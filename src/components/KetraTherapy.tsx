@@ -1,7 +1,7 @@
 import { CheckCircle, Zap, Target, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import ketraLogo from "@/assets/ketra-logo-v2.png";
+import ketraLogo from "@/assets/ketra-logo-transparent.png";
 
 const KetraTherapy = () => {
   const benefits = [

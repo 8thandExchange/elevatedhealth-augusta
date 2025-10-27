@@ -1,5 +1,5 @@
 import { MapPin, Phone, Mail } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-transparent.png";
 
 const Footer = () => {
   const scrollToSection = (id: string) => {
