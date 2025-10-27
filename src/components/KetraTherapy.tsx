@@ -1,6 +1,7 @@
 import { CheckCircle, Zap, Target, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import ketraLogo from "@/assets/ketra-logo.png";
 
 const KetraTherapy = () => {
   const benefits = [
@@ -33,11 +34,11 @@ const KetraTherapy = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              Proprietary Treatment
+            <div className="inline-flex justify-center mb-8">
+              <img src={ketraLogo} alt="KETRA - From Darkness, Light" className="h-32 md:h-40" />
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-              What is <span className="text-primary">KETRA™</span> Therapy?
+              What is KETRA™ Therapy?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Our innovative ketamine-based treatment protocol designed to rapidly alleviate symptoms of depression, 
@@ -46,8 +47,8 @@ const KetraTherapy = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 mb-16">
-            <Card className="p-8">
-              <Zap className="h-12 w-12 text-primary mb-4" />
+            <Card className="p-8 border-accent/20">
+              <Zap className="h-12 w-12 text-accent mb-4" />
               <h3 className="text-2xl font-semibold mb-4 text-foreground">How It Works</h3>
               <p className="text-muted-foreground mb-4 leading-relaxed">
                 KETRA™ therapy utilizes carefully controlled ketamine administration to create new neural pathways 
@@ -60,8 +61,8 @@ const KetraTherapy = () => {
               </p>
             </Card>
 
-            <Card className="p-8">
-              <Target className="h-12 w-12 text-primary mb-4" />
+            <Card className="p-8 border-accent/20">
+              <Target className="h-12 w-12 text-accent mb-4" />
               <h3 className="text-2xl font-semibold mb-4 text-foreground">What to Expect</h3>
               <p className="text-muted-foreground mb-4 leading-relaxed">
                 Treatment typically involves a series of sessions in our comfortable, clinical setting. Each session 

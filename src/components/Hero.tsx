@@ -26,8 +26,8 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-10 pt-20">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white animate-fade-in-up">
-            Transform Your Mental Health with{" "}
-            <span className="text-secondary">KETRA™ Therapy</span>
+            Transform Your Mental Health at{" "}
+            <span className="text-secondary">Elevated Health</span>
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-white/90 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Physician-led ketamine treatment for depression, anxiety, and PTSD in Augusta, GA
