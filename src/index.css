@@ -37,6 +37,12 @@ All colors MUST be HSL.
     --accent-foreground: 0 0% 100%;
     --accent-light: 185 60% 65%;
 
+    /* Gold - Honor, service, excellence */
+    --gold: 43 85% 58%;
+    --gold-foreground: 215 25% 15%;
+    --gold-light: 43 80% 68%;
+    --gold-dark: 43 90% 48%;
+
     /* Muted tones */
     --muted: 210 20% 94%;
     --muted-foreground: 215 15% 45%;
