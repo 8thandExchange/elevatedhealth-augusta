@@ -82,8 +82,7 @@ const Footer = () => {
               </ul>
               <div className="mt-4 text-background/80">
                 <p className="text-sm">Mon-Fri: 8AM - 6PM</p>
-                <p className="text-sm">Sat: 9AM - 2PM</p>
-                <p className="text-sm">Sun: Closed</p>
+                <p className="text-sm">Sat-Sun: By Appointment Only</p>
               </div>
             </div>
           </div>
