@@ -16,7 +16,7 @@ const Footer = () => {
             {/* Brand */}
             <div className="md:col-span-2">
               <h3 className="text-2xl font-bold mb-4">
-                Elevated Health <span className="text-secondary">Augusta</span>
+                Elevated Health <span className="text-primary">Augusta</span>
               </h3>
               <p className="text-background/80 mb-4">
                 Physician-led mental health care specializing in KETRA™ ketamine therapy 
