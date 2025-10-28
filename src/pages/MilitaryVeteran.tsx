@@ -183,22 +183,39 @@ Thank you for considering my request.`;
         {/* Widget Section */}
         <section id="mv-widget" className="py-16 md:py-24 bg-muted/30">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="max-w-2xl mx-auto text-center">
+            <div className="max-w-2xl mx-auto text-center mb-8">
               <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                Need Help Sending Your Referral Request?
+                Send Your Referral Request
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                We can help you prepare and send your referral request directly to your provider.
+                Complete the form below and we'll send your referral request to your provider and follow up within 1-2 business days.
               </p>
-              <Button
-                onClick={() => setIsModalOpen(true)}
-                size="lg"
-                className="text-base md:text-lg px-8 py-6 gap-2"
-              >
-                <Send className="h-5 w-5" />
-                Send Referral Request to My Provider
-              </Button>
             </div>
+            
+            {/* Form Section */}
+            <section id="mv-form" className="max-w-3xl mx-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl">Referral Request Form</CardTitle>
+                  <CardDescription className="text-base">
+                    All fields marked with * are required. This form is WCAG AA compliant and fully accessible.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={() => setIsModalOpen(true)}
+                    size="lg"
+                    className="w-full text-base md:text-lg gap-2"
+                  >
+                    <Send className="h-5 w-5" />
+                    Complete Referral Request Form
+                  </Button>
+                  <p className="text-sm text-muted-foreground text-center mt-4">
+                    Your information is secure and will only be shared with your provider and our clinic team.
+                  </p>
+                </CardContent>
+              </Card>
+            </section>
           </div>
         </section>
       </main>

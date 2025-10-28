@@ -2,3 +2,6 @@ project_id = "szcbfgnucdhwtccsolru"
 
 [functions.chat]
 verify_jwt = false
+
+[functions.send-referral]
+verify_jwt = false
