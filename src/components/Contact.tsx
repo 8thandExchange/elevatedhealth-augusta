@@ -5,6 +5,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  phone: z.string().trim().regex(/^[0-9+\(\)\-\s]+$/, "Phone number can only contain numbers and +()-").max(20, "Phone number must be less than 20 characters"),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000, "Message must be less than 2000 characters")
+});
 
 const Contact = () => {
   const { toast } = useToast();
@@ -18,33 +26,26 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.message) {
+    // Validate with zod schema
+    try {
+      const validatedData = contactSchema.parse(formData);
+      
+      // Simulate form submission with sanitized data
       toast({
-        title: "Missing Information",
-        description: "Please fill out all fields before submitting.",
-        variant: "destructive",
+        title: "Consultation Request Received!",
+        description: "Thank you for reaching out. We'll contact you within 24 hours to schedule your consultation.",
       });
-      return;
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const firstError = error.errors[0];
+        toast({
+          title: "Validation Error",
+          description: firstError.message,
+          variant: "destructive",
+        });
+      }
     }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast({
-        title: "Invalid Email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Simulate form submission
-    toast({
-      title: "Consultation Request Received!",
-      description: "Thank you for reaching out. We'll contact you within 24 hours to schedule your consultation.",
-    });
-    setFormData({ name: "", email: "", phone: "", message: "" });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -156,6 +157,7 @@ const Contact = () => {
                     onChange={handleChange}
                     placeholder="Enter your full name"
                     className="border-2 focus:border-accent focus:ring-accent"
+                    maxLength={100}
                     required
                   />
                 </div>
@@ -172,6 +174,7 @@ const Contact = () => {
                     onChange={handleChange}
                     placeholder="your.email@example.com"
                     className="border-2 focus:border-accent focus:ring-accent"
+                    maxLength={255}
                     required
                   />
                 </div>
@@ -188,6 +191,7 @@ const Contact = () => {
                     onChange={handleChange}
                     placeholder="(706) 555-0123"
                     className="border-2 focus:border-accent focus:ring-accent"
+                    maxLength={20}
                     required
                   />
                 </div>
@@ -204,6 +208,7 @@ const Contact = () => {
                     placeholder="Share what brings you here and how we can help..."
                     rows={5}
                     className="border-2 focus:border-accent focus:ring-accent resize-none"
+                    maxLength={2000}
                     required
                   />
                 </div>
