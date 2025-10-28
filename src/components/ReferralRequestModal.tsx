@@ -293,7 +293,7 @@ export const ReferralRequestModal = ({ isOpen, onClose }: ReferralRequestModalPr
                   id="diagnosis"
                   value={formData.diagnosis}
                   onChange={(e) => handleChange("diagnosis", e.target.value)}
-                  placeholder="e.g., Treatment-Resistant Depression, Major Depressive Disorder with suicidal ideation"
+                  placeholder="e.g., Treatment-Resistant Depression, Major Depressive Disorder"
                   rows={2}
                   required
                   maxLength={500}
