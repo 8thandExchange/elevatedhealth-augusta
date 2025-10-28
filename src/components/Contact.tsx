@@ -116,7 +116,7 @@ const Contact = () => {
               {/* Google Map */}
               <Card className="overflow-hidden bg-card/95 backdrop-blur">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3319.8!2d-82.1285!3d33.5343!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDMyJzAzLjUiTiA4MsKwMDcnNDIuNiJX!5e0!3m2!1sen!2sus!4v1234567890"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3319.2!2d-82.128!3d33.534!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88f9cd0b6e6e6e6f%3A0x1234567890abcdef!2s7013%20Evans%20Town%20Center%20Blvd%2C%20Evans%2C%20GA%2030809!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus"
                   width="100%"
                   height="320"
                   style={{ border: 0 }}
