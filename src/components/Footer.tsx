@@ -100,9 +100,9 @@ const Footer = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:care@elevatedhealthaugusta.com" className="flex items-center gap-2 hover:text-secondary transition-colors">
-                    <Mail className="h-4 w-4" />
-                    care@elevatedhealthaugusta.com
+                  <a href="mailto:care@elevatedhealthaugusta.com" className="flex items-start gap-2 hover:text-secondary transition-colors">
+                    <Mail className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                    <span className="break-all">care@elevatedhealthaugusta.com</span>
                   </a>
                 </li>
               </ul>
