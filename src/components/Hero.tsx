@@ -47,7 +47,7 @@ const Hero = () => {
         <div className="max-w-6xl mx-auto text-left">
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 md:mb-8 text-secondary leading-tight animate-fade-in-up max-w-4xl">
-            Physician-led ketamine care in Evans, GA
+            Expert-led ketamine care in Evans, GA
           </h1>
 
           {/* Subheading */}

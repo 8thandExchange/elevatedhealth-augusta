@@ -27,7 +27,7 @@ const Testimonials = () => {
       location: "Martinez, GA"
     },
     {
-      quote: "I was terrified to try something new after so many failed treatments. But the physician-led approach and the care I received made all the difference. My anxiety doesn't control my days anymore. I finally feel like myself again.",
+      quote: "I was terrified to try something new after so many failed treatments. But the expert-led approach and the care I received made all the difference. My anxiety doesn't control my days anymore. I finally feel like myself again.",
       initials: "K.H.",
       location: "Grovetown, GA"
     },

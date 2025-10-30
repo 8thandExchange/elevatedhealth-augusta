@@ -23,7 +23,7 @@ const Footer = () => {
                 {SITE_CONFIG.clinicName}
               </h3>
               <p className="text-background/80 mb-4">
-                Physician-led ketamine therapy for treatment-resistant depression, anxiety, and PTSD. 
+                Expert-led ketamine therapy for treatment-resistant depression, anxiety, and PTSD. 
                 Proudly serving Veterans, first responders, and the Augusta community.
               </p>
               <div className="space-y-3 text-background/80">

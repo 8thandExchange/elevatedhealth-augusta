@@ -35,7 +35,7 @@ const About = () => {
               A Clinic Built on Compassion & Clinical Excellence
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Physician-led mental health care combining medical expertise with genuine human connection
+              Expert-led mental health care combining medical expertise with genuine human connection
             </p>
           </div>
 
@@ -71,7 +71,7 @@ const About = () => {
                 className="rounded-2xl shadow-lg w-full h-[500px] object-cover"
               />
               <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground p-6 rounded-xl shadow-xl">
-                <div className="text-3xl font-bold">Physician-Led</div>
+                <div className="text-3xl font-bold">Expert-Led</div>
                 <div className="text-sm opacity-90">Every Session, Every Time</div>
               </div>
             </div>

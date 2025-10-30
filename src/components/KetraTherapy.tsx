@@ -21,7 +21,7 @@ const KetraTherapy = () => {
     },
     {
       icon: Shield,
-      title: "Physician-Led",
+      title: "Expert-Led",
       description: "Safe, monitored treatment in a clinical setting"
     }
   ];
@@ -134,7 +134,7 @@ const KetraTherapy = () => {
                 experience significant improvement within hours to days.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Our physician-led approach ensures optimal dosing, safety monitoring, and integration with 
+                Our expert-led approach ensures optimal dosing, safety monitoring, and integration with 
                 complementary therapeutic techniques for maximum effectiveness.
               </p>
             </Card>
