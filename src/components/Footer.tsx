@@ -124,29 +124,27 @@ const Footer = () => {
 
           {/* Bottom Bar */}
           <div className="border-t border-background/20 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-background/60 text-sm">
-              <p>© 2025 {SITE_CONFIG.clinicName}. All rights reserved.</p>
-              <div className="flex gap-6">
-                <button 
-                  onClick={() => navigate("/privacy-policy")} 
-                  className="hover:text-secondary transition-colors"
-                >
-                  Privacy Policy
-                </button>
-                <button 
-                  onClick={() => navigate("/terms-of-service")} 
-                  className="hover:text-secondary transition-colors"
-                >
-                  Terms of Service
-                </button>
-                <button 
-                  onClick={() => navigate("/hipaa-notice")} 
-                  className="hover:text-secondary transition-colors"
-                >
-                  HIPAA Notice
-                </button>
-              </div>
-            </div>
+            <p className="text-center text-xs text-background/60">
+              © 2025 {SITE_CONFIG.clinicName} | {" "}
+              <button 
+                onClick={() => navigate("/privacy-policy")} 
+                className="text-secondary hover:underline"
+              >
+                Privacy Policy
+              </button> | {" "}
+              <button 
+                onClick={() => navigate("/hipaa-notice")} 
+                className="text-secondary hover:underline"
+              >
+                HIPAA Notice
+              </button> | {" "}
+              <button 
+                onClick={() => navigate("/terms-of-service")} 
+                className="text-secondary hover:underline"
+              >
+                Terms of Use
+              </button>
+            </p>
             <p className="text-center mt-4 text-background/40 text-xs">
               Individual results may vary. Consult with a physician to determine if treatment is appropriate for you.
             </p>
