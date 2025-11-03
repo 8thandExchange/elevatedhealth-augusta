@@ -230,6 +230,10 @@ const Contact = () => {
                     maxLength={2000}
                     required
                   />
+                  <p className="text-sm text-muted-foreground mt-2 flex items-start gap-2">
+                    <span className="flex-shrink-0">🔒</span>
+                    <span><strong>Privacy Notice:</strong> Please do not share any sensitive medical or personal health information in this form. This form is intended for general inquiries only. Our care team will reach out to discuss your needs securely.</span>
+                  </p>
                 </div>
 
                 <Button 
