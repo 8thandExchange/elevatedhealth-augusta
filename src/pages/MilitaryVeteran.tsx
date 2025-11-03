@@ -7,18 +7,19 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ReferralRequestModal } from "@/components/ReferralRequestModal";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-
 const MilitaryVeteran = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const scrollToForm = () => {
     const element = document.getElementById("mv-widget");
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({
+        behavior: "smooth"
+      });
     }
   };
-
   const tricareTemplate = `Hello,
 
 I'm requesting a referral to Elevated Health Augusta for ketamine-assisted therapy evaluation.
@@ -33,7 +34,6 @@ This clinic offers FDA-approved SPRAVATO® (esketamine) nasal spray for Treatmen
 I believe this specialized treatment may be beneficial for my case, and I'd like to explore coverage options under my TRICARE plan.
 
 Thank you for your assistance.`;
-
   const vaTemplate = `Hello,
 
 I'm requesting authorization through VA Community Care for ketamine-assisted therapy evaluation at Elevated Health Augusta.
@@ -48,25 +48,16 @@ This clinic provides evidence-based ketamine therapies including FDA-approved SP
 As a Veteran enrolled in VA care, I'm interested in exploring whether this treatment is available through Community Care authorization.
 
 Thank you for considering my request.`;
-
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast({
         title: "Copied to clipboard",
-        description: `${type} referral template copied successfully.`,
+        description: `${type} referral template copied successfully.`
       });
     });
   };
-
-  const advocacyItems = [
-    "Dedicated TRICARE and VA benefit advocates on staff",
-    "Support with referral documentation and prior authorization submissions",
-    "Complimentary benefit verification to check coverage eligibility",
-    "Guidance navigating military healthcare systems and Community Care networks"
-  ];
-
-  return (
-    <div className="min-h-screen">
+  const advocacyItems = ["Dedicated TRICARE and VA benefit advocates on staff", "Support with referral documentation and prior authorization submissions", "Complimentary benefit verification to check coverage eligibility", "Guidance navigating military healthcare systems and Community Care networks"];
+  return <div className="min-h-screen">
       <Navbar />
       
       <main>
@@ -77,16 +68,15 @@ Thank you for considering my request.`;
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">
                 Military & Veteran Care — You may be eligible for covered treatment
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 animate-fade-in-up" style={{
+              animationDelay: "0.1s"
+            }}>
                 We help TRICARE beneficiaries and VA-enrolled Veterans check benefits, prepare 
                 referral requests, and advocate for themselves.
               </p>
-              <Button
-                onClick={scrollToForm}
-                size="lg"
-                className="text-base md:text-lg px-8 py-6 animate-fade-in-up"
-                style={{ animationDelay: "0.2s" }}
-              >
+              <Button onClick={scrollToForm} size="lg" className="text-base md:text-lg px-8 py-6 animate-fade-in-up" style={{
+              animationDelay: "0.2s"
+            }}>
                 Start Your Benefits Check
               </Button>
             </div>
@@ -94,7 +84,7 @@ Thank you for considering my request.`;
         </section>
 
         {/* Advocacy Section */}
-        <section id="mv-advocacy" className="py-16 md:py-24 bg-background">
+        <section id="mv-advocacy" className="py-16 bg-background md:py-[15px]">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center">
@@ -103,12 +93,10 @@ Thank you for considering my request.`;
               <Card>
                 <CardContent className="p-6 md:p-8">
                   <ul className="space-y-4">
-                    {advocacyItems.map((item, index) => (
-                      <li key={index} className="flex gap-3 items-start">
+                    {advocacyItems.map((item, index) => <li key={index} className="flex gap-3 items-start">
                         <CheckCircle2 className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -134,11 +122,7 @@ Thank you for considering my request.`;
                       {tricareTemplate}
                     </pre>
                   </div>
-                  <Button
-                    onClick={() => copyToClipboard(tricareTemplate, "TRICARE")}
-                    variant="outline"
-                    className="gap-2"
-                  >
+                  <Button onClick={() => copyToClipboard(tricareTemplate, "TRICARE")} variant="outline" className="gap-2">
                     <Copy className="h-4 w-4" />
                     Copy TRICARE Template
                   </Button>
@@ -166,11 +150,7 @@ Thank you for considering my request.`;
                       {vaTemplate}
                     </pre>
                   </div>
-                  <Button
-                    onClick={() => copyToClipboard(vaTemplate, "VA")}
-                    variant="outline"
-                    className="gap-2"
-                  >
+                  <Button onClick={() => copyToClipboard(vaTemplate, "VA")} variant="outline" className="gap-2">
                     <Copy className="h-4 w-4" />
                     Copy VA Template
                   </Button>
@@ -202,11 +182,7 @@ Thank you for considering my request.`;
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button
-                    onClick={() => setIsModalOpen(true)}
-                    size="lg"
-                    className="w-full text-base md:text-lg gap-2"
-                  >
+                  <Button onClick={() => setIsModalOpen(true)} size="lg" className="w-full text-base md:text-lg gap-2">
                     <Send className="h-5 w-5" />
                     Complete Referral Request Form
                   </Button>
@@ -222,8 +198,6 @@ Thank you for considering my request.`;
 
       <Footer />
       <ReferralRequestModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </div>
-  );
+    </div>;
 };
-
 export default MilitaryVeteran;
