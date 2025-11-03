@@ -133,7 +133,12 @@ const Footer = () => {
                 >
                   Privacy Policy
                 </button>
-                <button className="hover:text-secondary transition-colors">Terms of Service</button>
+                <button 
+                  onClick={() => navigate("/terms-of-service")} 
+                  className="hover:text-secondary transition-colors"
+                >
+                  Terms of Service
+                </button>
                 <button 
                   onClick={() => navigate("/hipaa-notice")} 
                   className="hover:text-secondary transition-colors"
