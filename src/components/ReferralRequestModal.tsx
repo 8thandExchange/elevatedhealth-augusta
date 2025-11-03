@@ -33,7 +33,6 @@ const referralSchema = z.object({
   }),
   diagnosis: z.string().trim().min(1, "Diagnosis is required").max(500),
   priorTreatments: z.string().trim().min(1, "Prior treatments information is required").max(1000),
-  webhookUrl: z.string().trim().url("Invalid webhook URL").optional().or(z.literal("")),
 });
 
 export const ReferralRequestModal = ({ isOpen, onClose }: ReferralRequestModalProps) => {
@@ -49,7 +48,6 @@ export const ReferralRequestModal = ({ isOpen, onClose }: ReferralRequestModalPr
     providerEmail: "",
     diagnosis: "",
     priorTreatments: "",
-    webhookUrl: "",
   });
 
   // Track modal open
@@ -117,7 +115,6 @@ export const ReferralRequestModal = ({ isOpen, onClose }: ReferralRequestModalPr
         providerEmail: "",
         diagnosis: "",
         priorTreatments: "",
-        webhookUrl: "",
       });
       onClose();
     }
@@ -381,23 +378,6 @@ export const ReferralRequestModal = ({ isOpen, onClose }: ReferralRequestModalPr
                   {formData.priorTreatments === "custom" ? `${formData.priorTreatments.length}/1000 characters` : "Select the treatments you've tried"}
                 </p>
               </div>
-            </div>
-
-            {/* CRM Webhook (Optional) */}
-            <div className="space-y-2 pt-4 border-t">
-              <Label htmlFor="webhookUrl">CRM Webhook URL (Optional)</Label>
-              <Input
-                id="webhookUrl"
-                type="url"
-                value={formData.webhookUrl}
-                onChange={(e) => handleChange("webhookUrl", e.target.value)}
-                placeholder="https://your-crm-webhook-url.com"
-                maxLength={500}
-                aria-describedby="webhook-help"
-              />
-              <p id="webhook-help" className="text-xs text-muted-foreground">
-                For internal use only - leave blank if not applicable
-              </p>
             </div>
           </div>
 

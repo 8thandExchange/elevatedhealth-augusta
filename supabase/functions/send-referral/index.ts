@@ -18,7 +18,6 @@ interface ReferralRequest {
   providerEmail: string;
   diagnosis: string;
   priorTreatments: string;
-  webhookUrl?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -40,7 +39,6 @@ const handler = async (req: Request): Promise<Response> => {
       providerEmail,
       diagnosis,
       priorTreatments,
-      webhookUrl,
     } = data;
 
     // Configure Paubox HIPAA-compliant SMTP client (port 465 with implicit TLS)
@@ -219,41 +217,6 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Patient confirmation email sent via Paubox SMTP");
 
     await client.close();
-
-    // Trigger webhook if provided (for CRM integration)
-    if (webhookUrl) {
-      console.log("Triggering CRM webhook:", webhookUrl);
-      try {
-        await fetch(webhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            timestamp: new Date().toISOString(),
-            type: "referral_request",
-            patient: {
-              name: patientName,
-              email: patientEmail,
-              phone: patientPhone,
-              benefitType,
-            },
-            provider: {
-              name: providerName,
-              email: providerEmail,
-            },
-            clinical: {
-              diagnosis,
-              priorTreatments,
-            },
-          }),
-        });
-        console.log("Webhook triggered successfully");
-      } catch (webhookError) {
-        console.error("Webhook error (non-blocking):", webhookError);
-        // Don't fail the request if webhook fails
-      }
-    }
 
     return new Response(
       JSON.stringify({
