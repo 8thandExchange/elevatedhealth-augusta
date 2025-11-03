@@ -38,12 +38,12 @@ const handler = async (req: Request): Promise<Response> => {
       timeStyle: 'long'
     });
 
-    // Send email via Paubox HIPAA-compliant SMTP
+    // Send email via Paubox HIPAA-compliant SMTP (port 465 with implicit TLS)
     const client = new SMTPClient({
       connection: {
         hostname: "smtp.paubox.com",
-        port: 587,
-        tls: false,
+        port: 465,
+        tls: true,
         auth: {
           username: "care@elevatedhealthaugusta.com",
           password: PAUBOX_SMTP_PASSWORD!,
@@ -55,7 +55,7 @@ const handler = async (req: Request): Promise<Response> => {
       from: "care@elevatedhealthaugusta.com",
       to: "care@elevatedhealthaugusta.com",
       replyTo: validatedData.email,
-      subject: "New Inquiry from Elevated Health Augusta",
+      subject: "New Elevated Health Augusta Inquiry",
       content: "auto",
       html: `
         <!DOCTYPE html>

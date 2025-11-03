@@ -43,10 +43,10 @@ const Contact = () => {
         throw new Error(error.message || 'Failed to send message');
       }
 
-      // Success
+      // Success - Show HIPAA-compliant thank you message
       toast({
-        title: "Thank You for Reaching Out!",
-        description: "Thank you for reaching out to Elevated Health Augusta. We've received your message and will be in touch soon. Please do not include personal medical information in this form."
+        title: "Thank You for Contacting Us!",
+        description: "Thank you for contacting Elevated Health Augusta. We've received your message and will reach out soon. Please avoid including personal medical information."
       });
       
       setFormData({
