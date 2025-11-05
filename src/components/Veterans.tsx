@@ -1,4 +1,4 @@
-import { Shield, Cross, BadgeCheck, CheckCircle, Calendar } from "lucide-react";
+import { Shield, Cross, BadgeCheck, CheckCircle, Calendar, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -30,7 +30,7 @@ const Veterans = () => {
       description: "Specialized care for police, firefighters, EMS, and emergency personnel",
       features: [
         "Understanding of first responder culture",
-        "Trauma-informed care",
+        "Trauma-informed, evidence-based care",
         "Confidential treatment options"
       ]
     }
@@ -83,6 +83,32 @@ const Veterans = () => {
             ))}
           </div>
 
+          {/* Veterans Assistance Program Callout */}
+          <div className="mb-12">
+            <Card className="p-8 md:p-10 border-accent/30 bg-accent/5 backdrop-blur relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl"></div>
+              <div className="relative z-10">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/20 flex-shrink-0">
+                    <Heart className="h-6 w-6 text-accent" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-foreground">
+                      Ask About Our Veterans Assistance Program
+                    </h3>
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      We partner with the VA and TRICARE to ensure accessible care for those who've served. Our Veterans 
+                      Assistance Program includes discounted rates for eligible Veterans and service members, streamlined 
+                      authorization support, and dedicated care coordination. Every treatment is delivered with trauma-informed, 
+                      evidence-based protocols that honor your service while addressing the unique mental health challenges 
+                      faced by our military and first responder communities.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
           {/* Why This Matters Section */}
           <div className="mb-16">
             <Card className="p-8 md:p-12 border-accent/20 bg-card/50 backdrop-blur">
@@ -97,13 +123,14 @@ const Veterans = () => {
                   </p>
                   <p>
                     Our KETRA™ therapy offers a path forward without the stigma. We understand the unique challenges 
-                    you face and provide care that respects your experience while helping you heal.
+                    you face and provide trauma-informed care that respects your experience while helping you heal.
                   </p>
                 </div>
                 <div>
                   <p className="mb-4">
-                    Whether you're navigating VA benefits, TRICARE coverage, or seeking confidential support as a 
-                    first responder, we handle the paperwork so you can focus on recovery.
+                    Through our partnerships with the VA and TRICARE, we handle the paperwork and authorization process 
+                    so you can focus on recovery. Our team is experienced with military and first responder benefits, 
+                    and we offer discounted rates to ensure care is accessible.
                   </p>
                   <p>
                     You've spent your career protecting others. Let us help protect your mental health.
