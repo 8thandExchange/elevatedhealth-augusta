@@ -71,7 +71,7 @@ const Hero = () => {
           animationDelay: "0.4s"
         }}>
             <Button 
-              variant="cta" 
+              variant="hero" 
               size="xl" 
               asChild
               className="gap-2 text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 shadow-2xl hover:scale-105 transition-transform"

@@ -112,7 +112,7 @@ const WeightLoss = () => {
                   Schedule a consultation to learn about our medical weight loss programs and start your transformation.
                 </p>
                 <Button
-                  variant="cta"
+                  variant="hero"
                   size="lg"
                   asChild
                   className="text-base md:text-lg px-8 py-6"

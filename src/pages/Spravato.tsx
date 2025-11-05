@@ -74,7 +74,7 @@ const Spravato = () => {
                 Schedule a consultation to learn if SPRAVATO® could be part of your treatment plan.
               </p>
               <Button
-                variant="cta"
+                variant="hero"
                 size="lg"
                 asChild
                 className="text-base md:text-lg px-8 py-6"

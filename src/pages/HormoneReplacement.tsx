@@ -94,7 +94,7 @@ const HormoneReplacement = () => {
                   Schedule a consultation to discuss hormone testing and personalized treatment options.
                 </p>
                 <Button
-                  variant="cta"
+                  variant="hero"
                   size="lg"
                   asChild
                   className="text-base md:text-lg px-8 py-6"

@@ -110,7 +110,7 @@ const Navbar = () => {
             <button onClick={() => scrollToSection("contact")} className="text-foreground hover:text-primary transition-colors">
               Contact
             </button>
-            <Button variant="cta" size="lg" asChild>
+            <Button variant="hero" size="lg" asChild>
               <a
                 href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
                 target="_blank"
@@ -187,7 +187,7 @@ const Navbar = () => {
               <button onClick={() => scrollToSection("contact")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
                 Contact
               </button>
-              <Button variant="cta" size="lg" className="w-full" asChild>
+              <Button variant="hero" size="lg" className="w-full" asChild>
                 <a
                   href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
                   target="_blank"

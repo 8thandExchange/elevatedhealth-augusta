@@ -23,7 +23,7 @@ const BookingWidget = () => {
               
               <div className="pt-4">
                 <Button
-                  variant="cta"
+                  variant="hero"
                   asChild
                   size="lg"
                   className="gap-2 text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
