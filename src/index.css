@@ -8,67 +8,67 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Base colors - calming whites and light grays */
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
+    /* Base colors - clean whites and light grays */
+    --background: 0 0% 98%;
+    --foreground: 207 100% 17%;
 
     /* Card surfaces */
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 207 100% 17%;
 
     /* Popover surfaces */
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 207 100% 17%;
 
-    /* Primary - Deep medical blue (trust, professionalism) */
-    --primary: 210 80% 42%;
+    /* Primary - Deep Navy Blue (logo brand color, trust, professionalism) */
+    --primary: 207 100% 17%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 210 75% 55%;
-    --primary-dark: 210 85% 32%;
+    --primary-light: 207 80% 35%;
+    --primary-dark: 207 100% 12%;
 
-    /* Secondary - Calming teal (KETRA brand color, healing, tranquility) */
-    --secondary: 175 60% 70%;
-    --secondary-foreground: 215 25% 15%;
-    --secondary-light: 170 65% 80%;
-    --secondary-dark: 180 70% 55%;
+    /* Secondary - Silver Gray (logo accent, sophistication) */
+    --secondary: 200 5% 70%;
+    --secondary-foreground: 207 100% 17%;
+    --secondary-light: 200 5% 85%;
+    --secondary-dark: 200 8% 55%;
 
-    /* Accent - Soft teal (calming, healing) */
-    --accent: 185 65% 55%;
+    /* Accent - Lighter Navy (healing, trust) */
+    --accent: 207 80% 45%;
     --accent-foreground: 0 0% 100%;
-    --accent-light: 185 60% 65%;
+    --accent-light: 207 60% 60%;
 
     /* Gold - Honor, service, excellence */
     --gold: 43 85% 58%;
-    --gold-foreground: 215 25% 15%;
+    --gold-foreground: 207 100% 17%;
     --gold-light: 43 80% 68%;
     --gold-dark: 43 90% 48%;
 
     /* Muted tones */
-    --muted: 210 20% 94%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 200 10% 94%;
+    --muted-foreground: 207 30% 45%;
 
     /* Destructive */
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
     /* Borders and inputs */
-    --border: 210 20% 88%;
-    --input: 210 20% 92%;
-    --ring: 210 80% 42%;
+    --border: 200 10% 88%;
+    --input: 200 10% 92%;
+    --ring: 207 100% 17%;
 
     /* Border radius */
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(210 80% 42%) 0%, hsl(185 65% 55%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(0 0% 100%) 100%);
-    --gradient-overlay: linear-gradient(90deg, hsla(210 80% 42% / 0.95) 0%, hsla(185 65% 55% / 0.85) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(207 100% 17%) 0%, hsl(207 80% 35%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-overlay: linear-gradient(90deg, hsla(207 100% 17% / 0.95) 0%, hsla(207 80% 35% / 0.85) 100%);
 
     /* Shadows */
-    --shadow-sm: 0 2px 8px hsla(210 80% 42% / 0.08);
-    --shadow-md: 0 4px 16px hsla(210 80% 42% / 0.12);
-    --shadow-lg: 0 8px 32px hsla(210 80% 42% / 0.16);
-    --shadow-glow: 0 0 40px hsla(210 80% 42% / 0.2);
+    --shadow-sm: 0 2px 8px hsla(207 100% 17% / 0.08);
+    --shadow-md: 0 4px 16px hsla(207 100% 17% / 0.12);
+    --shadow-lg: 0 8px 32px hsla(207 100% 17% / 0.16);
+    --shadow-glow: 0 0 40px hsla(207 100% 17% / 0.2);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -76,25 +76,25 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 215 25% 12%;
-    --foreground: 210 20% 95%;
-    --card: 215 25% 15%;
-    --card-foreground: 210 20% 95%;
-    --popover: 215 25% 15%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 210 75% 55%;
+    --background: 207 30% 12%;
+    --foreground: 200 10% 95%;
+    --card: 207 30% 15%;
+    --card-foreground: 200 10% 95%;
+    --popover: 207 30% 15%;
+    --popover-foreground: 200 10% 95%;
+    --primary: 207 80% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 175 55% 65%;
-    --secondary-foreground: 215 25% 12%;
-    --accent: 185 60% 50%;
+    --secondary: 200 8% 60%;
+    --secondary-foreground: 207 30% 12%;
+    --accent: 207 70% 55%;
     --accent-foreground: 0 0% 100%;
-    --muted: 215 20% 20%;
-    --muted-foreground: 215 15% 60%;
+    --muted: 207 20% 20%;
+    --muted-foreground: 200 10% 60%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 20% 22%;
-    --input: 215 20% 20%;
-    --ring: 210 75% 55%;
+    --border: 207 20% 22%;
+    --input: 207 20% 20%;
+    --ring: 207 80% 45%;
   }
 }
 

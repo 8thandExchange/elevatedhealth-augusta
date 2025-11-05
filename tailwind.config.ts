@@ -105,8 +105,8 @@ export default {
           "100%": { transform: "translateX(0)", opacity: "1" },
         },
         "glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsla(210 80% 42% / 0.3)" },
-          "50%": { boxShadow: "0 0 40px hsla(210 80% 42% / 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsla(207 100% 17% / 0.3)" },
+          "50%": { boxShadow: "0 0 40px hsla(207 100% 17% / 0.6)" },
         },
       },
       animation: {
