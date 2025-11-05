@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
@@ -68,8 +68,8 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            <button onClick={() => scrollToSection("about")} className="text-foreground hover:text-primary transition-colors">
-              About
+            <button onClick={() => scrollToSection("hero")} className="text-foreground hover:text-primary transition-colors">
+              Home
             </button>
             
             {/* Treatments Dropdown */}
@@ -94,24 +94,24 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <button 
-              onClick={() => navigate(SITE_CONFIG.routes.militaryVeteran)} 
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Military/Veteran
+            <button onClick={() => scrollToSection("about")} className="text-foreground hover:text-primary transition-colors">
+              About
+            </button>
+            <button onClick={() => scrollToSection("veterans")} className="text-foreground hover:text-primary transition-colors">
+              Veterans
             </button>
             <button onClick={() => scrollToSection("insurance")} className="text-foreground hover:text-primary transition-colors">
               Insurance
             </button>
+            <button onClick={() => scrollToSection("testimonials")} className="text-foreground hover:text-primary transition-colors">
+              Testimonials
+            </button>
             <button onClick={() => scrollToSection("contact")} className="text-foreground hover:text-primary transition-colors">
               Contact
             </button>
-            <a href={`tel:${SITE_CONFIG.phoneRaw}`}>
-              <Button variant="cta" size="lg" className="gap-2">
-                <Phone className="h-4 w-4" />
-                {SITE_CONFIG.phone}
-              </Button>
-            </a>
+            <Button variant="cta" size="lg" onClick={() => scrollToSection("booking")}>
+              Book Consultation
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -128,8 +128,8 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
-              <button onClick={() => scrollToSection("about")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
-                About
+              <button onClick={() => scrollToSection("hero")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+                Home
               </button>
               
               {/* Treatments Mobile Submenu */}
@@ -165,27 +165,24 @@ const Navbar = () => {
                 )}
               </div>
 
-              <button 
-                onClick={() => {
-                  navigate(SITE_CONFIG.routes.militaryVeteran);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-left py-2 text-foreground hover:text-primary transition-colors"
-              >
-                Military/Veteran
+              <button onClick={() => scrollToSection("about")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+                About
+              </button>
+              <button onClick={() => scrollToSection("veterans")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+                Veterans
               </button>
               <button onClick={() => scrollToSection("insurance")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
                 Insurance
               </button>
+              <button onClick={() => scrollToSection("testimonials")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+                Testimonials
+              </button>
               <button onClick={() => scrollToSection("contact")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
                 Contact
               </button>
-              <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="w-full">
-                <Button variant="cta" size="lg" className="w-full gap-2">
-                  <Phone className="h-4 w-4" />
-                  {SITE_CONFIG.phone}
-                </Button>
-              </a>
+              <Button variant="cta" size="lg" className="w-full" onClick={() => scrollToSection("booking")}>
+                Book Consultation
+              </Button>
             </div>
           </div>
         )}
