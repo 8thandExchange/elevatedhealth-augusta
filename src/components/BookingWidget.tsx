@@ -23,9 +23,10 @@ const BookingWidget = () => {
               
               <div className="pt-4">
                 <Button
+                  variant="cta"
                   asChild
                   size="lg"
-                  className="gap-2 text-lg px-8 py-6 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg hover:shadow-xl transition-all"
+                  className="gap-2 text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
                 >
                   <a
                     href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"

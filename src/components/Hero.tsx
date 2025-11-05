@@ -73,11 +73,17 @@ const Hero = () => {
             <Button 
               variant="cta" 
               size="xl" 
-              onClick={scrollToBooking} 
+              asChild
               className="gap-2 text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 shadow-2xl hover:scale-105 transition-transform"
             >
-              Book Your Free 30-Minute Consultation
-              <ArrowRight className="h-5 w-5" />
+              <a
+                href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Book Your Free 30-Minute Consultation
+                <ArrowRight className="h-5 w-5" />
+              </a>
             </Button>
           </div>
 

@@ -74,11 +74,18 @@ const Spravato = () => {
                 Schedule a consultation to learn if SPRAVATO® could be part of your treatment plan.
               </p>
               <Button
-                onClick={scrollToBooking}
+                variant="cta"
                 size="lg"
+                asChild
                 className="text-base md:text-lg px-8 py-6"
               >
-                Book Your Free Consultation
+                <a
+                  href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Book Your Free Consultation
+                </a>
               </Button>
             </div>
           </div>

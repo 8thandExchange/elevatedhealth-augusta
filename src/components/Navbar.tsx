@@ -110,8 +110,14 @@ const Navbar = () => {
             <button onClick={() => scrollToSection("contact")} className="text-foreground hover:text-primary transition-colors">
               Contact
             </button>
-            <Button variant="cta" size="lg" onClick={() => scrollToSection("booking")}>
-              Book Consultation
+            <Button variant="cta" size="lg" asChild>
+              <a
+                href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Book Consultation
+              </a>
             </Button>
           </div>
 
@@ -181,8 +187,14 @@ const Navbar = () => {
               <button onClick={() => scrollToSection("contact")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
                 Contact
               </button>
-              <Button variant="cta" size="lg" className="w-full" onClick={() => scrollToSection("booking")}>
-                Book Consultation
+              <Button variant="cta" size="lg" className="w-full" asChild>
+                <a
+                  href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Book Consultation
+                </a>
               </Button>
             </div>
           </div>
