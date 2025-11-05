@@ -1,7 +1,13 @@
-import { Shield, FileCheck, DollarSign, Phone, CheckCircle2, ArrowRight } from "lucide-react";
+import { Shield, FileCheck, DollarSign, Phone, CheckCircle2, ArrowRight, CreditCard, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Insurance = () => {
   const verificationSteps = [
@@ -114,17 +120,21 @@ const Insurance = () => {
             </Card>
           </div>
 
-          {/* Other Insurance & Payment Options */}
+          {/* Coverage vs. Cash-Pay Services */}
           <div className="mb-16">
             <h3 className="text-3xl font-bold mb-8 text-center text-foreground">
-              Additional Coverage & Payment Options
+              Understanding Coverage & Payment Options
             </h3>
             <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <Card className="p-8 border-accent/20">
-                <Shield className="h-12 w-12 text-accent mb-4" />
-                <h4 className="text-2xl font-semibold mb-4 text-foreground">Other Insurance Plans</h4>
+              <Card className="p-8 border-accent/20 bg-accent/5">
+                <div className="flex items-center gap-3 mb-4">
+                  <Shield className="h-12 w-12 text-accent" />
+                  <Badge className="bg-accent text-accent-foreground">Insurance Covered</Badge>
+                </div>
+                <h4 className="text-2xl font-semibold mb-4 text-foreground">SPRAVATO® Therapy</h4>
                 <p className="text-muted-foreground mb-6">
-                  We also work with several other major insurance providers:
+                  SPRAVATO® (intranasal esketamine) is FDA-approved and covered by most major insurance plans 
+                  including Blue Cross Blue Shield, Aetna, Cigna, UnitedHealthcare, and others.
                 </p>
                 <div className="space-y-3">
                   {otherInsuranceProviders.map((provider, index) => (
@@ -135,35 +145,160 @@ const Insurance = () => {
                   ))}
                 </div>
                 <p className="text-sm text-muted-foreground mt-6">
-                  Don't see your plan? Contact us—we may still be able to help.
+                  We handle all insurance verification and authorization paperwork for you.
                 </p>
               </Card>
 
               <Card className="p-8 border-accent/20">
-                <DollarSign className="h-12 w-12 text-accent mb-4" />
-                <h4 className="text-2xl font-semibold mb-4 text-foreground">Self-Pay Options</h4>
+                <div className="flex items-center gap-3 mb-4">
+                  <Wallet className="h-12 w-12 text-accent" />
+                  <Badge variant="outline" className="border-accent/30">Self-Pay</Badge>
+                </div>
+                <h4 className="text-2xl font-semibold mb-4 text-foreground">Cash-Pay Services</h4>
                 <p className="text-muted-foreground mb-6">
-                  No insurance? No problem. We offer transparent self-pay rates and flexible payment plans.
+                  The following services are offered on a self-pay basis with transparent, upfront pricing:
                 </p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">Transparent, upfront pricing</span>
+                    <div>
+                      <span className="text-foreground font-semibold">IV Ketamine Therapy</span>
+                      <p className="text-sm text-muted-foreground">KETRA™ infusion treatments</p>
+                    </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">Flexible payment plans available</span>
+                    <div>
+                      <span className="text-foreground font-semibold">Hormone Replacement Therapy</span>
+                      <p className="text-sm text-muted-foreground">Personalized HRT programs</p>
+                    </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">HSA and FSA accepted</span>
+                    <div>
+                      <span className="text-foreground font-semibold">Medical Weight Loss</span>
+                      <p className="text-sm text-muted-foreground">Comprehensive weight management</p>
+                    </div>
                   </li>
                 </ul>
-                <Button variant="outline" onClick={scrollToContact} className="w-full">
-                  Request Pricing Information
-                </Button>
               </Card>
             </div>
+          </div>
+
+          {/* Financing Options */}
+          <div className="mb-16">
+            <Card className="p-8 md:p-12 border-accent/20 bg-gradient-subtle">
+              <div className="text-center mb-8">
+                <CreditCard className="h-16 w-16 text-accent mx-auto mb-4" />
+                <h3 className="text-3xl font-bold mb-4 text-foreground">
+                  Flexible Financing Options
+                </h3>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  We believe cost should never be a barrier to transformative mental health care. 
+                  That's why we offer multiple payment solutions to make treatment accessible.
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-card p-6 rounded-lg border border-accent/20">
+                  <h4 className="font-semibold text-foreground mb-2">CareCredit</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Healthcare financing with flexible payment plans and 0% interest options available
+                  </p>
+                </div>
+                <div className="bg-card p-6 rounded-lg border border-accent/20">
+                  <h4 className="font-semibold text-foreground mb-2">HSA & FSA</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Use your Health Savings or Flexible Spending Account for tax-advantaged payments
+                  </p>
+                </div>
+                <div className="bg-card p-6 rounded-lg border border-accent/20">
+                  <h4 className="font-semibold text-foreground mb-2">Payment Plans</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Custom payment arrangements to fit your budget—ask us about options during consultation
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-accent/10 border-l-4 border-accent p-6 rounded-lg">
+                <p className="text-foreground font-semibold mb-2">
+                  Transparent Pricing Promise
+                </p>
+                <p className="text-muted-foreground">
+                  We provide clear, upfront pricing for all self-pay services before you commit. No hidden fees, 
+                  no surprises. You'll know exactly what to expect before starting treatment.
+                </p>
+              </div>
+            </Card>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="mb-16">
+            <h3 className="text-3xl font-bold mb-8 text-center text-foreground">
+              Common Insurance & Payment Questions
+            </h3>
+            <Card className="p-8 border-accent/20">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-accent">
+                    Is Ketamine therapy covered by insurance?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    <p className="mb-4">
+                      It depends on the type of ketamine therapy. <strong>SPRAVATO®</strong> (intranasal esketamine) 
+                      is FDA-approved for treatment-resistant depression and is covered by most major insurance plans, 
+                      including Blue Cross Blue Shield, Aetna, Cigna, UnitedHealthcare, and Medicare (select plans).
+                    </p>
+                    <p>
+                      <strong>IV Ketamine therapy</strong> (KETRA™) is not FDA-approved for depression treatment and 
+                      is typically offered on a self-pay basis. However, many patients find the transparent pricing 
+                      and flexible payment options make it an accessible choice. We're happy to provide a superbill 
+                      for potential out-of-network reimbursement.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-2">
+                  <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-accent">
+                    Can I use HSA or FSA?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    <p className="mb-4">
+                      <strong>Yes!</strong> We accept both Health Savings Accounts (HSA) and Flexible Spending 
+                      Accounts (FSA) for all of our services, including self-pay treatments like IV Ketamine 
+                      therapy, Hormone Replacement Therapy, and Medical Weight Loss programs.
+                    </p>
+                    <p>
+                      Using your HSA or FSA allows you to pay for treatment with pre-tax dollars, which can 
+                      significantly reduce your out-of-pocket costs. We'll provide all necessary documentation 
+                      for your records.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-3">
+                  <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-accent">
+                    Do you offer payment plans?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    <p className="mb-4">
+                      <strong>Absolutely.</strong> We partner with <strong>CareCredit</strong>, a healthcare 
+                      financing solution that offers flexible payment plans with low monthly payments. Many 
+                      patients qualify for promotional financing with 0% interest if paid within the promotional period.
+                    </p>
+                    <p className="mb-4">
+                      In addition to CareCredit, we also offer <strong>in-house payment arrangements</strong> on 
+                      a case-by-case basis. Our goal is to make treatment accessible, so we encourage you to 
+                      discuss your financial situation with our team during your consultation.
+                    </p>
+                    <p>
+                      We're committed to working with you to find a payment solution that fits your budget—because 
+                      transformative mental health care should be within reach for everyone.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </Card>
           </div>
 
           {/* CTA Section */}
