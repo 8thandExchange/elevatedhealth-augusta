@@ -39,7 +39,7 @@ const Footer = () => {
                 RESTORE • REPAIR • RENEW
               </p>
               <p className="font-inter text-white/80 mb-4">
-                Expert-led ketamine therapy for treatment-resistant depression, anxiety, and PTSD. 
+                Expert-led ketamine therapy, medical weight loss, and hormone replacement therapy. 
                 Proudly serving Veterans, first responders, and the Augusta community.
               </p>
               <div className="space-y-3 font-inter text-white/80">
@@ -70,18 +70,26 @@ const Footer = () => {
                 </li>
                 <li>
                   <button 
-                    onClick={() => navigate(SITE_CONFIG.routes.ivKetamine)} 
+                    onClick={() => navigate(SITE_CONFIG.routes.ketamine)} 
                     className="hover:text-gold transition-colors"
                   >
-                    IV Ketamine
+                    Ketamine Therapy
                   </button>
                 </li>
                 <li>
                   <button 
-                    onClick={() => navigate(SITE_CONFIG.routes.spravato)} 
+                    onClick={() => navigate(SITE_CONFIG.routes.weightloss)} 
                     className="hover:text-gold transition-colors"
                   >
-                    SPRAVATO®
+                    Medical Weight Loss
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => navigate(SITE_CONFIG.routes.hormones)} 
+                    className="hover:text-gold transition-colors"
+                  >
+                    Hormone Replacement
                   </button>
                 </li>
                 <li>
@@ -126,15 +134,6 @@ const Footer = () => {
                   aria-label="Facebook"
                 >
                   <span className="text-lg font-bold">FB</span>
-                </a>
-                <a 
-                  href="https://x.com/Dr_Troy_Akers" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold flex items-center justify-center transition-colors"
-                  aria-label="X (Twitter)"
-                >
-                  <span className="text-lg font-bold">X</span>
                 </a>
               </div>
               
