@@ -8,7 +8,7 @@ const About = () => {
     {
       icon: Shield,
       title: "Medical Excellence",
-      description: "Board-certified physicians with specialized training in ketamine therapy"
+      description: "Board-certified nurse practitioner with specialized training in ketamine therapy"
     },
     {
       icon: Heart,
@@ -51,7 +51,7 @@ const About = () => {
                 Led by Medical Experts Who Care
               </h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Every treatment at Elevated Health Augusta is overseen by board-certified providers with specialized training in ketamine therapy. We believe that exceptional mental health care requires both clinical precision and compassionate understanding of each patient's unique journey.
+                Every treatment at Elevated Health Augusta is overseen by Lauren Bursey, NP-C, our board-certified nurse practitioner with specialized training in ketamine therapy. We believe that exceptional mental health care requires both clinical precision and compassionate understanding of each patient's unique journey.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Our proprietary <span className="font-bold text-primary">KETRA™ protocol</span> represents the gold standard in ketamine-assisted therapy, combining evidence-based medicine with personalized care plans designed to address depression, anxiety, PTSD, and treatment-resistant conditions.

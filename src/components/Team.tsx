@@ -32,8 +32,8 @@ const Team = () => {
                 </div>
                 <div className="p-8 md:p-10 flex flex-col justify-center bg-gradient-subtle">
                   <div className="mb-6">
-                    <h3 className="text-3xl font-bold text-primary mb-2">Our Provider</h3>
-                    <div className="text-lg text-muted-foreground mb-4">Board-Certified Medical Expert</div>
+                    <h3 className="text-3xl font-bold text-primary mb-2">Lauren Bursey, NP-C</h3>
+                    <div className="text-lg text-muted-foreground mb-4">Board-Certified Nurse Practitioner</div>
                   </div>
                   
                   <div className="space-y-6">
