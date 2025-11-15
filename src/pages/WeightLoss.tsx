@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import logo from "@/assets/elevated-health-logo-transparent.png";
 
 const WeightLoss = () => {
   const scrollToBooking = () => {
@@ -28,9 +27,6 @@ const WeightLoss = () => {
         <section className="py-16 md:py-24 bg-gradient-to-b from-muted/30 to-background">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-4xl mx-auto text-center">
-              <div className="mb-6 animate-fade-in-up flex justify-center">
-                <img src={logo} alt="Elevated Health Augusta" className="h-16 md:h-20 w-auto" />
-              </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">
                 Medical Weight Loss Programs
               </h1>

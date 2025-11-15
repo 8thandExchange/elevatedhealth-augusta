@@ -50,7 +50,7 @@ const Hero = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
           <div className="mb-6 animate-fade-in-up flex justify-center">
-            <img src={logo} alt="Elevated Health Augusta" className="h-16 md:h-20 w-auto" />
+            <img src={logo} alt="Elevated Health Augusta" className="h-48 md:h-60 w-auto" />
           </div>
           
           {/* Clinic Name & Tagline */}
