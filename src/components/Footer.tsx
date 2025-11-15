@@ -1,6 +1,7 @@
 import { MapPin, Phone, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { trackCTAClick } from "@/lib/analytics";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -134,6 +135,18 @@ const Footer = () => {
                   aria-label="X (Twitter)"
                 >
                   <span className="text-lg font-bold">X</span>
+                </a>
+              </div>
+              
+              {/* AI Voice Agent Link */}
+              <div className="mb-6">
+                <p className="text-white/60 text-sm font-inter mb-2">24/7 AI Support:</p>
+                <a 
+                  href="tel:+17067603470" 
+                  className="text-[#FF6B35] hover:text-[#FF6B35]/80 transition-colors font-inter font-semibold"
+                  onClick={() => trackCTAClick('ai_voice_call_footer', 'tel:+17067603470')}
+                >
+                  (706) 760-3470
                 </a>
               </div>
               

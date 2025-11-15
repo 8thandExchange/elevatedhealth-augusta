@@ -9,6 +9,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { trackCTAClick } from "@/lib/analytics";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -228,6 +229,24 @@ const Contact = () => {
                   className="border-0"
                   title="Schedule Consultation"
                 />
+              </div>
+              
+              {/* AI Voice Agent CTA */}
+              <div className="p-6 border-t border-border">
+                <p className="font-inter text-muted-foreground text-center mb-4">
+                  Prefer to Talk?
+                </p>
+                <Button
+                  size="lg"
+                  asChild
+                  className="w-full font-inter font-semibold text-base px-8 py-6 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white shadow-xl hover:translate-y-[-4px] transition-all"
+                  onClick={() => trackCTAClick('ai_voice_call_contact', 'tel:+17067603470')}
+                >
+                  <a href="tel:+17067603470">
+                    <Phone className="mr-2 h-5 w-5" />
+                    Call (706) 760-3470
+                  </a>
+                </Button>
               </div>
             </Card>
           </div>

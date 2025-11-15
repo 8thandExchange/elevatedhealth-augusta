@@ -3,6 +3,7 @@ import { ArrowRight, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-breakthrough.jpg";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { trackCTAClick } from "@/lib/analytics";
 const Hero = () => {
   const navigate = useNavigate();
   
@@ -62,7 +63,7 @@ const Hero = () => {
           </p>
 
           {/* Primary CTA Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10 animate-fade-in-up" style={{
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6 animate-fade-in-up" style={{
             animationDelay: "0.4s"
           }}>
             <Button 
@@ -90,6 +91,26 @@ const Hero = () => {
                 Call Now
               </a>
             </Button>
+          </div>
+
+          {/* AI Voice Agent CTA */}
+          <div className="flex flex-col items-center gap-3 mb-10 animate-fade-in-up" style={{
+            animationDelay: "0.5s"
+          }}>
+            <Button
+              size="lg"
+              asChild
+              className="font-inter font-semibold text-base px-8 py-6 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white shadow-xl hover:translate-y-[-4px] transition-all w-full sm:w-auto"
+              onClick={() => trackCTAClick('ai_voice_call', 'tel:+17067603470')}
+            >
+              <a href="tel:+17067603470">
+                <Phone className="mr-2 h-5 w-5" />
+                Or Call Us Now (706) 760-3470
+              </a>
+            </Button>
+            <p className="text-white/80 text-xs font-inter">
+              Secure, HIPAA-compliant calls powered by AI
+            </p>
           </div>
 
           {/* Trust Indicators */}
