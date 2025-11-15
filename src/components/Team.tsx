@@ -71,12 +71,6 @@ const Team = () => {
                       </div>
                     </div>
                   </div>
-
-                  <div className="mt-8 p-6 bg-accent/10 rounded-lg border border-accent/20">
-                    <p className="text-foreground italic">
-                      "Elevated Health was created as a space for patients to start healing. Our services help with anxiety, depression, PTSD, and OCD. Patients feel safe here, and that's our goal. While the journey to healing is hard, it's worth the effort."
-                    </p>
-                  </div>
                 </div>
               </div>
             </Card>
