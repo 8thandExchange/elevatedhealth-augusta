@@ -145,18 +145,6 @@ const Treatments = () => {
             })}
           </div>
 
-          {/* How Ketamine Works CTA */}
-          <div className="mt-12 text-center">
-            <Link 
-              to="/how-ketamine-works"
-              className="inline-flex items-center gap-2 font-inter text-lg font-semibold text-hope hover:text-hope/80 transition-colors group"
-            >
-              <span className="border-b-2 border-hope group-hover:border-hope/80">
-                Watch: How Ketamine Works
-              </span>
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
 
           {/* Disclaimer */}
           <div className="mt-8 text-center">
