@@ -9,7 +9,7 @@ import {
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import logo from "@/assets/elevated-health-logo.png";
+import logo from "@/assets/logo-modern-serif.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -55,27 +55,43 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-card/95 backdrop-blur-md shadow-md" : "bg-card/90 backdrop-blur-sm"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
+        isScrolled 
+          ? "bg-white/95 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.08)]" 
+          : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
-            <button onClick={() => scrollToSection("hero")} className="focus:outline-none">
-              <img src={logo} alt="Elevated Health Augusta" className="h-12 md:h-16 w-auto" />
+            <button 
+              onClick={() => scrollToSection("hero")} 
+              className="focus:outline-none transition-all duration-300 hover:scale-105"
+            >
+              <img 
+                src={logo} 
+                alt="Elevated Health Augusta" 
+                className="h-10 md:h-14 w-auto transition-all duration-300"
+              />
             </button>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            <button onClick={() => scrollToSection("hero")} className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection("hero")} 
+              className={`font-medium transition-all duration-300 ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}
+            >
               Home
             </button>
             
             {/* Treatments Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors focus:outline-none">
+              <DropdownMenuTrigger className={`flex items-center gap-1 font-medium transition-all duration-300 focus:outline-none ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}>
                 Treatments
                 <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
@@ -103,33 +119,69 @@ const Navbar = () => {
                   navigate('/what-to-expect');
                 }
               }} 
-              className="text-foreground hover:text-primary transition-colors"
+              className={`font-medium transition-all duration-300 ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}
             >
               What to Expect
             </button>
 
-            <button onClick={() => scrollToSection("team")} className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection("team")} 
+              className={`font-medium transition-all duration-300 ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}
+            >
               Our Team
             </button>
-            <button onClick={() => scrollToSection("veterans")} className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection("veterans")} 
+              className={`font-medium transition-all duration-300 ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}
+            >
               Veterans
             </button>
-            <button onClick={() => scrollToSection("insurance")} className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection("insurance")} 
+              className={`font-medium transition-all duration-300 ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}
+            >
               Insurance
             </button>
-            <button onClick={() => scrollToSection("testimonials")} className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection("testimonials")} 
+              className={`font-medium transition-all duration-300 ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}
+            >
               Testimonials
             </button>
-            <button onClick={() => scrollToSection("contact")} className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection("contact")} 
+              className={`font-medium transition-all duration-300 ${
+                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+              }`}
+            >
               Contact
             </button>
-            <Button variant="hero" size="lg" asChild>
+            <Button 
+              className="bg-[#27AE60] hover:bg-[#229954] text-white font-semibold px-6 py-2.5 rounded-md transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
+              size="lg" 
+              asChild
+            >
               <a
                 href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  if (typeof window !== 'undefined' && (window as any).gtag) {
+                    (window as any).gtag('event', 'consult_book', { location: 'navbar' });
+                  }
+                }}
               >
-                Book Consultation
+                Book Free Consult
               </a>
             </Button>
           </div>
