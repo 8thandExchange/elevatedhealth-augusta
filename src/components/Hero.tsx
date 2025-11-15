@@ -46,16 +46,16 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 sm:px-6 relative z-10 pt-32 pb-20">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10 pt-24 pb-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
           <div className="mb-8 animate-fade-in-up flex justify-center">
-            <img src={logo} alt="Elevated Health" className="h-32 md:h-40 w-auto" />
+            <img src={logo} alt="Elevated Health" className="h-48 md:h-64 lg:h-72 w-auto" />
           </div>
           
           {/* Main Tagline */}
           <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            <h1 className="font-inter text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 text-gold leading-tight drop-shadow-lg">
+            <h1 className="font-inter text-2xl sm:text-3xl md:text-4xl font-semibold mb-6 text-gold leading-tight drop-shadow-lg">
               Restore Your Mind. Renew Your Body. Rebalance Your Hormones.
             </h1>
           </div>
