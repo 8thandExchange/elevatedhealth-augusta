@@ -3,13 +3,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, Award, Heart, GraduationCap, Shield, Clock, Users } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Compare from "@/components/Compare";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Link } from "react-router-dom";
 import providerImage from "@/assets/provider-portrait.jpg";
 import quoteImage from "@/assets/provider-testimonial.jpg";
 import { Helmet } from "react-helmet";
+import { useState } from "react";
 
 const Ketamine = () => {
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+  
   const scrollToBooking = () => {
     window.open(SITE_CONFIG.bookingUrl, "_blank");
   };
@@ -451,6 +455,9 @@ const Ketamine = () => {
               </div>
             </div>
           </section>
+
+          {/* Compare Section */}
+          <Compare isQuizOpen={isQuizOpen} onQuizClose={() => setIsQuizOpen(false)} />
         </main>
 
         <Footer />
