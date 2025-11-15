@@ -3,8 +3,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, ClipboardCheck, Heart, Video, Shield, Clock, Phone } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useRef } from "react";
 
 const WhatToExpect = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
   const steps = [
     {
       icon: Calendar,
@@ -59,18 +73,33 @@ const WhatToExpect = () => {
 
         {/* Video Section */}
         <div className="max-w-5xl mx-auto mb-16">
-          <Card className="overflow-hidden shadow-2xl border-2 border-accent/20">
+          <Card className="overflow-hidden shadow-2xl border-2 border-accent/20 hover:border-accent/40 transition-all duration-300">
             <CardContent className="p-0">
-              <div className="aspect-video w-full bg-muted">
+              <div 
+                className="aspect-video w-full bg-muted relative group cursor-pointer"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
                 <video
+                  ref={videoRef}
                   controls
+                  muted
+                  loop
+                  playsInline
                   className="w-full h-full object-cover"
-                  poster="/placeholder.svg"
-                  preload="metadata"
+                  preload="auto"
+                  style={{ 
+                    objectFit: 'cover',
+                    filter: 'contrast(1.05) saturate(1.1)'
+                  }}
                 >
                   <source src="/videos/clinic-experience.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300 pointer-events-none" />
+                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <p className="text-white text-xs font-medium">Hover to play</p>
+                </div>
               </div>
               <div className="p-6 bg-card">
                 <h3 className="font-playfair text-2xl font-semibold text-foreground mb-2">
