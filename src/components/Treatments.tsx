@@ -17,7 +17,7 @@ const Treatments = () => {
       bullets: [
         "70%+ response rate for treatment-resistant depression¹",
         "Private suite with Netflix & noise-canceling headphones",
-        "Starting at $399/session (financing available)"
+        "Starting at $400/session (financing available)"
       ],
       ctaText: "Book IV Ketamine",
       ctaUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
