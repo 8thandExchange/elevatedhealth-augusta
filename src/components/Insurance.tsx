@@ -10,6 +10,15 @@ import {
 } from "@/components/ui/accordion";
 
 const Insurance = () => {
+  const insuranceLogos = [
+    { name: "Blue Cross Blue Shield", featured: true },
+    { name: "Aetna", featured: false },
+    { name: "Cigna", featured: false },
+    { name: "UnitedHealthcare", featured: false },
+    { name: "TRICARE", featured: false },
+    { name: "Medicare*", featured: false, note: "Spravato only" }
+  ];
+
   const verificationSteps = [
     {
       number: "1",
@@ -50,34 +59,53 @@ const Insurance = () => {
   };
 
   return (
-    <section id="insurance" className="py-24 bg-background scroll-mt-20">
+    <section id="insurance" className="py-24 bg-secondary/30 scroll-mt-20">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          {/* BCBS Announcement Hero */}
-          <div className="text-center mb-16">
-            <Badge className="mb-6 px-4 py-2 text-sm font-semibold">
-              Great News for Georgia
-            </Badge>
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 text-foreground">
-              Now In-Network with<br />
-              <span className="text-primary">Blue Cross Blue Shield</span>
+          {/* Section Header */}
+          <div className="text-center mb-12">
+            <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-6 text-primary">
+              We Accept Most Major Plans
             </h2>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-              Getting the mental health care you need just became easier. We're proud to accept 
-              BCBS of Georgia, making KETRA™ therapy more accessible than ever.
+            <p className="font-inter text-xl text-muted-foreground max-w-3xl mx-auto">
+              Making mental health care accessible through insurance coverage
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="xl" onClick={scrollToContact} className="gap-2">
-                <Shield className="h-5 w-5" />
-                Verify My Insurance
-              </Button>
-              <a href="tel:7065509202">
-                <Button variant="outline" size="xl" className="gap-2 border-2">
-                  <Phone className="h-5 w-5" />
-                  Call (706) 550-9202
-                </Button>
-              </a>
-            </div>
+          </div>
+
+          {/* Insurance Logos Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-12">
+            {insuranceLogos.map((logo, index) => (
+              <Card 
+                key={index} 
+                className={`p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition-shadow ${
+                  logo.featured ? 'border-2 border-accent' : ''
+                }`}
+              >
+                <div className="w-full h-16 flex items-center justify-center mb-2">
+                  <span className="font-inter font-semibold text-sm text-foreground">
+                    {logo.name}
+                  </span>
+                </div>
+                {logo.note && (
+                  <p className="text-xs text-muted-foreground italic">{logo.note}</p>
+                )}
+              </Card>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="text-center">
+            <Button 
+              size="lg" 
+              onClick={scrollToContact}
+              className="font-inter font-semibold uppercase bg-accent hover:bg-accent-light text-white px-12 py-6"
+            >
+              <Shield className="mr-2 h-5 w-5" />
+              Verify My Coverage
+            </Button>
+            <p className="font-inter text-sm text-muted-foreground mt-6">
+              Coverage varies by plan. We'll verify your benefits at no cost.
+            </p>
           </div>
 
           {/* How to Verify Your Coverage */}

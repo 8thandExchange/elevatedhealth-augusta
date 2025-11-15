@@ -14,6 +14,7 @@ import Footer from "@/components/Footer";
 import BookingWidget from "@/components/BookingWidget";
 import ChatBot from "@/components/ChatBot";
 import { ServedModal } from "@/components/ServedModal";
+import MobileBookNow from "@/components/MobileBookNow";
 
 const Index = () => {
   return (
@@ -36,6 +37,7 @@ const Index = () => {
       <Footer />
       <ChatBot />
       <ServedModal />
+      <MobileBookNow />
     </div>
   );
 };
