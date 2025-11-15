@@ -95,8 +95,8 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <button onClick={() => scrollToSection("about")} className="text-foreground hover:text-primary transition-colors">
-              About
+            <button onClick={() => scrollToSection("team")} className="text-foreground hover:text-primary transition-colors">
+              Our Team
             </button>
             <button onClick={() => scrollToSection("veterans")} className="text-foreground hover:text-primary transition-colors">
               Veterans
@@ -172,8 +172,8 @@ const Navbar = () => {
                 )}
               </div>
 
-              <button onClick={() => scrollToSection("about")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
-                About
+              <button onClick={() => scrollToSection("team")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+                Our Team
               </button>
               <button onClick={() => scrollToSection("veterans")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
                 Veterans

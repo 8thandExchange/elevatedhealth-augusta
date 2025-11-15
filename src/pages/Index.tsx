@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Treatments from "@/components/Treatments";
 import Compare from "@/components/Compare";
-import About from "@/components/About";
 import Team from "@/components/Team";
 import ClinicTour from "@/components/ClinicTour";
 import KetraTherapy from "@/components/KetraTherapy";
@@ -24,7 +23,6 @@ const Index = () => {
         <Hero />
         <Treatments />
         <Compare />
-        <About />
         <Team />
         <ClinicTour />
         <KetraTherapy />

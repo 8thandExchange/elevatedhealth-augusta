@@ -64,8 +64,8 @@ const Footer = () => {
               <h4 className="font-inter font-semibold mb-4 text-lg">Quick Links</h4>
               <ul className="space-y-2 font-inter text-white/80">
                 <li>
-                  <button onClick={() => scrollToSection("about")} className="hover:text-gold transition-colors">
-                    About Us
+                  <button onClick={() => scrollToSection("team")} className="hover:text-gold transition-colors">
+                    Our Team
                   </button>
                 </li>
                 <li>
