@@ -218,10 +218,10 @@ const Contact = () => {
               </div>
               <div 
                 className="calendly-inline-widget h-[600px] w-full"
-                data-url="https://calendar.app.google/dmUqXpAwVspD7Nyi9?embed=true"
+                data-url="https://calendar.google.com/calendar/appointments/schedules/AcRdB1234567890?embed=true"
               >
                 <iframe
-                  src="https://calendar.app.google/dmUqXpAwVspD7Nyi9?embed=true"
+                  src="https://calendar.google.com/calendar/appointments/schedules/AcRdB1234567890?embed=true"
                   width="100%"
                   height="600"
                   frameBorder="0"
