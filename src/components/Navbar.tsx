@@ -61,7 +61,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-center h-20 py-4">
           {/* Desktop Menu - Centered */}
-          <div className="hidden md:flex items-center gap-8 lg:gap-10">
+          <div className="hidden md:flex items-center gap-4 lg:gap-6">
             <button 
               onClick={() => scrollToSection("hero")} 
               className={`text-sm font-medium transition-all duration-300 ${
