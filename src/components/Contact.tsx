@@ -239,12 +239,13 @@ const Contact = () => {
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
                 
-                <p className="text-center text-sm text-muted-foreground mt-4">
-                  Prefer to talk? <a href="tel:+17067603470" className="text-accent hover:underline font-semibold inline-flex items-center gap-1">
+                <div className="text-center text-sm text-muted-foreground mt-4">
+                  <p className="mb-1">Prefer to talk?</p>
+                  <a href="tel:+17067603470" className="text-accent hover:underline font-semibold inline-flex items-center gap-1 justify-center">
                     <Phone className="h-4 w-4" />
                     Call (706) 760-3470
                   </a>
-                </p>
+                </div>
               </form>
 
               {/* Clinic Info */}
