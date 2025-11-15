@@ -19,10 +19,6 @@ const Testimonials = () => {
 
   const testimonials: Testimonial[] = [
     {
-      type: 'image',
-      imageSrc: quoteGraphic
-    },
-    {
       type: 'text',
       quote: "After 6 years of failed meds, one infusion gave me my life back.",
       name: "J.D.",
