@@ -106,7 +106,7 @@ const Team = () => {
             >
               <a href="tel:+17067603470">
                 <Phone className="mr-2 h-5 w-5" />
-                Call AI Assistant (706) 760-3470
+                Call Us (706) 760-3470
               </a>
             </Button>
 

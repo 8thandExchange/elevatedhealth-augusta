@@ -138,9 +138,9 @@ const Footer = () => {
                 </a>
               </div>
               
-              {/* AI Voice Agent Link */}
+              {/* Call Us Link */}
               <div className="mb-6">
-                <p className="text-white/60 text-sm font-inter mb-2">24/7 AI Support:</p>
+                <p className="text-white/60 text-sm font-inter mb-2">Call Us:</p>
                 <a 
                   href="tel:+17067603470" 
                   className="text-gold hover:text-gold/80 transition-colors font-inter font-semibold"

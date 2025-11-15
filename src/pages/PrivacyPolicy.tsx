@@ -80,7 +80,7 @@ const PrivacyPolicy = () => {
           <p className="leading-relaxed">
             Elevated Health Augusta<br />
             7013 Evans Town Center Blvd, Suite 203 • Evans, GA 30809<br />
-            (706) 550-9202 •{" "}
+            (706) 760-3470 •{" "}
             <a 
               href="mailto:care@elevatedhealthaugusta.com" 
               className="text-accent hover:underline"

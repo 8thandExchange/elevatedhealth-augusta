@@ -348,10 +348,10 @@ const Insurance = () => {
                 <Shield className="h-5 w-5" />
                 Verify My Insurance
               </Button>
-              <a href="tel:7065509202">
+              <a href="tel:7067603470">
                 <Button variant="outline" size="xl" className="gap-2 border-2">
                   <Phone className="h-5 w-5" />
-                  Call (706) 550-9202
+                  Call (706) 760-3470
                 </Button>
               </a>
             </div>

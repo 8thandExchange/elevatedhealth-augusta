@@ -69,7 +69,7 @@ const Contact = () => {
       } else {
         toast({
           title: "Error Sending Message",
-          description: "Please call us directly at (706) 550-9202.",
+          description: "Please call us directly at (706) 760-3470.",
           variant: "destructive"
         });
       }
@@ -196,8 +196,8 @@ const Contact = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 flex-shrink-0" />
-                  <a href="tel:7065509202" className="hover:text-accent">
-                    (706) 550-9202
+                  <a href="tel:7067603470" className="hover:text-accent">
+                    (706) 760-3470
                   </a>
                 </div>
                 <div className="flex items-center gap-2">
