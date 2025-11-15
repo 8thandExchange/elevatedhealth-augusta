@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "lucide-react";
+import { Calendar, Phone } from "lucide-react";
+import { trackCTAClick } from "@/lib/analytics";
 
 const BookingWidget = () => {
   return (
@@ -21,15 +22,16 @@ const BookingWidget = () => {
                 to discuss your unique needs and explore how ketamine therapy can help you.
               </p>
               
-              <div className="pt-4">
+              <div className="pt-4 space-y-4">
                 <Button
                   variant="hero"
                   asChild
                   size="lg"
                   className="gap-2 text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
+                  onClick={() => trackCTAClick('booking_widget_cta', 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true')}
                 >
                   <a
-                    href="https://calendar.app.google/SgGgATWunSGzz34s6"
+                    href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -37,6 +39,13 @@ const BookingWidget = () => {
                     Book Your Free Consultation
                   </a>
                 </Button>
+                
+                <p className="text-sm text-muted-foreground">
+                  Prefer to talk? <a href="tel:+17067603470" className="text-accent hover:underline font-semibold inline-flex items-center gap-1">
+                    <Phone className="h-4 w-4" />
+                    Call (706) 760-3470
+                  </a>
+                </p>
               </div>
               
               <p className="text-sm text-muted-foreground pt-2">
