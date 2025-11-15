@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-breakthrough.jpg";
-import logo from "@/assets/elevated-health-logo-cropped.png";
+import logo from "@/assets/elevated-health-logo-new.png";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
 const Hero = () => {
@@ -49,22 +49,19 @@ const Hero = () => {
       <div className="container mx-auto px-4 sm:px-6 relative z-10 pt-32 pb-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
-          <div className="mb-6 animate-fade-in-up flex justify-center">
-            <img src={logo} alt="Elevated Health Augusta" className="h-48 md:h-60 w-auto" />
+          <div className="mb-8 animate-fade-in-up flex justify-center">
+            <img src={logo} alt="Elevated Health" className="h-32 md:h-40 w-auto" />
           </div>
           
-          {/* Clinic Name & Tagline */}
-          <div className="mb-8 md:mb-10 animate-fade-in-up">
-            <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
-              Elevated Health Augusta
-            </h1>
-            <p className="font-inter text-xl sm:text-2xl md:text-3xl text-white font-normal leading-relaxed drop-shadow-md">
+          {/* Main Tagline */}
+          <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+            <h1 className="font-inter text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 text-gold leading-tight drop-shadow-lg">
               Restore Your Mind. Renew Your Body. Rebalance Your Hormones.
-            </p>
+            </h1>
           </div>
 
-          {/* Tagline */}
-          <p className="font-inter text-base sm:text-lg text-gold uppercase tracking-wider mb-10 animate-fade-in-up drop-shadow-md" style={{
+          {/* Services Tagline */}
+          <p className="font-inter text-lg sm:text-xl md:text-2xl text-white font-normal mb-10 animate-fade-in-up drop-shadow-md" style={{
             animationDelay: "0.2s"
           }}>
             Ketamine Therapy • Medical Weight Loss • Hormone Replacement
