@@ -78,6 +78,7 @@ export default {
         'md': 'var(--shadow-md)',
         'lg': 'var(--shadow-lg)',
         'glow': 'var(--shadow-glow)',
+        'gold-glow': 'var(--shadow-gold-glow)',
       },
       transitionTimingFunction: {
         'smooth': 'var(--transition-smooth)',

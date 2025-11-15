@@ -74,6 +74,7 @@ All colors MUST be HSL.
     --shadow-md: 0 4px 16px hsla(200 72% 21% / 0.12);
     --shadow-lg: 0 8px 32px hsla(200 72% 21% / 0.16);
     --shadow-glow: 0 0 40px hsla(200 72% 21% / 0.2);
+    --shadow-gold-glow: 0 0 40px hsla(43 70% 53% / 0.4), 0 4px 16px hsla(43 70% 53% / 0.3);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
