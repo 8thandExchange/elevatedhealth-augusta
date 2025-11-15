@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Menu, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import logo from "@/assets/logo-transparent.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -62,8 +55,8 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-20 py-4">
-          {/* Desktop Menu */}
+        <div className="flex items-center justify-center h-20 py-4">
+          {/* Desktop Menu - Centered */}
           <div className="hidden md:flex items-center gap-8 lg:gap-10">
             <button 
               onClick={() => scrollToSection("hero")} 
@@ -126,26 +119,9 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Logo - Center on desktop */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
-            <button onClick={() => {
-              if (location.pathname === '/') {
-                scrollToSection("hero");
-              } else {
-                navigate('/');
-              }
-            }}>
-              <img 
-                src={logo} 
-                alt="Elevated Health Augusta" 
-                className="h-12 w-auto transition-opacity hover:opacity-80"
-              />
-            </button>
-          </div>
-
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-foreground"
+            className="md:hidden p-2 text-foreground absolute right-6"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
