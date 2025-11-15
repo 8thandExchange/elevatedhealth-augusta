@@ -22,16 +22,17 @@ const BookingWidget = () => {
               </p>
             </div>
             
-            {/* Google Calendar Embed */}
-            <div className="w-full rounded-lg overflow-hidden shadow-inner bg-background/50">
-              <iframe 
-                src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true" 
-                style={{ border: 0 }} 
-                width="100%" 
-                height="800" 
-                frameBorder="0"
-                title="Book Consultation"
-              />
+            {/* Book Consultation Button */}
+            <div className="text-center">
+              <a 
+                href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackCTAClick('book_consultation', 'google_calendar')}
+                className="inline-block px-8 py-4 bg-accent text-white rounded-lg text-lg font-semibold hover:bg-accent/90 transition-colors shadow-lg hover:shadow-xl"
+              >
+                Book Your Free Consultation →
+              </a>
             </div>
             
             <p className="text-center text-sm text-muted-foreground pt-6">
