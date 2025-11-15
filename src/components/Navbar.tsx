@@ -81,7 +81,7 @@ const Navbar = () => {
             <button 
               onClick={() => scrollToSection("hero")} 
               className={`font-medium transition-all duration-300 ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}
             >
               Home
@@ -90,7 +90,7 @@ const Navbar = () => {
             {/* Treatments Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger className={`flex items-center gap-1 font-medium transition-all duration-300 focus:outline-none ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}>
                 Treatments
                 <ChevronDown className="h-4 w-4" />
@@ -120,7 +120,7 @@ const Navbar = () => {
                 }
               }} 
               className={`font-medium transition-all duration-300 ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}
             >
               What to Expect
@@ -129,7 +129,7 @@ const Navbar = () => {
             <button 
               onClick={() => scrollToSection("team")} 
               className={`font-medium transition-all duration-300 ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}
             >
               Our Team
@@ -137,7 +137,7 @@ const Navbar = () => {
             <button 
               onClick={() => scrollToSection("veterans")} 
               className={`font-medium transition-all duration-300 ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}
             >
               Veterans
@@ -145,7 +145,7 @@ const Navbar = () => {
             <button 
               onClick={() => scrollToSection("insurance")} 
               className={`font-medium transition-all duration-300 ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}
             >
               Insurance
@@ -153,7 +153,7 @@ const Navbar = () => {
             <button 
               onClick={() => scrollToSection("testimonials")} 
               className={`font-medium transition-all duration-300 ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}
             >
               Testimonials
@@ -161,13 +161,13 @@ const Navbar = () => {
             <button 
               onClick={() => scrollToSection("contact")} 
               className={`font-medium transition-all duration-300 ${
-                isScrolled ? "text-[#0A3D62] hover:text-[#27AE60]" : "text-foreground/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-hope" : "text-white hover:text-gold"
               }`}
             >
               Contact
             </button>
             <Button 
-              className="bg-[#27AE60] hover:bg-[#229954] text-white font-semibold px-6 py-2.5 rounded-md transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
+              className="bg-hope hover:bg-hope-light text-white font-semibold px-6 py-2.5 rounded-md transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
               size="lg" 
               asChild
             >
@@ -200,7 +200,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
-              <button onClick={() => scrollToSection("hero")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+              <button onClick={() => scrollToSection("hero")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
                 Home
               </button>
               
@@ -208,7 +208,7 @@ const Navbar = () => {
               <div>
                 <button 
                   onClick={() => setIsTreatmentsOpen(!isTreatmentsOpen)}
-                  className="flex items-center justify-between w-full text-left py-2 text-foreground hover:text-primary transition-colors"
+                  className="flex items-center justify-between w-full text-left py-2 text-foreground hover:text-hope transition-colors"
                 >
                   Treatments
                   <ChevronDown className={`h-4 w-4 transition-transform ${isTreatmentsOpen ? 'rotate-180' : ''}`} />
@@ -220,7 +220,7 @@ const Navbar = () => {
                         navigate(SITE_CONFIG.routes.ivKetamine);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="block w-full text-left py-2 text-sm text-foreground/80 hover:text-primary transition-colors"
+                      className="block w-full text-left py-2 text-sm text-muted-foreground hover:text-hope transition-colors"
                     >
                       IV Ketamine
                     </button>
@@ -229,7 +229,7 @@ const Navbar = () => {
                         navigate(SITE_CONFIG.routes.spravato);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="block w-full text-left py-2 text-sm text-foreground/80 hover:text-primary transition-colors"
+                      className="block w-full text-left py-2 text-sm text-muted-foreground hover:text-hope transition-colors"
                     >
                       SPRAVATO® Nasal Spray
                     </button>
@@ -246,33 +246,33 @@ const Navbar = () => {
                     navigate('/what-to-expect');
                   }
                 }} 
-                className="text-left py-2 text-foreground hover:text-primary transition-colors"
+                className="text-left py-2 text-foreground hover:text-hope transition-colors"
               >
                 What to Expect
               </button>
 
-              <button onClick={() => scrollToSection("team")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+              <button onClick={() => scrollToSection("team")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
                 Our Team
               </button>
-              <button onClick={() => scrollToSection("veterans")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+              <button onClick={() => scrollToSection("veterans")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
                 Veterans
               </button>
-              <button onClick={() => scrollToSection("insurance")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+              <button onClick={() => scrollToSection("insurance")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
                 Insurance
               </button>
-              <button onClick={() => scrollToSection("testimonials")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+              <button onClick={() => scrollToSection("testimonials")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
                 Testimonials
               </button>
-              <button onClick={() => scrollToSection("contact")} className="text-left py-2 text-foreground hover:text-primary transition-colors">
+              <button onClick={() => scrollToSection("contact")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
                 Contact
               </button>
-              <Button variant="hero" size="lg" className="w-full" asChild>
+              <Button className="bg-hope hover:bg-hope-light text-white w-full" size="lg" asChild>
                 <a
                   href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Book Consultation
+                  Book Free Consult
                 </a>
               </Button>
             </div>
