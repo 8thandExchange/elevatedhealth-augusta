@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-breakthrough.jpg";
-import logo from "@/assets/elevated-health-logo-transparent.png";
+import logo from "@/assets/elevated-health-logo-cropped.png";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
 const Hero = () => {
