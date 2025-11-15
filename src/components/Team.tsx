@@ -116,7 +116,7 @@ const Team = () => {
               className="font-inter font-semibold text-base px-8 py-6 bg-accent hover:bg-accent-light text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
             >
               <a
-                href="https://calendar.app.google/SgGgATWunSGzz34s6"
+                href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
                 target="_blank"
                 rel="noopener noreferrer"
               >

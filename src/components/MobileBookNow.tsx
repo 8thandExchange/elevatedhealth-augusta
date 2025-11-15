@@ -2,15 +2,21 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { trackEvent } from "@/lib/analytics";
 
 const MobileBookNow = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    trackEvent('booking_modal_open', { source: 'mobile_floating_button', link_id: 'long_schedule' });
+  };
 
   return (
     <>
       {/* Mobile Floating Button */}
       <Button
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         className="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-2xl bg-accent hover:bg-accent-light text-white z-50 lg:hidden animate-[pulse_1.5s_ease-out_1] hover:scale-105 transition-transform"
         aria-label="Book consultation"
       >
@@ -37,13 +43,17 @@ const MobileBookNow = () => {
           </DialogHeader>
           <div className="h-full overflow-hidden">
             <iframe
-              src="https://calendar.app.google/SgGgATWunSGzz34s6?embed=true"
+              src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
               width="100%"
               height="100%"
               frameBorder="0"
               className="border-0"
               title="Schedule Consultation"
+              onLoad={() => trackEvent('booking_iframe_loaded', { link_id: 'long_schedule' })}
             />
+            <div className="p-4 text-center text-sm text-muted-foreground border-t">
+              Prefer to talk? <a href="tel:+17067603470" className="text-accent hover:underline font-semibold">Call (706) 760-3470</a>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

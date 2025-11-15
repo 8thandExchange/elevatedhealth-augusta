@@ -16,8 +16,8 @@ const HowKetamineWorks = () => {
   }, []);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const handleBooking = () => {
-    trackCTAClick('how_ketamine_works_book', 'https://calendar.app.google/SgGgATWunSGzz34s6');
-    window.open('https://calendar.app.google/SgGgATWunSGzz34s6', '_blank', 'noopener,noreferrer');
+    trackCTAClick('how_ketamine_works_book', 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true');
+    window.open('https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true', '_blank', 'noopener,noreferrer');
   };
 
   const handleCall = () => {
