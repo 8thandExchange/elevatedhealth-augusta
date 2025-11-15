@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import brainPathwayReset from "@/assets/brain-pathway-reset.jpg";
-import rapidMoodLift from "@/assets/rapid-mood-lift.jpg";
-import safeSupervisedCare from "@/assets/safe-supervised-care.jpg";
+import researchDataVisualization from "@/assets/research-data-visualization.jpg";
+import providerMonitoredCare from "@/assets/provider-monitored-care.jpg";
 import { trackCTAClick, trackEvent } from "@/lib/analytics";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
@@ -33,16 +33,16 @@ const HowKetamineWorks = () => {
       alt: "Medical illustration of brain synapse pathway showing neural connections and BDNF markers"
     },
     {
-      image: rapidMoodLift,
+      image: researchDataVisualization,
       title: "2. Rapid Mood Lift",
-      description: "Within 4 hours, 70%+ of patients report relief from treatment-resistant depression (Yale Study, 2023).",
-      alt: "Medical infographic showing mood improvement timeline with 70% statistic"
+      description: "Within hours, 70% report relief in early trials (Yale/NIMH).",
+      alt: "Peer-reviewed U.S. medical journal–style graph illustrating rapid symptom improvement"
     },
     {
-      image: safeSupervisedCare,
+      image: providerMonitoredCare,
       title: "3. Safe, Supervised Care",
-      description: "Physician-monitored infusions in private suites with oxygen, anti-nausea meds, and vital tracking.",
-      alt: "Medical facility illustration showing private treatment suite with vital signs monitor"
+      description: "Provider-monitored infusions in private suites with oxygen, anti-nausea support, and continuous vital tracking.",
+      alt: "Private treatment suite with female provider and vital signs monitor"
     }
   ];
 
