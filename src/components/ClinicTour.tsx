@@ -71,7 +71,7 @@ const ClinicTour = () => {
           </div>
 
           {/* Slider */}
-          <Card className="relative overflow-hidden rounded-2xl shadow-2xl bg-secondary/20">
+          <Card className="relative overflow-hidden rounded-2xl shadow-2xl bg-card">
             {/* Main Image */}
             <div className="relative h-[400px] md:h-[500px] lg:h-[600px]">
               {slides.map((slide, index) => (
