@@ -28,7 +28,7 @@ const BookingWidget = () => {
                 src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true" 
                 style={{ border: 0 }} 
                 width="100%" 
-                height="600" 
+                height="800" 
                 frameBorder="0"
                 title="Book Consultation"
               />
