@@ -143,7 +143,7 @@ const Footer = () => {
                 <p className="text-white/60 text-sm font-inter mb-2">24/7 AI Support:</p>
                 <a 
                   href="tel:+17067603470" 
-                  className="text-[#FF6B35] hover:text-[#FF6B35]/80 transition-colors font-inter font-semibold"
+                  className="text-gold hover:text-gold/80 transition-colors font-inter font-semibold"
                   onClick={() => trackCTAClick('ai_voice_call_footer', 'tel:+17067603470')}
                 >
                   (706) 760-3470

@@ -239,7 +239,7 @@ const Contact = () => {
                 <Button
                   size="lg"
                   asChild
-                  className="w-full font-inter font-semibold text-base px-8 py-6 bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white shadow-xl hover:translate-y-[-4px] transition-all"
+                  className="w-full font-inter font-semibold text-base px-8 py-6 bg-gold hover:bg-gold/90 text-white shadow-xl hover:translate-y-[-4px] transition-all"
                   onClick={() => trackCTAClick('ai_voice_call_contact', 'tel:+17067603470')}
                 >
                   <a href="tel:+17067603470">
