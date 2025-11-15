@@ -18,7 +18,7 @@ const BookingWidget = () => {
               
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Take the first step toward transformative care. Schedule a complimentary consultation 
-                to discuss your unique needs and explore how KETRA™ therapy can help you.
+                to discuss your unique needs and explore how ketamine therapy can help you.
               </p>
               
               <div className="pt-4">

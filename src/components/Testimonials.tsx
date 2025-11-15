@@ -27,7 +27,7 @@ const Testimonials = () => {
     },
     {
       type: 'text',
-      quote: "The darkness had become so familiar that I forgot what it felt like to want to get out of bed. KETRA™ didn't just lift the depression—it gave me back my curiosity about life.",
+      quote: "The darkness had become so familiar that I forgot what it felt like to want to get out of bed. Ketamine therapy didn't just lift the depression—it gave me back my curiosity about life.",
       name: "M.R.",
       location: "Evans, GA",
       rating: 5

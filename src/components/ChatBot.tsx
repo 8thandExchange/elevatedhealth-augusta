@@ -16,7 +16,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I'm here to help answer your questions about KETRA therapy, Veterans support, and our services. How can I assist you today?",
+      content: "Hello! I'm here to help answer your questions about ketamine therapy, Veterans support, and our services. How can I assist you today?",
     },
   ]);
   const [input, setInput] = useState("");

@@ -122,7 +122,7 @@ const Veterans = () => {
                     Depression, anxiety, and PTSD don't diminish your strength; they're evidence of what you've endured.
                   </p>
                   <p>
-                    Our KETRA™ therapy offers a path forward without the stigma. We understand the unique challenges 
+                    Our ketamine therapy offers a path forward without the stigma. We understand the unique challenges 
                     you face and provide trauma-informed care that respects your experience while helping you heal.
                   </p>
                 </div>
