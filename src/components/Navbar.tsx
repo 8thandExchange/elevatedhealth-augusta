@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import logo from "@/assets/logo-transparent.png";
@@ -17,7 +17,6 @@ const Navbar = () => {
   const isHomePage = location.pathname === '/';
   const [isScrolled, setIsScrolled] = useState(!isHomePage);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isTreatmentsOpen, setIsTreatmentsOpen] = useState(false);
 
   useEffect(() => {
     // Always show solid navbar on non-home pages
@@ -75,29 +74,32 @@ const Navbar = () => {
               Home
             </button>
             
-            {/* Treatments Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className={`flex items-center gap-1 text-sm font-medium transition-all duration-300 focus:outline-none ${
+            <button 
+              onClick={() => navigate(SITE_CONFIG.routes.ketamine)}
+              className={`text-sm font-medium transition-all duration-300 ${
                 isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-gold"
-              }`}>
-                Treatments
-                <ChevronDown className="h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-card border-border z-50 shadow-lg">
-                <DropdownMenuItem 
-                  onClick={() => navigate(SITE_CONFIG.routes.ivKetamine)}
-                  className="cursor-pointer hover:bg-muted focus:bg-muted"
-                >
-                  IV Ketamine
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => navigate(SITE_CONFIG.routes.spravato)}
-                  className="cursor-pointer hover:bg-muted focus:bg-muted"
-                >
-                  SPRAVATO® Nasal Spray
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              }`}
+            >
+              Ketamine Therapy
+            </button>
+
+            <button 
+              onClick={() => navigate(SITE_CONFIG.routes.weightloss)}
+              className={`text-sm font-medium transition-all duration-300 ${
+                isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-gold"
+              }`}
+            >
+              Medical Weight Loss
+            </button>
+
+            <button 
+              onClick={() => navigate(SITE_CONFIG.routes.hormones)}
+              className={`text-sm font-medium transition-all duration-300 ${
+                isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-gold"
+              }`}
+            >
+              Hormone Replacement
+            </button>
 
             <button 
               onClick={() => {
@@ -193,70 +195,44 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
-              <button onClick={() => scrollToSection("hero")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
+              <button onClick={() => scrollToSection("hero")} className="text-left py-2 text-foreground hover:text-accent transition-colors">
                 Home
               </button>
               
-              {/* Treatments Mobile Submenu */}
-              <div>
-                <button 
-                  onClick={() => setIsTreatmentsOpen(!isTreatmentsOpen)}
-                  className="flex items-center justify-between w-full text-left py-2 text-foreground hover:text-hope transition-colors"
-                >
-                  Treatments
-                  <ChevronDown className={`h-4 w-4 transition-transform ${isTreatmentsOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {isTreatmentsOpen && (
-                  <div className="pl-4 mt-2 space-y-2 animate-fade-in">
-                    <button 
-                      onClick={() => {
-                        navigate(SITE_CONFIG.routes.ivKetamine);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block w-full text-left py-2 text-sm text-muted-foreground hover:text-hope transition-colors"
-                    >
-                      IV Ketamine
-                    </button>
-                    <button 
-                      onClick={() => {
-                        navigate(SITE_CONFIG.routes.spravato);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block w-full text-left py-2 text-sm text-muted-foreground hover:text-hope transition-colors"
-                    >
-                      SPRAVATO® Nasal Spray
-                    </button>
-                  </div>
-                )}
-              </div>
+              <button 
+                onClick={() => {
+                  navigate(SITE_CONFIG.routes.ketamine);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left py-2 text-foreground hover:text-accent transition-colors"
+              >
+                Ketamine Therapy
+              </button>
 
               <button 
                 onClick={() => {
+                  navigate(SITE_CONFIG.routes.weightloss);
                   setIsMobileMenuOpen(false);
-                  if (window.location.pathname === '/what-to-expect') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  } else {
-                    navigate('/what-to-expect');
-                  }
-                }} 
-                className="text-left py-2 text-foreground hover:text-hope transition-colors"
+                }}
+                className="text-left py-2 text-foreground hover:text-accent transition-colors"
               >
-                What to Expect
+                Medical Weight Loss
               </button>
 
-              <button onClick={() => scrollToSection("team")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
-                Our Team
+              <button 
+                onClick={() => {
+                  navigate(SITE_CONFIG.routes.hormones);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left py-2 text-foreground hover:text-accent transition-colors"
+              >
+                Hormone Replacement
               </button>
-              <button onClick={() => scrollToSection("veterans")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
-                Veterans
-              </button>
-              <button onClick={() => scrollToSection("insurance")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
-                Insurance
-              </button>
-              <button onClick={() => scrollToSection("testimonials")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
+
+              <button onClick={() => scrollToSection("testimonials")} className="text-left py-2 text-foreground hover:text-accent transition-colors">
                 Testimonials
               </button>
-              <button onClick={() => scrollToSection("contact")} className="text-left py-2 text-foreground hover:text-hope transition-colors">
+              <button onClick={() => scrollToSection("contact")} className="text-left py-2 text-foreground hover:text-accent transition-colors">
                 Contact
               </button>
               <Button 

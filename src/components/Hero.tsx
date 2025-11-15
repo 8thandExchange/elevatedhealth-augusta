@@ -56,10 +56,10 @@ const Hero = () => {
           {/* Clinic Name & Tagline */}
           <div className="mb-8 md:mb-10 animate-fade-in-up">
             <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-white leading-tight drop-shadow-lg">
-              Break Free from Treatment-Resistant Depression
+              Elevated Health Augusta
             </h1>
             <p className="font-inter text-xl sm:text-2xl md:text-3xl text-white font-normal leading-relaxed drop-shadow-md">
-              Augusta's private-room ketamine clinic. Evidence-based care for PTSD, anxiety, OCD.
+              Restore Your Mind. Renew Your Body. Rebalance Your Hormones.
             </p>
           </div>
 
@@ -67,7 +67,7 @@ const Hero = () => {
           <p className="font-inter text-base sm:text-lg text-gold uppercase tracking-wider mb-10 animate-fade-in-up drop-shadow-md" style={{
             animationDelay: "0.2s"
           }}>
-            Restore • Repair • Renew
+            Ketamine Therapy • Medical Weight Loss • Hormone Replacement
           </p>
 
           {/* Primary CTA Button */}
