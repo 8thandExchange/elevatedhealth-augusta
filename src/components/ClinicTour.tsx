@@ -92,7 +92,7 @@ const ClinicTour = () => {
                     onMouseLeave={() => setIsAutoPlaying(true)}
                   />
                   {/* Caption Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/90 to-transparent p-6">
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/90 to-transparent p-6 pb-16">
                     <p className="font-inter text-white text-lg md:text-xl font-medium text-center">
                       {slide.caption}
                     </p>
@@ -121,7 +121,7 @@ const ClinicTour = () => {
             </Button>
 
             {/* Dots Navigation */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-10">
               {slides.map((_, index) => (
                 <button
                   key={index}
