@@ -9,7 +9,7 @@ import {
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import logo from "@/assets/logo-modern-serif.png";
+import logo from "@/assets/logo-transparent.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
