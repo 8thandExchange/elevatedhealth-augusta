@@ -9,6 +9,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { trackCTAClick } from "@/lib/analytics";
 
 const contactSchema = z.object({
@@ -16,6 +17,7 @@ const contactSchema = z.object({
   email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
   phone: z.string().trim().regex(/^[0-9+\(\)\-\s]+$/, "Phone number can only contain numbers and +()-").max(20, "Phone number must be less than 20 characters"),
   preferredContact: z.enum(["call", "text", "email"]),
+  insurance: z.array(z.string()).optional(),
   message: z.string().trim().max(2000, "Message must be less than 2000 characters").optional()
 });
 
@@ -26,6 +28,7 @@ const Contact = () => {
     email: "",
     phone: "",
     preferredContact: "email" as "call" | "text" | "email",
+    insurance: [] as string[],
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +59,7 @@ const Contact = () => {
         email: "",
         phone: "",
         preferredContact: "email",
+        insurance: [],
         message: ""
       });
     } catch (error) {
@@ -82,6 +86,15 @@ const Contact = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handleInsuranceChange = (value: string, checked: boolean) => {
+    setFormData({
+      ...formData,
+      insurance: checked
+        ? [...formData.insurance, value]
+        : formData.insurance.filter((item) => item !== value)
     });
   };
 
@@ -142,6 +155,45 @@ const Contact = () => {
                     onChange={handleChange}
                     className="font-inter"
                   />
+                </div>
+
+                <div>
+                  <Label className="font-inter mb-3 block">Do you have one of our covered plans? (optional)</Label>
+                  <div className="space-y-3 rounded-lg bg-muted/30 p-4">
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="insurance-bcbs"
+                        checked={formData.insurance.includes("bcbs")}
+                        onCheckedChange={(checked) => handleInsuranceChange("bcbs", checked as boolean)}
+                      />
+                      <Label htmlFor="insurance-bcbs" className="font-inter cursor-pointer font-normal">
+                        Blue Cross Blue Shield
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="insurance-tricare"
+                        checked={formData.insurance.includes("tricare")}
+                        onCheckedChange={(checked) => handleInsuranceChange("tricare", checked as boolean)}
+                      />
+                      <Label htmlFor="insurance-tricare" className="font-inter cursor-pointer font-normal">
+                        TRICARE
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="insurance-va"
+                        checked={formData.insurance.includes("va")}
+                        onCheckedChange={(checked) => handleInsuranceChange("va", checked as boolean)}
+                      />
+                      <Label htmlFor="insurance-va" className="font-inter cursor-pointer font-normal">
+                        VA (Veterans Affairs)
+                      </Label>
+                    </div>
+                    <p className="text-xs text-muted-foreground italic mt-2">
+                      We'll confirm eligibility during your consultation – no upfront verification needed
+                    </p>
+                  </div>
                 </div>
 
                 <div>

@@ -144,7 +144,7 @@ const Veterans = () => {
           <div className="bg-primary/5 border border-accent/20 rounded-2xl p-8 md:p-12 text-center">
             <h3 className="text-3xl font-bold mb-4 text-foreground">We're Here When You're Ready</h3>
             <p className="text-xl mb-8 text-muted-foreground max-w-2xl mx-auto">
-              Connect with us to verify your coverage and learn how we can support your mental health journey
+              Connect with us to learn about our services and how we can support your mental health journey
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="default" size="xl" asChild className="gap-2">

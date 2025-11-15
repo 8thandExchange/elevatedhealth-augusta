@@ -32,11 +32,10 @@ const questions = [
   },
   {
     id: 2,
-    question: "Do you have commercial insurance or Medicare?",
+    question: "Do you have insurance coverage?",
     options: [
-      { value: "yes", label: "Yes", weight: { spravato: 2, iv: 1 } },
+      { value: "yes", label: "Yes (BCBS, TRICARE, or VA)", weight: { spravato: 2, iv: 1 } },
       { value: "no", label: "No (self-pay)", weight: { spravato: 0, iv: 2 } },
-      { value: "unsure", label: "Not sure", weight: { spravato: 1, iv: 1 } },
     ],
   },
   {
