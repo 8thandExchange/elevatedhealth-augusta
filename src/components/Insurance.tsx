@@ -198,7 +198,7 @@ const Insurance = () => {
                     <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
                     <div>
                       <span className="text-foreground font-semibold">IV Ketamine Therapy</span>
-                      <p className="text-sm text-muted-foreground">KETRA™ infusion treatments</p>
+                      <p className="text-sm text-muted-foreground">IV infusion treatments</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -285,8 +285,8 @@ const Insurance = () => {
                       including Blue Cross Blue Shield, Aetna, Cigna, UnitedHealthcare, and Medicare (select plans).
                     </p>
                     <p>
-                      <strong>IV Ketamine therapy</strong> (KETRA™) is not FDA-approved for depression treatment and 
-                      is typically offered on a self-pay basis. However, many patients find the transparent pricing 
+                      <strong>IV Ketamine therapy</strong> is not FDA-approved for depression treatment and 
+                      is typically offered on a self-pay basis. However, many patients find the transparent pricing
                       and flexible payment options make it an accessible choice. We're happy to provide a superbill 
                       for potential out-of-network reimbursement.
                     </p>
