@@ -5,7 +5,12 @@ import heroImage from "@/assets/hero-breakthrough.jpg";
 import logo from "@/assets/elevated-health-logo-new.png";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
-const Hero = () => {
+
+interface HeroProps {
+  onOpenBooking: () => void;
+}
+
+const Hero = ({ onOpenBooking }: HeroProps) => {
   const navigate = useNavigate();
   
   const scrollToBooking = () => {
@@ -73,17 +78,11 @@ const Hero = () => {
           }}>
             <Button 
               size="lg" 
-              asChild
+              onClick={onOpenBooking}
               className="font-inter font-semibold uppercase text-base px-10 py-7 bg-accent hover:bg-accent-light text-white shadow-2xl hover:scale-105 transition-all"
             >
-              <a
-                href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Book Free Consultation
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
+              Book Free Consultation
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
 

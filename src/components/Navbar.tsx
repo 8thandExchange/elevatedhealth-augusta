@@ -4,7 +4,11 @@ import { Menu, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
-const Navbar = () => {
+interface NavbarProps {
+  onOpenBooking?: () => void;
+}
+
+const Navbar = ({ onOpenBooking }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
@@ -102,20 +106,16 @@ const Navbar = () => {
                   : "border-white text-white hover:bg-accent hover:text-white"
               }`}
               size="lg" 
-              asChild
+              onClick={() => {
+                if (onOpenBooking) {
+                  onOpenBooking();
+                }
+                if (typeof window !== 'undefined' && (window as any).gtag) {
+                  (window as any).gtag('event', 'consult_book', { location: 'navbar' });
+                }
+              }}
             >
-              <a
-                href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('event', 'consult_book', { location: 'navbar' });
-                  }
-                }}
-              >
-                Book Consultation
-              </a>
+              Book Consultation
             </Button>
           </div>
 
@@ -171,21 +171,17 @@ const Navbar = () => {
                 variant="outline"
                 className="w-full border-accent text-accent hover:bg-accent hover:text-white mt-4"
                 size="lg" 
-                asChild
+                onClick={() => {
+                  if (onOpenBooking) {
+                    onOpenBooking();
+                  }
+                  setIsMobileMenuOpen(false);
+                  if (typeof window !== 'undefined' && (window as any).gtag) {
+                    (window as any).gtag('event', 'consult_book', { location: 'mobile_menu' });
+                  }
+                }}
               >
-                <a
-                  href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    if (typeof window !== 'undefined' && (window as any).gtag) {
-                      (window as any).gtag('event', 'consult_book', { location: 'mobile_menu' });
-                    }
-                  }}
-                >
-                  Book Consultation
-                </a>
+                Book Consultation
               </Button>
               <Button 
                 variant="outline"

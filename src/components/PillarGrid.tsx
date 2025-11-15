@@ -4,7 +4,11 @@ import { Brain, TrendingDown, Zap, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
-const PillarGrid = () => {
+interface PillarGridProps {
+  onOpenBooking: () => void;
+}
+
+const PillarGrid = ({ onOpenBooking }: PillarGridProps) => {
   const navigate = useNavigate();
 
   const pillars = [
@@ -12,8 +16,6 @@ const PillarGrid = () => {
       icon: Brain,
       title: "Ketamine Therapy",
       description: "IV infusions & SPRAVATO® for treatment-resistant depression, PTSD, and anxiety",
-      price: "$400",
-      priceDetail: "/session",
       color: "primary",
       route: SITE_CONFIG.routes.ketamine,
       features: ["70% response rate", "Results within 24hrs", "FDA-approved options"]
@@ -22,8 +24,6 @@ const PillarGrid = () => {
       icon: TrendingDown,
       title: "Medical Weight Loss",
       description: "Semaglutide (GLP-1) therapy with personalized nutrition and lifestyle support",
-      price: "$399",
-      priceDetail: "/month",
       color: "accent",
       route: SITE_CONFIG.routes.weightloss,
       features: ["15-20% weight loss", "Physician supervised", "Evidence-based"]
@@ -32,8 +32,6 @@ const PillarGrid = () => {
       icon: Zap,
       title: "Hormone Replacement",
       description: "Bioidentical hormone therapy to restore energy, mood, and vitality",
-      price: "$299",
-      priceDetail: "/month",
       color: "gold",
       route: SITE_CONFIG.routes.hormones,
       features: ["BHRT therapy", "Lab testing included", "Coming Soon"]
@@ -74,11 +72,6 @@ const PillarGrid = () => {
                     <p className="text-muted-foreground mb-6 leading-relaxed">
                       {pillar.description}
                     </p>
-
-                    <div className="mb-6">
-                      <span className={`text-4xl font-bold text-${pillar.color}`}>{pillar.price}</span>
-                      <span className="text-muted-foreground">{pillar.priceDetail}</span>
-                    </div>
 
                     <ul className="space-y-2 mb-6">
                       {pillar.features.map((feature, idx) => (
