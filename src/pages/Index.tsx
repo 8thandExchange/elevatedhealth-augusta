@@ -19,7 +19,7 @@ const Index = () => {
       <main>
         <Hero onOpenBooking={() => setIsBookingOpen(true)} />
         <PillarGrid onOpenBooking={() => setIsBookingOpen(true)} />
-        <Contact />
+        <Contact onOpenBooking={() => setIsBookingOpen(true)} />
       </main>
       <Footer />
       <ChatBot />

@@ -17,17 +17,23 @@ const contactSchema = z.object({
   email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
   phone: z.string().trim().regex(/^[0-9+\(\)\-\s]+$/, "Phone number can only contain numbers and +()-").max(20, "Phone number must be less than 20 characters"),
   preferredContact: z.enum(["call", "text", "email"]),
+  serviceInterest: z.enum(["ketamine", "weightloss", "hormones"]).optional(),
   insurance: z.array(z.string()).optional(),
   message: z.string().trim().max(2000, "Message must be less than 2000 characters").optional()
 });
 
-const Contact = () => {
+interface ContactProps {
+  onOpenBooking?: () => void;
+}
+
+const Contact = ({ onOpenBooking }: ContactProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     preferredContact: "email" as "call" | "text" | "email",
+    serviceInterest: "" as "" | "ketamine" | "weightloss" | "hormones",
     insurance: [] as string[],
     message: ""
   });
@@ -59,6 +65,7 @@ const Contact = () => {
         email: "",
         phone: "",
         preferredContact: "email",
+        serviceInterest: "",
         insurance: [],
         message: ""
       });
@@ -158,6 +165,34 @@ const Contact = () => {
                 </div>
 
                 <div>
+                  <Label className="font-inter mb-3 block">Which service are you interested in? (optional)</Label>
+                  <RadioGroup
+                    value={formData.serviceInterest}
+                    onValueChange={(value) => setFormData({ ...formData, serviceInterest: value as "ketamine" | "weightloss" | "hormones" })}
+                    className="space-y-3 rounded-lg bg-muted/30 p-4"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="ketamine" id="service-ketamine" />
+                      <Label htmlFor="service-ketamine" className="font-inter cursor-pointer font-normal">
+                        Ketamine Therapy
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="weightloss" id="service-weightloss" />
+                      <Label htmlFor="service-weightloss" className="font-inter cursor-pointer font-normal">
+                        Medical Weight Loss
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="hormones" id="service-hormones" />
+                      <Label htmlFor="service-hormones" className="font-inter cursor-pointer font-normal">
+                        Hormone Replacement
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div>
                   <Label className="font-inter mb-3 block">Do you have one of our covered plans? (optional)</Label>
                   <div className="space-y-3 rounded-lg bg-muted/30 p-4">
                     <div className="flex items-center space-x-3">
@@ -238,6 +273,25 @@ const Contact = () => {
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
+
+                {onOpenBooking && (
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-center text-sm text-muted-foreground mb-3">
+                      Or schedule your free consultation directly
+                    </p>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        trackCTAClick('book_consultation', 'contact_form');
+                        onOpenBooking();
+                      }}
+                      className="w-full font-inter font-semibold uppercase bg-primary hover:bg-primary-light text-white py-6"
+                    >
+                      <Calendar className="mr-2 h-5 w-5" />
+                      Book Consultation
+                    </Button>
+                  </div>
+                )}
                 
                 <div className="text-center text-sm text-muted-foreground mt-4">
                   <p className="mb-1">Prefer to talk?</p>
