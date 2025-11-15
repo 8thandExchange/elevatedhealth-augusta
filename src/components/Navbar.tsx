@@ -36,7 +36,7 @@ const Navbar = () => {
         setTimeout(() => {
           const element = document.getElementById(id);
           if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
           }
         }, 50);
       }, 100);
@@ -46,7 +46,7 @@ const Navbar = () => {
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }, 50);
     }

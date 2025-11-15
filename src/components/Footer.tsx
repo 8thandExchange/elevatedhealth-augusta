@@ -11,7 +11,7 @@ const Footer = () => {
     if (window.location.pathname === "/" || window.location.pathname === "/index") {
       const element = document.getElementById(id);
       if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     } else {
       // Navigate to homepage first, then scroll
@@ -19,7 +19,7 @@ const Footer = () => {
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }, 100);
     }

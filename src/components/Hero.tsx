@@ -11,7 +11,8 @@ const Hero = () => {
     const element = document.getElementById("booking");
     if (element) {
       element.scrollIntoView({
-        behavior: "smooth"
+        behavior: "smooth",
+        block: "start"
       });
     }
   };
@@ -20,7 +21,8 @@ const Hero = () => {
     const element = document.getElementById("compare");
     if (element) {
       element.scrollIntoView({
-        behavior: "smooth"
+        behavior: "smooth",
+        block: "start"
       });
     }
   };

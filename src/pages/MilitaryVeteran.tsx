@@ -16,7 +16,8 @@ const MilitaryVeteran = () => {
     const element = document.getElementById("mv-widget");
     if (element) {
       element.scrollIntoView({
-        behavior: "smooth"
+        behavior: "smooth",
+        block: "start"
       });
     }
   };

@@ -54,7 +54,7 @@ const Treatments = () => {
     if (url.startsWith('#')) {
       const element = document.getElementById(url.substring(1));
       if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     } else {
       window.open(url, '_blank', 'noopener,noreferrer');
