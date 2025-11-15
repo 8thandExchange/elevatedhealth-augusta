@@ -14,6 +14,7 @@ import BookingWidget from "@/components/BookingWidget";
 import ChatBot from "@/components/ChatBot";
 import { ServedModal } from "@/components/ServedModal";
 import MobileBookNow from "@/components/MobileBookNow";
+import WhatToExpect from "@/components/WhatToExpect";
 
 const Index = () => {
   return (
@@ -23,6 +24,7 @@ const Index = () => {
         <Hero />
         <Treatments />
         <Compare />
+        <WhatToExpect />
         <Team />
         <ClinicTour />
         <KetamineTherapy />
