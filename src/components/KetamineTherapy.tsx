@@ -1,32 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-
 const KetamineTherapy = () => {
-  const coreValues = [
-    {
-      title: "Safety First",
-      description: "Medical supervision throughout your entire treatment"
-    },
-    {
-      title: "Personalized Care",
-      description: "Tailored protocols based on your unique needs"
-    },
-    {
-      title: "Evidence-Based",
-      description: "Backed by decades of research and clinical studies"
-    }
-  ];
-
+  const coreValues = [{
+    title: "Safety First",
+    description: "Medical supervision throughout your entire treatment"
+  }, {
+    title: "Personalized Care",
+    description: "Tailored protocols based on your unique needs"
+  }, {
+    title: "Evidence-Based",
+    description: "Backed by decades of research and clinical studies"
+  }];
   const scrollToContact = () => {
     const element = document.getElementById("contact");
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
     }
   };
-
-  return (
-    <section id="ketamine-therapy" className="py-24 scroll-mt-20 relative overflow-hidden">
+  return <section id="ketamine-therapy" className="py-24 scroll-mt-20 relative overflow-hidden">
       {/* Soft gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-hope/5 -z-10" />
       
@@ -46,27 +41,13 @@ const KetamineTherapy = () => {
             
             {/* Core Values */}
             <div className="grid md:grid-cols-3 gap-6 mb-12">
-              {coreValues.map((value, index) => (
-                <Card key={index} className="p-6 bg-card/80 backdrop-blur border-accent/10 hover:border-accent/30 transition-colors">
+              {coreValues.map((value, index) => <Card key={index} className="p-6 bg-card/80 backdrop-blur border-accent/10 hover:border-accent/30 transition-colors">
                   <h3 className="font-semibold text-lg mb-2 text-foreground">{value.title}</h3>
                   <p className="text-muted-foreground">{value.description}</p>
-                </Card>
-              ))}
+                </Card>)}
             </div>
             
-            <Button 
-              onClick={() => {
-                const element = document.querySelector('.ketamine-details');
-                if (element) {
-                  element.scrollIntoView({ behavior: "smooth", block: "start" });
-                }
-              }}
-              size="lg"
-              className="group bg-accent hover:bg-accent-light text-white font-semibold shadow-lg"
-            >
-              Discover How Ketamine Works
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            
           </div>
 
           {/* The Science Behind Ketamine */}
@@ -122,11 +103,7 @@ const KetamineTherapy = () => {
             <p className="text-xl mb-8 opacity-90">
               Schedule a consultation to learn if ketamine therapy is right for you
             </p>
-            <Button 
-              onClick={scrollToContact}
-              size="lg"
-              className="bg-accent hover:bg-accent-light text-white font-semibold shadow-xl"
-            >
+            <Button onClick={scrollToContact} size="lg" className="bg-accent hover:bg-accent-light text-white font-semibold shadow-xl">
               Book Your Free Consultation
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -134,8 +111,6 @@ const KetamineTherapy = () => {
 
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default KetamineTherapy;
