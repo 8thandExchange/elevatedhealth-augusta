@@ -33,7 +33,10 @@ const Hero = () => {
         <img 
           src={heroImage} 
           alt="Mental health breakthrough - person walking up sunlit path emerging from fog" 
-          className="w-full h-full object-cover" 
+          className="w-full h-full object-cover"
+          loading="eager"
+          width="1920"
+          height="1080"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/30 to-primary/60" />
       </div>

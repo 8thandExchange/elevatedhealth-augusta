@@ -23,6 +23,9 @@ const About = () => {
                   src={providerImage} 
                   alt="Lauren Bursey, NP-C - Board-Certified Nurse Practitioner at Elevated Health Augusta" 
                   className="w-full h-auto object-cover"
+                  loading="lazy"
+                  width="800"
+                  height="1000"
                 />
               </div>
             </div>
@@ -47,12 +50,14 @@ const About = () => {
                 </p>
               </div>
 
-              {/* Pull Quote Graphic */}
               <Card className="p-0 overflow-hidden border-0 shadow-lg mt-8">
                 <img 
                   src={quoteImage} 
                   alt="Lauren's story about creating Elevated Health" 
                   className="w-full h-auto"
+                  loading="lazy"
+                  width="800"
+                  height="400"
                 />
               </Card>
 

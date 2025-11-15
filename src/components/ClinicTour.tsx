@@ -85,6 +85,9 @@ const ClinicTour = () => {
                     src={slide.src}
                     alt={slide.caption}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    width="1200"
+                    height="800"
                     onMouseEnter={() => setIsAutoPlaying(false)}
                     onMouseLeave={() => setIsAutoPlaying(true)}
                   />

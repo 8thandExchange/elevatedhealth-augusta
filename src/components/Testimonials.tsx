@@ -99,6 +99,9 @@ const Testimonials = () => {
                         src={testimonial.imageSrc} 
                         alt="Patient testimonial" 
                         className="w-full h-auto"
+                        loading="lazy"
+                        width={1200}
+                        height={800}
                       />
                     </Card>
                   ) : (
