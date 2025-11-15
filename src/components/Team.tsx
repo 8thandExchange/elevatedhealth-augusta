@@ -20,110 +20,62 @@ const Team = () => {
             </p>
           </div>
 
-          {/* Team Grid */}
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Lauren Bursey Card */}
+          {/* Lauren Bursey Card - Centered */}
+          <div className="max-w-4xl mx-auto mb-12">
             <Card className="overflow-hidden bg-card shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="relative h-[400px]">
-                <img 
-                  src={providerImage} 
-                  alt="Lauren Bursey, NP-C - Board-Certified Nurse Practitioner at Elevated Health Augusta" 
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  width="800"
-                  height="1000"
-                />
-              </div>
-              <div className="p-8 bg-gradient-subtle">
-                <h3 className="font-playfair text-3xl font-bold text-primary mb-2">Lauren Bursey, NP-C</h3>
-                <p className="text-lg text-muted-foreground mb-6">Board-Certified Nurse Practitioner</p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <GraduationCap className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold text-foreground mb-1">Specialized Training</div>
-                      <div className="text-muted-foreground text-sm">
-                        Advanced certification in ketamine therapy and mental health treatment protocols
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Heart className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold text-foreground mb-1">Patient-Centered Approach</div>
-                      <div className="text-muted-foreground text-sm">
-                        Committed to creating a safe, welcoming environment where patients feel heard and supported
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Award className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold text-foreground mb-1">Evidence-Based Care</div>
-                      <div className="text-muted-foreground text-sm">
-                        Utilizes the latest research and proven protocols to deliver optimal outcomes
-                      </div>
-                    </div>
-                  </div>
+              <div className="grid md:grid-cols-2 gap-0">
+                <div className="relative h-[500px] md:h-auto">
+                  <img 
+                    src={providerImage} 
+                    alt="Lauren Bursey, NP-C - Board-Certified Nurse Practitioner at Elevated Health Augusta" 
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    width="800"
+                    height="1000"
+                  />
                 </div>
-              </div>
-            </Card>
-
-            {/* Dr. Troy Akers Card */}
-            <Card className="overflow-hidden bg-card shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="relative h-[400px] bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
-                    <Award className="h-16 w-16 text-primary" />
+                <div className="p-8 md:p-10 flex flex-col justify-center bg-gradient-subtle">
+                  <div className="mb-6">
+                    <h3 className="font-playfair text-3xl font-bold text-primary mb-2">Lauren Bursey, NP-C</h3>
+                    <p className="text-lg text-muted-foreground">Board-Certified Nurse Practitioner</p>
                   </div>
-                  <h3 className="font-playfair text-3xl font-bold text-primary mb-2">Dr. Troy Akers</h3>
-                  <p className="text-lg text-muted-foreground mb-4">Founder & Medical Director</p>
-                  <a 
-                    href="https://x.com/Dr_Troy_Akers" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-accent hover:text-accent/80 transition-colors font-semibold"
-                  >
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                    @Dr_Troy_Akers
-                  </a>
-                </div>
-              </div>
-              <div className="p-8 bg-gradient-subtle">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Award className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold text-foreground mb-1">Visionary Leadership</div>
-                      <div className="text-muted-foreground text-sm">
-                        Founded Elevated Health Augusta to provide innovative mental health treatments
+                  
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                      <GraduationCap className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
+                      <div>
+                        <div className="font-semibold text-foreground mb-1">Specialized Training</div>
+                        <div className="text-muted-foreground">
+                          Advanced certification in ketamine therapy and mental health treatment protocols
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      <Heart className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
+                      <div>
+                        <div className="font-semibold text-foreground mb-1">Patient-Centered Approach</div>
+                        <div className="text-muted-foreground">
+                          Committed to creating a safe, welcoming environment where patients feel heard and supported
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      <Award className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
+                      <div>
+                        <div className="font-semibold text-foreground mb-1">Evidence-Based Care</div>
+                        <div className="text-muted-foreground">
+                          Utilizes the latest research and proven protocols to deliver optimal outcomes
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <GraduationCap className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold text-foreground mb-1">Clinical Expertise</div>
-                      <div className="text-muted-foreground text-sm">
-                        Board-certified with extensive experience in ketamine therapy protocols
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Heart className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
-                    <div>
-                      <div className="font-semibold text-foreground mb-1">Veteran Advocacy</div>
-                      <div className="text-muted-foreground text-sm">
-                        Dedicated to serving military veterans and first responders with specialized care
-                      </div>
-                    </div>
+                  <div className="mt-8 p-6 bg-accent/10 rounded-lg border border-accent/20">
+                    <p className="text-foreground italic">
+                      "Elevated Health was created as a space for patients to start healing. Our services help with anxiety, depression, PTSD, and OCD. Patients feel safe here, and that's our goal. While the journey to healing is hard, it's worth the effort."
+                    </p>
                   </div>
                 </div>
               </div>

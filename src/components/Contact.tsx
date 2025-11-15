@@ -217,17 +217,13 @@ const Contact = () => {
                   Schedule directly with our team
                 </p>
               </div>
-              <div 
-                className="calendly-inline-widget h-[600px] w-full"
-                data-url="https://calendar.app.google/SgGgATWunSGzz34s6?embed=true"
-              >
+              <div className="w-full h-[600px] overflow-hidden rounded-lg">
                 <iframe
-                  src="https://calendar.app.google/SgGgATWunSGzz34s6?embed=true"
-                  width="100%"
-                  height="600"
+                  src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1uD5LLPzYBCPD3SgYXLJ9xGfZmJ0jxrVS7KFkQEt0mCmjP4zFPnB0cYOJ7E-ZLMXLqPqyxL9Aj?gv=true"
+                  style={{ border: 0, width: '100%', height: '600px' }}
                   frameBorder="0"
-                  className="border-0"
                   title="Schedule Consultation"
+                  allowFullScreen
                 />
               </div>
               
