@@ -33,9 +33,9 @@ const ClinicTour = () => {
       category: "waiting"
     },
     {
-      src: clinicInterior,
+      src: "", // Placeholder for treatment room photo
       title: "Private Treatment Rooms",
-      description: "State-of-the-art treatment spaces equipped with comfortable recliners and modern medical technology, ensuring your safety and comfort.",
+      description: "Our state-of-the-art treatment spaces feature comfortable recliners, ambient lighting, and modern medical technology in a spa-like environment designed for your safety, comfort, and healing.",
       category: "treatment"
     },
     {
@@ -91,38 +91,62 @@ const ClinicTour = () => {
             {images.map((image, index) => (
               <Card
                 key={index}
-                className="group relative overflow-hidden cursor-pointer hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-                onClick={() => openModal(index)}
+                className={`group relative overflow-hidden ${image.src ? 'cursor-pointer hover:shadow-2xl transition-all duration-300 hover:-translate-y-2' : ''}`}
+                onClick={() => image.src && openModal(index)}
               >
-                <div className="relative h-[400px] overflow-hidden">
-                  <img
-                    src={image.src}
-                    alt={image.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
-                  
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-primary-foreground">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="inline-block px-3 py-1 bg-gold/20 backdrop-blur-sm rounded-full text-xs font-semibold text-gold border border-gold/30">
-                        {image.category === "exterior" && "Exterior"}
-                        {image.category === "waiting" && "Waiting Area"}
-                        {image.category === "treatment" && "Treatment Space"}
-                      </span>
+                {image.src ? (
+                  <div className="relative h-[400px] overflow-hidden">
+                    <img
+                      src={image.src}
+                      alt={image.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+                    
+                    {/* Content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-primary-foreground">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-block px-3 py-1 bg-gold/20 backdrop-blur-sm rounded-full text-xs font-semibold text-gold border border-gold/30">
+                          {image.category === "exterior" && "Exterior"}
+                          {image.category === "waiting" && "Waiting Area"}
+                          {image.category === "treatment" && "Treatment Space"}
+                        </span>
+                      </div>
+                      <h3 className="text-2xl font-bold mb-2">{image.title}</h3>
+                      <p className="text-primary-foreground/90 text-sm line-clamp-2">
+                        {image.description}
+                      </p>
                     </div>
-                    <h3 className="text-2xl font-bold mb-2">{image.title}</h3>
-                    <p className="text-primary-foreground/90 text-sm line-clamp-2">
-                      {image.description}
-                    </p>
-                  </div>
 
-                  {/* Hover Icon */}
-                  <div className="absolute top-4 right-4 w-12 h-12 bg-primary-foreground/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-primary-foreground/30">
-                    <Maximize2 className="h-6 w-6 text-primary-foreground" />
+                    {/* Hover Icon */}
+                    <div className="absolute top-4 right-4 w-12 h-12 bg-primary-foreground/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-primary-foreground/30">
+                      <Maximize2 className="h-6 w-6 text-primary-foreground" />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="relative h-[400px] bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5 border-2 border-dashed border-primary/20">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                        <MapPin className="h-10 w-10 text-primary" />
+                      </div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="inline-block px-3 py-1 bg-gold/10 rounded-full text-xs font-semibold text-gold border border-gold/20">
+                          {image.category === "exterior" && "Exterior"}
+                          {image.category === "waiting" && "Waiting Area"}
+                          {image.category === "treatment" && "Treatment Space"}
+                        </span>
+                      </div>
+                      <h3 className="text-2xl font-bold mb-4 text-foreground">{image.title}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
+                        {image.description}
+                      </p>
+                      <div className="mt-6 text-xs text-muted-foreground/60 italic">
+                        Photo Coming Soon
+                      </div>
+                    </div>
+                  </div>
+                )}
               </Card>
             ))}
           </div>
