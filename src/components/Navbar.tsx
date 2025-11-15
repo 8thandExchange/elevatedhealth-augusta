@@ -63,22 +63,22 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-6">
-        <div className="flex items-start justify-between h-32 pt-4">
+        <div className="flex items-center justify-between h-24 py-4">
           <div className="flex items-center">
             <button 
               onClick={() => scrollToSection("hero")} 
-              className="focus:outline-none transition-all duration-300 hover:opacity-80 relative top-10"
+              className="focus:outline-none transition-all duration-300 hover:opacity-80"
             >
               <img 
                 src={logo} 
                 alt="Elevated Health Augusta" 
-                className="h-32 md:h-40 lg:h-48 w-auto transition-all duration-300"
+                className="h-20 md:h-24 w-auto transition-all duration-300"
               />
             </button>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8 lg:gap-10 pt-3">
+          <div className="hidden md:flex items-center gap-8 lg:gap-10">
             <button 
               onClick={() => scrollToSection("hero")} 
               className={`text-sm font-medium transition-all duration-300 ${
