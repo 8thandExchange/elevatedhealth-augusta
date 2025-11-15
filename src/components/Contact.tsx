@@ -111,7 +111,7 @@ const Contact = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="max-w-2xl mx-auto">
             {/* Contact Form */}
             <Card className="p-8 bg-card shadow-xl">
               <h3 className="font-playfair text-2xl font-bold mb-6 text-foreground">Send Us a Message</h3>
