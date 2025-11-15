@@ -25,20 +25,23 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-foreground text-background py-12">
+    <footer className="bg-primary text-white py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
             <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4">
+              <h3 className="font-playfair text-2xl font-bold mb-2">
                 {SITE_CONFIG.clinicName}
               </h3>
-              <p className="text-background/80 mb-4">
+              <p className="text-gold uppercase tracking-wider text-sm font-semibold mb-4">
+                RESTORE • REPAIR • RENEW
+              </p>
+              <p className="font-inter text-white/80 mb-4">
                 Expert-led ketamine therapy for treatment-resistant depression, anxiety, and PTSD. 
                 Proudly serving Veterans, first responders, and the Augusta community.
               </p>
-              <div className="space-y-3 text-background/80">
+              <div className="space-y-3 font-inter text-white/80">
                 <div className="flex gap-3">
                   <MapPin className="h-5 w-5 flex-shrink-0 mt-1" />
                   <div>
@@ -48,7 +51,7 @@ const Footer = () => {
                 </div>
                 <div className="flex gap-3">
                   <Phone className="h-5 w-5 flex-shrink-0" />
-                  <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="hover:text-secondary transition-colors">
+                  <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="hover:text-gold transition-colors">
                     {SITE_CONFIG.phone}
                   </a>
                 </div>
@@ -57,17 +60,17 @@ const Footer = () => {
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-semibold mb-4 text-lg">Quick Links</h4>
-              <ul className="space-y-2 text-background/80">
+              <h4 className="font-inter font-semibold mb-4 text-lg">Quick Links</h4>
+              <ul className="space-y-2 font-inter text-white/80">
                 <li>
-                  <button onClick={() => scrollToSection("about")} className="hover:text-secondary transition-colors">
+                  <button onClick={() => scrollToSection("about")} className="hover:text-gold transition-colors">
                     About Us
                   </button>
                 </li>
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.ivKetamine)} 
-                    className="hover:text-secondary transition-colors"
+                    className="hover:text-gold transition-colors"
                   >
                     IV Ketamine
                   </button>
@@ -75,7 +78,7 @@ const Footer = () => {
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.spravato)} 
-                    className="hover:text-secondary transition-colors"
+                    className="hover:text-gold transition-colors"
                   >
                     SPRAVATO®
                   </button>
@@ -83,44 +86,67 @@ const Footer = () => {
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.militaryVeteran)} 
-                    className="hover:text-secondary transition-colors"
+                    className="hover:text-gold transition-colors"
                   >
                     Benefits & Advocacy
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => scrollToSection("insurance")} className="hover:text-secondary transition-colors">
+                  <button onClick={() => scrollToSection("insurance")} className="hover:text-gold transition-colors">
                     Insurance
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => scrollToSection("contact")} className="hover:text-secondary transition-colors">
+                  <button onClick={() => scrollToSection("contact")} className="hover:text-gold transition-colors">
                     Contact
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Contact */}
+            {/* Social & Legal */}
             <div>
-              <h4 className="font-semibold mb-4 text-lg">Contact</h4>
-              <ul className="space-y-3 text-background/80">
-                <li>
-                  <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="flex items-center gap-2 hover:text-secondary transition-colors">
-                    <Phone className="h-4 w-4" />
-                    {SITE_CONFIG.phone}
-                  </a>
-                </li>
-                <li>
-                  <a href="mailto:care@elevatedhealthaugusta.com" className="flex items-start gap-2 hover:text-secondary transition-colors">
-                    <Mail className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                    <span className="break-all">care@elevatedhealthaugusta.com</span>
-                  </a>
-                </li>
-              </ul>
-              <div className="mt-4 text-background/80">
-                <p className="text-sm">Mon-Fri: 8AM - 6PM</p>
-                <p className="text-sm">Sat-Sun: By Appointment</p>
+              <h4 className="font-inter font-semibold mb-4 text-lg">Connect With Us</h4>
+              <div className="flex gap-4 mb-6">
+                <a 
+                  href="https://instagram.com/elevatedhealthaugusta" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold flex items-center justify-center transition-colors"
+                  aria-label="Instagram"
+                >
+                  <span className="text-lg font-bold">IG</span>
+                </a>
+                <a 
+                  href="https://facebook.com/elevatedhealthaugusta" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold flex items-center justify-center transition-colors"
+                  aria-label="Facebook"
+                >
+                  <span className="text-lg font-bold">FB</span>
+                </a>
+                <a 
+                  href="https://x.com/Dr_Troy_Akers" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold flex items-center justify-center transition-colors"
+                  aria-label="X (Twitter)"
+                >
+                  <span className="text-lg font-bold">X</span>
+                </a>
+              </div>
+              
+              <div className="space-y-2 font-inter text-sm">
+                <a href="/privacy-policy" className="hover:text-gold transition-colors block">
+                  Privacy Policy
+                </a>
+                <a href="/hipaa-notice" className="hover:text-gold transition-colors block">
+                  HIPAA Notice
+                </a>
+                <a href="/terms-of-service" className="hover:text-gold transition-colors block">
+                  Terms of Use
+                </a>
               </div>
             </div>
           </div>
