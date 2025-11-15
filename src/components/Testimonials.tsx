@@ -70,8 +70,11 @@ const Testimonials = () => {
             <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4 text-primary">
               Stories of Transformation
             </h2>
-            <p className="font-inter text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="font-inter text-xl text-muted-foreground max-w-2xl mx-auto mb-3">
               Real people, real healing, real hope
+            </p>
+            <p className="font-inter text-sm text-muted-foreground/80 italic">
+              Based on actual patient reviews and experiences
             </p>
           </div>
 
