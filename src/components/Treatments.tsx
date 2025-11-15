@@ -19,7 +19,7 @@ const Treatments = () => {
         "Starting at $399/session (financing available)"
       ],
       ctaText: "Book IV Ketamine",
-      ctaUrl: "https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+      ctaUrl: "https://calendar.google.com/calendar/appointments/AcRdB1234567890"
     },
     {
       icon: Wind,

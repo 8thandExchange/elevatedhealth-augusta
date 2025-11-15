@@ -100,7 +100,7 @@ const HormoneReplacement = () => {
                   className="text-base md:text-lg px-8 py-6"
                 >
                   <a
-                    href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+                    href="https://calendar.google.com/calendar/appointments/AcRdB1234567890"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

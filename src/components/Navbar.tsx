@@ -112,7 +112,7 @@ const Navbar = () => {
             </button>
             <Button variant="hero" size="lg" asChild>
               <a
-                href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+                href="https://calendar.google.com/calendar/appointments/AcRdB1234567890"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -189,7 +189,7 @@ const Navbar = () => {
               </button>
               <Button variant="hero" size="lg" className="w-full" asChild>
                 <a
-                  href="https://calendar.app.google/dmUqXpAwVspD7Nyi9"
+                  href="https://calendar.google.com/calendar/appointments/AcRdB1234567890"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
