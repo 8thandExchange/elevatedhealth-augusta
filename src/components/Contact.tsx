@@ -100,7 +100,7 @@ const Contact = () => {
 
   return (
     <section id="contact" className="py-24 bg-secondary/30 scroll-mt-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-6 text-primary">

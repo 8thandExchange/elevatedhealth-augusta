@@ -5,7 +5,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Droplet, Wind, ClipboardCheck, ChevronDown, CheckCircle2, ArrowRight } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-const Treatments = () => {
+interface TreatmentsProps {
+  onOpenQuiz?: () => void;
+}
+
+const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
   const [openCard, setOpenCard] = useState<number | null>(null);
 
   const treatments = [
@@ -50,8 +54,10 @@ const Treatments = () => {
     setOpenCard(openCard === index ? null : index);
   };
 
-  const handleCtaClick = (url: string) => {
-    if (url.startsWith('#')) {
+  const handleCtaClick = (url: string, isQuiz: boolean = false) => {
+    if (isQuiz && onOpenQuiz) {
+      onOpenQuiz();
+    } else if (url.startsWith('#')) {
       const element = document.getElementById(url.substring(1));
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -130,7 +136,7 @@ const Treatments = () => {
                         <Button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleCtaClick(treatment.ctaUrl);
+                            handleCtaClick(treatment.ctaUrl, treatment.title === "Mood & Symptom Quiz");
                           }}
                           className="w-full font-inter font-semibold uppercase bg-accent hover:bg-accent-light text-white"
                           size="lg"

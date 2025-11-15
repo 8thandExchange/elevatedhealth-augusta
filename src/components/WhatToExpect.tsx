@@ -45,7 +45,7 @@ const WhatToExpect = () => {
 
   return (
     <section id="what-to-expect" className="py-16 md:py-24 bg-gradient-to-br from-background via-secondary/5 to-accent/5 scroll-mt-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-6">

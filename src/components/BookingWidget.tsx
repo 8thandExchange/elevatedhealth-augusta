@@ -5,7 +5,7 @@ import { trackCTAClick } from "@/lib/analytics";
 const BookingWidget = () => {
   return (
     <section id="booking" className="py-16 md:py-20 bg-gradient-to-br from-accent/10 via-primary/5 to-accent/5 scroll-mt-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="bg-card border-2 border-accent/20 rounded-2xl p-8 md:p-12 shadow-lg">
             <div className="text-center space-y-6 mb-8">

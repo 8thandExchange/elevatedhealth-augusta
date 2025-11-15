@@ -16,7 +16,7 @@ const Insurance = () => {
 
   return (
     <section id="insurance" className="py-24 bg-secondary/30 scroll-mt-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-12">

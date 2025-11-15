@@ -45,7 +45,7 @@ const Veterans = () => {
 
   return (
     <section id="veterans" className="py-24 bg-gradient-subtle scroll-mt-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-block bg-accent/10 text-accent px-6 py-3 rounded-full text-sm font-semibold mb-6 border border-accent/20">

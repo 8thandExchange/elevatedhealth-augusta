@@ -3,8 +3,21 @@ import { Button } from "@/components/ui/button";
 import { HelpCircle } from "lucide-react";
 import { CompareQuizModal } from "./CompareQuizModal";
 
-const Compare = () => {
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
+interface CompareProps {
+  isQuizOpen?: boolean;
+  onQuizClose?: () => void;
+}
+
+const Compare = ({ isQuizOpen = false, onQuizClose }: CompareProps) => {
+  const [internalIsQuizOpen, setInternalIsQuizOpen] = useState(false);
+  
+  const effectiveIsQuizOpen = isQuizOpen || internalIsQuizOpen;
+  const handleClose = () => {
+    if (onQuizClose) {
+      onQuizClose();
+    }
+    setInternalIsQuizOpen(false);
+  };
 
   return (
     <section id="compare" className="py-16 md:py-24 bg-background scroll-mt-20">
@@ -142,7 +155,7 @@ const Compare = () => {
           {/* Help Me Choose Button */}
           <div className="text-center">
             <Button
-              onClick={() => setIsQuizOpen(true)}
+              onClick={() => setInternalIsQuizOpen(true)}
               size="lg"
               variant="outline"
               className="gap-2"
@@ -155,7 +168,7 @@ const Compare = () => {
         </div>
       </div>
 
-      <CompareQuizModal isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
+      <CompareQuizModal isOpen={effectiveIsQuizOpen} onClose={handleClose} />
     </section>
   );
 };

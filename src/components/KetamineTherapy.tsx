@@ -26,7 +26,7 @@ const KetamineTherapy = () => {
       {/* Soft gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-hope/5 -z-10" />
       
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           
           {/* Main Headline */}

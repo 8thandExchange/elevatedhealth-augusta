@@ -15,15 +15,18 @@ import ChatBot from "@/components/ChatBot";
 import { ServedModal } from "@/components/ServedModal";
 import MobileBookNow from "@/components/MobileBookNow";
 import WhatToExpect from "@/components/WhatToExpect";
+import { useState } from "react";
 
 const Index = () => {
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+
   return (
     <div className="min-h-screen">
       <Navbar />
       <main>
         <Hero />
-        <Treatments />
-        <Compare />
+        <Treatments onOpenQuiz={() => setIsQuizOpen(true)} />
+        <Compare isQuizOpen={isQuizOpen} onQuizClose={() => setIsQuizOpen(false)} />
         <WhatToExpect />
         <Team />
         <ClinicTour />
