@@ -67,12 +67,12 @@ const Navbar = () => {
           <div className="flex items-center">
             <button 
               onClick={() => scrollToSection("hero")} 
-              className="focus:outline-none transition-all duration-300 hover:opacity-80"
+              className="focus:outline-none transition-all duration-300 hover:opacity-80 relative top-2"
             >
               <img 
                 src={logo} 
                 alt="Elevated Health Augusta" 
-                className="h-12 md:h-16 w-auto transition-all duration-300"
+                className="h-16 md:h-20 w-auto transition-all duration-300"
               />
             </button>
           </div>
