@@ -14,41 +14,42 @@ import logo from "@/assets/logo-transparent.png";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const isHomePage = location.pathname === '/';
+  const [isScrolled, setIsScrolled] = useState(!isHomePage);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTreatmentsOpen, setIsTreatmentsOpen] = useState(false);
 
   useEffect(() => {
+    // Always show solid navbar on non-home pages
+    if (!isHomePage) {
+      setIsScrolled(true);
+      return;
+    }
+    
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   const scrollToSection = (id: string) => {
     // If not on home page, navigate to home first
     if (location.pathname !== '/') {
       navigate('/');
-      // Wait for navigation, scroll to top, then to section
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: "instant" });
-        setTimeout(() => {
-          const element = document.getElementById(id);
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        }, 50);
-      }, 100);
-    } else {
-      // Scroll to top first, then to section
-      window.scrollTo({ top: 0, behavior: "instant" });
+      // Wait for navigation, then scroll to section
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-      }, 50);
+      }, 100);
+    } else {
+      // Scroll directly to section
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
     setIsMobileMenuOpen(false);
   };
