@@ -55,7 +55,14 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
           <div className="mb-8 animate-fade-in-up flex justify-center">
-            <img src={logo} alt="Elevated Health" className="h-48 md:h-64 lg:h-72 w-auto" />
+            <img 
+              src={logo} 
+              alt="Elevated Health Augusta - Ketamine Therapy, Weight Loss & Hormone Replacement" 
+              className="h-28 md:h-36 lg:h-40 w-auto"
+              loading="eager"
+              width="400"
+              height="160"
+            />
           </div>
           
           {/* Main Tagline */}
