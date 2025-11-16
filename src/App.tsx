@@ -17,6 +17,7 @@ import WhatToExpect from "./pages/WhatToExpect";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HipaaNotice from "./pages/HipaaNotice";
 import TermsOfService from "./pages/TermsOfService";
+import Consult from "./pages/Consult";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/consult" element={<Consult />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
