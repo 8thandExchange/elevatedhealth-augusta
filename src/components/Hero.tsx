@@ -55,7 +55,7 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Brand Name */}
           <div className="mb-6 animate-fade-in-up flex justify-center">
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-light text-primary tracking-wider drop-shadow-2xl">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-primary tracking-wide drop-shadow-2xl leading-tight">
               Elevated Health Augusta
             </h2>
           </div>
