@@ -471,9 +471,9 @@ const Hormones = () => {
                       <h3 className="text-2xl font-bold mb-6 text-center">Book Your Free Consultation</h3>
                       <div className="w-full h-[600px] rounded-lg overflow-hidden">
                         <iframe 
-                          src={SITE_CONFIG.bookingUrl}
+                          src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true"
                           className="w-full h-full border-0"
-                          title="Book Appointment"
+                          title="Book Hormone Replacement Appointment"
                         />
                       </div>
                     </div>
