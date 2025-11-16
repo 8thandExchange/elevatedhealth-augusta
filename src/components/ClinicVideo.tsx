@@ -1,9 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Play } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize } from "lucide-react";
 import { useState, useRef } from "react";
 
 const ClinicVideo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handlePlayClick = () => {
@@ -13,7 +15,7 @@ const ClinicVideo = () => {
     }
   };
 
-  const handleVideoClick = () => {
+  const togglePlayPause = () => {
     if (videoRef.current) {
       if (videoRef.current.paused) {
         videoRef.current.play();
@@ -21,6 +23,23 @@ const ClinicVideo = () => {
       } else {
         videoRef.current.pause();
         setIsPlaying(false);
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const toggleFullscreen = () => {
+    if (videoRef.current) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        videoRef.current.requestFullscreen();
       }
     }
   };
@@ -39,7 +58,11 @@ const ClinicVideo = () => {
 
         <Card className="overflow-hidden shadow-2xl border-2 border-accent/20 hover:shadow-3xl transition-all duration-500 animate-fade-in-up">
           <CardContent className="p-0">
-            <div className="aspect-video w-full bg-muted relative">
+            <div 
+              className="aspect-video w-full bg-muted relative"
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
               {/* Custom Play Button Overlay */}
               {!isPlaying && (
                 <div 
@@ -71,12 +94,57 @@ const ClinicVideo = () => {
                 </div>
               )}
 
+              {/* Custom Video Controls Overlay */}
+              {isPlaying && isHovering && (
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end z-20 transition-opacity duration-300">
+                  <div className="w-full p-4 flex items-center gap-4">
+                    {/* Play/Pause Button */}
+                    <button
+                      onClick={togglePlayPause}
+                      className="text-white hover:text-gold transition-colors p-2 hover:scale-110 transform duration-200"
+                      aria-label={isPlaying ? "Pause" : "Play"}
+                    >
+                      {isPlaying ? (
+                        <Pause className="w-6 h-6 fill-white" />
+                      ) : (
+                        <Play className="w-6 h-6 fill-white" />
+                      )}
+                    </button>
+
+                    {/* Volume Button */}
+                    <button
+                      onClick={toggleMute}
+                      className="text-white hover:text-gold transition-colors p-2 hover:scale-110 transform duration-200"
+                      aria-label={isMuted ? "Unmute" : "Mute"}
+                    >
+                      {isMuted ? (
+                        <VolumeX className="w-6 h-6" />
+                      ) : (
+                        <Volume2 className="w-6 h-6" />
+                      )}
+                    </button>
+
+                    {/* Spacer */}
+                    <div className="flex-1" />
+
+                    {/* Fullscreen Button */}
+                    <button
+                      onClick={toggleFullscreen}
+                      className="text-white hover:text-gold transition-colors p-2 hover:scale-110 transform duration-200"
+                      aria-label="Fullscreen"
+                    >
+                      <Maximize className="w-6 h-6" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Video Element */}
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
                 preload="metadata"
-                onClick={handleVideoClick}
+                onClick={togglePlayPause}
                 onEnded={() => setIsPlaying(false)}
                 style={{ 
                   objectFit: 'cover',
