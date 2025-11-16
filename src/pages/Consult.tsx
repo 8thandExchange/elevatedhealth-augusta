@@ -39,7 +39,7 @@ const Consult = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-1 py-16 px-4 bg-gradient-to-b from-background to-secondary/10">
+      <main className="flex-1 pt-32 pb-16 px-4 bg-gradient-to-b from-background to-secondary/10">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12 animate-fade-in-up">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
