@@ -19,24 +19,11 @@ const Testimonials = () => {
 
   const testimonials: Testimonial[] = [
     {
-      type: 'text',
-      quote: "After 6 years of failed meds, one infusion gave me my life back.",
-      name: "J.D.",
-      location: "Augusta, GA",
-      rating: 5
-    },
-    {
-      type: 'text',
-      quote: "The darkness had become so familiar that I forgot what it felt like to want to get out of bed. Ketamine therapy didn't just lift the depression—it gave me back my curiosity about life.",
-      name: "M.R.",
-      location: "Evans, GA",
-      rating: 5
-    },
-    {
-      type: 'text',
-      quote: "As a combat Veteran, I carried guilt about needing help. The team here understood without me having to explain. For the first time in a decade, I'm sleeping through the night.",
-      name: "T.W.",
-      location: "Martinez, GA",
+      type: 'image',
+      imageSrc: quoteGraphic,
+      quote: "",
+      name: "",
+      location: "",
       rating: 5
     }
   ];
@@ -173,7 +160,7 @@ const Testimonials = () => {
 
           <div className="mt-12 text-center">
             <p className="font-inter text-sm text-muted-foreground">
-              Names abbreviated for privacy. All testimonials represent genuine patient experiences.
+              All testimonials represent genuine patient experiences.
             </p>
           </div>
         </div>

@@ -95,19 +95,6 @@ const KetamineTherapy = () => {
             </Link>
           </div>
 
-          {/* Patient Testimonial */}
-          <div className="mb-16">
-            <Card className="p-8 md:p-12 bg-gradient-to-br from-hope/10 to-primary/5 border-hope/20">
-              <div className="max-w-4xl mx-auto text-center">
-                <blockquote className="text-2xl md:text-3xl font-light text-foreground mb-8 leading-relaxed italic">
-                  After years of trying different medications with little success, ketamine therapy gave me 
-                  hope again. Within days, I felt the fog lifting. The care team made me feel safe and 
-                  understood every step of the way.
-                </blockquote>
-                <cite className="text-muted-foreground not-italic">— Real Patient, Evans GA</cite>
-              </div>
-            </Card>
-          </div>
 
           {/* Final CTA */}
           <div className="text-center bg-gradient-to-r from-accent/10 via-primary/10 to-hope/10 rounded-2xl p-12">

@@ -395,21 +395,12 @@ const Ketamine = () => {
                   Patient Success Stories
                 </h2>
                 <div className="space-y-8">
-                  <Card className="p-8 bg-gradient-to-br from-accent/10 to-primary/5 border-accent/20">
-                    <blockquote className="text-xl md:text-2xl font-light text-foreground mb-6 leading-relaxed italic">
-                      "After years of trying different medications with little success, ketamine therapy gave me 
-                      hope again. Within days, I felt the fog lifting. The care team made me feel safe and 
-                      understood every step of the way."
-                    </blockquote>
-                    <cite className="text-muted-foreground not-italic">— Real Patient, Evans GA</cite>
-                  </Card>
-
-                  <Card className="p-8">
-                    <blockquote className="text-xl md:text-2xl font-light text-foreground mb-6 leading-relaxed italic">
-                      "As a veteran dealing with PTSD, I was skeptical. But ketamine therapy changed my life. 
-                      I'm sleeping better, my anxiety is manageable, and I feel like myself again."
-                    </blockquote>
-                    <cite className="text-muted-foreground not-italic">— Veteran, Augusta GA</cite>
+                  <Card className="p-0 overflow-hidden border-0 shadow-2xl max-w-2xl mx-auto">
+                    <img 
+                      src={quoteImage} 
+                      alt="Patient testimonial about ketamine therapy at Elevated Health Augusta" 
+                      className="w-full h-auto"
+                    />
                   </Card>
                 </div>
               </div>
