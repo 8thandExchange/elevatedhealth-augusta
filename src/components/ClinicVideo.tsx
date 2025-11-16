@@ -1,12 +1,41 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Play, Pause, Volume2, VolumeX, Maximize } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const ClinicVideo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Auto-pause video when scrolling away from section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // If video section is less than 50% visible and video is playing, pause it
+          if (!entry.isIntersecting && videoRef.current && !videoRef.current.paused) {
+            videoRef.current.pause();
+            setIsPlaying(false);
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of section is out of view
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
 
   const handlePlayClick = () => {
     if (videoRef.current) {
@@ -45,7 +74,7 @@ const ClinicVideo = () => {
   };
 
   return (
-    <section className="py-16 px-4 bg-background">
+    <section ref={sectionRef} className="py-16 px-4 bg-background">
       <div className="container mx-auto max-w-5xl">
         <div className="text-center mb-10 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-light text-primary mb-4">
