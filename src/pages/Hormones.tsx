@@ -94,14 +94,6 @@ const Hormones = () => {
                   <span className="text-4xl font-bold text-gold">$299</span>
                   <span className="text-xl text-muted-foreground">/month</span>
                 </div>
-                <Button
-                  onClick={scrollToBooking}
-                  size="lg"
-                  className="bg-gold hover:bg-gold-light text-gold-foreground text-base md:text-lg px-8 py-6 animate-fade-in-up"
-                  style={{ animationDelay: "0.3s" }}
-                >
-                  Join Waitlist - Coming Soon
-                </Button>
               </div>
             </div>
           </section>
