@@ -135,15 +135,6 @@ const Footer = () => {
                 >
                   <span className="text-lg font-bold">FB</span>
                 </a>
-                <a 
-                  href="https://linkedin.com/in/troy-akers" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold flex items-center justify-center transition-colors"
-                  aria-label="LinkedIn - Dr. Troy Akers"
-                >
-                  <span className="text-lg font-bold">in</span>
-                </a>
               </div>
               
               {/* Newsletter Signup */}
