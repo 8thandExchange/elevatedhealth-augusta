@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -17,7 +18,8 @@ import {
   Activity,
   Brain,
   Phone,
-  Calendar
+  Calendar,
+  ClipboardList
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -30,8 +32,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { HRTQuizModal } from "@/components/HRTQuizModal";
 
 const Hormones = () => {
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+
   const scrollToBooking = () => {
     const bookingSection = document.getElementById('booking-section');
     if (bookingSection) {
@@ -172,12 +177,21 @@ const Hormones = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
                   <Button
-                    onClick={scrollToBooking}
+                    onClick={() => setIsQuizOpen(true)}
                     size="lg"
                     className="bg-hope hover:bg-hope-light text-hope-foreground text-base md:text-lg px-8 py-6 shadow-lg w-full sm:w-auto"
                   >
+                    <ClipboardList className="mr-2 h-5 w-5" />
+                    Take Free Assessment
+                  </Button>
+                  <Button
+                    onClick={scrollToBooking}
+                    variant="outline"
+                    size="lg"
+                    className="text-base md:text-lg px-8 py-6 border-2 border-accent hover:bg-accent hover:text-accent-foreground w-full sm:w-auto"
+                  >
                     <Calendar className="mr-2 h-5 w-5" />
-                    Book Your Free Consultation
+                    Book Consultation
                   </Button>
                   <Button
                     asChild
@@ -187,7 +201,7 @@ const Hormones = () => {
                   >
                     <a href={`tel:${SITE_CONFIG.phoneRaw}`}>
                       <Phone className="mr-2 h-5 w-5" />
-                      Call Our Clinic
+                      Call Now
                     </a>
                   </Button>
                 </div>
@@ -503,6 +517,7 @@ const Hormones = () => {
         </main>
 
         <Footer />
+        <HRTQuizModal isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
       </div>
     </>
   );
