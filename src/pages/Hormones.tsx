@@ -22,7 +22,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import clinicInterior from "@/assets/clinic-interior.jpg";
+import providerPortrait from "@/assets/provider-portrait.jpg";
 import { Helmet } from "react-helmet";
 import {
   Accordion,
@@ -213,8 +213,8 @@ const Hormones = () => {
                   </div>
                   <div className="relative h-[400px] rounded-lg overflow-hidden shadow-lg">
                     <img 
-                      src={clinicInterior} 
-                      alt="Elevated Health Augusta clinic interior" 
+                      src={providerPortrait} 
+                      alt="Lauren Bursey, NP-C - Hormone Therapy Provider at Elevated Health Augusta" 
                       className="w-full h-full object-cover"
                     />
                   </div>
