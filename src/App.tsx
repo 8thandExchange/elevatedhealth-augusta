@@ -21,6 +21,8 @@ import HipaaNotice from "./pages/HipaaNotice";
 import TermsOfService from "./pages/TermsOfService";
 import Consult from "./pages/Consult";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,9 @@ const App = () => (
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/consult" element={<Consult />} />
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

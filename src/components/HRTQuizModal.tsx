@@ -46,73 +46,88 @@ const questions = [
   {
     id: 2,
     type: "radio",
-    question: "What is your age range?",
+    question: "How long have you been experiencing these symptoms?",
     options: [
-      { value: "under30", label: "Under 30" },
-      { value: "30-39", label: "30-39" },
-      { value: "40-49", label: "40-49" },
-      { value: "50-59", label: "50-59" },
-      { value: "60plus", label: "60+" }
+      { value: "less_than_3_months", label: "Less than 3 months" },
+      { value: "3_to_6_months", label: "3-6 months" },
+      { value: "6_months_to_1_year", label: "6 months to 1 year" },
+      { value: "more_than_1_year", label: "More than 1 year" }
     ]
   },
   {
     id: 3,
     type: "radio",
-    question: "What is your biological sex?",
+    question: "What is your age range?",
     options: [
-      { value: "male", label: "Male" },
-      { value: "female", label: "Female" }
+      { value: "Under 30", label: "Under 30" },
+      { value: "30-39", label: "30-39" },
+      { value: "40-49", label: "40-49" },
+      { value: "50-59", label: "50-59" },
+      { value: "60+", label: "60+" }
     ]
   },
   {
     id: 4,
     type: "radio",
-    question: "Do you have a primary care provider?",
+    question: "What is your biological sex?",
     options: [
-      { value: "yes", label: "Yes" },
-      { value: "no", label: "No" }
+      { value: "Male", label: "Male" },
+      { value: "Female", label: "Female" }
     ]
   },
   {
     id: 5,
     type: "radio",
-    question: "Have you had regular labs drawn this year?",
+    question: "Have you ever had hormone therapy before?",
     options: [
-      { value: "yes", label: "Yes" },
-      { value: "no", label: "No" },
-      { value: "unsure", label: "Not sure" }
+      { value: "Never", label: "Never" },
+      { value: "Yes, in the past", label: "Yes, in the past" },
+      { value: "Yes, currently", label: "Yes, currently" }
     ]
   },
   {
     id: 6,
-    type: "radio",
-    question: "Do you have any significant health problems?",
-    subtext: "Heart disease, diabetes, cancer, etc.",
-    options: [
-      { value: "none", label: "No" },
-      { value: "mild", label: "Yes, minor/well-controlled" },
-      { value: "moderate", label: "Yes, moderate" },
-      { value: "severe", label: "Yes, significant" }
-    ]
+    type: "textarea",
+    question: "If yes, please provide details about your past hormone therapy",
+    subtext: "Leave blank if you've never had hormone therapy",
+    placeholder: "e.g., type of therapy, duration, results...",
+    optional: true
   },
   {
     id: 7,
-    type: "radio",
-    question: "Have you ever had hormone therapy before?",
-    options: [
-      { value: "never", label: "Never" },
-      { value: "past", label: "Yes, in the past" },
-      { value: "current", label: "Yes, currently" }
-    ]
+    type: "textarea",
+    question: "Do you have any medical conditions we should know about?",
+    subtext: "Heart disease, diabetes, cancer, etc. or write 'None'",
+    placeholder: "List any significant health conditions...",
+    optional: true
   },
   {
     id: 8,
+    type: "textarea",
+    question: "Are you currently taking any medications?",
+    subtext: "Include prescriptions, supplements, etc. or write 'None'",
+    placeholder: "List your current medications...",
+    optional: true
+  },
+  {
+    id: 9,
     type: "textarea",
     question: "What are your primary goals for hormone therapy?",
     placeholder: "e.g., increase energy, improve sleep, manage weight, enhance mood..."
   },
   {
-    id: 9,
+    id: 10,
+    type: "radio",
+    question: "Do you have insurance coverage?",
+    options: [
+      { value: "Blue Cross Blue Shield", label: "Blue Cross Blue Shield" },
+      { value: "TRICARE", label: "TRICARE" },
+      { value: "Other insurance", label: "Other insurance" },
+      { value: "No insurance / Self-pay", label: "No insurance / Self-pay" }
+    ]
+  },
+  {
+    id: 11,
     type: "contact",
     question: "Contact Information",
     subtext: "We'll reach out to schedule your free consultation"
@@ -173,6 +188,11 @@ export const HRTQuizModal = ({ isOpen, onClose }: HRTQuizModalProps) => {
       return answers[currentQuestion]?.length > 0;
     }
     
+    // Allow proceeding if question is optional or if answer is provided
+    if (question.optional) {
+      return true;
+    }
+    
     return answers[currentQuestion] !== undefined && answers[currentQuestion] !== "";
   };
 
@@ -196,19 +216,19 @@ export const HRTQuizModal = ({ isOpen, onClose }: HRTQuizModalProps) => {
     try {
       // Prepare quiz data
       const quizData = {
-        symptoms: answers[0] || [],
-        age_range: answers[1] || "",
-        sex: answers[2] || "",
-        has_pcp: answers[3] || "",
-        recent_labs: answers[4] || "",
-        health_problems: answers[5] || "",
-        previous_hrt: answers[6] || "",
-        goals: answers[7] || "",
-        first_name: contactInfo.firstName,
-        last_name: contactInfo.lastName,
+        name: `${contactInfo.firstName} ${contactInfo.lastName}`,
         email: contactInfo.email,
         phone: contactInfo.phone,
-        created_at: new Date().toISOString()
+        symptoms: answers[0] || [],
+        symptom_duration: answers[1] || "",
+        age_range: answers[2] || "",
+        gender: answers[3] || "",
+        past_hrt: answers[4] || "",
+        past_hrt_details: answers[5] || "",
+        medical_conditions: answers[6] || "",
+        current_medications: answers[7] || "",
+        primary_goal: answers[8] || "",
+        insurance: answers[9] || ""
       };
 
       // Call edge function to send email
@@ -223,8 +243,8 @@ export const HRTQuizModal = ({ isOpen, onClose }: HRTQuizModalProps) => {
 
       trackEvent('hrt_quiz_completed', {
         age_range: quizData.age_range,
-        sex: quizData.sex,
-        previous_hrt: quizData.previous_hrt
+        gender: quizData.gender,
+        past_hrt: quizData.past_hrt
       });
 
       toast.success("Thank you! We'll contact you soon to schedule your free consultation.");
@@ -319,14 +339,15 @@ export const HRTQuizModal = ({ isOpen, onClose }: HRTQuizModalProps) => {
           )}
 
           {/* Textarea Questions */}
-          {question.type === "textarea" && (
-            <Textarea
-              placeholder={question.placeholder}
-              value={answers[currentQuestion] || ""}
-              onChange={(e) => handleTextAnswer(e.target.value)}
-              className="min-h-[120px]"
-            />
-          )}
+            {question.type === "textarea" && (
+              <Textarea
+                placeholder={question.placeholder}
+                value={answers[currentQuestion] || ""}
+                onChange={(e) => handleTextAnswer(e.target.value)}
+                className="min-h-[120px]"
+                required={!question.optional}
+              />
+            )}
 
           {/* Contact Form */}
           {question.type === "contact" && (
