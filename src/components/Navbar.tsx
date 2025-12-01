@@ -118,7 +118,9 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           {/* Logo / Brand */}
           <button 
             onClick={() => scrollToSection("hero")}
-            className="font-playfair text-xl tracking-wide text-foreground hover:text-primary transition-colors"
+            className={`font-playfair text-xl tracking-wide transition-colors ${
+              isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-white/80"
+            }`}
           >
             Elevated Health
           </button>
@@ -127,28 +129,36 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           <div className="hidden md:flex items-center gap-8">
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.ketamine)}
-              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
+              className={`text-sm font-lato font-normal tracking-wide transition-colors elegant-underline ${
+                isScrolled ? "text-muted-foreground hover:text-foreground" : "text-white/80 hover:text-white"
+              }`}
             >
               Ketamine
             </button>
 
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.weightloss)}
-              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
+              className={`text-sm font-lato font-normal tracking-wide transition-colors elegant-underline ${
+                isScrolled ? "text-muted-foreground hover:text-foreground" : "text-white/80 hover:text-white"
+              }`}
             >
               Weight Loss
             </button>
 
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.hormones)}
-              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
+              className={`text-sm font-lato font-normal tracking-wide transition-colors elegant-underline ${
+                isScrolled ? "text-muted-foreground hover:text-foreground" : "text-white/80 hover:text-white"
+              }`}
             >
               Hormones
             </button>
 
             <button 
               onClick={() => scrollToSection("contact")}
-              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
+              className={`text-sm font-lato font-normal tracking-wide transition-colors elegant-underline ${
+                isScrolled ? "text-muted-foreground hover:text-foreground" : "text-white/80 hover:text-white"
+              }`}
             >
               Contact
             </button>
@@ -161,7 +171,11 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="outline"
-                    className="font-lato font-normal text-sm tracking-wide px-4 py-2 border-primary/50 text-primary hover:bg-primary/5 hover:text-primary gap-2"
+                    className={`font-lato font-normal text-sm tracking-wide px-4 py-2 gap-2 ${
+                      isScrolled 
+                        ? "border-primary/50 text-primary hover:bg-primary/5 hover:text-primary" 
+                        : "border-white/50 text-white hover:bg-white/10 hover:text-white"
+                    }`}
                   >
                     <User className="w-4 h-4" />
                     {userName || "My Account"}
@@ -199,7 +213,11 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
             ) : (
               <Button 
                 variant="outline"
-                className="font-lato font-normal text-sm tracking-wide px-5 py-2 border-primary/50 text-primary hover:bg-primary/5 hover:text-primary"
+                className={`font-lato font-normal text-sm tracking-wide px-5 py-2 ${
+                  isScrolled 
+                    ? "border-primary/50 text-primary hover:bg-primary/5 hover:text-primary" 
+                    : "border-white/50 text-white hover:bg-white/10 hover:text-white"
+                }`}
                 onClick={() => navigate("/patient/login")}
               >
                 Patient Portal
@@ -217,7 +235,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-foreground"
+            className={`md:hidden p-2 ${isScrolled ? "text-foreground" : "text-white"}`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
