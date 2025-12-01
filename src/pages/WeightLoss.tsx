@@ -68,73 +68,13 @@ const WeightLoss = () => {
     }
   ];
 
-  const pricingTiers = [
-    {
-      name: "Semaglutide Program",
-      price: "$349-399",
-      period: "/month",
-      description: "Perfect for those starting their weight loss journey",
-      features: [
-        "Starter or maintenance dose",
-        "All visits included",
-        "Weekly support",
-        "B12 included",
-        "Injection supplies",
-        "Side-effect management"
-      ],
-      highlight: false,
-      color: "border-border"
-    },
-    {
-      name: "Tirzepatide Program",
-      price: "$499-699",
-      period: "/month",
-      description: "Enhanced medication for accelerated results",
-      features: [
-        "Starter to therapeutic doses",
-        "All visits included",
-        "Weekly support",
-        "B12 included",
-        "Injection supplies",
-        "Priority scheduling",
-        "Enhanced monitoring"
-      ],
-      highlight: false,
-      color: "border-accent"
-    },
-    {
-      name: "Hormone Add-On",
-      price: "$149",
-      period: "/month",
-      description: "Optimize hormones while losing weight",
-      features: [
-        "Hormone labs",
-        "Testosterone/estrogen optimization",
-        "Symptom tracking",
-        "Consultation + follow-up",
-        "Combines with any program"
-      ],
-      highlight: false,
-      color: "border-gold"
-    },
-    {
-      name: "Full Body Renewal",
-      price: "$799",
-      period: "/month",
-      description: "Our signature all-inclusive transformation package",
-      features: [
-        "GLP-1 weight loss medication",
-        "Hormone optimization",
-        "Monthly metabolic labs",
-        "Mental health check-ins",
-        "Priority scheduling",
-        "Supplement starter kit",
-        "Unlimited support",
-        "Complete care coordination"
-      ],
-      highlight: true,
-      color: "border-primary"
-    }
+  const membershipInclusions = [
+    "FDA-Approved GLP-1 Medication (Semaglutide) included.",
+    "ZRT Saliva Diagnostic Kit (shipped to your door).",
+    "Hormone Blocker Analysis (Cortisol, Estrogen, Testosterone check).",
+    "Adrenal & Hormone Support Protocols (if indicated by labs).",
+    "Direct Provider Access (Message Lauren anytime).",
+    "Priority Shipping from our Compounding Partner."
   ];
 
   const faqs = [
@@ -402,70 +342,85 @@ const WeightLoss = () => {
             </div>
           </section>
 
-          {/* Pricing Tiers */}
-          <section className="py-16 md:py-24 bg-secondary/30">
-            <div className="container mx-auto px-4 sm:px-6">
+          {/* The Elevated Membership */}
+          <section className="py-16 md:py-24 relative overflow-hidden">
+            {/* Soft Slate Blue Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2C3E50]/10 via-[#34495e]/15 to-[#2C3E50]/20" />
+            
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="max-w-4xl mx-auto text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Choose Your Program
+                <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                  By Invitation
+                </p>
+                <h2 className="font-cormorant text-primary text-3xl md:text-4xl font-bold mb-4">
+                  The Elevated Membership
                 </h2>
-                <p className="text-lg text-muted-foreground">
-                  Select the program that fits your goals and budget
+                <p className="text-lg text-muted-foreground font-lato">
+                  A private, all-inclusive approach to hormonal weight optimization
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-                {pricingTiers.map((tier, index) => (
-                  <Card 
-                    key={index} 
-                    className={`relative border-2 ${tier.color} hover:shadow-2xl transition-all animate-fade-in-up ${
-                      tier.highlight ? 'ring-2 ring-primary ring-offset-2 scale-105' : ''
-                    }`}
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    {tier.highlight && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                        <span className="bg-primary text-white px-4 py-1 rounded-full text-sm font-semibold">
-                          Most Popular
-                        </span>
+              {/* Glassmorphism Membership Card */}
+              <div className="max-w-xl mx-auto">
+                <div 
+                  className="relative p-8 md:p-10 rounded-2xl border border-gold/40 animate-fade-in-up"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 50%, rgba(250,247,242,0.8) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 8px 32px rgba(44, 62, 80, 0.12), inset 0 1px 0 rgba(255,255,255,0.8)'
+                  }}
+                >
+                  {/* Subtle Gold Glow */}
+                  <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-gold/20 via-transparent to-gold/10 pointer-events-none" />
+                  
+                  {/* Content */}
+                  <div className="relative z-10">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                      <h3 className="font-cormorant text-2xl md:text-3xl text-primary font-bold mb-4">
+                        The Hormonal Weight Reset
+                      </h3>
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="font-cormorant text-5xl md:text-6xl text-primary font-light">$399</span>
+                        <span className="text-primary/60 font-lato">/ month</span>
                       </div>
-                    )}
-                    <CardContent className="p-6">
-                      <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                      <div className="mb-4">
-                        <span className="text-4xl font-bold">{tier.price}</span>
-                        <span className="text-muted-foreground">{tier.period}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-6">{tier.description}</p>
-                      
-                      <ul className="space-y-3 mb-6">
-                        {tier.features.map((feature, fIndex) => (
-                          <li key={fIndex} className="flex items-start gap-2">
-                            <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                            <span className="text-sm">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <p className="mt-3 text-sm text-primary/60 font-lato">
+                        All-inclusive care. No hidden lab fees. Cancel anytime.
+                      </p>
+                    </div>
 
-                      <Button 
-                        onClick={scrollToBooking} 
-                        className="w-full"
-                        variant={tier.highlight ? "default" : "outline"}
-                      >
-                        Get Started
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                    {/* Divider */}
+                    <div className="h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent mb-8" />
 
-              <div className="mt-12 text-center">
-                <p className="text-muted-foreground mb-4">
-                  Questions about which program is right for you?
-                </p>
-                <Button onClick={scrollToBooking} size="lg" variant="outline">
-                  Schedule Free Consultation
-                </Button>
+                    {/* Inclusions */}
+                    <ul className="space-y-4 mb-8">
+                      {membershipInclusions.map((inclusion, index) => (
+                        <li 
+                          key={index} 
+                          className="flex items-start gap-3 animate-fade-in-up"
+                          style={{ animationDelay: `${index * 0.05}s` }}
+                        >
+                          <CheckCircle2 className="h-5 w-5 text-gold shrink-0 mt-0.5" />
+                          <span className="text-primary/80 font-lato text-sm md:text-base">{inclusion}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* CTA Button */}
+                    <Button 
+                      onClick={scrollToBooking} 
+                      size="lg" 
+                      className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-white font-lato"
+                    >
+                      Apply for Membership
+                    </Button>
+
+                    {/* Subtle Footer */}
+                    <p className="mt-6 text-center text-xs text-primary/50 font-lato">
+                      Limited availability. We accept new members each month.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
