@@ -89,6 +89,145 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          patient_id: string
+          protocol_snapshot: Json | null
+          status: Database["public"]["Enums"]["order_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          patient_id: string
+          protocol_snapshot?: Json | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          patient_id?: string
+          protocol_snapshot?: Json | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patients: {
+        Row: {
+          created_at: string | null
+          current_protocol: string | null
+          dob: string | null
+          full_name: string
+          id: string
+          safety_flags: Json | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_protocol?: string | null
+          dob?: string | null
+          full_name: string
+          id?: string
+          safety_flags?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_protocol?: string | null
+          dob?: string | null
+          full_name?: string
+          id?: string
+          safety_flags?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      protocols: {
+        Row: {
+          created_at: string | null
+          dispenser_type: string | null
+          id: string
+          instructions: string | null
+          name: string
+          primary_compound: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dispenser_type?: string | null
+          id?: string
+          instructions?: string | null
+          name: string
+          primary_compound?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dispenser_type?: string | null
+          id?: string
+          instructions?: string | null
+          name?: string
+          primary_compound?: string | null
+        }
+        Relationships: []
+      }
+      symptom_logs: {
+        Row: {
+          androgen_score: number | null
+          cortisol_score: number | null
+          created_at: string | null
+          date_logged: string | null
+          estrogen_score: number | null
+          id: string
+          patient_id: string
+          progesterone_score: number | null
+          raw_answers: Json | null
+        }
+        Insert: {
+          androgen_score?: number | null
+          cortisol_score?: number | null
+          created_at?: string | null
+          date_logged?: string | null
+          estrogen_score?: number | null
+          id?: string
+          patient_id: string
+          progesterone_score?: number | null
+          raw_answers?: Json | null
+        }
+        Update: {
+          androgen_score?: number | null
+          cortisol_score?: number | null
+          created_at?: string | null
+          date_logged?: string | null
+          estrogen_score?: number | null
+          id?: string
+          patient_id?: string
+          progesterone_score?: number | null
+          raw_answers?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "symptom_logs_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -125,6 +264,11 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "staff" | "user"
+      order_status:
+        | "pending_review"
+        | "authorized"
+        | "sent_to_pharmacy"
+        | "completed"
       submission_status: "new" | "contacted" | "scheduled" | "completed"
     }
     CompositeTypes: {
@@ -254,6 +398,12 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "staff", "user"],
+      order_status: [
+        "pending_review",
+        "authorized",
+        "sent_to_pharmacy",
+        "completed",
+      ],
       submission_status: ["new", "contacted", "scheduled", "completed"],
     },
   },
