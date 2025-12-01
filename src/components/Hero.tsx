@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check } from "lucide-react";
-import heroImage from "@/assets/hero-cool-luxury.jpg";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import heroImage from "@/assets/hero-dark-slate.jpg";
 import { trackCTAClick } from "@/lib/analytics";
 
 interface HeroProps {
@@ -9,7 +7,8 @@ interface HeroProps {
 }
 
 const Hero = ({ onOpenBooking }: HeroProps) => {
-  const scrollToContact = () => {
+  const handleRequestAccess = () => {
+    trackCTAClick('hero_request_access', 'contact_section');
     const element = document.getElementById("contact");
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -18,96 +17,46 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center">
-      {/* Split Layout */}
-      <div className="w-full min-h-screen flex flex-col lg:flex-row">
-        {/* Left Content Side */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center px-8 sm:px-12 lg:px-20 py-32 lg:py-20 bg-background">
-          <div className="max-w-xl">
-            {/* Elegant Tagline */}
-            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-6 animate-fade-in font-lato font-light">
-              Augusta's Premier Wellness Destination
-            </p>
-            
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-cormorant text-foreground leading-[1.1] mb-8 animate-fade-in-up">
-              Restore.<br />
-              Renew.<br />
-              <span className="text-primary">Rebalance.</span>
-            </h1>
+      {/* Full-screen Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src={heroImage} 
+          alt="Deep blue slate texture" 
+          className="w-full h-full object-cover"
+          loading="eager"
+        />
+        {/* Dark overlay for text contrast */}
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
-            {/* Elegant Divider */}
-            <div className="w-16 h-px bg-primary/40 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }} />
+      {/* Centered Content */}
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        {/* Gold Tagline */}
+        <p className="text-sm tracking-[0.4em] uppercase text-gold mb-8 font-lato font-light animate-fade-in">
+          Augusta's Premier Wellness Destination
+        </p>
 
-            {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-muted-foreground font-lato font-light leading-relaxed mb-10 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-              Experience transformative wellness through our curated treatments — 
-              Ketamine Therapy, Medical Weight Loss, and Hormone Optimization.
-            </p>
+        {/* Main Headline */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cormorant text-white leading-[1.1] mb-8 animate-fade-in-up">
+          Medical Precision.<br />
+          Holistic Restoration.
+        </h1>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-              <Button 
-                size="lg" 
-                onClick={() => {
-                  trackCTAClick('hero_book_consultation', 'contact_section');
-                  scrollToContact();
-                }}
-                className="font-lato font-normal tracking-wide text-sm px-8 py-6"
-              >
-                Book Your Consultation
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button 
-                variant="outline"
-                size="lg"
-                asChild
-                className="font-lato font-normal tracking-wide text-sm px-8 py-6"
-                onClick={() => trackCTAClick('hero_call', 'tel:+17067603470')}
-              >
-                <a href="tel:+17067603470">
-                  (706) 760-3470
-                </a>
-              </Button>
-            </div>
+        {/* Sub-headline */}
+        <p className="text-lg sm:text-xl text-white/80 font-lato font-light leading-relaxed mb-12 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+          Academy-Certified Hormone Optimization, Ketamine Therapy, and Medical Weight Loss.
+        </p>
 
-            {/* Osmind Portal Note */}
-            <p className="mt-4 text-sm text-muted-foreground font-lato font-light animate-fade-in" style={{ animationDelay: "0.5s" }}>
-              Request an appointment to receive your secure Osmind portal invitation.
-            </p>
-
-            {/* Why Choose Us - Vertical List with Gold Checkmarks */}
-            <div className="mt-12 pt-8 border-t border-border animate-fade-in" style={{ animationDelay: "0.6s" }}>
-              <p className="text-sm tracking-[0.15em] uppercase text-foreground mb-5 font-lato font-medium">
-                Why Choose Elevated Health
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground font-lato">Board-Certified Providers</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground font-lato">Insurance Accepted</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground font-lato">Private Treatment Suites</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Image Side */}
-        <div className="w-full lg:w-1/2 relative min-h-[50vh] lg:min-h-screen">
-          <img 
-            src={heroImage} 
-            alt="Elegant minimalist interior with warm ambient lighting" 
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="eager"
-          />
-          {/* Subtle overlay for elegance */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/10 via-transparent to-transparent lg:bg-gradient-to-r lg:from-background/5 lg:via-transparent lg:to-transparent" />
+        {/* Transparent Button */}
+        <div className="animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+          <Button 
+            variant="outline"
+            size="lg"
+            onClick={handleRequestAccess}
+            className="bg-transparent border-white text-white hover:bg-white hover:text-foreground font-lato font-normal tracking-[0.15em] uppercase text-sm px-12 py-6 rounded-none transition-all duration-300"
+          >
+            Request Access
+          </Button>
         </div>
       </div>
     </section>

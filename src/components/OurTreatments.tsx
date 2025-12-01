@@ -1,15 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { SITE_CONFIG } from "@/lib/siteConfig";
-import ketamineImg from "@/assets/service-ketamine-zen.jpg";
-import weightlossImg from "@/assets/service-weightloss-tape.jpg";
-import hormonesImg from "@/assets/service-hormones-cool.jpg";
 
 interface OurTreatmentsProps {
   onOpenBooking: () => void;
 }
 
-// Thin Stroke Minimalist Icons in Dark Slate Blue
+// Thin Stroke Minimalist Icons (White)
 const LotusIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 2C12 2 8 6 8 10C8 14 12 18 12 18C12 18 16 14 16 10C16 6 12 2 12 2Z" />
@@ -39,29 +35,26 @@ const treatments = [
   {
     id: "ketamine",
     title: "Ketamine Therapy",
-    subtitle: "Mental Wellness",
-    description: "FDA-approved treatment for depression, anxiety, and PTSD. Experience breakthrough relief in a serene, medically supervised environment.",
-    image: ketamineImg,
+    tagline: "Mental Clarity & Neural Repair",
     icon: LotusIcon,
     route: "/ketamine",
+    gradient: "from-[#1a365d] via-[#2c5282] to-[#1a365d]",
   },
   {
     id: "weight-loss",
     title: "Medical Weight Loss",
-    subtitle: "Body Transformation",
-    description: "Personalized GLP-1 programs designed to help you achieve sustainable results with ongoing provider support.",
-    image: weightlossImg,
+    tagline: "Metabolic Reset & Composition",
     icon: DNAIcon,
     route: "/weight-loss",
+    gradient: "from-[#2d3748] via-[#4a5568] to-[#2d3748]",
   },
   {
     id: "hormones",
     title: "Hormone Optimization",
-    subtitle: "Women's Health",
-    description: "Advanced bio-identical hormone replacement therapy (BHRT) for women. Specialized care for perimenopause, menopause, and hormonal balance to restore energy and vitality. Academy-level protocols for safe, effective results.",
-    image: hormonesImg,
+    tagline: "Women's Vitality & Academy-Level Protocols",
     icon: FeminineIcon,
     route: "/hormones",
+    gradient: "from-[#2c3e50] via-[#34495e] to-[#2c3e50]",
   },
 ];
 
@@ -73,62 +66,51 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-20">
-          <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
+          <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
             Our Services
           </p>
           <h2 className="font-cormorant text-foreground mb-6">
-            Curated Treatments
+            Pillars of Care
           </h2>
           <p className="text-lg text-muted-foreground font-lato font-light leading-relaxed">
-            Each treatment is thoughtfully designed to address your unique wellness journey
+            Three integrated pathways to restore your wellbeing
           </p>
         </div>
 
-        {/* Treatments Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-8">
+        {/* Textural Cards Grid - Credit Card Style */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-6">
           {treatments.map((treatment, index) => {
             const Icon = treatment.icon;
             return (
               <article 
                 key={treatment.id}
-                className="group cursor-pointer"
+                className="group cursor-pointer animate-fade-in-up"
                 onClick={() => navigate(treatment.route)}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                {/* Image Container */}
-                <div className="relative aspect-[4/5] mb-8 overflow-hidden bg-secondary">
-                  <img
-                    src={treatment.image}
-                    alt={treatment.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  {/* Subtle overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-foreground/10" />
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-500" />
-                </div>
+                {/* Card Container - Credit Card Aspect Ratio */}
+                <div className={`relative aspect-[1.6/1] rounded-xl overflow-hidden bg-gradient-to-br ${treatment.gradient} p-8 flex flex-col justify-between transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-2xl`}>
+                  {/* Subtle texture overlay */}
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.05)_0%,_transparent_50%)]" />
+                  
+                  {/* Top Section - Icon */}
+                  <div className="relative z-10">
+                    <Icon className="h-10 w-10 text-white/90" />
+                  </div>
 
-                {/* Content */}
-                <div className="space-y-4">
-                  {/* Icon and Subtitle */}
-                  <div className="flex items-center gap-3">
-                    <Icon className="h-5 w-5 text-primary" />
-                    <p className="text-xs tracking-[0.2em] uppercase text-accent font-lato">
-                      {treatment.subtitle}
+                  {/* Bottom Section - Content */}
+                  <div className="relative z-10 space-y-2">
+                    <h3 className="text-xl lg:text-2xl font-cormorant text-white">
+                      {treatment.title}
+                    </h3>
+                    <p className="text-white/70 font-lato font-light text-sm">
+                      {treatment.tagline}
                     </p>
                   </div>
-                  
-                  <h3 className="text-2xl lg:text-3xl font-cormorant text-foreground group-hover:text-primary transition-colors duration-300">
-                    {treatment.title}
-                  </h3>
-                  <p className="text-muted-foreground font-lato font-light leading-relaxed text-sm">
-                    {treatment.description}
-                  </p>
-                  
-                  {/* Learn More Link */}
-                  <div className="flex items-center gap-2 pt-2 text-primary font-lato text-sm">
-                    <span className="elegant-underline">Learn More</span>
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+
+                  {/* Hover Arrow */}
+                  <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <ArrowRight className="h-5 w-5 text-white/80" />
                   </div>
                 </div>
               </article>

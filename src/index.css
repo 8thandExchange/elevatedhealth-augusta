@@ -35,11 +35,11 @@
     --accent-foreground: 0 0% 100%;
     --accent-light: 184 6% 63%;
 
-    /* Keep these for backward compatibility, now mapped to primary */
-    --gold: 210 29% 24%;
+    /* Gold accent for luxury highlights */
+    --gold: 43 74% 49%;
     --gold-foreground: 0 0% 100%;
-    --gold-light: 210 29% 34%;
-    --gold-dark: 210 29% 18%;
+    --gold-light: 43 74% 59%;
+    --gold-dark: 43 74% 39%;
 
     /* Hope - Soft blue-grey */
     --hope: 200 15% 50%;
