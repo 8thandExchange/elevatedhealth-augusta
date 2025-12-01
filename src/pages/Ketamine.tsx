@@ -5,8 +5,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/ketamine-hero-cool.jpg";
-import treatmentSuite from "@/assets/treatment-suite-interior.jpg";
 import { Helmet } from "react-helmet";
 import { useState } from "react";
 import ConsultationModal from "@/components/ConsultationModal";
@@ -60,36 +58,32 @@ const Ketamine = () => {
         <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
         
         <main>
-          {/* Hero Section - Full Width Abstract Background */}
-          <section className="relative min-h-[70vh] flex items-center justify-center">
-            <img 
-              src={heroImage} 
-              alt="Serene abstract background" 
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/10 to-background" />
+        {/* Hero Section - Full Width Gradient Background */}
+        <section className="relative min-h-[70vh] flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-[hsl(200,25%,35%)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/50" />
             
-            <div className="relative z-10 container mx-auto px-6 text-center py-32">
-              <p className="text-sm tracking-[0.3em] uppercase text-foreground/70 mb-6 font-lato font-light animate-fade-in">
-                Mental Wellness
-              </p>
-              <h1 className="font-cormorant text-foreground mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-                Ketamine Therapy
-              </h1>
-              <p className="text-xl text-foreground/80 max-w-2xl mx-auto mb-10 font-lato font-light leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
-                A breakthrough treatment for depression, anxiety, and PTSD—delivered with compassion in a sanctuary of healing.
-              </p>
-              <Button
-                onClick={scrollToContact}
-                size="lg"
-                className="animate-fade-in"
-                style={{ animationDelay: "0.3s" }}
-              >
-                Begin Your Journey
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </section>
+          <div className="relative z-10 container mx-auto px-6 text-center py-32">
+            <p className="text-sm tracking-[0.3em] uppercase text-white/70 mb-6 font-lato font-light animate-fade-in">
+              Mental Wellness
+            </p>
+            <h1 className="font-cormorant text-white mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+              Ketamine Therapy
+            </h1>
+            <p className="text-xl text-white/80 max-w-2xl mx-auto mb-10 font-lato font-light leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              A breakthrough treatment for depression, anxiety, and PTSD—delivered with compassion in a sanctuary of healing.
+            </p>
+            <Button
+              onClick={scrollToContact}
+              size="lg"
+              className="animate-fade-in bg-gold border-gold text-white hover:bg-gold-dark"
+              style={{ animationDelay: "0.3s" }}
+            >
+              Begin Your Journey
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </section>
 
           {/* The Philosophy / Science Section */}
           <section className="section-spacing bg-background">
@@ -160,15 +154,16 @@ const Ketamine = () => {
                     </ul>
                   </div>
 
-                  {/* Right - Interior Image */}
+                  {/* Right - Abstract Gradient Element */}
                   <div className="relative">
-                    <img 
-                      src={treatmentSuite} 
-                      alt="Private treatment suite at Elevated Health Augusta" 
-                      className="w-full h-auto rounded-sm"
-                    />
-                    {/* Warm overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/10 rounded-sm" />
+                    <div className="aspect-[4/3] rounded-sm bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/20 flex items-center justify-center">
+                      <div className="text-center p-8">
+                        <div className="text-6xl font-cormorant text-primary/30 mb-4">✦</div>
+                        <p className="text-muted-foreground font-light italic">
+                          "A sanctuary designed for healing"
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
