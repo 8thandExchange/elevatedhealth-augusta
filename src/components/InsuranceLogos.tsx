@@ -6,7 +6,7 @@ const InsuranceLogos = () => {
           <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
             Accessibility
           </p>
-          <h2 className="text-3xl sm:text-4xl font-playfair text-foreground mb-4">
+          <h2 className="text-3xl sm:text-4xl font-cormorant text-foreground mb-4">
             Insurance Accepted
           </h2>
           <p className="text-muted-foreground font-lato font-light">
@@ -17,17 +17,17 @@ const InsuranceLogos = () => {
         {/* Insurance Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div className="text-center p-8 bg-background rounded-sm">
-            <span className="font-playfair text-3xl text-foreground">BCBS</span>
+            <span className="font-cormorant text-3xl text-foreground">BCBS</span>
             <p className="text-sm text-muted-foreground font-lato mt-2">Blue Cross Blue Shield</p>
           </div>
 
           <div className="text-center p-8 bg-background rounded-sm">
-            <span className="font-playfair text-3xl text-foreground">TRICARE</span>
+            <span className="font-cormorant text-3xl text-foreground">TRICARE</span>
             <p className="text-sm text-muted-foreground font-lato mt-2">Military Health System</p>
           </div>
 
           <div className="text-center p-8 bg-background rounded-sm">
-            <span className="font-playfair text-3xl text-foreground">VA</span>
+            <span className="font-cormorant text-3xl text-foreground">VA</span>
             <p className="text-sm text-muted-foreground font-lato mt-2">Veterans Affairs</p>
           </div>
         </div>

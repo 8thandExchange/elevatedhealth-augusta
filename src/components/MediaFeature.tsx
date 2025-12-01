@@ -10,7 +10,7 @@ const MediaFeature = () => {
           <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
             Press
           </p>
-          <h2 className="text-3xl sm:text-4xl font-playfair text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-cormorant text-foreground">
             As Featured On
           </h2>
         </div>
@@ -31,7 +31,7 @@ const MediaFeature = () => {
             <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4 font-lato">
               WJBF News Channel 6
             </p>
-            <h3 className="text-2xl lg:text-3xl font-playfair text-foreground mb-4">
+            <h3 className="text-2xl lg:text-3xl font-cormorant text-foreground mb-4">
               Area's First Ketamine Clinic Opens in Evans
             </h3>
             <p className="text-muted-foreground font-lato font-light leading-relaxed mb-8">
