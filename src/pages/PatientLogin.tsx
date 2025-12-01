@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff } from "lucide-react";
+import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
 
 interface SafetyScreening {
@@ -442,6 +443,16 @@ const PatientLogin = () => {
             </Tabs>
           </CardContent>
         </Card>
+
+        <div className="text-center mt-6">
+          <Link 
+            to="/" 
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Website
+          </Link>
+        </div>
       </div>
     </div>
   );
