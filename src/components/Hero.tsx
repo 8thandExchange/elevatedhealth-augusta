@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-dark-slate.jpg";
 import { trackCTAClick } from "@/lib/analytics";
+
 interface HeroProps {
   onOpenBooking: () => void;
 }
@@ -16,17 +16,8 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center">
-      {/* Full-screen Background Image */}
-      <div className="absolute inset-0">
-        <img 
-          src={heroImage} 
-          alt="Dark slate blue luxury texture"
-          className="w-full h-full object-cover"
-          loading="eager"
-        />
-        {/* Refined dark overlay - lighter for sophistication */}
-        <div className="absolute inset-0 bg-black/25" />
-      </div>
+      {/* Soft Gradient Background - Dark Slate to Lighter Slate Blue */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-[hsl(200,25%,35%)]" />
 
       {/* Centered Content */}
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
