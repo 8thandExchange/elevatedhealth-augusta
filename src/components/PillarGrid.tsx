@@ -88,22 +88,22 @@ const PillarGrid = ({ onOpenBooking }: PillarGridProps) => {
                   style={{ animationDelay: `${index * 0.15}s` }}
                   onClick={() => navigate(pillar.route)}
                 >
-                  <CardContent className="p-10">
+                  <CardContent className="p-6 lg:p-8">
                     {/* Thin-stroke Icon */}
-                    <div className="mb-8">
-                      <Icon className="h-12 w-12 text-primary" />
+                    <div className="mb-6">
+                      <Icon className="h-16 w-16 text-primary" />
                     </div>
                     
-                    <h3 className="text-2xl font-cormorant mb-4 text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="text-2xl font-cormorant mb-3 text-foreground group-hover:text-primary transition-colors">
                       {pillar.title}
                     </h3>
                     
-                    <p className="text-muted-foreground mb-8 leading-relaxed font-light">
+                    <p className="text-muted-foreground mb-6 leading-relaxed font-light">
                       {pillar.description}
                     </p>
 
                     {/* Features with slate blue dots */}
-                    <ul className="space-y-3 mb-8">
+                    <ul className="space-y-2 mb-6">
                       {pillar.features.map((feature, idx) => (
                         <li key={idx} className="text-sm text-muted-foreground flex items-center gap-3">
                           <div className="h-1.5 w-1.5 rounded-full bg-primary" />
