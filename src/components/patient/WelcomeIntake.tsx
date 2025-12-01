@@ -5,10 +5,10 @@ import { ClipboardList, Clock, Shield, CheckCircle } from "lucide-react";
 
 interface WelcomeIntakeProps {
   patientName: string;
-  intakeCompleted: boolean;
+  intakeCompleted?: boolean;
 }
 
-const WelcomeIntake = ({ patientName, intakeCompleted }: WelcomeIntakeProps) => {
+const WelcomeIntake = ({ patientName, intakeCompleted = false }: WelcomeIntakeProps) => {
   const navigate = useNavigate();
 
   if (intakeCompleted) {
