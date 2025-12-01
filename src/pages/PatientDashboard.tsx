@@ -8,6 +8,7 @@ import { Loader2, Activity, Zap, Heart, Brain, LogOut, Plus, Clock } from "lucid
 import CircularGauge from "@/components/ui/CircularGauge";
 import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
+import OnboardingProgress from "@/components/patient/OnboardingProgress";
 
 interface SymptomLog {
   id: string;
@@ -217,6 +218,15 @@ const PatientDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Onboarding Progress - Show if not fully active */}
+        {!isAuthorized && (
+          <OnboardingProgress
+            onboardingStatus={patient?.onboarding_status || null}
+            intakeCompleted={patient?.intake_completed || false}
+            hasAuthorizedOrder={isAuthorized}
+          />
+        )}
+
         {/* Circular Health Gauges */}
         {latestLog && (
           <div>
