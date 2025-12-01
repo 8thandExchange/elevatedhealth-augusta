@@ -18,17 +18,31 @@ const WeightLoss = () => {
     window.open(SITE_CONFIG.bookingUrl, "_blank");
   };
 
+  // 3-Step Concierge Workflow
+  const processSteps = [
+    {
+      step: "01",
+      headline: "Test, Don't Guess.",
+      body: "We ship a ZRT Saliva Test kit directly to your door. No labs, no needles, and no waiting rooms. Simply complete the swab at home to reveal your cortisol, estrogen, and testosterone levels."
+    },
+    {
+      step: "02",
+      headline: "Identify Your Barriers.",
+      body: "Our providers analyze your lab results to find the invisible hormonal blockers—like high cortisol or low testosterone—that have made previous diets fail."
+    },
+    {
+      step: "03",
+      headline: "GLP-1s + Hormone Support.",
+      body: "Receive your FDA-approved GLP-1 medication alongside targeted hormone support to ensure you burn fat while protecting your energy and lean muscle."
+    }
+  ];
+
   const programIncludes = [
-    { icon: LineChart, text: "Comprehensive metabolic labs (CBC, CMP, A1c, lipids, TSH, cortisol)" },
-    { icon: Scale, text: "Body composition analysis (monthly)" },
-    { icon: Droplet, text: "Personalized dosing plan for semaglutide or tirzepatide" },
-    { icon: Clock, text: "Weekly progress check-ins (virtual or in-person)" },
-    { icon: MessageCircle, text: "Unlimited messaging support" },
-    { icon: Shield, text: "Side-effect management + dose adjustments" },
-    { icon: Apple, text: "Nutritional guidance" },
-    { icon: Brain, text: "Behavioral support modules" },
-    { icon: Heart, text: "Optional mental health integration" },
-    { icon: Sparkles, text: "No hidden fees" }
+    { icon: Pill, text: "Weekly GLP-1 Medication (Semaglutide)" },
+    { icon: Droplet, text: "ZRT Home Hormone Kit (Included)" },
+    { icon: Activity, text: "'Blocker' Analysis Review" },
+    { icon: MessageCircle, text: "Direct Provider Messaging" },
+    { icon: Apple, text: "Nutrition & Macro Guidance" }
   ];
 
   const differentiators = [
@@ -125,40 +139,20 @@ const WeightLoss = () => {
 
   const faqs = [
     {
-      q: "How is this different from other weight loss programs?",
-      a: "We don't just prescribe medication—we transform lives. Unlike other programs, we offer comprehensive metabolic labs, psychological support, weekly check-ins, lifestyle coaching, and ketamine-quality medical oversight. You'll never feel alone in your journey."
+      q: "How is this different from other online Semaglutide clinics?",
+      a: "Most clinics prescribe blindly. We are the only program that combines GLP-1 therapy with advanced saliva testing. We don't just suppress your appetite; we identify if stress (cortisol) or hormonal imbalances are driving your weight gain in the first place."
     },
     {
-      q: "What makes the Full Body Renewal Package special?",
-      a: "This is Augusta's only comprehensive program combining weight loss, hormone optimization, and mental health support under one roof. It's designed for patients who want complete transformation, not just a prescription."
+      q: "Do I need to go to a lab for blood work?",
+      a: "No. We use advanced ZRT Saliva testing which is more accurate for tissue hormone levels and can be done from the comfort of your home. No needles required."
     },
     {
-      q: "Do you offer weekly check-ins?",
-      a: "Yes! Unlike most programs, we provide weekly progress check-ins either virtually or in-person, plus unlimited messaging support. You'll always have access to our medical team."
+      q: "Why do you test hormones for weight loss?",
+      a: "Because calories aren't the whole story. High cortisol causes belly fat, and estrogen dominance causes hip retention. If we don't fix the hormones, the weight often comes back."
     },
     {
-      q: "What is semaglutide and tirzepatide?",
-      a: "Both are FDA-approved GLP-1 medications that help regulate appetite, slow digestion, and improve blood sugar control. Tirzepatide (dual GLP-1/GIP) typically provides faster results. We'll help you choose the right medication during your consultation."
-    },
-    {
-      q: "Will I be monitored by a real doctor?",
-      a: "Absolutely. You'll receive the same level of medical oversight we provide for our ketamine therapy patients. This includes comprehensive labs, body composition analysis, and ongoing adjustments to your treatment plan."
-    },
-    {
-      q: "What if I hit a plateau?",
-      a: "Plateaus are normal, but unlike other programs, we won't leave you frustrated. We'll adjust your dosing, review your labs, modify your nutrition plan, and provide behavioral support to get you back on track."
-    },
-    {
-      q: "Is the hormone optimization necessary?",
-      a: "Not required, but highly recommended. Many patients struggle to lose weight due to hormone imbalances. Optimizing hormones while on GLP-1 therapy accelerates results and improves overall wellbeing."
-    },
-    {
-      q: "What kind of results can I expect?",
-      a: "With our comprehensive program, patients typically achieve 15-20% body weight loss or more. Results vary based on starting weight, medication choice, and commitment to lifestyle changes. We'll set realistic goals during your consultation."
-    },
-    {
-      q: "Do you accept insurance?",
-      a: "We accept several insurance plans and can provide documentation for reimbursement. Contact us to verify your specific coverage. Many patients find our program more affordable than national chains when you factor in the level of support included."
+      q: "What if I have 'Adrenal Fatigue'?",
+      a: "This is exactly why we test. If your cortisol is dysregulated, we add a specific Adrenal Support protocol to your plan to ensure your body feels safe enough to release the weight."
     }
   ];
 
@@ -284,40 +278,88 @@ const WeightLoss = () => {
             </div>
           </section>
 
-          {/* What's Included Section */}
-          <section className="py-16 md:py-24 bg-secondary/30">
+          {/* How It Works - 3-Step Concierge Workflow */}
+          <section className="py-16 md:py-24 bg-background">
             <div className="container mx-auto px-4 sm:px-6">
-              <div className="max-w-4xl mx-auto text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Weight Reset Program™ Includes
+              <div className="max-w-4xl mx-auto text-center mb-16">
+                <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                  The Process
+                </p>
+                <h2 className="font-cormorant text-primary text-3xl md:text-4xl font-bold mb-4">
+                  Your Concierge Weight Loss Journey
                 </h2>
-                <p className="text-lg text-muted-foreground">
-                  A medically supervised GLP-1 & metabolic optimization program
+                <p className="text-lg text-muted-foreground font-lato">
+                  A medically-guided pathway designed around your biology
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
-                {programIncludes.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <Card 
-                      key={index} 
-                      className="border-2 hover:border-primary/50 transition-all hover:shadow-lg animate-fade-in-up"
-                      style={{ animationDelay: `${index * 0.05}s` }}
-                    >
-                      <CardContent className="p-6 flex gap-4">
+              <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {processSteps.map((step, index) => (
+                  <div 
+                    key={index}
+                    className="relative animate-fade-in-up"
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                  >
+                    {/* Step Number */}
+                    <div className="text-6xl font-cormorant text-gold/30 font-bold mb-4">
+                      {step.step}
+                    </div>
+                    {/* Content */}
+                    <h3 className="text-xl font-cormorant text-primary font-bold mb-3">
+                      {step.headline}
+                    </h3>
+                    <p className="text-muted-foreground font-lato leading-relaxed">
+                      {step.body}
+                    </p>
+                    {/* Connector line (except last) */}
+                    {index < processSteps.length - 1 && (
+                      <div className="hidden md:block absolute top-8 left-full w-full h-px bg-gradient-to-r from-gold/30 to-transparent -translate-x-8" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* What's Included Section - Cream/Gold Theme */}
+          <section className="py-16 md:py-24 bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3]">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="max-w-4xl mx-auto text-center mb-12">
+                <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                  What You Get
+                </p>
+                <h2 className="font-cormorant text-primary text-3xl md:text-4xl font-bold mb-4">
+                  Hormonal Weight Reset Includes
+                </h2>
+                <p className="text-lg text-primary/70 font-lato">
+                  Everything you need for sustainable, biology-based weight loss
+                </p>
+              </div>
+
+              <div className="max-w-2xl mx-auto">
+                <div className="space-y-4">
+                  {programIncludes.map((item, index) => {
+                    const Icon = item.icon;
+                    return (
+                      <div 
+                        key={index} 
+                        className="flex items-center gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-gold/20 animate-fade-in-up"
+                        style={{ animationDelay: `${index * 0.08}s` }}
+                      >
                         <div className="shrink-0">
-                          <div className="p-3 bg-primary/10 rounded-lg">
-                            <Icon className="h-6 w-6 text-primary" />
-                          </div>
+                          <CheckCircle2 className="h-6 w-6 text-gold" />
                         </div>
-                        <div className="flex items-center">
-                          <p className="text-foreground">{item.text}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                        <p className="text-primary font-lato font-medium">{item.text}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-10 text-center">
+                  <Button onClick={scrollToBooking} size="lg" className="font-lato bg-primary hover:bg-primary/90 text-white">
+                    Check Your Hormone Blockers
+                  </Button>
+                </div>
               </div>
             </div>
           </section>
