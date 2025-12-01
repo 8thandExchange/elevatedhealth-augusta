@@ -17,22 +17,22 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
         <div className="w-full lg:w-1/2 flex items-center justify-center px-8 sm:px-12 lg:px-20 py-32 lg:py-20 bg-background">
           <div className="max-w-xl">
             {/* Elegant Tagline */}
-            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-6 animate-fade-in font-inter font-light">
+            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-6 animate-fade-in font-lato font-light">
               Augusta's Premier Wellness Destination
             </p>
             
             {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-cormorant font-light text-foreground leading-[1.1] mb-8 animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-playfair text-foreground leading-[1.1] mb-8 animate-fade-in-up">
               Restore.<br />
               Renew.<br />
               <span className="text-primary">Rebalance.</span>
             </h1>
 
             {/* Elegant Divider */}
-            <div className="w-16 h-px bg-primary/30 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }} />
+            <div className="w-16 h-px bg-primary/40 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }} />
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-muted-foreground font-inter font-light leading-relaxed mb-10 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+            <p className="text-lg sm:text-xl text-muted-foreground font-lato font-light leading-relaxed mb-10 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
               Experience transformative wellness through our curated treatments — 
               Ketamine Therapy, Medical Weight Loss, and Hormone Optimization.
             </p>
@@ -45,7 +45,7 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
                   trackCTAClick('hero_book_consultation', 'modal');
                   onOpenBooking();
                 }}
-                className="font-inter font-normal tracking-wide text-sm px-8 py-6 bg-primary hover:bg-primary-dark text-primary-foreground transition-all duration-300"
+                className="font-lato font-normal tracking-wide text-sm px-8 py-6"
               >
                 Book Your Consultation
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -54,7 +54,7 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
                 variant="outline"
                 size="lg"
                 asChild
-                className="font-inter font-normal tracking-wide text-sm px-8 py-6 border-primary/20 text-foreground hover:bg-secondary transition-all duration-300"
+                className="font-lato font-normal tracking-wide text-sm px-8 py-6"
                 onClick={() => trackCTAClick('hero_call', 'tel:+17067603470')}
               >
                 <a href="tel:+17067603470">
@@ -65,10 +65,10 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
 
             {/* Trust Indicators */}
             <div className="mt-16 pt-8 border-t border-border animate-fade-in" style={{ animationDelay: "0.6s" }}>
-              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4 font-inter">
+              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4 font-lato">
                 Trusted by
               </p>
-              <div className="flex flex-wrap gap-6 text-sm text-muted-foreground font-inter">
+              <div className="flex flex-wrap gap-6 text-sm text-muted-foreground font-lato">
                 <span>Board-Certified Providers</span>
                 <span className="text-border">|</span>
                 <span>Insurance Accepted</span>
@@ -95,7 +95,7 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-subtle-float hidden lg:block">
         <div className="flex flex-col items-center gap-2">
-          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-inter">Scroll</span>
+          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-lato">Scroll</span>
           <div className="w-px h-8 bg-primary/30" />
         </div>
       </div>

@@ -24,20 +24,20 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-primary text-primary-foreground py-16 lg:py-24">
+    <footer className="bg-foreground text-background py-16 lg:py-24">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {/* Top Section */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             {/* Brand */}
             <div className="lg:col-span-2">
-              <h3 className="font-cormorant text-3xl font-light mb-4">
+              <h3 className="font-playfair text-3xl font-light mb-4 text-background">
                 {SITE_CONFIG.clinicName}
               </h3>
-              <p className="text-sm tracking-[0.2em] uppercase text-primary-foreground/60 mb-6 font-inter">
+              <p className="text-sm tracking-[0.2em] uppercase text-background/50 mb-6 font-lato">
                 Restore · Renew · Rebalance
               </p>
-              <p className="font-inter font-light text-primary-foreground/80 leading-relaxed max-w-md">
+              <p className="font-lato font-light text-background/70 leading-relaxed max-w-md">
                 Expert-led ketamine therapy, medical weight loss, and hormone optimization. 
                 Serving Veterans, first responders, and the Augusta community.
               </p>
@@ -45,12 +45,12 @@ const Footer = () => {
 
             {/* Services */}
             <div>
-              <h4 className="font-cormorant text-xl mb-6">Services</h4>
-              <ul className="space-y-3 font-inter font-light text-sm text-primary-foreground/70">
+              <h4 className="font-playfair text-xl mb-6 text-background">Services</h4>
+              <ul className="space-y-3 font-lato font-light text-sm text-background/60">
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.ketamine)} 
-                    className="hover:text-primary-foreground transition-colors"
+                    className="hover:text-background transition-colors"
                   >
                     Ketamine Therapy
                   </button>
@@ -58,7 +58,7 @@ const Footer = () => {
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.weightloss)} 
-                    className="hover:text-primary-foreground transition-colors"
+                    className="hover:text-background transition-colors"
                   >
                     Medical Weight Loss
                   </button>
@@ -66,7 +66,7 @@ const Footer = () => {
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.hormones)} 
-                    className="hover:text-primary-foreground transition-colors"
+                    className="hover:text-background transition-colors"
                   >
                     Hormone Optimization
                   </button>
@@ -74,7 +74,7 @@ const Footer = () => {
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.militaryVeteran)} 
-                    className="hover:text-primary-foreground transition-colors"
+                    className="hover:text-background transition-colors"
                   >
                     Veterans Program
                   </button>
@@ -84,8 +84,8 @@ const Footer = () => {
 
             {/* Contact */}
             <div>
-              <h4 className="font-cormorant text-xl mb-6">Contact</h4>
-              <div className="space-y-4 font-inter font-light text-sm text-primary-foreground/70">
+              <h4 className="font-playfair text-xl mb-6 text-background">Contact</h4>
+              <div className="space-y-4 font-lato font-light text-sm text-background/60">
                 <div className="flex gap-3">
                   <MapPin className="h-4 w-4 flex-shrink-0 mt-1" />
                   <div>
@@ -97,7 +97,7 @@ const Footer = () => {
                   <Phone className="h-4 w-4 flex-shrink-0" />
                   <a 
                     href={`tel:${SITE_CONFIG.phoneRaw}`} 
-                    className="hover:text-primary-foreground transition-colors"
+                    className="hover:text-background transition-colors"
                     onClick={() => trackCTAClick('footer_call', `tel:${SITE_CONFIG.phoneRaw}`)}
                   >
                     {SITE_CONFIG.phone}
@@ -110,7 +110,7 @@ const Footer = () => {
                   href="https://instagram.com/elevatedhealthaugusta" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
+                  className="text-sm text-background/50 hover:text-background transition-colors font-lato"
                   aria-label="Instagram"
                 >
                   Instagram
@@ -119,7 +119,7 @@ const Footer = () => {
                   href="https://facebook.com/elevatedhealthaugusta" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
+                  className="text-sm text-background/50 hover:text-background transition-colors font-lato"
                   aria-label="Facebook"
                 >
                   Facebook
@@ -129,36 +129,36 @@ const Footer = () => {
           </div>
 
           {/* Divider */}
-          <div className="w-full h-px bg-primary-foreground/10 mb-12" />
+          <div className="w-full h-px bg-background/10 mb-12" />
 
           {/* Disclaimer */}
           <div className="mb-12">
-            <p className="text-primary-foreground/50 text-xs font-inter font-light leading-relaxed max-w-4xl">
-              <strong className="text-primary-foreground/60">Disclaimer:</strong> Coverage and eligibility vary by plan, diagnosis, prior treatments, and medical-necessity review. IV ketamine for depression/anxiety is an off-label use. SPRAVATO® is FDA-approved for specific indications and administered only in-clinic under REMS with monitoring.
+            <p className="text-background/40 text-xs font-lato font-light leading-relaxed max-w-4xl">
+              <strong className="text-background/50">Disclaimer:</strong> Coverage and eligibility vary by plan, diagnosis, prior treatments, and medical-necessity review. IV ketamine for depression/anxiety is an off-label use. SPRAVATO® is FDA-approved for specific indications and administered only in-clinic under REMS with monitoring.
             </p>
           </div>
 
           {/* Bottom Bar */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-primary-foreground/40 font-inter">
+            <p className="text-xs text-background/30 font-lato">
               © 2025 {SITE_CONFIG.clinicName}. All rights reserved.
             </p>
-            <div className="flex gap-6 text-xs text-primary-foreground/40 font-inter">
+            <div className="flex gap-6 text-xs text-background/30 font-lato">
               <button 
                 onClick={() => navigate("/privacy-policy")} 
-                className="hover:text-primary-foreground/70 transition-colors"
+                className="hover:text-background/60 transition-colors"
               >
                 Privacy
               </button>
               <button 
                 onClick={() => navigate("/hipaa-notice")} 
-                className="hover:text-primary-foreground/70 transition-colors"
+                className="hover:text-background/60 transition-colors"
               >
                 HIPAA
               </button>
               <button 
                 onClick={() => navigate("/terms-of-service")} 
-                className="hover:text-primary-foreground/70 transition-colors"
+                className="hover:text-background/60 transition-colors"
               >
                 Terms
               </button>

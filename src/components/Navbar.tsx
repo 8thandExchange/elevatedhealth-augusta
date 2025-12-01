@@ -59,7 +59,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           {/* Logo / Brand */}
           <button 
             onClick={() => scrollToSection("hero")}
-            className="font-cormorant text-xl tracking-wide text-foreground hover:text-primary transition-colors"
+            className="font-playfair text-xl tracking-wide text-foreground hover:text-primary transition-colors"
           >
             Elevated Health
           </button>
@@ -68,28 +68,28 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           <div className="hidden md:flex items-center gap-8">
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.ketamine)}
-              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
+              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
             >
               Ketamine
             </button>
 
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.weightloss)}
-              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
+              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
             >
               Weight Loss
             </button>
 
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.hormones)}
-              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
+              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
             >
               Hormones
             </button>
 
             <button 
               onClick={() => scrollToSection("contact")}
-              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
+              className="text-sm font-lato font-normal tracking-wide text-muted-foreground hover:text-foreground transition-colors elegant-underline"
             >
               Contact
             </button>
@@ -98,7 +98,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           {/* Desktop CTA */}
           <div className="hidden md:block">
             <Button 
-              className="font-inter font-normal text-sm tracking-wide px-6 py-2 bg-primary hover:bg-primary-dark text-primary-foreground transition-all duration-300"
+              className="font-lato font-normal text-sm tracking-wide px-6 py-2"
               onClick={() => {
                 if (onOpenBooking) onOpenBooking();
               }}
@@ -130,7 +130,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                 <nav className="flex flex-col gap-6">
                   <button 
                     onClick={() => scrollToSection("hero")} 
-                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl text-foreground hover:text-primary transition-colors"
                   >
                     Home
                   </button>
@@ -140,7 +140,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       navigate(SITE_CONFIG.routes.ketamine);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl text-foreground hover:text-primary transition-colors"
                   >
                     Ketamine Therapy
                   </button>
@@ -150,7 +150,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       navigate(SITE_CONFIG.routes.weightloss);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl text-foreground hover:text-primary transition-colors"
                   >
                     Weight Loss
                   </button>
@@ -160,7 +160,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       navigate(SITE_CONFIG.routes.hormones);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl text-foreground hover:text-primary transition-colors"
                   >
                     Hormones
                   </button>
@@ -170,7 +170,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       scrollToSection("contact");
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl text-foreground hover:text-primary transition-colors"
                   >
                     Contact
                   </button>
@@ -178,7 +178,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
                 <div className="mt-12 pt-8 border-t border-border">
                   <Button 
-                    className="w-full font-inter text-sm tracking-wide py-6 bg-primary hover:bg-primary-dark text-primary-foreground"
+                    className="w-full font-lato text-sm tracking-wide py-6"
                     onClick={() => {
                       if (onOpenBooking) onOpenBooking();
                       setIsMobileMenuOpen(false);
@@ -187,7 +187,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                     Book Consultation
                   </Button>
                   
-                  <p className="mt-6 text-sm text-muted-foreground font-inter">
+                  <p className="mt-6 text-sm text-muted-foreground font-lato">
                     {SITE_CONFIG.phone}
                   </p>
                 </div>

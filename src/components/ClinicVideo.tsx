@@ -73,13 +73,13 @@ const ClinicVideo = () => {
       <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
         {/* Section Header */}
         <div className="text-center mb-16 animate-fade-in-up">
-          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-inter font-light">
+          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
             Experience
           </p>
-          <h2 className="text-4xl sm:text-5xl font-cormorant font-light text-foreground mb-4">
+          <h2 className="text-4xl sm:text-5xl font-playfair text-foreground mb-4">
             What to Expect
           </h2>
-          <p className="text-lg text-muted-foreground font-inter font-light max-w-xl mx-auto">
+          <p className="text-lg text-muted-foreground font-lato font-light max-w-xl mx-auto">
             Experience our private treatment suites and calming environment
           </p>
         </div>
@@ -94,24 +94,24 @@ const ClinicVideo = () => {
             {/* Custom Play Button Overlay */}
             {!isPlaying && (
               <div 
-                className="absolute inset-0 bg-primary/80 flex flex-col items-center justify-center cursor-pointer group z-10 transition-all duration-500 hover:bg-primary/85"
+                className="absolute inset-0 bg-foreground/80 flex flex-col items-center justify-center cursor-pointer group z-10 transition-all duration-500 hover:bg-foreground/85"
                 onClick={handlePlayClick}
               >
-                <p className="text-sm tracking-[0.3em] uppercase text-primary-foreground/60 mb-4 font-inter">
+                <p className="text-sm tracking-[0.3em] uppercase text-background/60 mb-4 font-lato">
                   Tour Our Space
                 </p>
-                <h3 className="text-3xl md:text-4xl font-cormorant font-light text-primary-foreground mb-8">
+                <h3 className="text-3xl md:text-4xl font-playfair font-light text-background mb-8">
                   Elevated Health Augusta
                 </h3>
 
                 {/* Play Button */}
                 <div className="relative">
-                  <div className="w-20 h-20 rounded-full border border-primary-foreground/30 flex items-center justify-center group-hover:border-primary-foreground/50 transition-all duration-300">
-                    <Play className="w-8 h-8 text-primary-foreground ml-1" />
+                  <div className="w-20 h-20 rounded-full border border-background/30 flex items-center justify-center group-hover:border-background/50 transition-all duration-300">
+                    <Play className="w-8 h-8 text-background ml-1" />
                   </div>
                 </div>
 
-                <p className="text-primary-foreground/50 text-xs mt-8 tracking-[0.2em] uppercase font-inter">
+                <p className="text-background/40 text-xs mt-8 tracking-[0.2em] uppercase font-lato">
                   Click to Play
                 </p>
               </div>
@@ -173,10 +173,10 @@ const ClinicVideo = () => {
 
           {/* Caption */}
           <div className="p-8 lg:p-10 bg-card border border-border/50">
-            <h3 className="text-2xl font-cormorant font-light text-foreground mb-3">
+            <h3 className="text-2xl font-playfair text-foreground mb-3">
               Tour Our Clinic
             </h3>
-            <p className="text-muted-foreground font-inter font-light leading-relaxed">
+            <p className="text-muted-foreground font-lato font-light leading-relaxed">
               See our private treatment suites and experience the calming environment 
               designed for your comfort and healing.
             </p>

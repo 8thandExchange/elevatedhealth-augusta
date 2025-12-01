@@ -44,13 +44,13 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-20">
-          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-inter font-light">
+          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
             Our Services
           </p>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-cormorant font-light text-foreground mb-6">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-playfair text-foreground mb-6">
             Curated Treatments
           </h2>
-          <p className="text-lg text-muted-foreground font-inter font-light leading-relaxed">
+          <p className="text-lg text-muted-foreground font-lato font-light leading-relaxed">
             Each treatment is thoughtfully designed to address your unique wellness journey
           </p>
         </div>
@@ -77,18 +77,18 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
 
               {/* Content */}
               <div className="space-y-3">
-                <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-inter">
+                <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-lato">
                   {treatment.subtitle}
                 </p>
-                <h3 className="text-2xl lg:text-3xl font-cormorant font-light text-foreground group-hover:text-primary transition-colors duration-300">
+                <h3 className="text-2xl lg:text-3xl font-playfair text-foreground group-hover:text-primary transition-colors duration-300">
                   {treatment.title}
                 </h3>
-                <p className="text-muted-foreground font-inter font-light leading-relaxed text-sm">
+                <p className="text-muted-foreground font-lato font-light leading-relaxed text-sm">
                   {treatment.description}
                 </p>
                 
                 {/* Learn More Link */}
-                <div className="flex items-center gap-2 pt-2 text-primary font-inter text-sm">
+                <div className="flex items-center gap-2 pt-2 text-primary font-lato text-sm">
                   <span className="elegant-underline">Learn More</span>
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
@@ -99,12 +99,12 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-20 pt-16 border-t border-border">
-          <p className="text-lg text-muted-foreground font-inter font-light mb-6">
+          <p className="text-lg text-muted-foreground font-lato font-light mb-6">
             Not sure which treatment is right for you?
           </p>
           <button
             onClick={onOpenBooking}
-            className="inline-flex items-center gap-2 text-primary font-inter text-sm tracking-wide hover:gap-3 transition-all duration-300"
+            className="inline-flex items-center gap-2 text-primary font-lato text-sm tracking-wide hover:gap-3 transition-all duration-300"
           >
             <span className="elegant-underline">Schedule a complimentary consultation</span>
             <ArrowRight className="h-4 w-4" />
