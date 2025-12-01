@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
 
 interface SafetyScreening {
@@ -49,6 +49,7 @@ const PatientLogin = () => {
   });
   const [showSafetyGate, setShowSafetyGate] = useState(false);
   const [createdPatientName, setCreatedPatientName] = useState("");
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -157,13 +158,17 @@ const PatientLogin = () => {
 
       if (patientError) throw patientError;
 
+      setSignupSuccess(true);
+      
       if (highRisk) {
         setCreatedPatientName(signupData.fullName);
-        setShowSafetyGate(true);
-        toast.info("Account created. Manual review required.");
+        setTimeout(() => {
+          setShowSafetyGate(true);
+          toast.info("Account created. Manual review required.");
+        }, 800);
       } else {
         toast.success("Account created! Welcome to Elevated Health.");
-        navigate("/patient/dashboard");
+        setTimeout(() => navigate("/patient/dashboard"), 800);
       }
     } catch (error: any) {
       // Handle "User already registered" error
@@ -446,9 +451,20 @@ const PatientLogin = () => {
                         <ChevronLeft className="w-4 h-4 mr-2" />
                         Back
                       </Button>
-                      <Button type="submit" className="flex-1" disabled={isLoading}>
-                        {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                        Create Account
+                      <Button type="submit" className="flex-1" disabled={isLoading || signupSuccess}>
+                        {signupSuccess ? (
+                          <>
+                            <Check className="w-4 h-4 mr-2 text-green-500" />
+                            Account Created
+                          </>
+                        ) : isLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Creating...
+                          </>
+                        ) : (
+                          "Create Account"
+                        )}
                       </Button>
                     </div>
                   </form>
