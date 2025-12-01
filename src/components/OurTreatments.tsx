@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import ketamineImg from "@/assets/service-ketamine-water.jpg";
-import weightlossImg from "@/assets/service-weightloss-citrus.jpg";
-import hormonesImg from "@/assets/service-hormones-vitality.jpg";
+import ketamineImg from "@/assets/service-ketamine-zen.jpg";
+import weightlossImg from "@/assets/service-weightloss-tape.jpg";
+import hormonesImg from "@/assets/service-hormones-cool.jpg";
 
 interface OurTreatmentsProps {
   onOpenBooking: () => void;
