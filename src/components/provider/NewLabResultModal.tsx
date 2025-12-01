@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Beaker, AlertCircle, Activity, Scale } from "lucide-react";
+import { Loader2, Beaker, AlertCircle, Activity, Scale, TrendingDown } from "lucide-react";
 
 interface NewLabResultModalProps {
   isOpen: boolean;
@@ -60,8 +60,57 @@ const NewLabResultModal = ({
   const [metabolicCortisol, setMetabolicCortisol] = useState("");
   const [vitaminD, setVitaminD] = useState("");
   
+  // Weight Loss Intake (Hormone Blockers - ZRT Saliva)
+  const [wlCortisol, setWlCortisol] = useState("");
+  const [wlEstradiol, setWlEstradiol] = useState("");
+  const [wlTestosterone, setWlTestosterone] = useState("");
+  
   const [recommendations, setRecommendations] = useState<ProtocolRecommendation[]>([]);
   const [recommendation, setRecommendation] = useState<ProtocolRecommendation | null>(null);
+
+  // Weight Loss Hormone Blocker Logic
+  const getWeightLossBlockers = (
+    cort: number | null,
+    e2: number | null,
+    t: number | null
+  ): ProtocolRecommendation[] => {
+    const blockers: ProtocolRecommendation[] = [];
+
+    // High Cortisol = Stress Blocker (belly fat retention)
+    if (cort !== null && cort > 20) {
+      blockers.push({
+        title: "⚠️ Stress Blocker Detected",
+        protocol: "Adrenal Support Protocol",
+        dose: "Adaptogenic herbs + cortisol-lowering strategies",
+        reason: `Cortisol at ${cort} μg/dL is elevated. Patient risks belly fat retention. Recommend Adrenal Support.`,
+        severity: "warning"
+      });
+    }
+
+    // High Estradiol = Estrogen Dominance (water retention/hip weight)
+    if (e2 !== null && e2 > 5) {
+      blockers.push({
+        title: "⚠️ Estrogen Dominance",
+        protocol: "Progesterone Balance Protocol",
+        dose: "Progesterone supplementation to restore E2:P ratio",
+        reason: `Estradiol at ${e2} pg/mL indicates dominance. Patient risks water retention/hip weight. Recommend Progesterone Balance.`,
+        severity: "warning"
+      });
+    }
+
+    // Low Testosterone = Muscle Wasting Risk
+    if (t !== null && t < 25) {
+      blockers.push({
+        title: "⚠️ Muscle Wasting Risk",
+        protocol: "Testosterone Support Protocol",
+        dose: "Low-dose testosterone optimization",
+        reason: `Testosterone at ${t} ng/dL is low. Patient risks losing lean mass on GLP-1s. Recommend Testosterone Support.`,
+        severity: "critical"
+      });
+    }
+
+    return blockers;
+  };
 
   const getProtocolRecommendation = (
     e2: number | null, 
@@ -272,6 +321,55 @@ const NewLabResultModal = ({
     }
   };
 
+  const handleWeightLossSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const cortValue = wlCortisol ? parseFloat(wlCortisol) : null;
+      const e2Value = wlEstradiol ? parseFloat(wlEstradiol) : null;
+      const tValue = wlTestosterone ? parseFloat(wlTestosterone) : null;
+
+      // Get weight loss blocker recommendations
+      const blockers = getWeightLossBlockers(cortValue, e2Value, tValue);
+
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const weightLossNotes = `Weight Loss Intake (ZRT Saliva): Cortisol=${cortValue || 'N/A'} μg/dL, Estradiol=${e2Value || 'N/A'} pg/mL, Testosterone=${tValue || 'N/A'} ng/dL`;
+
+      const { error } = await supabase.from("lab_results").insert({
+        patient_id: patientId,
+        collection_date: collectionDate,
+        estradiol_e2: e2Value,
+        testosterone_t: tValue,
+        cortisol_morning: cortValue,
+        notes: weightLossNotes,
+        correlation_alert: blockers.length > 0 ? blockers.map(b => b.title).join("; ") : null,
+        created_by: user?.id
+      });
+
+      if (error) throw error;
+
+      if (blockers.length > 0) {
+        setRecommendations(blockers);
+        toast.success("Weight Loss Intake saved!", {
+          description: `${blockers.length} hormone blocker(s) detected.`
+        });
+      } else {
+        toast.success("No hormone blockers detected. Clear for GLP-1 therapy!");
+        resetAndClose();
+      }
+
+      onSaved();
+    } catch (error: any) {
+      toast.error("Failed to save weight loss intake", {
+        description: error.message
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const resetAndClose = () => {
     setActiveTab("hormone");
     setCollectionDate(new Date().toISOString().split('T')[0]);
@@ -283,6 +381,9 @@ const NewLabResultModal = ({
     setFastingInsulin("");
     setMetabolicCortisol("");
     setVitaminD("");
+    setWlCortisol("");
+    setWlEstradiol("");
+    setWlTestosterone("");
     setRecommendation(null);
     setRecommendations([]);
     onClose();
@@ -366,14 +467,18 @@ const NewLabResultModal = ({
           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="hormone" className="flex items-center gap-2">
-                <Beaker className="w-4 h-4" />
-                Hormone Labs
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="hormone" className="flex items-center gap-2 text-xs">
+                <Beaker className="w-3 h-3" />
+                Hormone
               </TabsTrigger>
-              <TabsTrigger value="metabolic" className="flex items-center gap-2">
-                <Scale className="w-4 h-4" />
-                Metabolic Labs
+              <TabsTrigger value="metabolic" className="flex items-center gap-2 text-xs">
+                <Scale className="w-3 h-3" />
+                Metabolic
+              </TabsTrigger>
+              <TabsTrigger value="weightloss" className="flex items-center gap-2 text-xs">
+                <TrendingDown className="w-3 h-3" />
+                Weight Loss
               </TabsTrigger>
             </TabsList>
 
@@ -590,6 +695,107 @@ const NewLabResultModal = ({
                       </>
                     ) : (
                       "Save Metabolic Labs"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </TabsContent>
+
+            {/* Weight Loss Intake Tab (Hormone Blockers) */}
+            <TabsContent value="weightloss">
+              <form onSubmit={handleWeightLossSubmit} className="space-y-4">
+                <div className="bg-gold/5 border border-gold/20 rounded-lg p-3 mb-4">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-gold">Hormone Blocker Analysis</span> — 
+                    Enter ZRT Saliva values to identify weight loss blockers
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="wlDate">Collection Date</Label>
+                  <Input
+                    id="wlDate"
+                    type="date"
+                    value={collectionDate}
+                    onChange={(e) => setCollectionDate(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="wlCortisol">Cortisol (Morning)</Label>
+                    <div className="relative">
+                      <Input
+                        id="wlCortisol"
+                        type="number"
+                        step="0.1"
+                        placeholder="15.0"
+                        value={wlCortisol}
+                        onChange={(e) => setWlCortisol(e.target.value)}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                        μg/dL
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      High = Stress blocker → Belly fat retention
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="wlEstradiol">Estradiol (E2)</Label>
+                    <div className="relative">
+                      <Input
+                        id="wlEstradiol"
+                        type="number"
+                        step="0.1"
+                        placeholder="3.0"
+                        value={wlEstradiol}
+                        onChange={(e) => setWlEstradiol(e.target.value)}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                        pg/mL
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      High = Estrogen dominance → Water retention/hip weight
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="wlTestosterone">Testosterone</Label>
+                    <div className="relative">
+                      <Input
+                        id="wlTestosterone"
+                        type="number"
+                        step="0.1"
+                        placeholder="35.0"
+                        value={wlTestosterone}
+                        onChange={(e) => setWlTestosterone(e.target.value)}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                        ng/dL
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Low = Muscle wasting risk → Loses lean mass on GLP-1s
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button type="button" variant="outline" className="flex-1" onClick={resetAndClose}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      "Check Blockers"
                     )}
                   </Button>
                 </div>

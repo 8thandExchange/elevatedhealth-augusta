@@ -174,61 +174,102 @@ const WeightLoss = () => {
         <Navbar />
         
         <main>
-          {/* Hero Section - Abstract Cellular Design */}
+          {/* Hero Section - Warm Alabaster with Golden Balance */}
           <section className="pt-32 pb-16 md:pb-24 relative overflow-hidden">
-            {/* Abstract Cellular Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-[hsl(200,25%,25%)]">
-              {/* DNA/Cellular Abstract Pattern Overlay */}
-              <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
-                {/* Cellular structures */}
-                <circle cx="150" cy="150" r="80" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" />
-                <circle cx="150" cy="150" r="60" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.3" />
-                <circle cx="150" cy="150" r="40" fill="none" stroke="white" strokeWidth="0.5" />
-                <circle cx="650" cy="450" r="100" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" />
-                <circle cx="650" cy="450" r="70" fill="none" stroke="white" strokeWidth="0.3" />
-                <circle cx="400" cy="300" r="120" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.3" />
-                {/* DNA helix pattern */}
-                <path d="M50,100 Q200,200 50,300 Q200,400 50,500" fill="none" stroke="white" strokeWidth="0.5" opacity="0.5" />
-                <path d="M150,100 Q0,200 150,300 Q0,400 150,500" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" opacity="0.5" />
-                <path d="M700,50 Q550,150 700,250 Q550,350 700,450" fill="none" stroke="white" strokeWidth="0.5" opacity="0.5" />
-                <path d="M600,50 Q750,150 600,250 Q750,350 600,450" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" opacity="0.5" />
-                {/* Connecting lines (nucleotides) */}
-                {[100, 150, 200, 250, 300, 350, 400, 450].map((y, i) => (
-                  <line key={i} x1="50" y1={y} x2="150" y2={y} stroke="hsl(var(--gold))" strokeWidth="0.3" opacity="0.3" />
-                ))}
+            {/* Warm Alabaster/Cream Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3]">
+              {/* Abstract Golden Fluid Balance Pattern */}
+              <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+                {/* Zen stone-like circles representing balance */}
+                <ellipse cx="600" cy="400" rx="120" ry="40" fill="none" stroke="hsl(var(--gold))" strokeWidth="1" opacity="0.6" />
+                <ellipse cx="600" cy="360" rx="100" ry="35" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.8" opacity="0.5" />
+                <ellipse cx="600" cy="325" rx="80" ry="28" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.6" opacity="0.4" />
+                <ellipse cx="600" cy="295" rx="60" ry="22" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" opacity="0.3" />
+                {/* Flowing golden curves */}
+                <path d="M0,300 Q200,250 300,350 Q400,450 500,350 Q600,250 800,300" fill="none" stroke="hsl(var(--gold))" strokeWidth="1.5" opacity="0.3" />
+                <path d="M0,350 Q150,300 250,380 Q350,460 450,380 Q550,300 700,350 Q800,400 900,350" fill="none" stroke="hsl(var(--gold))" strokeWidth="1" opacity="0.2" />
+                {/* Equilibrium circles */}
+                <circle cx="150" cy="200" r="60" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" opacity="0.4" />
+                <circle cx="150" cy="200" r="40" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.3" opacity="0.3" />
               </svg>
-              {/* Gradient overlay for depth */}
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-transparent to-transparent" />
+              {/* Soft gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#f5f0e8]/50" />
             </div>
 
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="max-w-5xl mx-auto text-center">
                 <div className="inline-block mb-6 animate-fade-in-up">
-                  <span className="px-4 py-2 bg-white/10 text-white/90 border border-gold/30 rounded-full text-sm font-semibold backdrop-blur-sm">
-                    Metabolic Optimization Program
+                  <span className="px-4 py-2 bg-primary/10 text-primary border border-gold/30 rounded-full text-sm font-semibold">
+                    Hormonal Weight Reset
                   </span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up text-white font-cormorant" style={{ animationDelay: "0.1s" }}>
-                  Repair Your Metabolism<br />at the Cellular Level
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 animate-fade-in-up text-primary font-cormorant" style={{ animationDelay: "0.1s" }}>
+                  Hormonal Weight Reset
                 </h1>
-                <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-10 max-w-3xl mx-auto animate-fade-in-up font-lato" style={{ animationDelay: "0.2s" }}>
-                  Most weight loss fails because it ignores biology. We combine GLP-1 therapy with 
-                  advanced ZRT hormone testing to repair your metabolism at the cellular level.
+                <p className="text-xl md:text-2xl text-gold mb-6 animate-fade-in-up font-lato font-medium" style={{ animationDelay: "0.15s" }}>
+                  FDA-Approved GLP-1s. Optimized by Your Biology.
+                </p>
+                <p className="text-lg md:text-xl text-primary/70 leading-relaxed mb-10 max-w-3xl mx-auto animate-fade-in-up font-lato" style={{ animationDelay: "0.2s" }}>
+                  Weight loss isn't just about calories—it's about hormones. We combine Semaglutide therapy 
+                  with advanced Saliva Diagnostics to identify and treat the hidden blockers (like High Cortisol 
+                  or Estrogen Dominance) that stall your progress.
                 </p>
 
+                {/* Differentiator Icons */}
+                <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
+                  {/* Saliva Diagnostics */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-3 rounded-full border border-gold/30">
+                      <svg className="w-8 h-8 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2v6" />
+                        <path d="M12 8a4 4 0 0 1 4 4c0 3-4 10-4 10s-4-7-4-10a4 4 0 0 1 4-4z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-lato text-primary font-medium">Saliva Diagnostics</span>
+                  </div>
+                  {/* Fat vs Muscle Targeting */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-3 rounded-full border border-gold/30">
+                      <svg className="w-8 h-8 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <circle cx="12" cy="12" r="6" />
+                        <circle cx="12" cy="12" r="2" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-lato text-primary font-medium">Fat vs. Muscle Targeting</span>
+                  </div>
+                  {/* Adrenal Support */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-3 rounded-full border border-gold/30">
+                      <svg className="w-8 h-8 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="4" />
+                        <path d="M12 2v2" />
+                        <path d="M12 20v2" />
+                        <path d="m4.93 4.93 1.41 1.41" />
+                        <path d="m17.66 17.66 1.41 1.41" />
+                        <path d="M2 12h2" />
+                        <path d="M20 12h2" />
+                        <path d="m6.34 17.66-1.41 1.41" />
+                        <path d="m19.07 4.93-1.41 1.41" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-lato text-primary font-medium">Adrenal Support</span>
+                  </div>
+                </div>
+
                 <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-                  <Button onClick={scrollToBooking} size="lg" className="text-lg px-8 py-6 bg-gold hover:bg-gold/90 text-primary">
-                    Book Free Consultation
+                  <Button onClick={scrollToBooking} size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white">
+                    Check Your Hormone Blockers
                   </Button>
-                  <Button onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")} size="lg" variant="outline" className="text-lg px-8 py-6 border-white/50 text-white bg-transparent hover:bg-white/10">
+                  <Button onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")} size="lg" variant="outline" className="text-lg px-8 py-6 border-primary/30 text-primary bg-transparent hover:bg-primary/5">
                     Call {SITE_CONFIG.phone}
                   </Button>
                 </div>
 
-                <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-white/70 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+                <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-primary/60 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-gold" />
-                    <span>ZRT Metabolic Analysis</span>
+                    <span>ZRT Saliva Testing</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-gold" />
@@ -236,7 +277,7 @@ const WeightLoss = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-gold" />
-                    <span>Hormone Integration</span>
+                    <span>Hormone Blocker Analysis</span>
                   </div>
                 </div>
               </div>
