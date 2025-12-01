@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import ivTherapy from "@/assets/iv-therapy-closeup.jpg";
-import providerCare from "@/assets/provider-monitored-care.jpg";
-import clinicInterior from "@/assets/clinic-interior.jpg";
+import mentalWellnessImg from "@/assets/treatment-mental-wellness.jpg";
+import bodyTransformationImg from "@/assets/treatment-body-transformation.jpg";
+import vitalityRestorationImg from "@/assets/treatment-vitality-restoration.jpg";
 
 interface OurTreatmentsProps {
   onOpenBooking: () => void;
@@ -15,7 +15,7 @@ const treatments = [
     title: "Ketamine Therapy",
     subtitle: "Mental Wellness",
     description: "FDA-approved treatment for depression, anxiety, and PTSD. Experience breakthrough relief in a serene, medically supervised environment.",
-    image: ivTherapy,
+    image: mentalWellnessImg,
     route: "/ketamine",
   },
   {
@@ -23,7 +23,7 @@ const treatments = [
     title: "Medical Weight Loss",
     subtitle: "Body Transformation",
     description: "Personalized GLP-1 programs designed to help you achieve sustainable results with ongoing provider support.",
-    image: providerCare,
+    image: bodyTransformationImg,
     route: "/weight-loss",
   },
   {
@@ -31,7 +31,7 @@ const treatments = [
     title: "Hormone Optimization",
     subtitle: "Vitality Restoration",
     description: "Restore balance and reclaim your energy with customized hormone replacement therapy for men and women.",
-    image: clinicInterior,
+    image: vitalityRestorationImg,
     route: "/hormones",
   },
 ];
@@ -71,6 +71,8 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
                   alt={treatment.title}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                {/* Warm Luxury Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/10 mix-blend-overlay" />
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-500" />
               </div>
