@@ -62,7 +62,7 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
   const navigate = useNavigate();
 
   return (
-    <section className="section-spacing bg-background">
+    <section id="treatments" className="section-spacing bg-background scroll-mt-20">
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-20">
