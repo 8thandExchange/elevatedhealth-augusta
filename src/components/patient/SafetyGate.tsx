@@ -33,7 +33,7 @@ const SafetyGate = ({ patientName, onContinue }: SafetyGateProps) => {
             </p>
             
             <p className="text-foreground leading-relaxed">
-              Based on your medical history, <span className="font-semibold">Lauren Bersi, FNP-C</span> needs 
+              Based on your medical history, <span className="font-semibold">a provider</span> needs 
               to review your file manually to ensure your safety before we can proceed with hormone therapy recommendations.
             </p>
 
@@ -49,7 +49,7 @@ const SafetyGate = ({ patientName, onContinue }: SafetyGateProps) => {
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>Lauren will personally review your medical history within <strong>24-48 hours</strong></span>
+                  <span>A provider will personally review your medical history within <strong>24-48 hours</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
