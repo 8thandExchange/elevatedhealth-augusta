@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Phone } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-breakthrough.jpg";
-import logo from "@/assets/elevated-health-logo-new.png";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
 
@@ -11,150 +9,98 @@ interface HeroProps {
 }
 
 const Hero = ({ onOpenBooking }: HeroProps) => {
-  const navigate = useNavigate();
-  
-  const scrollToBooking = () => {
-    const element = document.getElementById("booking");
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  };
-  
-  const scrollToCompare = () => {
-    const element = document.getElementById("compare");
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  };
-  
-  const handleMilitaryClick = () => {
-    navigate(SITE_CONFIG.routes.militaryVeteran);
-  };
-  return <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Hero Background Image */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src={heroImage} 
-          alt="Mental health breakthrough - person walking up sunlit path emerging from fog" 
-          className="w-full h-full object-cover"
-          loading="eager"
-          width="1920"
-          height="1080"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/30 to-primary/60" />
-      </div>
-
-      {/* Content */}
-      <div className="container mx-auto px-4 sm:px-6 relative z-10 pt-20 pb-20">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Brand Name */}
-          <div className="mb-6 animate-fade-in-up flex justify-center">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-primary tracking-wide drop-shadow-2xl leading-tight">
-              Elevated Health Augusta
-            </h2>
-          </div>
-          
-          {/* Main Tagline */}
-          <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            <div className="inline-block px-4 py-2 bg-gold/90 backdrop-blur-sm rounded-full mb-4">
-              <p className="text-sm font-semibold text-primary uppercase tracking-wide">
-                Augusta's Premier Ketamine Clinic
-              </p>
-            </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-6 text-white leading-tight drop-shadow-2xl">
-              Restore Your Mind. Renew Your Body. Rebalance Your Hormones.
+  return (
+    <section id="hero" className="relative min-h-screen flex items-center justify-center">
+      {/* Split Layout */}
+      <div className="w-full min-h-screen flex flex-col lg:flex-row">
+        {/* Left Content Side */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center px-8 sm:px-12 lg:px-20 py-32 lg:py-20 bg-background">
+          <div className="max-w-xl">
+            {/* Elegant Tagline */}
+            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-6 animate-fade-in font-inter font-light">
+              Augusta's Premier Wellness Destination
+            </p>
+            
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-cormorant font-light text-foreground leading-[1.1] mb-8 animate-fade-in-up">
+              Restore.<br />
+              Renew.<br />
+              <span className="text-primary">Rebalance.</span>
             </h1>
-          </div>
 
-          {/* Services Tagline */}
-          <p className="text-lg sm:text-xl md:text-2xl text-white/95 font-light mb-10 animate-fade-in-up drop-shadow-lg leading-relaxed" style={{
-            animationDelay: "0.2s"
-          }}>
-            Ketamine Therapy • Medical Weight Loss • Hormone Replacement
-          </p>
+            {/* Elegant Divider */}
+            <div className="w-16 h-px bg-primary/30 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }} />
 
-          {/* Primary CTA Button */}
-          <div className="flex justify-center mb-6 animate-fade-in-up" style={{
-            animationDelay: "0.4s"
-          }}>
-            <Button 
-              size="xl" 
-              onClick={onOpenBooking}
-              className="font-semibold uppercase text-base px-12 py-7 bg-primary hover:bg-primary-dark text-white shadow-2xl hover:scale-105 transition-all"
-            >
-              Book Free Consultation
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-
-          {/* AI Voice Agent CTA */}
-          <div className="flex flex-col items-center gap-3 mb-10 animate-fade-in-up" style={{
-            animationDelay: "0.5s"
-          }}>
-            <Button
-              size="xl"
-              asChild
-              className="font-semibold text-base px-10 py-6 bg-white hover:bg-white/90 text-primary shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto border-2 border-white/20"
-              onClick={() => trackCTAClick('ai_voice_call', 'tel:+17067603470')}
-            >
-              <a href="tel:+17067603470">
-                <Phone className="mr-2 h-5 w-5" />
-                Call Us (706) 760-3470
-              </a>
-            </Button>
-            <p className="text-white/80 text-xs font-inter">
-              Secure, HIPAA-compliant calls
+            {/* Subtitle */}
+            <p className="text-lg sm:text-xl text-muted-foreground font-inter font-light leading-relaxed mb-10 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+              Experience transformative wellness through our curated treatments — 
+              Ketamine Therapy, Medical Weight Loss, and Hormone Optimization.
             </p>
-          </div>
 
-          {/* Trust Indicators */}
-          <div className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-8 items-center text-white/90 font-inter text-sm sm:text-base animate-fade-in-up mb-4" style={{
-            animationDelay: "0.6s"
-          }}>
-            <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <span className="font-medium">Private Treatment Rooms</span>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+              <Button 
+                size="lg" 
+                onClick={() => {
+                  trackCTAClick('hero_book_consultation', 'modal');
+                  onOpenBooking();
+                }}
+                className="font-inter font-normal tracking-wide text-sm px-8 py-6 bg-primary hover:bg-primary-dark text-primary-foreground transition-all duration-300"
+              >
+                Book Your Consultation
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline"
+                size="lg"
+                asChild
+                className="font-inter font-normal tracking-wide text-sm px-8 py-6 border-primary/20 text-foreground hover:bg-secondary transition-all duration-300"
+                onClick={() => trackCTAClick('hero_call', 'tel:+17067603470')}
+              >
+                <a href="tel:+17067603470">
+                  (706) 760-3470
+                </a>
+              </Button>
             </div>
-            <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="font-medium">Board-Certified Care</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="font-medium">Insurance Accepted</span>
-            </div>
-          </div>
 
-          {/* Contact Info */}
-          <div className="text-white/80 text-sm sm:text-base animate-fade-in-up" style={{
-            animationDelay: "0.7s"
-          }}>
-            <p>
-              {SITE_CONFIG.address.full} • {SITE_CONFIG.phone}
-            </p>
+            {/* Trust Indicators */}
+            <div className="mt-16 pt-8 border-t border-border animate-fade-in" style={{ animationDelay: "0.6s" }}>
+              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4 font-inter">
+                Trusted by
+              </p>
+              <div className="flex flex-wrap gap-6 text-sm text-muted-foreground font-inter">
+                <span>Board-Certified Providers</span>
+                <span className="text-border">|</span>
+                <span>Insurance Accepted</span>
+                <span className="text-border">|</span>
+                <span>Private Suites</span>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Right Image Side */}
+        <div className="w-full lg:w-1/2 relative min-h-[50vh] lg:min-h-screen">
+          <img 
+            src={heroImage} 
+            alt="Serene wellness environment at Elevated Health Augusta" 
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+          />
+          {/* Subtle overlay for elegance */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent lg:bg-gradient-to-r lg:from-background/10 lg:via-transparent lg:to-transparent" />
         </div>
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/40 rounded-full flex items-start justify-center p-2">
-          <div className="w-1 h-3 bg-white/40 rounded-full animate-pulse" />
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-subtle-float hidden lg:block">
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-inter">Scroll</span>
+          <div className="w-px h-8 bg-primary/30" />
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default Hero;

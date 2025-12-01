@@ -1,8 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import OurTreatments from "@/components/OurTreatments";
 import PillarGrid from "@/components/PillarGrid";
 import ClinicVideo from "@/components/ClinicVideo";
-import TreatmentsPricing from "@/components/TreatmentsPricing";
 import InsuranceLogos from "@/components/InsuranceLogos";
 import MediaFeature from "@/components/MediaFeature";
 import Contact from "@/components/Contact";
@@ -24,9 +24,9 @@ const Index = () => {
       <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
       <main>
         <Hero onOpenBooking={() => setIsBookingOpen(true)} />
-        <ClinicVideo />
+        <OurTreatments onOpenBooking={() => setIsBookingOpen(true)} />
         <PillarGrid onOpenBooking={() => setIsBookingOpen(true)} />
-        <TreatmentsPricing onOpenBooking={() => setIsBookingOpen(true)} />
+        <ClinicVideo />
         <InsuranceLogos />
         <MediaFeature />
         <Contact onOpenBooking={() => setIsBookingOpen(true)} />

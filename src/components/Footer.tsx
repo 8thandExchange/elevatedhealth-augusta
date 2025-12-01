@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
@@ -7,14 +7,12 @@ const Footer = () => {
   const navigate = useNavigate();
   
   const scrollToSection = (id: string) => {
-    // Check if we're on the homepage
     if (window.location.pathname === "/" || window.location.pathname === "/index") {
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     } else {
-      // Navigate to homepage first, then scroll
       navigate("/");
       setTimeout(() => {
         const element = document.getElementById(id);
@@ -26,52 +24,33 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-primary text-white py-12">
-      <div className="container mx-auto px-4 sm:px-6">
+    <footer className="bg-primary text-primary-foreground py-16 lg:py-24">
+      <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          {/* Top Section */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             {/* Brand */}
-            <div className="md:col-span-2">
-              <h3 className="font-playfair text-2xl font-bold mb-2">
+            <div className="lg:col-span-2">
+              <h3 className="font-cormorant text-3xl font-light mb-4">
                 {SITE_CONFIG.clinicName}
               </h3>
-              <p className="text-gold uppercase tracking-wider text-sm font-semibold mb-4">
-                RESTORE • REPAIR • RENEW
+              <p className="text-sm tracking-[0.2em] uppercase text-primary-foreground/60 mb-6 font-inter">
+                Restore · Renew · Rebalance
               </p>
-              <p className="font-inter text-white/80 mb-4">
-                Expert-led ketamine therapy, medical weight loss, and hormone replacement therapy. 
-                Proudly serving Veterans, first responders, and the Augusta community.
+              <p className="font-inter font-light text-primary-foreground/80 leading-relaxed max-w-md">
+                Expert-led ketamine therapy, medical weight loss, and hormone optimization. 
+                Serving Veterans, first responders, and the Augusta community.
               </p>
-              <div className="space-y-3 font-inter text-white/80">
-                <div className="flex gap-3">
-                  <MapPin className="h-5 w-5 flex-shrink-0 mt-1" />
-                  <div>
-                    <p>{SITE_CONFIG.address.line1}</p>
-                    <p>{SITE_CONFIG.address.cityStateZip}</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <Phone className="h-5 w-5 flex-shrink-0" />
-                  <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="hover:text-gold transition-colors">
-                    {SITE_CONFIG.phone}
-                  </a>
-                </div>
-              </div>
             </div>
 
-            {/* Quick Links */}
+            {/* Services */}
             <div>
-              <h4 className="font-inter font-semibold mb-4 text-lg">Quick Links</h4>
-              <ul className="space-y-2 font-inter text-white/80">
-                <li>
-                  <button onClick={() => scrollToSection("team")} className="hover:text-gold transition-colors">
-                    Our Team
-                  </button>
-                </li>
+              <h4 className="font-cormorant text-xl mb-6">Services</h4>
+              <ul className="space-y-3 font-inter font-light text-sm text-primary-foreground/70">
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.ketamine)} 
-                    className="hover:text-gold transition-colors"
+                    className="hover:text-primary-foreground transition-colors"
                   >
                     Ketamine Therapy
                   </button>
@@ -79,7 +58,7 @@ const Footer = () => {
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.weightloss)} 
-                    className="hover:text-gold transition-colors"
+                    className="hover:text-primary-foreground transition-colors"
                   >
                     Medical Weight Loss
                   </button>
@@ -87,141 +66,103 @@ const Footer = () => {
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.hormones)} 
-                    className="hover:text-gold transition-colors"
+                    className="hover:text-primary-foreground transition-colors"
                   >
-                    Hormone Replacement
+                    Hormone Optimization
                   </button>
                 </li>
                 <li>
                   <button 
                     onClick={() => navigate(SITE_CONFIG.routes.militaryVeteran)} 
-                    className="hover:text-gold transition-colors"
+                    className="hover:text-primary-foreground transition-colors"
                   >
-                    Benefits & Advocacy
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => scrollToSection("insurance")} className="hover:text-gold transition-colors">
-                    Insurance
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => scrollToSection("contact")} className="hover:text-gold transition-colors">
-                    Contact
+                    Veterans Program
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Social & Legal */}
+            {/* Contact */}
             <div>
-              <h4 className="font-inter font-semibold mb-4 text-lg">Connect With Us</h4>
-              <div className="flex gap-4 mb-6">
+              <h4 className="font-cormorant text-xl mb-6">Contact</h4>
+              <div className="space-y-4 font-inter font-light text-sm text-primary-foreground/70">
+                <div className="flex gap-3">
+                  <MapPin className="h-4 w-4 flex-shrink-0 mt-1" />
+                  <div>
+                    <p>{SITE_CONFIG.address.line1}</p>
+                    <p>{SITE_CONFIG.address.cityStateZip}</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Phone className="h-4 w-4 flex-shrink-0" />
+                  <a 
+                    href={`tel:${SITE_CONFIG.phoneRaw}`} 
+                    className="hover:text-primary-foreground transition-colors"
+                    onClick={() => trackCTAClick('footer_call', `tel:${SITE_CONFIG.phoneRaw}`)}
+                  >
+                    {SITE_CONFIG.phone}
+                  </a>
+                </div>
+              </div>
+              
+              <div className="mt-8 flex gap-4">
                 <a 
                   href="https://instagram.com/elevatedhealthaugusta" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold flex items-center justify-center transition-colors"
+                  className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
                   aria-label="Instagram"
                 >
-                  <span className="text-lg font-bold">IG</span>
+                  Instagram
                 </a>
                 <a 
                   href="https://facebook.com/elevatedhealthaugusta" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold flex items-center justify-center transition-colors"
+                  className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
                   aria-label="Facebook"
                 >
-                  <span className="text-lg font-bold">FB</span>
-                </a>
-              </div>
-              
-              {/* Newsletter Signup */}
-              <div className="mb-6">
-                <p className="text-white/80 text-sm font-semibold mb-3">Stay Updated</p>
-                <p className="text-white/60 text-xs mb-3">Get health tips & clinic news</p>
-                <form className="flex gap-2" onSubmit={(e) => {
-                  e.preventDefault();
-                  // Newsletter signup would be handled here
-                  alert('Newsletter signup coming soon!');
-                }}>
-                  <input 
-                    type="email" 
-                    placeholder="Your email" 
-                    className="flex-1 px-3 py-2 rounded bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-gold"
-                    required
-                  />
-                  <button 
-                    type="submit"
-                    className="px-4 py-2 bg-gold hover:bg-gold-dark text-primary font-semibold rounded text-sm transition-colors"
-                  >
-                    Join
-                  </button>
-                </form>
-              </div>
-              
-              {/* Call Us Link */}
-              <div className="mb-6">
-                <p className="text-white/60 text-sm font-inter mb-2">Call Us:</p>
-                <a 
-                  href="tel:+17067603470" 
-                  className="text-gold hover:text-gold/80 transition-colors font-inter font-semibold"
-                  onClick={() => trackCTAClick('ai_voice_call_footer', 'tel:+17067603470')}
-                >
-                  (706) 760-3470
-                </a>
-              </div>
-              
-              <div className="space-y-2 font-inter text-sm">
-                <a href="/privacy-policy" className="hover:text-gold transition-colors block">
-                  Privacy Policy
-                </a>
-                <a href="/hipaa-notice" className="hover:text-gold transition-colors block">
-                  HIPAA Notice
-                </a>
-                <a href="/terms-of-service" className="hover:text-gold transition-colors block">
-                  Terms of Use
+                  Facebook
                 </a>
               </div>
             </div>
           </div>
 
+          {/* Divider */}
+          <div className="w-full h-px bg-primary-foreground/10 mb-12" />
+
           {/* Disclaimer */}
-          <div className="border-t border-background/20 pt-8 pb-6">
-            <div className="bg-background/10 rounded-lg p-4 md:p-6">
-              <p className="text-background/70 text-sm leading-relaxed">
-                <strong className="text-background/90">Important Disclaimer:</strong> Coverage and eligibility vary by plan, diagnosis, prior treatments, and medical-necessity review. Elevated Health Augusta will help you verify benefits and request referrals. IV ketamine for depression/anxiety is an off-label use. SPRAVATO® is FDA-approved for specific indications and administered only in-clinic under REMS with monitoring.
-              </p>
-            </div>
+          <div className="mb-12">
+            <p className="text-primary-foreground/50 text-xs font-inter font-light leading-relaxed max-w-4xl">
+              <strong className="text-primary-foreground/60">Disclaimer:</strong> Coverage and eligibility vary by plan, diagnosis, prior treatments, and medical-necessity review. IV ketamine for depression/anxiety is an off-label use. SPRAVATO® is FDA-approved for specific indications and administered only in-clinic under REMS with monitoring.
+            </p>
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-background/20 pt-8">
-            <p className="text-center text-xs text-background/60">
-              © 2025 {SITE_CONFIG.clinicName} | {" "}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-primary-foreground/40 font-inter">
+              © 2025 {SITE_CONFIG.clinicName}. All rights reserved.
+            </p>
+            <div className="flex gap-6 text-xs text-primary-foreground/40 font-inter">
               <button 
                 onClick={() => navigate("/privacy-policy")} 
-                className="text-secondary hover:underline"
+                className="hover:text-primary-foreground/70 transition-colors"
               >
-                Privacy Policy
-              </button> | {" "}
+                Privacy
+              </button>
               <button 
                 onClick={() => navigate("/hipaa-notice")} 
-                className="text-secondary hover:underline"
+                className="hover:text-primary-foreground/70 transition-colors"
               >
-                HIPAA Notice
-              </button> | {" "}
+                HIPAA
+              </button>
               <button 
                 onClick={() => navigate("/terms-of-service")} 
-                className="text-secondary hover:underline"
+                className="hover:text-primary-foreground/70 transition-colors"
               >
-                Terms of Use
+                Terms
               </button>
-            </p>
-            <p className="text-center mt-4 text-background/40 text-xs">
-              Individual results may vary. Consult with a physician to determine if treatment is appropriate for you.
-            </p>
+            </div>
           </div>
         </div>
       </div>

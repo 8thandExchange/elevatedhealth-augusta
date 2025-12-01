@@ -1,89 +1,59 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, Tv } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import mediaImage from "@/assets/jennie-tv-feature.webp";
 
 const MediaFeature = () => {
   return (
-    <section className="py-16 px-4 bg-gradient-subtle">
-      <div className="container mx-auto max-w-6xl">
+    <section className="py-24 lg:py-32 bg-background">
+      <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
         {/* Section Header */}
-        <div className="text-center mb-12 animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Tv className="w-8 h-8 text-accent" />
-            <h2 className="text-3xl md:text-4xl font-bold text-primary">
-              As Featured On
-            </h2>
-          </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            The area's first ketamine clinic, bringing hope and innovative treatment to Augusta
+        <div className="text-center mb-16">
+          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-inter font-light">
+            Press
           </p>
+          <h2 className="text-3xl sm:text-4xl font-cormorant font-light text-foreground">
+            As Featured On
+          </h2>
         </div>
 
         {/* Feature Card */}
-        <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Image */}
-            <div className="relative h-64 md:h-auto">
-              <img
-                src={mediaImage}
-                alt="Lauren Bursey featured on WJBF Jennie Show discussing Elevated Health Augusta"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="p-6 md:p-8 flex flex-col justify-center">
-              <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-accent/10 text-accent font-semibold rounded-full text-sm mb-3">
-                  WJBF News Channel 6
-                </span>
-                <h3 className="text-2xl font-bold text-primary mb-3">
-                  Area's First Ketamine Clinic Opens in Evans
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  Lauren Bursey, Family Nurse Practitioner, was featured on WJBF's "Jennie" show to discuss how Elevated Health Augusta is providing cutting-edge ketamine infusions for patients battling treatment-resistant mental health conditions.
-                </p>
-              </div>
-
-              <div className="space-y-3 mb-6 text-sm text-foreground">
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-                  <p>The only clinic of its kind in the Augusta area</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-                  <p>Specialized treatment for depression, PTSD, and anxiety</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-                  <p>Provider-monitored care throughout each 40-minute infusion</p>
-                </div>
-              </div>
-
-              <Button
-                variant="cta"
-                size="lg"
-                className="w-full md:w-auto"
-                onClick={() => window.open('https://www.wjbf.com/featured/jennie/jennie-areas-first-ketamine-clinic-opens-in-evans/', '_blank')}
-              >
-                Watch Full Interview
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
+        <div className="grid lg:grid-cols-2 gap-0 overflow-hidden bg-card border border-border/50">
+          {/* Image */}
+          <div className="relative aspect-[4/3] lg:aspect-auto">
+            <img
+              src={mediaImage}
+              alt="Lauren Bursey featured on WJBF discussing Elevated Health Augusta"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
           </div>
-        </Card>
 
-        {/* Additional Trust Indicators */}
-        <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground mb-4">
-            Trusted by the Augusta community since 2024
-          </p>
-          <div className="flex flex-wrap justify-center gap-8 items-center opacity-60">
-            <div className="text-2xl font-bold text-primary">WJBF</div>
-            <div className="text-lg text-muted-foreground">News Channel 6</div>
+          {/* Content */}
+          <div className="p-8 lg:p-12 flex flex-col justify-center">
+            <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4 font-inter">
+              WJBF News Channel 6
+            </p>
+            <h3 className="text-2xl lg:text-3xl font-cormorant font-light text-foreground mb-4">
+              Area's First Ketamine Clinic Opens in Evans
+            </h3>
+            <p className="text-muted-foreground font-inter font-light leading-relaxed mb-8">
+              Lauren Bursey, Family Nurse Practitioner, was featured on WJBF's "Jennie" show 
+              to discuss how Elevated Health Augusta is providing cutting-edge ketamine infusions 
+              for patients with treatment-resistant mental health conditions.
+            </p>
+
+            <button
+              onClick={() => window.open('https://www.wjbf.com/featured/jennie/jennie-areas-first-ketamine-clinic-opens-in-evans/', '_blank')}
+              className="inline-flex items-center gap-2 text-primary font-inter text-sm tracking-wide hover:gap-3 transition-all duration-300 w-fit"
+            >
+              <span className="elegant-underline">Watch Full Interview</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
+
+        {/* Trust Line */}
+        <p className="text-center text-sm text-muted-foreground font-inter font-light mt-12">
+          Trusted by the Augusta community since 2024
+        </p>
       </div>
     </section>
   );

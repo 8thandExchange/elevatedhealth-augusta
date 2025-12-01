@@ -106,22 +106,25 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
   };
 
   return (
-    <section id="contact" className="py-24 bg-secondary/30 scroll-mt-20">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section id="contact" className="py-24 lg:py-32 bg-background scroll-mt-20">
+      <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-6 text-primary">
-              Take the First Step Today
+          <div className="text-center mb-16">
+            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-inter font-light">
+              Get in Touch
+            </p>
+            <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-light mb-6 text-foreground">
+              Begin Your Journey
             </h2>
-            <p className="font-inter text-xl text-muted-foreground max-w-3xl mx-auto">
-              Schedule your free consultation or send us a message
+            <p className="font-inter text-lg text-muted-foreground font-light max-w-xl mx-auto">
+              Schedule your complimentary consultation or send us a message
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-xl mx-auto">
             {/* Contact Form */}
-            <Card className="p-8 bg-card shadow-xl">
-              <h3 className="font-playfair text-2xl font-bold mb-6 text-foreground">Send Us a Message</h3>
+            <Card className="p-8 lg:p-10 bg-card border-border/50 shadow-md">
+              <h3 className="font-cormorant text-2xl font-light mb-8 text-foreground">Send Us a Message</h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="name" className="font-inter">Name *</Label>

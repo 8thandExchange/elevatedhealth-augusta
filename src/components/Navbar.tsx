@@ -16,24 +16,21 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Always show solid navbar on non-home pages
     if (!isHomePage) {
       setIsScrolled(true);
       return;
     }
     
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHomePage]);
 
   const scrollToSection = (id: string) => {
-    // If not on home page, navigate to home first
     if (location.pathname !== '/') {
       navigate('/');
-      // Wait for navigation, then scroll to section
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
@@ -41,7 +38,6 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
         }
       }, 100);
     } else {
-      // Scroll directly to section
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -52,67 +48,59 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         (isScrolled || isMobileMenuOpen)
-          ? "bg-white shadow-md border-b border-border/30"
+          ? "bg-background/95 backdrop-blur-md border-b border-border/50"
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-center h-20 py-4">
-          {/* Desktop Menu - Centered */}
-          <div className="hidden md:flex items-center gap-4 lg:gap-6">
-            <button 
-              onClick={() => scrollToSection("hero")} 
-              className={`text-sm font-medium transition-all duration-300 ${
-                isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-gold"
-              }`}
-            >
-              Home
-            </button>
-            
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo / Brand */}
+          <button 
+            onClick={() => scrollToSection("hero")}
+            className="font-cormorant text-xl tracking-wide text-foreground hover:text-primary transition-colors"
+          >
+            Elevated Health
+          </button>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.ketamine)}
-              className={`text-sm font-medium transition-all duration-300 ${
-                isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-gold"
-              }`}
+              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
             >
-              Ketamine Therapy
+              Ketamine
             </button>
 
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.weightloss)}
-              className={`text-sm font-medium transition-all duration-300 ${
-                isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-gold"
-              }`}
+              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
             >
-              Medical Weight Loss
+              Weight Loss
             </button>
 
             <button 
               onClick={() => navigate(SITE_CONFIG.routes.hormones)}
-              className={`text-sm font-medium transition-all duration-300 ${
-                isScrolled ? "text-foreground hover:text-primary" : "text-white hover:text-gold"
-              }`}
+              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
             >
-              Hormone Replacement
+              Hormones
             </button>
 
+            <button 
+              onClick={() => scrollToSection("contact")}
+              className="text-sm font-inter font-light tracking-wide text-foreground/80 hover:text-foreground transition-colors elegant-underline"
+            >
+              Contact
+            </button>
+          </div>
+
+          {/* Desktop CTA */}
+          <div className="hidden md:block">
             <Button 
-              variant="outline"
-              className={`font-medium px-6 py-2 transition-all duration-300 ${
-                isScrolled 
-                  ? "border-primary bg-primary text-white hover:bg-primary-dark" 
-                  : "border-white bg-primary text-white hover:bg-primary-dark"
-              }`}
-              size="lg" 
+              className="font-inter font-normal text-sm tracking-wide px-6 py-2 bg-primary hover:bg-primary-dark text-primary-foreground transition-all duration-300"
               onClick={() => {
-                if (onOpenBooking) {
-                  onOpenBooking();
-                }
-                if (typeof window !== 'undefined' && (window as any).gtag) {
-                  (window as any).gtag('event', 'consult_book', { location: 'navbar' });
-                }
+                if (onOpenBooking) onOpenBooking();
               }}
             >
               Book Consultation
@@ -121,77 +109,88 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-foreground absolute right-6"
+            className="md:hidden p-2 text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Mobile Menu Overlay */}
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <>
-            {/* Semi-transparent backdrop */}
             <div 
-              className="md:hidden fixed inset-0 top-20 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
+              className="md:hidden fixed inset-0 top-20 bg-foreground/20 backdrop-blur-sm z-40 animate-fade-in"
               onClick={() => setIsMobileMenuOpen(false)}
-              aria-hidden="true"
             />
             
-            {/* Mobile Menu */}
-            <div className="md:hidden absolute left-0 right-0 top-20 bg-white shadow-lg border-t border-border animate-slide-in-right z-50">
-              <div className="flex flex-col gap-4 px-6 py-6">
-              <button onClick={() => scrollToSection("hero")} className="text-left py-2 text-foreground hover:text-accent transition-colors">
-                Home
-              </button>
-              
-              <button 
-                onClick={() => {
-                  navigate(SITE_CONFIG.routes.ketamine);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-left py-2 text-foreground hover:text-accent transition-colors"
-              >
-                Ketamine Therapy
-              </button>
+            <div className="md:hidden fixed right-0 top-20 bottom-0 w-80 max-w-full bg-background shadow-lg border-l border-border animate-slide-in-right z-50">
+              <div className="flex flex-col p-8">
+                <nav className="flex flex-col gap-6">
+                  <button 
+                    onClick={() => scrollToSection("hero")} 
+                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                  >
+                    Home
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      navigate(SITE_CONFIG.routes.ketamine);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                  >
+                    Ketamine Therapy
+                  </button>
 
-              <button 
-                onClick={() => {
-                  navigate(SITE_CONFIG.routes.weightloss);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-left py-2 text-foreground hover:text-accent transition-colors"
-              >
-                Medical Weight Loss
-              </button>
+                  <button 
+                    onClick={() => {
+                      navigate(SITE_CONFIG.routes.weightloss);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                  >
+                    Weight Loss
+                  </button>
 
-              <button 
-                onClick={() => {
-                  navigate(SITE_CONFIG.routes.hormones);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-left py-2 text-foreground hover:text-accent transition-colors"
-              >
-                Hormone Replacement
-              </button>
-              
-              <Button 
-                variant="outline"
-                className="w-full border-accent text-accent hover:bg-accent hover:text-white mt-4"
-                size="lg" 
-                onClick={() => {
-                  if (onOpenBooking) {
-                    onOpenBooking();
-                  }
-                  setIsMobileMenuOpen(false);
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('event', 'consult_book', { location: 'mobile_menu' });
-                  }
-                }}
-              >
-                Book Consultation
-              </Button>
+                  <button 
+                    onClick={() => {
+                      navigate(SITE_CONFIG.routes.hormones);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                  >
+                    Hormones
+                  </button>
+
+                  <button 
+                    onClick={() => {
+                      scrollToSection("contact");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-left font-cormorant text-2xl text-foreground hover:text-primary transition-colors"
+                  >
+                    Contact
+                  </button>
+                </nav>
+
+                <div className="mt-12 pt-8 border-t border-border">
+                  <Button 
+                    className="w-full font-inter text-sm tracking-wide py-6 bg-primary hover:bg-primary-dark text-primary-foreground"
+                    onClick={() => {
+                      if (onOpenBooking) onOpenBooking();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Book Consultation
+                  </Button>
+                  
+                  <p className="mt-6 text-sm text-muted-foreground font-inter">
+                    {SITE_CONFIG.phone}
+                  </p>
+                </div>
               </div>
             </div>
           </>
