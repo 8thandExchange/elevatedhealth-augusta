@@ -27,6 +27,7 @@ import PatientLogin from "./pages/PatientLogin";
 import PatientDashboard from "./pages/PatientDashboard";
 import SymptomCheckIn from "./pages/SymptomCheckIn";
 import ProviderDashboard from "./pages/ProviderDashboard";
+import SymptomChecker from "./pages/SymptomChecker";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
           <Route path="/hormone-replacement" element={<HormoneReplacement />} />
           <Route path="/weight-loss" element={<WeightLoss />} />
           {/* Other Routes */}
+          <Route path="/symptom-checker" element={<SymptomChecker />} />
           <Route path="/military-veteran" element={<MilitaryVeteran />} />
           <Route path="/how-ketamine-works" element={<HowKetamineWorks />} />
           <Route path="/what-to-expect" element={<WhatToExpect />} />
