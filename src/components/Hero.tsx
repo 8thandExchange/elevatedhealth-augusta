@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import heroImage from "@/assets/hero-breakthrough.jpg";
+import { ArrowRight, Check } from "lucide-react";
+import heroImage from "@/assets/hero-abstract-luxury.jpg";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
 
@@ -9,6 +9,13 @@ interface HeroProps {
 }
 
 const Hero = ({ onOpenBooking }: HeroProps) => {
+  const scrollToContact = () => {
+    const element = document.getElementById("contact");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center">
       {/* Split Layout */}
@@ -42,8 +49,8 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
               <Button 
                 size="lg" 
                 onClick={() => {
-                  trackCTAClick('hero_book_consultation', 'modal');
-                  onOpenBooking();
+                  trackCTAClick('hero_book_consultation', 'contact_section');
+                  scrollToContact();
                 }}
                 className="font-lato font-normal tracking-wide text-sm px-8 py-6"
               >
@@ -63,18 +70,30 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
               </Button>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="mt-16 pt-8 border-t border-border animate-fade-in" style={{ animationDelay: "0.6s" }}>
-              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4 font-lato">
-                Trusted by
+            {/* Osmind Portal Note */}
+            <p className="mt-4 text-sm text-muted-foreground font-lato font-light animate-fade-in" style={{ animationDelay: "0.5s" }}>
+              Request an appointment to receive your secure Osmind portal invitation.
+            </p>
+
+            {/* Why Choose Us - Vertical List with Gold Checkmarks */}
+            <div className="mt-12 pt-8 border-t border-border animate-fade-in" style={{ animationDelay: "0.6s" }}>
+              <p className="text-sm tracking-[0.15em] uppercase text-foreground mb-5 font-lato font-medium">
+                Why Choose Elevated Health
               </p>
-              <div className="flex flex-wrap gap-6 text-sm text-muted-foreground font-lato">
-                <span>Board-Certified Providers</span>
-                <span className="text-border">|</span>
-                <span>Insurance Accepted</span>
-                <span className="text-border">|</span>
-                <span>Private Suites</span>
-              </div>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground font-lato">Board-Certified Providers</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground font-lato">Insurance Accepted</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground font-lato">Private Treatment Suites</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -83,20 +102,12 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
         <div className="w-full lg:w-1/2 relative min-h-[50vh] lg:min-h-screen">
           <img 
             src={heroImage} 
-            alt="Serene wellness environment at Elevated Health Augusta" 
+            alt="Elegant minimalist interior with warm ambient lighting" 
             className="absolute inset-0 w-full h-full object-cover"
             loading="eager"
           />
           {/* Subtle overlay for elegance */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent lg:bg-gradient-to-r lg:from-background/10 lg:via-transparent lg:to-transparent" />
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-subtle-float hidden lg:block">
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-lato">Scroll</span>
-          <div className="w-px h-8 bg-primary/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/10 via-transparent to-transparent lg:bg-gradient-to-r lg:from-background/5 lg:via-transparent lg:to-transparent" />
         </div>
       </div>
     </section>
