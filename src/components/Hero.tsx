@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
-import heroImage from "@/assets/hero-abstract-luxury.jpg";
+import heroImage from "@/assets/hero-cool-luxury.jpg";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
 
@@ -29,7 +29,7 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
             </p>
             
             {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-playfair text-foreground leading-[1.1] mb-8 animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-cormorant text-foreground leading-[1.1] mb-8 animate-fade-in-up">
               Restore.<br />
               Renew.<br />
               <span className="text-primary">Rebalance.</span>

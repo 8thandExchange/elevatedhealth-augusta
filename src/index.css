@@ -2,82 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Medical Sanctuary Design System - Luxury Warm Palette */
+/* Cool Luxury Design System - Dark Slate Blue with Silver Accents */
 
 @layer base {
   :root {
-    /* Base colors - Alabaster/Off-White background #F9F9F7 */
-    --background: 60 14% 97%;
-    --foreground: 0 0% 17%;
+    /* Base colors - Pure White background */
+    --background: 0 0% 100%;
+    --foreground: 210 29% 24%;
 
-    /* Card surfaces - pure white with warmth */
-    --card: 60 20% 99%;
-    --card-foreground: 0 0% 17%;
+    /* Card surfaces - pure white */
+    --card: 0 0% 100%;
+    --card-foreground: 210 29% 24%;
 
     /* Popover surfaces */
-    --popover: 60 20% 99%;
-    --popover-foreground: 0 0% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 29% 24%;
 
-    /* Primary - Muted Gold #C5A059 */
-    --primary: 40 52% 56%;
+    /* Primary - Dark Slate Blue #2C3E50 */
+    --primary: 210 29% 24%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 40 52% 66%;
-    --primary-dark: 40 52% 46%;
+    --primary-light: 210 29% 34%;
+    --primary-dark: 210 29% 18%;
 
-    /* Secondary - Warm Taupe */
-    --secondary: 30 15% 90%;
-    --secondary-foreground: 0 0% 17%;
-    --secondary-light: 30 15% 95%;
-    --secondary-dark: 30 12% 82%;
+    /* Secondary - Light Grey */
+    --secondary: 210 10% 96%;
+    --secondary-foreground: 210 29% 24%;
+    --secondary-light: 210 10% 98%;
+    --secondary-dark: 210 10% 90%;
 
-    /* Accent - Sage Green (muted) */
-    --accent: 140 18% 50%;
+    /* Accent - Muted Silver/Blue #7F8C8D */
+    --accent: 184 6% 53%;
     --accent-foreground: 0 0% 100%;
-    --accent-light: 140 18% 60%;
+    --accent-light: 184 6% 63%;
 
-    /* Gold - Muted Gold #C5A059 */
-    --gold: 40 52% 56%;
+    /* Keep these for backward compatibility, now mapped to primary */
+    --gold: 210 29% 24%;
     --gold-foreground: 0 0% 100%;
-    --gold-light: 40 52% 68%;
-    --gold-dark: 40 52% 46%;
+    --gold-light: 210 29% 34%;
+    --gold-dark: 210 29% 18%;
 
-    /* Hope - Soft olive */
-    --hope: 80 18% 48%;
+    /* Hope - Soft blue-grey */
+    --hope: 200 15% 50%;
     --hope-foreground: 0 0% 100%;
-    --hope-light: 80 18% 58%;
+    --hope-light: 200 15% 60%;
 
-    /* Feminine - Dusty rose */
-    --feminine: 350 28% 68%;
+    /* Feminine - Soft rose (keeping for women's health focus) */
+    --feminine: 350 25% 70%;
     --feminine-foreground: 0 0% 100%;
-    --feminine-light: 350 32% 78%;
-    --feminine-dark: 350 24% 58%;
+    --feminine-light: 350 30% 80%;
+    --feminine-dark: 350 20% 60%;
 
     /* Muted tones */
-    --muted: 40 12% 94%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 10% 96%;
+    --muted-foreground: 210 10% 45%;
 
     /* Destructive */
     --destructive: 0 55% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders and inputs - softer, warmer */
-    --border: 40 8% 88%;
-    --input: 40 12% 94%;
-    --ring: 40 52% 56%;
+    /* Borders and inputs - subtle grey */
+    --border: 210 10% 90%;
+    --input: 210 10% 96%;
+    --ring: 210 29% 24%;
 
     /* Border radius */
     --radius: 0.5rem;
 
-    /* Gradients */
-    --gradient-hero: linear-gradient(180deg, hsla(60 14% 97% / 0) 0%, hsla(60 14% 97% / 0.9) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(60 14% 97%) 0%, hsl(30 15% 95%) 100%);
-    --gradient-overlay: linear-gradient(180deg, hsla(0 0% 17% / 0.2) 0%, hsla(0 0% 17% / 0.05) 100%);
+    /* Gradients - cool tones */
+    --gradient-hero: linear-gradient(180deg, hsla(0 0% 100% / 0) 0%, hsla(0 0% 100% / 0.9) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 10% 98%) 100%);
+    --gradient-overlay: linear-gradient(180deg, hsla(210 29% 24% / 0.2) 0%, hsla(210 29% 24% / 0.05) 100%);
 
-    /* Shadows - ultra soft, elegant */
-    --shadow-sm: 0 2px 8px hsla(0 0% 17% / 0.03);
-    --shadow-md: 0 4px 20px hsla(0 0% 17% / 0.06);
-    --shadow-lg: 0 12px 40px hsla(0 0% 17% / 0.08);
-    --shadow-glow: 0 0 60px hsla(40 52% 56% / 0.12);
+    /* Shadows - subtle and elegant */
+    --shadow-sm: 0 2px 8px hsla(210 29% 24% / 0.04);
+    --shadow-md: 0 4px 20px hsla(210 29% 24% / 0.08);
+    --shadow-lg: 0 12px 40px hsla(210 29% 24% / 0.12);
+    --shadow-glow: 0 0 60px hsla(210 29% 24% / 0.1);
 
     /* Transitions */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -85,25 +85,25 @@
   }
 
   .dark {
-    --background: 0 0% 8%;
-    --foreground: 60 10% 95%;
-    --card: 0 0% 10%;
-    --card-foreground: 60 10% 95%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 60 10% 95%;
-    --primary: 40 52% 58%;
-    --primary-foreground: 0 0% 8%;
-    --secondary: 30 10% 18%;
-    --secondary-foreground: 60 10% 95%;
-    --accent: 140 18% 55%;
-    --accent-foreground: 0 0% 8%;
-    --muted: 0 0% 16%;
-    --muted-foreground: 60 10% 60%;
+    --background: 210 29% 10%;
+    --foreground: 210 10% 95%;
+    --card: 210 29% 12%;
+    --card-foreground: 210 10% 95%;
+    --popover: 210 29% 12%;
+    --popover-foreground: 210 10% 95%;
+    --primary: 210 29% 60%;
+    --primary-foreground: 210 29% 10%;
+    --secondary: 210 15% 20%;
+    --secondary-foreground: 210 10% 95%;
+    --accent: 184 6% 60%;
+    --accent-foreground: 210 29% 10%;
+    --muted: 210 15% 18%;
+    --muted-foreground: 210 10% 60%;
     --destructive: 0 55% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 18%;
-    --input: 0 0% 16%;
-    --ring: 40 52% 58%;
+    --border: 210 15% 20%;
+    --input: 210 15% 18%;
+    --ring: 210 29% 60%;
   }
 }
 
@@ -122,11 +122,11 @@
     line-height: 1.7;
   }
 
-  /* Typography - Playfair Display for Headings */
+  /* Typography - Cormorant Garamond for Headings (High-End Medical Magazine) */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-playfair text-foreground;
+    @apply font-cormorant text-foreground;
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.01em;
     line-height: 1.2;
   }
 

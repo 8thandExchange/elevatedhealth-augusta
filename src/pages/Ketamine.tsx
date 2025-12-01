@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/ketamine-hero-abstract.jpg";
+import heroImage from "@/assets/ketamine-hero-cool.jpg";
 import treatmentSuite from "@/assets/treatment-suite-interior.jpg";
 import { Helmet } from "react-helmet";
 import { useState } from "react";
@@ -73,7 +73,7 @@ const Ketamine = () => {
               <p className="text-sm tracking-[0.3em] uppercase text-foreground/70 mb-6 font-lato font-light animate-fade-in">
                 Mental Wellness
               </p>
-              <h1 className="font-playfair text-foreground mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+              <h1 className="font-cormorant text-foreground mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
                 Ketamine Therapy
               </h1>
               <p className="text-xl text-foreground/80 max-w-2xl mx-auto mb-10 font-lato font-light leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
@@ -98,7 +98,7 @@ const Ketamine = () => {
                 <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
                   The Science
                 </p>
-                <h2 className="font-playfair text-foreground mb-8">
+                <h2 className="font-cormorant text-foreground mb-8">
                   Understanding Ketamine
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed font-light mb-8">
@@ -114,15 +114,15 @@ const Ketamine = () => {
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-border">
                   <div>
-                    <div className="text-4xl lg:text-5xl font-playfair text-primary mb-2">70%</div>
+                    <div className="text-4xl lg:text-5xl font-cormorant text-primary mb-2">70%</div>
                     <p className="text-sm text-muted-foreground font-light">Response rate in treatment-resistant depression</p>
                   </div>
                   <div>
-                    <div className="text-4xl lg:text-5xl font-playfair text-primary mb-2">24h</div>
+                    <div className="text-4xl lg:text-5xl font-cormorant text-primary mb-2">24h</div>
                     <p className="text-sm text-muted-foreground font-light">Many patients notice improvement within one day</p>
                   </div>
                   <div>
-                    <div className="text-4xl lg:text-5xl font-playfair text-primary mb-2">FDA</div>
+                    <div className="text-4xl lg:text-5xl font-cormorant text-primary mb-2">FDA</div>
                     <p className="text-sm text-muted-foreground font-light">SPRAVATO® approved for depression</p>
                   </div>
                 </div>
@@ -140,7 +140,7 @@ const Ketamine = () => {
                     <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
                       The Experience
                     </p>
-                    <h2 className="font-playfair text-foreground mb-8">
+                    <h2 className="font-cormorant text-foreground mb-8">
                       What to Expect
                     </h2>
                     <p className="text-lg text-muted-foreground leading-relaxed font-light mb-10">
@@ -183,7 +183,7 @@ const Ketamine = () => {
                   <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
                     Treatment Paths
                   </p>
-                  <h2 className="font-playfair text-foreground mb-6">
+                  <h2 className="font-cormorant text-foreground mb-6">
                     Choose Your Path
                   </h2>
                 </div>
@@ -192,9 +192,9 @@ const Ketamine = () => {
                   {/* IV Ketamine */}
                   <Card className="border border-border/50 hover:border-primary/30 transition-all duration-500 bg-card/80">
                     <CardContent className="p-10">
-                      <h3 className="text-2xl font-playfair mb-4 text-foreground">IV Ketamine Infusion</h3>
+                      <h3 className="text-2xl font-cormorant mb-4 text-foreground">IV Ketamine Infusion</h3>
                       <div className="mb-6">
-                        <span className="text-3xl font-playfair text-primary">$400</span>
+                        <span className="text-3xl font-cormorant text-primary">$400</span>
                         <span className="text-muted-foreground font-light ml-2">/session</span>
                       </div>
                       <ul className="space-y-4 mb-8">
@@ -224,7 +224,7 @@ const Ketamine = () => {
                   {/* SPRAVATO */}
                   <Card className="border border-border/50 hover:border-primary/30 transition-all duration-500 bg-card/80">
                     <CardContent className="p-10">
-                      <h3 className="text-2xl font-playfair mb-4 text-foreground">SPRAVATO® Nasal Spray</h3>
+                      <h3 className="text-2xl font-cormorant mb-4 text-foreground">SPRAVATO® Nasal Spray</h3>
                       <div className="mb-6">
                         <span className="text-muted-foreground font-light">Often covered by insurance</span>
                       </div>
@@ -264,7 +264,7 @@ const Ketamine = () => {
                   <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
                     Common Questions
                   </p>
-                  <h2 className="font-playfair text-foreground">
+                  <h2 className="font-cormorant text-foreground">
                     Frequently Asked
                   </h2>
                 </div>
@@ -272,7 +272,7 @@ const Ketamine = () => {
                 <div className="space-y-8">
                   {faqs.map((faq, index) => (
                     <div key={index} className="border-b border-border pb-8">
-                      <h3 className="text-xl font-playfair text-foreground mb-4">{faq.q}</h3>
+                      <h3 className="text-xl font-cormorant text-foreground mb-4">{faq.q}</h3>
                       <p className="text-muted-foreground font-light leading-relaxed">{faq.a}</p>
                     </div>
                   ))}
@@ -288,7 +288,7 @@ const Ketamine = () => {
                 <p className="text-sm tracking-[0.3em] uppercase text-primary-foreground/70 mb-4 font-lato font-light">
                   Begin Today
                 </p>
-                <h2 className="font-playfair text-primary-foreground mb-6">
+                <h2 className="font-cormorant text-primary-foreground mb-6">
                   Your Journey Awaits
                 </h2>
                 <p className="text-lg text-primary-foreground/90 mb-10 font-light leading-relaxed">

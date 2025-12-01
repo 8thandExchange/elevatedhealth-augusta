@@ -23,7 +23,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
           <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
             Begin Today
           </p>
-          <h2 className="font-playfair text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
+          <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
             Start Your Journey
           </h2>
           <p className="font-lato text-lg text-muted-foreground font-light mb-12 leading-relaxed">
