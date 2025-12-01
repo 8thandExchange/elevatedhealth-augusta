@@ -38,7 +38,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           .select("full_name")
           .eq("user_id", session.user.id)
           .maybeSingle();
-        setUserName(patient?.full_name || session.user.email?.split('@')[0] || null);
+        setUserName(patient?.full_name || null);
       } else {
         setIsLoggedIn(false);
         setUserName(null);
@@ -47,9 +47,16 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         setIsLoggedIn(true);
+        // Fetch patient name
+        const { data: patient } = await supabase
+          .from("patients")
+          .select("full_name")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+        setUserName(patient?.full_name || null);
       } else {
         setIsLoggedIn(false);
         setUserName(null);
