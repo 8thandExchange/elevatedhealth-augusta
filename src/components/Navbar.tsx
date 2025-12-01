@@ -164,7 +164,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                     className="font-lato font-normal text-sm tracking-wide px-4 py-2 border-primary/50 text-primary hover:bg-primary/5 hover:text-primary gap-2"
                   >
                     <User className="w-4 h-4" />
-                    {userName || "Patient Portal"}
+                    {userName || "My Account"}
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
