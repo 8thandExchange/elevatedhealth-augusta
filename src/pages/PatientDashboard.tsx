@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Activity, Zap, Heart, Brain, LogOut, Plus } from "lucide-react";
+import TreatmentPlan from "@/components/patient/TreatmentPlan";
 
 interface SymptomLog {
   id: string;
@@ -270,35 +271,13 @@ const PatientDashboard = () => {
           </Card>
         )}
 
-        {/* Current Protocol */}
-        {protocol && (
-          <div>
-            <h2 className="font-cormorant text-xl text-foreground mb-4">My Regimen</h2>
-            <Card className={`border-2 ${
-              protocol.dispenser_type === "Pink Topiclick" 
-                ? "border-pink-300 bg-gradient-to-br from-pink-50 to-pink-100/50 dark:from-pink-950/20 dark:to-pink-900/10" 
-                : "border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/10"
-            }`}>
-              <CardHeader>
-                <CardTitle className="font-cormorant text-lg">{protocol.name}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className={`w-16 h-24 rounded-lg flex items-center justify-center ${
-                    protocol.dispenser_type === "Pink Topiclick" 
-                      ? "bg-gradient-to-b from-pink-300 to-pink-500" 
-                      : "bg-gradient-to-b from-blue-300 to-blue-500"
-                  }`}>
-                    <span className="text-white text-xs font-medium rotate-90">TOPICLICK</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">{protocol.dispenser_type}</p>
-                    <p className="text-sm text-muted-foreground">{protocol.instructions}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Treatment Plan */}
+        {patient?.current_protocol && protocol && (
+          <TreatmentPlan 
+            protocolName={patient.current_protocol}
+            dispenserType={protocol.dispenser_type}
+            instructions={protocol.instructions}
+          />
         )}
 
         {/* Quick Actions */}
