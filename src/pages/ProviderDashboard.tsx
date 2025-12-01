@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Loader2, LogOut, AlertTriangle, Check, User, TrendingUp, X, Send, ShieldCheck, ShieldAlert } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
+import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 
 interface Patient {
   id: string;
@@ -494,6 +495,18 @@ const ProviderDashboard = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Lab Analysis Card */}
+              <LabAnalysisCard
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                latestSymptomScore={selectedPatient.latestLog ? {
+                  estrogen: selectedPatient.latestLog.estrogen_score || 0,
+                  progesterone: selectedPatient.latestLog.progesterone_score || 0,
+                  androgen: selectedPatient.latestLog.androgen_score || 0,
+                  cortisol: selectedPatient.latestLog.cortisol_score || 0,
+                } : undefined}
+              />
 
               {/* Protocol Suggestion */}
               {recommendedProtocol ? (

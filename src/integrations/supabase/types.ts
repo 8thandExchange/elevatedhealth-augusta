@@ -89,6 +89,56 @@ export type Database = {
         }
         Relationships: []
       }
+      lab_results: {
+        Row: {
+          collection_date: string
+          correlation_alert: string | null
+          cortisol_morning: number | null
+          created_at: string
+          created_by: string | null
+          estradiol_e2: number | null
+          id: string
+          notes: string | null
+          patient_id: string
+          progesterone_pg: number | null
+          testosterone_t: number | null
+        }
+        Insert: {
+          collection_date: string
+          correlation_alert?: string | null
+          cortisol_morning?: number | null
+          created_at?: string
+          created_by?: string | null
+          estradiol_e2?: number | null
+          id?: string
+          notes?: string | null
+          patient_id: string
+          progesterone_pg?: number | null
+          testosterone_t?: number | null
+        }
+        Update: {
+          collection_date?: string
+          correlation_alert?: string | null
+          cortisol_morning?: number | null
+          created_at?: string
+          created_by?: string | null
+          estradiol_e2?: number | null
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          progesterone_pg?: number | null
+          testosterone_t?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_results_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           created_at: string | null

@@ -1,0 +1,166 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { Beaker, Plus, TrendingUp } from "lucide-react";
+import LabGauge from "./LabGauge";
+import NewLabResultModal from "./NewLabResultModal";
+
+interface LabResult {
+  id: string;
+  collection_date: string;
+  estradiol_e2: number | null;
+  progesterone_pg: number | null;
+  testosterone_t: number | null;
+  cortisol_morning: number | null;
+  correlation_alert: string | null;
+}
+
+interface LabAnalysisCardProps {
+  patientId: string;
+  patientName: string;
+  latestSymptomScore?: {
+    estrogen: number;
+    progesterone: number;
+    androgen: number;
+    cortisol: number;
+  };
+}
+
+const LabAnalysisCard = ({ patientId, patientName, latestSymptomScore }: LabAnalysisCardProps) => {
+  const [latestLab, setLatestLab] = useState<LabResult | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const loadLatestLab = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("lab_results")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("collection_date", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      setLatestLab(data);
+    } catch (error) {
+      console.error("Error loading lab results:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadLatestLab();
+  }, [patientId]);
+
+  return (
+    <>
+      <Card className="border-border/50 bg-card">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-lg font-cormorant">
+              <Beaker className="w-5 h-5 text-primary" />
+              Lab Analysis
+            </CardTitle>
+            <Button size="sm" variant="outline" onClick={() => setIsModalOpen(true)}>
+              <Plus className="w-4 h-4 mr-1" />
+              Add Labs
+            </Button>
+          </div>
+          {latestLab && (
+            <p className="text-xs text-muted-foreground">
+              Last collected: {new Date(latestLab.collection_date).toLocaleDateString()}
+            </p>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {isLoading ? (
+            <div className="h-32 flex items-center justify-center">
+              <div className="animate-pulse text-muted-foreground">Loading...</div>
+            </div>
+          ) : !latestLab ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Beaker className="w-10 h-10 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">No lab results yet</p>
+              <p className="text-xs mt-1">Click "Add Labs" to enter ZRT results</p>
+            </div>
+          ) : (
+            <>
+              {/* Correlation Alert */}
+              {latestLab.correlation_alert && (
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <TrendingUp className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
+                        Correlation Alert
+                      </p>
+                      <p className="text-xs text-amber-600 dark:text-amber-300 mt-0.5">
+                        {latestLab.correlation_alert}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Hormone Gauges */}
+              <div className="grid gap-3">
+                <LabGauge
+                  label="Estradiol (E2)"
+                  value={latestLab.estradiol_e2}
+                  unit="pg/mL"
+                  min={0}
+                  max={10}
+                  optimalMin={2}
+                  optimalMax={4}
+                />
+                <LabGauge
+                  label="Testosterone"
+                  value={latestLab.testosterone_t}
+                  unit="ng/dL"
+                  min={0}
+                  max={60}
+                  optimalMin={30}
+                  optimalMax={45}
+                />
+                <LabGauge
+                  label="Progesterone"
+                  value={latestLab.progesterone_pg}
+                  unit="pg/mL"
+                  min={0}
+                  max={500}
+                  optimalMin={100}
+                  optimalMax={300}
+                />
+                {latestLab.cortisol_morning !== null && (
+                  <LabGauge
+                    label="Cortisol (Morning)"
+                    value={latestLab.cortisol_morning}
+                    unit="μg/dL"
+                    min={0}
+                    max={25}
+                    optimalMin={10}
+                    optimalMax={18}
+                  />
+                )}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <NewLabResultModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        patientId={patientId}
+        patientName={patientName}
+        latestSymptomScore={latestSymptomScore}
+        onSaved={loadLatestLab}
+      />
+    </>
+  );
+};
+
+export default LabAnalysisCard;
