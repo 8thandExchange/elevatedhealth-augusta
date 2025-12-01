@@ -124,51 +124,34 @@ const Ketamine = () => {
             </div>
           </section>
 
-          {/* The Experience - Two Column Section */}
-          <section className="section-spacing bg-secondary/30">
-            <div className="container mx-auto px-6 lg:px-8">
-              <div className="max-w-6xl mx-auto">
-                <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
-                  {/* Left - What to Expect */}
-                  <div>
-                    <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
-                      The Experience
-                    </p>
-                    <h2 className="font-cormorant text-foreground mb-8">
-                      What to Expect
-                    </h2>
-                    <p className="text-lg text-muted-foreground leading-relaxed font-light mb-10">
-                      Your journey begins in a private, spa-like setting designed for comfort and tranquility. 
-                      Every aspect of your experience is curated to support healing.
-                    </p>
+        {/* The Experience Section - Single Column */}
+        <section className="section-spacing bg-secondary/30">
+          <div className="container mx-auto px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-12">
+                <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
+                  The Experience
+                </p>
+                <h2 className="font-cormorant text-foreground mb-6">
+                  What to Expect
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed font-light">
+                  Your journey begins in a private, spa-like setting designed for comfort and tranquility. 
+                  Every aspect of your experience is curated to support healing.
+                </p>
+              </div>
 
-                    <ul className="space-y-5">
-                      {experienceItems.map((item, index) => (
-                        <li key={index} className="flex items-center gap-4">
-                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <CheckCircle2 className="h-4 w-4 text-primary" />
-                          </div>
-                          <span className="text-foreground font-light">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {experienceItems.map((item, index) => (
+                  <div key={index} className="flex items-center gap-3 p-4 bg-card rounded-lg border border-border/50">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                    <span className="text-foreground font-light text-sm">{item}</span>
                   </div>
-
-                  {/* Right - Abstract Gradient Element */}
-                  <div className="relative">
-                    <div className="aspect-[4/3] rounded-sm bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/20 flex items-center justify-center">
-                      <div className="text-center p-8">
-                        <div className="text-6xl font-cormorant text-primary/30 mb-4">✦</div>
-                        <p className="text-muted-foreground font-light italic">
-                          "A sanctuary designed for healing"
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
           {/* Treatment Options */}
           <section className="section-spacing bg-background">
