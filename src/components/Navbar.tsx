@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Menu, X, User, LayoutDashboard, ClipboardList, LogOut, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface NavbarProps {
   onOpenBooking?: () => void;
@@ -14,6 +23,41 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
   const isHomePage = location.pathname === '/';
   const [isScrolled, setIsScrolled] = useState(!isHomePage);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check auth state
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setIsLoggedIn(true);
+        // Try to get patient name
+        const { data: patient } = await supabase
+          .from("patients")
+          .select("full_name")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+        setUserName(patient?.full_name || session.user.email?.split('@')[0] || null);
+      } else {
+        setIsLoggedIn(false);
+        setUserName(null);
+      }
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+        setUserName(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (!isHomePage) {
@@ -44,6 +88,14 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
       }
     }
     setIsMobileMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    setUserName(null);
+    toast.success("Logged out successfully");
+    navigate("/");
   };
 
   return (
@@ -97,13 +149,55 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button 
-              variant="outline"
-              className="font-lato font-normal text-sm tracking-wide px-5 py-2 border-primary/50 text-primary hover:bg-primary/5 hover:text-primary"
-              onClick={() => navigate("/patient/login")}
-            >
-              Patient Portal
-            </Button>
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline"
+                    className="font-lato font-normal text-sm tracking-wide px-4 py-2 border-primary/50 text-primary hover:bg-primary/5 hover:text-primary gap-2"
+                  >
+                    <User className="w-4 h-4" />
+                    {userName || "Patient Portal"}
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-48 bg-background border border-border shadow-lg z-[100]"
+                >
+                  <DropdownMenuItem 
+                    onClick={() => navigate("/patient/dashboard")}
+                    className="cursor-pointer gap-2"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    My Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => navigate("/patient/intake")}
+                    className="cursor-pointer gap-2"
+                  >
+                    <ClipboardList className="w-4 h-4" />
+                    Symptom Check-In
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleLogout}
+                    className="cursor-pointer gap-2 text-red-600 focus:text-red-600"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                variant="outline"
+                className="font-lato font-normal text-sm tracking-wide px-5 py-2 border-primary/50 text-primary hover:bg-primary/5 hover:text-primary"
+                onClick={() => navigate("/patient/login")}
+              >
+                Patient Portal
+              </Button>
+            )}
             <Button 
               className="font-lato font-normal text-sm tracking-wide px-6 py-2"
               onClick={() => {
@@ -194,16 +288,54 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                     Book Consultation
                   </Button>
                   
-                  <Button 
-                    variant="outline"
-                    className="w-full font-lato text-sm tracking-wide py-6 border-primary/50 text-primary"
-                    onClick={() => {
-                      navigate("/patient/login");
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    Patient Portal
-                  </Button>
+                  {isLoggedIn ? (
+                    <>
+                      <Button 
+                        variant="outline"
+                        className="w-full font-lato text-sm tracking-wide py-6 border-primary/50 text-primary gap-2"
+                        onClick={() => {
+                          navigate("/patient/dashboard");
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        My Dashboard
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        className="w-full font-lato text-sm tracking-wide py-6 border-border text-muted-foreground gap-2"
+                        onClick={() => {
+                          navigate("/patient/intake");
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        <ClipboardList className="w-4 h-4" />
+                        Symptom Check-In
+                      </Button>
+                      <Button 
+                        variant="ghost"
+                        className="w-full font-lato text-sm tracking-wide py-6 text-red-600 hover:text-red-700 hover:bg-red-50 gap-2"
+                        onClick={() => {
+                          handleLogout();
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <Button 
+                      variant="outline"
+                      className="w-full font-lato text-sm tracking-wide py-6 border-primary/50 text-primary"
+                      onClick={() => {
+                        navigate("/patient/login");
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Patient Portal
+                    </Button>
+                  )}
                   
                   <p className="mt-6 text-sm text-muted-foreground font-lato">
                     {SITE_CONFIG.phone}
