@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-warm-alabaster.jpg";
+import heroImage from "@/assets/hero-dark-slate.jpg";
 import { trackCTAClick } from "@/lib/analytics";
-
 interface HeroProps {
   onOpenBooking: () => void;
 }
@@ -21,12 +20,12 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
       <div className="absolute inset-0">
         <img 
           src={heroImage} 
-          alt="Warm alabaster stone texture" 
+          alt="Dark slate blue luxury texture"
           className="w-full h-full object-cover"
           loading="eager"
         />
-        {/* Subtle warm overlay for consistency */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-white/20" />
+        {/* Refined dark overlay - lighter for sophistication */}
+        <div className="absolute inset-0 bg-black/25" />
       </div>
 
       {/* Centered Content */}
@@ -36,14 +35,14 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
           Augusta's Premier Wellness Destination
         </p>
 
-        {/* Main Headline - Dark Slate Blue */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cormorant text-primary leading-[1.1] mb-8 animate-fade-in-up">
+        {/* Main Headline - White */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cormorant text-white leading-[1.1] mb-8 animate-fade-in-up">
           Medical Precision.<br />
           Holistic Restoration.
         </h1>
 
-        {/* Sub-headline - Dark Slate Blue */}
-        <p className="text-lg sm:text-xl text-primary/80 font-lato font-light leading-relaxed mb-12 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+        {/* Sub-headline - White */}
+        <p className="text-lg sm:text-xl text-white/90 font-lato font-light leading-relaxed mb-12 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           Academy-Certified Hormone Optimization, Ketamine Therapy, and Medical Weight Loss.
         </p>
 
