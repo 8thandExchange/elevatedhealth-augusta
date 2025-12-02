@@ -24,7 +24,7 @@ const WelcomeIntake = ({ patientName, intakeCompleted = false }: WelcomeIntakePr
                 Intake Complete
               </h3>
               <p className="text-muted-foreground">
-                Thank you for completing your medical intake. Lauren is reviewing your 
+                Thank you for completing your medical intake. A provider is reviewing your 
                 protocol based on your results. You will be notified when your personalized 
                 treatment plan is ready.
               </p>

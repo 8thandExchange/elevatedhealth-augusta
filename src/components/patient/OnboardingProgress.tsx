@@ -10,7 +10,7 @@ type OnboardingStep = {
 const ONBOARDING_STEPS: OnboardingStep[] = [
   { id: "account", label: "Account Created", description: "Welcome to Elevated Health" },
   { id: "intake", label: "Medical Intake", description: "Complete your symptom assessment" },
-  { id: "review", label: "Provider Review", description: "Lauren reviews your protocol" },
+  { id: "review", label: "Provider Review", description: "Your protocol is being reviewed" },
   { id: "active", label: "Treatment Active", description: "Your personalized plan is ready" },
 ];
 
