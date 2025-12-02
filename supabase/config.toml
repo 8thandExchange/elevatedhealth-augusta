@@ -17,3 +17,9 @@ verify_jwt = false
 
 [functions.send-labcorp-requisition]
 verify_jwt = false
+
+[functions.create-hormone-checkout]
+verify_jwt = false
+
+[functions.verify-hormone-payment]
+verify_jwt = false

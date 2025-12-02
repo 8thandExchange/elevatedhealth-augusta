@@ -13,7 +13,9 @@ import {
   TestTube,
   UserCheck,
   TrendingUp,
-  Shield
+  Shield,
+  CreditCard,
+  Loader2
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -29,14 +31,37 @@ import {
 } from "@/components/ui/accordion";
 import { HRTQuizModal } from "@/components/HRTQuizModal";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const HormonesWomen = () => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
   const scrollToBooking = () => {
     const bookingSection = document.getElementById('booking-section');
     if (bookingSection) {
       bookingSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleCheckout = async () => {
+    setIsCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-hormone-checkout");
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsCheckoutLoading(false);
     }
   };
 
@@ -400,11 +425,16 @@ const HormonesWomen = () => {
                         This fee covers your diagnostics and provider time. There is no obligation to proceed with treatment.
                       </p>
                       <Button 
-                        onClick={() => setIsQuizOpen(true)}
+                        onClick={handleCheckout}
+                        disabled={isCheckoutLoading}
                         className="w-full bg-feminine hover:bg-feminine-light text-feminine-foreground"
                       >
-                        <Sparkles className="mr-2 h-4 w-4" />
-                        Begin Assessment
+                        {isCheckoutLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        {isCheckoutLoading ? "Processing..." : "Get Started - $299"}
                       </Button>
                     </CardContent>
                   </Card>

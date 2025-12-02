@@ -30,6 +30,7 @@ import PatientIntake from "./pages/PatientIntake";
 import SymptomCheckIn from "./pages/SymptomCheckIn";
 import ProviderDashboard from "./pages/ProviderDashboard";
 import SymptomChecker from "./pages/SymptomChecker";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/consult" element={<Consult />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           
           {/* Protected Patient Routes */}
           <Route path="/symptom-checker" element={

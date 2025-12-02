@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      hormone_mapping_payments: {
+        Row: {
+          amount_paid: number | null
+          created_at: string
+          customer_email: string
+          id: string
+          kit_shipped_at: string | null
+          lab_review_scheduled_at: string | null
+          patient_id: string | null
+          payment_status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          zrt_kit_status: string
+        }
+        Insert: {
+          amount_paid?: number | null
+          created_at?: string
+          customer_email: string
+          id?: string
+          kit_shipped_at?: string | null
+          lab_review_scheduled_at?: string | null
+          patient_id?: string | null
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          zrt_kit_status?: string
+        }
+        Update: {
+          amount_paid?: number | null
+          created_at?: string
+          customer_email?: string
+          id?: string
+          kit_shipped_at?: string | null
+          lab_review_scheduled_at?: string | null
+          patient_id?: string | null
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          zrt_kit_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hormone_mapping_payments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hrt_quiz_submissions: {
         Row: {
           age_range: string
