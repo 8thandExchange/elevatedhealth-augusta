@@ -163,7 +163,7 @@ serve(async (req) => {
         `;
 
         const emailResponse = await resend.emails.send({
-          from: "Elevated Health <onboarding@resend.dev>",
+          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
           to: [patient_email],
           subject: "Elevated Health: Your Membership is Ready to Activate",
           html: emailHtml,
