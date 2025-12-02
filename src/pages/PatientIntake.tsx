@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, CheckCircle, ShieldAlert, Loader2, User, Check } from "lucide-react";
@@ -97,6 +98,7 @@ const PatientIntake = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<"profile" | "symptoms" | "safety" | "medical">("profile");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [fullName, setFullName] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [treatmentRequests, setTreatmentRequests] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -205,19 +207,25 @@ const PatientIntake = () => {
         .eq("user_id", user.id)
         .maybeSingle();
 
-      // If no patient record exists, create one
+      // If no patient record exists, create one with the entered name
       if (!patient && !patientError) {
         const { data: newPatient, error: createError } = await supabase
           .from("patients")
           .insert({
             user_id: user.id,
-            full_name: user.email?.split("@")[0] || "Patient",
+            full_name: fullName.trim(),
           })
           .select("id")
           .single();
         
         if (createError) throw new Error("Failed to create patient record");
         patient = newPatient;
+      } else if (patient) {
+        // Update the patient's name if they entered one
+        await supabase
+          .from("patients")
+          .update({ full_name: fullName.trim() })
+          .eq("id", patient.id);
       }
 
       if (patientError || !patient) throw new Error("Patient not found");
@@ -276,7 +284,7 @@ const PatientIntake = () => {
     }
   };
 
-  const canProceedFromProfile = gender && treatmentRequests.length > 0;
+  const canProceedFromProfile = fullName.trim().length >= 2 && gender && treatmentRequests.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -344,9 +352,26 @@ const PatientIntake = () => {
                     </h2>
                   </div>
 
+                  {/* Full Name */}
+                  <div className="mb-8">
+                    <Label htmlFor="fullName" className="text-sm font-medium mb-3 block">
+                      Full Name <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="fullName"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="w-full"
+                      required
+                    />
+                  </div>
+
                   {/* Gender Selection */}
                   <div className="mb-8">
-                    <Label className="text-sm font-medium mb-3 block">I identify as:</Label>
+                    <Label className="text-sm font-medium mb-3 block">
+                      I identify as: <span className="text-red-500">*</span>
+                    </Label>
                     <RadioGroup 
                       value={gender} 
                       onValueChange={(value) => {
