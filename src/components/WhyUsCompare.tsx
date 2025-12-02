@@ -19,29 +19,29 @@ const WhyUsCompare = ({ onOpenBooking }: WhyUsCompareProps) => {
       elevated: "FDA-Approved GLP-1s with Personalized Protocols"
     },
     {
-      feature: "Testing & Analysis",
+      feature: "Diagnostic Testing",
       standard: "Basic Weight Check",
-      elevated: "ZRT Metabolic Analysis + Hormone Panel"
+      elevated: "ZRT Saliva Diagnostics + Hormone Panel"
     },
     {
-      feature: "Appointments",
+      feature: "Consultations",
       standard: "15-Minute Med Refills",
-      elevated: "Comprehensive Physician-Led Consultations"
+      elevated: "Comprehensive Provider-Led Consultations"
     },
     {
-      feature: "Hormone Health",
-      standard: "Not Addressed",
-      elevated: "Full Hormone Balancing Integration"
+      feature: "Root Cause Analysis",
+      standard: "Symptom Treatment Only",
+      elevated: "Hormone Blockers Identified & Addressed"
     },
     {
-      feature: "Root Cause",
-      standard: "Symptom Band-Aid",
-      elevated: "Cellular-Level Metabolic Repair"
+      feature: "Biological Approach",
+      standard: "Calories In, Calories Out",
+      elevated: "Cortisol, Estrogen, Testosterone Optimization"
     },
     {
-      feature: "Support Access",
+      feature: "Care Model",
       standard: "Office Hours Only",
-      elevated: "Unlimited Messaging + Weekly Check-ins"
+      elevated: "Concierge Access + Weekly Check-ins"
     }
   ];
 
@@ -54,11 +54,11 @@ const WhyUsCompare = ({ onOpenBooking }: WhyUsCompareProps) => {
             The Difference
           </p>
           <h2 className="font-cormorant text-foreground mb-6">
-            Why Choose Elevated Health?
+            We Test. We Don't Guess.
           </h2>
           <p className="text-lg text-muted-foreground font-lato font-light leading-relaxed">
-            Not all weight loss programs are created equal. See how our metabolic optimization 
-            approach differs from standard clinics.
+            Most clinics prescribe blindly. We architect your protocol around your unique biology 
+            using advanced saliva diagnostics.
           </p>
         </div>
 
@@ -116,7 +116,7 @@ const WhyUsCompare = ({ onOpenBooking }: WhyUsCompareProps) => {
           {/* Bottom CTA */}
           <div className="mt-12 text-center">
             <p className="text-muted-foreground font-lato mb-6">
-              Ready to experience the difference?
+              Ready to discover your biological blockers?
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -124,7 +124,7 @@ const WhyUsCompare = ({ onOpenBooking }: WhyUsCompareProps) => {
                 size="lg"
                 className="font-lato"
               >
-                Book Free Consultation
+                Request Access
               </Button>
               <Button 
                 onClick={handleLearnMore}
@@ -132,7 +132,7 @@ const WhyUsCompare = ({ onOpenBooking }: WhyUsCompareProps) => {
                 size="lg"
                 className="font-lato group"
               >
-                Learn More About Our Program
+                Learn About Hormonal Weight Reset
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>

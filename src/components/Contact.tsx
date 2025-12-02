@@ -9,7 +9,7 @@ interface ContactProps {
 
 const Contact = ({ onOpenBooking }: ContactProps) => {
   const handleBooking = () => {
-    trackCTAClick('cta_book_consultation', 'booking_calendar');
+    trackCTAClick('cta_request_access', 'booking_calendar');
     if (onOpenBooking) {
       onOpenBooking();
     }
@@ -20,15 +20,15 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
       <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center">
           {/* Section Header */}
-          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">
-            Begin Today
+          <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+            Begin Your Restoration
           </p>
           <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
-            Start Your Journey
+            Request Access
           </h2>
           <p className="font-lato text-lg text-muted-foreground font-light mb-12 leading-relaxed">
-            Schedule your complimentary consultation and discover<br className="hidden sm:block" />
-            how we can help you achieve your wellness goals.
+            We will test your biology, understand your history, and architect<br className="hidden sm:block" />
+            a personalized protocol designed specifically for you.
           </p>
 
           {/* Primary CTA */}
@@ -37,7 +37,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
             onClick={handleBooking}
             className="font-lato tracking-wide text-base px-12 py-7"
           >
-            Book Consultation
+            Apply for Consultation
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
 

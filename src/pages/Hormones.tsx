@@ -1,40 +1,216 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Shield } from "lucide-react";
+import { Heart, Shield, TestTube, CheckCircle2, ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import ConsultationModal from "@/components/ConsultationModal";
 import elevatedForHerLogo from "@/assets/elevated-for-her-logo.png";
 import elevatedForHimLogo from "@/assets/elevated-for-him-logo.png";
 
 const Hormones = () => {
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  const protocols = [
+    {
+      name: "Menopause Restoration",
+      compound: "Bi-Est / Progesterone",
+      description: "Precision estrogen and progesterone balance for women experiencing menopause, perimenopause, or hormonal decline.",
+      for: "Women"
+    },
+    {
+      name: "Androgen Vitality",
+      compound: "Testosterone Therapy",
+      description: "Bio-identical testosterone optimization for men and women experiencing fatigue, low libido, or muscle loss.",
+      for: "Men & Women"
+    },
+    {
+      name: "Adrenal Recovery",
+      compound: "Cortisol Management",
+      description: "Targeted support for cortisol dysregulation, chronic stress, and adrenal fatigue patterns.",
+      for: "All Patients"
+    }
+  ];
+
   return (
     <>
       <Helmet>
-        <title>Hormone Replacement Therapy Augusta | BHRT for Men & Women - Elevated Health</title>
-        <meta name="description" content="Bioidentical hormone replacement therapy in Augusta, GA. Specialized treatment for men and women. Expert care for testosterone therapy, menopause, and hormone optimization." />
-        <meta name="keywords" content="hormone replacement Augusta, BHRT Augusta GA, testosterone therapy, menopause treatment, hormone optimization Augusta" />
+        <title>Precision Bio-Identical Therapy Augusta | Hormone Optimization - Elevated Health</title>
+        <meta name="description" content="Advanced bioidentical hormone replacement therapy in Augusta, GA. We test before we treat. ZRT saliva diagnostics and pharmacy-grade bio-identicals for men and women." />
+        <meta name="keywords" content="bioidentical hormones Augusta, BHRT Augusta GA, testosterone therapy, menopause treatment, hormone optimization Augusta, ZRT testing" />
       </Helmet>
 
       <div className="min-h-screen">
-        <Navbar />
+        <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
         
         <main>
           {/* Hero Section */}
-          <section className="pt-32 pb-20 md:pt-40 md:pb-28 bg-gradient-to-br from-primary/10 via-background to-accent/5">
-            <div className="container mx-auto px-4 sm:px-6">
-              <div className="max-w-4xl mx-auto text-center mb-16">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in-up leading-tight">
-                  Hormone Replacement<br />Therapy in Augusta
-                </h1>
-                <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-                  Personalized bioidentical hormone therapy for men and women.<br />
-                  Restore balance, energy, and vitality.
+          <section className="relative min-h-[60vh] flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-[hsl(200,25%,35%)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/50" />
+            
+            <div className="relative z-10 container mx-auto px-6 text-center py-32">
+              <p className="text-sm tracking-[0.3em] uppercase text-gold mb-6 font-lato font-light animate-fade-in">
+                Biological Reset
+              </p>
+              <h1 className="font-cormorant text-white mb-6 animate-fade-in text-4xl sm:text-5xl md:text-6xl" style={{ animationDelay: "0.1s" }}>
+                Precision Bio-Identical Therapy
+              </h1>
+              <p className="text-xl text-white/80 max-w-2xl mx-auto mb-10 font-lato font-light leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
+                We reject the one-size-fits-all approach. Your hormones are unique. Your protocol should be too.
+              </p>
+              <Button
+                onClick={() => setIsBookingOpen(true)}
+                size="lg"
+                className="animate-fade-in bg-gold border-gold text-white hover:bg-gold-dark"
+                style={{ animationDelay: "0.3s" }}
+              >
+                Request Access
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </section>
+
+          {/* Test, Don't Guess Section */}
+          <section className="section-spacing bg-background">
+            <div className="container mx-auto px-6 lg:px-8">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-12">
+                  <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                    Our Philosophy
+                  </p>
+                  <h2 className="font-cormorant text-foreground mb-6">
+                    Test, Don't Guess
+                  </h2>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <p className="text-lg text-muted-foreground leading-relaxed font-light mb-6">
+                      Using advanced Saliva and Blood Spot diagnostics, we map your specific levels 
+                      of <span className="text-foreground font-medium">Estrogen, Testosterone, Progesterone, and Cortisol</span> before 
+                      writing a single prescription.
+                    </p>
+                    <p className="text-lg text-muted-foreground leading-relaxed font-light mb-8">
+                      This is not guesswork. This is precision medicine—architecting your protocol 
+                      based on objective data, not symptoms alone.
+                    </p>
+                    <div className="flex items-center gap-3 px-4 py-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <TestTube className="h-5 w-5 text-gold" />
+                      <span className="text-sm text-foreground font-lato">
+                        Powered by ZRT Laboratory Diagnostics
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {["Estrogen (E2)", "Progesterone (Pg)", "Testosterone (T)", "Cortisol (Morning & Evening)", "DHEA-S"].map((test, i) => (
+                      <div key={i} className="flex items-center gap-3 p-4 bg-card rounded-lg border border-border/50">
+                        <CheckCircle2 className="h-5 w-5 text-gold shrink-0" />
+                        <span className="text-foreground font-light">{test}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Safety First Section */}
+          <section className="section-spacing bg-secondary/30">
+            <div className="container mx-auto px-6 lg:px-8">
+              <div className="max-w-3xl mx-auto text-center">
+                <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                  Safety First
                 </p>
+                <h2 className="font-cormorant text-foreground mb-8">
+                  Your Safety Is Non-Negotiable
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed font-light mb-8">
+                  We rigorously screen for contraindications—including <span className="text-foreground font-medium">prostate health for men</span> and 
+                  <span className="text-foreground font-medium"> breast health for women</span>—before initiating any protocol. 
+                  Certain conditions require LabCorp blood work rather than saliva testing to ensure complete safety.
+                </p>
+                <p className="text-lg text-muted-foreground leading-relaxed font-light">
+                  We partner with leading compounding pharmacies to deliver pure, precise bio-identical medications 
+                  tailored to your exact specifications.
+                </p>
+
+                {/* Safety Badges */}
+                <div className="grid grid-cols-3 gap-6 mt-12">
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-3">
+                      <Shield className="h-6 w-6 text-primary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground font-light">PSA Screening<br />(Men)</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-feminine/10 mb-3">
+                      <Heart className="h-6 w-6 text-feminine" />
+                    </div>
+                    <p className="text-sm text-muted-foreground font-light">Breast Health<br />(Women)</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-3">
+                      <TestTube className="h-6 w-6 text-gold" />
+                    </div>
+                    <p className="text-sm text-muted-foreground font-light">Liver & Kidney<br />Function</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Protocols Section */}
+          <section className="section-spacing bg-background">
+            <div className="container mx-auto px-6 lg:px-8">
+              <div className="max-w-5xl mx-auto">
+                <div className="text-center mb-16">
+                  <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                    Our Protocols
+                  </p>
+                  <h2 className="font-cormorant text-foreground mb-6">
+                    Precision Restoration Pathways
+                  </h2>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                  {protocols.map((protocol, index) => (
+                    <Card key={index} className="border border-border/50 hover:border-primary/30 transition-all bg-card/80">
+                      <CardContent className="p-8">
+                        <div className="text-xs text-gold uppercase tracking-wider mb-2 font-lato">
+                          {protocol.for}
+                        </div>
+                        <h3 className="text-xl font-cormorant text-foreground mb-2">
+                          {protocol.name}
+                        </h3>
+                        <p className="text-sm text-primary font-medium mb-4">
+                          {protocol.compound}
+                        </p>
+                        <p className="text-muted-foreground font-light text-sm leading-relaxed">
+                          {protocol.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Gender Selection Cards */}
+          <section className="section-spacing bg-secondary/30">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="text-center mb-12">
+                <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                  Specialized Care
+                </p>
+                <h2 className="font-cormorant text-foreground mb-6">
+                  Choose Your Path
+                </h2>
               </div>
 
-              {/* Gender Selection Cards */}
               <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
                 {/* Women's HRT Card */}
                 <Link to="/hormones-women">
@@ -44,28 +220,22 @@ const Hormones = () => {
                         <img 
                           src={elevatedForHerLogo} 
                           alt="Elevated+ for Her" 
-                          className="h-24 mx-auto mb-4"
+                          className="h-20 mx-auto mb-4"
                         />
                       </div>
-                      <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-feminine/10 group-hover:bg-feminine/20 transition-colors mb-6">
-                        <Heart className="h-10 w-10 text-feminine" />
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-feminine/10 group-hover:bg-feminine/20 transition-colors mb-6">
+                        <Heart className="h-8 w-8 text-feminine" />
                       </div>
-                      <h2 className="text-3xl font-bold mb-4 group-hover:text-feminine transition-colors">
+                      <h3 className="text-2xl font-cormorant mb-4 group-hover:text-feminine transition-colors">
                         For Women
-                      </h2>
-                      <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                        Bioidentical HRT for menopause, perimenopause, and hormone imbalance. Reclaim your energy and feel like yourself again.
+                      </h3>
+                      <p className="text-muted-foreground mb-6 leading-relaxed font-light">
+                        Menopause restoration, perimenopause support, and estrogen/progesterone optimization.
                       </p>
-                      <div className="space-y-2 text-sm text-muted-foreground mb-6">
-                        <p>✓ Hot flash relief</p>
-                        <p>✓ Mood & sleep support</p>
-                        <p>✓ Energy restoration</p>
-                        <p>✓ Expert women's care</p>
-                      </div>
                       <Button 
-                        className="w-full bg-feminine hover:bg-feminine-light text-feminine-foreground text-lg py-6"
+                        className="w-full bg-feminine hover:bg-feminine-light text-feminine-foreground"
                       >
-                        Explore Women's HRT
+                        Explore Women's Protocols
                       </Button>
                     </CardContent>
                   </Card>
@@ -79,44 +249,60 @@ const Hormones = () => {
                         <img 
                           src={elevatedForHimLogo} 
                           alt="Elevated+ for Him" 
-                          className="h-24 mx-auto"
+                          className="h-20 mx-auto"
                         />
                       </div>
-                      <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors mb-6">
-                        <Shield className="h-10 w-10 text-primary" />
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors mb-6">
+                        <Shield className="h-8 w-8 text-primary" />
                       </div>
-                      <h2 className="text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
+                      <h3 className="text-2xl font-cormorant mb-4 group-hover:text-primary transition-colors">
                         For Men
-                      </h2>
-                      <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                        Testosterone replacement therapy and hormone optimization. Restore your strength, drive, and performance.
+                      </h3>
+                      <p className="text-muted-foreground mb-6 leading-relaxed font-light">
+                        Testosterone optimization, androgen vitality, and performance restoration.
                       </p>
-                      <div className="space-y-2 text-sm text-muted-foreground mb-6">
-                        <p>✓ Low testosterone treatment</p>
-                        <p>✓ Energy & strength boost</p>
-                        <p>✓ Performance optimization</p>
-                        <p>✓ Expert men's health</p>
-                      </div>
                       <Button 
-                        className="w-full bg-primary hover:bg-primary-light text-primary-foreground text-lg py-6"
+                        className="w-full bg-primary hover:bg-primary-light text-primary-foreground"
                       >
-                        Explore Men's TRT
+                        Explore Men's Protocols
                       </Button>
                     </CardContent>
                   </Card>
                 </Link>
               </div>
+            </div>
+          </section>
 
-              <div className="text-center mt-12">
-                <p className="text-muted-foreground">
-                  Board-certified care • Personalized treatment plans • Comprehensive lab testing
+          {/* CTA Section */}
+          <section className="section-spacing bg-primary text-primary-foreground">
+            <div className="container mx-auto px-6 lg:px-8">
+              <div className="max-w-3xl mx-auto text-center">
+                <p className="text-sm tracking-[0.3em] uppercase text-primary-foreground/70 mb-4 font-lato font-light">
+                  Begin Your Restoration
                 </p>
+                <h2 className="font-cormorant text-primary-foreground mb-6">
+                  Your Biological Reset Awaits
+                </h2>
+                <p className="text-lg text-primary-foreground/90 mb-10 font-light leading-relaxed">
+                  We will test your biology, understand your symptoms, and architect a protocol 
+                  designed specifically for your unique hormonal landscape.
+                </p>
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 border-primary-foreground"
+                  onClick={() => setIsBookingOpen(true)}
+                >
+                  Apply for Consultation
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </div>
           </section>
         </main>
 
         <Footer />
+        <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
       </div>
     </>
   );

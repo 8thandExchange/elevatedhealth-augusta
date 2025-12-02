@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import providerImage from "@/assets/provider-portrait.jpg";
 import quoteImage from "@/assets/provider-testimonial.jpg";
-import { Award, Heart, GraduationCap, Phone, Calendar } from "lucide-react";
+import { Award, Heart, GraduationCap, Phone, Calendar, ArrowRight } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
 
 const Team = () => {
@@ -12,11 +12,15 @@ const Team = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold text-primary mb-6">
-              Healing Starts with Trust
+            <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+              Your Provider
+            </p>
+            <h2 className="font-cormorant text-4xl md:text-5xl text-primary mb-6">
+              Meet Your Metabolic Architect
             </h2>
-            <p className="font-inter text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our board-certified team brings years of specialized training in ketamine therapy and mental health treatment
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto font-lato font-light">
+              In a healthcare system designed for 15-minute visits and band-aid prescriptions, 
+              Lauren built Elevated Health to do the opposite.
             </p>
           </div>
 
@@ -36,37 +40,46 @@ const Team = () => {
                 </div>
                 <div className="p-8 md:p-10 flex flex-col justify-center bg-gradient-subtle">
                   <div className="mb-6">
-                    <h3 className="font-playfair text-3xl font-bold text-primary mb-2">Lauren Bursey, NP-C</h3>
-                    <p className="text-lg text-muted-foreground">Board-Certified Nurse Practitioner</p>
+                    <p className="text-sm tracking-[0.2em] uppercase text-gold mb-2 font-lato font-light">
+                      Your Metabolic Architect
+                    </p>
+                    <h3 className="font-cormorant text-3xl text-primary mb-2">Lauren Bursey, NP-C</h3>
+                    <p className="text-muted-foreground font-light">Board-Certified Nurse Practitioner</p>
                   </div>
                   
-                  <div className="space-y-6">
+                  <p className="text-muted-foreground font-light leading-relaxed mb-6">
+                    Specializing in the intersection of hormonal health and mental wellness, 
+                    Lauren uses clinical data to design personalized roadmaps for longevity. 
+                    She does not just treat patients—she partners with them.
+                  </p>
+                  
+                  <div className="space-y-4">
                     <div className="flex items-start gap-4">
-                      <GraduationCap className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
+                      <GraduationCap className="h-5 w-5 text-gold flex-shrink-0 mt-1" />
                       <div>
-                        <div className="font-semibold text-foreground mb-1">Specialized Training</div>
-                        <div className="text-muted-foreground">
-                          Advanced certification in ketamine therapy and mental health treatment protocols
+                        <div className="font-medium text-foreground mb-1">Advanced Certification</div>
+                        <div className="text-sm text-muted-foreground font-light">
+                          Ketamine therapy, hormone optimization, and metabolic medicine
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-4">
-                      <Heart className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
+                      <Heart className="h-5 w-5 text-gold flex-shrink-0 mt-1" />
                       <div>
-                        <div className="font-semibold text-foreground mb-1">Patient-Centered Approach</div>
-                        <div className="text-muted-foreground">
-                          Committed to creating a safe, welcoming environment where patients feel heard and supported
+                        <div className="font-medium text-foreground mb-1">Concierge Approach</div>
+                        <div className="text-sm text-muted-foreground font-light">
+                          Extended consultations, direct access, and personalized protocols
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-4">
-                      <Award className="h-6 w-6 text-accent flex-shrink-0 mt-1" />
+                      <Award className="h-5 w-5 text-gold flex-shrink-0 mt-1" />
                       <div>
-                        <div className="font-semibold text-foreground mb-1">Evidence-Based Care</div>
-                        <div className="text-muted-foreground">
-                          Utilizes the latest research and proven protocols to deliver optimal outcomes
+                        <div className="font-medium text-foreground mb-1">Data-Driven Care</div>
+                        <div className="text-sm text-muted-foreground font-light">
+                          ZRT diagnostics and evidence-based treatment protocols
                         </div>
                       </div>
                     </div>
@@ -95,19 +108,19 @@ const Team = () => {
             <Button
               size="lg"
               asChild
-              className="font-inter font-semibold text-base px-8 py-6 bg-gold hover:bg-gold/90 text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
+              className="font-lato text-base px-8 py-6 bg-gold hover:bg-gold/90 text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
               onClick={() => trackCTAClick('ai_voice_call_team', 'tel:+17067603470')}
             >
               <a href="tel:+17067603470">
                 <Phone className="mr-2 h-5 w-5" />
-                Call Us (706) 760-3470
+                Call (706) 760-3470
               </a>
             </Button>
 
             <Button 
               size="lg" 
               asChild
-              className="font-inter font-semibold text-base px-8 py-6 bg-accent hover:bg-accent-light text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
+              className="font-lato text-base px-8 py-6 bg-primary hover:bg-primary/90 text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
             >
               <a
                 href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
@@ -115,7 +128,7 @@ const Team = () => {
                 rel="noopener noreferrer"
               >
                 <Calendar className="mr-2 h-5 w-5" />
-                Book Free Consultation
+                Request Consultation
               </a>
             </Button>
           </div>
