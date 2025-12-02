@@ -11,6 +11,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } f
 import confetti from "canvas-confetti";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
+import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 
 interface Patient {
@@ -899,6 +900,15 @@ const ProviderDashboard = () => {
                   androgen: selectedPatient.latestLog.androgen_score || 0,
                   cortisol: selectedPatient.latestLog.cortisol_score || 0,
                 } : undefined}
+              />
+
+              {/* Hormone Protocol Pricing Add-On Selector */}
+              <HormoneAddonSelector
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientEmail={undefined} // TODO: Add email lookup from patient/user relation
+                currentTier={(selectedPatient.patient.medical_history as Record<string, any>)?.hormone_addon_tier || "none"}
+                baseMembership="metabolic"
               />
 
               {/* Protocol Suggestion */}
