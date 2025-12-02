@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { Loader2, Activity, Zap, Heart, Brain, LogOut, Plus, Clock, Settings } from "lucide-react";
 import CircularGauge from "@/components/ui/CircularGauge";
@@ -23,6 +24,7 @@ interface SymptomLog {
 interface Patient {
   id: string;
   full_name: string;
+  avatar_url: string | null;
   current_protocol: string | null;
   intake_completed: boolean;
   onboarding_status: string | null;
@@ -42,6 +44,15 @@ const PatientDashboard = () => {
   const [latestOrder, setLatestOrder] = useState<Order | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   useEffect(() => {
     loadDashboardData();
@@ -207,11 +218,19 @@ const PatientDashboard = () => {
       {/* Header */}
       <header className="border-b border-border/50 bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-gold">Welcome back</p>
-            <h1 className="font-cormorant text-2xl text-foreground">
-              {patient?.full_name || "Patient"}
-            </h1>
+          <div className="flex items-center gap-4">
+            <Avatar className="w-12 h-12 border border-border">
+              <AvatarImage src={patient?.avatar_url || undefined} alt={patient?.full_name} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {patient?.full_name ? getInitials(patient.full_name) : "P"}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-gold">Welcome back</p>
+              <h1 className="font-cormorant text-2xl text-foreground">
+                {patient?.full_name || "Patient"}
+              </h1>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => setIsEditProfileOpen(true)}>
@@ -353,7 +372,8 @@ const PatientDashboard = () => {
           onClose={() => setIsEditProfileOpen(false)}
           patientId={patient.id}
           currentName={patient.full_name}
-          onUpdate={(newName) => setPatient({ ...patient, full_name: newName })}
+          currentAvatarUrl={patient.avatar_url}
+          onUpdate={(newName, newAvatarUrl) => setPatient({ ...patient, full_name: newName, avatar_url: newAvatarUrl })}
         />
       )}
     </div>

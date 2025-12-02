@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Menu, X, User, LayoutDashboard, ClipboardList, LogOut, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
@@ -25,6 +26,16 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   useEffect(() => {
     // Check auth state
@@ -32,16 +43,18 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setIsLoggedIn(true);
-        // Try to get patient name
+        // Try to get patient name and avatar
         const { data: patient } = await supabase
           .from("patients")
-          .select("full_name")
+          .select("full_name, avatar_url")
           .eq("user_id", session.user.id)
           .maybeSingle();
         setUserName(patient?.full_name || null);
+        setUserAvatar(patient?.avatar_url || null);
       } else {
         setIsLoggedIn(false);
         setUserName(null);
+        setUserAvatar(null);
       }
     };
 
@@ -50,16 +63,18 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         setIsLoggedIn(true);
-        // Fetch patient name
+        // Fetch patient name and avatar
         const { data: patient } = await supabase
           .from("patients")
-          .select("full_name")
+          .select("full_name, avatar_url")
           .eq("user_id", session.user.id)
           .maybeSingle();
         setUserName(patient?.full_name || null);
+        setUserAvatar(patient?.avatar_url || null);
       } else {
         setIsLoggedIn(false);
         setUserName(null);
+        setUserAvatar(null);
       }
     });
 
@@ -101,6 +116,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
     await supabase.auth.signOut();
     setIsLoggedIn(false);
     setUserName(null);
+    setUserAvatar(null);
     toast.success("Logged out successfully");
     navigate("/");
   };
@@ -171,13 +187,18 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="outline"
-                    className={`font-lato font-normal text-sm tracking-wide px-4 py-2 gap-2 ${
+                    className={`font-lato font-normal text-sm tracking-wide px-3 py-2 gap-2 ${
                       isScrolled 
                         ? "border-primary/50 text-primary hover:bg-primary/5 hover:text-primary bg-transparent" 
                         : "border-white bg-white/10 text-white hover:bg-white/20 hover:text-white"
                     }`}
                   >
-                    <User className="w-4 h-4" />
+                    <Avatar className="w-6 h-6">
+                      <AvatarImage src={userAvatar || undefined} alt={userName || "User"} />
+                      <AvatarFallback className="text-xs bg-primary/20 text-primary">
+                        {userName ? getInitials(userName) : <User className="w-3 h-3" />}
+                      </AvatarFallback>
+                    </Avatar>
                     {userName || "My Account"}
                     <ChevronDown className="w-3 h-3" />
                   </Button>
