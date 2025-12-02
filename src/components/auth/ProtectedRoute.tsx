@@ -68,7 +68,9 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
   }
 
   if (!session) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+    // Redirect admins to admin login, regular users to patient login
+    const redirectPath = requireAdmin ? "/admin/login" : "/patient/login";
+    return <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 
   if (requireAdmin && !isAdmin) {
