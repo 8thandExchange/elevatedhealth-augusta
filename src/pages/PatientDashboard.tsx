@@ -137,8 +137,19 @@ const PatientDashboard = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/patient/login");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Logout error:", error);
+        toast.error("Failed to logout");
+        return;
+      }
+      toast.success("Logged out successfully");
+      navigate("/patient/login");
+    } catch (error: any) {
+      console.error("Logout exception:", error);
+      toast.error("Failed to logout");
+    }
   };
 
   // Build regimen items from protocol
