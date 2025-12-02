@@ -39,6 +39,7 @@ import { toast } from "sonner";
 const HormonesMen = () => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [isMembershipLoading, setIsMembershipLoading] = useState(false);
 
   const scrollToBooking = () => {
     const bookingSection = document.getElementById('booking-section');
@@ -64,6 +65,26 @@ const HormonesMen = () => {
       toast.error("Failed to start checkout. Please try again or call us.");
     } finally {
       setIsCheckoutLoading(false);
+    }
+  };
+
+  const handleMembershipCheckout = async () => {
+    setIsMembershipLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-membership-checkout");
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Membership checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsMembershipLoading(false);
     }
   };
 
@@ -448,7 +469,7 @@ const HormonesMen = () => {
                     <CardContent className="p-8">
                       <div className="text-5xl font-bold text-primary/20 mb-4">03</div>
                       <h3 className="text-xl font-bold mb-2">The Concierge Membership</h3>
-                      <div className="text-3xl font-bold text-primary mb-4">$149<span className="text-lg font-normal">/mo</span></div>
+                      <div className="text-3xl font-bold text-primary mb-4">$399<span className="text-lg font-normal">/mo</span></div>
                       <p className="text-sm text-muted-foreground mb-4">
                         Once your protocol is designed, your monthly membership covers:
                       </p>
@@ -467,11 +488,17 @@ const HormonesMen = () => {
                         </li>
                       </ul>
                       <Button 
-                        onClick={scrollToBooking}
+                        onClick={handleMembershipCheckout}
+                        disabled={isMembershipLoading}
                         variant="outline" 
                         className="w-full border-primary hover:bg-primary hover:text-primary-foreground"
                       >
-                        Learn More
+                        {isMembershipLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        {isMembershipLoading ? "Processing..." : "Apply for Membership"}
                       </Button>
                     </CardContent>
                   </Card>

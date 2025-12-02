@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-HORMONE-CHECKOUT] ${step}${detailsStr}`);
+  console.log(`[CREATE-MEMBERSHIP-CHECKOUT] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
@@ -58,25 +58,22 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    // Create checkout session for Hormone Mapping Package with shipping address
+    // Create checkout session for Elevated Concierge Membership ($399/mo)
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : userEmail,
       line_items: [
         {
-          price: "price_1SZiRMEOtKRY99pua6QMu12h", // Hormone Mapping Package $299
+          price: "price_1SZiXTEOtKRY99puR7PQUExU", // Elevated Concierge Membership $399/mo
           quantity: 1,
         },
       ],
-      mode: "payment",
-      shipping_address_collection: {
-        allowed_countries: ["US"],
-      },
-      success_url: `${origin}/schedule-consult?session_id={CHECKOUT_SESSION_ID}`,
+      mode: "subscription",
+      success_url: `${origin}/patient/dashboard?subscription=success`,
       cancel_url: `${origin}/hormones-women`,
       metadata: {
         user_id: userId || "",
-        product: "hormone_mapping_package",
+        product: "elevated_concierge_membership",
       },
     });
 
