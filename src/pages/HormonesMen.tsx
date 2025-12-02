@@ -86,8 +86,8 @@ const HormonesMen = () => {
       description: "Weekly or bi-weekly injections for steady hormone levels and optimal results"
     },
     {
-      title: "Testosterone Pellets",
-      description: "Long-lasting pellet therapy with consistent levels for 4-6 months"
+      title: "Topical Transdermal Cream",
+      description: "Precision dosing with daily micro-adjustments—unlike pellets, you're never locked into a dose"
     },
     {
       title: "HCG Therapy",
@@ -121,8 +121,8 @@ const HormonesMen = () => {
       a: "Many men notice improvements in energy and mood within 3-4 weeks. Sexual function and muscle mass improvements typically occur over 8-12 weeks. Full optimization usually takes 3-6 months with proper dosing."
     },
     {
-      q: "Are testosterone injections better than pellets?",
-      a: "Both have advantages. Injections offer flexibility and steady levels with weekly dosing. Pellets provide consistent testosterone for months without weekly administration. We'll help you choose based on your lifestyle and preferences."
+      q: "Why transdermal cream instead of pellets?",
+      a: "Unlike pellets, which lock you into a dose for months even if side effects occur, our Transdermal Cream and injection protocols allow for weekly micro-adjustments to ensure optimal levels. This precision dosing approach means we can fine-tune your therapy in real-time based on how you feel."
     },
     {
       q: "Is TRT safe for men?",
@@ -335,59 +335,107 @@ const HormonesMen = () => {
             </div>
           </section>
 
-          {/* Pricing */}
+          {/* Getting Started - 3 Step Process */}
           <section className="py-16 md:py-24 bg-primary/5">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-5xl mx-auto">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                    Transparent TRT Pricing
+                    Getting Started: Your 3-Step Journey
                   </h2>
-                  <p className="text-lg text-muted-foreground">
-                    Straightforward pricing for quality testosterone therapy.
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    A clear, transparent path to testosterone optimization with no surprises.
                   </p>
                 </div>
                 
-                <div className="grid md:grid-cols-3 gap-6">
-                  <Card className="hover:shadow-xl transition-shadow border-primary/30">
-                    <CardContent className="p-8 text-center">
-                      <h3 className="text-xl font-bold mb-2">Consultation</h3>
-                      <div className="text-4xl font-bold text-primary mb-4">Free</div>
-                      <p className="text-sm text-muted-foreground mb-6">Initial evaluation and planning</p>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {/* Step 1 */}
+                  <Card className="hover:shadow-xl transition-shadow border-primary/30 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+                    <CardContent className="p-8">
+                      <div className="text-5xl font-bold text-primary/20 mb-4">01</div>
+                      <h3 className="text-xl font-bold mb-2">The Discovery Call</h3>
+                      <div className="text-3xl font-bold text-primary mb-4">Complimentary</div>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        A 15-minute phone consultation to discuss your goals and determine if you are a candidate for testosterone optimization.
+                      </p>
                       <Button 
-                        onClick={() => setIsQuizOpen(true)}
+                        onClick={scrollToBooking}
                         variant="outline" 
                         className="w-full border-primary hover:bg-primary hover:text-primary-foreground"
                       >
-                        Get Started
+                        <Phone className="mr-2 h-4 w-4" />
+                        Schedule Call
                       </Button>
                     </CardContent>
                   </Card>
 
-                  <Card className="hover:shadow-xl transition-shadow border-2 border-primary shadow-lg relative">
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
-                        Most Popular
+                  {/* Step 2 */}
+                  <Card className="hover:shadow-xl transition-shadow border-2 border-primary shadow-lg relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+                    <div className="absolute -top-4 right-4 top-3">
+                      <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                        Required Before Treatment
                       </span>
                     </div>
-                    <CardContent className="p-8 text-center">
-                      <h3 className="text-xl font-bold mb-2">TRT Program</h3>
-                      <div className="text-4xl font-bold text-primary mb-4">$149</div>
-                      <p className="text-sm text-muted-foreground mb-6">Per month + medication</p>
+                    <CardContent className="p-8">
+                      <div className="text-5xl font-bold text-primary/20 mb-4">02</div>
+                      <h3 className="text-xl font-bold mb-2">The Hormone Mapping Experience</h3>
+                      <div className="text-3xl font-bold text-primary mb-4">$299</div>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        This comprehensive diagnostic phase includes:
+                      </p>
+                      <ul className="text-sm text-muted-foreground space-y-2 mb-6">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          Comprehensive Lab Panel (Total/Free T, Estradiol, PSA, CBC)
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          45-Minute Deep-Dive Clinical Review with Lauren Bursey, NP
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          Customized TRT Protocol Design
+                        </li>
+                      </ul>
+                      <p className="text-xs text-muted-foreground italic mb-4">
+                        This fee covers your diagnostics and provider time. There is no obligation to proceed with treatment.
+                      </p>
                       <Button 
-                        onClick={scrollToBooking}
+                        onClick={() => setIsQuizOpen(true)}
                         className="w-full bg-primary hover:bg-primary-light text-primary-foreground"
                       >
-                        Book Now
+                        <Zap className="mr-2 h-4 w-4" />
+                        Begin Evaluation
                       </Button>
                     </CardContent>
                   </Card>
 
-                  <Card className="hover:shadow-xl transition-shadow border-primary/30">
-                    <CardContent className="p-8 text-center">
-                      <h3 className="text-xl font-bold mb-2">Testosterone Pellets</h3>
-                      <div className="text-4xl font-bold text-primary mb-4">$650</div>
-                      <p className="text-sm text-muted-foreground mb-6">Per insertion (4-6 months)</p>
+                  {/* Step 3 */}
+                  <Card className="hover:shadow-xl transition-shadow border-primary/30 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+                    <CardContent className="p-8">
+                      <div className="text-5xl font-bold text-primary/20 mb-4">03</div>
+                      <h3 className="text-xl font-bold mb-2">The Concierge Membership</h3>
+                      <div className="text-3xl font-bold text-primary mb-4">$149<span className="text-lg font-normal">/mo</span></div>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Once your protocol is designed, your monthly membership covers:
+                      </p>
+                      <ul className="text-sm text-muted-foreground space-y-2 mb-6">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          Your testosterone prescription
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          Ongoing monitoring & dose optimization
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          Direct provider access
+                        </li>
+                      </ul>
                       <Button 
                         onClick={scrollToBooking}
                         variant="outline" 
@@ -399,9 +447,24 @@ const HormonesMen = () => {
                   </Card>
                 </div>
 
-                <p className="text-center text-sm text-muted-foreground mt-8">
-                  * Lab testing billed separately unless included in program. Insurance may cover labs.
-                </p>
+                {/* Precision Dosing Advantage */}
+                <Card className="mt-12 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/30">
+                  <CardContent className="p-8">
+                    <div className="flex flex-col md:flex-row gap-6 items-center">
+                      <div className="flex-shrink-0">
+                        <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                          <Target className="h-8 w-8 text-primary" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold mb-2">The Precision Dosing Advantage</h3>
+                        <p className="text-muted-foreground">
+                          Unlike pellets, which lock you into a dose for months even if side effects occur, our <strong>injection and cream protocols allow for weekly micro-adjustments</strong> to ensure optimal testosterone levels. We can fine-tune your therapy in real-time based on how you feel and your lab results.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </section>
