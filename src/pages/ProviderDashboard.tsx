@@ -80,6 +80,7 @@ const ProviderDashboard = () => {
   const [isEmailingRequisition, setIsEmailingRequisition] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState("triage");
+  const [renewingPatientId, setRenewingPatientId] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuthAndLoad();
@@ -399,6 +400,60 @@ const ProviderDashboard = () => {
     }
   };
 
+  const handleRenewRx = async (checkIn: RecentCheckIn) => {
+    setRenewingPatientId(checkIn.patient.id);
+    try {
+      // Get the patient's current protocol
+      const currentProtocol = checkIn.patient.current_protocol;
+      
+      if (!currentProtocol) {
+        toast.error("No current protocol found for this patient");
+        return;
+      }
+
+      // Find the protocol details
+      const protocol = protocols.find(p => p.name === currentProtocol);
+      
+      // Create a new authorized order (renewal)
+      const { error: orderError } = await supabase.from("orders").insert({
+        patient_id: checkIn.patient.id,
+        status: "authorized",
+        protocol_snapshot: {
+          protocol_id: protocol?.id || null,
+          protocol_name: currentProtocol,
+          compound: protocol?.primary_compound || currentProtocol,
+          dispenser: protocol?.dispenser_type || "Standard",
+          instructions: protocol?.instructions || "Continue as prescribed",
+          authorized_at: new Date().toISOString(),
+          renewal: true,
+          renewed_from_checkin: checkIn.currentLog.id,
+        }
+      });
+
+      if (orderError) throw orderError;
+
+      // Update patient's onboarding status to ensure it stays active
+      await supabase
+        .from("patients")
+        .update({ 
+          onboarding_status: "treatment_active",
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", checkIn.patient.id);
+
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      toast.success(`Prescription renewed for ${checkIn.patient.full_name}!`);
+      
+      // Refresh data
+      await loadData();
+    } catch (error: any) {
+      console.error("Error renewing prescription:", error);
+      toast.error(error.message || "Failed to renew prescription");
+    } finally {
+      setRenewingPatientId(null);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/admin/login");
@@ -645,9 +700,22 @@ const ProviderDashboard = () => {
                               </td>
                               <td className="py-4 px-4 text-right">
                                 {isImproved ? (
-                                  <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
-                                    <Pill className="w-3 h-3 mr-1" />
-                                    Renew Rx
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="text-green-600 border-green-600 hover:bg-green-50"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleRenewRx(checkIn);
+                                    }}
+                                    disabled={renewingPatientId === checkIn.patient.id}
+                                  >
+                                    {renewingPatientId === checkIn.patient.id ? (
+                                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                    ) : (
+                                      <Pill className="w-3 h-3 mr-1" />
+                                    )}
+                                    {renewingPatientId === checkIn.patient.id ? "Renewing..." : "Renew Rx"}
                                   </Button>
                                 ) : isWorsened ? (
                                   <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
