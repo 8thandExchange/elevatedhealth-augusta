@@ -22,8 +22,6 @@ const PRICE_IDS = {
   tier3: "price_1SZjAAEOtKRY99puFwqI2CTV", // $175/mo Tier 3 - Trifecta
 };
 
-const HIGHLEVEL_WEBHOOK_URL = "https://services.leadconnectorhq.com/hooks/wqGyQyVn4INUQXzYRwuv/webhook-trigger/e19b62f3-696a-4bd9-9f00-f6554";
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -47,8 +45,8 @@ serve(async (req) => {
 
     logStep("Request body received", { first_name, phone, base_membership, addon_tier });
 
-    if (!first_name || !phone) {
-      throw new Error("Missing required fields: first_name and phone are required");
+    if (!first_name) {
+      throw new Error("Missing required field: first_name is required");
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
@@ -84,7 +82,7 @@ serve(async (req) => {
       cancel_url: `${origin}/`,
       metadata: {
         first_name,
-        phone,
+        phone: phone || "",
         base_membership,
         addon_tier,
       },
@@ -92,35 +90,10 @@ serve(async (req) => {
 
     logStep("Stripe Checkout session created", { sessionId: session.id, url: session.url });
 
-    // Send to HighLevel webhook
-    const webhookPayload = {
-      first_name,
-      phone,
-      payment_link: session.url,
-    };
-
-    logStep("Sending to HighLevel webhook", webhookPayload);
-
-    const webhookResponse = await fetch(HIGHLEVEL_WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(webhookPayload),
-    });
-
-    if (!webhookResponse.ok) {
-      const errorText = await webhookResponse.text();
-      logStep("HighLevel webhook error", { status: webhookResponse.status, error: errorText });
-      throw new Error(`HighLevel webhook failed: ${webhookResponse.status}`);
-    }
-
-    logStep("HighLevel webhook sent successfully");
-
     return new Response(JSON.stringify({ 
       success: true, 
       payment_link: session.url,
-      message: "Sent to HighLevel! SMS is on the way."
+      message: "Activation link generated successfully."
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
