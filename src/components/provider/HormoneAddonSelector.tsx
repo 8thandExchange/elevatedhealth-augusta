@@ -8,17 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, DollarSign, Pill, RefreshCw, Link2, Copy, Check, ClipboardList } from "lucide-react";
+import { Loader2, DollarSign, Pill, RefreshCw, Link2, Copy, Mail, MessageSquare, Check } from "lucide-react";
 
 interface HormoneAddonSelectorProps {
   patientId: string;
@@ -52,10 +44,11 @@ const HormoneAddonSelector = ({
   const [selectedTier, setSelectedTier] = useState(currentTier);
   const [selectedMembership, setSelectedMembership] = useState<"metabolic" | "vitality">(baseMembership || "metabolic");
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [isSendingSms, setIsSendingSms] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [smsSent, setSmsSent] = useState(false);
 
   const selectedAddon = ADDON_TIERS.find(t => t.value === selectedTier);
   const basePrice = BASE_PRICES[selectedMembership];
@@ -95,8 +88,14 @@ const HormoneAddonSelector = ({
     }
   };
 
-  const handleGenerateActivationLink = async () => {
-    setIsGenerating(true);
+  const handleSendEmail = async () => {
+    if (!patientEmail) {
+      toast.error("Patient email is required to send activation email");
+      return;
+    }
+
+    setIsSendingEmail(true);
+    setEmailSent(false);
     try {
       const { data, error } = await supabase.functions.invoke("send-activation-sms", {
         body: {
@@ -105,298 +104,266 @@ const HormoneAddonSelector = ({
           base_membership: selectedMembership,
           addon_tier: selectedTier,
           patient_email: patientEmail,
+          send_email: true,
+          send_sms: false,
         },
       });
 
       if (error) throw error;
 
-      if (data?.success && data?.payment_link) {
+      if (data?.success) {
         setGeneratedLink(data.payment_link);
-        setShowLinkModal(true);
-        setCopied(false);
+        if (data.email_sent) {
+          setEmailSent(true);
+          toast.success(`Activation email sent to ${patientEmail}!`);
+        } else {
+          toast.warning("Link generated but email could not be sent. Use copy link instead.");
+        }
       } else {
-        throw new Error(data?.error || "Failed to generate activation link");
+        throw new Error(data?.error || "Failed to send activation email");
       }
     } catch (err: any) {
-      console.error("Generate link error:", err);
-      toast.error(err.message || "Failed to generate activation link");
+      console.error("Send email error:", err);
+      toast.error(err.message || "Failed to send activation email");
     } finally {
-      setIsGenerating(false);
+      setIsSendingEmail(false);
     }
   };
 
-  const handleCopyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(generatedLink);
-      setCopied(true);
-      toast.success("Link copied to clipboard!");
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      toast.error("Failed to copy link");
+  const handleSendSms = async () => {
+    if (!patientPhone) {
+      toast.error("Patient phone number is required to send SMS");
+      return;
     }
-  };
 
-  const emailSubject = "Elevated Health: Activation & Pharmacy Order";
-  const emailBody = `Hi ${firstName},
-
-Lauren has approved your hormone protocol. Please click the secure link below to activate your membership and finalize your pharmacy order:
-
-${generatedLink}
-
-Best,
-Elevated Health Team`;
-
-  const handleCopyField = async (field: "subject" | "body" | "link" | "all") => {
+    setIsSendingSms(true);
+    setSmsSent(false);
     try {
-      let textToCopy = "";
-      switch (field) {
-        case "subject":
-          textToCopy = emailSubject;
-          break;
-        case "body":
-          textToCopy = emailBody;
-          break;
-        case "link":
-          textToCopy = generatedLink;
-          break;
-        case "all":
-          textToCopy = `Subject: ${emailSubject}\n\n${emailBody}`;
-          break;
+      const { data, error } = await supabase.functions.invoke("send-activation-sms", {
+        body: {
+          first_name: firstName,
+          phone: patientPhone,
+          base_membership: selectedMembership,
+          addon_tier: selectedTier,
+          patient_email: patientEmail,
+          send_email: false,
+          send_sms: true,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        setGeneratedLink(data.payment_link);
+        if (data.sms_sent) {
+          setSmsSent(true);
+          toast.success(`Activation SMS sent to ${patientPhone}!`);
+        } else {
+          toast.warning("Link generated but SMS could not be sent. Use copy link instead.");
+        }
+      } else {
+        throw new Error(data?.error || "Failed to send activation SMS");
       }
-      await navigator.clipboard.writeText(textToCopy);
-      toast.success(field === "all" ? "Full email copied to clipboard!" : "Copied to clipboard!");
-    } catch (err) {
-      toast.error("Failed to copy");
+    } catch (err: any) {
+      console.error("Send SMS error:", err);
+      toast.error(err.message || "Failed to send activation SMS");
+    } finally {
+      setIsSendingSms(false);
+    }
+  };
+
+  const handleCopyLink = async () => {
+    // If we don't have a link yet, generate one first
+    if (!generatedLink) {
+      try {
+        const { data, error } = await supabase.functions.invoke("send-activation-sms", {
+          body: {
+            first_name: firstName,
+            phone: patientPhone || "",
+            base_membership: selectedMembership,
+            addon_tier: selectedTier,
+            patient_email: patientEmail,
+            send_email: false,
+            send_sms: false,
+          },
+        });
+
+        if (error) throw error;
+
+        if (data?.success && data?.payment_link) {
+          setGeneratedLink(data.payment_link);
+          await navigator.clipboard.writeText(data.payment_link);
+          toast.success("Payment link copied to clipboard!");
+        }
+      } catch (err: any) {
+        toast.error("Failed to generate link");
+      }
+    } else {
+      await navigator.clipboard.writeText(generatedLink);
+      toast.success("Payment link copied to clipboard!");
     }
   };
 
   return (
-    <>
-      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2 text-primary">
-            <Pill className="w-4 h-4" />
-            Membership & Hormone Protocol Pricing
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label className="text-xs text-muted-foreground block mb-1.5">Base Membership</label>
-            <Select value={selectedMembership} onValueChange={(v: "metabolic" | "vitality") => setSelectedMembership(v)}>
-              <SelectTrigger className="bg-background">
-                <SelectValue placeholder="Select membership" />
-              </SelectTrigger>
-              <SelectContent className="bg-background z-50">
-                <SelectItem value="metabolic">
-                  <div className="flex items-center justify-between w-full">
-                    <span>Metabolic Membership (GLP-1)</span>
-                    <span className="text-muted-foreground ml-4">$399/mo</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="vitality">
-                  <div className="flex items-center justify-between w-full">
-                    <span>Vitality Membership (HRT Only)</span>
-                    <span className="text-muted-foreground ml-4">$199/mo</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="text-xs text-muted-foreground block mb-1.5">Hormone Add-On Tier</label>
-            <Select value={selectedTier} onValueChange={setSelectedTier}>
-              <SelectTrigger className="bg-background">
-                <SelectValue placeholder="Select hormone tier" />
-              </SelectTrigger>
-              <SelectContent className="bg-background z-50">
-                {ADDON_TIERS.map((tier) => (
-                  <SelectItem key={tier.value} value={tier.value}>
-                    <div className="flex items-center justify-between w-full">
-                      <span>{tier.label}</span>
-                      <span className="text-muted-foreground ml-4">
-                        {tier.price > 0 ? `+$${tier.price}/mo` : "No charge"}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {selectedAddon && (
-              <p className="text-xs text-muted-foreground mt-1">{selectedAddon.description}</p>
-            )}
-          </div>
-
-          <div className="bg-secondary/30 rounded-lg p-4 space-y-2">
-            <div className="flex items-center gap-2 mb-2">
-              <DollarSign className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold">Monthly Bill Estimate</span>
-            </div>
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  {selectedMembership === "vitality" ? "Vitality Membership" : "Metabolic Membership"}
-                </span>
-                <span>${basePrice}</span>
-              </div>
-              {addonPrice > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{selectedAddon?.label}</span>
-                  <span>+${addonPrice}</span>
+    <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm flex items-center gap-2 text-primary">
+          <Pill className="w-4 h-4" />
+          Membership & Hormone Protocol Pricing
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <label className="text-xs text-muted-foreground block mb-1.5">Base Membership</label>
+          <Select value={selectedMembership} onValueChange={(v: "metabolic" | "vitality") => setSelectedMembership(v)}>
+            <SelectTrigger className="bg-background">
+              <SelectValue placeholder="Select membership" />
+            </SelectTrigger>
+            <SelectContent className="bg-background z-50">
+              <SelectItem value="metabolic">
+                <div className="flex items-center justify-between w-full">
+                  <span>Metabolic Membership (GLP-1)</span>
+                  <span className="text-muted-foreground ml-4">$399/mo</span>
                 </div>
-              )}
-              <div className="border-t border-border pt-2 mt-2 flex justify-between font-semibold">
-                <span>Total Monthly</span>
-                <span className="text-primary text-lg">${totalMonthly}/mo</span>
+              </SelectItem>
+              <SelectItem value="vitality">
+                <div className="flex items-center justify-between w-full">
+                  <span>Vitality Membership (HRT Only)</span>
+                  <span className="text-muted-foreground ml-4">$199/mo</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label className="text-xs text-muted-foreground block mb-1.5">Hormone Add-On Tier</label>
+          <Select value={selectedTier} onValueChange={setSelectedTier}>
+            <SelectTrigger className="bg-background">
+              <SelectValue placeholder="Select hormone tier" />
+            </SelectTrigger>
+            <SelectContent className="bg-background z-50">
+              {ADDON_TIERS.map((tier) => (
+                <SelectItem key={tier.value} value={tier.value}>
+                  <div className="flex items-center justify-between w-full">
+                    <span>{tier.label}</span>
+                    <span className="text-muted-foreground ml-4">
+                      {tier.price > 0 ? `+$${tier.price}/mo` : "No charge"}
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {selectedAddon && (
+            <p className="text-xs text-muted-foreground mt-1">{selectedAddon.description}</p>
+          )}
+        </div>
+
+        <div className="bg-secondary/30 rounded-lg p-4 space-y-2">
+          <div className="flex items-center gap-2 mb-2">
+            <DollarSign className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold">Monthly Bill Estimate</span>
+          </div>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">
+                {selectedMembership === "vitality" ? "Vitality Membership" : "Metabolic Membership"}
+              </span>
+              <span>${basePrice}</span>
+            </div>
+            {addonPrice > 0 && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">{selectedAddon?.label}</span>
+                <span>+${addonPrice}</span>
               </div>
+            )}
+            <div className="border-t border-border pt-2 mt-2 flex justify-between font-semibold">
+              <span>Total Monthly</span>
+              <span className="text-primary text-lg">${totalMonthly}/mo</span>
             </div>
           </div>
+        </div>
 
+        {/* Send Actions */}
+        <div className="space-y-2">
           <Button
-            onClick={handleGenerateActivationLink}
-            disabled={isGenerating}
+            onClick={handleSendEmail}
+            disabled={isSendingEmail || !patientEmail}
             className="w-full bg-green-600 hover:bg-green-700 text-white"
             size="lg"
           >
-            {isGenerating ? (
+            {isSendingEmail ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : emailSent ? (
+              <Check className="w-4 h-4 mr-2" />
             ) : (
-              <Link2 className="w-4 h-4 mr-2" />
+              <Mail className="w-4 h-4 mr-2" />
             )}
-            {isGenerating ? "Generating..." : "Create Activation Link"}
+            {isSendingEmail ? "Sending..." : emailSent ? "Email Sent!" : "Send Activation Email"}
+          </Button>
+          
+          {!patientEmail && (
+            <p className="text-xs text-center text-amber-600">No email on file - add patient email to send</p>
+          )}
+
+          <Button
+            onClick={handleSendSms}
+            disabled={isSendingSms || !patientPhone}
+            variant="outline"
+            className="w-full"
+            size="lg"
+          >
+            {isSendingSms ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : smsSent ? (
+              <Check className="w-4 h-4 mr-2" />
+            ) : (
+              <MessageSquare className="w-4 h-4 mr-2" />
+            )}
+            {isSendingSms ? "Sending..." : smsSent ? "SMS Sent!" : "Send Activation SMS"}
           </Button>
 
-          {patientEmail && (
-            <Button
-              onClick={handleUpdateMembership}
-              disabled={isUpdating || selectedTier === currentTier}
-              variant="outline"
-              className="w-full"
-            >
-              {isUpdating ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <RefreshCw className="w-4 h-4 mr-2" />
-              )}
-              {isUpdating ? "Updating..." : "Update Existing Subscription"}
-            </Button>
+          {!patientPhone && (
+            <p className="text-xs text-center text-muted-foreground">No phone on file - add patient phone to send SMS</p>
           )}
+        </div>
 
-          {selectedTier === currentTier && patientEmail && (
-            <p className="text-xs text-center text-muted-foreground">
-              Select a different tier to update existing subscription
-            </p>
-          )}
-        </CardContent>
-      </Card>
+        {/* Fallback Copy Link */}
+        <Button
+          onClick={handleCopyLink}
+          variant="ghost"
+          className="w-full text-muted-foreground hover:text-foreground"
+          size="sm"
+        >
+          <Copy className="w-4 h-4 mr-2" />
+          Copy Payment Link
+        </Button>
 
-      <Dialog open={showLinkModal} onOpenChange={setShowLinkModal}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ClipboardList className="w-5 h-5 text-primary" />
-              Email Copy Tool
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            {/* Patient Info */}
-            <div className="bg-secondary/30 rounded-lg p-3 text-sm">
-              <p className="text-muted-foreground">
-                <strong>Patient:</strong> {patientName}
-              </p>
-              {patientEmail && (
-                <p className="text-muted-foreground">
-                  <strong>Email:</strong> {patientEmail}
-                </p>
-              )}
-              <p className="text-muted-foreground">
-                <strong>Monthly Total:</strong> ${totalMonthly}/mo
-              </p>
-            </div>
+        {/* Update Existing Subscription */}
+        {patientEmail && (
+          <Button
+            onClick={handleUpdateMembership}
+            disabled={isUpdating || selectedTier === currentTier}
+            variant="outline"
+            className="w-full"
+          >
+            {isUpdating ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
+            {isUpdating ? "Updating..." : "Update Existing Subscription"}
+          </Button>
+        )}
 
-            {/* Subject Line */}
-            <div>
-              <label className="text-sm font-medium block mb-2">
-                Subject Line
-              </label>
-              <div className="flex gap-2">
-                <Input
-                  value={emailSubject}
-                  readOnly
-                  className="text-sm"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleCopyField("subject")}
-                  className="shrink-0"
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Message Body */}
-            <div>
-              <label className="text-sm font-medium block mb-2">
-                Message Body
-              </label>
-              <div className="flex gap-2">
-                <Textarea
-                  value={emailBody}
-                  readOnly
-                  className="text-sm min-h-[140px] resize-none"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleCopyField("body")}
-                  className="shrink-0 self-start"
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Link Only */}
-            <div>
-              <label className="text-sm font-medium block mb-2">
-                Payment Link Only
-              </label>
-              <div className="flex gap-2">
-                <Input
-                  value={generatedLink}
-                  readOnly
-                  className="font-mono text-xs"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleCopyField("link")}
-                  className="shrink-0"
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Copy All Button */}
-            <Button
-              onClick={() => handleCopyField("all")}
-              className="w-full"
-              size="lg"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy Full Email to Clipboard
-            </Button>
-
-            <p className="text-xs text-center text-muted-foreground">
-              Open your email client, paste the content, and send to the patient.
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        {selectedTier === currentTier && patientEmail && (
+          <p className="text-xs text-center text-muted-foreground">
+            Select a different tier to update existing subscription
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
