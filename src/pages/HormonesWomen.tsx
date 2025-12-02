@@ -15,7 +15,9 @@ import {
   TrendingUp,
   Shield,
   CreditCard,
-  Loader2
+  Loader2,
+  Plus,
+  Info
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -38,6 +40,7 @@ const HormonesWomen = () => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [isMembershipLoading, setIsMembershipLoading] = useState(false);
+  const [isVitalityLoading, setIsVitalityLoading] = useState(false);
 
   const scrollToBooking = () => {
     const bookingSection = document.getElementById('booking-section');
@@ -83,6 +86,26 @@ const HormonesWomen = () => {
       toast.error("Failed to start checkout. Please try again or call us.");
     } finally {
       setIsMembershipLoading(false);
+    }
+  };
+
+  const handleVitalityCheckout = async () => {
+    setIsVitalityLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-vitality-checkout");
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Vitality checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsVitalityLoading(false);
     }
   };
 
@@ -159,6 +182,10 @@ const HormonesWomen = () => {
     {
       q: "Am I a good candidate for women's HRT?",
       a: "If you're experiencing symptoms of perimenopause, menopause, or hormone imbalance such as hot flashes, mood changes, low energy, or decreased libido, you may be a great candidate. We'll review your symptoms and lab work to create a personalized plan."
+    },
+    {
+      q: "Does the $399 fee include all my medications?",
+      a: "The Metabolic Membership includes the cost of your Semaglutide (GLP-1) weight loss medication and all clinical monitoring. Because hormone therapy is highly customized (some women need Bi-Est, others need Testosterone or Progesterone), these prescriptions are billed separately at our discounted Member Rate ($40-60/mo). This ensures you receive a precision protocol, not a generic 'bundle' that doesn't fit your biology."
     },
     {
       q: "How long does it take to feel results?",
@@ -460,45 +487,115 @@ const HormonesWomen = () => {
                     </CardContent>
                   </Card>
 
-                  {/* Step 3 */}
-                  <Card className="hover:shadow-xl transition-shadow border-feminine/30 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-feminine"></div>
-                    <CardContent className="p-8">
-                      <div className="text-5xl font-bold text-feminine/20 mb-4">03</div>
-                      <h3 className="text-xl font-bold mb-2">The Concierge Membership</h3>
-                      <div className="text-3xl font-bold text-feminine mb-4">$399<span className="text-lg font-normal">/mo</span></div>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Once your protocol is designed, your monthly membership covers:
-                      </p>
-                      <ul className="text-sm text-muted-foreground space-y-2 mb-6">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
-                          Your prescription medications
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
-                          Ongoing monitoring & adjustments
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
-                          Direct provider access
-                        </li>
-                      </ul>
-                      <Button 
-                        onClick={handleMembershipCheckout}
-                        disabled={isMembershipLoading}
-                        variant="outline" 
-                        className="w-full border-feminine hover:bg-feminine hover:text-feminine-foreground"
-                      >
-                        {isMembershipLoading ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <CreditCard className="mr-2 h-4 w-4" />
-                        )}
-                        {isMembershipLoading ? "Processing..." : "Apply for Membership"}
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  {/* Step 3 - Membership Options */}
+                  <div className="md:col-span-1 space-y-6">
+                    {/* Metabolic Membership - $399/mo */}
+                    <Card className="hover:shadow-xl transition-shadow border-2 border-feminine shadow-md relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-feminine"></div>
+                      <div className="absolute -top-4 right-4 top-3">
+                        <span className="bg-feminine text-feminine-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                          Most Popular
+                        </span>
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="text-4xl font-bold text-feminine/20 mb-2">03</div>
+                        <h3 className="text-lg font-bold mb-1">Metabolic Membership</h3>
+                        <p className="text-xs text-muted-foreground mb-2">Weight Loss + Hormone Support</p>
+                        <div className="text-2xl font-bold text-feminine mb-3">$399<span className="text-sm font-normal">/mo</span></div>
+                        
+                        <p className="text-xs font-semibold text-foreground mb-2">What's Included:</p>
+                        <ul className="text-xs text-muted-foreground space-y-1.5 mb-3">
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span>GLP-1 Medication (Semaglutide up to 1.0mg/week)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span>Clinical Management with Lauren Bersi, NP</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span>Quarterly Hormone Monitoring (ZRT Kits)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span>Adrenal Support & Lifestyle Protocols</span>
+                          </li>
+                        </ul>
+                        
+                        <p className="text-xs font-semibold text-foreground mb-2">Exclusive Member Access:</p>
+                        <ul className="text-xs text-muted-foreground space-y-1.5 mb-3">
+                          <li className="flex items-start gap-2">
+                            <Plus className="h-3.5 w-3.5 text-feminine flex-shrink-0 mt-0.5" />
+                            <span>Bio-Identical Hormones at Member Pricing (~$40-60/mo)</span>
+                          </li>
+                        </ul>
+                        
+                        <div className="flex items-start gap-1.5 bg-secondary/50 rounded p-2 mb-4">
+                          <Info className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                          <p className="text-[10px] text-muted-foreground italic">
+                            We separate hormone costs so you never pay for medication your body doesn't need.
+                          </p>
+                        </div>
+                        
+                        <Button 
+                          onClick={handleMembershipCheckout}
+                          disabled={isMembershipLoading}
+                          className="w-full bg-feminine hover:bg-feminine-light text-feminine-foreground"
+                        >
+                          {isMembershipLoading ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <CreditCard className="mr-2 h-4 w-4" />
+                          )}
+                          {isMembershipLoading ? "Processing..." : "Apply for Membership"}
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    {/* Vitality Membership - $199/mo */}
+                    <Card className="hover:shadow-xl transition-shadow border-feminine/30 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-feminine/50"></div>
+                      <CardContent className="p-6">
+                        <h3 className="text-lg font-bold mb-1">Vitality Membership</h3>
+                        <p className="text-xs text-muted-foreground mb-2">Hormone Optimization Only (No GLP-1)</p>
+                        <div className="text-2xl font-bold text-feminine mb-3">$199<span className="text-sm font-normal">/mo</span></div>
+                        
+                        <ul className="text-xs text-muted-foreground space-y-1.5 mb-3">
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span>Clinical Management & Protocol Design</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span>Quarterly ZRT Saliva Testing</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span>$50/mo Credit Toward Hormone Prescriptions</span>
+                          </li>
+                        </ul>
+                        
+                        <p className="text-[10px] text-muted-foreground mb-4">
+                          <strong>Ideal for:</strong> Women seeking menopause relief or libido restoration who don't need weight loss therapy.
+                        </p>
+                        
+                        <Button 
+                          onClick={handleVitalityCheckout}
+                          disabled={isVitalityLoading}
+                          variant="outline"
+                          className="w-full border-feminine hover:bg-feminine hover:text-feminine-foreground"
+                        >
+                          {isVitalityLoading ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <CreditCard className="mr-2 h-4 w-4" />
+                          )}
+                          {isVitalityLoading ? "Processing..." : "Choose Vitality"}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
 
                 {/* Transdermal Advantage */}

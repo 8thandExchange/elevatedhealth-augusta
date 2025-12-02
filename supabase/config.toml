@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.create-membership-checkout]
 verify_jwt = false
+
+[functions.create-vitality-checkout]
+verify_jwt = false
