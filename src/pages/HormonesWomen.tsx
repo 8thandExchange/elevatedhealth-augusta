@@ -88,8 +88,8 @@ const HormonesWomen = () => {
       description: "Balance and protect uterine health while improving sleep and mood"
     },
     {
-      title: "Hormone Pellet Therapy",
-      description: "Consistent hormone delivery with pellet insertion every 3-4 months"
+      title: "Topical Transdermal Cream",
+      description: "Precision dosing with daily micro-adjustments—unlike pellets, you're never locked into a dose"
     },
     {
       title: "Thyroid Optimization",
@@ -119,8 +119,8 @@ const HormonesWomen = () => {
       a: "Many women notice improvements in hot flashes and mood within 2-4 weeks. Energy levels, sleep quality, and other symptoms typically improve over 2-3 months as your hormones reach optimal levels."
     },
     {
-      q: "Are hormone pellets better than creams or pills?",
-      a: "Each delivery method has benefits. Pellets provide steady hormone levels 24/7 without daily applications. Creams offer flexibility in dosing. Pills are convenient. We'll discuss which option is best for your lifestyle and goals."
+      q: "Why transdermal cream instead of pellets?",
+      a: "Unlike pellets, which lock you into a dose for months even if side effects occur, our Transdermal Cream protocols allow for daily micro-adjustments to ensure you feel your best every single day. This precision dosing approach means we can fine-tune your therapy in real-time."
     },
     {
       q: "Is HRT safe for women?",
@@ -332,59 +332,107 @@ const HormonesWomen = () => {
             </div>
           </section>
 
-          {/* Pricing */}
+          {/* Getting Started - 3 Step Process */}
           <section className="py-16 md:py-24 bg-feminine/5">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-5xl mx-auto">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                    Transparent Women's HRT Pricing
+                    Getting Started: Your 3-Step Journey
                   </h2>
-                  <p className="text-lg text-muted-foreground">
-                    Affordable, straightforward pricing for quality hormone care.
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    A clear, transparent path to hormonal optimization with no surprises.
                   </p>
                 </div>
                 
-                <div className="grid md:grid-cols-3 gap-6">
-                  <Card className="hover:shadow-xl transition-shadow border-feminine/30">
-                    <CardContent className="p-8 text-center">
-                      <h3 className="text-xl font-bold mb-2">Consultation</h3>
-                      <div className="text-4xl font-bold text-feminine mb-4">Free</div>
-                      <p className="text-sm text-muted-foreground mb-6">Initial assessment and planning</p>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {/* Step 1 */}
+                  <Card className="hover:shadow-xl transition-shadow border-feminine/30 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-feminine"></div>
+                    <CardContent className="p-8">
+                      <div className="text-5xl font-bold text-feminine/20 mb-4">01</div>
+                      <h3 className="text-xl font-bold mb-2">The Discovery Call</h3>
+                      <div className="text-3xl font-bold text-feminine mb-4">Complimentary</div>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        A 15-minute phone consultation to discuss your goals and determine if you are a candidate for bio-identical optimization.
+                      </p>
                       <Button 
-                        onClick={() => setIsQuizOpen(true)}
+                        onClick={scrollToBooking}
                         variant="outline" 
                         className="w-full border-feminine hover:bg-feminine hover:text-feminine-foreground"
                       >
-                        Get Started
+                        <Phone className="mr-2 h-4 w-4" />
+                        Schedule Call
                       </Button>
                     </CardContent>
                   </Card>
 
-                  <Card className="hover:shadow-xl transition-shadow border-2 border-feminine shadow-lg relative">
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-feminine text-feminine-foreground px-4 py-1 rounded-full text-sm font-semibold">
-                        Most Popular
+                  {/* Step 2 */}
+                  <Card className="hover:shadow-xl transition-shadow border-2 border-feminine shadow-lg relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-feminine"></div>
+                    <div className="absolute -top-4 right-4 top-3">
+                      <span className="bg-feminine text-feminine-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                        Required Before Treatment
                       </span>
                     </div>
-                    <CardContent className="p-8 text-center">
-                      <h3 className="text-xl font-bold mb-2">Monthly Program</h3>
-                      <div className="text-4xl font-bold text-feminine mb-4">$149</div>
-                      <p className="text-sm text-muted-foreground mb-6">Ongoing support & monitoring</p>
+                    <CardContent className="p-8">
+                      <div className="text-5xl font-bold text-feminine/20 mb-4">02</div>
+                      <h3 className="text-xl font-bold mb-2">The Hormone Mapping Experience</h3>
+                      <div className="text-3xl font-bold text-feminine mb-4">$299</div>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        This comprehensive diagnostic phase includes:
+                      </p>
+                      <ul className="text-sm text-muted-foreground space-y-2 mb-6">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
+                          Your At-Home ZRT Saliva Test Kit (shipped to your door)
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
+                          45-Minute Deep-Dive Clinical Review with Lauren Bursey, NP
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
+                          Customized Protocol Design
+                        </li>
+                      </ul>
+                      <p className="text-xs text-muted-foreground italic mb-4">
+                        This fee covers your diagnostics and provider time. There is no obligation to proceed with treatment.
+                      </p>
                       <Button 
-                        onClick={scrollToBooking}
+                        onClick={() => setIsQuizOpen(true)}
                         className="w-full bg-feminine hover:bg-feminine-light text-feminine-foreground"
                       >
-                        Book Now
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Begin Assessment
                       </Button>
                     </CardContent>
                   </Card>
 
-                  <Card className="hover:shadow-xl transition-shadow border-feminine/30">
-                    <CardContent className="p-8 text-center">
-                      <h3 className="text-xl font-bold mb-2">Hormone Pellets</h3>
-                      <div className="text-4xl font-bold text-feminine mb-4">$450</div>
-                      <p className="text-sm text-muted-foreground mb-6">Per insertion (3-4 months)</p>
+                  {/* Step 3 */}
+                  <Card className="hover:shadow-xl transition-shadow border-feminine/30 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-feminine"></div>
+                    <CardContent className="p-8">
+                      <div className="text-5xl font-bold text-feminine/20 mb-4">03</div>
+                      <h3 className="text-xl font-bold mb-2">The Concierge Membership</h3>
+                      <div className="text-3xl font-bold text-feminine mb-4">$149<span className="text-lg font-normal">/mo</span></div>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Once your protocol is designed, your monthly membership covers:
+                      </p>
+                      <ul className="text-sm text-muted-foreground space-y-2 mb-6">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
+                          Your prescription medications
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
+                          Ongoing monitoring & adjustments
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-feminine flex-shrink-0 mt-0.5" />
+                          Direct provider access
+                        </li>
+                      </ul>
                       <Button 
                         onClick={scrollToBooking}
                         variant="outline" 
@@ -396,9 +444,24 @@ const HormonesWomen = () => {
                   </Card>
                 </div>
 
-                <p className="text-center text-sm text-muted-foreground mt-8">
-                  * Lab testing billed separately unless included in program. Insurance may cover labs.
-                </p>
+                {/* Transdermal Advantage */}
+                <Card className="mt-12 bg-gradient-to-r from-feminine/10 to-feminine/5 border-feminine/30">
+                  <CardContent className="p-8">
+                    <div className="flex flex-col md:flex-row gap-6 items-center">
+                      <div className="flex-shrink-0">
+                        <div className="w-16 h-16 rounded-full bg-feminine/20 flex items-center justify-center">
+                          <Activity className="h-8 w-8 text-feminine" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold mb-2">The Transdermal Cream Advantage</h3>
+                        <p className="text-muted-foreground">
+                          Unlike pellets, which lock you into a dose for months even if side effects occur, our <strong>Transdermal Cream protocols allow for daily micro-adjustments</strong> to ensure you feel your best every single day. Precision dosing means we can fine-tune your therapy in real-time.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </section>
