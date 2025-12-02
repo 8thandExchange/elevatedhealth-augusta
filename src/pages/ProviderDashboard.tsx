@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, LogOut, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, RefreshCw, Activity, MessageSquare, Pill } from "lucide-react";
+import { Loader2, LogOut, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, RefreshCw, Activity, MessageSquare, Pill, ClipboardList } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
@@ -527,6 +527,12 @@ const ProviderDashboard = () => {
             <h1 className="font-cormorant text-2xl text-foreground">Triage Dashboard</h1>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/admin/dashboard">
+                <ClipboardList className="w-4 h-4 mr-2" />
+                HRT Quiz
+              </Link>
+            </Button>
             <Button 
               variant="ghost" 
               size="icon" 
