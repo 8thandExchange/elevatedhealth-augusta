@@ -115,6 +115,8 @@ const ProviderDashboard = () => {
 
   const loadData = async () => {
     try {
+      console.log("[ProviderDashboard] Loading data...");
+      
       // Load patients with pending_review orders
       const { data: ordersData, error: ordersError } = await supabase
         .from("orders")
@@ -124,14 +126,18 @@ const ProviderDashboard = () => {
         `)
         .eq("status", "pending_review");
 
+      console.log("[ProviderDashboard] Orders query result:", { ordersData, ordersError });
+
       if (ordersError) throw ordersError;
 
       // Also load patients with intake complete but no order yet
-      const { data: intakePatients } = await supabase
+      const { data: intakePatients, error: intakeError } = await supabase
         .from("patients")
         .select("*")
         .eq("onboarding_status", "intake_complete")
         .is("current_protocol", null);
+
+      console.log("[ProviderDashboard] Intake patients query result:", { intakePatients, intakeError });
 
       // Combine unique patients
       const allPatients: Patient[] = [];
