@@ -6,11 +6,11 @@ interface MissionStatementProps {
 
 const MissionStatement = ({ onOpenBooking }: MissionStatementProps) => {
   return (
-    <section className="section-spacing bg-secondary/30">
+    <section className="py-16 md:py-20 bg-secondary/30">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
               Our Philosophy
             </p>
@@ -20,7 +20,7 @@ const MissionStatement = ({ onOpenBooking }: MissionStatementProps) => {
           </div>
 
           {/* Body Copy */}
-          <div className="prose prose-lg max-w-none text-center mb-12">
+          <div className="prose prose-lg max-w-none text-center mb-8">
             <p className="text-lg text-muted-foreground font-lato font-light leading-relaxed mb-6">
               True wellness is not about losing weight or feeling happier—it is about 
               <span className="text-foreground font-medium"> biological alignment</span>. 
@@ -34,7 +34,7 @@ const MissionStatement = ({ onOpenBooking }: MissionStatementProps) => {
           </div>
 
           {/* Differentiator Badge */}
-          <div className="flex justify-center mb-12">
+          <div className="flex justify-center">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary/5 border border-primary/20 rounded-lg">
               <div className="h-2 w-2 rounded-full bg-gold" />
               <span className="text-sm text-foreground font-lato">
@@ -43,30 +43,8 @@ const MissionStatement = ({ onOpenBooking }: MissionStatementProps) => {
             </div>
           </div>
 
-          {/* The Three Resets */}
-          <div className="grid md:grid-cols-3 gap-8 pt-12 border-t border-border">
-            <div className="text-center">
-              <div className="text-3xl font-cormorant text-gold mb-2">Neural Reset</div>
-              <p className="text-sm text-muted-foreground font-lato font-light">
-                Ketamine protocols that restore neural pathways
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-cormorant text-gold mb-2">Metabolic Reset</div>
-              <p className="text-sm text-muted-foreground font-lato font-light">
-                GLP-1 therapy optimized by hormone testing
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-cormorant text-gold mb-2">Biological Reset</div>
-              <p className="text-sm text-muted-foreground font-lato font-light">
-                Precision bio-identical hormone restoration
-              </p>
-            </div>
-          </div>
-
           {/* CTA */}
-          <div className="text-center mt-16">
+          <div className="text-center mt-10">
             <button
               onClick={onOpenBooking}
               className="inline-flex items-center gap-2 text-primary font-lato text-sm tracking-wide hover:gap-3 transition-all duration-300"

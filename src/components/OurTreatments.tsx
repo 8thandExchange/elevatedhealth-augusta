@@ -62,10 +62,10 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
   const navigate = useNavigate();
 
   return (
-    <section id="treatments" className="section-spacing bg-background scroll-mt-20">
+    <section id="treatments" className="py-16 md:py-24 bg-background scroll-mt-20">
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-20">
+        <div className="text-center max-w-2xl mx-auto mb-14">
           <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
             Our Pathways
           </p>
@@ -117,7 +117,7 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-20 pt-16 border-t border-border">
+        <div className="text-center mt-14 pt-10 border-t border-border">
           <p className="text-lg text-muted-foreground font-lato font-light mb-6">
             Not sure which reset is right for you?
           </p>
