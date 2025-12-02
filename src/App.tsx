@@ -24,7 +24,6 @@ import Consult from "./pages/Consult";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
 import PatientLogin from "./pages/PatientLogin";
 import PatientDashboard from "./pages/PatientDashboard";
 import PatientIntake from "./pages/PatientIntake";
@@ -89,11 +88,6 @@ const App = () => (
           
           {/* Admin/Provider Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={
-            <ProtectedRoute requireAdmin>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
           <Route path="/provider/dashboard" element={
             <ProtectedRoute requireAdmin>
               <ProviderDashboard />

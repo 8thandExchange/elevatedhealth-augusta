@@ -53,7 +53,7 @@ const AdminLogin = () => {
         }
 
         toast.success("Logged in successfully");
-        navigate("/admin/dashboard");
+        navigate("/provider/dashboard");
       }
     } catch (error: any) {
       toast.error(error.message || "Failed to login");
@@ -67,7 +67,7 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/admin/dashboard`;
+      const redirectUrl = `${window.location.origin}/provider/dashboard`;
       
       const { data, error } = await supabase.auth.signUp({
         email: signupEmail,
@@ -100,7 +100,7 @@ const AdminLogin = () => {
       });
 
       if (!loginError) {
-        navigate("/admin/dashboard");
+        navigate("/provider/dashboard");
       }
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");

@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, ClipboardList, RefreshCw } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw } from "lucide-react";
 
 interface AdminNavbarProps {
   title: string;
@@ -16,7 +16,6 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing }: AdminNavbarPr
   const location = useLocation();
 
   const isOnProviderDashboard = location.pathname === "/provider/dashboard";
-  const isOnAdminDashboard = location.pathname === "/admin/dashboard";
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -36,20 +35,11 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing }: AdminNavbarPr
         
         <div className="flex items-center gap-2">
           {/* Navigation Links */}
-          {!isOnAdminDashboard && (
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/admin/dashboard">
-                <ClipboardList className="w-4 h-4 mr-2" />
-                HRT Quiz
-              </Link>
-            </Button>
-          )}
-          
           {!isOnProviderDashboard && (
             <Button variant="outline" size="sm" asChild>
               <Link to="/provider/dashboard">
                 <Stethoscope className="w-4 h-4 mr-2" />
-                Provider Triage
+                Provider Dashboard
               </Link>
             </Button>
           )}
