@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard } from "lucide-react";
+import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
@@ -99,6 +99,8 @@ const ProviderDashboard = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState("triage");
   const [renewingPatientId, setRenewingPatientId] = useState<string | null>(null);
+  const [resendingActivationId, setResendingActivationId] = useState<string | null>(null);
+  const [selectedPatientIds, setSelectedPatientIds] = useState<Set<string>>(new Set());
   const [providerInfo, setProviderInfo] = useState<{ name: string; credentials: string }>({
     name: "Provider",
     credentials: "NP-C"
@@ -483,6 +485,21 @@ const ProviderDashboard = () => {
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       toast.success("Order authorized! Treatment Plan Ready email will be sent.");
 
+      // Send treatment authorized notification email
+      if (selectedPatient.patient.email) {
+        try {
+          await supabase.functions.invoke("send-treatment-authorized", {
+            body: {
+              patient_name: selectedPatient.patient.full_name,
+              patient_email: selectedPatient.patient.email,
+              protocol_name: recommendedProtocol.name,
+            },
+          });
+        } catch (emailErr) {
+          console.error("Failed to send treatment authorized email:", emailErr);
+        }
+      }
+
       await loadData();
       setIsPanelOpen(false);
       setSelectedPatient(null);
@@ -572,7 +589,57 @@ const ProviderDashboard = () => {
       console.error("Error emailing requisition:", error);
       toast.error("Failed to email requisition: " + error.message);
     } finally {
-      setIsEmailingRequisition(false);
+    setIsEmailingRequisition(false);
+    }
+  };
+
+  const handleResendActivation = async (activation: PendingActivation) => {
+    setResendingActivationId(activation.id);
+    try {
+      const firstName = activation.patient_name.split(" ")[0];
+      const { data, error } = await supabase.functions.invoke("send-activation-sms", {
+        body: {
+          first_name: firstName,
+          phone: activation.patient_phone || "",
+          base_membership: activation.base_membership,
+          addon_tier: activation.addon_tier,
+          patient_email: activation.patient_email,
+          send_email: true,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.email_sent) {
+        toast.success(`Activation email resent to ${activation.patient_email}`);
+      } else {
+        toast.warning("Could not send email. Link generated - copy manually if needed.");
+      }
+    } catch (err: any) {
+      console.error("Resend error:", err);
+      toast.error(err.message || "Failed to resend activation email");
+    } finally {
+      setResendingActivationId(null);
+    }
+  };
+
+  const togglePatientSelection = (patientId: string) => {
+    setSelectedPatientIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(patientId)) {
+        newSet.delete(patientId);
+      } else {
+        newSet.add(patientId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedPatientIds.size === pendingPatients.length) {
+      setSelectedPatientIds(new Set());
+    } else {
+      setSelectedPatientIds(new Set(pendingPatients.map(p => p.patient.id)));
     }
   };
 
@@ -642,56 +709,99 @@ const ProviderDashboard = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border/50">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Highest Category</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Risk Level</th>
-                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pendingPatients.map((p) => (
-                      <tr 
-                        key={p.patient.id} 
-                        className={`border-b border-border/30 hover:bg-muted/30 cursor-pointer ${
-                          p.riskLevel === "red" ? "bg-red-50/50 dark:bg-red-950/10" : ""
-                        }`}
-                        onClick={() => selectPatient(p)}
-                      >
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                              <User className="w-5 h-5 text-primary" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-foreground">{p.patient.full_name}</p>
-                              {p.patient.safety_flags?.length > 0 && (
-                                <p className="text-xs text-red-500 flex items-center gap-1">
-                                  <ShieldAlert className="w-3 h-3" />
-                                  {p.patient.safety_flags.length} safety flag(s)
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <span className="text-sm text-foreground">{p.highestCategory}</span>
-                        </td>
-                        <td className="py-4 px-4">
-                          {getRiskBadge(p.riskLevel)}
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <Button size="sm" variant="outline">
-                            Review
-                          </Button>
-                        </td>
+              <div className="space-y-4">
+                {/* Bulk Selection Header */}
+                {selectedPatientIds.size > 0 && (
+                  <div className="bg-primary/10 rounded-lg p-3 flex items-center justify-between">
+                    <span className="text-sm text-foreground">
+                      {selectedPatientIds.size} patient{selectedPatientIds.size !== 1 ? "s" : ""} selected
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedPatientIds(new Set())}
+                    >
+                      Clear Selection
+                    </Button>
+                  </div>
+                )}
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border/50">
+                        <th className="text-left py-3 px-4 w-12">
+                          <button 
+                            onClick={toggleSelectAll}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            {selectedPatientIds.size === pendingPatients.length ? (
+                              <CheckSquare className="w-4 h-4" />
+                            ) : (
+                              <Square className="w-4 h-4" />
+                            )}
+                          </button>
+                        </th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Highest Category</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Risk Level</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {pendingPatients.map((p) => (
+                        <tr 
+                          key={p.patient.id} 
+                          className={`border-b border-border/30 hover:bg-muted/30 cursor-pointer ${
+                            p.riskLevel === "red" ? "bg-red-50/50 dark:bg-red-950/10" : ""
+                          } ${selectedPatientIds.has(p.patient.id) ? "bg-primary/5" : ""}`}
+                        >
+                          <td className="py-4 px-4">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                togglePatientSelection(p.patient.id);
+                              }}
+                              className="text-muted-foreground hover:text-foreground"
+                            >
+                              {selectedPatientIds.has(p.patient.id) ? (
+                                <CheckSquare className="w-4 h-4 text-primary" />
+                              ) : (
+                                <Square className="w-4 h-4" />
+                              )}
+                            </button>
+                          </td>
+                          <td className="py-4 px-4" onClick={() => selectPatient(p)}>
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                <User className="w-5 h-5 text-primary" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-foreground">{p.patient.full_name}</p>
+                                {p.patient.safety_flags?.length > 0 && (
+                                  <p className="text-xs text-red-500 flex items-center gap-1">
+                                    <ShieldAlert className="w-3 h-3" />
+                                    {p.patient.safety_flags.length} safety flag(s)
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4" onClick={() => selectPatient(p)}>
+                            <span className="text-sm text-foreground">{p.highestCategory}</span>
+                          </td>
+                          <td className="py-4 px-4" onClick={() => selectPatient(p)}>
+                            {getRiskBadge(p.riskLevel)}
+                          </td>
+                          <td className="py-4 px-4 text-right">
+                            <Button size="sm" variant="outline" onClick={() => selectPatient(p)}>
+                              Review
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </TabsContent>
@@ -843,6 +953,7 @@ const ProviderDashboard = () => {
                           <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Monthly</th>
                           <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Sent</th>
                           <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Days Waiting</th>
+                          <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -878,6 +989,21 @@ const ProviderDashboard = () => {
                                 }`}>
                                   {daysSinceSent === 0 ? "Today" : `${daysSinceSent} day${daysSinceSent !== 1 ? "s" : ""}`}
                                 </span>
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleResendActivation(activation)}
+                                  disabled={resendingActivationId === activation.id}
+                                >
+                                  {resendingActivationId === activation.id ? (
+                                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                  ) : (
+                                    <RotateCcw className="w-3 h-3 mr-1" />
+                                  )}
+                                  {resendingActivationId === activation.id ? "Sending..." : "Resend"}
+                                </Button>
                               </td>
                             </tr>
                           );

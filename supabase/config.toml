@@ -38,3 +38,9 @@ verify_jwt = false
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.send-treatment-authorized]
+verify_jwt = false
+
+[functions.send-safety-callback-request]
+verify_jwt = false
