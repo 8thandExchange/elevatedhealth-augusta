@@ -507,8 +507,9 @@ const NewLabResultModal = ({
                         placeholder="0.0"
                         value={estradiol}
                         onChange={(e) => setEstradiol(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         pg/mL
                       </span>
                     </div>
@@ -525,8 +526,9 @@ const NewLabResultModal = ({
                         placeholder="0"
                         value={progesterone}
                         onChange={(e) => setProgesterone(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         pg/mL
                       </span>
                     </div>
@@ -543,8 +545,9 @@ const NewLabResultModal = ({
                         placeholder="0.0"
                         value={testosterone}
                         onChange={(e) => setTestosterone(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         ng/dL
                       </span>
                     </div>
@@ -561,8 +564,9 @@ const NewLabResultModal = ({
                         placeholder="0.0"
                         value={cortisol}
                         onChange={(e) => setCortisol(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         μg/dL
                       </span>
                     </div>
@@ -620,8 +624,9 @@ const NewLabResultModal = ({
                         placeholder="5.4"
                         value={hba1c}
                         onChange={(e) => setHba1c(e.target.value)}
+                        className="pr-10"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         %
                       </span>
                     </div>
@@ -638,8 +643,9 @@ const NewLabResultModal = ({
                         placeholder="8.0"
                         value={fastingInsulin}
                         onChange={(e) => setFastingInsulin(e.target.value)}
+                        className="pr-16"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         μIU/mL
                       </span>
                     </div>
@@ -656,8 +662,9 @@ const NewLabResultModal = ({
                         placeholder="15.0"
                         value={metabolicCortisol}
                         onChange={(e) => setMetabolicCortisol(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         μg/dL
                       </span>
                     </div>
@@ -674,8 +681,9 @@ const NewLabResultModal = ({
                         placeholder="45"
                         value={vitaminD}
                         onChange={(e) => setVitaminD(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         ng/mL
                       </span>
                     </div>
@@ -733,8 +741,9 @@ const NewLabResultModal = ({
                         placeholder="15.0"
                         value={wlCortisol}
                         onChange={(e) => setWlCortisol(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         μg/dL
                       </span>
                     </div>
@@ -753,8 +762,9 @@ const NewLabResultModal = ({
                         placeholder="3.0"
                         value={wlEstradiol}
                         onChange={(e) => setWlEstradiol(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         pg/mL
                       </span>
                     </div>
@@ -773,8 +783,9 @@ const NewLabResultModal = ({
                         placeholder="35.0"
                         value={wlTestosterone}
                         onChange={(e) => setWlTestosterone(e.target.value)}
+                        className="pr-14"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
                         ng/dL
                       </span>
                     </div>
