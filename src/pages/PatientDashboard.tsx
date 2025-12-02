@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Activity, Zap, Heart, Brain, LogOut, Plus, Clock } from "lucide-react";
+import { Loader2, Activity, Zap, Heart, Brain, LogOut, Plus, Clock, Settings } from "lucide-react";
 import CircularGauge from "@/components/ui/CircularGauge";
 import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
 import OnboardingProgress from "@/components/patient/OnboardingProgress";
+import EditProfileModal from "@/components/patient/EditProfileModal";
 
 interface SymptomLog {
   id: string;
@@ -40,6 +41,7 @@ const PatientDashboard = () => {
   const [latestLog, setLatestLog] = useState<SymptomLog | null>(null);
   const [latestOrder, setLatestOrder] = useState<Order | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -211,9 +213,14 @@ const PatientDashboard = () => {
               {patient?.full_name || "Patient"}
             </h1>
           </div>
-          <Button variant="ghost" size="icon" onClick={handleLogout}>
-            <LogOut className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => setIsEditProfileOpen(true)}>
+              <Settings className="w-5 h-5" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={handleLogout}>
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -338,6 +345,17 @@ const PatientDashboard = () => {
           </Button>
         </div>
       </main>
+
+      {/* Edit Profile Modal */}
+      {patient && (
+        <EditProfileModal
+          isOpen={isEditProfileOpen}
+          onClose={() => setIsEditProfileOpen(false)}
+          patientId={patient.id}
+          currentName={patient.full_name}
+          onUpdate={(newName) => setPatient({ ...patient, full_name: newName })}
+        />
+      )}
     </div>
   );
 };
