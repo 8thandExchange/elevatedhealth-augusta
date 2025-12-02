@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Loader2 } from "lucide-react";
+import ProgressReport from "@/components/patient/ProgressReport";
 
 interface SymptomQuestion {
   id: string;
@@ -41,11 +42,66 @@ const categoryLabels: Record<string, { title: string; description: string }> = {
 
 const severityLabels = ["None", "Mild", "Moderate", "Severe"];
 
+interface PreviousScores {
+  estrogen: number;
+  progesterone: number;
+  androgen: number;
+  cortisol: number;
+}
+
 const SymptomCheckIn = () => {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingPrevious, setIsLoadingPrevious] = useState(true);
+  const [previousScores, setPreviousScores] = useState<PreviousScores | null>(null);
+  const [showProgressReport, setShowProgressReport] = useState(false);
+  const [currentScores, setCurrentScores] = useState<PreviousScores | null>(null);
+
+  useEffect(() => {
+    loadPreviousScores();
+  }, []);
+
+  const loadPreviousScores = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/patient/login");
+        return;
+      }
+
+      const { data: patient } = await supabase
+        .from("patients")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!patient) return;
+
+      // Get the most recent symptom log
+      const { data: previousLog } = await supabase
+        .from("symptom_logs")
+        .select("estrogen_score, progesterone_score, androgen_score, cortisol_score")
+        .eq("patient_id", patient.id)
+        .order("date_logged", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (previousLog) {
+        setPreviousScores({
+          estrogen: previousLog.estrogen_score || 0,
+          progesterone: previousLog.progesterone_score || 0,
+          androgen: previousLog.androgen_score || 0,
+          cortisol: previousLog.cortisol_score || 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error loading previous scores:", error);
+    } finally {
+      setIsLoadingPrevious(false);
+    }
+  };
 
   const currentQuestion = questions[currentIndex];
   const currentCategory = currentQuestion.category;
@@ -106,6 +162,7 @@ const SymptomCheckIn = () => {
       }
 
       const scores = calculateScores();
+      setCurrentScores(scores);
 
       const { error } = await supabase.from("symptom_logs").insert({
         patient_id: patient.id,
@@ -118,8 +175,8 @@ const SymptomCheckIn = () => {
 
       if (error) throw error;
 
-      toast.success("Check-in submitted successfully!");
-      navigate("/patient/dashboard");
+      // Show progress report instead of immediately navigating
+      setShowProgressReport(true);
     } catch (error: any) {
       toast.error(error.message || "Failed to submit check-in");
     } finally {
@@ -129,6 +186,27 @@ const SymptomCheckIn = () => {
 
   const currentValue = answers[currentQuestion.id] ?? 0;
   const isLastQuestion = currentIndex === questions.length - 1;
+
+  if (isLoadingPrevious) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (showProgressReport && currentScores) {
+    return (
+      <ProgressReport
+        previousScores={previousScores}
+        currentScores={currentScores}
+        onContinue={() => {
+          toast.success("Check-in submitted successfully!");
+          navigate("/patient/dashboard");
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

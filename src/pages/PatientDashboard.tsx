@@ -347,32 +347,44 @@ const PatientDashboard = () => {
           </Card>
         )}
 
-        {/* No data state */}
-        {!latestLog && (
+        {/* No data state - only show if no intake completed */}
+        {!latestLog && !patient?.intake_completed && (
           <Card className="bg-card border-border/50">
             <CardContent className="pt-6 text-center space-y-4">
               <p className="text-muted-foreground">
-                No symptom check-ins yet. Complete your first assessment to see your wellness status.
+                No symptom check-ins yet. Complete your medical intake to see your wellness status.
               </p>
               <Button onClick={() => navigate("/patient/intake")}>
                 <Plus className="w-4 h-4 mr-2" />
-                Start Medical Intake
+                Begin Medical Intake
               </Button>
             </CardContent>
           </Card>
         )}
 
-        {/* Quick Actions */}
+        {/* Quick Actions - Conditional based on intake status */}
         <div className="pb-8">
-          <Button
-            onClick={() => navigate("/patient/intake")}
-            variant="outline"
-            className="w-full"
-            size="lg"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Symptom Check-In
-          </Button>
+          {patient?.intake_completed ? (
+            <Button
+              onClick={() => navigate("/patient/checkin")}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Log Monthly Symptoms
+            </Button>
+          ) : (
+            <Button
+              onClick={() => navigate("/patient/intake")}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Begin Medical Intake
+            </Button>
+          )}
         </div>
       </main>
 

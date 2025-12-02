@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, LogOut, AlertTriangle, Check, User, TrendingUp, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, RefreshCw } from "lucide-react";
+import { Loader2, LogOut, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, RefreshCw, Activity, MessageSquare, Pill } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
@@ -32,6 +33,7 @@ interface SymptomLog {
   androgen_score: number;
   cortisol_score: number;
   raw_answers: any;
+  patient_id: string;
 }
 
 interface Protocol {
@@ -56,10 +58,19 @@ interface PatientWithLog {
   labPath?: LabPathInfo;
 }
 
+interface RecentCheckIn {
+  patient: Patient;
+  currentLog: SymptomLog;
+  previousLog: SymptomLog | null;
+  percentChange: number | null;
+  improved: boolean;
+}
+
 const ProviderDashboard = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [pendingPatients, setPendingPatients] = useState<PatientWithLog[]>([]);
+  const [recentCheckIns, setRecentCheckIns] = useState<RecentCheckIn[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<PatientWithLog | null>(null);
   const [patientLogs, setPatientLogs] = useState<SymptomLog[]>([]);
   const [protocols, setProtocols] = useState<Protocol[]>([]);
@@ -68,6 +79,7 @@ const ProviderDashboard = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isEmailingRequisition, setIsEmailingRequisition] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState("triage");
 
   useEffect(() => {
     checkAuthAndLoad();
@@ -217,6 +229,56 @@ const ProviderDashboard = () => {
       // Load protocols
       const { data: protocolsData } = await supabase.from("protocols").select("*");
       setProtocols(protocolsData || []);
+
+      // Load recent check-ins (last 7 days) for Patient Monitoring tab
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      const { data: recentLogs } = await supabase
+        .from("symptom_logs")
+        .select("*, patients(*)")
+        .gte("date_logged", sevenDaysAgo.toISOString())
+        .order("date_logged", { ascending: false });
+
+      const checkInsData: RecentCheckIn[] = [];
+      
+      if (recentLogs) {
+        for (const log of recentLogs) {
+          if (!log.patients) continue;
+          
+          // Get previous log for this patient
+          const { data: previousLogs } = await supabase
+            .from("symptom_logs")
+            .select("*")
+            .eq("patient_id", log.patient_id)
+            .lt("date_logged", log.date_logged)
+            .order("date_logged", { ascending: false })
+            .limit(1);
+
+          const previousLog = previousLogs?.[0] || null;
+          
+          const currentTotal = (log.estrogen_score || 0) + (log.progesterone_score || 0) + 
+                              (log.androgen_score || 0) + (log.cortisol_score || 0);
+          const previousTotal = previousLog 
+            ? (previousLog.estrogen_score || 0) + (previousLog.progesterone_score || 0) + 
+              (previousLog.androgen_score || 0) + (previousLog.cortisol_score || 0)
+            : null;
+          
+          const percentChange = previousTotal && previousTotal > 0
+            ? Math.round(((currentTotal - previousTotal) / previousTotal) * 100)
+            : null;
+
+          checkInsData.push({
+            patient: log.patients as Patient,
+            currentLog: log as SymptomLog,
+            previousLog: previousLog as SymptomLog | null,
+            percentChange,
+            improved: percentChange !== null && percentChange < -20,
+          });
+        }
+      }
+      
+      setRecentCheckIns(checkInsData);
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -424,74 +486,191 @@ const ProviderDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Action Needed Feed */}
-        <div className="mb-8">
-          <h2 className="font-cormorant text-xl text-foreground mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            Action Needed ({pendingPatients.length})
-          </h2>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="triage" className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Action Needed ({pendingPatients.length})
+            </TabsTrigger>
+            <TabsTrigger value="monitoring" className="flex items-center gap-2">
+              <Activity className="w-4 h-4" />
+              Patient Monitoring ({recentCheckIns.length})
+            </TabsTrigger>
+          </TabsList>
 
-          {pendingPatients.length === 0 ? (
+          {/* Triage Tab */}
+          <TabsContent value="triage">
+            {pendingPatients.length === 0 ? (
+              <Card className="bg-card border-border/50">
+                <CardContent className="pt-6 text-center">
+                  <ShieldCheck className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                  <p className="text-muted-foreground">All caught up! No pending reviews.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/50">
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Highest Category</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Risk Level</th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pendingPatients.map((p) => (
+                      <tr 
+                        key={p.patient.id} 
+                        className={`border-b border-border/30 hover:bg-muted/30 cursor-pointer ${
+                          p.riskLevel === "red" ? "bg-red-50/50 dark:bg-red-950/10" : ""
+                        }`}
+                        onClick={() => selectPatient(p)}
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                              <User className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground">{p.patient.full_name}</p>
+                              {p.patient.safety_flags?.length > 0 && (
+                                <p className="text-xs text-red-500 flex items-center gap-1">
+                                  <ShieldAlert className="w-3 h-3" />
+                                  {p.patient.safety_flags.length} safety flag(s)
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <span className="text-sm text-foreground">{p.highestCategory}</span>
+                        </td>
+                        <td className="py-4 px-4">
+                          {getRiskBadge(p.riskLevel)}
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <Button size="sm" variant="outline">
+                            Review
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Patient Monitoring Tab */}
+          <TabsContent value="monitoring">
             <Card className="bg-card border-border/50">
-              <CardContent className="pt-6 text-center">
-                <ShieldCheck className="w-12 h-12 mx-auto mb-2 text-green-500" />
-                <p className="text-muted-foreground">All caught up! No pending reviews.</p>
+              <CardHeader>
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Activity className="w-4 h-4" />
+                  Check-Ins (Last 7 Days)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {recentCheckIns.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Activity className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-muted-foreground">No check-ins in the past 7 days.</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border/50">
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Date</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Previous</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Current</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">% Change</th>
+                          <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recentCheckIns.map((checkIn) => {
+                          const prevTotal = checkIn.previousLog 
+                            ? (checkIn.previousLog.estrogen_score || 0) + (checkIn.previousLog.progesterone_score || 0) +
+                              (checkIn.previousLog.androgen_score || 0) + (checkIn.previousLog.cortisol_score || 0)
+                            : null;
+                          const currTotal = (checkIn.currentLog.estrogen_score || 0) + (checkIn.currentLog.progesterone_score || 0) +
+                            (checkIn.currentLog.androgen_score || 0) + (checkIn.currentLog.cortisol_score || 0);
+                          
+                          const isImproved = checkIn.percentChange !== null && checkIn.percentChange < -20;
+                          const isWorsened = checkIn.percentChange !== null && checkIn.percentChange >= 0;
+                          
+                          return (
+                            <tr 
+                              key={checkIn.currentLog.id}
+                              className={`border-b border-border/30 ${
+                                isImproved ? "bg-green-50/50 dark:bg-green-950/10" : 
+                                isWorsened ? "bg-red-50/50 dark:bg-red-950/10" : ""
+                              }`}
+                            >
+                              <td className="py-4 px-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <User className="w-5 h-5 text-primary" />
+                                  </div>
+                                  <p className="font-medium text-foreground">{checkIn.patient.full_name}</p>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="text-sm text-muted-foreground">
+                                  {new Date(checkIn.currentLog.date_logged).toLocaleDateString()}
+                                </span>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="text-sm text-muted-foreground">
+                                  {prevTotal !== null ? prevTotal : "—"}
+                                </span>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="text-sm font-medium text-foreground">{currTotal}</span>
+                              </td>
+                              <td className="py-4 px-4">
+                                {checkIn.percentChange !== null ? (
+                                  <span className={`flex items-center gap-1 text-sm font-medium ${
+                                    isImproved ? "text-green-600" : isWorsened ? "text-red-600" : "text-muted-foreground"
+                                  }`}>
+                                    {isImproved ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
+                                    {checkIn.percentChange > 0 ? "+" : ""}{checkIn.percentChange}%
+                                  </span>
+                                ) : (
+                                  <span className="text-sm text-muted-foreground">Baseline</span>
+                                )}
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                {isImproved ? (
+                                  <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
+                                    <Pill className="w-3 h-3 mr-1" />
+                                    Renew Rx
+                                  </Button>
+                                ) : isWorsened ? (
+                                  <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                                    <MessageSquare className="w-3 h-3 mr-1" />
+                                    Message
+                                  </Button>
+                                ) : (
+                                  <Button size="sm" variant="ghost" disabled>
+                                    No Action
+                                  </Button>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border/50">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Highest Category</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Risk Level</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pendingPatients.map((p) => (
-                    <tr 
-                      key={p.patient.id} 
-                      className={`border-b border-border/30 hover:bg-muted/30 cursor-pointer ${
-                        p.riskLevel === "red" ? "bg-red-50/50 dark:bg-red-950/10" : ""
-                      }`}
-                      onClick={() => selectPatient(p)}
-                    >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <User className="w-5 h-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-foreground">{p.patient.full_name}</p>
-                            {p.patient.safety_flags?.length > 0 && (
-                              <p className="text-xs text-red-500 flex items-center gap-1">
-                                <ShieldAlert className="w-3 h-3" />
-                                {p.patient.safety_flags.length} safety flag(s)
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className="text-sm text-foreground">{p.highestCategory}</span>
-                      </td>
-                      <td className="py-4 px-4">
-                        {getRiskBadge(p.riskLevel)}
-                      </td>
-                      <td className="py-4 px-4 text-right">
-                        <Button size="sm" variant="outline">
-                          Review
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Side Panel */}
