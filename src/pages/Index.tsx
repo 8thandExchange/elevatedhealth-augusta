@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import OurTreatments from "@/components/OurTreatments";
+import MissionStatement from "@/components/MissionStatement";
 import WhyUsCompare from "@/components/WhyUsCompare";
 import ClinicVideo from "@/components/ClinicVideo";
 import InsuranceLogos from "@/components/InsuranceLogos";
@@ -24,6 +25,7 @@ const Index = () => {
       <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
       <main>
         <Hero onOpenBooking={() => setIsBookingOpen(true)} />
+        <MissionStatement onOpenBooking={() => setIsBookingOpen(true)} />
         <OurTreatments onOpenBooking={() => setIsBookingOpen(true)} />
         <WhyUsCompare onOpenBooking={() => setIsBookingOpen(true)} />
         <ClinicVideo />

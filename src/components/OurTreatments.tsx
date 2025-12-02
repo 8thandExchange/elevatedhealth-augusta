@@ -34,24 +34,24 @@ const FeminineIcon = ({ className }: { className?: string }) => (
 const treatments = [
   {
     id: "ketamine",
-    title: "Ketamine Therapy",
-    tagline: "Mental Clarity & Neural Repair",
+    title: "Neural Restoration",
+    tagline: "Reset neural pathways altered by stress",
     icon: LotusIcon,
     route: "/ketamine",
     gradient: "from-[#1a365d] via-[#2c5282] to-[#1a365d]",
   },
   {
     id: "weight-loss",
-    title: "Metabolic Optimization",
-    tagline: "Cellular-Level Weight Management",
+    title: "Metabolic Reset",
+    tagline: "GLP-1s optimized by hormone testing",
     icon: DNAIcon,
     route: "/weight-loss",
     gradient: "from-[#2d3748] via-[#4a5568] to-[#2d3748]",
   },
   {
     id: "hormones",
-    title: "Hormone Optimization",
-    tagline: "Women's Vitality & Academy-Level Protocols",
+    title: "Biological Reset",
+    tagline: "Precision bio-identical protocols",
     icon: FeminineIcon,
     route: "/hormones",
     gradient: "from-[#2c3e50] via-[#34495e] to-[#2c3e50]",
@@ -67,13 +67,13 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-20">
           <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
-            Our Services
+            Our Pathways
           </p>
           <h2 className="font-cormorant text-foreground mb-6">
-            Pillars of Care
+            Three Integrated Resets
           </h2>
           <p className="text-lg text-muted-foreground font-lato font-light leading-relaxed">
-            Three integrated pathways to restore your wellbeing
+            We test before we treat. Every protocol is architected around your unique biology.
           </p>
         </div>
 
@@ -119,13 +119,13 @@ const OurTreatments = ({ onOpenBooking }: OurTreatmentsProps) => {
         {/* Bottom CTA */}
         <div className="text-center mt-20 pt-16 border-t border-border">
           <p className="text-lg text-muted-foreground font-lato font-light mb-6">
-            Not sure which treatment is right for you?
+            Not sure which reset is right for you?
           </p>
           <button
             onClick={onOpenBooking}
             className="inline-flex items-center gap-2 text-primary font-lato text-sm tracking-wide hover:gap-3 transition-all duration-300"
           >
-            <span className="elegant-underline">Schedule a complimentary consultation</span>
+            <span className="elegant-underline">Request a personalized consultation</span>
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
