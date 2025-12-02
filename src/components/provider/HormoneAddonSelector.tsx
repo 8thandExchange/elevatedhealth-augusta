@@ -137,11 +137,9 @@ const HormoneAddonSelector = ({
 
   const handleDraftEmail = () => {
     const subject = encodeURIComponent("Elevated Health: Activation & Pharmacy Order");
-    const body = encodeURIComponent(
-      `Hi ${firstName},\n\nLauren has approved your hormone protocol. Please click the secure link below to activate your membership and finalize your pharmacy order:\n\n${generatedLink}\n\nBest,\nElevated Health Team`
-    );
-    const mailtoLink = `mailto:${patientEmail || ""}?subject=${subject}&body=${body}`;
-    window.open(mailtoLink, "_blank");
+    const emailBody = `Hi ${firstName},\n\nLauren has approved your hormone protocol. Please click the secure link below to activate your membership and finalize your pharmacy order:\n\n${generatedLink}\n\nBest,\nElevated Health Team`;
+    const mailtoLink = "mailto:" + (patientEmail || "") + "?subject=" + subject + "&body=" + encodeURIComponent(emailBody);
+    window.location.href = mailtoLink;
   };
 
   return (
