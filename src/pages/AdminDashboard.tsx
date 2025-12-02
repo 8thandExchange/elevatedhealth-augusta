@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, LogOut, Stethoscope } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { SubmissionsList } from "@/components/admin/SubmissionsList";
 import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -52,12 +51,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast.success("Logged out successfully");
-    navigate("/admin/login");
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -68,26 +61,10 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">HRT Quiz Dashboard</h1>
-            <p className="text-sm text-muted-foreground">{userEmail}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" asChild>
-              <Link to="/provider/dashboard">
-                <Stethoscope className="mr-2 h-4 w-4" />
-                Provider Triage
-              </Link>
-            </Button>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
+      <AdminNavbar 
+        title="HRT Quiz Dashboard" 
+        subtitle={userEmail}
+      />
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="submissions" className="space-y-4">
