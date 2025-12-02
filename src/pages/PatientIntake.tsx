@@ -198,12 +198,27 @@ const PatientIntake = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      // Get patient record
-      const { data: patient, error: patientError } = await supabase
+      // Get or create patient record
+      let { data: patient, error: patientError } = await supabase
         .from("patients")
         .select("id")
         .eq("user_id", user.id)
         .maybeSingle();
+
+      // If no patient record exists, create one
+      if (!patient && !patientError) {
+        const { data: newPatient, error: createError } = await supabase
+          .from("patients")
+          .insert({
+            user_id: user.id,
+            full_name: user.email?.split("@")[0] || "Patient",
+          })
+          .select("id")
+          .single();
+        
+        if (createError) throw new Error("Failed to create patient record");
+        patient = newPatient;
+      }
 
       if (patientError || !patient) throw new Error("Patient not found");
 
