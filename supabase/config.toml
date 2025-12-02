@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.create-vitality-checkout]
 verify_jwt = false
+
+[functions.update-subscription-addon]
+verify_jwt = false
