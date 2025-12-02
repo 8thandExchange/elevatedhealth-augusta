@@ -137,17 +137,19 @@ const PatientDashboard = () => {
   };
 
   const handleLogout = async () => {
+    console.log("[PatientDashboard] Logout initiated");
     try {
       const { error } = await supabase.auth.signOut();
+      console.log("[PatientDashboard] signOut result:", { error });
       if (error) {
-        console.error("Logout error:", error);
+        console.error("[PatientDashboard] Logout error:", error);
         toast.error("Failed to logout");
         return;
       }
       toast.success("Logged out successfully");
       navigate("/patient/login");
     } catch (error: any) {
-      console.error("Logout exception:", error);
+      console.error("[PatientDashboard] Logout exception:", error);
       toast.error("Failed to logout");
     }
   };

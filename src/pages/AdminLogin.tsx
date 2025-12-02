@@ -35,7 +35,7 @@ const AdminLogin = () => {
 
       if (error) throw error;
 
-      if (data.user) {
+      if (data.user && data.session) {
         // Check if user has admin or staff role
         const { data: roles, error: roleError } = await supabase
           .from("user_roles")
@@ -53,7 +53,8 @@ const AdminLogin = () => {
         }
 
         toast.success("Logged in successfully");
-        navigate("/provider/dashboard");
+        // Small delay to ensure session is propagated
+        setTimeout(() => navigate("/provider/dashboard"), 100);
       }
     } catch (error: any) {
       toast.error(error.message || "Failed to login");
