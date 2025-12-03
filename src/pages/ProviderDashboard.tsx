@@ -779,6 +779,7 @@ const ProviderDashboard = () => {
           setIsRefreshing(false);
         }}
         isRefreshing={isRefreshing}
+        onNavigateToMessages={() => setActiveTab("messages")}
       />
 
       <main className="container mx-auto px-4 py-8">
