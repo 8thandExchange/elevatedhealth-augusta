@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square, UserPlus, FileText, MessageCircle } from "lucide-react";
+import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square, UserPlus, FileText, MessageCircle, Ban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
@@ -137,6 +137,7 @@ const ProviderDashboard = () => {
   const [editEmail, setEditEmail] = useState("");
   const [isSavingContact, setIsSavingContact] = useState(false);
   const [isMarkingLabsReviewed, setIsMarkingLabsReviewed] = useState(false);
+  const [isFlaggingNoShow, setIsFlaggingNoShow] = useState(false);
   // Kit tracking state
   const [selectedPatientKit, setSelectedPatientKit] = useState<{
     id: string;
@@ -1619,6 +1620,44 @@ const ProviderDashboard = () => {
               >
                 <User className="w-4 h-4 mr-2" />
                 Edit Patient Profile
+              </Button>
+
+              {/* Flag as Late Cancel / No-Show Button */}
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  if (!selectedPatient) return;
+                  setIsFlaggingNoShow(true);
+                  try {
+                    const { error } = await supabase
+                      .from("patients")
+                      .update({ onboarding_status: "rebooking_fee_required" })
+                      .eq("id", selectedPatient.patient.id);
+                    
+                    if (error) throw error;
+                    toast.success("Patient flagged for late cancel/no-show. $99 rebooking fee required.");
+                    await loadData();
+                    selectPatient({
+                      ...selectedPatient,
+                      patient: { ...selectedPatient.patient, onboarding_status: "rebooking_fee_required" }
+                    });
+                  } catch (err: any) {
+                    toast.error(err.message || "Failed to flag patient");
+                  } finally {
+                    setIsFlaggingNoShow(false);
+                  }
+                }}
+                disabled={isFlaggingNoShow || selectedPatient.patient.onboarding_status === "rebooking_fee_required"}
+                className="w-full border-red-500/30 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+              >
+                {isFlaggingNoShow ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Ban className="w-4 h-4 mr-2" />
+                )}
+                {selectedPatient.patient.onboarding_status === "rebooking_fee_required" 
+                  ? "Already Flagged - Fee Required" 
+                  : "Flag as Late Cancel / No-Show"}
               </Button>
 
               {/* Edit Patient Profile Modal */}

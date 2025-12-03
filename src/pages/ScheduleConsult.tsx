@@ -1,24 +1,49 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle, Loader2, Lock, CreditCard } from "lucide-react";
+import { CheckCircle, Loader2, Lock, CreditCard, AlertTriangle, Calendar } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import KitTracker from "@/components/patient/KitTracker";
+import { Card, CardContent } from "@/components/ui/card";
 
 const GOOGLE_CALENDAR_URL = "https://calendar.app.google/tfNK7WdwvwF2xNmMA";
 
 const ScheduleConsult = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [hasPaid, setHasPaid] = useState(false);
   const [patientId, setPatientId] = useState<string | null>(null);
   const [kitData, setKitData] = useState<any>(null);
   const [confirming, setConfirming] = useState(false);
+  const [onboardingStatus, setOnboardingStatus] = useState<string | null>(null);
+  const [processingRebooking, setProcessingRebooking] = useState(false);
+
+  // Handle rebooking success return
+  useEffect(() => {
+    const rebookingParam = searchParams.get("rebooking");
+    if (rebookingParam === "success" && patientId) {
+      // Update status back to ready to book
+      const updateStatus = async () => {
+        try {
+          await supabase
+            .from("patients")
+            .update({ onboarding_status: "consult_scheduled" })
+            .eq("id", patientId);
+          setOnboardingStatus("consult_scheduled");
+          toast.success("Rebooking fee paid! You can now schedule your appointment.");
+        } catch (err) {
+          console.error("Status update error:", err);
+        }
+      };
+      updateStatus();
+    }
+  }, [searchParams, patientId]);
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
@@ -34,7 +59,7 @@ const ScheduleConsult = () => {
         // Get patient record
         const { data: patient } = await supabase
           .from("patients")
-          .select("id")
+          .select("id, onboarding_status")
           .eq("user_id", user.id)
           .maybeSingle();
 
@@ -45,6 +70,7 @@ const ScheduleConsult = () => {
         }
 
         setPatientId(patient.id);
+        setOnboardingStatus(patient.onboarding_status);
 
         // Check for paid hormone mapping payment
         const { data: payment } = await supabase
@@ -93,6 +119,27 @@ const ScheduleConsult = () => {
     }
   };
 
+  const handlePayRebookingFee = async () => {
+    setProcessingRebooking(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-rebooking-checkout");
+      
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err: any) {
+      console.error("Rebooking checkout error:", err);
+      toast.error(err.message || "Failed to create payment. Please try again.");
+      setProcessingRebooking(false);
+    }
+  };
+
+  // Check if patient is in the "penalty box" (needs to pay rebooking fee)
+  const needsRebookingFee = onboardingStatus === "rebooking_fee_required";
+
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
@@ -107,6 +154,78 @@ const ScheduleConsult = () => {
             <div className="text-center py-20">
               <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
               <p className="text-muted-foreground">Checking your payment status...</p>
+            </div>
+          ) : needsRebookingFee ? (
+            /* Penalty Box - Missed Appointment State */
+            <div className="space-y-8">
+              <div className="text-center">
+                <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
+                  <AlertTriangle className="w-10 h-10 text-red-600" />
+                </div>
+                <h1 className="text-3xl md:text-4xl font-cormorant font-semibold text-foreground mb-4">
+                  Appointment Missed
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+                  Per our policy, cancellations within 24 hours require a re-booking fee to reschedule.
+                </p>
+              </div>
+
+              {/* Locked Calendar Visual */}
+              <Card className="border-red-200 bg-red-50/30 dark:bg-red-950/10">
+                <CardContent className="py-12">
+                  <div className="text-center">
+                    <div className="relative inline-block mb-6">
+                      <Calendar className="w-24 h-24 text-muted-foreground/30" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Lock className="w-10 h-10 text-red-500" />
+                      </div>
+                    </div>
+                    <p className="text-muted-foreground mb-6">
+                      Your scheduling calendar is locked until the rebooking fee is paid.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rebooking Fee Payment Card */}
+              <Card className="border-border bg-card">
+                <CardContent className="py-8">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      <CreditCard className="w-6 h-6 text-primary" />
+                      <span className="text-3xl font-semibold text-foreground">$99</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm mb-6">
+                      Late Cancellation / No-Show Rebooking Fee
+                    </p>
+                    <Button
+                      size="xl"
+                      onClick={handlePayRebookingFee}
+                      disabled={processingRebooking}
+                      className="min-w-[280px]"
+                    >
+                      {processingRebooking ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                          Processing...
+                        </>
+                      ) : (
+                        "Pay $99 Rebooking Fee"
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Support Note */}
+              <div className="text-center text-sm text-muted-foreground">
+                <p>
+                  Questions about this policy? Call us at{" "}
+                  <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="text-primary hover:underline">
+                    {SITE_CONFIG.phone}
+                  </a>
+                </p>
+              </div>
             </div>
           ) : hasPaid ? (
             <div className="space-y-8">
