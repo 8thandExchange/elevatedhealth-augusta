@@ -9,21 +9,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check } from "lucide-react";
+import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check, Heart, Brain } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
 
-interface SafetyScreening {
+type PrimaryProgram = "hormone" | "ketamine";
+
+interface HormoneSafetyScreening {
   breastCancer: boolean;
   uterineCancer: boolean;
   bloodClot: boolean;
   pregnantBreastfeeding: boolean;
 }
 
-const HIGH_RISK_CONDITIONS = [
+interface KetamineSafetyScreening {
+  activePsychosis: boolean;
+  uncontrolledHypertension: boolean;
+  seizureDisorder: boolean;
+  pregnancy: boolean;
+}
+
+const HORMONE_HIGH_RISK_CONDITIONS = [
   { id: "breastCancer", label: "Breast Cancer (Personal History)", description: "Have you ever been diagnosed with breast cancer?" },
   { id: "uterineCancer", label: "Uterine/Endometrial Cancer", description: "Have you ever been diagnosed with uterine or endometrial cancer?" },
   { id: "bloodClot", label: "Active Blood Clot (DVT/PE)", description: "Do you currently have or recently had a blood clot (deep vein thrombosis or pulmonary embolism)?" },
   { id: "pregnantBreastfeeding", label: "Pregnant or Breastfeeding", description: "Are you currently pregnant or breastfeeding?" },
+];
+
+const KETAMINE_HIGH_RISK_CONDITIONS = [
+  { id: "activePsychosis", label: "Active Psychosis", description: "Are you currently experiencing psychotic symptoms or have been diagnosed with schizophrenia?" },
+  { id: "uncontrolledHypertension", label: "Uncontrolled High Blood Pressure", description: "Do you have high blood pressure that is not well-controlled with medication?" },
+  { id: "seizureDisorder", label: "Seizure Disorder", description: "Do you have a history of seizures or epilepsy?" },
+  { id: "pregnancy", label: "Pregnant or Trying to Conceive", description: "Are you currently pregnant or actively trying to become pregnant?" },
 ];
 
 const PatientLogin = () => {
@@ -34,18 +50,25 @@ const PatientLogin = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [signupStep, setSignupStep] = useState<"info" | "safety" | "complete">("info");
+  const [signupStep, setSignupStep] = useState<"info" | "program" | "safety" | "complete">("info");
   const [signupData, setSignupData] = useState({ 
     email: "", 
     password: "", 
     fullName: "",
     dob: ""
   });
-  const [safetyScreening, setSafetyScreening] = useState<SafetyScreening>({
+  const [primaryProgram, setPrimaryProgram] = useState<PrimaryProgram | null>(null);
+  const [hormoneSafetyScreening, setHormoneSafetyScreening] = useState<HormoneSafetyScreening>({
     breastCancer: false,
     uterineCancer: false,
     bloodClot: false,
     pregnantBreastfeeding: false,
+  });
+  const [ketamineSafetyScreening, setKetamineSafetyScreening] = useState<KetamineSafetyScreening>({
+    activePsychosis: false,
+    uncontrolledHypertension: false,
+    seizureDisorder: false,
+    pregnancy: false,
   });
   const [showSafetyGate, setShowSafetyGate] = useState(false);
   const [createdPatientName, setCreatedPatientName] = useState("");
@@ -109,14 +132,46 @@ const PatientLogin = () => {
   };
 
   const isHighRisk = () => {
-    return safetyScreening.breastCancer || 
-           safetyScreening.uterineCancer || 
-           safetyScreening.bloodClot || 
-           safetyScreening.pregnantBreastfeeding;
+    if (primaryProgram === "hormone") {
+      return hormoneSafetyScreening.breastCancer || 
+             hormoneSafetyScreening.uterineCancer || 
+             hormoneSafetyScreening.bloodClot || 
+             hormoneSafetyScreening.pregnantBreastfeeding;
+    } else if (primaryProgram === "ketamine") {
+      return ketamineSafetyScreening.activePsychosis || 
+             ketamineSafetyScreening.uncontrolledHypertension || 
+             ketamineSafetyScreening.seizureDisorder || 
+             ketamineSafetyScreening.pregnancy;
+    }
+    return false;
+  };
+
+  const getSafetyFlags = () => {
+    if (primaryProgram === "hormone") {
+      return Object.entries(hormoneSafetyScreening)
+        .filter(([_, value]) => value)
+        .map(([key]) => {
+          const condition = HORMONE_HIGH_RISK_CONDITIONS.find(c => c.id === key);
+          return condition?.label || key;
+        });
+    } else if (primaryProgram === "ketamine") {
+      return Object.entries(ketamineSafetyScreening)
+        .filter(([_, value]) => value)
+        .map(([key]) => {
+          const condition = KETAMINE_HIGH_RISK_CONDITIONS.find(c => c.id === key);
+          return condition?.label || key;
+        });
+    }
+    return [];
   };
 
   const handleSignupStep1 = (e: React.FormEvent) => {
     e.preventDefault();
+    setSignupStep("program");
+  };
+
+  const handleProgramSelect = (program: PrimaryProgram) => {
+    setPrimaryProgram(program);
     setSignupStep("safety");
   };
 
@@ -140,20 +195,22 @@ const PatientLogin = () => {
       if (!authData.user) throw new Error("Signup failed");
 
       const highRisk = isHighRisk();
+      const safetyFlags = getSafetyFlags();
+      const medicalHistory = primaryProgram === "hormone" 
+        ? hormoneSafetyScreening 
+        : ketamineSafetyScreening;
 
-      // Create patient record with safety screening
+      // Create patient record with safety screening and primary program
       const { error: patientError } = await supabase.from("patients").insert([{
         user_id: authData.user.id,
         full_name: signupData.fullName,
         dob: signupData.dob || null,
+        primary_program: primaryProgram,
         risk_status: highRisk ? "high_risk_review" : "standard",
-        medical_history: safetyScreening as unknown as Record<string, boolean>,
-        safety_flags: highRisk ? Object.entries(safetyScreening)
-          .filter(([_, value]) => value)
-          .map(([key]) => {
-            const condition = HIGH_RISK_CONDITIONS.find(c => c.id === key);
-            return condition?.label || key;
-          }) : [],
+        medical_history: medicalHistory as unknown as Record<string, boolean>,
+        safety_flags: highRisk ? safetyFlags : [],
+        // Ketamine patients skip hormone intake
+        intake_completed: primaryProgram === "ketamine" ? true : false,
       }]);
 
       if (patientError) throw patientError;
@@ -168,6 +225,8 @@ const PatientLogin = () => {
         }, 800);
       } else {
         toast.success("Account created! Welcome to Elevated Health.");
+        // Both hormone and ketamine patients go to dashboard
+        // Ketamine patients skip intake (intake_completed = true)
         setTimeout(() => navigate("/patient/dashboard"), 800);
       }
     } catch (error: any) {
@@ -248,6 +307,28 @@ const PatientLogin = () => {
     );
   }
 
+  const currentSafetyConditions = primaryProgram === "hormone" 
+    ? HORMONE_HIGH_RISK_CONDITIONS 
+    : KETAMINE_HIGH_RISK_CONDITIONS;
+  
+  const currentSafetyScreening = primaryProgram === "hormone"
+    ? hormoneSafetyScreening
+    : ketamineSafetyScreening;
+
+  const setCurrentSafetyScreening = (id: string, checked: boolean) => {
+    if (primaryProgram === "hormone") {
+      setHormoneSafetyScreening({
+        ...hormoneSafetyScreening,
+        [id]: checked
+      });
+    } else {
+      setKetamineSafetyScreening({
+        ...ketamineSafetyScreening,
+        [id]: checked
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -316,6 +397,7 @@ const PatientLogin = () => {
               </TabsContent>
 
               <TabsContent value="signup" className="mt-4">
+                {/* Step 1: Basic Info */}
                 {signupStep === "info" && (
                   <form onSubmit={handleSignupStep1} className="space-y-4">
                     <div className="space-y-2">
@@ -369,20 +451,87 @@ const PatientLogin = () => {
                       </div>
                     </div>
                     <Button type="submit" className="w-full">
-                      Continue to Safety Screening
+                      Continue
                       <ChevronRight className="w-4 h-4 ml-2" />
                     </Button>
                   </form>
                 )}
 
-                {signupStep === "safety" && (
+                {/* Step 2: Program Selection */}
+                {signupStep === "program" && (
+                  <div className="space-y-4">
+                    <div className="text-center mb-4">
+                      <h3 className="font-cormorant text-lg font-medium text-foreground">
+                        What is your primary goal?
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Select the treatment track that best fits your needs
+                      </p>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* Hormone Option */}
+                      <button
+                        type="button"
+                        onClick={() => handleProgramSelect("hormone")}
+                        className="w-full p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all text-left group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-pink-100 dark:bg-pink-900/30 group-hover:bg-pink-200 dark:group-hover:bg-pink-900/50 transition-colors">
+                            <Heart className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-foreground">Hormone Optimization / Weight Loss</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Bio-identical hormones, GLP-1 weight management, metabolic optimization
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-2" />
+                        </div>
+                      </button>
+
+                      {/* Ketamine Option */}
+                      <button
+                        type="button"
+                        onClick={() => handleProgramSelect("ketamine")}
+                        className="w-full p-4 rounded-lg border-2 border-border bg-card hover:border-accent/50 hover:bg-accent/5 transition-all text-left group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                            <Brain className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-foreground">Ketamine Therapy / Mental Wellness</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              IV ketamine infusions, Spravato®, mental health support via Osmind
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors mt-2" />
+                        </div>
+                      </button>
+                    </div>
+
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={() => setSignupStep("info")}
+                      className="w-full mt-4"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-2" />
+                      Back
+                    </Button>
+                  </div>
+                )}
+
+                {/* Step 3: Safety Screening */}
+                {signupStep === "safety" && primaryProgram && (
                   <form onSubmit={handleSignupComplete} className="space-y-4">
                     {/* Safety Header */}
                     <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
                       <div className="flex items-center gap-2 mb-2">
                         <ShieldAlert className="w-5 h-5 text-amber-600" />
                         <h3 className="font-medium text-amber-700 dark:text-amber-400">
-                          Medical Safety Screening
+                          {primaryProgram === "hormone" ? "Hormone Therapy" : "Ketamine Therapy"} Safety Screening
                         </h3>
                       </div>
                       <p className="text-sm text-amber-600 dark:text-amber-300">
@@ -392,11 +541,11 @@ const PatientLogin = () => {
 
                     {/* Safety Questions */}
                     <div className="space-y-4">
-                      {HIGH_RISK_CONDITIONS.map((condition) => (
+                      {currentSafetyConditions.map((condition) => (
                         <div 
                           key={condition.id}
                           className={`p-4 rounded-lg border transition-colors ${
-                            safetyScreening[condition.id as keyof SafetyScreening]
+                            currentSafetyScreening[condition.id as keyof typeof currentSafetyScreening]
                               ? "border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
                               : "border-border bg-card"
                           }`}
@@ -404,12 +553,9 @@ const PatientLogin = () => {
                           <div className="flex items-start gap-3">
                             <Checkbox
                               id={condition.id}
-                              checked={safetyScreening[condition.id as keyof SafetyScreening]}
+                              checked={currentSafetyScreening[condition.id as keyof typeof currentSafetyScreening]}
                               onCheckedChange={(checked) => 
-                                setSafetyScreening({
-                                  ...safetyScreening,
-                                  [condition.id]: checked === true
-                                })
+                                setCurrentSafetyScreening(condition.id, checked === true)
                               }
                               className="mt-1"
                             />
@@ -445,7 +591,7 @@ const PatientLogin = () => {
                       <Button 
                         type="button" 
                         variant="outline"
-                        onClick={() => setSignupStep("info")}
+                        onClick={() => setSignupStep("program")}
                         className="flex-1"
                       >
                         <ChevronLeft className="w-4 h-4 mr-2" />

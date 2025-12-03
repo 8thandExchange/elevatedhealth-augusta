@@ -511,6 +511,7 @@ export type Database = {
           medical_history: Json | null
           onboarding_status: string | null
           phone: string | null
+          primary_program: string | null
           risk_status: string | null
           safety_flags: Json | null
           state: string | null
@@ -539,6 +540,7 @@ export type Database = {
           medical_history?: Json | null
           onboarding_status?: string | null
           phone?: string | null
+          primary_program?: string | null
           risk_status?: string | null
           safety_flags?: Json | null
           state?: string | null
@@ -567,6 +569,7 @@ export type Database = {
           medical_history?: Json | null
           onboarding_status?: string | null
           phone?: string | null
+          primary_program?: string | null
           risk_status?: string | null
           safety_flags?: Json | null
           state?: string | null
