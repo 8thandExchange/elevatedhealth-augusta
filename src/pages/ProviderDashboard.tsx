@@ -14,6 +14,7 @@ import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
+import PharmacyOrderCard from "@/components/provider/PharmacyOrderCard";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 
 interface Patient {
@@ -1238,6 +1239,19 @@ const ProviderDashboard = () => {
                 patientId={selectedPatient.patient.id}
                 patientName={selectedPatient.patient.full_name}
                 currentPeptides={(selectedPatient.patient.medical_history as Record<string, any>)?.peptide_protocols || []}
+              />
+
+              {/* Pharmacy Order Card */}
+              <PharmacyOrderCard
+                patient={{
+                  id: selectedPatient.patient.id,
+                  full_name: selectedPatient.patient.full_name,
+                  dob: selectedPatient.patient.dob,
+                  email: selectedPatient.patient.email,
+                  phone: selectedPatient.patient.phone,
+                  medical_history: selectedPatient.patient.medical_history as Record<string, any> | null,
+                }}
+                onOrderCreated={() => loadData()}
               />
 
               {/* Protocol Suggestion */}
