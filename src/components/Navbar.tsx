@@ -270,14 +270,14 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
         <>
           {/* Backdrop overlay */}
           <div 
-            className="md:hidden fixed inset-0 top-20 z-[60]"
+            className="fixed inset-0 top-20 z-[60]"
             style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
             onClick={() => setIsMobileMenuOpen(false)}
           />
           
           {/* Menu panel */}
           <div 
-            className="md:hidden fixed right-0 top-20 bottom-0 w-80 max-w-[85vw] shadow-2xl z-[70] overflow-y-auto"
+            className="fixed right-0 top-20 bottom-0 w-80 max-w-[85vw] shadow-2xl z-[70] overflow-y-auto"
             style={{ 
               backgroundColor: '#ffffff',
               borderLeft: '1px solid #e2e8f0'
