@@ -100,6 +100,11 @@ const PatientIntake = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fullName, setFullName] = useState<string>("");
   const [gender, setGender] = useState<string>("");
+  const [streetAddress, setStreetAddress] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [state, setState] = useState<string>("");
+  const [zipCode, setZipCode] = useState<string>("");
+  const [allergies, setAllergies] = useState<string>("");
   const [treatmentRequests, setTreatmentRequests] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [safetyAnswers, setSafetyAnswers] = useState<Record<string, boolean>>({});
@@ -261,6 +266,11 @@ const PatientIntake = () => {
         gender,
         treatment_request: treatmentRequests.join(","),
         lab_path: labPathResult.path,
+        street_address: streetAddress.trim() || null,
+        city: city.trim() || null,
+        state: state.trim() || null,
+        zip_code: zipCode.trim() || null,
+        allergies: allergies.trim() || "NKDA",
       };
 
       if (highRisk) {
@@ -390,6 +400,58 @@ const PatientIntake = () => {
                         <Label htmlFor="male" className="cursor-pointer flex-1">Male</Label>
                       </div>
                     </RadioGroup>
+                  </div>
+
+                  {/* Address Fields */}
+                  <div className="mb-8">
+                    <Label className="text-sm font-medium mb-3 block">
+                      Mailing Address <span className="text-muted-foreground font-normal">(for pharmacy shipments)</span>
+                    </Label>
+                    <div className="space-y-3">
+                      <Input
+                        value={streetAddress}
+                        onChange={(e) => setStreetAddress(e.target.value)}
+                        placeholder="Street Address"
+                        className="w-full"
+                      />
+                      <div className="grid grid-cols-6 gap-3">
+                        <Input
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="City"
+                          className="col-span-3"
+                        />
+                        <Input
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
+                          placeholder="State"
+                          className="col-span-1"
+                          maxLength={2}
+                        />
+                        <Input
+                          value={zipCode}
+                          onChange={(e) => setZipCode(e.target.value)}
+                          placeholder="ZIP"
+                          className="col-span-2"
+                          maxLength={10}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Allergies */}
+                  <div className="mb-8">
+                    <Label htmlFor="allergies" className="text-sm font-medium mb-3 block">
+                      Drug Allergies
+                    </Label>
+                    <Input
+                      id="allergies"
+                      value={allergies}
+                      onChange={(e) => setAllergies(e.target.value)}
+                      placeholder="List any drug allergies (or leave blank for NKDA)"
+                      className="w-full"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Leave blank if no known drug allergies</p>
                   </div>
 
                   {/* Treatment Request - Multi-select */}

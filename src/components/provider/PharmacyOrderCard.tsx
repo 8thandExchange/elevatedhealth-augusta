@@ -13,6 +13,11 @@ interface PatientData {
   dob?: string | null;
   email?: string | null;
   phone?: string | null;
+  street_address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  allergies?: string | null;
   medical_history?: Record<string, any> | null;
 }
 
