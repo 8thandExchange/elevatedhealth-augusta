@@ -22,6 +22,7 @@ import SuperbillGenerator from "@/components/provider/SuperbillGenerator";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 import ProviderInbox from "@/components/chat/ProviderInbox";
 import KitStatusAdmin from "@/components/provider/KitStatusAdmin";
+import ResourceManager from "@/components/provider/ResourceManager";
 
 interface Patient {
   id: string;
@@ -805,26 +806,30 @@ const ProviderDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="triage" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
-              Action Needed ({pendingPatients.length})
+              <span className="hidden sm:inline">Action Needed</span> ({pendingPatients.length})
             </TabsTrigger>
             <TabsTrigger value="pharmacy" className="flex items-center gap-2">
               <Pill className="w-4 h-4" />
-              Pending Pharmacy ({pendingPharmacy.length})
+              <span className="hidden sm:inline">Pharmacy</span> ({pendingPharmacy.length})
             </TabsTrigger>
             <TabsTrigger value="monitoring" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
-              Monitoring ({recentCheckIns.length})
+              <span className="hidden sm:inline">Monitoring</span> ({recentCheckIns.length})
             </TabsTrigger>
             <TabsTrigger value="activations" className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Activations ({pendingActivations.length})
+              <span className="hidden sm:inline">Activations</span> ({pendingActivations.length})
             </TabsTrigger>
             <TabsTrigger value="messages" className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4" />
-              Messages
+              <span className="hidden sm:inline">Messages</span>
+            </TabsTrigger>
+            <TabsTrigger value="resources" className="flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              <span className="hidden sm:inline">Resources</span>
             </TabsTrigger>
           </TabsList>
 
@@ -1247,6 +1252,11 @@ const ProviderDashboard = () => {
           {/* Messages Tab */}
           <TabsContent value="messages">
             <ProviderInbox />
+          </TabsContent>
+
+          {/* Resources Tab */}
+          <TabsContent value="resources">
+            <ResourceManager />
           </TabsContent>
         </Tabs>
       </main>

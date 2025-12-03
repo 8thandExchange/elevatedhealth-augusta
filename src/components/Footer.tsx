@@ -79,6 +79,14 @@ const Footer = () => {
                     Veterans Program
                   </button>
                 </li>
+                <li>
+                  <button 
+                    onClick={() => navigate("/patient-resources")} 
+                    className="hover:text-background transition-colors"
+                  >
+                    Patient Resources
+                  </button>
+                </li>
               </ul>
             </div>
 
