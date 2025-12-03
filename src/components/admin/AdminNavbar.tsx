@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings } from "lucide-react";
 
 interface AdminNavbarProps {
   title: string;
@@ -16,6 +16,7 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing }: AdminNavbarPr
   const location = useLocation();
 
   const isOnProviderDashboard = location.pathname === "/provider/dashboard";
+  const isOnSettings = location.pathname === "/admin/settings";
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -40,6 +41,15 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing }: AdminNavbarPr
               <Link to="/provider/dashboard">
                 <Stethoscope className="w-4 h-4 mr-2" />
                 Provider Dashboard
+              </Link>
+            </Button>
+          )}
+
+          {/* Settings Link */}
+          {!isOnSettings && (
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/admin/settings">
+                <Settings className="w-5 h-5" />
               </Link>
             </Button>
           )}

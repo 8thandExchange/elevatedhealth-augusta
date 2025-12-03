@@ -73,6 +73,63 @@ export type Database = {
           },
         ]
       }
+      clinic_settings: {
+        Row: {
+          description: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          updated_by: string | null
+          value: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: string
+        }
+        Relationships: []
+      }
+      cpt_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          default_charge: number | null
+          description: string
+          id: string
+          panel_group: string | null
+          quantity: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          default_charge?: number | null
+          description: string
+          id?: string
+          panel_group?: string | null
+          quantity?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          default_charge?: number | null
+          description?: string
+          id?: string
+          panel_group?: string | null
+          quantity?: number | null
+        }
+        Relationships: []
+      }
       hormone_mapping_payments: {
         Row: {
           amount_paid: number | null
@@ -198,6 +255,30 @@ export type Database = {
           symptom_duration?: string
           symptoms?: string[]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      icd10_codes: {
+        Row: {
+          category: string | null
+          code: string
+          created_at: string | null
+          description: string
+          id: string
+        }
+        Insert: {
+          category?: string | null
+          code: string
+          created_at?: string | null
+          description: string
+          id?: string
+        }
+        Update: {
+          category?: string | null
+          code?: string
+          created_at?: string | null
+          description?: string
+          id?: string
         }
         Relationships: []
       }
@@ -396,6 +477,50 @@ export type Database = {
           primary_compound?: string | null
         }
         Relationships: []
+      }
+      superbills: {
+        Row: {
+          cpt_codes: Json
+          created_at: string | null
+          created_by: string | null
+          date_of_service: string
+          diagnosis_codes: string[]
+          id: string
+          notes: string | null
+          patient_id: string
+          total_charge: number
+        }
+        Insert: {
+          cpt_codes: Json
+          created_at?: string | null
+          created_by?: string | null
+          date_of_service: string
+          diagnosis_codes: string[]
+          id?: string
+          notes?: string | null
+          patient_id: string
+          total_charge: number
+        }
+        Update: {
+          cpt_codes?: Json
+          created_at?: string | null
+          created_by?: string | null
+          date_of_service?: string
+          diagnosis_codes?: string[]
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          total_charge?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "superbills_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       symptom_logs: {
         Row: {
