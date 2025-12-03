@@ -12,6 +12,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } f
 import confetti from "canvas-confetti";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
+import ZRTRequisitionGenerator from "@/components/provider/ZRTRequisitionGenerator";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
 import PharmacyOrderCard from "@/components/provider/PharmacyOrderCard";
@@ -1338,6 +1339,34 @@ const ProviderDashboard = () => {
                   reason={selectedPatient.labPath.reason || "Medical necessity"}
                   onEmailRequisition={handleEmailRequisition}
                   isEmailing={isEmailingRequisition}
+                  providerName={providerInfo.name}
+                  providerCredentials={providerInfo.credentials}
+                />
+              )}
+
+              {/* ZRT Saliva Kit Requisition */}
+              {selectedPatient.labPath?.path === "zrt" && (
+                <ZRTRequisitionGenerator
+                  patient={{
+                    full_name: selectedPatient.patient.full_name,
+                    dob: selectedPatient.patient.dob,
+                    gender: selectedPatient.patient.gender,
+                    street_address: selectedPatient.patient.street_address,
+                    city: selectedPatient.patient.city,
+                    state: selectedPatient.patient.state,
+                    zip_code: selectedPatient.patient.zip_code,
+                    phone: selectedPatient.patient.phone,
+                    email: selectedPatient.patient.email,
+                    treatment_request: selectedPatient.patient.treatment_request,
+                  }}
+                  symptomLog={selectedPatient.latestLog ? {
+                    estrogen_score: selectedPatient.latestLog.estrogen_score,
+                    progesterone_score: selectedPatient.latestLog.progesterone_score,
+                    androgen_score: selectedPatient.latestLog.androgen_score,
+                    cortisol_score: selectedPatient.latestLog.cortisol_score,
+                    raw_answers: selectedPatient.latestLog.raw_answers as any,
+                  } : null}
+                  membershipType={selectedPatient.patient.treatment_request?.includes("weight") ? "weight_management" : "hormone"}
                   providerName={providerInfo.name}
                   providerCredentials={providerInfo.credentials}
                 />

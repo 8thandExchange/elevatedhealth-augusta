@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, CheckCircle, ShieldAlert, Loader2, User, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, ShieldAlert, Loader2, User, Check, TestTube } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 
@@ -87,8 +87,27 @@ const TREATMENT_OPTIONS_MALE = [
 
 const severityLabels = ["None", "Mild", "Moderate", "Severe"];
 
+const MENSTRUAL_STATUS_OPTIONS = [
+  { id: "regular", label: "Regular Periods" },
+  { id: "irregular", label: "Irregular Periods" },
+  { id: "no_periods", label: "No Periods" },
+  { id: "hysterectomy", label: "Hysterectomy" },
+  { id: "menopause", label: "Menopause" },
+];
+
+const WAKE_TIME_OPTIONS = [
+  { id: "5am", label: "5:00 - 5:30 AM" },
+  { id: "530am", label: "5:30 - 6:00 AM" },
+  { id: "6am", label: "6:00 - 6:30 AM" },
+  { id: "630am", label: "6:30 - 7:00 AM" },
+  { id: "7am", label: "7:00 - 7:30 AM" },
+  { id: "730am", label: "7:30 - 8:00 AM" },
+  { id: "8am", label: "8:00 AM or later" },
+];
+
 const STEPS = [
   { id: "profile", label: "Profile" },
+  { id: "hormoneHistory", label: "Hormone Hx" },
   { id: "symptoms", label: "Symptoms" },
   { id: "safety", label: "Safety" },
   { id: "medical", label: "History" },
@@ -96,7 +115,7 @@ const STEPS = [
 
 const PatientIntake = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<"profile" | "symptoms" | "safety" | "medical">("profile");
+  const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical">("profile");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fullName, setFullName] = useState<string>("");
   const [gender, setGender] = useState<string>("");
@@ -111,6 +130,12 @@ const PatientIntake = () => {
   const [medicalHistory, setMedicalHistory] = useState<Record<string, boolean>>({});
   const [labcorpConditions, setLabcorpConditions] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Hormone History (ZRT Required)
+  const [menstrualStatus, setMenstrualStatus] = useState<string>("");
+  const [takingHormones, setTakingHormones] = useState<boolean | null>(null);
+  const [hormoneDetails, setHormoneDetails] = useState<string>("");
+  const [wakeTime, setWakeTime] = useState<string>("");
 
   // Filter questions based on gender
   const filteredSymptomQuestions = useMemo(() => {
@@ -128,16 +153,19 @@ const PatientIntake = () => {
 
   const currentQuestion = filteredSymptomQuestions[currentIndex];
 
-  // Calculate which step index we're on (0-3)
+  // Calculate which step index we're on (0-4)
   const getStepIndex = () => {
     switch (step) {
       case "profile": return 0;
-      case "symptoms": return 1;
-      case "safety": return 2;
-      case "medical": return 3;
+      case "hormoneHistory": return 1;
+      case "symptoms": return 2;
+      case "safety": return 3;
+      case "medical": return 4;
       default: return 0;
     }
   };
+  
+  const canProceedFromHormoneHistory = wakeTime.length > 0 && (gender === "male" || menstrualStatus.length > 0);
 
   const handleTreatmentToggle = (treatmentId: string) => {
     setTreatmentRequests(prev => 
@@ -240,7 +268,7 @@ const PatientIntake = () => {
       const androgenExcess = hasAndrogenExcess();
       const labPathResult = determineLabPath();
 
-      // Save symptom log
+      // Save symptom log with hormone history
       const { error: logError } = await supabase.from("symptom_logs").insert([{
         patient_id: patient.id,
         estrogen_score: scores.estrogen,
@@ -253,6 +281,12 @@ const PatientIntake = () => {
           androgenExcess,
           labcorpConditions,
           labPath: labPathResult,
+          hormoneHistory: {
+            menstrualStatus: gender === "female" ? menstrualStatus : "n/a_male",
+            takingHormones,
+            hormoneDetails: takingHormones ? hormoneDetails : null,
+            wakeTime,
+          },
         },
       }]);
 
@@ -492,13 +526,156 @@ const PatientIntake = () => {
               </Card>
 
               <Button 
-                onClick={() => setStep("symptoms")} 
+                onClick={() => setStep("hormoneHistory")} 
                 className="w-full"
                 disabled={!canProceedFromProfile}
               >
                 Continue
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
+            </>
+          )}
+
+          {/* Hormone History Step (ZRT Required) */}
+          {step === "hormoneHistory" && (
+            <>
+              <Card className="border-border/50 mb-8">
+                <CardContent className="pt-8 pb-8">
+                  <div className="flex items-center gap-2 mb-6">
+                    <TestTube className="w-5 h-5 text-blue-500" />
+                    <h2 className="font-cormorant text-xl text-foreground">
+                      Hormone History
+                    </h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    This information is required for your ZRT saliva test kit.
+                  </p>
+
+                  {/* Menstrual Status - Female Only */}
+                  {gender === "female" && (
+                    <div className="mb-8">
+                      <Label className="text-sm font-medium mb-3 block">
+                        Menstrual Status <span className="text-red-500">*</span>
+                      </Label>
+                      <RadioGroup 
+                        value={menstrualStatus} 
+                        onValueChange={setMenstrualStatus}
+                        className="space-y-2"
+                      >
+                        {MENSTRUAL_STATUS_OPTIONS.map((option) => (
+                          <div 
+                            key={option.id}
+                            className={cn(
+                              "flex items-center gap-3 p-3 rounded-lg border transition-colors",
+                              menstrualStatus === option.id 
+                                ? "border-primary bg-primary/5" 
+                                : "border-border hover:border-primary/50"
+                            )}
+                          >
+                            <RadioGroupItem value={option.id} id={`menstrual-${option.id}`} />
+                            <Label htmlFor={`menstrual-${option.id}`} className="cursor-pointer flex-1">
+                              {option.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                  )}
+
+                  {/* Currently Taking Hormones */}
+                  <div className="mb-8">
+                    <Label className="text-sm font-medium mb-3 block">
+                      Are you currently taking hormones? <span className="text-red-500">*</span>
+                    </Label>
+                    <RadioGroup 
+                      value={takingHormones === null ? "" : takingHormones ? "yes" : "no"} 
+                      onValueChange={(v) => setTakingHormones(v === "yes")}
+                      className="space-y-2"
+                    >
+                      <div className={cn(
+                        "flex items-center gap-3 p-3 rounded-lg border transition-colors",
+                        takingHormones === false ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                      )}>
+                        <RadioGroupItem value="no" id="hormones-no" />
+                        <Label htmlFor="hormones-no" className="cursor-pointer flex-1">No</Label>
+                      </div>
+                      <div className={cn(
+                        "flex items-center gap-3 p-3 rounded-lg border transition-colors",
+                        takingHormones === true ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                      )}>
+                        <RadioGroupItem value="yes" id="hormones-yes" />
+                        <Label htmlFor="hormones-yes" className="cursor-pointer flex-1">Yes</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Hormone Details - If Yes */}
+                  {takingHormones === true && (
+                    <div className="mb-8 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <Label htmlFor="hormoneDetails" className="text-sm font-medium mb-3 block">
+                        List Hormone, Brand, Dose, and Last Time Used
+                      </Label>
+                      <textarea
+                        id="hormoneDetails"
+                        value={hormoneDetails}
+                        onChange={(e) => setHormoneDetails(e.target.value)}
+                        placeholder="e.g., Estradiol (Estrace) 1mg, last taken yesterday morning"
+                        className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      />
+                      <p className="text-xs text-muted-foreground mt-2">
+                        This helps us interpret your saliva hormone levels accurately.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Wake Time */}
+                  <div>
+                    <Label className="text-sm font-medium mb-3 block">
+                      What time do you usually wake up? <span className="text-red-500">*</span>
+                    </Label>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Crucial for interpreting your Cortisol Awakening Response (CAR).
+                    </p>
+                    <RadioGroup 
+                      value={wakeTime} 
+                      onValueChange={setWakeTime}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      {WAKE_TIME_OPTIONS.map((option) => (
+                        <div 
+                          key={option.id}
+                          className={cn(
+                            "flex items-center gap-2 p-3 rounded-lg border transition-colors",
+                            wakeTime === option.id 
+                              ? "border-primary bg-primary/5" 
+                              : "border-border hover:border-primary/50"
+                          )}
+                        >
+                          <RadioGroupItem value={option.id} id={`wake-${option.id}`} />
+                          <Label htmlFor={`wake-${option.id}`} className="cursor-pointer text-sm">
+                            {option.label}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex gap-4">
+                <Button variant="outline" onClick={() => setStep("profile")} className="flex-1">
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  Back
+                </Button>
+                <Button 
+                  onClick={() => setStep("symptoms")} 
+                  className="flex-1"
+                  disabled={!canProceedFromHormoneHistory}
+                >
+                  Continue
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </>
           )}
 
@@ -540,7 +717,7 @@ const PatientIntake = () => {
                   variant="outline" 
                   onClick={() => {
                     if (currentIndex === 0) {
-                      setStep("profile");
+                      setStep("hormoneHistory");
                     } else {
                       handlePrev();
                     }
