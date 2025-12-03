@@ -272,7 +272,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
               onClick={() => setIsMobileMenuOpen(false)}
             />
             
-            <div className="md:hidden fixed right-0 top-20 bottom-0 w-80 max-w-full bg-background shadow-lg border-l border-border animate-slide-in-right z-50">
+            <div className="md:hidden fixed right-0 top-20 bottom-0 w-80 max-w-full bg-white dark:bg-[hsl(222,47%,11%)] shadow-lg border-l border-border animate-slide-in-right z-50">
               <div className="flex flex-col p-8">
                 <nav className="flex flex-col gap-6">
                   <button 
