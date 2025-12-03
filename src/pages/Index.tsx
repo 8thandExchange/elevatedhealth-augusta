@@ -13,7 +13,7 @@ import SEOSchema from "@/components/SEOSchema";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 import ChatBot from "@/components/ChatBot";
-import { ServedModal } from "@/components/ServedModal";
+
 import MobileBookNow from "@/components/MobileBookNow";
 import { useState } from "react";
 
@@ -36,7 +36,7 @@ const Index = () => {
       </main>
       <Footer />
       <ChatBot />
-      <ServedModal />
+      
       <MobileBookNow />
       <PWAInstallPrompt />
       <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />

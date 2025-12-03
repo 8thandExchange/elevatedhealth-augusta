@@ -29,7 +29,7 @@ const MissionStatement = ({ onOpenBooking }: MissionStatementProps) => {
             </p>
             <p className="text-lg text-muted-foreground font-lato font-light leading-relaxed">
               We treat the whole system, not just the symptom. We test before we treat. 
-              We architect personalized protocols based on your unique biology.
+              Every protocol is tailored to your unique biology.
             </p>
           </div>
 
