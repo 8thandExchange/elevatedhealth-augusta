@@ -214,3 +214,35 @@
 .skip-to-main:focus {
   top: 1rem;
 }
+
+/* Mobile Navigation Menu - Full Screen Overlay */
+.mobile-menu-overlay {
+  position: fixed !important;
+  top: 80px !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: #F9F9F7 !important;
+  z-index: 9999 !important;
+  overflow-y: auto !important;
+}
+
+.mobile-menu-overlay * {
+  color: #2C3E50 !important;
+}
+
+.mobile-menu-link {
+  display: block !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: 1.5rem !important;
+  color: #2C3E50 !important;
+  padding: 0.75rem 0 !important;
+  text-align: left !important;
+  background: transparent !important;
+  border: none !important;
+  width: 100% !important;
+}
+
+.mobile-menu-link:hover {
+  opacity: 0.7 !important;
+}
