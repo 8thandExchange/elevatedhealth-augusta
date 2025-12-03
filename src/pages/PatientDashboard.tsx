@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,8 @@ import OnboardingProgress from "@/components/patient/OnboardingProgress";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import KitTracker from "@/components/patient/KitTracker";
+import MindCareCard from "@/components/patient/MindCareCard";
+import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard";
 
 interface SymptomLog {
   id: string;
@@ -26,10 +28,12 @@ interface SymptomLog {
 interface Patient {
   id: string;
   full_name: string;
+  email: string | null;
   avatar_url: string | null;
   current_protocol: string | null;
   intake_completed: boolean;
   onboarding_status: string | null;
+  primary_program: string | null;
 }
 
 interface Order {
@@ -49,6 +53,7 @@ interface KitTracking {
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [patient, setPatient] = useState<Patient | null>(null);
   const [latestLog, setLatestLog] = useState<SymptomLog | null>(null);
@@ -68,6 +73,11 @@ const PatientDashboard = () => {
 
   useEffect(() => {
     loadDashboardData();
+    
+    // Check for neurotransmitter payment success
+    if (searchParams.get("neurotransmitter") === "success") {
+      toast.success("Neurotransmitter Analysis purchased! Your kit will ship within 3-5 business days.");
+    }
   }, []);
 
   const loadDashboardData = async () => {
@@ -92,38 +102,41 @@ const PatientDashboard = () => {
 
       setPatient(patientData);
 
-      const { data: logData } = await supabase
-        .from("symptom_logs")
-        .select("*")
-        .eq("patient_id", patientData.id)
-        .order("date_logged", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      // Only fetch hormone-specific data for hormone patients
+      if (patientData.primary_program !== "ketamine") {
+        const { data: logData } = await supabase
+          .from("symptom_logs")
+          .select("*")
+          .eq("patient_id", patientData.id)
+          .order("date_logged", { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      setLatestLog(logData);
+        setLatestLog(logData);
 
-      // Get latest order
-      const { data: orderData } = await supabase
-        .from("orders")
-        .select("*")
-        .eq("patient_id", patientData.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        // Get latest order
+        const { data: orderData } = await supabase
+          .from("orders")
+          .select("*")
+          .eq("patient_id", patientData.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      setLatestOrder(orderData);
+        setLatestOrder(orderData);
 
-      // Get kit tracking info
-      const { data: kitData } = await supabase
-        .from("hormone_mapping_payments")
-        .select("id, zrt_kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
-        .eq("patient_id", patientData.id)
-        .eq("payment_status", "paid")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        // Get kit tracking info
+        const { data: kitData } = await supabase
+          .from("hormone_mapping_payments")
+          .select("id, zrt_kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
+          .eq("patient_id", patientData.id)
+          .eq("payment_status", "paid")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      setKitTracking(kitData);
+        setKitTracking(kitData);
+      }
     } catch (error: any) {
       toast.error(error.message || "Failed to load dashboard");
     } finally {
@@ -242,11 +255,12 @@ const PatientDashboard = () => {
     );
   }
 
-  // Show welcome intake if not completed
-  if (patient && !patient.intake_completed) {
+  // Show welcome intake if not completed (only for hormone patients)
+  if (patient && !patient.intake_completed && patient.primary_program !== "ketamine") {
     return <WelcomeIntake patientName={patient.full_name} />;
   }
 
+  const isKetaminePatient = patient?.primary_program === "ketamine";
   const isAuthorized = latestOrder?.status === "authorized";
   const isPendingReview = latestOrder?.status === "pending_review";
   
@@ -299,219 +313,252 @@ const PatientDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Onboarding Progress - Show if not fully active */}
-        {!isAuthorized && (
-          <OnboardingProgress
-            onboardingStatus={patient?.onboarding_status || null}
-            intakeCompleted={patient?.intake_completed || false}
-            hasAuthorizedOrder={isAuthorized}
-          />
-        )}
+        {/* KETAMINE PATIENT DASHBOARD */}
+        {isKetaminePatient ? (
+          <>
+            {/* Mind Care Card - Osmind Portal */}
+            <MindCareCard />
 
-        {/* Kit Tracker - Show if patient has paid for hormone mapping */}
-        {kitTracking && kitTracking.zrt_kit_status !== "not_ordered" && (
-          <KitTracker
-            status={kitTracking.zrt_kit_status}
-            trackingNumber={kitTracking.tracking_number}
-            shippedAt={kitTracking.shipped_at}
-            sampleReceivedAt={kitTracking.sample_received_at}
-            resultsReadyAt={kitTracking.results_ready_at}
-            onBookCall={() => navigate("/schedule-consult")}
-          />
-        )}
+            {/* Neurotransmitter Analysis Add-on */}
+            <NeurotransmitterCard 
+              patientEmail={patient?.email || undefined}
+              patientName={patient?.full_name}
+            />
 
-        {/* Circular Health Gauges */}
-        {latestLog && (
-          <div>
-            <h2 className="font-cormorant text-xl text-foreground mb-6 text-center">Your Wellness Status</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
-              <CircularGauge
-                score={latestLog.estrogen_score}
-                maxScore={15}
-                label="Estrogen"
-                icon={<Heart className="w-4 h-4 text-pink-500" />}
-              />
-              <CircularGauge
-                score={latestLog.progesterone_score}
-                maxScore={9}
-                label="Progesterone"
-                icon={<Brain className="w-4 h-4 text-purple-500" />}
-              />
-              <CircularGauge
-                score={latestLog.androgen_score}
-                maxScore={12}
-                label="Vitality"
-                icon={<Zap className="w-4 h-4 text-blue-500" />}
-              />
-              <CircularGauge
-                score={latestLog.cortisol_score}
-                maxScore={9}
-                label="Stress"
-                icon={<Activity className="w-4 h-4 text-orange-500" />}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Health Report Card - Show when labs have been reviewed */}
-        {canPurchaseMembership && (
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-blue-500/20 rounded-full">
-                  <FileText className="w-6 h-6 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">Your Health Report is Ready</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    See how your symptoms correlate with your lab results. Understand the science behind your treatment.
+            {/* Welcome message for ketamine patients */}
+            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <Brain className="w-12 h-12 text-primary mx-auto" />
+                  <h3 className="font-cormorant text-xl text-foreground">
+                    Your Mental Wellness Journey
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    Your ketamine therapy is coordinated through Osmind, our HIPAA-compliant mental health platform. 
+                    Check your email for your secure portal invitation.
                   </p>
-                  <Button 
-                    onClick={() => navigate("/patient/health-report")}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <FileText className="w-4 h-4 mr-2" />
-                    View Health Report
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          /* HORMONE PATIENT DASHBOARD */
+          <>
+            {/* Onboarding Progress - Show if not fully active */}
+            {!isAuthorized && (
+              <OnboardingProgress
+                onboardingStatus={patient?.onboarding_status || null}
+                intakeCompleted={patient?.intake_completed || false}
+                hasAuthorizedOrder={isAuthorized}
+              />
+            )}
+
+            {/* Kit Tracker - Show if patient has paid for hormone mapping */}
+            {kitTracking && kitTracking.zrt_kit_status !== "not_ordered" && (
+              <KitTracker
+                status={kitTracking.zrt_kit_status}
+                trackingNumber={kitTracking.tracking_number}
+                shippedAt={kitTracking.shipped_at}
+                sampleReceivedAt={kitTracking.sample_received_at}
+                resultsReadyAt={kitTracking.results_ready_at}
+                onBookCall={() => navigate("/schedule-consult")}
+              />
+            )}
+
+            {/* Circular Health Gauges */}
+            {latestLog && (
+              <div>
+                <h2 className="font-cormorant text-xl text-foreground mb-6 text-center">Your Wellness Status</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+                  <CircularGauge
+                    score={latestLog.estrogen_score}
+                    maxScore={15}
+                    label="Estrogen"
+                    icon={<Heart className="w-4 h-4 text-pink-500" />}
+                  />
+                  <CircularGauge
+                    score={latestLog.progesterone_score}
+                    maxScore={9}
+                    label="Progesterone"
+                    icon={<Brain className="w-4 h-4 text-purple-500" />}
+                  />
+                  <CircularGauge
+                    score={latestLog.androgen_score}
+                    maxScore={12}
+                    label="Vitality"
+                    icon={<Zap className="w-4 h-4 text-blue-500" />}
+                  />
+                  <CircularGauge
+                    score={latestLog.cortisol_score}
+                    maxScore={9}
+                    label="Stress"
+                    icon={<Activity className="w-4 h-4 text-orange-500" />}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Health Report Card - Show when labs have been reviewed */}
+            {canPurchaseMembership && (
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-blue-500/20 rounded-full">
+                      <FileText className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground">Your Health Report is Ready</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        See how your symptoms correlate with your lab results. Understand the science behind your treatment.
+                      </p>
+                      <Button 
+                        onClick={() => navigate("/patient/health-report")}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        View Health Report
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Status Cards */}
+            {isPendingReview && (
+              <Card className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-amber-200 dark:border-amber-800">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-amber-500/20 rounded-full">
+                      <Clock className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">Review in Progress</h3>
+                      <p className="text-sm text-muted-foreground">
+                        A provider is reviewing your protocol based on your results.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* My Regimen Card - Show if authorized */}
+            {isAuthorized && latestOrder?.protocol_snapshot && (
+              <MyRegimenCard
+                protocolName={latestOrder.protocol_snapshot.protocol_name || patient?.current_protocol || "Your Treatment Plan"}
+                items={getRegimenItems()}
+              />
+            )}
+
+            {/* Request Review Button - Show if has logs but no pending/authorized order */}
+            {latestLog && !isPendingReview && !isAuthorized && (
+              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+                <CardContent className="pt-6">
+                  <div className="text-center space-y-4">
+                    <h3 className="font-cormorant text-xl text-foreground">
+                      Ready to optimize your protocol?
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Request a review to discuss your results and get your personalized treatment plan.
+                    </p>
+                    <Button
+                      onClick={handleRequestReview}
+                      disabled={isCreatingOrder}
+                      size="lg"
+                    >
+                      {isCreatingOrder ? "Submitting..." : "Request Protocol Review"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* LOCK #4: Membership Card - Only visible after protocol approval */}
+            {canPurchaseMembership && !isAuthorized && (
+              <Card className="bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-green-500/20 rounded-full">
+                      <CreditCard className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground">Your Protocol is Approved!</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Lauren has reviewed your labs and designed your personalized treatment plan.
+                        Activate your membership to begin treatment.
+                      </p>
+                      <Button onClick={handlePurchaseMembership} className="bg-green-600 hover:bg-green-700">
+                        <CreditCard className="w-4 h-4 mr-2" />
+                        Activate $399/mo Membership
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Locked Membership Card - Show when not yet approved */}
+            {!canPurchaseMembership && patient?.intake_completed && !isAuthorized && (
+              <Card className="bg-secondary/30 border-border/50 relative overflow-hidden">
+                <CardContent className="pt-6 opacity-60">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-muted rounded-full">
+                      <Lock className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-muted-foreground">Membership Locked</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Your membership will be available after Lauren reviews your diagnostic results 
+                        and approves your personalized protocol.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* No data state - only show if no intake completed */}
+            {!latestLog && !patient?.intake_completed && (
+              <Card className="bg-card border-border/50">
+                <CardContent className="pt-6 text-center space-y-4">
+                  <p className="text-muted-foreground">
+                    No symptom check-ins yet. Complete your medical intake to see your wellness status.
+                  </p>
+                  <Button onClick={() => navigate("/patient/intake")}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Begin Medical Intake
                   </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </CardContent>
+              </Card>
+            )}
 
-        {/* Status Cards */}
-        {isPendingReview && (
-          <Card className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border-amber-200 dark:border-amber-800">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-amber-500/20 rounded-full">
-                  <Clock className="w-6 h-6 text-amber-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">Review in Progress</h3>
-                  <p className="text-sm text-muted-foreground">
-                    A provider is reviewing your protocol based on your results.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* My Regimen Card - Show if authorized */}
-        {isAuthorized && latestOrder?.protocol_snapshot && (
-          <MyRegimenCard
-            protocolName={latestOrder.protocol_snapshot.protocol_name || patient?.current_protocol || "Your Treatment Plan"}
-            items={getRegimenItems()}
-          />
-        )}
-
-        {/* Request Review Button - Show if has logs but no pending/authorized order */}
-        {latestLog && !isPendingReview && !isAuthorized && (
-          <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-            <CardContent className="pt-6">
-              <div className="text-center space-y-4">
-                <h3 className="font-cormorant text-xl text-foreground">
-                  Ready to optimize your protocol?
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Request a review to discuss your results and get your personalized treatment plan.
-                </p>
+            {/* Quick Actions - Conditional based on intake status */}
+            <div className="pb-8">
+              {patient?.intake_completed ? (
                 <Button
-                  onClick={handleRequestReview}
-                  disabled={isCreatingOrder}
+                  onClick={() => navigate("/patient/checkin")}
+                  variant="outline"
+                  className="w-full"
                   size="lg"
                 >
-                  {isCreatingOrder ? "Submitting..." : "Request Protocol Review"}
+                  <Plus className="w-4 h-4 mr-2" />
+                  Log Monthly Symptoms
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
+              ) : (
+                <Button
+                  onClick={() => navigate("/patient/intake")}
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Begin Medical Intake
+                </Button>
+              )}
+            </div>
+          </>
         )}
-
-        {/* LOCK #4: Membership Card - Only visible after protocol approval */}
-        {canPurchaseMembership && !isAuthorized && (
-          <Card className="bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-green-500/20 rounded-full">
-                  <CreditCard className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">Your Protocol is Approved!</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Lauren has reviewed your labs and designed your personalized treatment plan.
-                    Activate your membership to begin treatment.
-                  </p>
-                  <Button onClick={handlePurchaseMembership} className="bg-green-600 hover:bg-green-700">
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Activate $399/mo Membership
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Locked Membership Card - Show when not yet approved */}
-        {!canPurchaseMembership && patient?.intake_completed && !isAuthorized && (
-          <Card className="bg-secondary/30 border-border/50 relative overflow-hidden">
-            <CardContent className="pt-6 opacity-60">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-muted rounded-full">
-                  <Lock className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-muted-foreground">Membership Locked</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Your membership will be available after Lauren reviews your diagnostic results 
-                    and approves your personalized protocol.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* No data state - only show if no intake completed */}
-        {!latestLog && !patient?.intake_completed && (
-          <Card className="bg-card border-border/50">
-            <CardContent className="pt-6 text-center space-y-4">
-              <p className="text-muted-foreground">
-                No symptom check-ins yet. Complete your medical intake to see your wellness status.
-              </p>
-              <Button onClick={() => navigate("/patient/intake")}>
-                <Plus className="w-4 h-4 mr-2" />
-                Begin Medical Intake
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Quick Actions - Conditional based on intake status */}
-        <div className="pb-8">
-          {patient?.intake_completed ? (
-            <Button
-              onClick={() => navigate("/patient/checkin")}
-              variant="outline"
-              className="w-full"
-              size="lg"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Log Monthly Symptoms
-            </Button>
-          ) : (
-            <Button
-              onClick={() => navigate("/patient/intake")}
-              variant="outline"
-              className="w-full"
-              size="lg"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Begin Medical Intake
-            </Button>
-          )}
-        </div>
       </main>
 
       {/* Edit Profile Modal */}
@@ -526,8 +573,8 @@ const PatientDashboard = () => {
         />
       )}
 
-      {/* Secure Chat Widget */}
-      {patient && patient.intake_completed && (
+      {/* Secure Chat Widget - Show for all patients after intake */}
+      {patient && (patient.intake_completed || isKetaminePatient) && (
         <PatientChatWidget patientId={patient.id} />
       )}
     </div>
