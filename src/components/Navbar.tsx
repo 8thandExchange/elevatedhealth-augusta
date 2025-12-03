@@ -268,17 +268,17 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
       {/* Fullscreen Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="mobile-menu-overlay">
-          <div className="flex flex-col p-8 min-h-full">
+          <div className="flex flex-col px-8 pb-8">
             {/* Close button */}
             <button 
               onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100"
+              className="mobile-menu-close absolute top-24 right-6 p-2 rounded-full"
             >
               <X className="h-6 w-6" />
             </button>
 
             {/* Navigation Links */}
-            <nav className="flex flex-col gap-4 mt-8">
+            <nav className="flex flex-col gap-4">
               <button 
                 onClick={() => scrollToSection("hero")} 
                 className="mobile-menu-link"

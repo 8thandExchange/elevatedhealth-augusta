@@ -223,12 +223,9 @@
   right: 0 !important;
   bottom: 0 !important;
   background-color: #F9F9F7 !important;
-  z-index: 9999 !important;
+  z-index: 50 !important;
   overflow-y: auto !important;
-}
-
-.mobile-menu-overlay * {
-  color: #2C3E50 !important;
+  padding-top: 5rem !important;
 }
 
 .mobile-menu-link {
@@ -241,8 +238,35 @@
   background: transparent !important;
   border: none !important;
   width: 100% !important;
+  cursor: pointer !important;
 }
 
 .mobile-menu-link:hover {
   opacity: 0.7 !important;
+}
+
+.mobile-menu-close {
+  color: #2C3E50 !important;
+  background: transparent !important;
+}
+
+.mobile-menu-close:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Mobile menu button text colors */
+.mobile-menu-overlay button {
+  color: #2C3E50 !important;
+}
+
+.mobile-menu-overlay .bg-primary {
+  color: #ffffff !important;
+}
+
+.mobile-menu-overlay p {
+  color: #64748b !important;
+}
+
+.mobile-menu-overlay svg {
+  color: inherit !important;
 }
