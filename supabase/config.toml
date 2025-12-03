@@ -62,3 +62,6 @@ verify_jwt = false
 
 [functions.create-neurotransmitter-checkout]
 verify_jwt = false
+
+[functions.verify-neurotransmitter-payment]
+verify_jwt = false

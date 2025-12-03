@@ -51,6 +51,15 @@ interface KitTracking {
   results_ready_at: string | null;
 }
 
+interface NeurotransmitterPayment {
+  id: string;
+  kit_status: string;
+  tracking_number: string | null;
+  shipped_at: string | null;
+  sample_received_at: string | null;
+  results_ready_at: string | null;
+}
+
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -59,6 +68,7 @@ const PatientDashboard = () => {
   const [latestLog, setLatestLog] = useState<SymptomLog | null>(null);
   const [latestOrder, setLatestOrder] = useState<Order | null>(null);
   const [kitTracking, setKitTracking] = useState<KitTracking | null>(null);
+  const [neuroPayment, setNeuroPayment] = useState<NeurotransmitterPayment | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
@@ -74,11 +84,31 @@ const PatientDashboard = () => {
   useEffect(() => {
     loadDashboardData();
     
-    // Check for neurotransmitter payment success
-    if (searchParams.get("neurotransmitter") === "success") {
-      toast.success("Neurotransmitter Analysis purchased! Your kit will ship within 3-5 business days.");
+    // Check for neurotransmitter payment success and verify
+    const sessionId = searchParams.get("session_id");
+    if (searchParams.get("neurotransmitter") === "success" && sessionId) {
+      verifyNeurotransmitterPayment(sessionId);
     }
   }, []);
+
+  const verifyNeurotransmitterPayment = async (sessionId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-neurotransmitter-payment', {
+        body: { sessionId }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.verified) {
+        toast.success("Neurotransmitter Analysis purchased! Your kit will ship within 3-5 business days.");
+        // Reload data to show updated status
+        loadDashboardData();
+      }
+    } catch (err) {
+      console.error('Payment verification error:', err);
+      toast.success("Payment received! Your kit will ship soon.");
+    }
+  };
 
   const loadDashboardData = async () => {
     try {
@@ -102,8 +132,21 @@ const PatientDashboard = () => {
 
       setPatient(patientData);
 
-      // Only fetch hormone-specific data for hormone patients
-      if (patientData.primary_program !== "ketamine") {
+      // Fetch data based on patient program
+      if (patientData.primary_program === "ketamine") {
+        // Fetch neurotransmitter payment for ketamine patients
+        const { data: neuroData } = await supabase
+          .from("neurotransmitter_payments")
+          .select("id, kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
+          .eq("patient_id", patientData.id)
+          .eq("payment_status", "paid")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        setNeuroPayment(neuroData);
+      } else {
+        // Fetch hormone-specific data
         const { data: logData } = await supabase
           .from("symptom_logs")
           .select("*")
@@ -323,6 +366,8 @@ const PatientDashboard = () => {
             <NeurotransmitterCard 
               patientEmail={patient?.email || undefined}
               patientName={patient?.full_name}
+              patientId={patient?.id}
+              existingPayment={neuroPayment}
             />
 
             {/* Welcome message for ketamine patients */}
