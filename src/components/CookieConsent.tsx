@@ -78,8 +78,8 @@ const CookieConsent = () => {
             </Button>
             <Button
               onClick={() => handleConsent("declined")}
-              variant="outline"
-              className="border-background/30 text-background hover:bg-background/10 font-lato"
+              variant="ghost"
+              className="border border-white/40 text-white bg-transparent hover:bg-white/10 font-lato"
             >
               Decline Non-Essential
             </Button>

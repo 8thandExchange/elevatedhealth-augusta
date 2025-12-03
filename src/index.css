@@ -198,3 +198,19 @@
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
 }
+
+/* Accessibility - Focus indicators */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Skip to main content link */
+.skip-to-main {
+  @apply absolute -top-full left-4 z-[100] bg-primary text-primary-foreground px-4 py-2 rounded-md font-lato text-sm;
+  transition: top 0.3s ease;
+}
+
+.skip-to-main:focus {
+  top: 1rem;
+}

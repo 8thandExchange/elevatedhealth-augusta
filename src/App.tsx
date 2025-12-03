@@ -22,6 +22,7 @@ import WhatToExpect from "./pages/WhatToExpect";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HipaaNotice from "./pages/HipaaNotice";
 import TermsOfService from "./pages/TermsOfService";
+import Accessibility from "./pages/Accessibility";
 import Consult from "./pages/Consult";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
@@ -49,6 +50,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <a href="#main-content" className="skip-to-main">
+          Skip to main content
+        </a>
         <CookieConsent />
         <Routes>
           {/* Public Routes */}
@@ -72,6 +76,7 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/accessibility" element={<Accessibility />} />
           <Route path="/consult" element={<Consult />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/ketamine-payment-success" element={<KetaminePaymentSuccess />} />

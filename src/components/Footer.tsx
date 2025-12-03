@@ -182,6 +182,12 @@ const Footer = () => {
               >
                 Terms
               </button>
+              <button 
+                onClick={() => navigate("/accessibility")} 
+                className="hover:text-background/60 transition-colors"
+              >
+                Accessibility
+              </button>
             </div>
           </div>
         </div>
