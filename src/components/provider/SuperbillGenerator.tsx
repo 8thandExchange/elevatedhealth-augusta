@@ -27,12 +27,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { FileText, Loader2, Check, ChevronsUpDown, Printer, X } from "lucide-react";
+import { FileText, Loader2, Check, ChevronsUpDown, Printer, X, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PatientData {
   id: string;
   full_name: string;
+  email?: string | null;
   dob?: string;
   street_address?: string | null;
   city?: string | null;
@@ -80,6 +81,7 @@ const SuperbillGenerator = ({
 }: SuperbillGeneratorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailing, setIsEmailing] = useState(false);
   const [dateOfService, setDateOfService] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -230,6 +232,88 @@ const SuperbillGenerator = ({
       toast.error("Failed to generate superbill");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const emailSuperbillToPatient = async () => {
+    if (!patient.email) {
+      toast.error("Patient does not have an email address on file");
+      return;
+    }
+
+    if (selectedIcd10Codes.length === 0) {
+      toast.error("Please select at least one diagnosis code");
+      return;
+    }
+
+    setIsEmailing(true);
+    try {
+      const selectedCpts = cptCodes.filter((c) => selectedCptCodes.has(c.id));
+      const selectedDiagnoses = icd10Codes.filter((c) =>
+        selectedIcd10Codes.includes(c.code)
+      );
+
+      const { error } = await supabase.functions.invoke("send-superbill-email", {
+        body: {
+          patientEmail: patient.email,
+          patientName: patient.full_name,
+          dateOfService: new Date(dateOfService).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          patientDob: patient.dob || "Not provided",
+          patientAddress: formatAddress(),
+          diagnoses: selectedDiagnoses.map((d) => ({
+            code: d.code,
+            description: d.description,
+          })),
+          cptCodes: selectedCpts.map((c) => ({
+            code: c.code,
+            description: c.description,
+            quantity: c.quantity,
+            charge: c.default_charge || chargeAmount / selectedCpts.length,
+          })),
+          totalCharge: chargeAmount,
+          clinicSettings: {
+            legalName: clinicSettings?.clinic_legal_name || "Elevated Health Augusta",
+            taxId: clinicSettings?.clinic_tax_id || "",
+            npi: clinicSettings?.provider_npi || "",
+            address: clinicSettings?.clinic_address || "",
+            phone: clinicSettings?.clinic_phone || "",
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      // Also save to database
+      const cptSnapshot = selectedCpts.map((c) => ({
+        code: c.code,
+        description: c.description,
+        quantity: c.quantity,
+        charge: c.default_charge || chargeAmount / selectedCpts.length,
+      }));
+
+      const { data: { user } } = await supabase.auth.getUser();
+
+      await supabase.from("superbills").insert({
+        patient_id: patient.id,
+        date_of_service: dateOfService,
+        diagnosis_codes: selectedIcd10Codes,
+        cpt_codes: cptSnapshot,
+        total_charge: chargeAmount,
+        created_by: user?.id,
+      });
+
+      toast.success(`Superbill emailed to ${patient.email}`);
+      setIsOpen(false);
+      onGenerated?.();
+    } catch (err) {
+      console.error("Error emailing superbill:", err);
+      toast.error("Failed to email superbill");
+    } finally {
+      setIsEmailing(false);
     }
   };
 
@@ -539,20 +623,42 @@ const SuperbillGenerator = ({
               </CardContent>
             </Card>
 
-            {/* Generate Button */}
-            <Button
-              onClick={generatePDF}
-              disabled={isLoading || selectedIcd10Codes.length === 0}
-              className="w-full"
-              size="lg"
-            >
-              {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Printer className="mr-2 h-4 w-4" />
-              )}
-              {isLoading ? "Generating..." : "Generate & Print Superbill"}
-            </Button>
+            {/* Generate Buttons */}
+            <div className="flex gap-3">
+              <Button
+                onClick={generatePDF}
+                disabled={isLoading || isEmailing || selectedIcd10Codes.length === 0}
+                className="flex-1"
+                size="lg"
+              >
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Printer className="mr-2 h-4 w-4" />
+                )}
+                {isLoading ? "Generating..." : "Print Superbill"}
+              </Button>
+              <Button
+                onClick={emailSuperbillToPatient}
+                disabled={isLoading || isEmailing || selectedIcd10Codes.length === 0 || !patient.email}
+                variant="secondary"
+                size="lg"
+                className="flex-1"
+                title={!patient.email ? "Patient has no email on file" : `Email to ${patient.email}`}
+              >
+                {isEmailing ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="mr-2 h-4 w-4" />
+                )}
+                {isEmailing ? "Sending..." : "Email to Patient"}
+              </Button>
+            </div>
+            {patient.email && (
+              <p className="text-xs text-muted-foreground text-center">
+                Will be sent to: {patient.email}
+              </p>
+            )}
           </div>
         )}
       </DialogContent>

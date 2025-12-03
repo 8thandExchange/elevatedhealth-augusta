@@ -565,7 +565,7 @@ const HormonesWomen = () => {
                           </li>
                           <li className="flex items-start gap-2">
                             <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
-                            <span>Clinical Management with Lauren Bersi, NP</span>
+                            <span>Clinical Management with Lauren Bursey, NP</span>
                           </li>
                           <li className="flex items-start gap-2">
                             <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />

@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.add-peptide-subscription]
 verify_jwt = false
+
+[functions.send-superbill-email]
+verify_jwt = false

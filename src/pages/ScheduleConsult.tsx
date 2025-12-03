@@ -137,7 +137,7 @@ const ScheduleConsult = () => {
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   Your kit will arrive in 3-5 days. Please schedule your 45-Minute Clinical Strategy Session 
-                  with Lauren Bersi below. We recommend choosing a date{" "}
+                  with Lauren Bursey below. We recommend choosing a date{" "}
                   <span className="font-semibold text-foreground">3 weeks from today</span> to ensure your 
                   lab results are ready.
                 </p>
