@@ -265,149 +265,147 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
         </div>
       </div>
 
-      {/* Mobile Menu - Outside container for proper fixed positioning */}
+      {/* Fullscreen Mobile Menu */}
       {isMobileMenuOpen && (
-        <>
-          {/* Backdrop overlay */}
-          <div 
-            className="fixed inset-0 top-20 z-[60]"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          
-          {/* Menu panel */}
-          <div 
-            className="fixed right-0 top-20 bottom-0 w-80 max-w-[85vw] shadow-2xl z-[70] overflow-y-auto"
-            style={{ 
-              backgroundColor: '#ffffff',
-              borderLeft: '1px solid #e2e8f0'
-            }}
-          >
-            <div className="flex flex-col p-8">
-              <div className="flex flex-col gap-6">
-                <button 
-                  onClick={() => scrollToSection("hero")} 
-                  className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
-                  style={{ color: '#1e293b' }}
-                >
-                  Home
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    navigate(SITE_CONFIG.routes.ketamine);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
-                  style={{ color: '#1e293b' }}
-                >
-                  Ketamine Therapy
-                </button>
+        <div 
+          className="fixed inset-0 top-20 z-[100] overflow-y-auto"
+          style={{ backgroundColor: '#ffffff' }}
+        >
+          <div className="flex flex-col p-8 min-h-full">
+            {/* Close button */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100"
+              style={{ color: '#1e293b' }}
+            >
+              <X className="h-6 w-6" />
+            </button>
 
-                <button 
-                  onClick={() => {
-                    navigate(SITE_CONFIG.routes.weightloss);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
-                  style={{ color: '#1e293b' }}
-                >
-                  Weight Loss
-                </button>
+            {/* Navigation Links */}
+            <nav className="flex flex-col gap-6 mt-8">
+              <button 
+                onClick={() => scrollToSection("hero")} 
+                className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                style={{ color: '#1e293b' }}
+              >
+                Home
+              </button>
+              
+              <button 
+                onClick={() => {
+                  navigate(SITE_CONFIG.routes.ketamine);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                style={{ color: '#1e293b' }}
+              >
+                Ketamine Therapy
+              </button>
 
-                <button 
-                  onClick={() => {
-                    navigate(SITE_CONFIG.routes.hormones);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
-                  style={{ color: '#1e293b' }}
-                >
-                  Hormones
-                </button>
+              <button 
+                onClick={() => {
+                  navigate(SITE_CONFIG.routes.weightloss);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                style={{ color: '#1e293b' }}
+              >
+                Weight Loss
+              </button>
 
-                <button 
-                  onClick={() => {
-                    scrollToSection("contact");
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
-                  style={{ color: '#1e293b' }}
-                >
-                  Contact
-                </button>
-              </div>
+              <button 
+                onClick={() => {
+                  navigate(SITE_CONFIG.routes.hormones);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                style={{ color: '#1e293b' }}
+              >
+                Hormones
+              </button>
 
-              <div className="mt-12 pt-8 space-y-3" style={{ borderTop: '1px solid #e2e8f0' }}>
-                <Button 
-                  className="w-full font-lato text-sm tracking-wide py-6"
-                  onClick={() => {
-                    if (onOpenBooking) onOpenBooking();
-                    setIsMobileMenuOpen(false);
-                  }}
-                >
-                  Book Consultation
-                </Button>
-                
-                {isLoggedIn ? (
-                  <>
-                    <Button 
-                      variant="outline"
-                      className="w-full font-lato text-sm tracking-wide py-6 gap-2"
-                      style={{ backgroundColor: '#ffffff', borderColor: '#94a3b8', color: '#2C3E50' }}
-                      onClick={() => {
-                        navigate("/patient/dashboard");
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <LayoutDashboard className="w-4 h-4" />
-                      My Dashboard
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="w-full font-lato text-sm tracking-wide py-6 gap-2"
-                      style={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', color: '#475569' }}
-                      onClick={() => {
-                        navigate("/patient/intake");
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <ClipboardList className="w-4 h-4" />
-                      Symptom Check-In
-                    </Button>
-                    <Button 
-                      variant="ghost"
-                      className="w-full font-lato text-sm tracking-wide py-6 text-red-600 hover:text-red-700 hover:bg-red-50 gap-2"
-                      onClick={() => {
-                        handleLogout();
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
+              <button 
+                onClick={() => {
+                  scrollToSection("contact");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                style={{ color: '#1e293b' }}
+              >
+                Contact
+              </button>
+            </nav>
+
+            {/* Action Buttons */}
+            <div className="mt-auto pt-8 space-y-3" style={{ borderTop: '1px solid #e2e8f0' }}>
+              <Button 
+                className="w-full font-lato text-sm tracking-wide py-6"
+                onClick={() => {
+                  if (onOpenBooking) onOpenBooking();
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                Book Consultation
+              </Button>
+              
+              {isLoggedIn ? (
+                <>
                   <Button 
                     variant="outline"
-                    className="w-full font-lato text-sm tracking-wide py-6"
+                    className="w-full font-lato text-sm tracking-wide py-6 gap-2"
                     style={{ backgroundColor: '#ffffff', borderColor: '#94a3b8', color: '#2C3E50' }}
                     onClick={() => {
-                      navigate("/patient/login");
+                      navigate("/patient/dashboard");
                       setIsMobileMenuOpen(false);
                     }}
                   >
-                    Patient Portal
+                    <LayoutDashboard className="w-4 h-4" />
+                    My Dashboard
                   </Button>
-                )}
-                
-                <p className="mt-6 text-sm font-lato" style={{ color: '#64748b' }}>
-                  {SITE_CONFIG.phone}
-                </p>
-              </div>
+                  <Button 
+                    variant="outline"
+                    className="w-full font-lato text-sm tracking-wide py-6 gap-2"
+                    style={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', color: '#475569' }}
+                    onClick={() => {
+                      navigate("/patient/intake");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <ClipboardList className="w-4 h-4" />
+                    Symptom Check-In
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    className="w-full font-lato text-sm tracking-wide py-6 text-red-600 hover:text-red-700 hover:bg-red-50 gap-2"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  variant="outline"
+                  className="w-full font-lato text-sm tracking-wide py-6"
+                  style={{ backgroundColor: '#ffffff', borderColor: '#94a3b8', color: '#2C3E50' }}
+                  onClick={() => {
+                    navigate("/patient/login");
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  Patient Portal
+                </Button>
+              )}
+              
+              <p className="mt-6 text-sm font-lato text-center" style={{ color: '#64748b' }}>
+                {SITE_CONFIG.phone}
+              </p>
             </div>
           </div>
-        </>
+        </div>
       )}
     </nav>
   );
