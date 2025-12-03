@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square } from "lucide-react";
+import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
@@ -16,6 +16,7 @@ import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
 import PharmacyOrderCard from "@/components/provider/PharmacyOrderCard";
 import EditPatientProfileModal from "@/components/provider/EditPatientProfileModal";
+import InvitePatientCard from "@/components/provider/InvitePatientCard";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 
 interface Patient {
@@ -764,6 +765,11 @@ const ProviderDashboard = () => {
 
           {/* Triage Tab */}
           <TabsContent value="triage">
+            {/* Invite Patient Card - Always visible at top */}
+            <div className="mb-6">
+              <InvitePatientCard onInviteSent={() => loadData()} />
+            </div>
+            
             {pendingPatients.length === 0 ? (
               <Card className="bg-card border-border/50">
                 <CardContent className="pt-6 text-center">

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { Loader2, Activity, Zap, Heart, Brain, LogOut, Plus, Clock, Settings } from "lucide-react";
+import { Loader2, Activity, Zap, Heart, Brain, LogOut, Plus, Clock, Settings, CreditCard, Lock } from "lucide-react";
 import CircularGauge from "@/components/ui/CircularGauge";
 import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
@@ -225,6 +225,24 @@ const PatientDashboard = () => {
 
   const isAuthorized = latestOrder?.status === "authorized";
   const isPendingReview = latestOrder?.status === "pending_review";
+  
+  // LOCK #4: Membership is only available after protocol approval / labs reviewed
+  const canPurchaseMembership = patient?.onboarding_status === "protocol_approved" || 
+                                 patient?.onboarding_status === "labs_reviewed" ||
+                                 patient?.onboarding_status === "pending_pharmacy_order" ||
+                                 patient?.onboarding_status === "treatment_active";
+
+  const handlePurchaseMembership = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("create-membership-checkout");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to start checkout");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -344,6 +362,50 @@ const PatientDashboard = () => {
                 >
                   {isCreatingOrder ? "Submitting..." : "Request Protocol Review"}
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* LOCK #4: Membership Card - Only visible after protocol approval */}
+        {canPurchaseMembership && !isAuthorized && (
+          <Card className="bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-green-500/20 rounded-full">
+                  <CreditCard className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground">Your Protocol is Approved!</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Lauren has reviewed your labs and designed your personalized treatment plan.
+                    Activate your membership to begin treatment.
+                  </p>
+                  <Button onClick={handlePurchaseMembership} className="bg-green-600 hover:bg-green-700">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Activate $399/mo Membership
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Locked Membership Card - Show when not yet approved */}
+        {!canPurchaseMembership && patient?.intake_completed && !isAuthorized && (
+          <Card className="bg-secondary/30 border-border/50 relative overflow-hidden">
+            <CardContent className="pt-6 opacity-60">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-muted rounded-full">
+                  <Lock className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-muted-foreground">Membership Locked</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Your membership will be available after Lauren reviews your diagnostic results 
+                    and approves your personalized protocol.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

@@ -1,144 +1,196 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.1";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface InviteRequest {
-  email: string;
-  name: string;
-  patientId: string;
-}
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[SEND-PATIENT-INVITE] ${step}${detailsStr}`);
+};
 
-const handler = async (req: Request): Promise<Response> => {
+serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { email, name, patientId }: InviteRequest = await req.json();
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    logStep("Function started");
 
-    console.log(`Sending invite to ${email} for patient ${patientId}`);
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
-    // Create Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendKey) throw new Error("RESEND_API_KEY is not set");
 
-    // Generate magic link
-    const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-      type: "magiclink",
-      email: email,
-      options: {
-        redirectTo: `${req.headers.get("origin") || "https://elevatedhealthaugusta.com"}/patient/dashboard`,
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    // Verify admin/staff authorization
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("No authorization header");
+
+    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    
+    if (userError || !userData.user) throw new Error("Unauthorized");
+
+    // Check user role
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userData.user.id);
+
+    const hasAccess = roles?.some(r => r.role === "admin" || r.role === "staff");
+    if (!hasAccess) throw new Error("Insufficient permissions");
+
+    logStep("Authorization verified");
+
+    const body = await req.json();
+    const { patient_email, patient_name } = body;
+
+    if (!patient_email || !patient_name) {
+      throw new Error("Missing required fields: patient_email and patient_name");
+    }
+
+    logStep("Request body", { patient_email, patient_name });
+
+    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+    const origin = "https://elevatedhealthaugusta.com";
+
+    // Create Stripe Checkout session for $299 Hormone Mapping
+    // After payment, redirect to account creation page
+    const session = await stripe.checkout.sessions.create({
+      customer_email: patient_email,
+      line_items: [
+        {
+          price: "price_1SZiRMEOtKRY99pua6QMu12h", // Hormone Mapping Package $299
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      shipping_address_collection: {
+        allowed_countries: ["US"],
+      },
+      // Redirect to account creation after payment
+      success_url: `${origin}/patient/create-account?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(patient_email)}&name=${encodeURIComponent(patient_name)}`,
+      cancel_url: `${origin}/`,
+      metadata: {
+        patient_email,
+        patient_name,
+        product: "hormone_mapping_package",
+        invite_type: "provider_invite",
       },
     });
 
-    if (linkError) {
-      console.error("Error generating magic link:", linkError);
-      throw linkError;
-    }
+    logStep("Stripe checkout session created", { sessionId: session.id });
 
-    const magicLink = linkData.properties?.action_link;
+    const paymentLink = session.url;
+    const firstName = patient_name.split(" ")[0];
 
-    // Update patient with user_id if created
-    if (linkData.user) {
-      await supabase
-        .from("patients")
-        .update({ user_id: linkData.user.id })
-        .eq("id", patientId);
-    }
-
-    // Send email via Resend API directly
-    const emailResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "Elevated Health <onboarding@resend.dev>",
-        to: [email],
-        subject: "Welcome to Elevated Health - Your Personal Wellness Portal",
-        html: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          </head>
-          <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
-            <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-              <div style="background: white; border-radius: 12px; padding: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
-                
-                <div style="text-align: center; margin-bottom: 32px;">
-                  <h1 style="color: #2C3E50; font-size: 28px; margin: 0; font-weight: 300;">
-                    Elevated Health
-                  </h1>
-                  <p style="color: #B8860B; font-size: 12px; letter-spacing: 2px; margin-top: 8px; text-transform: uppercase;">
-                    Augusta's Premier Wellness Destination
-                  </p>
-                </div>
-
-                <div style="margin-bottom: 32px;">
-                  <h2 style="color: #2C3E50; font-size: 24px; margin: 0 0 16px 0;">
-                    Welcome, ${name}!
-                  </h2>
-                  <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0;">
-                    Lauren Bersi, FNP-C has invited you to access your personal wellness portal at Elevated Health.
-                  </p>
-                </div>
-
-                <div style="text-align: center; margin: 32px 0;">
-                  <a href="${magicLink}" style="display: inline-block; background-color: #2C3E50; color: white; padding: 16px 32px; text-decoration: none; border-radius: 50px; font-size: 16px; font-weight: 500;">
-                    Access Your Portal
-                  </a>
-                </div>
-
-                <div style="background: #f8fafc; border-radius: 8px; padding: 24px; margin-top: 32px;">
-                  <h3 style="color: #2C3E50; font-size: 16px; margin: 0 0 16px 0;">What's Next?</h3>
-                  <ol style="color: #64748b; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
-                    <li>Click the button above to access your portal</li>
-                    <li>Complete the medical intake questionnaire</li>
-                    <li>Lauren will review and create your personalized protocol</li>
-                  </ol>
-                </div>
-
-                <p style="color: #94a3b8; font-size: 12px; margin-top: 32px; text-align: center;">
-                  This link is valid for 24 hours.
-                </p>
-
-              </div>
-
-              <div style="text-align: center; margin-top: 24px;">
-                <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-                  Elevated Health Augusta | 7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809
-                </p>
-              </div>
+    // Send invite email via Resend
+    const resend = new Resend(resendKey);
+    
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; }
+          .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .logo { font-size: 24px; font-weight: bold; color: #2C3E50; }
+          .content { background: #f8f9fa; border-radius: 12px; padding: 30px; margin-bottom: 30px; }
+          .cta-button { display: inline-block; background: #2C3E50; color: white !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; margin: 20px 0; }
+          .price { font-size: 32px; font-weight: bold; color: #2C3E50; }
+          .includes { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; }
+          .includes li { margin: 8px 0; color: #4a5568; }
+          .footer { text-align: center; color: #7F8C8D; font-size: 14px; margin-top: 30px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">Elevated Health Augusta</div>
+          </div>
+          <div class="content">
+            <h2>Welcome, ${firstName}!</h2>
+            <p>Lauren Bursey, NP-C has invited you to begin your personalized hormone optimization journey with Elevated Health.</p>
+            
+            <p class="price">$299 One-Time</p>
+            <p style="font-size: 14px; color: #7F8C8D; margin-top: 0;">Hormone Mapping Experience</p>
+            
+            <div class="includes">
+              <strong>What's Included:</strong>
+              <ul>
+                <li>✓ At-home ZRT Saliva Test Kit (shipped to you)</li>
+                <li>✓ Comprehensive hormone panel analysis</li>
+                <li>✓ 45-minute deep-dive clinical review with Lauren</li>
+                <li>✓ Customized protocol design</li>
+              </ul>
             </div>
-          </body>
-          </html>
-        `,
-      }),
+            
+            <div style="text-align: center;">
+              <a href="${paymentLink}" class="cta-button">Begin Your Journey →</a>
+            </div>
+            
+            <p style="font-size: 14px; color: #7F8C8D;">After payment, you'll create your secure patient portal account and complete your medical intake form.</p>
+          </div>
+          <div class="footer">
+            <p>Questions? Reply to this email or call us at (706) 821-7354</p>
+            <p>Elevated Health Augusta<br/>3540 Wheeler Road, Suite 601<br/>Augusta, GA 30909</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const emailResponse = await resend.emails.send({
+      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      to: [patient_email],
+      subject: "Welcome to Elevated Health – Begin Your Hormone Mapping",
+      html: emailHtml,
     });
 
-    const emailResult = await emailResponse.json();
-    console.log("Email sent:", emailResult);
+    logStep("Email sent", { emailId: emailResponse.data?.id });
 
-    return new Response(JSON.stringify({ success: true, emailResult }), {
+    // Create a pending patient record
+    const { error: patientError } = await supabase
+      .from("patients")
+      .insert({
+        full_name: patient_name,
+        email: patient_email,
+        onboarding_status: "invited",
+        invited_at: new Date().toISOString(),
+        invited_by: userData.user.id,
+      });
+
+    if (patientError) {
+      logStep("Patient record creation warning", { error: patientError.message });
+      // Don't fail if patient already exists
+    } else {
+      logStep("Patient record created");
+    }
+
+    return new Response(JSON.stringify({ 
+      success: true, 
+      payment_link: paymentLink,
+      email_sent: true,
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
-  } catch (error: any) {
-    console.error("Error in send-patient-invite:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-    );
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logStep("ERROR", { message: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+    });
   }
-};
-
-serve(handler);
+});
