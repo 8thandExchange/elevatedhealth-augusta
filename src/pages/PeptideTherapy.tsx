@@ -76,6 +76,7 @@ const pillars = [
     subtitle: "Sermorelin / Tesamorelin",
     benefit: "Stimulates natural HGH production to improve sleep quality, burn visceral fat, and enhance skin elasticity.",
     category: "Metabolic & Growth",
+    price: "From $149/mo",
   },
   {
     icon: CellEnergyIcon,
@@ -83,6 +84,7 @@ const pillars = [
     subtitle: "NAD+ Therapy",
     benefit: "Replenishes cellular energy to banish brain fog, improve focus, and support DNA repair.",
     category: "Cognitive & Cellular Energy",
+    price: "Troches from $99/mo | Injections from $199/mo",
   },
   {
     icon: VitalitySunIcon,
@@ -90,6 +92,7 @@ const pillars = [
     subtitle: "PT-141 Protocol",
     benefit: "Neurologically activates desire and arousal in both men and women, restoring the spark that stress often steals.",
     category: "Libido & Vitality",
+    price: "$225 per 10-Dose Kit",
   },
 ];
 
@@ -213,8 +216,11 @@ const PeptideTherapy = () => {
                           <p className="text-sm font-lato text-gold mb-4">
                             {pillar.subtitle}
                           </p>
-                          <p className="text-base font-cormorant text-muted-foreground leading-relaxed">
+                          <p className="text-base font-cormorant text-muted-foreground leading-relaxed mb-4">
                             {pillar.benefit}
+                          </p>
+                          <p className="text-sm font-lato font-semibold text-gold">
+                            {pillar.price}
                           </p>
                         </CardContent>
                       </Card>
@@ -232,8 +238,11 @@ const PeptideTherapy = () => {
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-cormorant mb-6 text-foreground">
                   Ready to Optimize Your Biology?
                 </h2>
-                <p className="text-lg font-cormorant text-muted-foreground mb-10 max-w-xl mx-auto">
+                <p className="text-lg font-cormorant text-muted-foreground mb-6 max-w-xl mx-auto">
                   Schedule a personalized peptide strategy session to discover which protocols align with your health goals.
+                </p>
+                <p className="text-sm font-lato text-muted-foreground mb-10 max-w-md mx-auto italic">
+                  All peptide protocols include supplies and shipping.
                 </p>
                 <Button
                   onClick={() => setIsConsultOpen(true)}

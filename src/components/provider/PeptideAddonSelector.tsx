@@ -1,192 +1,245 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, Plus, Package } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PeptideAddonSelectorProps {
   patientId: string;
   patientName: string;
+  patientEmail?: string;
   currentPeptides?: string[];
   onUpdate?: (peptides: string[]) => void;
 }
 
-const PEPTIDE_OPTIONS = [
-  {
-    value: "sermorelin",
-    label: "Sermorelin Protocol",
-    description: "Daily Injection - Growth Hormone Support",
-    priceNote: "Custom Pricing",
+// Stripe price IDs for peptide products
+const PEPTIDE_PRODUCTS = {
+  sermorelin: {
+    label: "Sermorelin Injection",
+    price: "$149/mo",
+    priceId: "price_1Sa3oyEOtKRY99puGS2t9EZv",
+    type: "recurring" as const,
+    description: "Growth Hormone Support",
   },
-  {
-    value: "tesamorelin",
-    label: "Tesamorelin Protocol",
-    description: "Daily Injection - Visceral Fat Reduction",
-    priceNote: "Custom Pricing",
+  nad_injection: {
+    label: "NAD+ Injection",
+    price: "$199/mo",
+    priceId: "price_1Sa3waEOtKRY99puCB267VpA",
+    type: "recurring" as const,
+    description: "Cellular Energy Protocol",
   },
-  {
-    value: "nad_injection",
-    label: "NAD+ Injection Protocol",
-    description: "Weekly Injection - Cellular Energy",
-    priceNote: "Custom Pricing",
+  nad_troche: {
+    label: "NAD+ Troches",
+    price: "$99/mo",
+    priceId: "price_1Sa3x1EOtKRY99pufL3wEyIN",
+    type: "recurring" as const,
+    description: "Brain Restoration",
   },
-  {
-    value: "nad_troche",
-    label: "NAD+ Troche Protocol",
-    description: "Daily Troche - Brain Restoration",
-    priceNote: "Custom Pricing",
+  pt141: {
+    label: "PT-141 Performance Kit",
+    price: "$225",
+    priceId: "price_1Sa3xIEOtKRY99puIXSB3L31",
+    type: "one_time" as const,
+    description: "10-Dose Kit for Libido",
   },
-  {
-    value: "pt141",
-    label: "PT-141 Protocol",
-    description: "As Needed Injection - Libido & Intimacy",
-    priceNote: "Custom Pricing",
-  },
-];
+};
+
+type PeptideKey = keyof typeof PEPTIDE_PRODUCTS;
 
 const PeptideAddonSelector = ({
   patientId,
   patientName,
+  patientEmail,
   currentPeptides = [],
   onUpdate,
 }: PeptideAddonSelectorProps) => {
-  const [selectedPeptides, setSelectedPeptides] = useState<string[]>(currentPeptides);
-  const [pendingAdd, setPendingAdd] = useState<string>("");
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedPeptides, setSelectedPeptides] = useState<Set<PeptideKey>>(
+    new Set(currentPeptides as PeptideKey[])
+  );
+  const [isProcessing, setIsProcessing] = useState<string | null>(null);
 
-  const handleAddPeptide = () => {
-    if (pendingAdd && !selectedPeptides.includes(pendingAdd)) {
-      const updated = [...selectedPeptides, pendingAdd];
-      setSelectedPeptides(updated);
-      setPendingAdd("");
+  const handleToggle = (key: PeptideKey) => {
+    const updated = new Set(selectedPeptides);
+    if (updated.has(key)) {
+      updated.delete(key);
+    } else {
+      updated.add(key);
     }
-  };
-
-  const handleRemovePeptide = (peptide: string) => {
-    const updated = selectedPeptides.filter((p) => p !== peptide);
     setSelectedPeptides(updated);
   };
 
-  const handleSave = async () => {
-    setIsUpdating(true);
+  const handleAddToSubscription = async (key: PeptideKey) => {
+    if (!patientEmail) {
+      toast.error("Patient email is required to add subscription items");
+      return;
+    }
+
+    const product = PEPTIDE_PRODUCTS[key];
+    setIsProcessing(key);
+
     try {
-      // For now, just show success - actual backend integration would go here
-      // This could update a patient's peptide_protocols field in the database
-      toast.success(`Peptide protocols updated for ${patientName}`);
-      onUpdate?.(selectedPeptides);
+      const { data, error } = await supabase.functions.invoke("add-peptide-subscription", {
+        body: {
+          patient_email: patientEmail,
+          price_id: product.priceId,
+          peptide_type: key,
+          is_recurring: product.type === "recurring",
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // One-time payment - open checkout
+        window.open(data.url, "_blank");
+        toast.success(`Payment link opened for ${product.label}`);
+      } else if (data?.success) {
+        // Added to subscription
+        toast.success(`${product.label} added to ${patientName}'s subscription`);
+        const updated = new Set(selectedPeptides);
+        updated.add(key);
+        setSelectedPeptides(updated);
+        onUpdate?.(Array.from(updated));
+      }
     } catch (error: any) {
-      toast.error(error.message || "Failed to update peptide protocols");
+      console.error("Peptide add error:", error);
+      toast.error(error.message || `Failed to add ${product.label}`);
     } finally {
-      setIsUpdating(false);
+      setIsProcessing(null);
     }
   };
 
-  const availableOptions = PEPTIDE_OPTIONS.filter(
-    (opt) => !selectedPeptides.includes(opt.value)
+  const recurringProducts = Object.entries(PEPTIDE_PRODUCTS).filter(
+    ([_, p]) => p.type === "recurring"
   );
-
-  const getLabel = (value: string) =>
-    PEPTIDE_OPTIONS.find((opt) => opt.value === value)?.label || value;
+  const oneTimeProducts = Object.entries(PEPTIDE_PRODUCTS).filter(
+    ([_, p]) => p.type === "one_time"
+  );
 
   return (
     <Card className="border-gold/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center gap-2">
-          <svg className="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
-          </svg>
+          <Package className="w-5 h-5 text-gold" />
           Peptide Add-Ons
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Standalone boosters - compatible with all memberships
         </p>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Current Peptides */}
-        {selectedPeptides.length > 0 && (
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Active Protocols</label>
-            <div className="flex flex-wrap gap-2">
-              {selectedPeptides.map((peptide) => (
-                <Badge
-                  key={peptide}
-                  variant="secondary"
-                  className="bg-gold/10 text-gold border border-gold/30 px-3 py-1 flex items-center gap-2"
-                >
-                  {getLabel(peptide)}
-                  <button
-                    onClick={() => handleRemovePeptide(peptide)}
-                    className="hover:text-destructive transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
+      <CardContent className="space-y-6">
+        {/* Recurring Peptides */}
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500" />
+            Monthly Subscriptions
+          </h4>
+          {recurringProducts.map(([key, product]) => {
+            const peptideKey = key as PeptideKey;
+            const isActive = selectedPeptides.has(peptideKey);
+            const isLoading = isProcessing === key;
 
-        {/* Add New Peptide */}
-        {availableOptions.length > 0 && (
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Add Protocol</label>
-            <div className="flex gap-2">
-              <Select value={pendingAdd} onValueChange={setPendingAdd}>
-                <SelectTrigger className="flex-1 bg-background">
-                  <SelectValue placeholder="Select peptide protocol..." />
-                </SelectTrigger>
-                <SelectContent className="bg-background border">
-                  {availableOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      <div className="flex flex-col">
-                        <span>{opt.label}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {opt.description} • {opt.priceNote}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleAddPeptide}
-                disabled={!pendingAdd}
-                className="border-gold/30 hover:bg-gold/10"
+            return (
+              <div
+                key={key}
+                className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                  isActive
+                    ? "bg-gold/5 border-gold/40"
+                    : "bg-secondary/30 border-border/50 hover:border-gold/30"
+                }`}
               >
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    checked={isActive}
+                    onCheckedChange={() => handleToggle(peptideKey)}
+                  />
+                  <div>
+                    <p className="font-medium text-foreground text-sm">{product.label}</p>
+                    <p className="text-xs text-muted-foreground">{product.description}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="text-gold border-gold/30">
+                    {product.price}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleAddToSubscription(peptideKey)}
+                    disabled={isLoading || !patientEmail}
+                    className="border-gold/30 hover:bg-gold/10 text-xs"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <>
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* One-Time Peptides */}
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-500" />
+            One-Time Purchase
+          </h4>
+          {oneTimeProducts.map(([key, product]) => {
+            const peptideKey = key as PeptideKey;
+            const isLoading = isProcessing === key;
+
+            return (
+              <div
+                key={key}
+                className="flex items-center justify-between p-3 rounded-lg border bg-secondary/30 border-border/50 hover:border-gold/30 transition-colors"
+              >
+                <div>
+                  <p className="font-medium text-foreground text-sm">{product.label}</p>
+                  <p className="text-xs text-muted-foreground">{product.description}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="text-gold border-gold/30">
+                    {product.price}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleAddToSubscription(peptideKey)}
+                    disabled={isLoading || !patientEmail}
+                    className="border-gold/30 hover:bg-gold/10 text-xs"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <>
+                        <Plus className="w-3 h-3 mr-1" />
+                        Charge
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
         {/* Info Note */}
         <div className="bg-secondary/50 rounded-lg p-3 text-sm text-muted-foreground">
-          <p className="font-medium text-foreground mb-1">Pricing Note</p>
           <p>
-            Peptide protocols are priced on a per-patient basis depending on dosage
-            and frequency. These do not conflict with Weight Loss or Hormone memberships.
+            All peptide protocols include supplies and shipping. Recurring items are
+            added to the patient's existing subscription. One-time items open a
+            payment link.
           </p>
         </div>
-
-        {/* Save Button */}
-        <Button
-          onClick={handleSave}
-          disabled={isUpdating}
-          className="w-full bg-gold hover:bg-gold-dark text-white"
-        >
-          {isUpdating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Updating...
-            </>
-          ) : (
-            "Save Peptide Protocols"
-          )}
-        </Button>
       </CardContent>
     </Card>
   );

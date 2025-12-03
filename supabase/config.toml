@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.send-safety-callback-request]
 verify_jwt = false
+
+[functions.add-peptide-subscription]
+verify_jwt = false
