@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, X } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,19 +18,84 @@ interface AdminNavbarProps {
   subtitle?: string;
   onRefresh?: () => Promise<void>;
   isRefreshing?: boolean;
+  onNavigateToMessages?: () => void;
 }
 
-const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing }: AdminNavbarProps) => {
+const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMessages }: AdminNavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const isOnProviderDashboard = location.pathname === "/provider/dashboard";
   const isOnSettings = location.pathname === "/admin/settings";
+
+  // Fetch unread message count
+  const fetchUnreadCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from("messages")
+        .select("*", { count: "exact", head: true })
+        .eq("sender_role", "patient")
+        .eq("is_read", false);
+
+      if (!error && count !== null) {
+        setUnreadCount(count);
+      }
+    } catch (err) {
+      console.error("Error fetching unread count:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUnreadCount();
+
+    // Set up real-time subscription for new messages
+    const channel = supabase
+      .channel("navbar-messages")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: "sender_role=eq.patient",
+        },
+        () => {
+          // Increment count on new patient message
+          setUnreadCount((prev) => prev + 1);
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+        },
+        () => {
+          // Refetch on any update (e.g., marking as read)
+          fetchUnreadCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast.success("Logged out successfully");
     navigate("/admin/login");
+  };
+
+  const handleMessagesClick = () => {
+    if (onNavigateToMessages) {
+      onNavigateToMessages();
+    } else if (!isOnProviderDashboard) {
+      navigate("/provider/dashboard?tab=messages");
+    }
   };
 
   return (
@@ -52,6 +118,24 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing }: AdminNavbarPr
               </Link>
             </Button>
           )}
+
+          {/* Messages Button with Badge */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative"
+            onClick={handleMessagesClick}
+          >
+            <MessageCircle className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-5 min-w-[20px] p-0 flex items-center justify-center text-xs"
+              >
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Badge>
+            )}
+          </Button>
 
           {!isOnSettings && (
             <Button variant="ghost" size="icon" asChild>
@@ -79,6 +163,24 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing }: AdminNavbarPr
 
         {/* Mobile Navigation */}
         <div className="flex md:hidden items-center gap-2">
+          {/* Messages Button with Badge - Mobile */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative"
+            onClick={handleMessagesClick}
+          >
+            <MessageCircle className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-4 min-w-[16px] p-0 flex items-center justify-center text-[10px]"
+              >
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Badge>
+            )}
+          </Button>
+
           {onRefresh && (
             <Button 
               variant="ghost" 
