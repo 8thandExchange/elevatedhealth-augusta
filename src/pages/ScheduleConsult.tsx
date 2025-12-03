@@ -4,8 +4,10 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle, Package, Calendar, Loader2 } from "lucide-react";
+import { CheckCircle, Package, Calendar, Loader2, Lock, AlertCircle } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ScheduleConsult = () => {
   const [searchParams] = useSearchParams();
@@ -13,6 +15,8 @@ const ScheduleConsult = () => {
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [intakeCompleted, setIntakeCompleted] = useState<boolean | null>(null);
+  const [checkingIntake, setCheckingIntake] = useState(true);
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -43,6 +47,39 @@ const ScheduleConsult = () => {
 
     verifyPayment();
   }, [sessionId]);
+
+  // CHECK #3: Intake First Lock - Check if logged-in user has completed intake
+  useEffect(() => {
+    const checkIntakeStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          // Not logged in - can't check intake status
+          setIntakeCompleted(false);
+          setCheckingIntake(false);
+          return;
+        }
+
+        const { data: patient } = await supabase
+          .from("patients")
+          .select("intake_completed")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        setIntakeCompleted(patient?.intake_completed || false);
+      } catch (err) {
+        console.error("Intake check error:", err);
+        setIntakeCompleted(false);
+      } finally {
+        setCheckingIntake(false);
+      }
+    };
+
+    if (verified) {
+      checkIntakeStatus();
+    }
+  }, [verified]);
 
   // Calculate recommended booking date (3 weeks from today)
   const recommendedDate = new Date();
@@ -129,7 +166,7 @@ const ScheduleConsult = () => {
                 <p className="text-xl font-semibold text-foreground">{formattedDate} or later</p>
               </div>
 
-              {/* Booking Calendar */}
+              {/* Booking Calendar - WITH INTAKE LOCK */}
               <div className="bg-card rounded-2xl border border-border overflow-hidden">
                 <div className="p-6 border-b border-border">
                   <h2 className="text-xl font-cormorant font-semibold text-foreground">
@@ -140,11 +177,56 @@ const ScheduleConsult = () => {
                   </p>
                 </div>
                 <div className="p-6">
-                  <iframe
-                    src={SITE_CONFIG.bookingLinks.labReview}
-                    style={{ border: 0, width: "100%", height: "600px" }}
-                    title="Schedule Lab Review Appointment"
-                  />
+                  {checkingIntake ? (
+                    <div className="text-center py-12">
+                      <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+                      <p className="text-muted-foreground">Checking intake status...</p>
+                    </div>
+                  ) : intakeCompleted ? (
+                    // UNLOCKED - Show calendar
+                    <iframe
+                      src={SITE_CONFIG.bookingLinks.labReview}
+                      style={{ border: 0, width: "100%", height: "600px" }}
+                      title="Schedule Lab Review Appointment"
+                    />
+                  ) : (
+                    // LOCKED - Intake not complete
+                    <div className="text-center py-12 relative">
+                      {/* Blurred/disabled calendar placeholder */}
+                      <div className="opacity-30 pointer-events-none blur-sm mb-6">
+                        <div className="h-[400px] bg-secondary/50 rounded-lg flex items-center justify-center">
+                          <Calendar className="w-24 h-24 text-muted-foreground/50" />
+                        </div>
+                      </div>
+                      
+                      {/* Lock overlay */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
+                        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4">
+                          <Lock className="w-8 h-8 text-amber-600" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-foreground mb-2">
+                          Calendar Locked
+                        </h3>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex items-center gap-2 text-amber-600 mb-4 cursor-help">
+                              <AlertCircle className="w-4 h-4" />
+                              <span className="text-sm">Why is this locked?</span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p>Please complete your Medical Intake Form first to unlock scheduling. This ensures Lauren has your health information before your consultation.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <p className="text-muted-foreground text-sm mb-6 max-w-md">
+                          Please complete your Medical Intake Form first to unlock scheduling.
+                        </p>
+                        <Button onClick={() => window.location.href = "/patient/intake"}>
+                          Complete Intake Form
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
