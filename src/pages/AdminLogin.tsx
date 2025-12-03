@@ -174,7 +174,7 @@ const AdminLogin = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center gap-2 mb-2">
@@ -197,11 +197,11 @@ const AdminLogin = () => {
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
@@ -250,11 +250,11 @@ const AdminLogin = () => {
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={signupEmail}
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                     required
                   />
