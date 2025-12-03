@@ -13,6 +13,7 @@ import confetti from "canvas-confetti";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
+import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 
 interface Patient {
@@ -1230,6 +1231,13 @@ const ProviderDashboard = () => {
                 patientPhone={selectedPatient.patient.phone}
                 currentTier={(selectedPatient.patient.medical_history as Record<string, any>)?.hormone_addon_tier || "none"}
                 baseMembership="metabolic"
+              />
+
+              {/* Peptide Add-On Selector */}
+              <PeptideAddonSelector
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                currentPeptides={(selectedPatient.patient.medical_history as Record<string, any>)?.peptide_protocols || []}
               />
 
               {/* Protocol Suggestion */}
