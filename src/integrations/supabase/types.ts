@@ -288,7 +288,9 @@ export type Database = {
       }
       patients: {
         Row: {
+          allergies: string | null
           avatar_url: string | null
+          city: string | null
           created_at: string | null
           current_protocol: string | null
           dob: string | null
@@ -305,12 +307,17 @@ export type Database = {
           phone: string | null
           risk_status: string | null
           safety_flags: Json | null
+          state: string | null
+          street_address: string | null
           treatment_request: string | null
           updated_at: string | null
           user_id: string | null
+          zip_code: string | null
         }
         Insert: {
+          allergies?: string | null
           avatar_url?: string | null
+          city?: string | null
           created_at?: string | null
           current_protocol?: string | null
           dob?: string | null
@@ -327,12 +334,17 @@ export type Database = {
           phone?: string | null
           risk_status?: string | null
           safety_flags?: Json | null
+          state?: string | null
+          street_address?: string | null
           treatment_request?: string | null
           updated_at?: string | null
           user_id?: string | null
+          zip_code?: string | null
         }
         Update: {
+          allergies?: string | null
           avatar_url?: string | null
+          city?: string | null
           created_at?: string | null
           current_protocol?: string | null
           dob?: string | null
@@ -349,9 +361,12 @@ export type Database = {
           phone?: string | null
           risk_status?: string | null
           safety_flags?: Json | null
+          state?: string | null
+          street_address?: string | null
           treatment_request?: string | null
           updated_at?: string | null
           user_id?: string | null
+          zip_code?: string | null
         }
         Relationships: []
       }

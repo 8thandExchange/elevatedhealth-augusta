@@ -16,6 +16,11 @@ interface PatientData {
   dob?: string | null;
   email?: string | null;
   phone?: string | null;
+  street_address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  allergies?: string | null;
   medical_history?: Record<string, any> | null;
 }
 
@@ -109,21 +114,32 @@ const FCCPortalModal = ({
     }
   };
 
-  // Get allergies from medical history
+  // Get allergies from patient record
   const getAllergies = () => {
+    if (patient.allergies) return patient.allergies;
+    // Fallback to medical history for older records
     const history = patient.medical_history;
-    if (!history) return "NKDA";
-    if (history.allergies) return history.allergies;
-    if (history.drugAllergies) return history.drugAllergies;
+    if (history?.allergies) return history.allergies;
+    if (history?.drugAllergies) return history.drugAllergies;
     return "NKDA";
   };
 
-  // Get address from medical history (if stored there)
+  // Get address from patient record
   const getAddress = () => {
+    // Use dedicated columns first
+    if (patient.street_address) {
+      const parts = [
+        patient.street_address,
+        patient.city,
+        patient.state,
+        patient.zip_code,
+      ].filter(Boolean);
+      return parts.join(", ") || "Not on file";
+    }
+    // Fallback to medical history for older records
     const history = patient.medical_history;
-    if (!history) return "Not on file";
-    if (history.address) return history.address;
-    if (history.streetAddress) {
+    if (history?.address) return history.address;
+    if (history?.streetAddress) {
       const parts = [
         history.streetAddress,
         history.city,
