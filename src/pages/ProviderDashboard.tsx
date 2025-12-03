@@ -91,12 +91,24 @@ interface PendingActivation {
   status: string;
 }
 
+interface PendingPharmacyPatient {
+  id: string;
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+  onboarding_status: string;
+  lab_path: string | null;
+  updated_at: string | null;
+}
+
 const ProviderDashboard = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [pendingPatients, setPendingPatients] = useState<PatientWithLog[]>([]);
   const [recentCheckIns, setRecentCheckIns] = useState<RecentCheckIn[]>([]);
   const [pendingActivations, setPendingActivations] = useState<PendingActivation[]>([]);
+  const [pendingPharmacy, setPendingPharmacy] = useState<PendingPharmacyPatient[]>([]);
+  const [completingPharmacyId, setCompletingPharmacyId] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<PatientWithLog | null>(null);
   const [patientLogs, setPatientLogs] = useState<SymptomLog[]>([]);
   const [protocols, setProtocols] = useState<Protocol[]>([]);
@@ -347,6 +359,15 @@ const ProviderDashboard = () => {
         .order("sent_at", { ascending: false });
       
       setPendingActivations((activationsData || []) as PendingActivation[]);
+
+      // GAP 2: Load patients pending pharmacy order (payment complete, awaiting meds)
+      const { data: pharmacyData } = await supabase
+        .from("patients")
+        .select("id, full_name, email, phone, onboarding_status, lab_path, updated_at")
+        .eq("onboarding_status", "pending_pharmacy_order")
+        .order("updated_at", { ascending: false });
+      
+      setPendingPharmacy((pharmacyData || []) as PendingPharmacyPatient[]);
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -632,6 +653,35 @@ const ProviderDashboard = () => {
     }
   };
 
+  // GAP 2: Complete pharmacy order - marks patient as treatment_active
+  const handleCompletePharmacyOrder = async (patientId: string) => {
+    setCompletingPharmacyId(patientId);
+    try {
+      const { error } = await supabase
+        .from("patients")
+        .update({ onboarding_status: "treatment_active" })
+        .eq("id", patientId);
+
+      if (error) throw error;
+
+      // Remove from pending list
+      setPendingPharmacy(prev => prev.filter(p => p.id !== patientId));
+      toast.success("Pharmacy order marked complete! Patient is now treatment active.");
+      
+      // Celebrate!
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    } catch (err: any) {
+      console.error("Complete pharmacy error:", err);
+      toast.error(err.message || "Failed to mark pharmacy order complete");
+    } finally {
+      setCompletingPharmacyId(null);
+    }
+  };
+
   const togglePatientSelection = (patientId: string) => {
     setSelectedPatientIds(prev => {
       const newSet = new Set(prev);
@@ -693,10 +743,14 @@ const ProviderDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="triage" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
               Action Needed ({pendingPatients.length})
+            </TabsTrigger>
+            <TabsTrigger value="pharmacy" className="flex items-center gap-2">
+              <Pill className="w-4 h-4" />
+              Pending Pharmacy ({pendingPharmacy.length})
             </TabsTrigger>
             <TabsTrigger value="monitoring" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
@@ -704,7 +758,7 @@ const ProviderDashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="activations" className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Pending Activations ({pendingActivations.length})
+              Activations ({pendingActivations.length})
             </TabsTrigger>
           </TabsList>
 
@@ -813,6 +867,100 @@ const ProviderDashboard = () => {
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          {/* GAP 2: Pending Pharmacy Orders Tab */}
+          <TabsContent value="pharmacy">
+            <Card className="bg-card border-border/50">
+              <CardHeader>
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Pill className="w-4 h-4" />
+                  Patients Awaiting Pharmacy Order
+                </CardTitle>
+                <p className="text-xs text-muted-foreground mt-1">
+                  These patients have paid but need medications ordered via Portal Assistant or Fax
+                </p>
+              </CardHeader>
+              <CardContent>
+                {pendingPharmacy.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Check className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                    <p className="text-muted-foreground">All pharmacy orders complete! No pending actions.</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border/50">
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Contact</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Lab Path</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Paid On</th>
+                          <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pendingPharmacy.map((patient) => {
+                          const paidDate = patient.updated_at ? new Date(patient.updated_at).toLocaleDateString() : "Unknown";
+                          
+                          return (
+                            <tr key={patient.id} className="border-b border-border/30 bg-amber-50/50 dark:bg-amber-950/10">
+                              <td className="py-4 px-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                                    <Pill className="w-5 h-5 text-amber-600" />
+                                  </div>
+                                  <p className="font-medium text-foreground">{patient.full_name}</p>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4">
+                                <div className="space-y-1">
+                                  {patient.email && (
+                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                      <Mail className="w-3 h-3" />
+                                      {patient.email}
+                                    </p>
+                                  )}
+                                  {patient.phone && (
+                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                      <Phone className="w-3 h-3" />
+                                      {patient.phone}
+                                    </p>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-4 px-4">
+                                <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"}>
+                                  {patient.lab_path === "labcorp" ? "LabCorp Required" : "ZRT Kit"}
+                                </Badge>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="text-sm text-muted-foreground">{paidDate}</span>
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleCompletePharmacyOrder(patient.id)}
+                                  disabled={completingPharmacyId === patient.id}
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                >
+                                  {completingPharmacyId === patient.id ? (
+                                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                  ) : (
+                                    <Check className="w-3 h-3 mr-1" />
+                                  )}
+                                  {completingPharmacyId === patient.id ? "Completing..." : "Order Placed"}
+                                </Button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Patient Monitoring Tab */}

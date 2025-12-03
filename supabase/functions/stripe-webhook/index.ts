@@ -44,9 +44,16 @@ const generateWelcomeEmail = (patientName: string) => `
               
               <table width="100%" cellpadding="0" cellspacing="0" style="margin: 20px 0;">
                 <tr>
+                  <td style="padding: 15px 20px; background-color: #fef3c7; border-radius: 6px; border-left: 4px solid #d97706;">
+                    <p style="color: #92400e; font-size: 14px; margin: 0 0 8px; font-weight: 600;">⏳ ZRT Saliva Kit Shipping</p>
+                    <p style="color: #78350f; font-size: 14px; margin: 0;">Your diagnostic kit will ship within 1-2 business days. This is required before we can finalize your prescription.</p>
+                  </td>
+                </tr>
+                <tr><td style="height: 12px;"></td></tr>
+                <tr>
                   <td style="padding: 15px 20px; background-color: #f8f9fa; border-radius: 6px; border-left: 4px solid #2C3E50;">
                     <p style="color: #2C3E50; font-size: 14px; margin: 0 0 8px; font-weight: 600;">✓ Your prescription is being prepared</p>
-                    <p style="color: #718096; font-size: 14px; margin: 0;">Our pharmacy partner will ship your medications within 3-5 business days.</p>
+                    <p style="color: #718096; font-size: 14px; margin: 0;">Once labs are reviewed, our pharmacy partner will ship your medications within 3-5 business days.</p>
                   </td>
                 </tr>
                 <tr><td style="height: 12px;"></td></tr>
@@ -152,11 +159,13 @@ serve(async (req) => {
     // Only process subscription payments (membership activations)
     if (session.mode === "subscription") {
       const customerEmail = session.customer_email || session.customer_details?.email;
+      const metadata = session.metadata || {};
+      const baseMembership = metadata.base_membership || "metabolic";
       
       if (customerEmail) {
-        logStep("Processing subscription activation", { email: customerEmail });
+        logStep("Processing subscription activation", { email: customerEmail, baseMembership });
 
-        // Get activation link to find patient name
+        // Get activation link to find patient name and membership details
         const { data: activationData, error: activationError } = await supabaseClient
           .from("activation_links")
           .update({ 
@@ -173,20 +182,30 @@ serve(async (req) => {
           logStep("Activation links updated", { count: activationData?.length || 0 });
         }
 
-        // Update patient onboarding_status to 'treatment_active'
+        // Determine the membership type from activation link or metadata
+        const membershipType = activationData?.[0]?.base_membership || baseMembership;
+        
+        // GAP 1 & 2 FIX: Set patient to 'pending_pharmacy_order' and ensure lab_path is 'zrt' for ALL memberships
+        // Both GLP-1 (metabolic) and hormone-only (vitality) patients need diagnostic labs
         const { data: patientData, error: patientError } = await supabaseClient
           .from("patients")
-          .update({ onboarding_status: "treatment_active" })
+          .update({ 
+            onboarding_status: "pending_pharmacy_order",  // GAP 2: Lauren sees this and must complete pharmacy order
+            lab_path: "zrt"  // GAP 1: ALL patients get ZRT kit shipped, including GLP-1/metabolic
+          })
           .eq("email", customerEmail)
           .select();
 
         if (patientError) {
           logStep("Error updating patient status", { error: patientError.message });
         } else {
-          logStep("Patient status updated", { count: patientData?.length || 0 });
+          logStep("Patient status updated to pending_pharmacy_order with ZRT lab path", { 
+            count: patientData?.length || 0,
+            membershipType 
+          });
         }
 
-        // Send welcome email
+        // Send welcome email (updated to mention ZRT kit shipping)
         const patientName = activationData?.[0]?.patient_name || patientData?.[0]?.full_name || "Valued Patient";
         
         try {
