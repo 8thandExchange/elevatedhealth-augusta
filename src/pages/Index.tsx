@@ -10,6 +10,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SEOSchema from "@/components/SEOSchema";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 import ChatBot from "@/components/ChatBot";
 import { ServedModal } from "@/components/ServedModal";
@@ -37,6 +38,7 @@ const Index = () => {
       <ChatBot />
       <ServedModal />
       <MobileBookNow />
+      <PWAInstallPrompt />
       <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </div>
   );
