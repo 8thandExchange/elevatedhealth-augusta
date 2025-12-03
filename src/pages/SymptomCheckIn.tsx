@@ -286,12 +286,11 @@ const SymptomCheckIn = () => {
         <div className="flex gap-4">
           <Button
             variant="outline"
-            onClick={handlePrev}
-            disabled={currentIndex === 0}
+            onClick={() => currentIndex === 0 ? navigate("/patient/dashboard") : handlePrev()}
             className="flex-1"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
-            Back
+            {currentIndex === 0 ? "Cancel" : "Back"}
           </Button>
           
           {isLastQuestion ? (
