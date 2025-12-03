@@ -272,14 +272,18 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
               onClick={() => setIsMobileMenuOpen(false)}
             />
             
-            <div className="md:hidden fixed right-0 top-20 bottom-0 w-80 max-w-full bg-white shadow-2xl border-l border-slate-200 animate-slide-in-right z-50">
+            <div 
+              className="md:hidden fixed right-0 top-20 bottom-0 w-80 max-w-full shadow-2xl border-l animate-slide-in-right z-50"
+              style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}
+            >
               {/* Top gradient overlay for depth */}
               <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-slate-100 to-transparent pointer-events-none" />
               <div className="flex flex-col p-8 pt-10">
-                <nav className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6">
                   <button 
                     onClick={() => scrollToSection("hero")} 
-                    className="text-left font-playfair text-2xl text-slate-800 hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                    style={{ color: '#1e293b' }}
                   >
                     Home
                   </button>
@@ -289,7 +293,8 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       navigate(SITE_CONFIG.routes.ketamine);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-playfair text-2xl text-slate-800 hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                    style={{ color: '#1e293b' }}
                   >
                     Ketamine Therapy
                   </button>
@@ -299,7 +304,8 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       navigate(SITE_CONFIG.routes.weightloss);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-playfair text-2xl text-slate-800 hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                    style={{ color: '#1e293b' }}
                   >
                     Weight Loss
                   </button>
@@ -309,7 +315,8 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       navigate(SITE_CONFIG.routes.hormones);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-playfair text-2xl text-slate-800 hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                    style={{ color: '#1e293b' }}
                   >
                     Hormones
                   </button>
@@ -319,13 +326,14 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       scrollToSection("contact");
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-left font-playfair text-2xl text-slate-800 hover:text-primary transition-colors"
+                    className="text-left font-playfair text-2xl hover:opacity-70 transition-opacity"
+                    style={{ color: '#1e293b' }}
                   >
                     Contact
                   </button>
-                </nav>
+                </div>
 
-                <div className="mt-12 pt-8 border-t border-slate-200 space-y-3">
+                <div className="mt-12 pt-8 space-y-3" style={{ borderTop: '1px solid #e2e8f0' }}>
                   <Button 
                     className="w-full font-lato text-sm tracking-wide py-6"
                     onClick={() => {
@@ -340,7 +348,8 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                     <>
                       <Button 
                         variant="outline"
-                        className="w-full font-lato text-sm tracking-wide py-6 border-primary/50 text-primary gap-2 bg-white"
+                        className="w-full font-lato text-sm tracking-wide py-6 gap-2"
+                        style={{ backgroundColor: '#ffffff', borderColor: '#94a3b8', color: '#2C3E50' }}
                         onClick={() => {
                           navigate("/patient/dashboard");
                           setIsMobileMenuOpen(false);
@@ -351,7 +360,8 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                       </Button>
                       <Button 
                         variant="outline"
-                        className="w-full font-lato text-sm tracking-wide py-6 border-slate-300 text-slate-600 gap-2 bg-white"
+                        className="w-full font-lato text-sm tracking-wide py-6 gap-2"
+                        style={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', color: '#475569' }}
                         onClick={() => {
                           navigate("/patient/intake");
                           setIsMobileMenuOpen(false);
@@ -375,7 +385,8 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                   ) : (
                     <Button 
                       variant="outline"
-                      className="w-full font-lato text-sm tracking-wide py-6 border-primary/50 text-primary bg-white"
+                      className="w-full font-lato text-sm tracking-wide py-6"
+                      style={{ backgroundColor: '#ffffff', borderColor: '#94a3b8', color: '#2C3E50' }}
                       onClick={() => {
                         navigate("/patient/login");
                         setIsMobileMenuOpen(false);
@@ -385,7 +396,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                     </Button>
                   )}
                   
-                  <p className="mt-6 text-sm text-slate-500 font-lato">
+                  <p className="mt-6 text-sm font-lato" style={{ color: '#64748b' }}>
                     {SITE_CONFIG.phone}
                   </p>
                 </div>
