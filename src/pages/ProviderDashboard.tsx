@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square, UserPlus } from "lucide-react";
+import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square, UserPlus, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
@@ -38,6 +38,7 @@ interface Patient {
   state?: string | null;
   zip_code?: string | null;
   allergies?: string | null;
+  onboarding_status?: string;
 }
 
 interface SymptomLog {
@@ -132,6 +133,7 @@ const ProviderDashboard = () => {
   const [editPhone, setEditPhone] = useState("");
   const [editEmail, setEditEmail] = useState("");
   const [isSavingContact, setIsSavingContact] = useState(false);
+  const [isMarkingLabsReviewed, setIsMarkingLabsReviewed] = useState(false);
 
   // Provider lookup based on email - expand this as you add more providers
   const getProviderInfo = (email: string) => {
@@ -457,6 +459,40 @@ const ProviderDashboard = () => {
       toast.error(err.message || "Failed to save contact info");
     } finally {
       setIsSavingContact(false);
+    }
+  };
+
+  const handleMarkLabsReviewed = async () => {
+    if (!selectedPatient) return;
+    
+    setIsMarkingLabsReviewed(true);
+    try {
+      const { error } = await supabase
+        .from("patients")
+        .update({ 
+          onboarding_status: "labs_reviewed",
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", selectedPatient.patient.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setSelectedPatient({
+        ...selectedPatient,
+        patient: {
+          ...selectedPatient.patient,
+          onboarding_status: "labs_reviewed",
+        }
+      });
+
+      toast.success(`Labs marked as reviewed for ${selectedPatient.patient.full_name}. Health Report is now unlocked!`);
+      await loadData();
+    } catch (err: any) {
+      console.error("Error marking labs reviewed:", err);
+      toast.error(err.message || "Failed to mark labs as reviewed");
+    } finally {
+      setIsMarkingLabsReviewed(false);
     }
   };
 
@@ -1413,6 +1449,54 @@ const ProviderDashboard = () => {
                   cortisol: selectedPatient.latestLog.cortisol_score || 0,
                 } : undefined}
               />
+
+              {/* Mark Labs Reviewed Button */}
+              {selectedPatient.patient.onboarding_status && 
+               !["labs_reviewed", "protocol_approved", "treatment_active", "pending_pharmacy_order"].includes(selectedPatient.patient.onboarding_status) && (
+                <Card className="border-primary/30 bg-primary/5">
+                  <CardContent className="pt-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-primary" />
+                        <span className="font-medium">Lab Results Review</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Once you've reviewed the patient's lab results, mark them as reviewed to unlock their Health Report.
+                      </p>
+                      <Button
+                        onClick={handleMarkLabsReviewed}
+                        disabled={isMarkingLabsReviewed}
+                        className="w-full"
+                      >
+                        {isMarkingLabsReviewed ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Check className="w-4 h-4 mr-2" />
+                        )}
+                        {isMarkingLabsReviewed ? "Updating..." : "Mark Labs Reviewed"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Labs Reviewed Badge */}
+              {selectedPatient.patient.onboarding_status && 
+               ["labs_reviewed", "protocol_approved", "treatment_active", "pending_pharmacy_order"].includes(selectedPatient.patient.onboarding_status) && (
+                <Card className="border-green-500/30 bg-green-50/50 dark:bg-green-950/20">
+                  <CardContent className="pt-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                        <Check className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-green-700 dark:text-green-400">Labs Reviewed</p>
+                        <p className="text-sm text-green-600 dark:text-green-300">Patient's Health Report is unlocked</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Hormone Protocol Pricing Add-On Selector */}
               <HormoneAddonSelector
