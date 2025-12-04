@@ -72,7 +72,12 @@ CONVERSATION GUIDELINES:
 - Always offer to help them book a free discovery call
 - If you don't know something, say so and offer to have the team follow up
 - Keep responses concise for voice—2-3 sentences max unless they want details
-- Collect their name and phone number naturally when appropriate for follow-up
+
+LEAD CAPTURE - CRITICAL:
+- When a caller shows genuine interest in services (asks about pricing, process, appointments, or wants to be contacted), use the capture_lead tool to save their information
+- Naturally ask for their name, phone number, and/or email during the conversation
+- Before ending meaningful conversations, try to capture at least a name and phone/email
+- When you capture their info, confirm it back to them and let them know the team will follow up
 
 INSURANCE INFO:
 - Ketamine/SPRAVATO: Often covered—we accept Blue Cross Blue Shield, TRICARE, and others
@@ -81,7 +86,42 @@ INSURANCE INFO:
 BOOKING:
 When they're ready to book, direct them to schedule a free 15-minute discovery call. You can say something like: "I'd love to connect you with our team. Can I get your name and phone number so we can reach out, or would you prefer to book online?"
 
-IMPORTANT: You are a helpful assistant, not a doctor. Never diagnose or prescribe. Always recommend they speak with our medical team for personalized advice.`
+IMPORTANT: You are a helpful assistant, not a doctor. Never diagnose or prescribe. Always recommend they speak with our medical team for personalized advice.`,
+        tools: [
+          {
+            type: "function",
+            name: "capture_lead",
+            description: "Capture a potential patient's contact information when they express interest in services or want to be contacted by the clinic. Call this when you have gathered their name, phone, or email.",
+            parameters: {
+              type: "object",
+              properties: {
+                name: { 
+                  type: "string", 
+                  description: "The caller's full name" 
+                },
+                phone: { 
+                  type: "string", 
+                  description: "The caller's phone number" 
+                },
+                email: { 
+                  type: "string", 
+                  description: "The caller's email address" 
+                },
+                interest: { 
+                  type: "string", 
+                  enum: ["ketamine", "hormone", "weight_loss", "peptides", "general"],
+                  description: "The primary service the caller is interested in" 
+                },
+                notes: {
+                  type: "string",
+                  description: "Brief summary of what the caller mentioned or their situation"
+                }
+              },
+              required: ["interest"]
+            }
+          }
+        ],
+        tool_choice: "auto"
       }),
     });
 
@@ -92,7 +132,7 @@ IMPORTANT: You are a helpful assistant, not a doctor. Never diagnose or prescrib
     }
 
     const data = await response.json();
-    console.log("Voice session created successfully");
+    console.log("Voice session created successfully with lead capture tool");
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

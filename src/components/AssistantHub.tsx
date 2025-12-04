@@ -200,6 +200,14 @@ const AssistantHub = () => {
           if (!speaking) {
             setVoiceTranscript("");
           }
+        },
+        (lead) => {
+          // Lead was captured via voice
+          console.log("Voice lead captured:", lead);
+          toast({
+            title: "Contact Info Saved",
+            description: `${lead.name ? `Thanks ${lead.name}! ` : ''}Our team will follow up soon.`,
+          });
         }
       );
 
