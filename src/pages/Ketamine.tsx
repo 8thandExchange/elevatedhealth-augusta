@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useState } from "react";
 import ConsultationModal from "@/components/ConsultationModal";
+import AssistantHub from "@/components/AssistantHub";
 
 const Ketamine = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -349,6 +350,7 @@ const Ketamine = () => {
         </main>
 
         <Footer />
+        <AssistantHub />
         <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
       </div>
     </>
