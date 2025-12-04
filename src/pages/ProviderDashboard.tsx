@@ -35,6 +35,7 @@ import ProviderInbox from "@/components/chat/ProviderInbox";
 import KitStatusAdmin from "@/components/provider/KitStatusAdmin";
 import ResourceManager from "@/components/provider/ResourceManager";
 import IVKetamineBilling from "@/components/provider/IVKetamineBilling";
+import { InviteProviderModal } from "@/components/provider/InviteProviderModal";
 
 interface Patient {
   id: string;
@@ -159,6 +160,8 @@ const ProviderDashboard = () => {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [showArchivedPatients, setShowArchivedPatients] = useState(false);
+  // Provider invite modal state
+  const [isInviteProviderOpen, setIsInviteProviderOpen] = useState(false);
   // Kit tracking state
   const [selectedPatientKit, setSelectedPatientKit] = useState<{
     id: string;
@@ -917,9 +920,28 @@ const ProviderDashboard = () => {
 
           {/* Triage Tab */}
           <TabsContent value="triage">
-            {/* Invite Patient Card - Always visible at top */}
-            <div className="mb-6">
-              <InvitePatientCard onInviteSent={() => loadData()} />
+            {/* Invite Cards - Patient + Provider (Admin only) */}
+            <div className="mb-6 flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <InvitePatientCard onInviteSent={() => loadData()} />
+              </div>
+              {providerInfo.role === "provider" && (
+                <Card className="sm:w-72 bg-card border-border/50">
+                  <CardContent className="pt-6">
+                    <Button 
+                      onClick={() => setIsInviteProviderOpen(true)}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Invite Provider / Staff
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-2 text-center">
+                      Send setup email to new team members
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
             
             {/* Archive Toggle */}
@@ -1957,6 +1979,12 @@ const ProviderDashboard = () => {
           </div>
         </>
       )}
+
+      {/* Invite Provider Modal */}
+      <InviteProviderModal
+        open={isInviteProviderOpen}
+        onOpenChange={setIsInviteProviderOpen}
+      />
     </div>
   );
 };

@@ -68,3 +68,6 @@ verify_jwt = false
 
 [functions.create-iv-ketamine-checkout]
 verify_jwt = false
+
+[functions.send-provider-invite]
+verify_jwt = false
