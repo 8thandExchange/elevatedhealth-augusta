@@ -73,6 +73,45 @@ export type Database = {
           },
         ]
       }
+      chat_leads: {
+        Row: {
+          chat_summary: string | null
+          created_at: string
+          email: string | null
+          id: string
+          interest: string | null
+          name: string | null
+          phone: string | null
+          source: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          chat_summary?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          interest?: string | null
+          name?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          chat_summary?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          interest?: string | null
+          name?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clinic_settings: {
         Row: {
           description: string | null
