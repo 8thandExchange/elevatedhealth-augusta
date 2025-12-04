@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
+import AssistantHub from "@/components/AssistantHub";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
 // Custom elegant line icons in gold
@@ -257,6 +258,7 @@ const PeptideTherapy = () => {
         </main>
 
         <Footer />
+        <AssistantHub />
       </div>
 
       <ConsultationModal isOpen={isConsultOpen} onClose={() => setIsConsultOpen(false)} />

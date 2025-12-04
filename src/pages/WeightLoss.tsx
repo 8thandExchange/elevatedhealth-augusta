@@ -11,6 +11,7 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Helmet } from "react-helmet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { trackEvent } from "@/lib/analytics";
+import AssistantHub from "@/components/AssistantHub";
 
 const WeightLoss = () => {
   const scrollToBooking = () => {
@@ -491,6 +492,7 @@ const WeightLoss = () => {
         </main>
 
         <Footer />
+        <AssistantHub />
       </div>
     </>
   );
