@@ -403,7 +403,7 @@ const HormonesMen = () => {
                       <h3 className="text-xl font-bold mb-2">The Discovery Call</h3>
                       <div className="text-3xl font-bold text-primary mb-4">Complimentary</div>
                       <p className="text-sm text-muted-foreground mb-6">
-                        A 15-minute phone consultation to discuss your goals and determine if you are a candidate for testosterone optimization.
+                        A 30-minute phone consultation to discuss your goals and determine if you are a candidate for testosterone optimization.
                       </p>
                       <Button 
                         onClick={scrollToBooking}
