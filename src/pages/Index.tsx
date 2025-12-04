@@ -11,10 +11,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import SEOSchema from "@/components/SEOSchema";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
-
-import ChatBot from "@/components/ChatBot";
-
-import MobileBookNow from "@/components/MobileBookNow";
+import AssistantHub from "@/components/AssistantHub";
 import { useState } from "react";
 
 const Index = () => {
@@ -35,9 +32,7 @@ const Index = () => {
         <Contact onOpenBooking={() => setIsBookingOpen(true)} />
       </main>
       <Footer />
-      <ChatBot />
-      
-      <MobileBookNow />
+      <AssistantHub />
       <PWAInstallPrompt />
       <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </div>
