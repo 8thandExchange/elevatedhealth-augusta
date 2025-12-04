@@ -6,10 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square, UserPlus, FileText, MessageCircle, Ban } from "lucide-react";
+import { Loader2, AlertTriangle, Check, User, TrendingUp, TrendingDown, X, Send, ShieldCheck, ShieldAlert, TestTube, Droplet, Activity, MessageSquare, Pill, Phone, Mail, Save, Clock, CreditCard, RotateCcw, CheckSquare, Square, UserPlus, FileText, MessageCircle, Ban, Archive, Trash2, ArchiveRestore } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import confetti from "canvas-confetti";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
 import ZRTRequisitionGenerator from "@/components/provider/ZRTRequisitionGenerator";
@@ -44,6 +55,7 @@ interface Patient {
   zip_code?: string | null;
   allergies?: string | null;
   onboarding_status?: string;
+  is_archived?: boolean;
 }
 
 interface SymptomLog {
@@ -130,9 +142,10 @@ const ProviderDashboard = () => {
   const [renewingPatientId, setRenewingPatientId] = useState<string | null>(null);
   const [resendingActivationId, setResendingActivationId] = useState<string | null>(null);
   const [selectedPatientIds, setSelectedPatientIds] = useState<Set<string>>(new Set());
-  const [providerInfo, setProviderInfo] = useState<{ name: string; credentials: string }>({
+  const [providerInfo, setProviderInfo] = useState<{ name: string; credentials: string; role: string }>({
     name: "Provider",
-    credentials: "NP-C"
+    credentials: "NP-C",
+    role: "provider"
   });
   // Contact info editing state
   const [editPhone, setEditPhone] = useState("");
@@ -140,6 +153,12 @@ const ProviderDashboard = () => {
   const [isSavingContact, setIsSavingContact] = useState(false);
   const [isMarkingLabsReviewed, setIsMarkingLabsReviewed] = useState(false);
   const [isFlaggingNoShow, setIsFlaggingNoShow] = useState(false);
+  // Archive/Delete state
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showArchivedPatients, setShowArchivedPatients] = useState(false);
   // Kit tracking state
   const [selectedPatientKit, setSelectedPatientKit] = useState<{
     id: string;
@@ -150,12 +169,17 @@ const ProviderDashboard = () => {
 
   // Provider lookup based on email - expand this as you add more providers
   const getProviderInfo = (email: string) => {
-    const providers: Record<string, { name: string; credentials: string }> = {
-      "admin@elevatedhealthaugusta.com": { name: "Lauren Bursey", credentials: "NP-C" },
-      "lauren@elevatedhealthaugusta.com": { name: "Lauren Bursey", credentials: "NP-C" },
-      // Add more providers here as needed
+    const providers: Record<string, { name: string; credentials: string; role: string }> = {
+      // Providers
+      "admin@elevatedhealthaugusta.com": { name: "Lauren Bursey", credentials: "FNP-C", role: "provider" },
+      "lauren@elevatedhealthaugusta.com": { name: "Lauren Bursey", credentials: "FNP-C", role: "provider" },
+      "troy.w.akers@gmail.com": { name: "Troy Akers", credentials: "DO", role: "provider" },
+      "mmbursey@gmail.com": { name: "Michael Bursey", credentials: "DO", role: "provider" },
+      "drdwmd@pmrehab.net": { name: "Dennis Williams", credentials: "MD", role: "provider" },
+      // Office Staff
+      "kcovington@pmrehab.net": { name: "Kristen Covington", credentials: "", role: "office_manager" },
     };
-    return providers[email.toLowerCase()] || { name: email.split("@")[0], credentials: "Provider" };
+    return providers[email.toLowerCase()] || { name: email.split("@")[0], credentials: "Provider", role: "staff" };
   };
 
   useEffect(() => {
@@ -521,6 +545,63 @@ const ProviderDashboard = () => {
     }
   };
 
+  const handleArchivePatient = async () => {
+    if (!selectedPatient) return;
+    
+    setIsArchiving(true);
+    try {
+      const newArchiveStatus = !selectedPatient.patient.is_archived;
+      const { error } = await supabase
+        .from("patients")
+        .update({ 
+          is_archived: newArchiveStatus,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", selectedPatient.patient.id);
+
+      if (error) throw error;
+
+      toast.success(newArchiveStatus 
+        ? `${selectedPatient.patient.full_name} moved to archived patients` 
+        : `${selectedPatient.patient.full_name} restored to active patients`
+      );
+      setIsPanelOpen(false);
+      setSelectedPatient(null);
+      await loadData();
+    } catch (err: any) {
+      console.error("Error archiving patient:", err);
+      toast.error(err.message || "Failed to archive patient");
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const handleDeletePatient = async () => {
+    if (!selectedPatient || deleteConfirmText !== "DELETE") return;
+    
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("patients")
+        .delete()
+        .eq("id", selectedPatient.patient.id);
+
+      if (error) throw error;
+
+      toast.success(`${selectedPatient.patient.full_name} permanently deleted`);
+      setIsDeleteModalOpen(false);
+      setDeleteConfirmText("");
+      setIsPanelOpen(false);
+      setSelectedPatient(null);
+      await loadData();
+    } catch (err: any) {
+      console.error("Error deleting patient:", err);
+      toast.error(err.message || "Failed to delete patient");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const authorizeAndSendOrder = async () => {
     if (!selectedPatient || !recommendedProtocol) return;
 
@@ -795,7 +876,7 @@ const ProviderDashboard = () => {
     <div className="min-h-screen bg-background">
       <AdminNavbar 
         title="Triage Dashboard" 
-        subtitle="Lauren's Command Center"
+        subtitle={`${providerInfo.name}'s Command Center`}
         onRefresh={async () => {
           setIsRefreshing(true);
           await loadData();
@@ -810,7 +891,7 @@ const ProviderDashboard = () => {
           <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="triage" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
-              <span className="hidden sm:inline">Action Needed</span> ({pendingPatients.length})
+              <span className="hidden sm:inline">Action Needed</span> ({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})
             </TabsTrigger>
             <TabsTrigger value="pharmacy" className="flex items-center gap-2">
               <Pill className="w-4 h-4" />
@@ -841,11 +922,26 @@ const ProviderDashboard = () => {
               <InvitePatientCard onInviteSent={() => loadData()} />
             </div>
             
-            {pendingPatients.length === 0 ? (
+            {/* Archive Toggle */}
+            <div className="flex items-center justify-end mb-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowArchivedPatients(!showArchivedPatients)}
+                className={showArchivedPatients ? "text-amber-600" : "text-muted-foreground"}
+              >
+                <Archive className="w-4 h-4 mr-2" />
+                {showArchivedPatients ? "Showing Archived" : "Show Archived"}
+              </Button>
+            </div>
+            
+            {pendingPatients.filter(p => showArchivedPatients ? true : !p.patient.is_archived).length === 0 ? (
               <Card className="bg-card border-border/50">
                 <CardContent className="pt-6 text-center">
                   <ShieldCheck className="w-12 h-12 mx-auto mb-2 text-green-500" />
-                  <p className="text-muted-foreground">All caught up! No pending reviews.</p>
+                  <p className="text-muted-foreground">
+                    {showArchivedPatients ? "No archived patients." : "All caught up! No pending reviews."}
+                  </p>
                 </CardContent>
               </Card>
             ) : (
@@ -888,12 +984,14 @@ const ProviderDashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {pendingPatients.map((p) => (
+                      {pendingPatients
+                        .filter(p => showArchivedPatients ? true : !p.patient.is_archived)
+                        .map((p) => (
                         <tr 
                           key={p.patient.id} 
                           className={`border-b border-border/30 hover:bg-muted/30 cursor-pointer ${
                             p.riskLevel === "red" ? "bg-red-50/50 dark:bg-red-950/10" : ""
-                          } ${selectedPatientIds.has(p.patient.id) ? "bg-primary/5" : ""}`}
+                          } ${p.patient.is_archived ? "opacity-60" : ""} ${selectedPatientIds.has(p.patient.id) ? "bg-primary/5" : ""}`}
                         >
                           <td className="py-4 px-4">
                             <button
@@ -916,7 +1014,14 @@ const ProviderDashboard = () => {
                                 <User className="w-5 h-5 text-primary" />
                               </div>
                               <div>
-                                <p className="font-medium text-foreground">{p.patient.full_name}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-medium text-foreground">{p.patient.full_name}</p>
+                                  {p.patient.is_archived && (
+                                    <Badge variant="outline" className="text-xs bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400">
+                                      Archived
+                                    </Badge>
+                                  )}
+                                </div>
                                 {p.patient.safety_flags?.length > 0 && (
                                   <p className="text-xs text-red-500 flex items-center gap-1">
                                     <ShieldAlert className="w-3 h-3" />
@@ -1678,6 +1783,95 @@ const ProviderDashboard = () => {
                   ? "Already Flagged - Fee Required" 
                   : "Flag as Late Cancel / No-Show"}
               </Button>
+
+              {/* Archive Patient Button */}
+              <Button
+                variant="outline"
+                onClick={handleArchivePatient}
+                disabled={isArchiving}
+                className={`w-full ${
+                  selectedPatient.patient.is_archived 
+                    ? "border-green-500/30 text-green-600 hover:bg-green-50 dark:hover:bg-green-950/20" 
+                    : "border-amber-500/30 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+                }`}
+              >
+                {isArchiving ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : selectedPatient.patient.is_archived ? (
+                  <ArchiveRestore className="w-4 h-4 mr-2" />
+                ) : (
+                  <Archive className="w-4 h-4 mr-2" />
+                )}
+                {isArchiving 
+                  ? "Processing..." 
+                  : selectedPatient.patient.is_archived 
+                    ? "Restore to Active" 
+                    : "Archive Patient"}
+              </Button>
+
+              {/* Delete Patient Button */}
+              <Button
+                variant="outline"
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="w-full border-red-600/50 text-red-600 hover:bg-red-100 dark:hover:bg-red-950/30"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Permanently Delete Patient
+              </Button>
+
+              {/* Delete Confirmation Modal */}
+              <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-red-600 flex items-center gap-2">
+                      <Trash2 className="w-5 h-5" />
+                      Delete Patient Permanently
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="space-y-4">
+                      <p>
+                        You are about to permanently delete <strong>{selectedPatient.patient.full_name}</strong> and all associated records. This action cannot be undone.
+                      </p>
+                      <div className="space-y-2">
+                        <Label htmlFor="deleteConfirm" className="text-sm font-medium">
+                          Type <span className="font-mono font-bold text-red-600">DELETE</span> to confirm:
+                        </Label>
+                        <Input
+                          id="deleteConfirm"
+                          value={deleteConfirmText}
+                          onChange={(e) => setDeleteConfirmText(e.target.value)}
+                          placeholder="Type DELETE to confirm"
+                          className="font-mono"
+                        />
+                      </div>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => {
+                      setDeleteConfirmText("");
+                      setIsDeleteModalOpen(false);
+                    }}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <Button
+                      variant="destructive"
+                      onClick={handleDeletePatient}
+                      disabled={deleteConfirmText !== "DELETE" || isDeleting}
+                    >
+                      {isDeleting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Deleting...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete Forever
+                        </>
+                      )}
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
               {/* Edit Patient Profile Modal */}
               <EditPatientProfileModal
