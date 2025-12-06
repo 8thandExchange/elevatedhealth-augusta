@@ -48,11 +48,21 @@ const NewLabResultModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [collectionDate, setCollectionDate] = useState(new Date().toISOString().split('T')[0]);
   
-  // Hormone Labs
+  // Lab Source Toggle
+  const [labSource, setLabSource] = useState<"zrt" | "labcorp">("zrt");
+  
+  // Hormone Labs (ZRT Saliva)
   const [estradiol, setEstradiol] = useState("");
   const [progesterone, setProgesterone] = useState("");
   const [testosterone, setTestosterone] = useState("");
   const [cortisol, setCortisol] = useState("");
+  
+  // Labcorp Blood Labs
+  const [hematocrit, setHematocrit] = useState("");
+  const [psa, setPsa] = useState("");
+  const [alt, setAlt] = useState("");
+  const [ast, setAst] = useState("");
+  const [labcorpA1c, setLabcorpA1c] = useState("");
   
   // Metabolic Labs (ZRT Weight Management Profile)
   const [hba1c, setHba1c] = useState("");
@@ -67,6 +77,9 @@ const NewLabResultModal = ({
   
   const [recommendations, setRecommendations] = useState<ProtocolRecommendation[]>([]);
   const [recommendation, setRecommendation] = useState<ProtocolRecommendation | null>(null);
+  
+  // Labcorp Safety Alerts
+  const [labcorpAlerts, setLabcorpAlerts] = useState<ProtocolRecommendation[]>([]);
 
   // Weight Loss Hormone Blocker Logic
   const getWeightLossBlockers = (
@@ -110,6 +123,71 @@ const NewLabResultModal = ({
     }
 
     return blockers;
+  };
+
+  // Labcorp Blood Safety Alerts
+  const getLabcorpSafetyAlerts = (
+    hct: number | null,
+    psaVal: number | null,
+    altVal: number | null,
+    astVal: number | null,
+    a1cVal: number | null
+  ): ProtocolRecommendation[] => {
+    const alerts: ProtocolRecommendation[] = [];
+
+    // Hematocrit > 52% = Polycythemia Risk
+    if (hct !== null && hct > 52) {
+      alerts.push({
+        title: "🚨 Polycythemia Risk",
+        protocol: "HOLD Testosterone Therapy",
+        dose: "Consider therapeutic phlebotomy if Hct > 54%",
+        reason: `Hematocrit at ${hct}% is elevated (normal: 38-50%). Risk of blood clots. Hold testosterone until resolved.`,
+        severity: "critical"
+      });
+    }
+
+    // PSA > 4.0 = Prostate Risk
+    if (psaVal !== null && psaVal > 4.0) {
+      alerts.push({
+        title: "🚨 Prostate Risk",
+        protocol: "Refer to Urology",
+        dose: "Hold testosterone pending urology clearance",
+        reason: `PSA at ${psaVal} ng/mL exceeds safety threshold (normal: <4.0 ng/mL). Requires urological evaluation before testosterone therapy.`,
+        severity: "critical"
+      });
+    }
+
+    // ALT or AST > 40 = Liver function warning
+    if ((altVal !== null && altVal > 40) || (astVal !== null && astVal > 40)) {
+      alerts.push({
+        title: "⚠️ Elevated Liver Enzymes",
+        protocol: "Monitor Liver Function",
+        dose: "Recheck LFTs in 4-6 weeks",
+        reason: `ALT: ${altVal || 'N/A'} U/L, AST: ${astVal || 'N/A'} U/L. Values above 40 U/L warrant monitoring. Consider hepatology referral if persistent.`,
+        severity: "warning"
+      });
+    }
+
+    // A1c > 6.5 = Diabetes
+    if (a1cVal !== null && a1cVal >= 6.5) {
+      alerts.push({
+        title: "⚠️ Diabetes Indicated",
+        protocol: "GLP-1 Therapy Recommended",
+        dose: "Consider Semaglutide or Tirzepatide",
+        reason: `HbA1c at ${a1cVal}% indicates diabetes (≥6.5%). GLP-1 therapy strongly recommended.`,
+        severity: a1cVal >= 7.0 ? "critical" : "warning"
+      });
+    } else if (a1cVal !== null && a1cVal >= 5.7) {
+      alerts.push({
+        title: "⚠️ Pre-Diabetes",
+        protocol: "Metabolic Optimization",
+        dose: "Lifestyle intervention + consider GLP-1",
+        reason: `HbA1c at ${a1cVal}% indicates pre-diabetes (5.7-6.4%).`,
+        severity: "warning"
+      });
+    }
+
+    return alerts;
   };
 
   const getProtocolRecommendation = (
@@ -225,41 +303,75 @@ const NewLabResultModal = ({
     setIsSubmitting(true);
 
     try {
-      const e2Value = estradiol ? parseFloat(estradiol) : null;
-      const pgValue = progesterone ? parseFloat(progesterone) : null;
-      const tValue = testosterone ? parseFloat(testosterone) : null;
-      const cortisolValue = cortisol ? parseFloat(cortisol) : null;
-
-      // Check for correlations
-      const correlationAlert = getCorrelationAlert(e2Value, pgValue, tValue);
-
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Insert lab result
-      const { error } = await supabase.from("lab_results").insert({
-        patient_id: patientId,
-        collection_date: collectionDate,
-        estradiol_e2: e2Value,
-        progesterone_pg: pgValue,
-        testosterone_t: tValue,
-        cortisol_morning: cortisolValue,
-        correlation_alert: correlationAlert,
-        created_by: user?.id
-      });
+      if (labSource === "labcorp") {
+        // Labcorp Blood Labs
+        const hctValue = hematocrit ? parseFloat(hematocrit) : null;
+        const psaValue = psa ? parseFloat(psa) : null;
+        const altValue = alt ? parseFloat(alt) : null;
+        const astValue = ast ? parseFloat(ast) : null;
+        const a1cValue = labcorpA1c ? parseFloat(labcorpA1c) : null;
 
-      if (error) throw error;
+        // Get safety alerts
+        const alerts = getLabcorpSafetyAlerts(hctValue, psaValue, altValue, astValue, a1cValue);
 
-      // Check for protocol recommendation
-      const rec = getProtocolRecommendation(e2Value, tValue);
-      if (rec) {
-        setRecommendation(rec);
-        toast.success("Lab results saved!", {
-          description: "Protocol recommendation generated."
+        const labcorpNotes = `Labcorp Blood Panel: Hematocrit=${hctValue || 'N/A'}%, PSA=${psaValue || 'N/A'} ng/mL, ALT=${altValue || 'N/A'} U/L, AST=${astValue || 'N/A'} U/L, A1c=${a1cValue || 'N/A'}%`;
+
+        const { error } = await supabase.from("lab_results").insert({
+          patient_id: patientId,
+          collection_date: collectionDate,
+          notes: labcorpNotes,
+          correlation_alert: alerts.length > 0 ? alerts.map(a => a.title).join("; ") : null,
+          created_by: user?.id
         });
+
+        if (error) throw error;
+
+        if (alerts.length > 0) {
+          setLabcorpAlerts(alerts);
+          toast.success("Labcorp labs saved!", {
+            description: `${alerts.length} safety alert(s) detected.`
+          });
+        } else {
+          toast.success("Labcorp labs saved. All values within normal range!");
+          resetAndClose();
+        }
       } else {
-        toast.success("Lab results saved successfully!");
-        resetAndClose();
+        // ZRT Saliva Labs (existing logic)
+        const e2Value = estradiol ? parseFloat(estradiol) : null;
+        const pgValue = progesterone ? parseFloat(progesterone) : null;
+        const tValue = testosterone ? parseFloat(testosterone) : null;
+        const cortisolValue = cortisol ? parseFloat(cortisol) : null;
+
+        // Check for correlations
+        const correlationAlert = getCorrelationAlert(e2Value, pgValue, tValue);
+
+        // Insert lab result
+        const { error } = await supabase.from("lab_results").insert({
+          patient_id: patientId,
+          collection_date: collectionDate,
+          estradiol_e2: e2Value,
+          progesterone_pg: pgValue,
+          testosterone_t: tValue,
+          cortisol_morning: cortisolValue,
+          correlation_alert: correlationAlert,
+          created_by: user?.id
+        });
+
+        if (error) throw error;
+
+        // Check for protocol recommendation
+        const rec = getProtocolRecommendation(e2Value, tValue);
+        if (rec) {
+          setRecommendation(rec);
+          toast.success("Lab results saved!", {
+            description: "Protocol recommendation generated."
+          });
+        } else {
+          toast.success("Lab results saved successfully!");
+          resetAndClose();
+        }
       }
 
       onSaved();
@@ -372,11 +484,19 @@ const NewLabResultModal = ({
 
   const resetAndClose = () => {
     setActiveTab("hormone");
+    setLabSource("zrt");
     setCollectionDate(new Date().toISOString().split('T')[0]);
     setEstradiol("");
     setProgesterone("");
     setTestosterone("");
     setCortisol("");
+    // Labcorp fields
+    setHematocrit("");
+    setPsa("");
+    setAlt("");
+    setAst("");
+    setLabcorpA1c("");
+    // Metabolic fields
     setHba1c("");
     setFastingInsulin("");
     setMetabolicCortisol("");
@@ -386,6 +506,7 @@ const NewLabResultModal = ({
     setWlTestosterone("");
     setRecommendation(null);
     setRecommendations([]);
+    setLabcorpAlerts([]);
     onClose();
   };
 
@@ -403,7 +524,7 @@ const NewLabResultModal = ({
         </DialogHeader>
 
         {/* Show recommendations if any */}
-        {(recommendation || recommendations.length > 0) ? (
+        {(recommendation || recommendations.length > 0 || labcorpAlerts.length > 0) ? (
           <div className="space-y-4">
             {/* Hormone Recommendation */}
             {recommendation && (
@@ -421,6 +542,37 @@ const NewLabResultModal = ({
                 </div>
               </div>
             )}
+
+            {/* Labcorp Safety Alerts */}
+            {labcorpAlerts.map((alert, index) => (
+              <div 
+                key={`labcorp-${index}`}
+                className={`border rounded-lg p-4 ${
+                  alert.severity === "critical" 
+                    ? "bg-destructive/5 border-destructive/30" 
+                    : "bg-amber-50 dark:bg-amber-950/20 border-amber-500/30"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <AlertCircle className={`w-5 h-5 shrink-0 mt-0.5 ${
+                    alert.severity === "critical" ? "text-destructive" : "text-amber-600"
+                  }`} />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold text-foreground">{alert.title}</h4>
+                      {alert.severity === "critical" && (
+                        <Badge variant="destructive" className="text-xs">Critical</Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{alert.reason}</p>
+                    <div className="mt-3 p-3 bg-card rounded border border-border">
+                      <p className="text-sm font-medium text-foreground">{alert.protocol}</p>
+                      <p className="text-sm text-primary mt-1">{alert.dose}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
 
             {/* Metabolic Recommendations */}
             {recommendations.map((rec, index) => (
@@ -496,83 +648,223 @@ const NewLabResultModal = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="estradiol">Estradiol (E2)</Label>
-                    <div className="relative">
-                      <Input
-                        id="estradiol"
-                        type="number"
-                        step="0.1"
-                        placeholder="0.0"
-                        value={estradiol}
-                        onChange={(e) => setEstradiol(e.target.value)}
-                        className="pr-14"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
-                        pg/mL
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">Optimal: 2-4</p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="progesterone">Progesterone (Pg)</Label>
-                    <div className="relative">
-                      <Input
-                        id="progesterone"
-                        type="number"
-                        step="1"
-                        placeholder="0"
-                        value={progesterone}
-                        onChange={(e) => setProgesterone(e.target.value)}
-                        className="pr-14"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
-                        pg/mL
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">Range: 0-500</p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="testosterone">Testosterone (T)</Label>
-                    <div className="relative">
-                      <Input
-                        id="testosterone"
-                        type="number"
-                        step="0.1"
-                        placeholder="0.0"
-                        value={testosterone}
-                        onChange={(e) => setTestosterone(e.target.value)}
-                        className="pr-14"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
-                        ng/dL
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">Optimal: 30-45</p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="cortisol">Cortisol (AM)</Label>
-                    <div className="relative">
-                      <Input
-                        id="cortisol"
-                        type="number"
-                        step="0.1"
-                        placeholder="0.0"
-                        value={cortisol}
-                        onChange={(e) => setCortisol(e.target.value)}
-                        className="pr-14"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
-                        μg/dL
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">Morning value</p>
+                {/* Lab Source Toggle */}
+                <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
+                  <Label className="text-sm font-medium">Lab Source:</Label>
+                  <div className="flex gap-1 bg-background rounded-lg p-1">
+                    <button
+                      type="button"
+                      onClick={() => setLabSource("zrt")}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                        labSource === "zrt"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      ZRT (Saliva)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLabSource("labcorp")}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                        labSource === "labcorp"
+                          ? "bg-amber-600 text-white"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Labcorp (Blood)
+                    </button>
                   </div>
                 </div>
+
+                {/* ZRT Saliva Fields */}
+                {labSource === "zrt" && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="estradiol">Estradiol (E2)</Label>
+                      <div className="relative">
+                        <Input
+                          id="estradiol"
+                          type="number"
+                          step="0.1"
+                          placeholder="0.0"
+                          value={estradiol}
+                          onChange={(e) => setEstradiol(e.target.value)}
+                          className="pr-14"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                          pg/mL
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Optimal: 2-4</p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="progesterone">Progesterone (Pg)</Label>
+                      <div className="relative">
+                        <Input
+                          id="progesterone"
+                          type="number"
+                          step="1"
+                          placeholder="0"
+                          value={progesterone}
+                          onChange={(e) => setProgesterone(e.target.value)}
+                          className="pr-14"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                          pg/mL
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Range: 0-500</p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="testosterone">Testosterone (T)</Label>
+                      <div className="relative">
+                        <Input
+                          id="testosterone"
+                          type="number"
+                          step="0.1"
+                          placeholder="0.0"
+                          value={testosterone}
+                          onChange={(e) => setTestosterone(e.target.value)}
+                          className="pr-14"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                          ng/dL
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Optimal: 30-45</p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="cortisol">Cortisol (AM)</Label>
+                      <div className="relative">
+                        <Input
+                          id="cortisol"
+                          type="number"
+                          step="0.1"
+                          placeholder="0.0"
+                          value={cortisol}
+                          onChange={(e) => setCortisol(e.target.value)}
+                          className="pr-14"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                          μg/dL
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Morning value</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Labcorp Blood Fields */}
+                {labSource === "labcorp" && (
+                  <div className="space-y-4">
+                    <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-500/30 rounded-lg p-3">
+                      <p className="text-xs text-amber-700 dark:text-amber-400">
+                        <span className="font-semibold">Labcorp Blood Panel</span> — Enter blood draw results for testosterone safety monitoring
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="hematocrit">Hematocrit (Hct)</Label>
+                        <div className="relative">
+                          <Input
+                            id="hematocrit"
+                            type="number"
+                            step="0.1"
+                            placeholder="0.0"
+                            value={hematocrit}
+                            onChange={(e) => setHematocrit(e.target.value)}
+                            className="pr-10"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                            %
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Normal: 38-50% | <span className="text-destructive">&gt;52% = Alert</span></p>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="psa">PSA</Label>
+                        <div className="relative">
+                          <Input
+                            id="psa"
+                            type="number"
+                            step="0.1"
+                            placeholder="0.0"
+                            value={psa}
+                            onChange={(e) => setPsa(e.target.value)}
+                            className="pr-16"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                            ng/mL
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Normal: &lt;4.0 | <span className="text-destructive">&gt;4.0 = Alert</span></p>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="alt">ALT (Liver)</Label>
+                        <div className="relative">
+                          <Input
+                            id="alt"
+                            type="number"
+                            step="1"
+                            placeholder="0"
+                            value={alt}
+                            onChange={(e) => setAlt(e.target.value)}
+                            className="pr-12"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                            U/L
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Normal: 7-40</p>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="ast">AST (Liver)</Label>
+                        <div className="relative">
+                          <Input
+                            id="ast"
+                            type="number"
+                            step="1"
+                            placeholder="0"
+                            value={ast}
+                            onChange={(e) => setAst(e.target.value)}
+                            className="pr-12"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                            U/L
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Normal: 8-33</p>
+                      </div>
+
+                      <div className="col-span-2">
+                        <Label htmlFor="labcorpA1c">HbA1c (Blood Sugar)</Label>
+                        <div className="relative max-w-[200px]">
+                          <Input
+                            id="labcorpA1c"
+                            type="number"
+                            step="0.1"
+                            placeholder="0.0"
+                            value={labcorpA1c}
+                            onChange={(e) => setLabcorpA1c(e.target.value)}
+                            className="pr-10"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                            %
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Normal: &lt;5.7% | 5.7-6.4% = Pre-diabetes | ≥6.5% = Diabetes</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex gap-3 pt-2">
                   <Button type="button" variant="outline" className="flex-1" onClick={resetAndClose}>
@@ -585,7 +877,7 @@ const NewLabResultModal = ({
                         Saving...
                       </>
                     ) : (
-                      "Save Hormone Labs"
+                      labSource === "labcorp" ? "Save Labcorp Labs" : "Save Hormone Labs"
                     )}
                   </Button>
                 </div>
