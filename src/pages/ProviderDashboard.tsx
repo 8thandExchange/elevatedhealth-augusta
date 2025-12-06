@@ -36,6 +36,7 @@ import KitStatusAdmin from "@/components/provider/KitStatusAdmin";
 import ResourceManager from "@/components/provider/ResourceManager";
 import IVKetamineBilling from "@/components/provider/IVKetamineBilling";
 import { InviteProviderModal } from "@/components/provider/InviteProviderModal";
+import LabcorpOrderModal from "@/components/provider/LabcorpOrderModal";
 
 interface Patient {
   id: string;
@@ -162,6 +163,8 @@ const ProviderDashboard = () => {
   const [showArchivedPatients, setShowArchivedPatients] = useState(false);
   // Provider invite modal state
   const [isInviteProviderOpen, setIsInviteProviderOpen] = useState(false);
+  // Labcorp order modal state
+  const [isLabcorpModalOpen, setIsLabcorpModalOpen] = useState(false);
   // Kit tracking state
   const [selectedPatientKit, setSelectedPatientKit] = useState<{
     id: string;
@@ -1757,6 +1760,16 @@ const ProviderDashboard = () => {
                   />
                 </CardContent>
               </Card>
+
+              {/* Order Labcorp Safety Panel Button */}
+              <Button
+                variant="outline"
+                onClick={() => setIsLabcorpModalOpen(true)}
+                className="w-full border-amber-500/30 text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+              >
+                <TestTube className="w-4 h-4 mr-2" />
+                Order Labcorp Safety Panel
+              </Button>
               
               {/* Edit Patient Profile Button */}
               <Button
@@ -1985,6 +1998,31 @@ const ProviderDashboard = () => {
         open={isInviteProviderOpen}
         onOpenChange={setIsInviteProviderOpen}
       />
+
+      {/* Labcorp Order Modal */}
+      {selectedPatient && (
+        <LabcorpOrderModal
+          isOpen={isLabcorpModalOpen}
+          onClose={() => setIsLabcorpModalOpen(false)}
+          patient={{
+            id: selectedPatient.patient.id,
+            full_name: selectedPatient.patient.full_name,
+            dob: selectedPatient.patient.dob,
+            street_address: selectedPatient.patient.street_address,
+            city: selectedPatient.patient.city,
+            state: selectedPatient.patient.state,
+            zip_code: selectedPatient.patient.zip_code,
+            email: selectedPatient.patient.email,
+          }}
+          onSuccess={() => {
+            loadData();
+            selectPatient({
+              ...selectedPatient,
+              patient: { ...selectedPatient.patient, onboarding_status: "awaiting_blood_work" }
+            });
+          }}
+        />
+      )}
     </div>
   );
 };

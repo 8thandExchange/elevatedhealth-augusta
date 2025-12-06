@@ -550,6 +550,47 @@ export type Database = {
           },
         ]
       }
+      patient_documents: {
+        Row: {
+          created_at: string
+          document_type: string
+          file_name: string
+          file_url: string
+          id: string
+          notes: string | null
+          patient_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          document_type: string
+          file_name: string
+          file_url: string
+          id?: string
+          notes?: string | null
+          patient_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_documents_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient_resources: {
         Row: {
           category: string
