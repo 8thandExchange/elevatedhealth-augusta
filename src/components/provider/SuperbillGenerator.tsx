@@ -101,10 +101,10 @@ const SuperbillGenerator = ({
   const loadData = async () => {
     setIsLoading(true);
     try {
-      // Load CPT codes for the service type
+      // Load CPT codes for the service type, always include labcorp panel
       const panelGroups = serviceType === "weight_management" 
-        ? ["saliva_profile_iii", "weight_management"]
-        : [serviceType];
+        ? ["saliva_profile_iii", "weight_management", "labcorp"]
+        : [serviceType, "labcorp"];
       
       const { data: cptData } = await supabase
         .from("cpt_codes")
@@ -113,8 +113,8 @@ const SuperbillGenerator = ({
 
       if (cptData) {
         setCptCodes(cptData);
-        // Pre-select all CPT codes
-        setSelectedCptCodes(new Set(cptData.map((c) => c.id)));
+        // Pre-select only non-labcorp CPT codes (labcorp codes are optional add-ons)
+        setSelectedCptCodes(new Set(cptData.filter(c => c.panel_group !== "labcorp").map((c) => c.id)));
       }
 
       // Load ICD-10 codes
@@ -580,35 +580,74 @@ const SuperbillGenerator = ({
                 Services (CPT Codes)
               </Label>
               <Card>
-                <CardContent className="pt-4 space-y-2">
-                  {cptCodes.map((cpt) => (
-                    <div
-                      key={cpt.id}
-                      className="flex items-center gap-3 p-2 rounded hover:bg-secondary/50"
-                    >
-                      <Checkbox
-                        id={cpt.id}
-                        checked={selectedCptCodes.has(cpt.id)}
-                        onCheckedChange={() => toggleCptCode(cpt.id)}
-                      />
-                      <Label
-                        htmlFor={cpt.id}
-                        className="flex-1 cursor-pointer flex items-center justify-between"
-                      >
-                        <span>
-                          <span className="font-mono font-medium">{cpt.code}</span>
-                          <span className="text-muted-foreground ml-2">
-                            {cpt.description}
-                          </span>
-                          {cpt.quantity > 1 && (
-                            <Badge variant="outline" className="ml-2">
-                              x{cpt.quantity}
-                            </Badge>
-                          )}
-                        </span>
-                      </Label>
+                <CardContent className="pt-4 space-y-4">
+                  {/* Main Service Codes */}
+                  {cptCodes.filter(c => c.panel_group !== "labcorp").length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Main Services</p>
+                      {cptCodes.filter(c => c.panel_group !== "labcorp").map((cpt) => (
+                        <div
+                          key={cpt.id}
+                          className="flex items-center gap-3 p-2 rounded hover:bg-secondary/50"
+                        >
+                          <Checkbox
+                            id={cpt.id}
+                            checked={selectedCptCodes.has(cpt.id)}
+                            onCheckedChange={() => toggleCptCode(cpt.id)}
+                          />
+                          <Label
+                            htmlFor={cpt.id}
+                            className="flex-1 cursor-pointer flex items-center justify-between"
+                          >
+                            <span>
+                              <span className="font-mono font-medium">{cpt.code}</span>
+                              <span className="text-muted-foreground ml-2">
+                                {cpt.description}
+                              </span>
+                              {cpt.quantity > 1 && (
+                                <Badge variant="outline" className="ml-2">
+                                  x{cpt.quantity}
+                                </Badge>
+                              )}
+                            </span>
+                          </Label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+
+                  {/* Labcorp Panel Codes */}
+                  {cptCodes.filter(c => c.panel_group === "labcorp").length > 0 && (
+                    <div className="space-y-2 pt-2 border-t border-border/50">
+                      <p className="text-xs font-medium text-amber-600 uppercase tracking-wider flex items-center gap-1">
+                        Labcorp Panels (Optional)
+                      </p>
+                      {cptCodes.filter(c => c.panel_group === "labcorp").map((cpt) => (
+                        <div
+                          key={cpt.id}
+                          className="flex items-center gap-3 p-2 rounded hover:bg-amber-50 dark:hover:bg-amber-950/20"
+                        >
+                          <Checkbox
+                            id={cpt.id}
+                            checked={selectedCptCodes.has(cpt.id)}
+                            onCheckedChange={() => toggleCptCode(cpt.id)}
+                          />
+                          <Label
+                            htmlFor={cpt.id}
+                            className="flex-1 cursor-pointer flex items-center justify-between"
+                          >
+                            <span>
+                              <span className="font-mono font-medium">{cpt.code}</span>
+                              <span className="text-muted-foreground ml-2">
+                                {cpt.description}
+                              </span>
+                            </span>
+                            <span className="text-sm font-medium text-amber-700">${cpt.default_charge?.toFixed(2)}</span>
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
