@@ -242,11 +242,12 @@ const ProviderDashboard = () => {
 
       if (ordersError) throw ordersError;
 
-      // Also load patients with intake complete but no order yet
+      // Also load patients with intake complete, account_created, or pending_invite but no order yet
+      // This ensures newly signed up patients (including ketamine) appear in triage
       const { data: intakePatients, error: intakeError } = await supabase
         .from("patients")
         .select("*")
-        .eq("onboarding_status", "intake_complete")
+        .in("onboarding_status", ["intake_complete", "account_created", "pending_invite"])
         .is("current_protocol", null);
 
       console.log("[ProviderDashboard] Intake patients query result:", { intakePatients, intakeError });

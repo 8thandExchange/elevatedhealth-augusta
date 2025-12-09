@@ -201,16 +201,18 @@ const PatientLogin = () => {
         : ketamineSafetyScreening;
 
       // Create patient record with safety screening and primary program
+      // Ketamine patients have intake_complete status since they skip hormone intake
       const { error: patientError } = await supabase.from("patients").insert([{
         user_id: authData.user.id,
         full_name: signupData.fullName,
+        email: signupData.email, // Store email in patients table
         dob: signupData.dob || null,
         primary_program: primaryProgram,
         risk_status: highRisk ? "high_risk_review" : "standard",
         medical_history: medicalHistory as unknown as Record<string, boolean>,
         safety_flags: highRisk ? safetyFlags : [],
-        // Ketamine patients skip hormone intake
         intake_completed: primaryProgram === "ketamine" ? true : false,
+        onboarding_status: primaryProgram === "ketamine" ? "intake_complete" : "account_created",
       }]);
 
       if (patientError) throw patientError;
