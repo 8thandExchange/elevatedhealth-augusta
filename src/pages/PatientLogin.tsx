@@ -608,26 +608,31 @@ const PatientLogin = () => {
 
                     {/* Ketamine Disqualification Message */}
                     {primaryProgram === "ketamine" && isKetamineHighRisk() && (
-                      <div className="bg-card border border-gold/30 rounded-lg p-6 text-center">
-                        <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
-                          <Heart className="w-6 h-6 text-gold" />
+                      <div className="bg-card border border-gold/30 rounded-lg p-6">
+                        <div className="text-center mb-4">
+                          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
+                            <Heart className="w-6 h-6 text-gold" />
+                          </div>
+                          <h3 className="font-cormorant text-xl font-semibold text-foreground mb-2">
+                            We Care About Your Safety
+                          </h3>
+                          <p className="text-muted-foreground text-sm">
+                            Based on your responses, ketamine therapy may not be the safest option for you at this time. 
+                            However, we'd love to have a quick call with you to discuss alternative treatment options that may help.
+                          </p>
                         </div>
-                        <h3 className="font-cormorant text-xl font-semibold text-foreground mb-2">
-                          We Care About Your Safety
-                        </h3>
-                        <p className="text-muted-foreground text-sm mb-6">
-                          Based on your responses, ketamine therapy may not be the safest option for you at this time. 
-                          However, we'd love to have a quick call with you to discuss alternative treatment options that may help.
-                        </p>
-                        <Button 
-                          asChild
-                          className="w-full mb-3"
-                        >
-                          <a href={KETAMINE_CONSULT_URL} target="_blank" rel="noopener noreferrer">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            Schedule a Free 15-Minute Call
-                          </a>
-                        </Button>
+                        
+                        <p className="text-sm font-medium text-foreground mb-2">Book a time that works for you:</p>
+                        <div className="rounded-lg overflow-hidden border border-border mb-4">
+                          <iframe 
+                            src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true" 
+                            style={{ border: 0 }} 
+                            width="100%" 
+                            height="400"
+                            title="Schedule a consultation"
+                          />
+                        </div>
+                        
                         <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
                           <Phone className="w-3 h-3" />
                           Or call us at (706) 750-9973
