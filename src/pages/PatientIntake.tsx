@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, CheckCircle, ShieldAlert, Loader2, User, Check, TestTube } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, ShieldAlert, Loader2, User, Check, TestTube, Brain } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { cn } from "@/lib/utils";
+import { PageLoader } from "@/components/ui/PageLoader";
 
 interface Question {
   id: string;
@@ -105,17 +106,46 @@ const WAKE_TIME_OPTIONS = [
   { id: "8am", label: "8:00 AM or later" },
 ];
 
+// Mental health questions for Ketamine patients
+const PHQ9_QUESTIONS = [
+  { id: "phq1", label: "Little interest or pleasure in doing things" },
+  { id: "phq2", label: "Feeling down, depressed, or hopeless" },
+  { id: "phq3", label: "Trouble falling or staying asleep, or sleeping too much" },
+  { id: "phq4", label: "Feeling tired or having little energy" },
+  { id: "phq5", label: "Poor appetite or overeating" },
+  { id: "phq6", label: "Feeling bad about yourself or that you are a failure" },
+  { id: "phq7", label: "Trouble concentrating on things" },
+  { id: "phq8", label: "Moving or speaking slowly, or being fidgety or restless" },
+  { id: "phq9", label: "Thoughts that you would be better off dead or hurting yourself" },
+];
+
+const GAD7_QUESTIONS = [
+  { id: "gad1", label: "Feeling nervous, anxious, or on edge" },
+  { id: "gad2", label: "Not being able to stop or control worrying" },
+  { id: "gad3", label: "Worrying too much about different things" },
+  { id: "gad4", label: "Trouble relaxing" },
+  { id: "gad5", label: "Being so restless that it's hard to sit still" },
+  { id: "gad6", label: "Becoming easily annoyed or irritable" },
+  { id: "gad7", label: "Feeling afraid as if something awful might happen" },
+];
+
+const mentalHealthSeverityLabels = ["Not at all", "Several days", "More than half the days", "Nearly every day"];
+
 const STEPS = [
   { id: "profile", label: "Profile" },
   { id: "hormoneHistory", label: "Hormone Hx" },
   { id: "symptoms", label: "Symptoms" },
   { id: "safety", label: "Safety" },
   { id: "medical", label: "History" },
+  { id: "mentalWellness", label: "Mental Wellness" },
 ];
 
 const PatientIntake = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical">("profile");
+  const [isLoading, setIsLoading] = useState(true);
+  const [patientInterests, setPatientInterests] = useState<string[]>([]);
+  const [primaryProgram, setPrimaryProgram] = useState<string>("hormone");
+  const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical" | "mentalWellness">("profile");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fullName, setFullName] = useState<string>("");
   const [gender, setGender] = useState<string>("");
@@ -131,11 +161,83 @@ const PatientIntake = () => {
   const [labcorpConditions, setLabcorpConditions] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Mental wellness answers (PHQ-9 and GAD-7)
+  const [phq9Answers, setPhq9Answers] = useState<Record<string, number>>({});
+  const [gad7Answers, setGad7Answers] = useState<Record<string, number>>({});
+  const [mentalWellnessIndex, setMentalWellnessIndex] = useState(0);
+  
   // Hormone History (ZRT Required)
   const [menstrualStatus, setMenstrualStatus] = useState<string>("");
   const [takingHormones, setTakingHormones] = useState<boolean | null>(null);
   const [hormoneDetails, setHormoneDetails] = useState<string>("");
   const [wakeTime, setWakeTime] = useState<string>("");
+
+  // Fetch patient's interests on mount
+  useEffect(() => {
+    const fetchPatientInterests = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          navigate("/patient/login");
+          return;
+        }
+
+        const { data: patient, error } = await supabase
+          .from("patients")
+          .select("treatment_request, primary_program, full_name, gender")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (patient) {
+          // Parse treatment_request (comma-separated interests)
+          const interests = patient.treatment_request?.split(",").filter(Boolean) || [];
+          setPatientInterests(interests);
+          setPrimaryProgram(patient.primary_program || "hormone");
+          
+          // Pre-fill name and gender if available
+          if (patient.full_name) setFullName(patient.full_name);
+          if (patient.gender) setGender(patient.gender);
+        }
+      } catch (error) {
+        console.error("Error fetching patient interests:", error);
+        toast.error("Failed to load patient data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPatientInterests();
+  }, [navigate]);
+
+  // Determine which sections to show based on interests
+  const hasHormoneInterests = useMemo(() => {
+    return patientInterests.some(i => ["hormone", "weight_loss", "peptides"].includes(i));
+  }, [patientInterests]);
+
+  const hasKetamineInterest = useMemo(() => {
+    return patientInterests.includes("ketamine");
+  }, [patientInterests]);
+
+  // Calculate visible steps based on interests
+  const visibleSteps = useMemo(() => {
+    const steps = [];
+    steps.push({ id: "profile", label: "Profile" });
+    
+    if (hasHormoneInterests) {
+      steps.push({ id: "hormoneHistory", label: "Hormone Hx" });
+      steps.push({ id: "symptoms", label: "Symptoms" });
+      steps.push({ id: "safety", label: "Safety" });
+      steps.push({ id: "medical", label: "History" });
+    }
+    
+    if (hasKetamineInterest) {
+      steps.push({ id: "mentalWellness", label: "Mental Wellness" });
+    }
+    
+    return steps;
+  }, [hasHormoneInterests, hasKetamineInterest]);
 
   // Filter questions based on gender
   const filteredSymptomQuestions = useMemo(() => {
@@ -153,16 +255,27 @@ const PatientIntake = () => {
 
   const currentQuestion = filteredSymptomQuestions[currentIndex];
 
-  // Calculate which step index we're on (0-4)
+  // Calculate which step index we're on based on visible steps
   const getStepIndex = () => {
-    switch (step) {
-      case "profile": return 0;
-      case "hormoneHistory": return 1;
-      case "symptoms": return 2;
-      case "safety": return 3;
-      case "medical": return 4;
-      default: return 0;
+    return visibleSteps.findIndex(s => s.id === step);
+  };
+  
+  // Get next step based on current step and interests
+  const getNextStep = () => {
+    const currentIdx = getStepIndex();
+    if (currentIdx < visibleSteps.length - 1) {
+      return visibleSteps[currentIdx + 1].id as typeof step;
     }
+    return null;
+  };
+
+  // Get previous step based on current step and interests  
+  const getPrevStep = () => {
+    const currentIdx = getStepIndex();
+    if (currentIdx > 0) {
+      return visibleSteps[currentIdx - 1].id as typeof step;
+    }
+    return null;
   };
   
   const canProceedFromHormoneHistory = wakeTime.length > 0 && (gender === "male" || menstrualStatus.length > 0);
@@ -268,25 +381,35 @@ const PatientIntake = () => {
       const androgenExcess = hasAndrogenExcess();
       const labPathResult = determineLabPath();
 
-      // Save symptom log with hormone history
+      // Calculate PHQ-9 and GAD-7 scores
+      const phq9Score = Object.values(phq9Answers).reduce((a, b) => a + b, 0);
+      const gad7Score = Object.values(gad7Answers).reduce((a, b) => a + b, 0);
+
+      // Save symptom log with hormone history and mental wellness
       const { error: logError } = await supabase.from("symptom_logs").insert([{
         patient_id: patient.id,
-        estrogen_score: scores.estrogen,
-        progesterone_score: scores.progesterone,
-        androgen_score: scores.androgen,
-        cortisol_score: scores.cortisol,
+        estrogen_score: hasHormoneInterests ? scores.estrogen : null,
+        progesterone_score: hasHormoneInterests ? scores.progesterone : null,
+        androgen_score: hasHormoneInterests ? scores.androgen : null,
+        cortisol_score: hasHormoneInterests ? scores.cortisol : null,
         raw_answers: {
-          symptoms: answers,
-          safety: safetyAnswers,
-          androgenExcess,
-          labcorpConditions,
-          labPath: labPathResult,
-          hormoneHistory: {
+          symptoms: hasHormoneInterests ? answers : null,
+          safety: hasHormoneInterests ? safetyAnswers : null,
+          androgenExcess: hasHormoneInterests ? androgenExcess : null,
+          labcorpConditions: hasHormoneInterests ? labcorpConditions : null,
+          labPath: hasHormoneInterests ? labPathResult : null,
+          hormoneHistory: hasHormoneInterests ? {
             menstrualStatus: gender === "female" ? menstrualStatus : "n/a_male",
             takingHormones,
             hormoneDetails: takingHormones ? hormoneDetails : null,
             wakeTime,
-          },
+          } : null,
+          mentalWellness: hasKetamineInterest ? {
+            phq9Answers,
+            phq9Score,
+            gad7Answers,
+            gad7Score,
+          } : null,
         },
       }]);
 
@@ -330,6 +453,10 @@ const PatientIntake = () => {
 
   const canProceedFromProfile = fullName.trim().length >= 2 && gender && treatmentRequests.length > 0;
 
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -339,7 +466,7 @@ const PatientIntake = () => {
           {/* Step Indicators */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              {STEPS.map((s, index) => {
+              {visibleSteps.map((s, index) => {
                 const currentStepIndex = getStepIndex();
                 const isCompleted = index < currentStepIndex;
                 const isCurrent = index === currentStepIndex;
@@ -366,7 +493,7 @@ const PatientIntake = () => {
                         {s.label}
                       </span>
                     </div>
-                    {index < STEPS.length - 1 && (
+                    {index < visibleSteps.length - 1 && (
                       <div className={cn(
                         "h-0.5 w-8 sm:w-12 mx-1",
                         index < currentStepIndex ? "bg-green-500" : "bg-secondary"
@@ -381,6 +508,7 @@ const PatientIntake = () => {
               {step === "symptoms" && `Question ${currentIndex + 1} of ${filteredSymptomQuestions.length}`}
               {step === "safety" && "Safety screening"}
               {step === "medical" && "Medical history review"}
+              {step === "mentalWellness" && "Mental wellness assessment"}
             </p>
           </div>
 
@@ -856,6 +984,101 @@ const PatientIntake = () => {
 
               <div className="flex gap-4">
                 <Button variant="outline" onClick={() => setStep("safety")} className="flex-1">
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  Back
+                </Button>
+                {hasKetamineInterest ? (
+                  <Button onClick={() => setStep("mentalWellness")} className="flex-1">
+                    Continue
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                ) : (
+                  <Button onClick={handleSubmit} disabled={isSubmitting} className="flex-1">
+                    {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />}
+                    Submit Intake
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Mental Wellness Step - PHQ-9 and GAD-7 */}
+          {step === "mentalWellness" && (
+            <>
+              <Card className="border-border/50 mb-8">
+                <CardContent className="pt-8 pb-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Brain className="w-5 h-5 text-primary" />
+                    <h2 className="font-cormorant text-xl text-foreground">
+                      Mental Wellness Assessment
+                    </h2>
+                  </div>
+                  <p className="text-muted-foreground text-sm mb-6">
+                    Over the last 2 weeks, how often have you been bothered by the following?
+                  </p>
+
+                  {/* PHQ-9 Questions */}
+                  <div className="mb-8">
+                    <h3 className="text-sm font-medium text-foreground mb-4">Depression Screening (PHQ-9)</h3>
+                    <div className="space-y-4">
+                      {PHQ9_QUESTIONS.map((q) => (
+                        <div key={q.id} className="p-4 rounded-lg border border-border">
+                          <p className="text-sm font-medium text-foreground mb-3">{q.label}</p>
+                          <div className="grid grid-cols-4 gap-2">
+                            {mentalHealthSeverityLabels.map((label, i) => (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => setPhq9Answers({ ...phq9Answers, [q.id]: i })}
+                                className={cn(
+                                  "p-2 text-xs rounded-lg border transition-colors",
+                                  phq9Answers[q.id] === i
+                                    ? "border-primary bg-primary/10 text-primary"
+                                    : "border-border hover:border-primary/50"
+                                )}
+                              >
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* GAD-7 Questions */}
+                  <div>
+                    <h3 className="text-sm font-medium text-foreground mb-4">Anxiety Screening (GAD-7)</h3>
+                    <div className="space-y-4">
+                      {GAD7_QUESTIONS.map((q) => (
+                        <div key={q.id} className="p-4 rounded-lg border border-border">
+                          <p className="text-sm font-medium text-foreground mb-3">{q.label}</p>
+                          <div className="grid grid-cols-4 gap-2">
+                            {mentalHealthSeverityLabels.map((label, i) => (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => setGad7Answers({ ...gad7Answers, [q.id]: i })}
+                                className={cn(
+                                  "p-2 text-xs rounded-lg border transition-colors",
+                                  gad7Answers[q.id] === i
+                                    ? "border-primary bg-primary/10 text-primary"
+                                    : "border-border hover:border-primary/50"
+                                )}
+                              >
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex gap-4">
+                <Button variant="outline" onClick={() => setStep(hasHormoneInterests ? "medical" : "profile")} className="flex-1">
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   Back
                 </Button>

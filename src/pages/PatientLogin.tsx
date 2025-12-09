@@ -28,6 +28,14 @@ interface KetamineSafetyScreening {
   pregnancy: boolean;
 }
 
+// Interest options for multi-select
+const INTEREST_OPTIONS = [
+  { id: "hormone", label: "Hormone Replacement Therapy", description: "Bio-identical hormones, menopause, perimenopause, testosterone" },
+  { id: "weight_loss", label: "Medical Weight Loss", description: "GLP-1 therapy, metabolic optimization" },
+  { id: "ketamine", label: "Ketamine Therapy / Mental Wellness", description: "IV ketamine infusions, Spravato®, depression & anxiety" },
+  { id: "peptides", label: "Peptide Therapy", description: "Sermorelin, NAD+, PT-141, cellular optimization" },
+];
+
 const HORMONE_HIGH_RISK_CONDITIONS = [
   { id: "breastCancer", label: "Breast Cancer (Personal History)", description: "Have you ever been diagnosed with breast cancer?" },
   { id: "uterineCancer", label: "Uterine/Endometrial Cancer", description: "Have you ever been diagnosed with uterine or endometrial cancer?" },
@@ -58,6 +66,7 @@ const PatientLogin = () => {
     dob: ""
   });
   const [primaryProgram, setPrimaryProgram] = useState<PrimaryProgram | null>(null);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [hormoneSafetyScreening, setHormoneSafetyScreening] = useState<HormoneSafetyScreening>({
     breastCancer: false,
     uterineCancer: false,
@@ -171,9 +180,33 @@ const PatientLogin = () => {
     setSignupStep("program");
   };
 
-  const handleProgramSelect = (program: PrimaryProgram) => {
-    setPrimaryProgram(program);
+  const handleInterestToggle = (interestId: string) => {
+    setSelectedInterests(prev => 
+      prev.includes(interestId) 
+        ? prev.filter(id => id !== interestId)
+        : [...prev, interestId]
+    );
+  };
+
+  const handleContinueFromProgram = () => {
+    // Determine primary program based on interests
+    // Ketamine takes priority for workflow routing if selected
+    if (selectedInterests.includes("ketamine")) {
+      setPrimaryProgram("ketamine");
+    } else {
+      setPrimaryProgram("hormone");
+    }
     setSignupStep("safety");
+  };
+
+  // Check if any hormone-related interests are selected
+  const hasHormoneInterests = () => {
+    return selectedInterests.some(i => ["hormone", "weight_loss", "peptides"].includes(i));
+  };
+
+  // Check if ketamine is the ONLY interest selected
+  const isKetamineOnly = () => {
+    return selectedInterests.length === 1 && selectedInterests.includes("ketamine");
   };
 
   const handleSignupComplete = async (e: React.FormEvent) => {
@@ -202,18 +235,20 @@ const PatientLogin = () => {
         : ketamineSafetyScreening;
 
       // Create patient record with safety screening and primary program
-      // Ketamine patients have intake_complete status since they skip hormone intake
+      // Skip intake only if ketamine is the ONLY interest selected
+      const skipIntake = isKetamineOnly();
       const { error: patientError } = await supabase.from("patients").insert([{
         user_id: authData.user.id,
         full_name: signupData.fullName,
         email: signupData.email, // Store email in patients table
         dob: signupData.dob || null,
         primary_program: primaryProgram,
+        treatment_request: selectedInterests.join(","), // Store all selected interests
         risk_status: highRisk ? "high_risk_review" : "standard",
         medical_history: medicalHistory as unknown as Record<string, boolean>,
         safety_flags: highRisk ? safetyFlags : [],
-        intake_completed: primaryProgram === "ketamine" ? true : false,
-        onboarding_status: primaryProgram === "ketamine" ? "intake_complete" : "account_created",
+        intake_completed: skipIntake,
+        onboarding_status: skipIntake ? "intake_complete" : "account_created",
       }]);
 
       if (patientError) throw patientError;
@@ -488,123 +523,204 @@ const PatientLogin = () => {
                   </form>
                 )}
 
-                {/* Step 2: Program Selection */}
+                {/* Step 2: Program Selection - Multi-Select */}
                 {signupStep === "program" && (
                   <div className="space-y-4">
                     <div className="text-center mb-4">
                       <h3 className="font-cormorant text-lg font-medium text-foreground">
-                        What is your primary goal?
+                        What are you interested in?
                       </h3>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Select the treatment track that best fits your needs
+                        Select all that apply — you can explore multiple options
                       </p>
                     </div>
 
                     <div className="space-y-3">
-                      {/* Hormone Option */}
-                      <button
-                        type="button"
-                        onClick={() => handleProgramSelect("hormone")}
-                        className="w-full p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all text-left group"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="p-2 rounded-full bg-pink-100 dark:bg-pink-900/30 group-hover:bg-pink-200 dark:group-hover:bg-pink-900/50 transition-colors">
-                            <Heart className="w-5 h-5 text-pink-600 dark:text-pink-400" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-medium text-foreground">Hormone Optimization / Weight Loss</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              Bio-identical hormones, GLP-1 weight management, metabolic optimization
-                            </p>
-                          </div>
-                          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors mt-2" />
-                        </div>
-                      </button>
-
-                      {/* Ketamine Option */}
-                      <button
-                        type="button"
-                        onClick={() => handleProgramSelect("ketamine")}
-                        className="w-full p-4 rounded-lg border-2 border-border bg-card hover:border-accent/50 hover:bg-accent/5 transition-all text-left group"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                            <Brain className="w-5 h-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-medium text-foreground">Ketamine Therapy / Mental Wellness</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              IV ketamine infusions, Spravato®, mental health support via Osmind
-                            </p>
-                          </div>
-                          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors mt-2" />
-                        </div>
-                      </button>
+                      {INTEREST_OPTIONS.map((option) => {
+                        const isSelected = selectedInterests.includes(option.id);
+                        const IconComponent = option.id === "ketamine" ? Brain : Heart;
+                        const iconBgClass = option.id === "ketamine" 
+                          ? "bg-primary/10" 
+                          : option.id === "weight_loss"
+                          ? "bg-green-100 dark:bg-green-900/30"
+                          : option.id === "peptides"
+                          ? "bg-purple-100 dark:bg-purple-900/30"
+                          : "bg-pink-100 dark:bg-pink-900/30";
+                        const iconColorClass = option.id === "ketamine"
+                          ? "text-primary"
+                          : option.id === "weight_loss"
+                          ? "text-green-600 dark:text-green-400"
+                          : option.id === "peptides"
+                          ? "text-purple-600 dark:text-purple-400"
+                          : "text-pink-600 dark:text-pink-400";
+                        
+                        return (
+                          <button
+                            key={option.id}
+                            type="button"
+                            onClick={() => handleInterestToggle(option.id)}
+                            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                              isSelected 
+                                ? "border-primary bg-primary/5" 
+                                : "border-border bg-card hover:border-primary/50"
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className={`p-2 rounded-full ${iconBgClass} transition-colors`}>
+                                <IconComponent className={`w-5 h-5 ${iconColorClass}`} />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-medium text-foreground">{option.label}</h4>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  {option.description}
+                                </p>
+                              </div>
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={() => handleInterestToggle(option.id)}
+                                className="mt-2"
+                              />
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
 
-                    <Button 
-                      type="button" 
-                      variant="outline"
-                      onClick={() => setSignupStep("info")}
-                      className="w-full mt-4"
-                    >
-                      <ChevronLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
+                    <div className="flex gap-3 pt-2">
+                      <Button 
+                        type="button" 
+                        variant="outline"
+                        onClick={() => setSignupStep("info")}
+                        className="flex-1"
+                      >
+                        <ChevronLeft className="w-4 h-4 mr-2" />
+                        Back
+                      </Button>
+                      <Button 
+                        type="button"
+                        onClick={handleContinueFromProgram}
+                        className="flex-1"
+                        disabled={selectedInterests.length === 0}
+                      >
+                        Continue
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
                   </div>
                 )}
 
                 {/* Step 3: Safety Screening */}
                 {signupStep === "safety" && primaryProgram && (
                   <div className="space-y-4">
-                    {/* Safety Header */}
-                    <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <ShieldAlert className="w-5 h-5 text-amber-600" />
-                        <h3 className="font-medium text-amber-700 dark:text-amber-400">
-                          {primaryProgram === "hormone" ? "Hormone Therapy" : "Ketamine Therapy"} Safety Screening
-                        </h3>
-                      </div>
-                      <p className="text-sm text-amber-600 dark:text-amber-300">
-                        Please answer honestly. This helps us ensure your safety and provide appropriate care.
-                      </p>
-                    </div>
-
-                    {/* Safety Questions */}
-                    <div className="space-y-4">
-                      {currentSafetyConditions.map((condition) => (
-                        <div 
-                          key={condition.id}
-                          className={`p-4 rounded-lg border transition-colors ${
-                            currentSafetyScreening[condition.id as keyof typeof currentSafetyScreening]
-                              ? "border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
-                              : "border-border bg-card"
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <Checkbox
-                              id={condition.id}
-                              checked={currentSafetyScreening[condition.id as keyof typeof currentSafetyScreening]}
-                              onCheckedChange={(checked) => 
-                                setCurrentSafetyScreening(condition.id, checked === true)
-                              }
-                              className="mt-1"
-                            />
-                            <div className="flex-1">
-                              <Label 
-                                htmlFor={condition.id}
-                                className="text-foreground font-medium cursor-pointer"
-                              >
-                                {condition.label}
-                              </Label>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {condition.description}
-                              </p>
-                            </div>
+                    {/* Show Ketamine Safety if ketamine selected */}
+                    {selectedInterests.includes("ketamine") && (
+                      <>
+                        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <ShieldAlert className="w-5 h-5 text-amber-600" />
+                            <h3 className="font-medium text-amber-700 dark:text-amber-400">
+                              Ketamine Therapy Safety Screening
+                            </h3>
                           </div>
+                          <p className="text-sm text-amber-600 dark:text-amber-300">
+                            Please answer honestly. This helps us ensure your safety and provide appropriate care.
+                          </p>
                         </div>
-                      ))}
-                    </div>
+
+                        <div className="space-y-4">
+                          {KETAMINE_HIGH_RISK_CONDITIONS.map((condition) => (
+                            <div 
+                              key={condition.id}
+                              className={`p-4 rounded-lg border transition-colors ${
+                                ketamineSafetyScreening[condition.id as keyof KetamineSafetyScreening]
+                                  ? "border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
+                                  : "border-border bg-card"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <Checkbox
+                                  id={`ketamine-${condition.id}`}
+                                  checked={ketamineSafetyScreening[condition.id as keyof KetamineSafetyScreening]}
+                                  onCheckedChange={(checked) => 
+                                    setKetamineSafetyScreening({
+                                      ...ketamineSafetyScreening,
+                                      [condition.id]: checked === true
+                                    })
+                                  }
+                                  className="mt-1"
+                                />
+                                <div className="flex-1">
+                                  <Label 
+                                    htmlFor={`ketamine-${condition.id}`}
+                                    className="text-foreground font-medium cursor-pointer"
+                                  >
+                                    {condition.label}
+                                  </Label>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {condition.description}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Show Hormone Safety if hormone interests selected */}
+                    {hasHormoneInterests() && (
+                      <>
+                        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <ShieldAlert className="w-5 h-5 text-amber-600" />
+                            <h3 className="font-medium text-amber-700 dark:text-amber-400">
+                              Hormone Therapy Safety Screening
+                            </h3>
+                          </div>
+                          <p className="text-sm text-amber-600 dark:text-amber-300">
+                            Please answer honestly. This helps us ensure your safety and provide appropriate care.
+                          </p>
+                        </div>
+
+                        <div className="space-y-4">
+                          {HORMONE_HIGH_RISK_CONDITIONS.map((condition) => (
+                            <div 
+                              key={condition.id}
+                              className={`p-4 rounded-lg border transition-colors ${
+                                hormoneSafetyScreening[condition.id as keyof HormoneSafetyScreening]
+                                  ? "border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
+                                  : "border-border bg-card"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <Checkbox
+                                  id={`hormone-${condition.id}`}
+                                  checked={hormoneSafetyScreening[condition.id as keyof HormoneSafetyScreening]}
+                                  onCheckedChange={(checked) => 
+                                    setHormoneSafetyScreening({
+                                      ...hormoneSafetyScreening,
+                                      [condition.id]: checked === true
+                                    })
+                                  }
+                                  className="mt-1"
+                                />
+                                <div className="flex-1">
+                                  <Label 
+                                    htmlFor={`hormone-${condition.id}`}
+                                    className="text-foreground font-medium cursor-pointer"
+                                  >
+                                    {condition.label}
+                                  </Label>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {condition.description}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
 
                     {/* Ketamine Disqualification Message */}
                     {primaryProgram === "ketamine" && isKetamineHighRisk() && (
@@ -651,8 +767,8 @@ const PatientLogin = () => {
                       </div>
                     )}
 
-                    {/* Ketamine: Confirm None Apply (only when no conditions checked) */}
-                    {primaryProgram === "ketamine" && !isKetamineHighRisk() && (
+                    {/* Ketamine: Confirm None Apply (only when ketamine selected and no conditions checked) */}
+                    {selectedInterests.includes("ketamine") && !isKetamineHighRisk() && (
                       <div className="p-4 rounded-lg border border-border bg-card">
                         <div className="flex items-start gap-3">
                           <Checkbox
@@ -686,37 +802,17 @@ const PatientLogin = () => {
                         Back
                       </Button>
                       
-                      {/* Ketamine: Hide button entirely if high risk, require confirmation if not */}
-                      {primaryProgram === "ketamine" ? (
-                        !isKetamineHighRisk() && (
-                          <Button 
-                            type="button"
-                            onClick={handleSignupComplete}
-                            className="flex-1" 
-                            disabled={isLoading || signupSuccess || !confirmedNoneApply}
-                          >
-                            {signupSuccess ? (
-                              <>
-                                <Check className="w-4 h-4 mr-2 text-green-500" />
-                                Account Created
-                              </>
-                            ) : isLoading ? (
-                              <>
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                Creating...
-                              </>
-                            ) : (
-                              "Create Account"
-                            )}
-                          </Button>
-                        )
-                      ) : (
-                        /* Hormone: Existing behavior (allows account creation with high risk) */
+                      {/* Show create account button - disabled if ketamine high risk and ketamine only */}
+                      {!(selectedInterests.includes("ketamine") && isKetamineHighRisk() && isKetamineOnly()) && (
                         <Button 
                           type="button"
                           onClick={handleSignupComplete}
                           className="flex-1" 
-                          disabled={isLoading || signupSuccess}
+                          disabled={
+                            isLoading || 
+                            signupSuccess || 
+                            (selectedInterests.includes("ketamine") && !isKetamineHighRisk() && !confirmedNoneApply)
+                          }
                         >
                           {signupSuccess ? (
                             <>
