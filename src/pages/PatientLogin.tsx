@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check, Heart, Brain } from "lucide-react";
+import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check, Heart, Brain, Calendar, Phone } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
 
 type PrimaryProgram = "hormone" | "ketamine";
@@ -73,6 +73,7 @@ const PatientLogin = () => {
   const [showSafetyGate, setShowSafetyGate] = useState(false);
   const [createdPatientName, setCreatedPatientName] = useState("");
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [confirmedNoneApply, setConfirmedNoneApply] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -346,7 +347,18 @@ const PatientLogin = () => {
         [id]: checked
       });
     }
+    // Reset confirmation when any condition changes
+    setConfirmedNoneApply(false);
   };
+
+  const isKetamineHighRisk = () => {
+    return ketamineSafetyScreening.activePsychosis || 
+           ketamineSafetyScreening.uncontrolledHypertension || 
+           ketamineSafetyScreening.seizureDisorder || 
+           ketamineSafetyScreening.pregnancy;
+  };
+
+  const KETAMINE_CONSULT_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true";
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -544,7 +556,7 @@ const PatientLogin = () => {
 
                 {/* Step 3: Safety Screening */}
                 {signupStep === "safety" && primaryProgram && (
-                  <form onSubmit={handleSignupComplete} className="space-y-4">
+                  <div className="space-y-4">
                     {/* Safety Header */}
                     <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
                       <div className="flex items-center gap-2 mb-2">
@@ -594,8 +606,37 @@ const PatientLogin = () => {
                       ))}
                     </div>
 
-                    {/* High Risk Warning */}
-                    {isHighRisk() && (
+                    {/* Ketamine Disqualification Message */}
+                    {primaryProgram === "ketamine" && isKetamineHighRisk() && (
+                      <div className="bg-card border border-gold/30 rounded-lg p-6 text-center">
+                        <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
+                          <Heart className="w-6 h-6 text-gold" />
+                        </div>
+                        <h3 className="font-cormorant text-xl font-semibold text-foreground mb-2">
+                          We Care About Your Safety
+                        </h3>
+                        <p className="text-muted-foreground text-sm mb-6">
+                          Based on your responses, ketamine therapy may not be the safest option for you at this time. 
+                          However, we'd love to meet with you to discuss alternative treatment options that may help.
+                        </p>
+                        <Button 
+                          asChild
+                          className="w-full mb-3"
+                        >
+                          <a href={KETAMINE_CONSULT_URL} target="_blank" rel="noopener noreferrer">
+                            <Calendar className="w-4 h-4 mr-2" />
+                            Schedule a Free 15-Minute Consultation
+                          </a>
+                        </Button>
+                        <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                          <Phone className="w-3 h-3" />
+                          Or call us at (706) 750-9973
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Hormone High Risk Warning (existing behavior) */}
+                    {primaryProgram === "hormone" && isHighRisk() && (
                       <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
                         <p className="text-sm text-red-700 dark:text-red-300">
                           <strong>Note:</strong> Based on your responses, your account will require 
@@ -605,34 +646,90 @@ const PatientLogin = () => {
                       </div>
                     )}
 
+                    {/* Ketamine: Confirm None Apply (only when no conditions checked) */}
+                    {primaryProgram === "ketamine" && !isKetamineHighRisk() && (
+                      <div className="p-4 rounded-lg border border-border bg-card">
+                        <div className="flex items-start gap-3">
+                          <Checkbox
+                            id="confirm-none-apply"
+                            checked={confirmedNoneApply}
+                            onCheckedChange={(checked) => setConfirmedNoneApply(checked === true)}
+                            className="mt-1"
+                          />
+                          <Label 
+                            htmlFor="confirm-none-apply"
+                            className="text-foreground font-medium cursor-pointer"
+                          >
+                            I confirm I have none of these conditions
+                          </Label>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Navigation */}
                     <div className="flex gap-3 pt-2">
                       <Button 
                         type="button" 
                         variant="outline"
-                        onClick={() => setSignupStep("program")}
+                        onClick={() => {
+                          setSignupStep("program");
+                          setConfirmedNoneApply(false);
+                        }}
                         className="flex-1"
                       >
                         <ChevronLeft className="w-4 h-4 mr-2" />
                         Back
                       </Button>
-                      <Button type="submit" className="flex-1" disabled={isLoading || signupSuccess}>
-                        {signupSuccess ? (
-                          <>
-                            <Check className="w-4 h-4 mr-2 text-green-500" />
-                            Account Created
-                          </>
-                        ) : isLoading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Creating...
-                          </>
-                        ) : (
-                          "Create Account"
-                        )}
-                      </Button>
+                      
+                      {/* Ketamine: Hide button entirely if high risk, require confirmation if not */}
+                      {primaryProgram === "ketamine" ? (
+                        !isKetamineHighRisk() && (
+                          <Button 
+                            type="button"
+                            onClick={handleSignupComplete}
+                            className="flex-1" 
+                            disabled={isLoading || signupSuccess || !confirmedNoneApply}
+                          >
+                            {signupSuccess ? (
+                              <>
+                                <Check className="w-4 h-4 mr-2 text-green-500" />
+                                Account Created
+                              </>
+                            ) : isLoading ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Creating...
+                              </>
+                            ) : (
+                              "Create Account"
+                            )}
+                          </Button>
+                        )
+                      ) : (
+                        /* Hormone: Existing behavior (allows account creation with high risk) */
+                        <Button 
+                          type="button"
+                          onClick={handleSignupComplete}
+                          className="flex-1" 
+                          disabled={isLoading || signupSuccess}
+                        >
+                          {signupSuccess ? (
+                            <>
+                              <Check className="w-4 h-4 mr-2 text-green-500" />
+                              Account Created
+                            </>
+                          ) : isLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Creating...
+                            </>
+                          ) : (
+                            "Create Account"
+                          )}
+                        </Button>
+                      )}
                     </div>
-                  </form>
+                  </div>
                 )}
               </TabsContent>
             </Tabs>
