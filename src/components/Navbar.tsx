@@ -113,12 +113,22 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsLoggedIn(false);
-    setUserName(null);
-    setUserAvatar(null);
-    toast.success("Logged out successfully");
-    navigate("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Logout error:", error);
+        toast.error("Failed to log out. Please try again.");
+        return;
+      }
+      setIsLoggedIn(false);
+      setUserName(null);
+      setUserAvatar(null);
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (err) {
+      console.error("Logout exception:", err);
+      toast.error("An error occurred during logout.");
+    }
   };
 
   return (
