@@ -4,6 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { Users, UserPlus, Shield, ShieldCheck, Mail, Calendar, Loader2 } from "lucide-react";
 import { InviteProviderModal } from "./InviteProviderModal";
@@ -21,6 +28,7 @@ const TeamManagement = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
 
   useEffect(() => {
     loadTeamMembers();
@@ -56,6 +64,53 @@ const TeamManagement = () => {
       toast.error("Failed to load team members");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const updateRole = async (targetUserId: string, newRole: string) => {
+    try {
+      setUpdatingRoleId(targetUserId);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Not authenticated");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("update-team-role", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: {
+          target_user_id: targetUserId,
+          new_role: newRole,
+        },
+      });
+
+      if (error) {
+        console.error("[TeamManagement] Update error:", error);
+        toast.error("Failed to update role");
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      toast.success("Role updated successfully");
+      
+      // Update local state
+      setTeamMembers((prev) =>
+        prev.map((m) =>
+          m.user_id === targetUserId ? { ...m, role: newRole } : m
+        )
+      );
+    } catch (err: any) {
+      console.error("[TeamManagement] Unexpected error:", err);
+      toast.error("Failed to update role");
+    } finally {
+      setUpdatingRoleId(null);
     }
   };
 
@@ -202,9 +257,42 @@ const TeamManagement = () => {
                       </div>
                     </div>
 
-                    {/* Role Badge */}
+                    {/* Role Badge or Selector */}
                     <div className="flex-shrink-0">
-                      {getRoleBadge(member.role, member.is_master_admin)}
+                      {member.is_master_admin ? (
+                        getRoleBadge(member.role, member.is_master_admin)
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {updatingRoleId === member.user_id ? (
+                            <div className="flex items-center gap-2 px-3 py-1">
+                              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                              <span className="text-sm text-muted-foreground">Updating...</span>
+                            </div>
+                          ) : (
+                            <Select
+                              value={member.role}
+                              onValueChange={(value) => updateRole(member.user_id, value)}
+                            >
+                              <SelectTrigger className="w-28 h-8">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="admin">
+                                  <span className="flex items-center gap-2">
+                                    <Shield className="w-3 h-3" />
+                                    Admin
+                                  </span>
+                                </SelectItem>
+                                <SelectItem value="staff">
+                                  <span className="flex items-center gap-2">
+                                    Staff
+                                  </span>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
