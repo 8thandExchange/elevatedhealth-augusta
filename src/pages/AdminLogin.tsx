@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft, CheckCircle, Mail, AlertCircle } from "lucide-react";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -17,15 +17,43 @@ const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [emailError, setEmailError] = useState("");
+  const [loginError, setLoginError] = useState("");
   
   // Signup state
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [showSignupPassword, setShowSignupPassword] = useState(false);
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (resendCountdown > 0) {
+      const timer = setTimeout(() => setResendCountdown(resendCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCountdown]);
+
+  // Email validation
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (value: string) => {
+    setResetEmail(value);
+    if (value && !validateEmail(value)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError("");
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -33,7 +61,14 @@ const AdminLogin = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          setLoginError("Invalid email or password. Please check your credentials and try again.");
+        } else {
+          setLoginError(error.message);
+        }
+        return;
+      }
 
       if (data.user && data.session) {
         // Check if user has admin or staff role
@@ -48,7 +83,7 @@ const AdminLogin = () => {
         
         if (!hasAccess) {
           await supabase.auth.signOut();
-          toast.error("Access denied. Admin or staff role required.");
+          setLoginError("Access denied. This portal is for authorized providers only.");
           return;
         }
 
@@ -62,7 +97,7 @@ const AdminLogin = () => {
         setTimeout(() => navigate(isOfficeManager ? "/office/dashboard" : "/provider/dashboard"), 100);
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to login");
+      setLoginError(error.message || "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -117,6 +152,12 @@ const AdminLogin = () => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateEmail(resetEmail)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
@@ -126,16 +167,130 @@ const AdminLogin = () => {
 
       if (error) throw error;
 
-      toast.success("Password reset email sent! Check your inbox.");
-      setShowForgotPassword(false);
-      setResetEmail("");
+      setResetEmailSent(true);
+      setResendCountdown(60);
     } catch (error: any) {
-      toast.error(error.message || "Failed to send reset email");
+      toast.error(error.message || "Failed to send reset email. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleResendEmail = async () => {
+    if (resendCountdown > 0) return;
+    
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/admin/login`,
+      });
+
+      if (error) throw error;
+      
+      setResendCountdown(60);
+      toast.success("Reset email sent again!");
+    } catch (error: any) {
+      toast.error("Failed to resend email. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetForgotPasswordFlow = () => {
+    setShowForgotPassword(false);
+    setResetEmailSent(false);
+    setResetEmail("");
+    setEmailError("");
+    setResendCountdown(0);
+  };
+
+  // Success screen after email sent
+  if (showForgotPassword && resetEmailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-8 pb-8">
+            <div className="text-center space-y-6">
+              {/* Success Icon */}
+              <div className="flex justify-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-primary" />
+                </div>
+              </div>
+              
+              {/* Heading */}
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold text-foreground">Check Your Email</h2>
+                <p className="text-muted-foreground">
+                  We sent a password reset link to
+                </p>
+                <p className="font-medium text-foreground">{resetEmail}</p>
+              </div>
+
+              {/* Help Box */}
+              <div className="bg-secondary/50 rounded-lg p-4 text-left space-y-2">
+                <div className="flex items-start gap-2">
+                  <Mail className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-foreground">Didn't receive the email?</p>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Check your spam or junk folder</li>
+                      <li>• Make sure the email address is correct</li>
+                      <li>• Allow a few minutes for delivery</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Resend Button */}
+              <div className="space-y-3">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleResendEmail}
+                  disabled={resendCountdown > 0 || isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : resendCountdown > 0 ? (
+                    `Resend in ${resendCountdown}s`
+                  ) : (
+                    "Resend Email"
+                  )}
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetEmailSent(false);
+                    setResetEmail("");
+                  }}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Try a different email address
+                </button>
+              </div>
+
+              {/* Back to Login */}
+              <button
+                type="button"
+                onClick={resetForgotPasswordFlow}
+                className="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors font-medium"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Back to Login
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Forgot password form
   if (showForgotPassword) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -143,34 +298,52 @@ const AdminLogin = () => {
           <CardHeader>
             <CardTitle>Reset Password</CardTitle>
             <CardDescription>
-              Enter your email to receive a password reset link
+              Enter your email address and we'll send you a link to reset your password.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleForgotPassword} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="reset-email">Email</Label>
-                    <Input
-                      id="reset-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
+                <Label htmlFor="reset-email">Email Address</Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={resetEmail}
+                  onChange={(e) => handleEmailChange(e.target.value)}
                   required
+                  disabled={isLoading}
+                  className={emailError ? "border-destructive focus-visible:ring-destructive" : ""}
                 />
+                {emailError && (
+                  <div className="flex items-center gap-1.5 text-sm text-destructive">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {emailError}
+                  </div>
+                )}
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Send Reset Link
-              </Button>
               <Button 
-                type="button" 
-                variant="ghost" 
-                className="w-full"
-                onClick={() => setShowForgotPassword(false)}
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || !resetEmail || !!emailError}
               >
-                Back to Login
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending Reset Link...
+                  </>
+                ) : (
+                  "Send Reset Link"
+                )}
               </Button>
+              <button
+                type="button"
+                onClick={resetForgotPasswordFlow}
+                className="w-full inline-flex items-center justify-center text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Back to Login
+              </button>
             </form>
           </CardContent>
         </Card>
@@ -200,6 +373,26 @@ const AdminLogin = () => {
 
             <TabsContent value="login" className="space-y-4 mt-4">
               <form onSubmit={handleLogin} className="space-y-4">
+                {loginError && (
+                  <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                    <div className="space-y-1">
+                      <p className="text-sm text-destructive">{loginError}</p>
+                      {loginError.includes("Invalid") && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowForgotPassword(true);
+                            setResetEmail(email);
+                          }}
+                          className="text-xs text-primary hover:underline"
+                        >
+                          Forgot your password?
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -207,8 +400,12 @@ const AdminLogin = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setLoginError("");
+                    }}
                     required
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -218,8 +415,12 @@ const AdminLogin = () => {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setLoginError("");
+                      }}
                       required
+                      disabled={isLoading}
                       className="pr-10"
                     />
                     <button
@@ -233,8 +434,14 @@ const AdminLogin = () => {
                   </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Sign In
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing In...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </Button>
                 <button
                   type="button"
@@ -262,6 +469,7 @@ const AdminLogin = () => {
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -274,6 +482,7 @@ const AdminLogin = () => {
                       onChange={(e) => setSignupPassword(e.target.value)}
                       required
                       minLength={6}
+                      disabled={isLoading}
                       className="pr-10"
                     />
                     <button
@@ -288,8 +497,14 @@ const AdminLogin = () => {
                   <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Admin Account
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    "Create Admin Account"
+                  )}
                 </Button>
               </form>
             </TabsContent>
