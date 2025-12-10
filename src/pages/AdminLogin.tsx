@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft, CheckCircle, Mail, AlertCircle } from "lucide-react";
 
@@ -21,11 +20,6 @@ const AdminLogin = () => {
   const [resendCountdown, setResendCountdown] = useState(0);
   const [emailError, setEmailError] = useState("");
   const [loginError, setLoginError] = useState("");
-  
-  // Signup state
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [showSignupPassword, setShowSignupPassword] = useState(false);
 
   // Countdown timer effect
   useEffect(() => {
@@ -83,7 +77,7 @@ const AdminLogin = () => {
         
         if (!hasAccess) {
           await supabase.auth.signOut();
-          setLoginError("Access denied. This portal is for authorized providers only.");
+          setLoginError("Access denied. This portal is for authorized providers only. Contact admin@elevatedhealthaugusta.com to request access.");
           return;
         }
 
@@ -98,53 +92,6 @@ const AdminLogin = () => {
       }
     } catch (error: any) {
       setLoginError(error.message || "An unexpected error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const redirectUrl = `${window.location.origin}/provider/dashboard`;
-      
-      const { data, error } = await supabase.auth.signUp({
-        email: signupEmail,
-        password: signupPassword,
-        options: {
-          emailRedirectTo: redirectUrl
-        }
-      });
-
-      if (error) throw error;
-      if (!data.user) throw new Error("Signup failed");
-
-      // Assign admin role
-      const { error: roleError } = await supabase.from("user_roles").insert({
-        user_id: data.user.id,
-        role: "admin"
-      });
-
-      if (roleError) {
-        console.error("Role assignment error:", roleError);
-        // Continue anyway - can be fixed manually
-      }
-
-      toast.success("Admin account created! You can now sign in.");
-      
-      // Auto-login after signup
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: signupEmail,
-        password: signupPassword,
-      });
-
-      if (!loginError) {
-        navigate("/provider/dashboard");
-      }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create account");
     } finally {
       setIsLoading(false);
     }
@@ -359,168 +306,97 @@ const AdminLogin = () => {
             <ShieldCheck className="w-5 h-5 text-primary" />
             <span className="text-xs uppercase tracking-widest text-primary">Provider Portal</span>
           </div>
-          <CardTitle>Admin Login</CardTitle>
+          <CardTitle>Provider Login</CardTitle>
           <CardDescription>
-            Sign in to access the provider dashboard
+            Sign in to access the provider dashboard. New providers must be invited by an administrator.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Sign In</TabsTrigger>
-              <TabsTrigger value="setup">First Time Setup</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login" className="space-y-4 mt-4">
-              <form onSubmit={handleLogin} className="space-y-4">
-                {loginError && (
-                  <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-sm text-destructive">{loginError}</p>
-                      {loginError.includes("Invalid") && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowForgotPassword(true);
-                            setResetEmail(email);
-                          }}
-                          className="text-xs text-primary hover:underline"
-                        >
-                          Forgot your password?
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setLoginError("");
-                    }}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setLoginError("");
-                      }}
-                      required
-                      disabled={isLoading}
-                      className="pr-10"
-                    />
+          <form onSubmit={handleLogin} className="space-y-4">
+            {loginError && (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-sm text-destructive">{loginError}</p>
+                  {loginError.includes("Invalid") && (
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                      tabIndex={-1}
+                      onClick={() => {
+                        setShowForgotPassword(true);
+                        setResetEmail(email);
+                      }}
+                      className="text-xs text-primary hover:underline"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      Forgot your password?
                     </button>
-                  </div>
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing In...
-                    </>
-                  ) : (
-                    "Sign In"
                   )}
-                </Button>
+                </div>
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setLoginError("");
+                }}
+                required
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setLoginError("");
+                  }}
+                  required
+                  disabled={isLoading}
+                  className="pr-10"
+                />
                 <button
                   type="button"
-                  onClick={() => setShowForgotPassword(true)}
-                  className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
                 >
-                  Forgot password?
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="setup" className="space-y-4 mt-4">
-              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4">
-                <p className="text-sm text-amber-700 dark:text-amber-300">
-                  <strong>One-time setup:</strong> Create your admin account to access the provider dashboard.
-                </p>
               </div>
-              <form onSubmit={handleSignup} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={signupEmail}
-                    onChange={(e) => setSignupEmail(e.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="signup-password"
-                      type={showSignupPassword ? "text" : "password"}
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                      required
-                      minLength={6}
-                      disabled={isLoading}
-                      className="pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowSignupPassword(!showSignupPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                      tabIndex={-1}
-                    >
-                      {showSignupPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Account...
-                    </>
-                  ) : (
-                    "Create Admin Account"
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                "Sign In"
+              )}
+            </Button>
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              Forgot password?
+            </button>
+          </form>
         </CardContent>
       </Card>
 
-      <div className="text-center mt-6">
-        <Link 
-          to="/" 
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Website
-        </Link>
-      </div>
+      <Link to="/" className="mt-6 text-sm text-muted-foreground hover:text-primary transition-colors">
+        ← Back to website
+      </Link>
     </div>
   );
 };
