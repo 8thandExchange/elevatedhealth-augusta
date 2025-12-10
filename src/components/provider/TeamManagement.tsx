@@ -11,8 +11,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Users, UserPlus, Shield, ShieldCheck, Mail, Calendar, Loader2 } from "lucide-react";
+import { Users, UserPlus, Shield, ShieldCheck, Mail, Calendar, Loader2, Trash2 } from "lucide-react";
 import { InviteProviderModal } from "./InviteProviderModal";
 
 interface TeamMember {
@@ -29,10 +39,21 @@ const TeamManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
+  const [removingMember, setRemovingMember] = useState<TeamMember | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
     loadTeamMembers();
+    getCurrentUser();
   }, []);
+
+  const getCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setCurrentUserId(user.id);
+    }
+  };
 
   const loadTeamMembers = async () => {
     try {
@@ -114,6 +135,53 @@ const TeamManagement = () => {
     }
   };
 
+  const removeMember = async () => {
+    if (!removingMember) return;
+    
+    try {
+      setIsRemoving(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Not authenticated");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("remove-team-member", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: {
+          target_user_id: removingMember.user_id,
+        },
+      });
+
+      if (error) {
+        console.error("[TeamManagement] Remove error:", error);
+        toast.error("Failed to remove team member");
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      toast.success(`${removingMember.full_name || removingMember.email} has been removed`);
+      
+      // Update local state
+      setTeamMembers((prev) =>
+        prev.filter((m) => m.user_id !== removingMember.user_id)
+      );
+    } catch (err: any) {
+      console.error("[TeamManagement] Unexpected error:", err);
+      toast.error("Failed to remove team member");
+    } finally {
+      setIsRemoving(false);
+      setRemovingMember(null);
+    }
+  };
+
   const getRoleBadge = (role: string, isMasterAdmin: boolean) => {
     if (isMasterAdmin) {
       return (
@@ -152,6 +220,11 @@ const TeamManagement = () => {
       return parts.map((p) => p[0]).join("").toUpperCase().slice(0, 2);
     }
     return email.slice(0, 2).toUpperCase();
+  };
+
+  const canRemove = (member: TeamMember) => {
+    // Cannot remove master admin or yourself
+    return !member.is_master_admin && member.user_id !== currentUserId;
   };
 
   return (
@@ -242,8 +315,11 @@ const TeamManagement = () => {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">
+                      <p className="font-medium text-foreground truncate flex items-center gap-2">
                         {member.full_name || member.email.split("@")[0]}
+                        {member.user_id === currentUserId && (
+                          <Badge variant="outline" className="text-xs">You</Badge>
+                        )}
                       </p>
                       <div className="flex items-center gap-4 mt-1">
                         <span className="text-sm text-muted-foreground flex items-center gap-1 truncate">
@@ -258,11 +334,11 @@ const TeamManagement = () => {
                     </div>
 
                     {/* Role Badge or Selector */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 flex items-center gap-2">
                       {member.is_master_admin ? (
                         getRoleBadge(member.role, member.is_master_admin)
                       ) : (
-                        <div className="flex items-center gap-2">
+                        <>
                           {updatingRoleId === member.user_id ? (
                             <div className="flex items-center gap-2 px-3 py-1">
                               <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -291,7 +367,19 @@ const TeamManagement = () => {
                               </SelectContent>
                             </Select>
                           )}
-                        </div>
+                          
+                          {/* Remove Button */}
+                          {canRemove(member) && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => setRemovingMember(member)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -307,6 +395,41 @@ const TeamManagement = () => {
         onOpenChange={setIsInviteOpen}
         onInviteSent={loadTeamMembers}
       />
+
+      {/* Remove Confirmation Dialog */}
+      <AlertDialog open={!!removingMember} onOpenChange={() => setRemovingMember(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="w-5 h-5" />
+              Remove Team Member
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove{" "}
+              <strong>{removingMember?.full_name || removingMember?.email}</strong> from the team?
+              <br /><br />
+              They will lose access to the provider dashboard immediately. This action can be undone by inviting them again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isRemoving}>Cancel</AlertDialogCancel>
+            <Button
+              variant="destructive"
+              onClick={removeMember}
+              disabled={isRemoving}
+            >
+              {isRemoving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Removing...
+                </>
+              ) : (
+                "Remove"
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
