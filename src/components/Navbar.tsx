@@ -132,10 +132,18 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
   };
 
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b border-border/50"
-      style={{ backgroundColor: '#F9F9F7' }}
-    >
+    <>
+      {/* Announcement Bar - Dark Navy */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#1a3a4a] text-white text-xs py-2 text-center">
+        <span className="font-lato">Serving Augusta & Evans, GA</span>
+        <span className="mx-2">|</span>
+        <a href="tel:7067603470" className="font-lato hover:underline">(706) 760-3470</a>
+      </div>
+      
+      {/* Main Navigation */}
+      <nav
+        className="fixed top-[32px] left-0 right-0 z-50 transition-all duration-500 border-b border-border/50 bg-white"
+      >
       <div className="container mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo / Brand */}
@@ -398,7 +406,8 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           </div>
         </div>
       )}
-    </nav>
+      </nav>
+    </>
   );
 };
 

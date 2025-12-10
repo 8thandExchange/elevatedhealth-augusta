@@ -218,14 +218,14 @@
 /* Mobile Navigation Menu - Full Screen Overlay */
 .mobile-menu-overlay {
   position: fixed !important;
-  top: 80px !important;
+  top: 112px !important; /* 32px announcement bar + 80px navbar */
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
-  background-color: #F9F9F7 !important;
+  background-color: #ffffff !important;
   z-index: 50 !important;
   overflow-y: auto !important;
-  padding-top: 5rem !important;
+  padding-top: 3rem !important;
 }
 
 .mobile-menu-link {
