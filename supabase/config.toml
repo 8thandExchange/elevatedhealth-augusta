@@ -80,3 +80,6 @@ verify_jwt = false
 
 [functions.update-team-role]
 verify_jwt = false
+
+[functions.remove-team-member]
+verify_jwt = false
