@@ -341,7 +341,103 @@ const WeightLoss = () => {
             </div>
           </section>
 
-          {/* The Elevated Membership */}
+          {/* À La Carte Options - For Budget-Conscious Patients */}
+          <section className="py-16 md:py-24 bg-background">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="max-w-5xl mx-auto">
+                <div className="text-center mb-12">
+                  <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                    Flexible Options
+                  </p>
+                  <h2 className="font-cormorant text-primary text-3xl md:text-4xl font-bold mb-4">
+                    À La Carte Services
+                  </h2>
+                  <p className="text-lg text-muted-foreground font-lato max-w-2xl mx-auto">
+                    Not ready for a full membership? Start with a single consultation or diagnostic to see if our approach is right for you.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                  {/* Single Consultation */}
+                  <Card className="border border-border/50 hover:border-gold/40 transition-all">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-3 bg-gold/10 rounded-full mb-4">
+                        <MessageCircle className="h-6 w-6 text-gold" />
+                      </div>
+                      <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
+                        Discovery Consultation
+                      </h3>
+                      <p className="text-3xl font-cormorant text-primary mb-2">$99</p>
+                      <p className="text-sm text-muted-foreground mb-4 font-lato">
+                        45-minute deep dive with our provider to assess your metabolic health and discuss options.
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        onClick={scrollToBooking}
+                        className="w-full border-gold/30 hover:bg-gold/5"
+                      >
+                        Book Consultation
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Metabolic Labs Only */}
+                  <Card className="border border-border/50 hover:border-gold/40 transition-all">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-3 bg-gold/10 rounded-full mb-4">
+                        <Droplet className="h-6 w-6 text-gold" />
+                      </div>
+                      <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
+                        Metabolic Mapping
+                      </h3>
+                      <p className="text-3xl font-cormorant text-primary mb-2">$299</p>
+                      <p className="text-sm text-muted-foreground mb-4 font-lato">
+                        Complete ZRT hormone panel + provider review to identify your unique metabolic blockers.
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        onClick={scrollToBooking}
+                        className="w-full border-gold/30 hover:bg-gold/5"
+                      >
+                        Get Your Labs
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* GLP-1 Starter */}
+                  <Card className="border border-gold/40 hover:border-gold transition-all relative">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="bg-gold text-white text-xs px-3 py-1 rounded-full font-lato">
+                        Most Popular
+                      </span>
+                    </div>
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-3 bg-gold/10 rounded-full mb-4">
+                        <Sparkles className="h-6 w-6 text-gold" />
+                      </div>
+                      <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
+                        GLP-1 Starter Month
+                      </h3>
+                      <p className="text-3xl font-cormorant text-primary mb-2">$349</p>
+                      <p className="text-sm text-muted-foreground mb-4 font-lato">
+                        One month of Semaglutide + provider consultation. No commitment required.
+                      </p>
+                      <Button 
+                        onClick={scrollToBooking}
+                        className="w-full bg-gold hover:bg-gold-dark text-white"
+                      >
+                        Start Your Trial
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <p className="text-center text-sm text-muted-foreground mt-8 font-lato">
+                  All à la carte services can be applied toward membership enrollment within 60 days.
+                </p>
+              </div>
+            </div>
+          </section>
           <section className="py-16 md:py-24 relative overflow-hidden">
             {/* Soft Slate Blue Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#2C3E50]/10 via-[#34495e]/15 to-[#2C3E50]/20" />

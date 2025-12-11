@@ -24,6 +24,7 @@ export const SITE_CONFIG = {
     hormonesWomen: "/hormones-women",
     hormonesMen: "/hormones-men",
     ivLounge: "/iv-lounge",
+    peptides: "/peptides",
     // Legacy routes for backwards compatibility
     ivKetamine: "/iv-ketamine",
     spravato: "/spravato",

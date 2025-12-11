@@ -73,18 +73,26 @@ const Footer = () => {
                 </li>
                 <li>
                   <button 
-                    onClick={() => navigate(SITE_CONFIG.routes.militaryVeteran)} 
+                    onClick={() => navigate(SITE_CONFIG.routes.ivLounge)} 
                     className="hover:text-background transition-colors"
                   >
-                    Veterans Program
+                    IV Lounge
                   </button>
                 </li>
                 <li>
                   <button 
-                    onClick={() => navigate("/patient-resources")} 
+                    onClick={() => navigate("/peptides")} 
                     className="hover:text-background transition-colors"
                   >
-                    Patient Resources
+                    Peptide Therapy
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => navigate(SITE_CONFIG.routes.militaryVeteran)} 
+                    className="hover:text-background transition-colors"
+                  >
+                    Veterans Program
                   </button>
                 </li>
               </ul>

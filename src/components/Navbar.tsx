@@ -190,6 +190,14 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
             </button>
 
             <button 
+              onClick={() => navigate("/peptides")}
+              className="text-sm font-lato font-normal tracking-wide transition-colors elegant-underline hover:opacity-70"
+              style={{ color: '#2C3E50' }}
+            >
+              Peptides
+            </button>
+
+            <button 
               onClick={() => scrollToSection("contact")}
               className="text-sm font-lato font-normal tracking-wide transition-colors elegant-underline hover:opacity-70"
               style={{ color: '#2C3E50' }}
@@ -339,6 +347,16 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                 className="mobile-menu-link"
               >
                 IV Lounge
+              </button>
+
+              <button 
+                onClick={() => {
+                  navigate("/peptides");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="mobile-menu-link"
+              >
+                Peptides
               </button>
 
               <button 

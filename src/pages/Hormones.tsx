@@ -199,7 +199,103 @@ const Hormones = () => {
             </div>
           </section>
 
-          {/* Gender Selection Cards */}
+          {/* À La Carte Options */}
+          <section className="section-spacing bg-background">
+            <div className="container mx-auto px-6 lg:px-8">
+              <div className="max-w-5xl mx-auto">
+                <div className="text-center mb-12">
+                  <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+                    Flexible Options
+                  </p>
+                  <h2 className="font-cormorant text-foreground mb-6">
+                    À La Carte Services
+                  </h2>
+                  <p className="text-lg text-muted-foreground font-light max-w-2xl mx-auto">
+                    Not ready for ongoing treatment? Start with a diagnostic to understand your hormone levels.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                  {/* Single Consultation */}
+                  <Card className="border border-border/50 hover:border-primary/30 transition-all bg-card/80">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
+                        <Heart className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-cormorant text-xl text-foreground mb-2">
+                        Hormone Consultation
+                      </h3>
+                      <p className="text-3xl font-cormorant text-foreground mb-2">$99</p>
+                      <p className="text-sm text-muted-foreground mb-4 font-light">
+                        45-minute assessment with our hormone specialist to discuss symptoms and treatment options.
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsBookingOpen(true)}
+                        className="w-full border-primary/30 hover:bg-primary/5"
+                      >
+                        Book Consultation
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Hormone Mapping */}
+                  <Card className="border border-gold/40 hover:border-gold transition-all bg-card/80 relative">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="bg-gold text-white text-xs px-3 py-1 rounded-full font-lato">
+                        Most Popular
+                      </span>
+                    </div>
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
+                        <TestTube className="h-6 w-6 text-gold" />
+                      </div>
+                      <h3 className="font-cormorant text-xl text-foreground mb-2">
+                        Hormone Mapping
+                      </h3>
+                      <p className="text-3xl font-cormorant text-foreground mb-2">$299</p>
+                      <p className="text-sm text-muted-foreground mb-4 font-light">
+                        Complete ZRT saliva panel + 45-minute deep-dive review of your hormone landscape.
+                      </p>
+                      <Button 
+                        onClick={() => setIsBookingOpen(true)}
+                        className="w-full bg-gold hover:bg-gold/90 text-white border-gold"
+                      >
+                        Map Your Hormones
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Full Panel */}
+                  <Card className="border border-border/50 hover:border-primary/30 transition-all bg-card/80">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
+                        <Shield className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-cormorant text-xl text-foreground mb-2">
+                        Comprehensive Panel
+                      </h3>
+                      <p className="text-3xl font-cormorant text-foreground mb-2">$399</p>
+                      <p className="text-sm text-muted-foreground mb-4 font-light">
+                        Saliva + blood spot testing with thyroid, adrenal, and sex hormone markers.
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsBookingOpen(true)}
+                        className="w-full border-primary/30 hover:bg-primary/5"
+                      >
+                        Get Full Panel
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <p className="text-center text-sm text-muted-foreground mt-8 font-light">
+                  All diagnostic services can be applied toward treatment enrollment within 60 days.
+                </p>
+              </div>
+            </div>
+          </section>
           <section className="section-spacing bg-secondary/30">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="text-center mb-12">
