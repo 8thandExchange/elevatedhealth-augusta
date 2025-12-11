@@ -45,6 +45,7 @@ import ScheduleConsult from "./pages/ScheduleConsult";
 import CreateAccount from "./pages/CreateAccount";
 import HealthReport from "./pages/HealthReport";
 import PatientServices from "./pages/PatientServices";
+import ConsultationConfirmed from "./pages/ConsultationConfirmed";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const App = () => (
           <Route path="/ketamine-payment-success" element={<KetaminePaymentSuccess />} />
           <Route path="/patient-resources" element={<PatientResources />} />
           <Route path="/schedule-consult" element={<ScheduleConsult />} />
+          <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
           <Route path="/patient/create-account" element={<CreateAccount />} />
           
           {/* Protected Patient Routes */}
