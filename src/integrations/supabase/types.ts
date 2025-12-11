@@ -139,6 +139,63 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_bookings: {
+        Row: {
+          amount_paid: number | null
+          booked_for: string | null
+          created_at: string
+          credit_code: string | null
+          credit_used_at: string | null
+          customer_email: string
+          customer_name: string | null
+          customer_phone: string | null
+          follow_up_date: string | null
+          id: string
+          notes: string | null
+          service_type: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_paid?: number | null
+          booked_for?: string | null
+          created_at?: string
+          credit_code?: string | null
+          credit_used_at?: string | null
+          customer_email: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          follow_up_date?: string | null
+          id?: string
+          notes?: string | null
+          service_type?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_paid?: number | null
+          booked_for?: string | null
+          created_at?: string
+          credit_code?: string | null
+          credit_used_at?: string | null
+          customer_email?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          follow_up_date?: string | null
+          id?: string
+          notes?: string | null
+          service_type?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -728,6 +785,7 @@ export type Database = {
           allergies: string | null
           avatar_url: string | null
           city: string | null
+          consultation_booking_id: string | null
           created_at: string | null
           current_protocol: string | null
           dob: string | null
@@ -740,6 +798,7 @@ export type Database = {
           invited_by: string | null
           is_archived: boolean | null
           lab_path: string | null
+          mapping_completed: boolean | null
           medical_history: Json | null
           onboarding_status: string | null
           phone: string | null
@@ -757,6 +816,7 @@ export type Database = {
           allergies?: string | null
           avatar_url?: string | null
           city?: string | null
+          consultation_booking_id?: string | null
           created_at?: string | null
           current_protocol?: string | null
           dob?: string | null
@@ -769,6 +829,7 @@ export type Database = {
           invited_by?: string | null
           is_archived?: boolean | null
           lab_path?: string | null
+          mapping_completed?: boolean | null
           medical_history?: Json | null
           onboarding_status?: string | null
           phone?: string | null
@@ -786,6 +847,7 @@ export type Database = {
           allergies?: string | null
           avatar_url?: string | null
           city?: string | null
+          consultation_booking_id?: string | null
           created_at?: string | null
           current_protocol?: string | null
           dob?: string | null
@@ -798,6 +860,7 @@ export type Database = {
           invited_by?: string | null
           is_archived?: boolean | null
           lab_path?: string | null
+          mapping_completed?: boolean | null
           medical_history?: Json | null
           onboarding_status?: string | null
           phone?: string | null
@@ -811,7 +874,15 @@ export type Database = {
           user_id?: string | null
           zip_code?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "patients_consultation_booking_id_fkey"
+            columns: ["consultation_booking_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       protocols: {
         Row: {
