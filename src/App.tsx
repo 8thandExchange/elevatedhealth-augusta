@@ -18,6 +18,7 @@ import HormoneReplacement from "./pages/HormoneReplacement";
 import MilitaryVeteran from "./pages/MilitaryVeteran";
 import HowKetamineWorks from "./pages/HowKetamineWorks";
 import PeptideTherapy from "./pages/PeptideTherapy";
+import IVLounge from "./pages/IVLounge";
 import WhatToExpect from "./pages/WhatToExpect";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HipaaNotice from "./pages/HipaaNotice";
@@ -74,6 +75,7 @@ const App = () => (
           <Route path="/military-veteran" element={<MilitaryVeteran />} />
           <Route path="/how-ketamine-works" element={<HowKetamineWorks />} />
           <Route path="/peptides" element={<PeptideTherapy />} />
+          <Route path="/iv-lounge" element={<IVLounge />} />
           <Route path="/what-to-expect" element={<WhatToExpect />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
