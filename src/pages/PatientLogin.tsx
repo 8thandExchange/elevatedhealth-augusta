@@ -747,7 +747,7 @@ const PatientLogin = () => {
                       </>
                     )}
 
-                    {/* Ketamine Disqualification Message */}
+                    {/* Ketamine Disqualification Message - Routes to Clinical Eligibility Review */}
                     {primaryProgram === "ketamine" && isKetamineHighRisk() && (
                       <div className="bg-card border border-gold/30 rounded-lg p-6">
                         <div className="text-center mb-4">
@@ -755,22 +755,40 @@ const PatientLogin = () => {
                             <Heart className="w-6 h-6 text-gold" />
                           </div>
                           <h3 className="font-cormorant text-xl font-semibold text-foreground mb-2">
-                            We Care About Your Safety
+                            Safety First. Let's Clarify Your Options.
                           </h3>
-                          <p className="text-muted-foreground text-sm">
-                            Based on your responses, ketamine therapy may not be the safest option for you at this time. 
-                            However, we'd love to have a quick call with you to discuss alternative treatment options that may help.
+                          <p className="text-muted-foreground text-sm mb-4">
+                            Your medical intake flagged a potential contraindication for treatment. 
+                            At Elevated Health, we prioritize your safety above all else.
                           </p>
+                          <p className="text-muted-foreground text-sm">
+                            This brief 15-minute triage call is designed to:
+                          </p>
+                          <ul className="text-sm text-muted-foreground text-left mt-3 space-y-2 max-w-sm mx-auto">
+                            <li className="flex items-start gap-2">
+                              <span className="text-gold font-semibold">•</span>
+                              <span><strong>Clarify:</strong> Review the specific answer that triggered the safety flag</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-gold font-semibold">•</span>
+                              <span><strong>Re-Evaluate:</strong> Determine if the issue is a hard stop or can be managed</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-gold font-semibold">•</span>
+                              <span><strong>Redirect:</strong> Explore other modalities if this therapy isn't safe for you</span>
+                            </li>
+                          </ul>
                         </div>
                         
-                        <p className="text-sm font-medium text-foreground mb-2">Book a time that works for you:</p>
+                        <p className="text-sm font-medium text-foreground mb-2">Book your Clinical Eligibility Review:</p>
                         <div className="rounded-lg overflow-hidden border border-border mb-4">
+                          {/* Clinical Eligibility Review Calendar */}
                           <iframe 
-                            src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true" 
+                            src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ26DhPKdGVdKetVQ6WQKaaGYWWrjCKd3c7P7E4dTNfiAbxcYX4Q2OO9lBS25v8X3yYT7KIPsZ9x?gv=true" 
                             style={{ border: 0 }} 
                             width="100%" 
                             height="400"
-                            title="Schedule a consultation"
+                            title="Clinical Eligibility Review"
                           />
                         </div>
                         

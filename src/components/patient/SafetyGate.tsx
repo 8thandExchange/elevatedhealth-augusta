@@ -2,10 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ShieldAlert, Phone, Clock, CheckCircle, Mail, Loader2, CalendarClock } from "lucide-react";
+import { ShieldAlert, Phone, Clock, CheckCircle, Mail, Loader2, CalendarClock, Calendar } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+// Clinical Eligibility Review Calendar URL - for ALL flagged patients
+const CLINICAL_ELIGIBILITY_REVIEW_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ26DhPKdGVdKetVQ6WQKaaGYWWrjCKd3c7P7E4dTNfiAbxcYX4Q2OO9lBS25v8X3yYT7KIPsZ9x?gv=true";
 
 interface SafetyGateProps {
   patientName: string;
@@ -21,6 +24,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
   const [callbackRequested, setCallbackRequested] = useState(false);
   const [phone, setPhone] = useState(patientPhone || "");
   const [preferredTime, setPreferredTime] = useState("");
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleRequestCallback = async () => {
     if (!phone) {
@@ -61,7 +65,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
             <ShieldAlert className="w-8 h-8 text-amber-600 dark:text-amber-400" />
           </div>
           <h1 className="font-cormorant text-3xl text-foreground mb-2">
-            Priority Medical Review
+            Safety First. Let's Clarify Your Options.
           </h1>
           <p className="text-muted-foreground">
             Your safety is our top priority
@@ -76,45 +80,68 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
             </p>
             
             <p className="text-foreground leading-relaxed">
-              Based on your medical history, <span className="font-semibold">a provider</span> needs 
-              to review your file manually to ensure your safety before we can proceed with {treatmentType === "ketamine" ? "ketamine therapy" : "hormone therapy recommendations"}.
+              Your medical intake flagged a potential contraindication for {treatmentType === "ketamine" ? "ketamine therapy" : "hormone therapy"}. 
+              At Elevated Health, we prioritize your safety above all else.
             </p>
 
             <div className="bg-white dark:bg-gray-900 rounded-lg p-4 space-y-3">
               <h3 className="font-medium text-foreground flex items-center gap-2">
                 <Clock className="w-4 h-4 text-primary" />
-                What happens next?
+                This brief 15-minute triage call is designed to:
               </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>Your account has been flagged for <strong>priority review</strong></span>
+                  <span><strong>Clarify:</strong> Review the specific answer that triggered the safety flag</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>A provider will personally review your medical history within <strong>24-48 hours</strong></span>
+                  <span><strong>Re-Evaluate:</strong> Determine if the issue is a hard stop or can be managed with clearance from your primary care physician</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>You will receive a call to discuss safe treatment options tailored to your needs</span>
+                  <span><strong>Redirect:</strong> If this therapy isn't safe, we'll explore other modalities (like Peptide Therapy or Nutritional Support) that may better serve your goals</span>
                 </li>
               </ul>
             </div>
 
             <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                <strong>Why the extra care?</strong> {treatmentType === "ketamine" 
-                  ? "Certain medical conditions require careful consideration before starting ketamine therapy. This review ensures we create a treatment plan that is both effective and safe for your mental wellness journey."
-                  : "Certain medical conditions require careful consideration before starting hormone therapy. This review ensures we create a treatment plan that is both effective and safe for your unique situation."}
+                <strong>Please Note:</strong> This is a medical triage call, not a therapy session. Please be ready to discuss your medical history in detail.
               </p>
             </div>
 
-            {/* Request Callback Form */}
-            {!callbackRequested ? (
+            {/* Book Clinical Eligibility Review */}
+            {!showCalendar ? (
+              <Button 
+                className="w-full" 
+                size="lg"
+                onClick={() => setShowCalendar(true)}
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Book Clinical Eligibility Review
+              </Button>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-foreground">Select a time for your Clinical Eligibility Review:</p>
+                <div className="rounded-lg overflow-hidden border border-border">
+                  <iframe 
+                    src={CLINICAL_ELIGIBILITY_REVIEW_URL}
+                    style={{ border: 0 }} 
+                    width="100%" 
+                    height="400"
+                    title="Clinical Eligibility Review"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Request Callback Alternative */}
+            {!callbackRequested && !showCalendar ? (
               <div className="bg-white dark:bg-gray-900 rounded-lg p-4 space-y-4 border border-border">
                 <h3 className="font-medium text-foreground flex items-center gap-2">
                   <CalendarClock className="w-4 h-4 text-primary" />
-                  Request a Callback
+                  Or Request a Callback
                 </h3>
                 <div className="space-y-3">
                   <div>
@@ -138,6 +165,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
                   <Button
                     onClick={handleRequestCallback}
                     disabled={isRequestingCallback || !phone}
+                    variant="outline"
                     className="w-full"
                   >
                     {isRequestingCallback ? (
@@ -149,7 +177,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
                   </Button>
                 </div>
               </div>
-            ) : (
+            ) : callbackRequested ? (
               <div className="bg-green-50 dark:bg-green-950/30 rounded-lg p-4 border border-green-200 dark:border-green-800">
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-600" />
@@ -159,7 +187,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
 
             {/* Contact Info */}
             <div className="flex items-center justify-center gap-4 pt-2">
@@ -179,6 +207,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
           <Button 
             className="w-full" 
             size="lg"
+            variant="outline"
             onClick={() => window.location.href = `tel:${SITE_CONFIG.phoneRaw}`}
           >
             <Phone className="w-4 h-4 mr-2" />
@@ -187,7 +216,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
           
           {onContinue && (
             <Button 
-              variant="outline" 
+              variant="ghost" 
               className="w-full"
               onClick={onContinue}
             >

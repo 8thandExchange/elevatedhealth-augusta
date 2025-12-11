@@ -13,31 +13,56 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 const CALENDAR_URLS: Record<string, string> = {
   hormone: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
   weight_loss: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
-  ketamine: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
+  // Ketamine Candidacy Review (15 min) - for paid $99 consultations
+  ketamine: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true",
   peptide: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true",
 };
 
 // Service type labels
-const SERVICE_LABELS: Record<string, { title: string; specialist: string; creditInfo: string }> = {
+const SERVICE_LABELS: Record<string, { title: string; specialist: string; creditInfo: string; steps: string[] }> = {
   hormone: {
     title: "Hormone Consultation",
     specialist: "hormone specialist",
-    creditInfo: "Use this code when purchasing Hormone Mapping to receive $99 off (pay only $200 instead of $299)."
+    creditInfo: "Use this code when purchasing Hormone Mapping to receive $99 off (pay only $200 instead of $299).",
+    steps: [
+      "Book your consultation using the calendar above",
+      "Speak with our hormone specialist to discuss your goals and symptoms",
+      "If you're a good fit, use your credit code for $99 off Hormone Mapping",
+      "Receive your at-home test kit and begin your hormone optimization journey"
+    ]
   },
   weight_loss: {
     title: "Weight Loss Consultation",
     specialist: "weight management specialist",
-    creditInfo: "Use this code when purchasing Metabolic Mapping to receive $99 off (pay only $200 instead of $299)."
+    creditInfo: "Use this code when purchasing Metabolic Mapping to receive $99 off (pay only $200 instead of $299).",
+    steps: [
+      "Book your consultation using the calendar above",
+      "Speak with our weight management specialist to discuss your goals",
+      "If you're a good fit, use your credit code for $99 off Metabolic Mapping",
+      "Begin your medically-supervised weight loss journey"
+    ]
   },
   ketamine: {
-    title: "Ketamine Consultation",
-    specialist: "mental wellness specialist",
-    creditInfo: "Your $99 consultation fee will be credited toward your treatment plan."
+    title: "Ketamine Candidacy Review",
+    specialist: "clinical team",
+    creditInfo: "Your $99 will be credited toward your first ketamine infusion session when you move forward with treatment.",
+    steps: [
+      "Book your 15-minute Candidacy Review using the calendar above",
+      "We'll confirm your medical history and discuss your mental health goals",
+      "If cleared, we'll book your comprehensive intake and first session immediately",
+      "Your $99 credit applies to your first infusion—you'll only pay the balance"
+    ]
   },
   peptide: {
     title: "Peptide Consultation",
     specialist: "peptide therapy specialist",
-    creditInfo: "Your $99 consultation fee will be credited toward your peptide protocol."
+    creditInfo: "Your $99 consultation fee will be credited toward your peptide protocol.",
+    steps: [
+      "Book your consultation using the calendar above",
+      "Speak with our peptide specialist to discuss your optimization goals",
+      "If you're a good fit, your $99 credit applies to your peptide protocol",
+      "Begin your cellular optimization journey"
+    ]
   },
 };
 
@@ -182,22 +207,12 @@ const ConsultationConfirmed = () => {
                 <CardContent className="p-6">
                   <h3 className="font-semibold mb-4">What Happens Next?</h3>
                   <ol className="space-y-3 text-sm">
-                    <li className="flex gap-3">
-                      <span className="font-bold text-gold">1.</span>
-                      <span>Book your consultation using the calendar above</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="font-bold text-gold">2.</span>
-                      <span>Speak with our hormone specialist to discuss your goals and symptoms</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="font-bold text-gold">3.</span>
-                      <span>If you're a good fit, use your credit code for $99 off Hormone Mapping</span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="font-bold text-gold">4.</span>
-                      <span>Receive your at-home test kit and begin your hormone optimization journey</span>
-                    </li>
+                    {serviceInfo.steps.map((step, index) => (
+                      <li key={index} className="flex gap-3">
+                        <span className="font-bold text-gold">{index + 1}.</span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
                   </ol>
                 </CardContent>
               </Card>
