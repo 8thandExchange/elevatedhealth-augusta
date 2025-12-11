@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   CheckCircle2, Award, Heart, Users, TrendingDown, Activity, 
   Apple, Scale, Droplet, LineChart, Brain, Pill, Clock, 
-  MessageCircle, Shield, Sparkles, CreditCard, Loader2
+  MessageCircle, Shield, Sparkles, CreditCard, Loader2, RefreshCw
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,6 +20,7 @@ import { toast } from "sonner";
 const WeightLoss = () => {
   const [isConsultationLoading, setIsConsultationLoading] = useState(false);
   const [isMappingLoading, setIsMappingLoading] = useState(false);
+  const [isContinuationLoading, setIsContinuationLoading] = useState(false);
   const [creditCode, setCreditCode] = useState("");
   const [creditApplied, setCreditApplied] = useState(false);
 
@@ -88,6 +89,30 @@ const WeightLoss = () => {
     setCreditCode("");
     setCreditApplied(false);
   };
+
+  const handleContinuationCheckout = async () => {
+    setIsContinuationLoading(true);
+    trackEvent("cta_click", { cta_name: "glp1_continuation", destination: "checkout" });
+    try {
+      const { data, error } = await supabase.functions.invoke("create-glp1-continuation-checkout", {
+        body: {}
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Continuation checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsContinuationLoading(false);
+    }
+  };
+
   // 3-Step Concierge Workflow
   const processSteps = [
     {
@@ -449,7 +474,7 @@ const WeightLoss = () => {
                   </p>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Discovery Consultation */}
                   <Card className="border border-border/50 hover:border-gold/40 transition-all">
                     <CardContent className="p-6 text-center">
@@ -541,13 +566,45 @@ const WeightLoss = () => {
                       </h3>
                       <p className="text-3xl font-cormorant text-primary mb-2">$349</p>
                       <p className="text-sm text-muted-foreground mb-4 font-lato">
-                        One month of Semaglutide + provider consultation. No commitment required.
+                        First month of Semaglutide + provider consultation. No commitment.
                       </p>
                       <Button 
                         onClick={scrollToBooking}
                         className="w-full bg-gold hover:bg-gold-dark text-white"
                       >
                         Start Your Trial
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* GLP-1 Continuation Month */}
+                  <Card className="border border-border/50 hover:border-gold/40 transition-all">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex p-3 bg-gold/10 rounded-full mb-4">
+                        <RefreshCw className="h-6 w-6 text-gold" />
+                      </div>
+                      <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
+                        GLP-1 Continuation
+                      </h3>
+                      <p className="text-3xl font-cormorant text-primary mb-2">$449</p>
+                      <p className="text-xs text-muted-foreground mb-1 font-lato">
+                        per month • no commitment
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-4 font-lato">
+                        Already started? Continue your GLP-1 with a monthly refill + check-in.
+                      </p>
+                      <Button 
+                        variant="outline"
+                        onClick={handleContinuationCheckout}
+                        disabled={isContinuationLoading}
+                        className="w-full border-gold/30 hover:bg-gold/5"
+                      >
+                        {isContinuationLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="mr-2 h-4 w-4" />
+                        )}
+                        {isContinuationLoading ? "..." : "Continue Treatment"}
                       </Button>
                     </CardContent>
                   </Card>
