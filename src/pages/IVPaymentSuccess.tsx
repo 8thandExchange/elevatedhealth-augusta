@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
-const IV_BOOKING_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true";
+const IV_BOOKING_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ19EEeTvO7yEID4o83yxzNBnC197eJp72gl_oy1fbKMo59Xx0LW0pcLkbnm9VCHMdvWEEJ4OoaR?gv=true";
 
 const IVPaymentSuccess = () => {
   const [searchParams] = useSearchParams();
