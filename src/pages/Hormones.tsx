@@ -12,10 +12,14 @@ import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import elevatedForHerLogo from "@/assets/elevated-for-her-logo.png";
 import elevatedForHimLogo from "@/assets/elevated-for-him-logo.png";
+import { CreditCodeInput } from "@/components/CreditCodeInput";
 
 const Hormones = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isConsultationLoading, setIsConsultationLoading] = useState(false);
+  const [isMappingLoading, setIsMappingLoading] = useState(false);
+  const [creditCode, setCreditCode] = useState("");
+  const [creditApplied, setCreditApplied] = useState(false);
 
   const handleConsultationCheckout = async () => {
     setIsConsultationLoading(true);
@@ -37,6 +41,67 @@ const Hormones = () => {
     } finally {
       setIsConsultationLoading(false);
     }
+  };
+
+  const handleMappingCheckout = async () => {
+    setIsMappingLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-hormone-checkout", {
+        body: { 
+          mappingType: "hormone",
+          creditCode: creditApplied ? creditCode : undefined
+        }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Mapping checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsMappingLoading(false);
+    }
+  };
+
+  const handleApplyCreditCode = async () => {
+    if (!creditCode.trim()) {
+      toast.error("Please enter a credit code");
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase
+        .from('consultation_bookings')
+        .select('id, credit_used_at')
+        .eq('credit_code', creditCode.trim().toUpperCase())
+        .eq('status', 'paid')
+        .single();
+      
+      if (error || !data) {
+        toast.error("Invalid credit code. Please check and try again.");
+        return;
+      }
+      
+      if (data.credit_used_at) {
+        toast.error("This credit code has already been used.");
+        return;
+      }
+      
+      setCreditApplied(true);
+      toast.success("$99 credit applied! Your total is now $200.");
+    } catch (err) {
+      toast.error("Failed to validate code. Please try again.");
+    }
+  };
+
+  const handleClearCreditCode = () => {
+    setCreditCode("");
+    setCreditApplied(false);
   };
 
   const protocols = [
@@ -290,15 +355,41 @@ const Hormones = () => {
                       <h3 className="font-cormorant text-xl text-foreground mb-2">
                         Hormone Mapping
                       </h3>
-                      <p className="text-3xl font-cormorant text-foreground mb-2">$299</p>
+                      <p className="text-3xl font-cormorant text-foreground mb-2">
+                        {creditApplied ? (
+                          <>
+                            <span className="line-through text-muted-foreground text-xl mr-2">$299</span>
+                            $200
+                          </>
+                        ) : (
+                          "$299"
+                        )}
+                      </p>
+                      {creditApplied && (
+                        <p className="text-xs text-green-600 font-medium mb-2">
+                          $99 consultation credit applied!
+                        </p>
+                      )}
                       <p className="text-sm text-muted-foreground mb-4 font-light">
                         Complete ZRT saliva panel + 45-minute deep-dive review of your hormone landscape.
                       </p>
+                      <CreditCodeInput
+                        value={creditCode}
+                        onChange={setCreditCode}
+                        isApplied={creditApplied}
+                        onApply={handleApplyCreditCode}
+                        onClear={handleClearCreditCode}
+                        className="mb-4"
+                      />
                       <Button 
-                        onClick={() => setIsBookingOpen(true)}
+                        onClick={handleMappingCheckout}
+                        disabled={isMappingLoading}
                         className="w-full bg-gold hover:bg-gold/90 text-white border-gold"
                       >
-                        Map Your Hormones
+                        {isMappingLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        {isMappingLoading ? "Processing..." : creditApplied ? "Pay $200" : "Map Your Hormones"}
                       </Button>
                     </CardContent>
                   </Card>

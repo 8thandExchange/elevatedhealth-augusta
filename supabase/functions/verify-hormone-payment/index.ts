@@ -98,6 +98,23 @@ serve(async (req) => {
       ? session.payment_intent 
       : session.payment_intent?.id;
     const mappingType = session.metadata?.mapping_type || 'hormone';
+    const creditCode = session.metadata?.credit_code || null;
+    
+    // SECURITY: Mark credit code as used to prevent reuse
+    if (creditCode) {
+      logStep("Marking credit code as used", { creditCode });
+      const { error: creditUpdateError } = await supabaseClient
+        .from('consultation_bookings')
+        .update({ credit_used_at: new Date().toISOString() })
+        .eq('credit_code', creditCode)
+        .is('credit_used_at', null); // Only update if not already used
+      
+      if (creditUpdateError) {
+        logStep("Warning: Failed to mark credit code as used", { error: creditUpdateError.message });
+      } else {
+        logStep("Credit code marked as used successfully");
+      }
+    }
 
     // Check if payment record already exists
     const { data: existingPayment } = await supabaseClient
