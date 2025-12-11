@@ -263,15 +263,41 @@ const PatientServices = () => {
                   
                   <div className="flex gap-2">
                     {isActive ? (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => navigate("/patient/dashboard")}
-                        className="flex-1"
-                      >
-                        View Dashboard
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
+                      <>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/patient-resources?service=${service.treatmentKey}`)}
+                          className="flex-1"
+                        >
+                          Resources
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={() => {
+                            // Navigate to service-specific action
+                            if (service.treatmentKey === "ketamine") {
+                              window.open("https://app.osmind.org", "_blank");
+                            } else if (service.treatmentKey === "iv_lounge") {
+                              navigate("/iv-lounge");
+                            } else if (patient?.intake_completed) {
+                              navigate("/patient/checkin");
+                            } else {
+                              navigate("/patient/intake");
+                            }
+                          }}
+                          className="flex-1"
+                        >
+                          {service.treatmentKey === "ketamine" 
+                            ? "Osmind Portal" 
+                            : service.treatmentKey === "iv_lounge"
+                            ? "Book Session"
+                            : patient?.intake_completed 
+                            ? "Log Symptoms" 
+                            : "Complete Intake"}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </>
                     ) : (
                       <>
                         <Button

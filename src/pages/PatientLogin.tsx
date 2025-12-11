@@ -580,11 +580,10 @@ const PatientLogin = () => {
                           : "text-pink-600 dark:text-pink-400";
                         
                         return (
-                          <button
+                          <label
                             key={option.id}
-                            type="button"
-                            onClick={() => handleInterestToggle(option.id)}
-                            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                            htmlFor={`interest-${option.id}`}
+                            className={`w-full p-4 rounded-lg border-2 transition-all text-left cursor-pointer block ${
                               isSelected 
                                 ? "border-primary bg-primary/5" 
                                 : "border-border bg-card hover:border-primary/50"
@@ -601,12 +600,13 @@ const PatientLogin = () => {
                                 </p>
                               </div>
                               <Checkbox
+                                id={`interest-${option.id}`}
                                 checked={isSelected}
                                 onCheckedChange={() => handleInterestToggle(option.id)}
                                 className="mt-2"
                               />
                             </div>
-                          </button>
+                          </label>
                         );
                       })}
                     </div>

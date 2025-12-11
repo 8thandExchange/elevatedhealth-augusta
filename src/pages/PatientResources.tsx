@@ -1,15 +1,41 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Play, FileText, Download, BookOpen, Syringe, Heart } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { 
+  Play, 
+  FileText, 
+  Download, 
+  BookOpen, 
+  Syringe, 
+  Heart, 
+  Scale, 
+  Brain, 
+  Droplets, 
+  Sparkles,
+  ChevronDown,
+  ExternalLink,
+  HelpCircle
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet";
 
-type ResourceCategory = "injection_tutorials" | "nutrition_guides" | "stress_management";
+type ResourceCategory = 
+  | "hormone_therapy" 
+  | "weight_loss" 
+  | "ketamine_therapy" 
+  | "peptide_therapy" 
+  | "iv_hydration"
+  | "general_wellness"
+  | "injection_tutorials" 
+  | "nutrition_guides" 
+  | "stress_management";
 
 interface Resource {
   id: string;
@@ -21,22 +47,174 @@ interface Resource {
   thumbnail_url: string | null;
 }
 
-const categoryConfig = {
+const categoryConfig: Record<string, { label: string; icon: any; description: string; color: string }> = {
+  hormone_therapy: {
+    label: "Hormone Therapy",
+    icon: Sparkles,
+    description: "Bio-identical hormone replacement guides and protocols",
+    color: "pink"
+  },
+  weight_loss: {
+    label: "Weight Loss",
+    icon: Scale,
+    description: "GLP-1 injection tutorials and metabolic optimization",
+    color: "green"
+  },
+  ketamine_therapy: {
+    label: "Mental Wellness",
+    icon: Brain,
+    description: "Ketamine therapy preparation and integration guides",
+    color: "purple"
+  },
+  peptide_therapy: {
+    label: "Peptide Therapy",
+    icon: Syringe,
+    description: "Peptide protocols for cellular optimization",
+    color: "blue"
+  },
+  iv_hydration: {
+    label: "IV Hydration",
+    icon: Droplets,
+    description: "IV therapy benefits and preparation guides",
+    color: "teal"
+  },
+  general_wellness: {
+    label: "General Wellness",
+    icon: Heart,
+    description: "Overall health and wellness resources",
+    color: "gold"
+  },
   injection_tutorials: {
     label: "Injection Tutorials",
     icon: Syringe,
-    description: "Step-by-step guides for self-administration"
+    description: "Step-by-step guides for self-administration",
+    color: "blue"
   },
   nutrition_guides: {
     label: "Nutrition Guides",
     icon: BookOpen,
-    description: "Optimize your results with proper nutrition"
+    description: "Optimize your results with proper nutrition",
+    color: "green"
   },
   stress_management: {
     label: "Stress Management",
     icon: Heart,
-    description: "Techniques for hormonal balance and mental wellness"
+    description: "Techniques for hormonal balance and mental wellness",
+    color: "purple"
   }
+};
+
+// Built-in interactive FAQ content for each service
+const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> = {
+  hormone_therapy: [
+    {
+      question: "How long until I see results from hormone therapy?",
+      answer: "Most patients begin noticing improvements in energy, sleep, and mood within 2-4 weeks. Full optimization typically takes 3-6 months as we fine-tune your protocol based on lab results and symptom response."
+    },
+    {
+      question: "Where do I apply my transdermal cream?",
+      answer: "Bi-Est (estrogen): Apply to inner thigh or behind knee—areas with thin skin for optimal absorption. Testosterone: Apply to clitoral area for localized effect. Progesterone: Apply to breast or neck area at bedtime. Always wash hands immediately after application."
+    },
+    {
+      question: "What if I experience side effects?",
+      answer: "The advantage of transdermal therapy is daily dose adjustment. If you experience any side effects, message your provider immediately through the patient portal. We can adjust your dosing within days, unlike pellet therapy which locks you in for months."
+    },
+    {
+      question: "Do I need to fast for my hormone lab tests?",
+      answer: "ZRT saliva testing does not require fasting. Collect samples first thing in the morning before eating, drinking, or brushing teeth. For LabCorp blood work, fasting 8-12 hours is recommended for accurate results."
+    }
+  ],
+  weight_loss: [
+    {
+      question: "How do I inject my GLP-1 medication?",
+      answer: "Inject subcutaneously (under the skin) into your abdomen, thigh, or upper arm. Rotate injection sites weekly to prevent lipodystrophy. Inject at the same time each week. Your medication comes in a pre-filled pen—simply dial your dose and inject."
+    },
+    {
+      question: "What should I eat while on GLP-1 therapy?",
+      answer: "Focus on protein-first eating (30g protein per meal), plenty of vegetables, and limited processed carbs. GLP-1s reduce appetite, so prioritize nutrient-dense foods. Stay hydrated—aim for half your body weight in ounces of water daily."
+    },
+    {
+      question: "What if I experience nausea?",
+      answer: "Nausea is common during dose escalation and typically resolves within 2-4 weeks. Eat smaller, more frequent meals. Avoid fatty or greasy foods. Ginger tea and peppermint can help. If severe, contact your provider—we may slow your titration schedule."
+    },
+    {
+      question: "How much weight can I expect to lose?",
+      answer: "Clinical trials show 15-20% body weight loss over 12-18 months with GLP-1 therapy. Results vary based on starting weight, diet adherence, and activity level. Our metabolic optimization approach typically enhances these results."
+    }
+  ],
+  ketamine_therapy: [
+    {
+      question: "How do I prepare for my ketamine session?",
+      answer: "Avoid eating 4 hours before your session (clear liquids OK until 2 hours before). Wear comfortable clothing. Arrange transportation—you cannot drive for 24 hours post-treatment. Set an intention for your session. Bring headphones and an eye mask if you prefer."
+    },
+    {
+      question: "What does a ketamine session feel like?",
+      answer: "Experiences vary. Many describe a dreamlike state with altered perception of time and space. You may feel deeply relaxed or have profound insights. Some experience mild nausea or dizziness. Our team monitors you throughout the entire session for safety and comfort."
+    },
+    {
+      question: "How do I access my Osmind portal?",
+      answer: "After your initial payment, you'll receive a secure invite email from Osmind within 1-2 hours. Check your spam folder. The portal is where you'll complete intake assessments, track progress, and communicate with your care team between sessions."
+    },
+    {
+      question: "How many sessions will I need?",
+      answer: "A typical initial series is 6 IV infusions over 2-3 weeks. Many patients experience significant improvement by session 3-4. Maintenance sessions (monthly or as needed) help sustain benefits. Your provider will create a personalized plan based on your response."
+    }
+  ],
+  peptide_therapy: [
+    {
+      question: "How do I reconstitute my peptide?",
+      answer: "Using the bacteriostatic water provided, draw the specified amount into your syringe. Inject slowly into the peptide vial, aiming at the glass wall (not directly onto powder). Gently swirl—never shake. Refrigerate after reconstitution. Use within 30 days."
+    },
+    {
+      question: "When should I take Sermorelin?",
+      answer: "Inject subcutaneously at bedtime on an empty stomach (2-3 hours after eating). Growth hormone is naturally released during sleep, so bedtime dosing amplifies this effect. Consistency is key—take at the same time daily."
+    },
+    {
+      question: "How long until peptides show results?",
+      answer: "NAD+ effects (mental clarity, energy) often within 1-2 weeks. Sermorelin benefits (sleep, recovery, body composition) typically 4-8 weeks. PT-141 works within 1-4 hours per dose. Full optimization may take 3-6 months of consistent use."
+    },
+    {
+      question: "Can I combine peptides with hormone therapy?",
+      answer: "Yes! Peptides complement hormone optimization beautifully. Sermorelin supports natural growth hormone while you optimize sex hormones. NAD+ enhances cellular energy alongside metabolic treatments. Your provider will design a synergistic protocol."
+    }
+  ],
+  iv_hydration: [
+    {
+      question: "How should I prepare for my IV session?",
+      answer: "Eat a light meal 1-2 hours before. Wear loose, comfortable clothing with easy arm access. Stay hydrated beforehand. Arrive 10 minutes early to complete intake. Sessions typically last 45-60 minutes—bring a book or headphones."
+    },
+    {
+      question: "How often should I get IV therapy?",
+      answer: "For general wellness: monthly. For athletic recovery or illness: weekly during active periods. For hangover recovery: as needed. For chronic conditions: your provider will recommend an optimal schedule based on your goals."
+    },
+    {
+      question: "Are there any side effects?",
+      answer: "Most people tolerate IV therapy very well. You may feel a cool sensation as fluids enter. Minor bruising at the injection site is possible. Some report increased urination (your body processing the fluids). Rarely, some feel lightheaded—we monitor you throughout."
+    },
+    {
+      question: "Which IV drip is right for me?",
+      answer: "The Meyers: General wellness boost. The Shield: Immunity support (cold season, travel). The Glow: Beauty/skin health. The Resurrection: Hangover/recovery. Beast Mode: Athletic performance. Not sure? Our team can recommend based on your needs."
+    }
+  ]
+};
+
+// Quick reference cards for each service
+const quickReferenceCards: Record<string, Array<{ title: string; content: string; highlight?: boolean }>> = {
+  hormone_therapy: [
+    { title: "Bi-Est (Estrogen)", content: "2 clicks AM/PM to inner thigh or behind knee. Thin skin areas for best absorption.", highlight: true },
+    { title: "Testosterone", content: "2 clicks AM to clitoral area. Wash hands immediately after.", highlight: false },
+    { title: "Progesterone", content: "2 clicks at bedtime to breast or neck. Promotes deep sleep.", highlight: false }
+  ],
+  weight_loss: [
+    { title: "Injection Day", content: "Same day each week. Rotate sites: abdomen, thigh, arm.", highlight: true },
+    { title: "Protein Goal", content: "30g protein per meal. Protein first, then vegetables.", highlight: false },
+    { title: "Hydration", content: "Half your body weight in ounces of water daily.", highlight: false }
+  ],
+  peptide_therapy: [
+    { title: "Sermorelin", content: "Bedtime injection on empty stomach. 2-3 hours after eating.", highlight: true },
+    { title: "NAD+ Troche", content: "Dissolve under tongue. Do not eat/drink for 15 minutes after.", highlight: false },
+    { title: "PT-141", content: "Take 1-4 hours before intimacy. Effects last 24-72 hours.", highlight: false }
+  ]
 };
 
 const getYouTubeThumbnail = (url: string): string | null => {
@@ -45,11 +223,6 @@ const getYouTubeThumbnail = (url: string): string | null => {
     return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
   }
   return null;
-};
-
-const getVimeoId = (url: string): string | null => {
-  const match = url.match(/vimeo\.com\/(\d+)/);
-  return match ? match[1] : null;
 };
 
 const VideoCard = ({ resource }: { resource: Resource }) => {
@@ -125,8 +298,61 @@ const PDFCard = ({ resource }: { resource: Resource }) => {
   );
 };
 
+const FAQSection = ({ category }: { category: string }) => {
+  const faqs = serviceFAQs[category];
+  if (!faqs || faqs.length === 0) return null;
+
+  return (
+    <div className="mt-8">
+      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
+        <HelpCircle className="h-5 w-5 text-gold" />
+        Frequently Asked Questions
+      </h2>
+      <Accordion type="single" collapsible className="w-full">
+        {faqs.map((faq, index) => (
+          <AccordionItem key={index} value={`faq-${index}`} className="border-border/50">
+            <AccordionTrigger className="text-left font-medium text-foreground hover:text-primary">
+              {faq.question}
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground leading-relaxed">
+              {faq.answer}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  );
+};
+
+const QuickReferenceSection = ({ category }: { category: string }) => {
+  const cards = quickReferenceCards[category];
+  if (!cards || cards.length === 0) return null;
+
+  return (
+    <div className="mt-8">
+      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
+        <BookOpen className="h-5 w-5 text-gold" />
+        Quick Reference
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {cards.map((card, index) => (
+          <Card key={index} className={`${card.highlight ? 'border-gold bg-gold/5' : 'border-border/50'}`}>
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-foreground mb-2">{card.title}</h3>
+              <p className="text-sm text-muted-foreground">{card.content}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const PatientResources = () => {
-  const [activeTab, setActiveTab] = useState<string>("all");
+  const [searchParams] = useSearchParams();
+  const serviceFilter = searchParams.get("service");
+  
+  const [activeTab, setActiveTab] = useState<string>(serviceFilter || "all");
 
   const { data: resources = [], isLoading } = useQuery({
     queryKey: ["patient-resources"],
@@ -141,12 +367,35 @@ const PatientResources = () => {
     }
   });
 
-  const filteredResources = activeTab === "all" 
+  // Map service filter to category
+  const categoryMap: Record<string, string> = {
+    hormone: "hormone_therapy",
+    weight_loss: "weight_loss",
+    ketamine: "ketamine_therapy",
+    peptides: "peptide_therapy",
+    iv_lounge: "iv_hydration"
+  };
+
+  const effectiveCategory = activeTab === "all" ? "all" : (categoryMap[activeTab] || activeTab);
+
+  const filteredResources = effectiveCategory === "all" 
     ? resources 
-    : resources.filter(r => r.category === activeTab);
+    : resources.filter(r => r.category === effectiveCategory);
 
   const videos = filteredResources.filter(r => r.resource_type === "video");
   const pdfs = filteredResources.filter(r => r.resource_type === "pdf");
+
+  // Show interactive content for specific service categories
+  const showInteractiveContent = effectiveCategory !== "all" && 
+    (serviceFAQs[effectiveCategory] || quickReferenceCards[effectiveCategory]);
+
+  const mainCategories = [
+    { key: "hormone_therapy", label: "Hormones", icon: Sparkles },
+    { key: "weight_loss", label: "Weight Loss", icon: Scale },
+    { key: "ketamine_therapy", label: "Mental Wellness", icon: Brain },
+    { key: "peptide_therapy", label: "Peptides", icon: Syringe },
+    { key: "iv_hydration", label: "IV Therapy", icon: Droplets },
+  ];
 
   return (
     <>
@@ -169,7 +418,7 @@ const PatientResources = () => {
                 Patient Resources
               </h1>
               <p className="text-lg text-white/80 max-w-2xl mx-auto font-light">
-                Video tutorials, guides, and resources to support your wellness journey
+                Video tutorials, guides, FAQs, and quick references to support your wellness journey
               </p>
             </div>
           </section>
@@ -177,49 +426,92 @@ const PatientResources = () => {
           {/* Resources Section */}
           <section className="section-spacing">
             <div className="container mx-auto px-6">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className="flex justify-center mb-12">
-                  <TabsList className="bg-secondary/50 p-1">
-                    <TabsTrigger value="all" className="px-6">All Resources</TabsTrigger>
-                    {Object.entries(categoryConfig).map(([key, config]) => (
-                      <TabsTrigger key={key} value={key} className="px-4 hidden sm:flex items-center gap-2">
-                        <config.icon className="h-4 w-4" />
-                        <span className="hidden md:inline">{config.label}</span>
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                </div>
+              {/* Category Pills */}
+              <div className="flex flex-wrap gap-2 justify-center mb-12">
+                <Button
+                  variant={activeTab === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setActiveTab("all")}
+                  className="rounded-full"
+                >
+                  All Resources
+                </Button>
+                {mainCategories.map(({ key, label, icon: Icon }) => (
+                  <Button
+                    key={key}
+                    variant={activeTab === key || categoryMap[activeTab] === key ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setActiveTab(key)}
+                    className="rounded-full"
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {label}
+                  </Button>
+                ))}
+              </div>
 
-                {/* Mobile Category Pills */}
-                <div className="flex flex-wrap gap-2 justify-center mb-8 sm:hidden">
-                  {Object.entries(categoryConfig).map(([key, config]) => (
-                    <Button
-                      key={key}
-                      variant={activeTab === key ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setActiveTab(key)}
-                      className="text-xs"
-                    >
-                      <config.icon className="h-3 w-3 mr-1" />
-                      {config.label}
-                    </Button>
+              {/* Category Description */}
+              {effectiveCategory !== "all" && categoryConfig[effectiveCategory] && (
+                <div className="text-center mb-8">
+                  <h2 className="font-cormorant text-3xl text-foreground mb-2">
+                    {categoryConfig[effectiveCategory].label}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {categoryConfig[effectiveCategory].description}
+                  </p>
+                </div>
+              )}
+
+              {/* Quick Reference Cards */}
+              {showInteractiveContent && <QuickReferenceSection category={effectiveCategory} />}
+
+              {/* Videos & PDFs from Database */}
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                  {[1, 2, 3].map(i => (
+                    <Card key={i} className="animate-pulse">
+                      <div className="aspect-video bg-muted" />
+                      <CardContent className="p-4">
+                        <div className="h-5 bg-muted rounded mb-2" />
+                        <div className="h-4 bg-muted rounded w-2/3" />
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
-
-                <TabsContent value={activeTab} className="mt-0">
-                  {isLoading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {[1, 2, 3, 4, 5, 6].map(i => (
-                        <Card key={i} className="animate-pulse">
-                          <div className="aspect-video bg-muted" />
-                          <CardContent className="p-4">
-                            <div className="h-5 bg-muted rounded mb-2" />
-                            <div className="h-4 bg-muted rounded w-2/3" />
-                          </CardContent>
-                        </Card>
-                      ))}
+              ) : (
+                <div className="space-y-12 mt-8">
+                  {/* Videos Section */}
+                  {videos.length > 0 && (
+                    <div>
+                      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
+                        <Play className="h-5 w-5 text-gold" />
+                        Video Tutorials
+                      </h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {videos.map(resource => (
+                          <VideoCard key={resource.id} resource={resource} />
+                        ))}
+                      </div>
                     </div>
-                  ) : filteredResources.length === 0 ? (
+                  )}
+
+                  {/* PDFs Section */}
+                  {pdfs.length > 0 && (
+                    <div>
+                      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-gold" />
+                        Downloadable Guides
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {pdfs.map(resource => (
+                          <PDFCard key={resource.id} resource={resource} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Show message when no database resources but interactive content exists */}
+                  {filteredResources.length === 0 && !showInteractiveContent && (
                     <div className="text-center py-16">
                       <BookOpen className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
                       <h3 className="font-cormorant text-2xl text-foreground mb-2">No Resources Yet</h3>
@@ -227,41 +519,25 @@ const PatientResources = () => {
                         Check back soon for educational content
                       </p>
                     </div>
-                  ) : (
-                    <div className="space-y-12">
-                      {/* Videos Section */}
-                      {videos.length > 0 && (
-                        <div>
-                          <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
-                            <Play className="h-5 w-5 text-gold" />
-                            Video Tutorials
-                          </h2>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {videos.map(resource => (
-                              <VideoCard key={resource.id} resource={resource} />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* PDFs Section */}
-                      {pdfs.length > 0 && (
-                        <div>
-                          <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
-                            <FileText className="h-5 w-5 text-gold" />
-                            Downloadable Guides
-                          </h2>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {pdfs.map(resource => (
-                              <PDFCard key={resource.id} resource={resource} />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
                   )}
-                </TabsContent>
-              </Tabs>
+                </div>
+              )}
+
+              {/* FAQ Section */}
+              {showInteractiveContent && <FAQSection category={effectiveCategory} />}
+
+              {/* Contact Card */}
+              <Card className="mt-12 bg-primary/5 border-primary/20">
+                <CardContent className="p-6 text-center">
+                  <h3 className="font-cormorant text-xl text-foreground mb-2">Have Questions?</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Our care team is here to help you understand your treatment.
+                  </p>
+                  <Button onClick={() => window.location.href = "/patient/dashboard"}>
+                    Message Your Provider
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </section>
         </main>
