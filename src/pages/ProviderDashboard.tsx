@@ -39,6 +39,8 @@ import { InviteProviderModal } from "@/components/provider/InviteProviderModal";
 import LabcorpOrderModal from "@/components/provider/LabcorpOrderModal";
 import BloodWorkHistory from "@/components/provider/BloodWorkHistory";
 import TeamManagement from "@/components/provider/TeamManagement";
+import StaffTasksTab from "@/components/provider/StaffTasksTab";
+import ConsultationTracker from "@/components/provider/ConsultationTracker";
 
 interface Patient {
   id: string;
@@ -897,10 +899,18 @@ const ProviderDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-8">
+          <TabsList className="grid w-full grid-cols-9 mb-8">
             <TabsTrigger value="triage" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
               <span className="hidden sm:inline">Action Needed</span> ({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})
+            </TabsTrigger>
+            <TabsTrigger value="staff" className="flex items-center gap-2">
+              <CheckSquare className="w-4 h-4" />
+              <span className="hidden sm:inline">Staff Tasks</span>
+            </TabsTrigger>
+            <TabsTrigger value="consultations" className="flex items-center gap-2">
+              <CreditCard className="w-4 h-4" />
+              <span className="hidden sm:inline">Consultations</span>
             </TabsTrigger>
             <TabsTrigger value="pharmacy" className="flex items-center gap-2">
               <Pill className="w-4 h-4" />
@@ -927,6 +937,16 @@ const ProviderDashboard = () => {
               <span className="hidden sm:inline">Team</span>
             </TabsTrigger>
           </TabsList>
+
+          {/* Staff Tasks Tab */}
+          <TabsContent value="staff">
+            <StaffTasksTab />
+          </TabsContent>
+
+          {/* Consultations Tab */}
+          <TabsContent value="consultations">
+            <ConsultationTracker />
+          </TabsContent>
 
           {/* Triage Tab */}
           <TabsContent value="triage">

@@ -41,11 +41,34 @@ const HormonesMen = () => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [isMembershipLoading, setIsMembershipLoading] = useState(false);
+  const [isConsultationLoading, setIsConsultationLoading] = useState(false);
 
   const scrollToBooking = () => {
     const bookingSection = document.getElementById('booking-section');
     if (bookingSection) {
       bookingSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleConsultationCheckout = async () => {
+    setIsConsultationLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-consultation-checkout", {
+        body: { serviceType: "hormone" }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Consultation checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsConsultationLoading(false);
     }
   };
 
@@ -396,24 +419,48 @@ const HormonesMen = () => {
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-8">
-                  {/* Step 1 */}
+                  {/* Step 1 - Discovery Consultation */}
                   <Card className="hover:shadow-xl transition-shadow border-primary/30 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
                     <CardContent className="p-8">
                       <div className="text-5xl font-bold text-primary/20 mb-4">01</div>
-                      <h3 className="text-xl font-bold mb-2">The Discovery Call</h3>
-                      <div className="text-3xl font-bold text-primary mb-4">Complimentary</div>
-                      <p className="text-sm text-muted-foreground mb-6">
-                        A 15-minute phone consultation to discuss your goals and determine if you are a candidate for testosterone optimization.
+                      <h3 className="text-xl font-bold mb-2">Discovery Consultation</h3>
+                      <div className="text-3xl font-bold text-primary mb-2">$99</div>
+                      <p className="text-xs text-green-600 font-medium mb-4">
+                        Includes $99 credit toward Diagnostics
                       </p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        A 15-minute consultation to discuss your goals and determine if you are a candidate for testosterone optimization.
+                      </p>
+                      <ul className="text-xs text-muted-foreground space-y-1.5 mb-4">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+                          Symptom & history review
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+                          Personalized recommendations
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+                          $99 credit if you proceed
+                        </li>
+                      </ul>
                       <Button 
-                        onClick={scrollToBooking}
-                        variant="outline" 
-                        className="w-full border-primary hover:bg-primary hover:text-primary-foreground"
+                        onClick={handleConsultationCheckout}
+                        disabled={isConsultationLoading}
+                        className="w-full bg-primary hover:bg-primary-light text-primary-foreground"
                       >
-                        <Phone className="mr-2 h-4 w-4" />
-                        Schedule Call
+                        {isConsultationLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        {isConsultationLoading ? "Processing..." : "Book Consultation - $99"}
                       </Button>
+                      <p className="text-[10px] text-muted-foreground text-center mt-3 italic">
+                        Not ready to commit? Call us at {SITE_CONFIG.phone}
+                      </p>
                     </CardContent>
                   </Card>
 

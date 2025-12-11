@@ -6,6 +6,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useState } from "react";
+import { Loader2, CreditCard, Phone } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface ConsultationModalProps {
   isOpen: boolean;
@@ -54,28 +59,56 @@ const VitalityIcon = ({ className }: { className?: string }) => (
 );
 
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
+  const [loadingService, setLoadingService] = useState<string | null>(null);
+
   const consultationOptions = [
     {
       icon: NeuralIcon,
       title: "Ketamine Therapy",
       description: "IV infusions & SPRAVATO® for depression, PTSD, and anxiety",
-      bookingUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
+      serviceType: "ketamine",
+      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
     },
     {
       icon: DNAIcon,
       title: "Medical Weight Loss",
       description: "Physician-supervised semaglutide (GLP-1) therapy",
-      bookingUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true"
+      serviceType: "weight_loss",
+      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true"
     },
     {
       icon: VitalityIcon,
       title: "Hormone Replacement",
       description: "Bioidentical hormone therapy to restore vitality",
-      bookingUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true"
+      serviceType: "hormone",
+      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true"
     }
   ];
 
-  const handleBooking = (url: string) => {
+  const handlePaidConsultation = async (serviceType: string) => {
+    setLoadingService(serviceType);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-consultation-checkout", {
+        body: { serviceType }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+        onClose();
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Consultation checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setLoadingService(null);
+    }
+  };
+
+  const handleFreeCall = (url: string) => {
     window.open(url, "_blank");
     onClose();
   };
@@ -95,42 +128,65 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
         <div className="grid md:grid-cols-3 gap-5 mt-6">
           {consultationOptions.map((option, index) => {
             const Icon = option.icon;
+            const isLoading = loadingService === option.serviceType;
             return (
               <div 
                 key={index}
-                className="group flex flex-col items-center text-center p-6 rounded-xl border border-border/50 hover:border-gold/40 transition-all duration-300 cursor-pointer bg-white hover:shadow-lg"
-                onClick={() => handleBooking(option.bookingUrl)}
+                className="group flex flex-col items-center text-center p-6 rounded-xl border border-border/50 hover:border-gold/40 transition-all duration-300 bg-white hover:shadow-lg"
               >
                 {/* Icon */}
-                <div className="mb-5 p-3">
-                  <Icon className="h-14 w-14 text-gold group-hover:scale-110 transition-transform duration-300" />
+                <div className="mb-4 p-3">
+                  <Icon className="h-12 w-12 text-gold group-hover:scale-110 transition-transform duration-300" />
                 </div>
                 
                 {/* Title */}
-                <h3 className="text-xl font-cormorant font-medium text-[#2C3E50] mb-3">
+                <h3 className="text-xl font-cormorant font-medium text-[#2C3E50] mb-2">
                   {option.title}
                 </h3>
                 
-                {/* Description - Serif, larger */}
-                <p className="text-[15px] text-[#2C3E50]/70 font-cormorant leading-relaxed mb-5 flex-grow">
+                {/* Description */}
+                <p className="text-sm text-[#2C3E50]/70 font-lato leading-relaxed mb-4 flex-grow">
                   {option.description}
                 </p>
 
-                {/* Ghost Button */}
+                {/* Price Badge */}
+                <div className="mb-3">
+                  <span className="text-2xl font-cormorant font-semibold text-[#2C3E50]">$99</span>
+                  <p className="text-xs text-green-600 font-medium mt-1">
+                    Credit toward treatment
+                  </p>
+                </div>
+
+                {/* Primary CTA - Paid Consultation */}
                 <Button 
-                  variant="outline"
-                  className="w-full border-[#2C3E50] text-[#2C3E50] bg-transparent hover:bg-gold hover:border-gold hover:text-white font-lato tracking-wide transition-all duration-300"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleBooking(option.bookingUrl);
-                  }}
+                  className="w-full bg-gold hover:bg-gold-dark text-white font-lato tracking-wide transition-all duration-300 mb-2"
+                  onClick={() => handlePaidConsultation(option.serviceType)}
+                  disabled={isLoading}
                 >
-                  Select
+                  {isLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <CreditCard className="mr-2 h-4 w-4" />
+                  )}
+                  {isLoading ? "Processing..." : "Book Consultation"}
                 </Button>
+
+                {/* Secondary - Free Call */}
+                <button
+                  onClick={() => handleFreeCall(option.freeCallUrl)}
+                  className="text-xs text-muted-foreground hover:text-[#2C3E50] transition-colors flex items-center gap-1"
+                >
+                  <Phone className="h-3 w-3" />
+                  Not ready? Free 15-min call
+                </button>
               </div>
             );
           })}
         </div>
+
+        <p className="text-center text-xs text-muted-foreground mt-4">
+          Questions? Call us at <a href={`tel:${SITE_CONFIG.phone}`} className="text-gold hover:underline">{SITE_CONFIG.phone}</a>
+        </p>
       </DialogContent>
     </Dialog>
   );

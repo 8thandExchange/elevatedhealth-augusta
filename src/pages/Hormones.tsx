@@ -1,17 +1,43 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Shield, TestTube, CheckCircle2, ArrowRight } from "lucide-react";
+import { Heart, Shield, TestTube, CheckCircle2, ArrowRight, CreditCard, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import ConsultationModal from "@/components/ConsultationModal";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 import elevatedForHerLogo from "@/assets/elevated-for-her-logo.png";
 import elevatedForHimLogo from "@/assets/elevated-for-him-logo.png";
 
 const Hormones = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isConsultationLoading, setIsConsultationLoading] = useState(false);
+
+  const handleConsultationCheckout = async () => {
+    setIsConsultationLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-consultation-checkout", {
+        body: { serviceType: "hormone" }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Consultation checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsConsultationLoading(false);
+    }
+  };
 
   const protocols = [
     {
@@ -216,26 +242,37 @@ const Hormones = () => {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6">
-                  {/* Single Consultation */}
+                  {/* Discovery Consultation */}
                   <Card className="border border-border/50 hover:border-primary/30 transition-all bg-card/80">
                     <CardContent className="p-6 text-center">
                       <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
                         <Heart className="h-6 w-6 text-primary" />
                       </div>
                       <h3 className="font-cormorant text-xl text-foreground mb-2">
-                        Hormone Consultation
+                        Discovery Consultation
                       </h3>
                       <p className="text-3xl font-cormorant text-foreground mb-2">$99</p>
+                      <p className="text-xs text-green-600 font-medium mb-2">
+                        Includes $99 credit toward Hormone Mapping
+                      </p>
                       <p className="text-sm text-muted-foreground mb-4 font-light">
                         45-minute assessment with our hormone specialist to discuss symptoms and treatment options.
                       </p>
                       <Button 
-                        variant="outline" 
-                        onClick={() => setIsBookingOpen(true)}
-                        className="w-full border-primary/30 hover:bg-primary/5"
+                        onClick={handleConsultationCheckout}
+                        disabled={isConsultationLoading}
+                        className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
                       >
-                        Book Consultation
+                        {isConsultationLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        {isConsultationLoading ? "Processing..." : "Book - $99"}
                       </Button>
+                      <p className="text-[10px] text-muted-foreground mt-2">
+                        Not ready? Call {SITE_CONFIG.phone}
+                      </p>
                     </CardContent>
                   </Card>
 

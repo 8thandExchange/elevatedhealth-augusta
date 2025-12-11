@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   CheckCircle2, Award, Heart, Users, TrendingDown, Activity, 
   Apple, Scale, Droplet, LineChart, Brain, Pill, Clock, 
-  MessageCircle, Shield, Sparkles
+  MessageCircle, Shield, Sparkles, CreditCard, Loader2
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,11 +12,39 @@ import { Helmet } from "react-helmet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { trackEvent } from "@/lib/analytics";
 import AssistantHub from "@/components/AssistantHub";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const WeightLoss = () => {
+  const [isConsultationLoading, setIsConsultationLoading] = useState(false);
+
   const scrollToBooking = () => {
     trackEvent("cta_click", { cta_name: "weight_loss_booking", destination: SITE_CONFIG.bookingUrl });
     window.open(SITE_CONFIG.bookingUrl, "_blank");
+  };
+
+  const handleConsultationCheckout = async () => {
+    setIsConsultationLoading(true);
+    trackEvent("cta_click", { cta_name: "weight_loss_consultation", destination: "checkout" });
+    try {
+      const { data, error } = await supabase.functions.invoke("create-consultation-checkout", {
+        body: { serviceType: "weight_loss" }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Consultation checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsConsultationLoading(false);
+    }
   };
 
   // 3-Step Concierge Workflow
@@ -191,13 +219,26 @@ const WeightLoss = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-                  <Button onClick={scrollToBooking} size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white">
-                    Check Your Hormone Blockers
+                  <Button 
+                    onClick={handleConsultationCheckout} 
+                    disabled={isConsultationLoading}
+                    size="lg" 
+                    className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white"
+                  >
+                    {isConsultationLoading ? (
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    ) : (
+                      <CreditCard className="mr-2 h-5 w-5" />
+                    )}
+                    {isConsultationLoading ? "Processing..." : "Discovery Consultation - $99"}
                   </Button>
                   <Button onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")} size="lg" variant="outline" className="text-lg px-8 py-6 border-primary/30 text-primary bg-transparent hover:bg-primary/5">
                     Call {SITE_CONFIG.phone}
                   </Button>
                 </div>
+                <p className="text-center text-xs text-green-600 font-medium mt-2 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
+                  $99 consultation fee credited toward your treatment
+                </p>
 
                 <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-primary/60 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                   <div className="flex items-center gap-2">
@@ -295,8 +336,18 @@ const WeightLoss = () => {
                 </div>
 
                 <div className="mt-10 text-center">
-                  <Button onClick={scrollToBooking} size="lg" className="font-lato bg-primary hover:bg-primary/90 text-white">
-                    Check Your Hormone Blockers
+                  <Button 
+                    onClick={handleConsultationCheckout} 
+                    disabled={isConsultationLoading}
+                    size="lg" 
+                    className="font-lato bg-primary hover:bg-primary/90 text-white"
+                  >
+                    {isConsultationLoading ? (
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    ) : (
+                      <CreditCard className="mr-2 h-5 w-5" />
+                    )}
+                    {isConsultationLoading ? "Processing..." : "Book Discovery Consultation - $99"}
                   </Button>
                 </div>
               </div>
@@ -358,7 +409,7 @@ const WeightLoss = () => {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6">
-                  {/* Single Consultation */}
+                  {/* Discovery Consultation */}
                   <Card className="border border-border/50 hover:border-gold/40 transition-all">
                     <CardContent className="p-6 text-center">
                       <div className="inline-flex p-3 bg-gold/10 rounded-full mb-4">
@@ -368,15 +419,23 @@ const WeightLoss = () => {
                         Discovery Consultation
                       </h3>
                       <p className="text-3xl font-cormorant text-primary mb-2">$99</p>
+                      <p className="text-xs text-green-600 font-medium mb-2">
+                        Credit toward Metabolic Mapping
+                      </p>
                       <p className="text-sm text-muted-foreground mb-4 font-lato">
                         45-minute deep dive with our provider to assess your metabolic health and discuss options.
                       </p>
                       <Button 
-                        variant="outline" 
-                        onClick={scrollToBooking}
-                        className="w-full border-gold/30 hover:bg-gold/5"
+                        onClick={handleConsultationCheckout}
+                        disabled={isConsultationLoading}
+                        className="w-full bg-gold hover:bg-gold-dark text-white"
                       >
-                        Book Consultation
+                        {isConsultationLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        {isConsultationLoading ? "..." : "Book - $99"}
                       </Button>
                     </CardContent>
                   </Card>
