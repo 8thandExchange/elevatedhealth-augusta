@@ -101,3 +101,6 @@ verify_jwt = false
 
 [functions.send-intake-reminder]
 verify_jwt = false
+
+[functions.send-stale-intake-alert]
+verify_jwt = false
