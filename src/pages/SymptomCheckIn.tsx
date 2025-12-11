@@ -67,7 +67,7 @@ const SymptomCheckIn = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        navigate("/patient/login");
+        // ProtectedRoute handles auth redirects - just return here
         return;
       }
 
@@ -145,7 +145,6 @@ const SymptomCheckIn = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("Please log in to submit your check-in");
-        navigate("/patient/login");
         return;
       }
 

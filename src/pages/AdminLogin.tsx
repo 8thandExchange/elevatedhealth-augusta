@@ -14,12 +14,37 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
   const [emailError, setEmailError] = useState("");
   const [loginError, setLoginError] = useState("");
+
+  // Check for existing session on mount - redirect if already logged in
+  useEffect(() => {
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // Check if user has admin/staff role
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id);
+        
+        const hasAccess = roles?.some(r => r.role === 'admin' || r.role === 'staff');
+        if (hasAccess) {
+          const officeManagerEmails = ["kcovington@pmrehab.net"];
+          const isOfficeManager = officeManagerEmails.includes(session.user.email?.toLowerCase() || "");
+          navigate(isOfficeManager ? "/office/dashboard" : "/provider/dashboard", { replace: true });
+          return;
+        }
+      }
+      setCheckingSession(false);
+    };
+    checkExistingSession();
+  }, [navigate]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -150,6 +175,15 @@ const AdminLogin = () => {
     setEmailError("");
     setResendCountdown(0);
   };
+
+  // Show loading while checking session
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   // Success screen after email sent
   if (showForgotPassword && resetEmailSent) {

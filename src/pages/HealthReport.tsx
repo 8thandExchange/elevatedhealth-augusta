@@ -78,7 +78,7 @@ const HealthReport = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        navigate("/patient/login");
+        // ProtectedRoute handles auth redirects - just return here
         return;
       }
 

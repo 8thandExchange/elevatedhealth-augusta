@@ -10,13 +10,14 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  const [session, setSession] = useState<Session | null>(null);
+  // Use undefined to distinguish "not loaded yet" from "no session" (null)
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
@@ -30,12 +31,13 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
       }
     );
 
-    // Check existing session
+    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
         checkRole(session.user.id);
       } else {
+        setSession(null); // Explicitly set to null when no session
         setIsLoading(false);
       }
     });
@@ -59,7 +61,8 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
     }
   };
 
-  if (isLoading) {
+  // Still loading - show spinner
+  if (isLoading || session === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -67,12 +70,13 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
     );
   }
 
-  if (!session) {
-    // Redirect admins to admin login, regular users to patient login
+  // Session is explicitly null (no session after loading) - redirect to login
+  if (session === null) {
     const redirectPath = requireAdmin ? "/admin/login" : "/patient/login";
     return <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 
+  // Has session but needs admin and isn't admin
   if (requireAdmin && !isAdmin) {
     return <Navigate to="/patient/dashboard" replace />;
   }

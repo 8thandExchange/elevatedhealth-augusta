@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -53,6 +53,7 @@ const KETAMINE_HIGH_RISK_CONDITIONS = [
 const PatientLogin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -83,6 +84,19 @@ const PatientLogin = () => {
   const [createdPatientName, setCreatedPatientName] = useState("");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [confirmedNoneApply, setConfirmedNoneApply] = useState(false);
+
+  // Check for existing session on mount - redirect if already logged in
+  useEffect(() => {
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/patient/dashboard", { replace: true });
+      } else {
+        setCheckingSession(false);
+      }
+    };
+    checkExistingSession();
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -305,6 +319,15 @@ const PatientLogin = () => {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking session
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   // Show Safety Gate screen if high-risk
   if (showSafetyGate) {
