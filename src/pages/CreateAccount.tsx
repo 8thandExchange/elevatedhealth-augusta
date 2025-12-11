@@ -88,13 +88,18 @@ const CreateAccount = () => {
 
       if (signUpData.user) {
         // Update the existing patient record to link to this user
-        const { error: updateError } = await supabase
+        const { data: patientData, error: updateError } = await supabase
           .from("patients")
           .update({ 
             user_id: signUpData.user.id,
             onboarding_status: "account_created",
+            full_name: name || email.split("@")[0],
           })
-          .eq("email", email);
+          .eq("email", email)
+          .select("primary_program")
+          .single();
+
+        let primaryProgram = patientData?.primary_program;
 
         if (updateError) {
           console.error("Patient update error:", updateError);
@@ -106,6 +111,15 @@ const CreateAccount = () => {
             onboarding_status: "account_created",
           });
         }
+
+        // Send welcome email (fire and forget - don't block account creation)
+        supabase.functions.invoke("send-welcome-email", {
+          body: {
+            patient_name: name || email.split("@")[0],
+            patient_email: email,
+            primary_program: primaryProgram,
+          },
+        }).catch(err => console.error("Welcome email error:", err));
 
         toast.success("Account created! Redirecting to intake form...");
         

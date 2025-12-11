@@ -95,3 +95,9 @@ verify_jwt = false
 
 [functions.get-business-metrics]
 verify_jwt = false
+
+[functions.send-welcome-email]
+verify_jwt = false
+
+[functions.send-intake-reminder]
+verify_jwt = false
