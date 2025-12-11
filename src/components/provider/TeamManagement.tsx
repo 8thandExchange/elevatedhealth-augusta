@@ -5,13 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -22,14 +15,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Users, UserPlus, Shield, ShieldCheck, Mail, Calendar, Loader2, Trash2 } from "lucide-react";
+import { Users, UserPlus, Shield, ShieldCheck, Mail, Calendar, Loader2, Trash2, Settings, BarChart3 } from "lucide-react";
 import { InviteProviderModal } from "./InviteProviderModal";
+import { ManageRolesModal } from "./ManageRolesModal";
 
 interface TeamMember {
   user_id: string;
   email: string;
   full_name: string | null;
-  role: string;
+  roles: string[];
+  role: string; // Legacy support
   created_at: string;
   is_master_admin: boolean;
 }
@@ -38,7 +33,7 @@ const TeamManagement = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-  const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
+  const [managingMember, setManagingMember] = useState<TeamMember | null>(null);
   const [removingMember, setRemovingMember] = useState<TeamMember | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -78,7 +73,12 @@ const TeamManagement = () => {
       }
 
       if (data?.team) {
-        setTeamMembers(data.team);
+        // Ensure roles array exists for each member
+        const membersWithRoles = data.team.map((m: any) => ({
+          ...m,
+          roles: m.roles || [m.role],
+        }));
+        setTeamMembers(membersWithRoles);
       }
     } catch (err: any) {
       console.error("[TeamManagement] Unexpected error:", err);
@@ -88,51 +88,12 @@ const TeamManagement = () => {
     }
   };
 
-  const updateRole = async (targetUserId: string, newRole: string) => {
-    try {
-      setUpdatingRoleId(targetUserId);
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast.error("Not authenticated");
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke("update-team-role", {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: {
-          target_user_id: targetUserId,
-          new_role: newRole,
-        },
-      });
-
-      if (error) {
-        console.error("[TeamManagement] Update error:", error);
-        toast.error("Failed to update role");
-        return;
-      }
-
-      if (data?.error) {
-        toast.error(data.error);
-        return;
-      }
-
-      toast.success("Role updated successfully");
-      
-      // Update local state
-      setTeamMembers((prev) =>
-        prev.map((m) =>
-          m.user_id === targetUserId ? { ...m, role: newRole } : m
-        )
-      );
-    } catch (err: any) {
-      console.error("[TeamManagement] Unexpected error:", err);
-      toast.error("Failed to update role");
-    } finally {
-      setUpdatingRoleId(null);
-    }
+  const handleRolesUpdated = (userId: string, newRoles: string[]) => {
+    setTeamMembers((prev) =>
+      prev.map((m) =>
+        m.user_id === userId ? { ...m, roles: newRoles, role: newRoles[0] } : m
+      )
+    );
   };
 
   const removeMember = async () => {
@@ -169,7 +130,6 @@ const TeamManagement = () => {
 
       toast.success(`${removingMember.full_name || removingMember.email} has been removed`);
       
-      // Update local state
       setTeamMembers((prev) =>
         prev.filter((m) => m.user_id !== removingMember.user_id)
       );
@@ -182,27 +142,46 @@ const TeamManagement = () => {
     }
   };
 
-  const getRoleBadge = (role: string, isMasterAdmin: boolean) => {
-    if (isMasterAdmin) {
+  const getRoleBadges = (member: TeamMember) => {
+    const roles = member.roles || [member.role];
+    
+    if (member.is_master_admin) {
       return (
-        <Badge className="bg-primary text-primary-foreground">
-          <ShieldCheck className="w-3 h-3 mr-1" />
-          Master Admin
-        </Badge>
+        <div className="flex flex-wrap gap-1">
+          <Badge className="bg-primary text-primary-foreground">
+            <ShieldCheck className="w-3 h-3 mr-1" />
+            Master Admin
+          </Badge>
+          {roles.includes("business_admin") && (
+            <Badge className="bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400">
+              <BarChart3 className="w-3 h-3 mr-1" />
+              Business
+            </Badge>
+          )}
+        </div>
       );
     }
-    if (role === "admin") {
-      return (
-        <Badge className="bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400">
-          <Shield className="w-3 h-3 mr-1" />
-          Admin
-        </Badge>
-      );
-    }
+
     return (
-      <Badge variant="secondary">
-        Staff
-      </Badge>
+      <div className="flex flex-wrap gap-1">
+        {roles.includes("admin") && (
+          <Badge className="bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400">
+            <Shield className="w-3 h-3 mr-1" />
+            Admin
+          </Badge>
+        )}
+        {roles.includes("staff") && (
+          <Badge variant="secondary">
+            Staff
+          </Badge>
+        )}
+        {roles.includes("business_admin") && (
+          <Badge className="bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400">
+            <BarChart3 className="w-3 h-3 mr-1" />
+            Business
+          </Badge>
+        )}
+      </div>
     );
   };
 
@@ -223,7 +202,6 @@ const TeamManagement = () => {
   };
 
   const canRemove = (member: TeamMember) => {
-    // Cannot remove master admin or yourself
     return !member.is_master_admin && member.user_id !== currentUserId;
   };
 
@@ -284,11 +262,10 @@ const TeamManagement = () => {
             <div className="space-y-3">
               {teamMembers
                 .sort((a, b) => {
-                  // Master admin first, then by role, then by name
                   if (a.is_master_admin) return -1;
                   if (b.is_master_admin) return 1;
-                  if (a.role === "admin" && b.role !== "admin") return -1;
-                  if (a.role !== "admin" && b.role === "admin") return 1;
+                  if (a.roles?.includes("admin") && !b.roles?.includes("admin")) return -1;
+                  if (!a.roles?.includes("admin") && b.roles?.includes("admin")) return 1;
                   return (a.full_name || a.email).localeCompare(b.full_name || b.email);
                 })
                 .map((member) => (
@@ -305,7 +282,7 @@ const TeamManagement = () => {
                       className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium ${
                         member.is_master_admin
                           ? "bg-primary text-primary-foreground"
-                          : member.role === "admin"
+                          : member.roles?.includes("admin")
                           ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
                           : "bg-secondary text-secondary-foreground"
                       }`}
@@ -333,53 +310,28 @@ const TeamManagement = () => {
                       </div>
                     </div>
 
-                    {/* Role Badge or Selector */}
-                    <div className="flex-shrink-0 flex items-center gap-2">
-                      {member.is_master_admin ? (
-                        getRoleBadge(member.role, member.is_master_admin)
-                      ) : (
-                        <>
-                          {updatingRoleId === member.user_id ? (
-                            <div className="flex items-center gap-2 px-3 py-1">
-                              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                              <span className="text-sm text-muted-foreground">Updating...</span>
-                            </div>
-                          ) : (
-                            <Select
-                              value={member.role}
-                              onValueChange={(value) => updateRole(member.user_id, value)}
-                            >
-                              <SelectTrigger className="w-28 h-8">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="admin">
-                                  <span className="flex items-center gap-2">
-                                    <Shield className="w-3 h-3" />
-                                    Admin
-                                  </span>
-                                </SelectItem>
-                                <SelectItem value="staff">
-                                  <span className="flex items-center gap-2">
-                                    Staff
-                                  </span>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                          
-                          {/* Remove Button */}
-                          {canRemove(member) && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => setRemovingMember(member)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </>
+                    {/* Role Badges and Actions */}
+                    <div className="flex-shrink-0 flex items-center gap-3">
+                      {getRoleBadges(member)}
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        onClick={() => setManagingMember(member)}
+                      >
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                      
+                      {canRemove(member) && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => setRemovingMember(member)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -394,6 +346,14 @@ const TeamManagement = () => {
         open={isInviteOpen}
         onOpenChange={setIsInviteOpen}
         onInviteSent={loadTeamMembers}
+      />
+
+      {/* Manage Roles Modal */}
+      <ManageRolesModal
+        open={!!managingMember}
+        onOpenChange={(open) => !open && setManagingMember(null)}
+        member={managingMember}
+        onRolesUpdated={handleRolesUpdated}
       />
 
       {/* Remove Confirmation Dialog */}

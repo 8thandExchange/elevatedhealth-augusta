@@ -48,7 +48,7 @@ serve(async (req) => {
 
     console.log("[get-team-members] User authenticated:", user.email);
 
-    // Check if user is admin
+    // Check if user has admin or staff role
     const { data: roles, error: rolesError } = await supabaseClient
       .from("user_roles")
       .select("role")
@@ -71,11 +71,11 @@ serve(async (req) => {
       );
     }
 
-    // Get all users with admin or staff roles
+    // Get all users with admin, staff, or business_admin roles
     const { data: teamRoles, error: teamRolesError } = await adminClient
       .from("user_roles")
       .select("user_id, role, created_at")
-      .in("role", ["admin", "staff"]);
+      .in("role", ["admin", "staff", "business_admin"]);
 
     if (teamRolesError) {
       console.log("[get-team-members] Team roles query error:", teamRolesError);
@@ -87,25 +87,39 @@ serve(async (req) => {
 
     console.log("[get-team-members] Found roles:", teamRoles?.length);
 
+    // Group roles by user_id
+    const userRolesMap = new Map<string, { roles: string[], created_at: string }>();
+    for (const roleRecord of teamRoles || []) {
+      const existing = userRolesMap.get(roleRecord.user_id);
+      if (existing) {
+        existing.roles.push(roleRecord.role);
+      } else {
+        userRolesMap.set(roleRecord.user_id, {
+          roles: [roleRecord.role],
+          created_at: roleRecord.created_at,
+        });
+      }
+    }
+
     // Get user details for each team member
     const teamMembers = [];
-    for (const roleRecord of teamRoles || []) {
-      const { data: userData, error: userDataError } = await adminClient.auth.admin.getUserById(
-        roleRecord.user_id
-      );
+    for (const [userId, roleData] of userRolesMap) {
+      const { data: userData, error: userDataError } = await adminClient.auth.admin.getUserById(userId);
 
       if (userDataError || !userData.user) {
-        console.log("[get-team-members] Failed to get user:", roleRecord.user_id, userDataError);
+        console.log("[get-team-members] Failed to get user:", userId, userDataError);
         continue;
       }
 
       teamMembers.push({
-        user_id: roleRecord.user_id,
+        user_id: userId,
         email: userData.user.email,
         full_name: userData.user.user_metadata?.full_name || null,
-        role: roleRecord.role,
-        created_at: roleRecord.created_at,
-        is_master_admin: roleRecord.user_id === "31178dc3-3509-4cdd-8440-e75835bb1521",
+        roles: roleData.roles,
+        // Legacy support - return first role as 'role'
+        role: roleData.roles[0],
+        created_at: roleData.created_at,
+        is_master_admin: userId === "31178dc3-3509-4cdd-8440-e75835bb1521",
       });
     }
 

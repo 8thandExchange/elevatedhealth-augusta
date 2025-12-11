@@ -3,10 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, UserPlus, Mail } from "lucide-react";
+import { Loader2, UserPlus, Mail, Shield, BarChart3, Users } from "lucide-react";
 
 interface InviteProviderModalProps {
   open: boolean;
@@ -14,11 +14,46 @@ interface InviteProviderModalProps {
   onInviteSent?: () => void;
 }
 
+const AVAILABLE_ROLES = [
+  { 
+    id: "admin", 
+    label: "Admin", 
+    description: "Full clinical access - manage patients, treatment, settings",
+    icon: Shield 
+  },
+  { 
+    id: "staff", 
+    label: "Staff", 
+    description: "Limited access - kit shipping, pharmacy orders, patient support",
+    icon: Users 
+  },
+  { 
+    id: "business_admin", 
+    label: "Business Admin", 
+    description: "Financial access - revenue metrics, funnel analytics, business dashboard",
+    icon: BarChart3 
+  },
+];
+
 export const InviteProviderModal = ({ open, onOpenChange, onInviteSent }: InviteProviderModalProps) => {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<"admin" | "staff">("staff");
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(["staff"]);
   const [isSending, setIsSending] = useState(false);
+
+  const toggleRole = (roleId: string) => {
+    setSelectedRoles(prev => {
+      if (prev.includes(roleId)) {
+        // Don't allow removing the last role
+        if (prev.length === 1) {
+          toast.error("At least one role must be selected");
+          return prev;
+        }
+        return prev.filter(r => r !== roleId);
+      }
+      return [...prev, roleId];
+    });
+  };
 
   const handleSendInvite = async () => {
     if (!email || !fullName) {
@@ -31,23 +66,28 @@ export const InviteProviderModal = ({ open, onOpenChange, onInviteSent }: Invite
       return;
     }
 
+    if (selectedRoles.length === 0) {
+      toast.error("Please select at least one role");
+      return;
+    }
+
     setIsSending(true);
 
     try {
       const { data, error } = await supabase.functions.invoke("send-provider-invite", {
-        body: { email, full_name: fullName, role },
+        body: { email, full_name: fullName, roles: selectedRoles },
       });
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
       toast.success(`Invitation sent to ${email}`, {
-        description: "They will receive an email to set up their password.",
+        description: `Roles: ${selectedRoles.map(r => AVAILABLE_ROLES.find(ar => ar.id === r)?.label).join(", ")}`,
       });
 
       setEmail("");
       setFullName("");
-      setRole("staff");
+      setSelectedRoles(["staff"]);
       onOpenChange(false);
       onInviteSent?.();
     } catch (error: any) {
@@ -66,7 +106,7 @@ export const InviteProviderModal = ({ open, onOpenChange, onInviteSent }: Invite
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-primary" />
-            Invite Provider or Staff
+            Invite Team Member
           </DialogTitle>
           <DialogDescription>
             Send an email invitation to set up a new provider or staff account.
@@ -97,20 +137,40 @@ export const InviteProviderModal = ({ open, onOpenChange, onInviteSent }: Invite
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="role">Role</Label>
-            <Select value={role} onValueChange={(v: "admin" | "staff") => setRole(v)} disabled={isSending}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="admin">Admin (Full Access)</SelectItem>
-                <SelectItem value="staff">Staff (Standard Access)</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Admins can manage users and settings. Staff can manage patients and orders.
-            </p>
+          <div className="space-y-3">
+            <Label>Roles (select one or more)</Label>
+            <div className="space-y-3">
+              {AVAILABLE_ROLES.map((role) => {
+                const Icon = role.icon;
+                return (
+                  <label
+                    key={role.id}
+                    className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                      selectedRoles.includes(role.id)
+                        ? "bg-primary/5 border-primary/30"
+                        : "bg-muted/30 border-border/50 hover:bg-muted/50"
+                    }`}
+                  >
+                    <Checkbox
+                      id={role.id}
+                      checked={selectedRoles.includes(role.id)}
+                      onCheckedChange={() => toggleRole(role.id)}
+                      disabled={isSending}
+                      className="mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Icon className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium text-sm">{role.label}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {role.description}
+                      </p>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
           </div>
         </div>
 
