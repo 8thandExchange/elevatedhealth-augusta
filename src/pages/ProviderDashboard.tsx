@@ -159,6 +159,7 @@ const ProviderDashboard = () => {
   const [isSavingContact, setIsSavingContact] = useState(false);
   const [isMarkingLabsReviewed, setIsMarkingLabsReviewed] = useState(false);
   const [isFlaggingNoShow, setIsFlaggingNoShow] = useState(false);
+  const [isClearingHighRisk, setIsClearingHighRisk] = useState<string | null>(null);
   // Archive/Delete state
   const [isArchiving, setIsArchiving] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -837,6 +838,30 @@ const ProviderDashboard = () => {
     }
   };
 
+  const handleClearHighRiskFlag = async (patientId: string) => {
+    setIsClearingHighRisk(patientId);
+    try {
+      const { error } = await supabase
+        .from("patients")
+        .update({ 
+          risk_status: null, 
+          safety_flags: null,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", patientId);
+
+      if (error) throw error;
+
+      toast.success("High-risk flag cleared. Patient can now access their dashboard.");
+      await loadData();
+    } catch (err: any) {
+      console.error("Error clearing high-risk flag:", err);
+      toast.error(err.message || "Failed to clear high-risk flag");
+    } finally {
+      setIsClearingHighRisk(null);
+    }
+  };
+
   const togglePatientSelection = (patientId: string) => {
     setSelectedPatientIds(prev => {
       const newSet = new Set(prev);
@@ -899,10 +924,14 @@ const ProviderDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-9 mb-8">
+          <TabsList className="grid w-full grid-cols-10 mb-8">
             <TabsTrigger value="triage" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
               <span className="hidden sm:inline">Action Needed</span> ({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})
+            </TabsTrigger>
+            <TabsTrigger value="highrisk" className="flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-red-500" />
+              <span className="hidden sm:inline">High-Risk</span> ({pendingPatients.filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review").length})
             </TabsTrigger>
             <TabsTrigger value="staff" className="flex items-center gap-2">
               <CheckSquare className="w-4 h-4" />
@@ -937,6 +966,92 @@ const ProviderDashboard = () => {
               <span className="hidden sm:inline">Team</span>
             </TabsTrigger>
           </TabsList>
+
+          {/* High-Risk Patients Tab */}
+          <TabsContent value="highrisk">
+            <Card className="bg-card border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-600">
+                  <ShieldAlert className="w-5 h-5" />
+                  High-Risk Patients Requiring Review
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {pendingPatients.filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review").length === 0 ? (
+                  <div className="text-center py-8">
+                    <ShieldCheck className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                    <p className="text-muted-foreground">No high-risk patients pending review.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingPatients
+                      .filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review")
+                      .map(({ patient, highestCategory, riskLevel }) => (
+                        <div 
+                          key={patient.id}
+                          className="flex items-center justify-between p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800 cursor-pointer hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
+                          onClick={() => {
+                            const patientWithLog = pendingPatients.find(p => p.patient.id === patient.id);
+                            if (patientWithLog) selectPatient(patientWithLog);
+                          }}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
+                              <ShieldAlert className="w-5 h-5 text-red-600" />
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-foreground">{patient.full_name}</h3>
+                              <p className="text-sm text-muted-foreground">{patient.email}</p>
+                              {patient.safety_flags && Array.isArray(patient.safety_flags) && patient.safety_flags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {patient.safety_flags.map((flag: string, i: number) => (
+                                    <span key={i} className="text-xs bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 px-2 py-0.5 rounded">
+                                      {flag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {getRiskBadge(riskLevel)}
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-red-300 text-red-600 hover:bg-red-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const patientWithLog = pendingPatients.find(p => p.patient.id === patient.id);
+                                if (patientWithLog) selectPatient(patientWithLog);
+                              }}
+                            >
+                              Review
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="default"
+                              className="bg-green-600 hover:bg-green-700"
+                              disabled={isClearingHighRisk === patient.id}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleClearHighRiskFlag(patient.id);
+                              }}
+                            >
+                              {isClearingHighRisk === patient.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Check className="w-4 h-4 mr-1" />
+                              )}
+                              Clear Flag
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Staff Tasks Tab */}
           <TabsContent value="staff">

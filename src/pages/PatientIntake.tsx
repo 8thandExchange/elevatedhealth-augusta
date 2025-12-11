@@ -465,6 +465,24 @@ const PatientIntake = () => {
         // Don't block the flow if notification fails
       }
 
+      // If patient is flagged as high-risk, send them the eligibility review email
+      if (highRisk) {
+        try {
+          await supabase.functions.invoke("send-flagged-patient-notification", {
+            body: {
+              patient_name: fullName.trim(),
+              patient_email: user.email,
+              safety_flags: highRiskConditions.filter(c => medicalHistory[c.id]).map(c => c.label),
+              treatment_type: treatmentRequests.join(", ") || "hormone therapy",
+            }
+          });
+          console.log("[PatientIntake] Flagged patient notification sent");
+        } catch (flaggedError) {
+          console.error("[PatientIntake] Failed to send flagged patient notification:", flaggedError);
+          // Don't block the flow if notification fails
+        }
+      }
+
       toast.success("Intake complete! A provider will review your results within 24-48 hours.");
       navigate("/patient/dashboard");
     } catch (error: any) {

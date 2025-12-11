@@ -15,6 +15,7 @@ import KitTracker from "@/components/patient/KitTracker";
 import MindCareCard from "@/components/patient/MindCareCard";
 import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard";
 import PatientNavbar from "@/components/patient/PatientNavbar";
+import SafetyGate from "@/components/patient/SafetyGate";
 
 interface SymptomLog {
   id: string;
@@ -34,6 +35,9 @@ interface Patient {
   intake_completed: boolean;
   onboarding_status: string | null;
   primary_program: string | null;
+  risk_status: string | null;
+  safety_flags: any;
+  treatment_request: string | null;
 }
 
 interface Order {
@@ -276,6 +280,25 @@ const PatientDashboard = () => {
   // Show welcome intake if not completed (only for hormone patients)
   if (patient && !patient.intake_completed && patient.primary_program !== "ketamine") {
     return <WelcomeIntake patientName={patient.full_name} />;
+  }
+
+  // HARD GATE: Block flagged patients from dashboard until provider clears them
+  const isFlaggedPatient = patient?.risk_status === "high_risk_review" || 
+    (Array.isArray(patient?.safety_flags) && patient.safety_flags.length > 0);
+  
+  if (patient && isFlaggedPatient) {
+    const safetyFlags = Array.isArray(patient.safety_flags) ? patient.safety_flags : [];
+    const treatmentType = patient.treatment_request || patient.primary_program || "hormone therapy";
+    
+    return (
+      <SafetyGate
+        patientName={patient.full_name}
+        patientEmail={patient.email || ""}
+        patientPhone=""
+        safetyFlags={safetyFlags}
+        treatmentType={treatmentType}
+      />
+    );
   }
 
   const isKetaminePatient = patient?.primary_program === "ketamine";

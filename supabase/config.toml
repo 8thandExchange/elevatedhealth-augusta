@@ -110,3 +110,9 @@ verify_jwt = false
 
 [functions.verify-consultation-payment]
 verify_jwt = false
+
+[functions.create-iv-drip-checkout]
+verify_jwt = false
+
+[functions.send-flagged-patient-notification]
+verify_jwt = false

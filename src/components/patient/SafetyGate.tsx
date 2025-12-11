@@ -15,11 +15,11 @@ interface SafetyGateProps {
   patientEmail?: string;
   patientPhone?: string;
   safetyFlags?: string[];
-  treatmentType?: "hormone" | "ketamine";
+  treatmentType?: string;
   onContinue?: () => void;
 }
 
-const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, treatmentType = "hormone", onContinue }: SafetyGateProps) => {
+const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, treatmentType = "hormone therapy", onContinue }: SafetyGateProps) => {
   const [isRequestingCallback, setIsRequestingCallback] = useState(false);
   const [callbackRequested, setCallbackRequested] = useState(false);
   const [phone, setPhone] = useState(patientPhone || "");
@@ -80,7 +80,7 @@ const SafetyGate = ({ patientName, patientEmail, patientPhone, safetyFlags, trea
             </p>
             
             <p className="text-foreground leading-relaxed">
-              Your medical intake flagged a potential contraindication for {treatmentType === "ketamine" ? "ketamine therapy" : "hormone therapy"}. 
+              Your medical intake flagged a potential contraindication for {treatmentType?.includes("ketamine") ? "ketamine therapy" : treatmentType || "hormone therapy"}. 
               At Elevated Health, we prioritize your safety above all else.
             </p>
 
