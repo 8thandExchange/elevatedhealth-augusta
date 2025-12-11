@@ -41,8 +41,14 @@ serve(async (req) => {
 
     // Parse request body
     const body = await req.json().catch(() => ({}));
-    const serviceType = body.serviceType || "hormone"; // hormone, weightloss
+    const serviceType = body.serviceType || "hormone"; // hormone, weight_loss, ketamine, peptide
     logStep("Service type", { serviceType });
+
+    // Validate service type
+    const validServiceTypes = ["hormone", "weight_loss", "ketamine", "peptide"];
+    if (!validServiceTypes.includes(serviceType)) {
+      throw new Error(`Invalid service type: ${serviceType}`);
+    }
 
     // Check for authenticated user (optional - supports guest checkout)
     const authHeader = req.headers.get("Authorization");
@@ -97,7 +103,7 @@ serve(async (req) => {
       ],
       mode: "payment",
       shipping_address_collection: undefined, // No shipping needed for consultation
-      success_url: `${origin}/consultation-confirmed?session_id={CHECKOUT_SESSION_ID}&credit=${creditCode}`,
+      success_url: `${origin}/consultation-confirmed?session_id={CHECKOUT_SESSION_ID}&credit=${creditCode}&service=${serviceType}`,
       cancel_url: `${origin}/hormones-women`,
       metadata: {
         user_id: userId || "",

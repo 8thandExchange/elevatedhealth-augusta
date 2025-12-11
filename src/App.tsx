@@ -46,6 +46,7 @@ import CreateAccount from "./pages/CreateAccount";
 import HealthReport from "./pages/HealthReport";
 import PatientServices from "./pages/PatientServices";
 import ConsultationConfirmed from "./pages/ConsultationConfirmed";
+import IVPaymentSuccess from "./pages/IVPaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +92,7 @@ const App = () => (
           <Route path="/patient-resources" element={<PatientResources />} />
           <Route path="/schedule-consult" element={<ScheduleConsult />} />
           <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
+          <Route path="/iv-payment-success" element={<IVPaymentSuccess />} />
           <Route path="/patient/create-account" element={<CreateAccount />} />
           
           {/* Protected Patient Routes */}

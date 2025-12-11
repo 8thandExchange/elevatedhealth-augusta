@@ -9,13 +9,49 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
+// Calendar URLs by service type
+const CALENDAR_URLS: Record<string, string> = {
+  hormone: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
+  weight_loss: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
+  ketamine: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
+  peptide: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true",
+};
+
+// Service type labels
+const SERVICE_LABELS: Record<string, { title: string; specialist: string; creditInfo: string }> = {
+  hormone: {
+    title: "Hormone Consultation",
+    specialist: "hormone specialist",
+    creditInfo: "Use this code when purchasing Hormone Mapping to receive $99 off (pay only $200 instead of $299)."
+  },
+  weight_loss: {
+    title: "Weight Loss Consultation",
+    specialist: "weight management specialist",
+    creditInfo: "Use this code when purchasing Metabolic Mapping to receive $99 off (pay only $200 instead of $299)."
+  },
+  ketamine: {
+    title: "Ketamine Consultation",
+    specialist: "mental wellness specialist",
+    creditInfo: "Your $99 consultation fee will be credited toward your treatment plan."
+  },
+  peptide: {
+    title: "Peptide Consultation",
+    specialist: "peptide therapy specialist",
+    creditInfo: "Your $99 consultation fee will be credited toward your peptide protocol."
+  },
+};
+
 const ConsultationConfirmed = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const creditCode = searchParams.get("credit");
+  const serviceType = searchParams.get("service") || "hormone";
   const [isVerifying, setIsVerifying] = useState(true);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const serviceInfo = SERVICE_LABELS[serviceType] || SERVICE_LABELS.hormone;
+  const bookingUrl = CALENDAR_URLS[serviceType] || CALENDAR_URLS.hormone;
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -54,8 +90,6 @@ const ConsultationConfirmed = () => {
     }
   };
 
-  const bookingUrl = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true";
-
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -78,7 +112,7 @@ const ConsultationConfirmed = () => {
                   Payment Confirmed!
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                  Thank you for booking your Discovery Consultation. Your next step is to schedule your call.
+                  Thank you for booking your {serviceInfo.title}. Your next step is to schedule your call.
                 </p>
               </div>
 
@@ -93,7 +127,7 @@ const ConsultationConfirmed = () => {
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg mb-1">Your $99 Credit Code</h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                          Use this code when purchasing Hormone Mapping to receive $99 off (pay only $200 instead of $299).
+                          {serviceInfo.creditInfo}
                         </p>
                         <div className="flex items-center gap-3">
                           <code className="bg-background px-4 py-2 rounded-lg font-mono text-lg font-bold tracking-wider border">
@@ -124,7 +158,7 @@ const ConsultationConfirmed = () => {
                   </div>
                   
                   <p className="text-muted-foreground mb-6">
-                    Select a time that works best for you. Your 15-minute call will be with one of our hormone specialists.
+                    Select a time that works best for you. Your call will be with one of our {serviceInfo.specialist}s.
                   </p>
 
                   {/* Embedded Calendar */}

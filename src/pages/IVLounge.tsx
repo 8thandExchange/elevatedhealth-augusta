@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { toast } from "sonner";
 import { 
   Droplets, 
   Sparkles, 
   Dumbbell, 
   Shield, 
   Sun,
-  Plus,
-  Check
+  Check,
+  Loader2
 } from "lucide-react";
 
 interface IVTherapy {
@@ -67,8 +67,9 @@ const IVLounge = () => {
   const [therapies, setTherapies] = useState<IVTherapy[]>([]);
   const [addons, setAddons] = useState<IVAddon[]>([]);
   const [selectedFeeling, setSelectedFeeling] = useState("all");
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [selectedAddons, setSelectedAddons] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
+  const [bookingTherapyId, setBookingTherapyId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,20 +91,50 @@ const IVLounge = () => {
     return therapy.feelings.includes(selectedFeeling);
   });
 
-  const toggleAddon = (addonId: string) => {
-    setSelectedAddons((prev) =>
-      prev.includes(addonId)
-        ? prev.filter((id) => id !== addonId)
-        : [...prev, addonId]
-    );
+  const toggleAddon = (therapyId: string, addonId: string) => {
+    setSelectedAddons((prev) => {
+      const current = prev[therapyId] || [];
+      const updated = current.includes(addonId)
+        ? current.filter((id) => id !== addonId)
+        : [...current, addonId];
+      return { ...prev, [therapyId]: updated };
+    });
   };
 
-  const handleBookNow = (therapy: IVTherapy) => {
-    // Open Google Calendar booking link
-    window.open(
-      "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1VfeDDUhPJgGJcLwhKB5Sh8n5uoVH8bZLOb0yPqZx8uClvHC6JvLlKzJg0E5nNE8gXiWL1fj2k",
-      "_blank"
-    );
+  const getTherapyAddons = (therapyId: string) => selectedAddons[therapyId] || [];
+
+  const calculateTotal = (therapy: IVTherapy) => {
+    const addonIds = getTherapyAddons(therapy.id);
+    const addonTotal = addonIds.reduce((total, id) => {
+      const addon = addons.find((a) => a.id === id);
+      return total + (addon?.price || 0);
+    }, 0);
+    return therapy.price + addonTotal;
+  };
+
+  const handleBookNow = async (therapy: IVTherapy) => {
+    setBookingTherapyId(therapy.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-iv-drip-checkout", {
+        body: { 
+          therapy_id: therapy.id,
+          addon_ids: getTherapyAddons(therapy.id)
+        }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("IV checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setBookingTherapyId(null);
+    }
   };
 
   return (
@@ -229,16 +260,54 @@ const IVLounge = () => {
                       </div>
                     </div>
 
+                    {/* Add-ons for this therapy */}
+                    {addons.length > 0 && (
+                      <div className="mb-4 pt-4 border-t border-border/30">
+                        <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">
+                          Add Boosters
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {addons.slice(0, 3).map((addon) => {
+                            const isSelected = getTherapyAddons(therapy.id).includes(addon.id);
+                            return (
+                              <button
+                                key={addon.id}
+                                onClick={() => toggleAddon(therapy.id, addon.id)}
+                                className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                                  isSelected
+                                    ? "bg-primary text-primary-foreground border-primary"
+                                    : "border-border hover:border-primary/50"
+                                }`}
+                              >
+                                {addon.name} +${addon.price}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Price & CTA */}
                     <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                      <span className="font-cormorant text-3xl text-foreground">
-                        ${therapy.price}
-                      </span>
+                      <div>
+                        <span className="font-cormorant text-3xl text-foreground">
+                          ${calculateTotal(therapy)}
+                        </span>
+                        {getTherapyAddons(therapy.id).length > 0 && (
+                          <span className="block text-xs text-muted-foreground">
+                            Base ${therapy.price} + add-ons
+                          </span>
+                        )}
+                      </div>
                       <Button
                         onClick={() => handleBookNow(therapy)}
                         className="rounded-full"
+                        disabled={bookingTherapyId === therapy.id}
                       >
-                        Book Now
+                        {bookingTherapyId === therapy.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : null}
+                        {bookingTherapyId === therapy.id ? "Processing..." : "Book & Pay"}
                       </Button>
                     </div>
                   </Card>
@@ -248,15 +317,15 @@ const IVLounge = () => {
           </div>
         </section>
 
-        {/* Add-ons Section */}
+        {/* Available Add-ons Info Section */}
         <section className="py-16 bg-secondary/20">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="font-cormorant text-3xl md:text-4xl font-light text-foreground mb-3">
-                Boost Your Drip
+                Premium Boosters
               </h2>
               <p className="text-muted-foreground">
-                Customize your infusion with premium add-ons
+                Add to any drip for enhanced results
               </p>
             </div>
 
@@ -264,25 +333,9 @@ const IVLounge = () => {
               {addons.map((addon) => (
                 <Card
                   key={addon.id}
-                  className={`p-4 cursor-pointer transition-all duration-200 border-2 ${
-                    selectedAddons.includes(addon.id)
-                      ? "border-primary bg-primary/5"
-                      : "border-transparent hover:border-primary/30"
-                  }`}
-                  onClick={() => toggleAddon(addon.id)}
+                  className="p-4 border border-border/50"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                        selectedAddons.includes(addon.id)
-                          ? "bg-primary border-primary"
-                          : "border-muted-foreground/30"
-                      }`}
-                    >
-                      {selectedAddons.includes(addon.id) && (
-                        <Check className="w-3 h-3 text-primary-foreground" />
-                      )}
-                    </div>
                     <span className="text-sm font-medium text-primary">
                       +${addon.price}
                     </span>
@@ -296,18 +349,6 @@ const IVLounge = () => {
                 </Card>
               ))}
             </div>
-
-            {selectedAddons.length > 0 && (
-              <div className="text-center mt-8">
-                <p className="text-sm text-muted-foreground">
-                  {selectedAddons.length} add-on{selectedAddons.length > 1 ? "s" : ""} selected • +$
-                  {selectedAddons.reduce((total, id) => {
-                    const addon = addons.find((a) => a.id === id);
-                    return total + (addon?.price || 0);
-                  }, 0)}
-                </p>
-              </div>
-            )}
           </div>
         </section>
 

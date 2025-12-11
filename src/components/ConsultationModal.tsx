@@ -58,6 +58,26 @@ const VitalityIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const CellularIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+    {/* Cellular/molecular structure */}
+    <circle cx="24" cy="24" r="10" />
+    <circle cx="24" cy="24" r="4" />
+    <circle cx="24" cy="8" r="3" />
+    <circle cx="24" cy="40" r="3" />
+    <circle cx="10" cy="16" r="3" />
+    <circle cx="38" cy="16" r="3" />
+    <circle cx="10" cy="32" r="3" />
+    <circle cx="38" cy="32" r="3" />
+    <line x1="24" y1="11" x2="24" y2="14" />
+    <line x1="24" y1="34" x2="24" y2="37" />
+    <line x1="12" y1="18" x2="15" y2="20" />
+    <line x1="33" y1="20" x2="36" y2="18" />
+    <line x1="12" y1="30" x2="15" y2="28" />
+    <line x1="33" y1="28" x2="36" y2="30" />
+  </svg>
+);
+
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
   const [loadingService, setLoadingService] = useState<string | null>(null);
 
@@ -82,6 +102,13 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
       description: "Bioidentical hormone therapy to restore vitality",
       serviceType: "hormone",
       freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true"
+    },
+    {
+      icon: CellularIcon,
+      title: "Peptide Therapy",
+      description: "Sermorelin, NAD+, BPC-157 & PT-141 for cellular optimization",
+      serviceType: "peptide",
+      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true"
     }
   ];
 
@@ -125,7 +152,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid md:grid-cols-3 gap-5 mt-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           {consultationOptions.map((option, index) => {
             const Icon = option.icon;
             const isLoading = loadingService === option.serviceType;
