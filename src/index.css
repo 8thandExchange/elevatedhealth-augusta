@@ -205,6 +205,55 @@
   outline-offset: 2px;
 }
 
+/* Input Focus Safeguards - Ensure inputs are always clickable */
+input, 
+textarea, 
+select,
+[role="combobox"],
+[role="listbox"],
+[role="textbox"] {
+  position: relative;
+  z-index: 1;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  z-index: 2;
+}
+
+/* Ensure form containers have proper stacking context */
+form {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Card form containers */
+.card form,
+[data-slot="card"] form {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Toast container should not block interactions */
+[data-sonner-toaster] {
+  pointer-events: none;
+}
+
+[data-sonner-toaster] [data-sonner-toast] {
+  pointer-events: auto;
+}
+
+/* Ensure labels don't block input clicks */
+label {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
 /* Skip to main content link */
 .skip-to-main {
   @apply absolute -top-full left-4 z-[100] bg-primary text-primary-foreground px-4 py-2 rounded-md font-lato text-sm;

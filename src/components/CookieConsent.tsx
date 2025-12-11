@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -9,17 +9,22 @@ type ConsentStatus = "accepted" | "declined" | null;
 
 const CookieConsent = () => {
   const [showBanner, setShowBanner] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY);
     if (!consent) {
       // Small delay for better UX
-      const timer = setTimeout(() => setShowBanner(true), 1500);
+      const timer = setTimeout(() => {
+        setShowBanner(true);
+        // Trigger animation after mount
+        requestAnimationFrame(() => setIsVisible(true));
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  const handleConsent = (status: ConsentStatus) => {
+  const handleConsent = useCallback((status: ConsentStatus) => {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + CONSENT_EXPIRY_DAYS);
     
@@ -30,22 +35,34 @@ const CookieConsent = () => {
 
     // If accepted, you could initialize analytics here
     if (status === "accepted") {
-      // Analytics initialization would go here
       console.log("Cookie consent accepted - analytics enabled");
     }
 
-    setShowBanner(false);
-  };
+    // Animate out then remove from DOM
+    setIsVisible(false);
+    setTimeout(() => setShowBanner(false), 300);
+  }, []);
 
+  const handleDismiss = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => setShowBanner(false), 300);
+  }, []);
+
+  // Complete removal from DOM when not showing
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 animate-in slide-in-from-bottom-5 duration-500">
-      <div className="max-w-4xl mx-auto bg-foreground text-background rounded-lg shadow-2xl border border-background/10">
+    <div 
+      className={`fixed bottom-0 left-0 right-0 z-50 p-4 transition-all duration-300 pointer-events-none ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+      aria-hidden={!isVisible}
+    >
+      <div className="max-w-4xl mx-auto bg-foreground text-background rounded-lg shadow-2xl border border-background/10 pointer-events-auto">
         <div className="p-4 sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <h3 className="font-playfair text-lg font-medium mb-2">
+              <h3 className="font-cormorant text-lg font-medium mb-2">
                 We Value Your Privacy
               </h3>
               <p className="text-sm text-background/70 font-lato leading-relaxed">
@@ -61,9 +78,10 @@ const CookieConsent = () => {
               </p>
             </div>
             <button
-              onClick={() => setShowBanner(false)}
+              onClick={handleDismiss}
               className="text-background/50 hover:text-background transition-colors p-1"
               aria-label="Close cookie banner"
+              type="button"
             >
               <X className="h-5 w-5" />
             </button>
@@ -71,12 +89,14 @@ const CookieConsent = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <Button
+              type="button"
               onClick={() => handleConsent("accepted")}
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-lato"
             >
               Accept All
             </Button>
             <Button
+              type="button"
               onClick={() => handleConsent("declined")}
               variant="ghost"
               className="border border-white/40 text-white bg-transparent hover:bg-white/10 font-lato"
