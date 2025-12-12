@@ -668,6 +668,11 @@ export type Database = {
       orders: {
         Row: {
           created_at: string | null
+          fax_destination: string | null
+          fax_error: string | null
+          fax_id: string | null
+          fax_sent_at: string | null
+          fax_status: string | null
           id: string
           patient_id: string
           protocol_snapshot: Json | null
@@ -676,6 +681,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          fax_destination?: string | null
+          fax_error?: string | null
+          fax_id?: string | null
+          fax_sent_at?: string | null
+          fax_status?: string | null
           id?: string
           patient_id: string
           protocol_snapshot?: Json | null
@@ -684,6 +694,11 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          fax_destination?: string | null
+          fax_error?: string | null
+          fax_id?: string | null
+          fax_sent_at?: string | null
+          fax_status?: string | null
           id?: string
           patient_id?: string
           protocol_snapshot?: Json | null

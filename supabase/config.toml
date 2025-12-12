@@ -116,3 +116,6 @@ verify_jwt = false
 
 [functions.send-flagged-patient-notification]
 verify_jwt = false
+
+[functions.send-rx-fax]
+verify_jwt = false

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, ExternalLink, CheckCircle, Loader2 } from "lucide-react";
+import { Copy, Check, ExternalLink, CheckCircle, Loader2, Send, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -39,8 +39,11 @@ interface FCCPortalModalProps {
   rxString: string;
   quantity: number;
   refills: number;
+  supplyDays?: number;
   onOrderCreated?: () => void;
 }
+
+type FaxStatus = 'idle' | 'transmitting' | 'sent' | 'failed';
 
 const CopyField = ({
   label,
@@ -95,9 +98,34 @@ const FCCPortalModal = ({
   rxString,
   quantity,
   refills,
+  supplyDays = 30,
   onOrderCreated,
 }: FCCPortalModalProps) => {
   const [isMarking, setIsMarking] = useState(false);
+  const [faxStatus, setFaxStatus] = useState<FaxStatus>('idle');
+  const [faxTimestamp, setFaxTimestamp] = useState<string | null>(null);
+  const [faxError, setFaxError] = useState<string | null>(null);
+  const [providerEmail, setProviderEmail] = useState<string>("");
+
+  // Get current user's email for provider identification
+  useEffect(() => {
+    const getProviderEmail = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        setProviderEmail(user.email);
+      }
+    };
+    getProviderEmail();
+  }, []);
+
+  // Reset fax status when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setFaxStatus('idle');
+      setFaxTimestamp(null);
+      setFaxError(null);
+    }
+  }, [isOpen]);
 
   // Format DOB
   const formatDOB = (dob?: string | null) => {
@@ -117,7 +145,6 @@ const FCCPortalModal = ({
   // Get allergies from patient record
   const getAllergies = () => {
     if (patient.allergies) return patient.allergies;
-    // Fallback to medical history for older records
     const history = patient.medical_history;
     if (history?.allergies) return history.allergies;
     if (history?.drugAllergies) return history.drugAllergies;
@@ -126,7 +153,6 @@ const FCCPortalModal = ({
 
   // Get address from patient record
   const getAddress = () => {
-    // Use dedicated columns first
     if (patient.street_address) {
       const parts = [
         patient.street_address,
@@ -136,7 +162,6 @@ const FCCPortalModal = ({
       ].filter(Boolean);
       return parts.join(", ") || "Not on file";
     }
-    // Fallback to medical history for older records
     const history = patient.medical_history;
     if (history?.address) return history.address;
     if (history?.streetAddress) {
@@ -149,6 +174,47 @@ const FCCPortalModal = ({
       return parts.join(", ") || "Not on file";
     }
     return "Not on file";
+  };
+
+  const handleFaxToHolgate = async () => {
+    if (!medication) return;
+    
+    setFaxStatus('transmitting');
+    setFaxError(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('send-rx-fax', {
+        body: {
+          patient_id: patient.id,
+          medication_name: medication.name,
+          medication_strength: medication.strength,
+          medication_sig: medication.sig,
+          quantity,
+          refills,
+          supply_days: supplyDays,
+          provider_email: providerEmail,
+        },
+      });
+
+      if (error) throw error;
+      
+      if (!data?.success) {
+        throw new Error(data?.error || "Fax transmission failed");
+      }
+
+      setFaxStatus('sent');
+      setFaxTimestamp(new Date().toLocaleString('en-US', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }));
+      toast.success("Prescription faxed to Dr. Holgate!");
+      onOrderCreated?.();
+    } catch (error: any) {
+      console.error("Fax error:", error);
+      setFaxStatus('failed');
+      setFaxError(error.message || "Failed to send fax");
+      toast.error("Fax failed - use manual fallback");
+    }
   };
 
   const handleLaunchPortal = () => {
@@ -169,7 +235,7 @@ const FCCPortalModal = ({
           rx_string: rxString,
           quantity,
           refills,
-          ordered_via: "FCC Portal",
+          ordered_via: "FCC Portal (Manual)",
           ordered_at: new Date().toISOString(),
         },
       });
@@ -203,7 +269,7 @@ const FCCPortalModal = ({
                 <path d="M9 12h6M9 16h6" />
               </svg>
             </span>
-            FCC Portal Assistant
+            Pharmacy Order Assistant
           </DialogTitle>
         </DialogHeader>
 
@@ -224,7 +290,7 @@ const FCCPortalModal = ({
                   {rxString}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Qty: {quantity} | Refills: {refills}
+                  Qty: {quantity} | Refills: {refills} | {supplyDays}-day supply
                 </p>
               </div>
               <Button
@@ -243,33 +309,81 @@ const FCCPortalModal = ({
           </div>
         </div>
 
+        {/* Fax Status Display */}
+        {faxStatus === 'sent' && (
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-green-700 dark:text-green-400">Fax Sent Successfully</p>
+              <p className="text-xs text-green-600 dark:text-green-500">{faxTimestamp}</p>
+            </div>
+          </div>
+        )}
+
+        {faxStatus === 'failed' && (
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-destructive">Fax Failed</p>
+                <p className="text-xs text-destructive/80">{faxError}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Action Buttons */}
-        <div className="flex gap-3 mt-6">
-          <Button
-            variant="outline"
-            onClick={handleLaunchPortal}
-            className="flex-1 border-foreground/20 hover:bg-secondary"
-          >
-            <ExternalLink className="w-4 h-4 mr-2" />
-            Launch FCC Portal
-          </Button>
-          <Button
-            onClick={handleMarkAsOrdered}
-            disabled={isMarking}
-            className="flex-1 bg-gold hover:bg-gold-dark text-white"
-          >
-            {isMarking ? (
-              <>
+        <div className="flex flex-col gap-3 mt-6">
+          {/* Primary: Fax to Holgate */}
+          {faxStatus !== 'sent' && (
+            <Button
+              onClick={handleFaxToHolgate}
+              disabled={faxStatus === 'transmitting' || !medication}
+              className="w-full bg-gold hover:bg-gold-dark text-white"
+            >
+              {faxStatus === 'transmitting' ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Transmitting...
+                </>
+              ) : faxStatus === 'failed' ? (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Try Fax Again
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  📠 Fax Rx to Holgate
+                </>
+              )}
+            </Button>
+          )}
+
+          {/* Secondary Actions */}
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={handleLaunchPortal}
+              className="flex-1 border-foreground/20 hover:bg-secondary"
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              FCC Portal
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleMarkAsOrdered}
+              disabled={isMarking}
+              className="flex-1 border-foreground/20 hover:bg-secondary"
+            >
+              {isMarking ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
+              ) : (
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Mark as Ordered
-              </>
-            )}
-          </Button>
+              )}
+              Mark Manual
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
