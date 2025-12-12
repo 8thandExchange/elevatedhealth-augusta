@@ -41,6 +41,7 @@ import BloodWorkHistory from "@/components/provider/BloodWorkHistory";
 import TeamManagement from "@/components/provider/TeamManagement";
 import StaffTasksTab from "@/components/provider/StaffTasksTab";
 import ConsultationTracker from "@/components/provider/ConsultationTracker";
+import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
 
 interface Patient {
   id: string;
@@ -176,6 +177,11 @@ const ProviderDashboard = () => {
     zrt_kit_status: string;
     tracking_number: string | null;
     customer_email: string;
+  } | null>(null);
+  // Latest lab result for supplement recommendations
+  const [selectedPatientLabResult, setSelectedPatientLabResult] = useState<{
+    testosterone_t: number | null;
+    estradiol_e2: number | null;
   } | null>(null);
 
   // Provider lookup based on email - expand this as you add more providers
@@ -447,6 +453,17 @@ const ProviderDashboard = () => {
       .maybeSingle();
 
     setSelectedPatientKit(kitData);
+
+    // Fetch latest lab result for supplement recommendations
+    const { data: labData } = await supabase
+      .from("lab_results")
+      .select("testosterone_t, estradiol_e2")
+      .eq("patient_id", patientWithLog.patient.id)
+      .order("collection_date", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    setSelectedPatientLabResult(labData);
 
     // Load all symptom logs for chart
     const { data: logs } = await supabase
@@ -1858,8 +1875,20 @@ const ProviderDashboard = () => {
                   zip_code: selectedPatient.patient.zip_code,
                   allergies: selectedPatient.patient.allergies,
                   medical_history: selectedPatient.patient.medical_history as Record<string, any> | null,
+                  gender: selectedPatient.patient.gender,
                 }}
                 onOrderCreated={() => loadData()}
+              />
+
+              {/* Supplement Plan Card - Dr. Holgate's Protocols */}
+              <SupplementPlanCard
+                patient={{
+                  id: selectedPatient.patient.id,
+                  full_name: selectedPatient.patient.full_name,
+                  gender: selectedPatient.patient.gender,
+                  dob: selectedPatient.patient.dob,
+                }}
+                latestLabResult={selectedPatientLabResult}
               />
 
               {/* Superbill Generator */}
