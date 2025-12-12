@@ -314,6 +314,7 @@ const PharmacyOrderCard = ({ patient, onOrderCreated }: PharmacyOrderCardProps) 
         rxString={buildRxString()}
         quantity={parseInt(quantity) || 1}
         refills={parseInt(refills) || 0}
+        supplyDays={parseInt(cadence) || 30}
         onOrderCreated={onOrderCreated}
       />
     </>
