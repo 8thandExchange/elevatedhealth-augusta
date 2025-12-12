@@ -16,6 +16,8 @@ interface FaxRequest {
   supply_days: number;
   provider_email: string;
   provider_notes?: string;
+  diagnosis_code?: string;
+  diagnosis_description?: string;
 }
 
 // Provider NPI mapping based on email
@@ -44,7 +46,8 @@ function generatePrescriptionHtml(
   refills: number,
   supplyDays: number,
   provider: { name: string; credentials: string; npi: string },
-  providerNotes?: string
+  providerNotes?: string,
+  diagnosis?: { code: string; description: string }
 ): string {
   const today = new Date().toLocaleDateString('en-US', { 
     year: 'numeric', 
@@ -116,6 +119,14 @@ function generatePrescriptionHtml(
     <p><strong>Allergies:</strong> ${patient.allergies || 'NKDA'}</p>
   </div>
 
+  ${diagnosis ? `
+  <div class="indication-section" style="margin: 20px 0; padding: 15px; background: #e8f4e8; border: 2px solid #4a7c59; border-radius: 8px;">
+    <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #4a7c59; text-transform: uppercase; letter-spacing: 1px;">Clinical Indication</h3>
+    <p style="margin: 5px 0; font-size: 16px; font-weight: bold;"><strong>ICD-10:</strong> ${diagnosis.code}</p>
+    <p style="margin: 5px 0; font-size: 14px;"><strong>Diagnosis:</strong> ${diagnosis.description}</p>
+  </div>
+  ` : ''}
+
   <div class="rx-section">
     <div class="rx-symbol">℞</div>
     <div class="rx-details">
@@ -176,7 +187,9 @@ serve(async (req) => {
       refills, 
       supply_days, 
       provider_email,
-      provider_notes 
+      provider_notes,
+      diagnosis_code,
+      diagnosis_description
     } = body;
 
     console.log("Processing fax request for patient:", patient_id);
@@ -215,7 +228,8 @@ serve(async (req) => {
       refills,
       supply_days,
       { name: providerInfo.name, credentials: providerInfo.credentials, npi: providerNpi },
-      provider_notes
+      provider_notes,
+      diagnosis_code && diagnosis_description ? { code: diagnosis_code, description: diagnosis_description } : undefined
     );
 
     // Convert HTML to base64 for Sinch API

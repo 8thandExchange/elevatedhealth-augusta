@@ -310,7 +310,7 @@ const PharmacyOrderCard = ({ patient, onOrderCreated }: PharmacyOrderCardProps) 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         patient={patient}
-        medication={selectedMedication}
+        medication={selectedMedication ? { ...selectedMedication, category: selectedMedication.category } : undefined}
         rxString={buildRxString()}
         quantity={parseInt(quantity) || 1}
         refills={parseInt(refills) || 0}

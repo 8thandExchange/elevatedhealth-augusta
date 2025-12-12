@@ -6,9 +6,42 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { Copy, Check, ExternalLink, CheckCircle, Loader2, Send, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
+// Diagnosis suggestions by medication category
+const DIAGNOSIS_MAP: Record<string, { code: string; description: string }[]> = {
+  male_hormone: [
+    { code: "E29.1", description: "Testicular Hypofunction" },
+    { code: "E89.5", description: "Post-procedural Hypopituitarism" },
+    { code: "R53.83", description: "Other Fatigue" },
+  ],
+  female_hormone: [
+    { code: "E28.310", description: "Premature Menopause" },
+    { code: "E28.39", description: "Primary Ovarian Failure, Other" },
+    { code: "N95.1", description: "Menopausal and Female Climacteric States" },
+    { code: "E34.9", description: "Endocrine Disorder, Unspecified" },
+  ],
+  sleep_support: [
+    { code: "G47.00", description: "Insomnia, Unspecified" },
+    { code: "F51.01", description: "Primary Insomnia" },
+    { code: "N95.1", description: "Menopausal and Female Climacteric States" },
+  ],
+  weight_loss: [
+    { code: "E66.9", description: "Obesity, Unspecified" },
+    { code: "E66.01", description: "Morbid (Severe) Obesity due to Excess Calories" },
+    { code: "E11.9", description: "Type 2 Diabetes Mellitus without Complications" },
+    { code: "R63.5", description: "Abnormal Weight Gain" },
+  ],
+  peptide: [
+    { code: "E34.9", description: "Endocrine Disorder, Unspecified" },
+    { code: "R53.83", description: "Other Fatigue" },
+    { code: "F52.0", description: "Hypoactive Sexual Desire Disorder" },
+  ],
+};
 
 interface PatientData {
   id: string;
@@ -29,6 +62,7 @@ interface MedicationData {
   name: string;
   strength: string;
   sig: string;
+  category?: string;
 }
 
 interface FCCPortalModalProps {
@@ -106,6 +140,20 @@ const FCCPortalModal = ({
   const [faxTimestamp, setFaxTimestamp] = useState<string | null>(null);
   const [faxError, setFaxError] = useState<string | null>(null);
   const [providerEmail, setProviderEmail] = useState<string>("");
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState<string>("");
+
+  // Get diagnosis options based on medication category
+  const diagnosisOptions = medication?.category 
+    ? DIAGNOSIS_MAP[medication.category] || []
+    : Object.values(DIAGNOSIS_MAP).flat();
+
+  // Auto-select first diagnosis when medication changes
+  useEffect(() => {
+    if (medication?.category && DIAGNOSIS_MAP[medication.category]?.[0]) {
+      const firstDiagnosis = DIAGNOSIS_MAP[medication.category][0];
+      setSelectedDiagnosis(`${firstDiagnosis.code}|${firstDiagnosis.description}`);
+    }
+  }, [medication]);
 
   // Get current user's email for provider identification
   useEffect(() => {
@@ -182,6 +230,9 @@ const FCCPortalModal = ({
     setFaxStatus('transmitting');
     setFaxError(null);
 
+    // Parse selected diagnosis
+    const [diagnosisCode, diagnosisDescription] = selectedDiagnosis.split('|');
+
     try {
       const { data, error } = await supabase.functions.invoke('send-rx-fax', {
         body: {
@@ -193,6 +244,8 @@ const FCCPortalModal = ({
           refills,
           supply_days: supplyDays,
           provider_email: providerEmail,
+          diagnosis_code: diagnosisCode,
+          diagnosis_description: diagnosisDescription,
         },
       });
 
@@ -307,6 +360,24 @@ const FCCPortalModal = ({
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Diagnosis Selector */}
+        <div className="space-y-2 mt-4">
+          <Label className="text-sm font-medium text-foreground">Clinical Indication (ICD-10)</Label>
+          <Select value={selectedDiagnosis} onValueChange={setSelectedDiagnosis}>
+            <SelectTrigger className="bg-background border-gold/30">
+              <SelectValue placeholder="Select diagnosis..." />
+            </SelectTrigger>
+            <SelectContent className="bg-background border max-h-[200px]">
+              {diagnosisOptions.map((diag) => (
+                <SelectItem key={diag.code} value={`${diag.code}|${diag.description}`}>
+                  {diag.code} - {diag.description}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">Required for pharmacist verification</p>
         </div>
 
         {/* Fax Status Display */}
