@@ -51,8 +51,7 @@ const PatientNavbar = ({ patientName, avatarUrl, onEditProfile }: PatientNavbarP
   };
 
   const navItems = [
-    { icon: Home, label: "Dashboard", path: "/patient/dashboard" },
-    { icon: Sparkles, label: "Services", path: "/patient/services" },
+    { icon: Home, label: "My Services", path: "/patient/dashboard" },
     { icon: BookOpen, label: "Resources", path: "/patient-resources" },
     { icon: MessageCircle, label: "Contact", path: "/consult" },
   ];

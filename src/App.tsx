@@ -46,6 +46,8 @@ import CreateAccount from "./pages/CreateAccount";
 import HealthReport from "./pages/HealthReport";
 import PatientServices from "./pages/PatientServices";
 import ConsultationConfirmed from "./pages/ConsultationConfirmed";
+import MentalWellnessPage from "./pages/MentalWellnessPage";
+import HormoneJourneyPage from "./pages/HormoneJourneyPage";
 import IVPaymentSuccess from "./pages/IVPaymentSuccess";
 
 const queryClient = new QueryClient();
@@ -102,9 +104,27 @@ const App = () => (
             </ProtectedRoute>
           } />
           <Route path="/patient/login" element={<PatientLogin />} />
+          {/* Patient Dashboard = Services Hub (main entry point) */}
           <Route path="/patient/dashboard" element={
             <ProtectedRoute>
-              <PatientDashboard />
+              <PatientServices />
+            </ProtectedRoute>
+          } />
+          {/* Legacy route redirect */}
+          <Route path="/patient/services" element={
+            <ProtectedRoute>
+              <PatientServices />
+            </ProtectedRoute>
+          } />
+          {/* Service-specific journey pages */}
+          <Route path="/patient/mental-wellness" element={
+            <ProtectedRoute>
+              <MentalWellnessPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/patient/hormone-journey" element={
+            <ProtectedRoute>
+              <HormoneJourneyPage />
             </ProtectedRoute>
           } />
           <Route path="/patient/intake" element={
@@ -120,11 +140,6 @@ const App = () => (
           <Route path="/patient/health-report" element={
             <ProtectedRoute>
               <HealthReport />
-            </ProtectedRoute>
-          } />
-          <Route path="/patient/services" element={
-            <ProtectedRoute>
-              <PatientServices />
             </ProtectedRoute>
           } />
           

@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import EditProfileModal from "@/components/patient/EditProfileModal";
+import WelcomeIntake from "@/components/patient/WelcomeIntake";
+import SafetyGate from "@/components/patient/SafetyGate";
 
 interface Service {
   id: string;
@@ -27,6 +29,8 @@ interface Service {
   treatmentKey: string;
   publicPage: string;
   color: string;
+  journeyPage: string;
+  actionLabel: string;
 }
 
 const SERVICES: Service[] = [
@@ -38,6 +42,8 @@ const SERVICES: Service[] = [
     treatmentKey: "hormone",
     publicPage: "/hormones",
     color: "pink",
+    journeyPage: "/patient/hormone-journey",
+    actionLabel: "View Treatment Plan",
   },
   {
     id: "weight_loss",
@@ -47,6 +53,8 @@ const SERVICES: Service[] = [
     treatmentKey: "weight_loss",
     publicPage: "/weightloss",
     color: "green",
+    journeyPage: "/patient/hormone-journey",
+    actionLabel: "Track Progress",
   },
   {
     id: "ketamine",
@@ -56,6 +64,8 @@ const SERVICES: Service[] = [
     treatmentKey: "ketamine",
     publicPage: "/ketamine",
     color: "purple",
+    journeyPage: "/patient/mental-wellness",
+    actionLabel: "Access Mind Care",
   },
   {
     id: "peptides",
@@ -65,6 +75,8 @@ const SERVICES: Service[] = [
     treatmentKey: "peptides",
     publicPage: "/peptides",
     color: "blue",
+    journeyPage: "/patient/hormone-journey",
+    actionLabel: "View Protocol",
   },
   {
     id: "iv_lounge",
@@ -74,6 +86,8 @@ const SERVICES: Service[] = [
     treatmentKey: "iv_lounge",
     publicPage: "/iv-lounge",
     color: "teal",
+    journeyPage: "/iv-lounge",
+    actionLabel: "Book Session",
   },
 ];
 
@@ -126,7 +140,6 @@ const PatientServices = () => {
     
     setAddingService(service.id);
     try {
-      // Add service to interests
       const newInterests = [...currentInterests, service.treatmentKey];
       const treatmentRequest = newInterests.join(",");
       
@@ -134,7 +147,6 @@ const PatientServices = () => {
         .from("patients")
         .update({ 
           treatment_request: treatmentRequest,
-          // Reset intake for services that need it
           ...(service.treatmentKey !== "iv_lounge" && !patient.intake_completed && { 
             onboarding_status: "intake_required" 
           })
@@ -143,7 +155,6 @@ const PatientServices = () => {
 
       if (error) throw error;
 
-      // Send notification to provider
       await supabase.functions.invoke("send-patient-signup-notification", {
         body: {
           patientName: patient.full_name,
@@ -158,7 +169,6 @@ const PatientServices = () => {
       setCurrentInterests(newInterests);
       toast.success(`${service.name} added to your care plan! A provider will reach out.`);
       
-      // For ketamine, direct to intake if not completed
       if (service.treatmentKey === "ketamine" && !patient.intake_completed) {
         toast.info("Please complete the mental wellness intake for ketamine therapy.");
         navigate("/patient/intake");
@@ -202,6 +212,34 @@ const PatientServices = () => {
     );
   }
 
+  // Show welcome intake if not completed (only for non-ketamine patients)
+  if (patient && !patient.intake_completed && patient.primary_program !== "ketamine") {
+    return <WelcomeIntake patientName={patient.full_name} />;
+  }
+
+  // HARD GATE: Block flagged patients
+  const isFlaggedPatient = patient?.risk_status === "high_risk_review" || 
+    (Array.isArray(patient?.safety_flags) && patient.safety_flags.length > 0);
+  
+  if (patient && isFlaggedPatient) {
+    const safetyFlags = Array.isArray(patient.safety_flags) ? patient.safety_flags : [];
+    const treatmentType = patient.treatment_request || patient.primary_program || "hormone therapy";
+    
+    return (
+      <SafetyGate
+        patientName={patient.full_name}
+        patientEmail={patient.email || ""}
+        patientPhone=""
+        safetyFlags={safetyFlags}
+        treatmentType={treatmentType}
+      />
+    );
+  }
+
+  // Get active services for display
+  const activeServices = SERVICES.filter(s => hasService(s.treatmentKey));
+  const inactiveServices = SERVICES.filter(s => !hasService(s.treatmentKey));
+
   return (
     <div className="min-h-screen bg-background">
       <PatientNavbar 
@@ -211,95 +249,88 @@ const PatientServices = () => {
       />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Welcome Header */}
         <div className="text-center mb-8">
-          <h1 className="font-cormorant text-3xl text-foreground mb-2">Your Services</h1>
+          <p className="text-sm text-muted-foreground uppercase tracking-widest mb-1">Welcome back</p>
+          <h1 className="font-cormorant text-3xl text-foreground mb-2">{patient?.full_name}</h1>
           <p className="text-muted-foreground">
-            View your current services or add new treatments to your care plan.
+            Your personalized health services
           </p>
         </div>
 
-        {/* Current Services */}
-        {currentInterests.length > 0 && (
-          <div className="mb-8">
-            <h2 className="font-semibold text-foreground mb-4">Active Services</h2>
-            <div className="flex flex-wrap gap-2">
-              {SERVICES.filter(s => hasService(s.treatmentKey)).map((service) => (
-                <Badge key={service.id} variant="secondary" className="px-3 py-1 gap-2">
-                  <Check className="w-3 h-3 text-green-600" />
-                  {service.name}
-                </Badge>
+        {/* Active Services - Prominent Cards */}
+        {activeServices.length > 0 && (
+          <div className="mb-10">
+            <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+              Your Active Services
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {activeServices.map((service) => (
+                <Card 
+                  key={service.id}
+                  className={`bg-gradient-to-br ${getColorClasses(service.color)} transition-all hover:shadow-lg cursor-pointer group`}
+                  onClick={() => navigate(service.journeyPage)}
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <div className={`p-3 rounded-full ${getIconColorClasses(service.color)}`}>
+                        {service.icon}
+                      </div>
+                      <Badge variant="secondary" className="gap-1 bg-green-500/20 text-green-700 border-green-300">
+                        <Check className="w-3 h-3" />
+                        Active
+                      </Badge>
+                    </div>
+                    <CardTitle className="font-cormorant text-xl">{service.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">{service.description}</p>
+                    
+                    <Button 
+                      className="w-full group-hover:bg-foreground group-hover:text-background transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(service.journeyPage);
+                      }}
+                    >
+                      {service.actionLabel}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         )}
 
-        {/* All Services Grid */}
-        <div className="grid md:grid-cols-2 gap-4">
-          {SERVICES.map((service) => {
-            const isActive = hasService(service.treatmentKey);
-            const isAdding = addingService === service.id;
-            
-            return (
-              <Card 
-                key={service.id}
-                className={`bg-gradient-to-br ${getColorClasses(service.color)} transition-all hover:shadow-md`}
-              >
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div className={`p-3 rounded-full ${getIconColorClasses(service.color)}`}>
-                      {service.icon}
-                    </div>
-                    {isActive && (
-                      <Badge variant="secondary" className="gap-1">
-                        <Check className="w-3 h-3 text-green-600" />
-                        Active
-                      </Badge>
-                    )}
-                  </div>
-                  <CardTitle className="font-cormorant text-xl">{service.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">{service.description}</p>
-                  
-                  <div className="flex gap-2">
-                    {isActive ? (
-                      <>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => navigate(`/patient-resources?service=${service.treatmentKey}`)}
-                          className="flex-1"
-                        >
-                          Resources
-                        </Button>
-                        <Button 
-                          size="sm"
-                          onClick={() => {
-                            // Navigate to service-specific action
-                            if (service.treatmentKey === "ketamine") {
-                              window.open("https://app.osmind.org", "_blank");
-                            } else if (service.treatmentKey === "iv_lounge") {
-                              navigate("/iv-lounge");
-                            } else if (patient?.intake_completed) {
-                              navigate("/patient/checkin");
-                            } else {
-                              navigate("/patient/intake");
-                            }
-                          }}
-                          className="flex-1"
-                        >
-                          {service.treatmentKey === "ketamine" 
-                            ? "Osmind Portal" 
-                            : service.treatmentKey === "iv_lounge"
-                            ? "Book Session"
-                            : patient?.intake_completed 
-                            ? "Log Symptoms" 
-                            : "Complete Intake"}
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </>
-                    ) : (
-                      <>
+        {/* Add More Services */}
+        {inactiveServices.length > 0 && (
+          <div>
+            <h2 className="font-semibold text-foreground mb-4 text-muted-foreground">
+              Explore More Services
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {inactiveServices.map((service) => {
+                const isAdding = addingService === service.id;
+                
+                return (
+                  <Card 
+                    key={service.id}
+                    className="bg-card border-border/50 transition-all hover:shadow-md"
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between">
+                        <div className={`p-3 rounded-full bg-muted`}>
+                          {service.icon}
+                        </div>
+                      </div>
+                      <CardTitle className="font-cormorant text-xl text-muted-foreground">{service.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-sm text-muted-foreground">{service.description}</p>
+                      
+                      <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
@@ -319,18 +350,18 @@ const PatientServices = () => {
                           ) : (
                             <>
                               <Plus className="w-4 h-4 mr-1" />
-                              Add Service
+                              Add
                             </>
                           )}
                         </Button>
-                      </>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Contact Card */}
         <Card className="mt-8 bg-card border-border/50">
