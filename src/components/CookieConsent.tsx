@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { X } from "lucide-react";
 
 const CONSENT_KEY = "cookie_consent";
 const CONSENT_EXPIRY_DAYS = 365;
@@ -73,6 +74,14 @@ const CookieConsent = () => {
           >
             Manage
           </a>
+          <button
+            type="button"
+            onClick={handleDismiss}
+            className="p-0.5 text-background/40 hover:text-background/70 transition-colors"
+            aria-label="Close cookie banner"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </div>
