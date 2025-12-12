@@ -42,6 +42,7 @@ import TeamManagement from "@/components/provider/TeamManagement";
 import StaffTasksTab from "@/components/provider/StaffTasksTab";
 import ConsultationTracker from "@/components/provider/ConsultationTracker";
 import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
+import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
 
 interface Patient {
   id: string;
@@ -941,7 +942,7 @@ const ProviderDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-10 mb-8">
+          <TabsList className="grid w-full grid-cols-11 mb-8">
             <TabsTrigger value="triage" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
               <span className="hidden sm:inline">Action Needed</span> ({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})
@@ -977,6 +978,10 @@ const ProviderDashboard = () => {
             <TabsTrigger value="resources" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               <span className="hidden sm:inline">Resources</span>
+            </TabsTrigger>
+            <TabsTrigger value="fax" className="flex items-center gap-2">
+              <Send className="w-4 h-4" />
+              <span className="hidden sm:inline">Fax Log</span>
             </TabsTrigger>
             <TabsTrigger value="team" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -1528,6 +1533,11 @@ const ProviderDashboard = () => {
           {/* Resources Tab */}
           <TabsContent value="resources">
             <ResourceManager />
+          </TabsContent>
+
+          {/* Fax History Tab */}
+          <TabsContent value="fax">
+            <FaxHistoryLog />
           </TabsContent>
 
           {/* Team Management Tab */}
