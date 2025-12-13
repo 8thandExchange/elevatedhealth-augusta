@@ -21,6 +21,7 @@ import BottomTabBar from "@/components/patient/BottomTabBar";
 import DailyProtocolCard from "@/components/patient/DailyProtocolCard";
 import HealthOverview from "@/components/patient/HealthOverview";
 import ActionPlanTab from "@/components/patient/ActionPlanTab";
+import AnimatedCard from "@/components/patient/AnimatedCard";
 
 interface SymptomLog {
   id: string;
@@ -390,237 +391,263 @@ const PatientDashboard = () => {
         {/* KETAMINE PATIENT DASHBOARD */}
         {isKetaminePatient ? (
           <>
-            <DailyProtocolCard 
-              patientName={patient?.full_name}
-              hasInjections={false}
-              hasSupplements={false}
-            />
+            <AnimatedCard delay={0} animation="fadeUp">
+              <DailyProtocolCard 
+                patientName={patient?.full_name}
+                hasInjections={false}
+                hasSupplements={false}
+              />
+            </AnimatedCard>
 
-            <MindCareCard />
+            <AnimatedCard delay={100} animation="fadeUp">
+              <MindCareCard />
+            </AnimatedCard>
 
-            <NeurotransmitterCard 
-              patientEmail={patient?.email || undefined}
-              patientName={patient?.full_name}
-              patientId={patient?.id}
-              existingPayment={neuroPayment}
-            />
+            <AnimatedCard delay={200} animation="fadeUp">
+              <NeurotransmitterCard 
+                patientEmail={patient?.email || undefined}
+                patientName={patient?.full_name}
+                patientId={patient?.id}
+                existingPayment={neuroPayment}
+              />
+            </AnimatedCard>
 
-            <Card className="bg-card border-border/50 rounded-2xl overflow-hidden">
-              <CardContent className="p-5">
-                <div className="text-center space-y-3">
-                  <Brain className="w-10 h-10 text-gold mx-auto" />
-                  <h3 className="font-playfair text-lg text-foreground">
-                    Your Mental Wellness Journey
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-inter">
-                    Your ketamine therapy is coordinated through Osmind. Check your email for your secure portal invitation.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <AnimatedCard delay={300} animation="scaleIn">
+              <Card className="bg-card border-border/50 rounded-2xl overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="text-center space-y-3">
+                    <Brain className="w-10 h-10 text-gold mx-auto" />
+                    <h3 className="font-playfair text-lg text-foreground">
+                      Your Mental Wellness Journey
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-inter">
+                      Your ketamine therapy is coordinated through Osmind. Check your email for your secure portal invitation.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </AnimatedCard>
           </>
         ) : (
           /* HORMONE PATIENT DASHBOARD */
           <>
             {/* Daily Protocol Hero Card */}
-            <DailyProtocolCard 
-              patientName={patient?.full_name}
-              hasInjections={isAuthorized}
-              hasSupplements={isAuthorized}
-            />
+            <AnimatedCard delay={0} animation="fadeUp">
+              <DailyProtocolCard 
+                patientName={patient?.full_name}
+                hasInjections={isAuthorized}
+                hasSupplements={isAuthorized}
+              />
+            </AnimatedCard>
 
             {/* Tabbed Interface */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full h-12 bg-card border border-border/50 rounded-xl p-1 grid grid-cols-2">
-                <TabsTrigger 
-                  value="overview" 
-                  className="rounded-lg font-inter text-sm data-[state=active]:bg-navy data-[state=active]:text-white"
-                >
-                  <LayoutGrid className="w-4 h-4 mr-2" />
-                  Health Overview
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="action-plan" 
-                  className="rounded-lg font-inter text-sm data-[state=active]:bg-navy data-[state=active]:text-white"
-                >
-                  <ClipboardList className="w-4 h-4 mr-2" />
-                  Action Plan
-                </TabsTrigger>
-              </TabsList>
+            <AnimatedCard delay={100} animation="fadeUp">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="w-full h-12 bg-card border border-border/50 rounded-xl p-1 grid grid-cols-2">
+                  <TabsTrigger 
+                    value="overview" 
+                    className="rounded-lg font-inter text-sm data-[state=active]:bg-navy data-[state=active]:text-white"
+                  >
+                    <LayoutGrid className="w-4 h-4 mr-2" />
+                    Health Overview
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="action-plan" 
+                    className="rounded-lg font-inter text-sm data-[state=active]:bg-navy data-[state=active]:text-white"
+                  >
+                    <ClipboardList className="w-4 h-4 mr-2" />
+                    Action Plan
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="overview" className="mt-4 space-y-4">
-                {/* Health Overview - Biological Scorecard */}
-                <HealthOverview
-                  patientId={patient?.id || ''}
-                  patientEmail={patient?.email || ''}
-                  patientName={patient?.full_name || ''}
-                  labData={labResult}
-                  gender={patient?.gender || undefined}
-                  hasToxicityPayment={false}
-                  hasElevatedArchitecturePayment={false}
-                />
-
-                {/* Onboarding Progress */}
-                {!isAuthorized && (
-                  <OnboardingProgress
-                    onboardingStatus={patient?.onboarding_status || null}
-                    intakeCompleted={patient?.intake_completed || false}
-                    hasAuthorizedOrder={isAuthorized}
+                <TabsContent value="overview" className="mt-4 space-y-4">
+                  {/* Health Overview - Biological Scorecard */}
+                  <HealthOverview
+                    patientId={patient?.id || ''}
+                    patientEmail={patient?.email || ''}
+                    patientName={patient?.full_name || ''}
+                    labData={labResult}
+                    gender={patient?.gender || undefined}
+                    hasToxicityPayment={false}
+                    hasElevatedArchitecturePayment={false}
                   />
-                )}
 
-                {/* Metabolic Architecture Card */}
-                {(patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) && (
-                  <MetabolicArchitectureCard
-                    patientId={patient.id}
-                    patientEmail={patient.email || ''}
-                    patientName={patient.full_name}
-                    kitStatus={metabolicPayment?.kit_status}
+                  {/* Onboarding Progress */}
+                  {!isAuthorized && (
+                    <OnboardingProgress
+                      onboardingStatus={patient?.onboarding_status || null}
+                      intakeCompleted={patient?.intake_completed || false}
+                      hasAuthorizedOrder={isAuthorized}
+                    />
+                  )}
+
+                  {/* Metabolic Architecture Card */}
+                  {(patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) && (
+                    <MetabolicArchitectureCard
+                      patientId={patient.id}
+                      patientEmail={patient.email || ''}
+                      patientName={patient.full_name}
+                      kitStatus={metabolicPayment?.kit_status}
+                    />
+                  )}
+                </TabsContent>
+
+                <TabsContent value="action-plan" className="mt-4">
+                  <ActionPlanTab 
+                    labData={labResult} 
+                    gender={patient?.gender || undefined} 
                   />
-                )}
-              </TabsContent>
-
-              <TabsContent value="action-plan" className="mt-4">
-                <ActionPlanTab 
-                  labData={labResult} 
-                  gender={patient?.gender || undefined} 
-                />
-              </TabsContent>
-            </Tabs>
+                </TabsContent>
+              </Tabs>
+            </AnimatedCard>
 
             {/* Kit Tracker */}
             {kitTracking && kitTracking.zrt_kit_status !== "not_ordered" && (
-              <KitTracker
-                status={kitTracking.zrt_kit_status}
-                trackingNumber={kitTracking.tracking_number}
-                shippedAt={kitTracking.shipped_at}
-                sampleReceivedAt={kitTracking.sample_received_at}
-                resultsReadyAt={kitTracking.results_ready_at}
-                onBookCall={() => navigate("/schedule-consult")}
-              />
+              <AnimatedCard delay={200} animation="slideInLeft">
+                <KitTracker
+                  status={kitTracking.zrt_kit_status}
+                  trackingNumber={kitTracking.tracking_number}
+                  shippedAt={kitTracking.shipped_at}
+                  sampleReceivedAt={kitTracking.sample_received_at}
+                  resultsReadyAt={kitTracking.results_ready_at}
+                  onBookCall={() => navigate("/schedule-consult")}
+                />
+              </AnimatedCard>
             )}
 
             {/* Status Cards */}
             {isPendingReview && (
-              <Card className="bg-gold/5 border-gold/20 rounded-2xl overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2.5 bg-gold/20 rounded-xl">
-                      <Clock className="w-5 h-5 text-gold" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-playfair font-semibold text-foreground">Provider Review in Progress</h3>
-                      <p className="text-sm text-muted-foreground font-inter mt-1">
-                        A provider is reviewing your results and designing your personalized treatment plan.
-                      </p>
-                      <div className="bg-gold/10 rounded-xl p-3 mt-3">
-                        <p className="text-sm font-inter font-medium text-foreground">⏱️ Estimated: 24-48 hours</p>
+              <AnimatedCard delay={250} animation="scaleIn">
+                <Card className="bg-gold/5 border-gold/20 rounded-2xl overflow-hidden">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="p-2.5 bg-gold/20 rounded-xl">
+                        <Clock className="w-5 h-5 text-gold" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-playfair font-semibold text-foreground">Provider Review in Progress</h3>
+                        <p className="text-sm text-muted-foreground font-inter mt-1">
+                          A provider is reviewing your results and designing your personalized treatment plan.
+                        </p>
+                        <div className="bg-gold/10 rounded-xl p-3 mt-3">
+                          <p className="text-sm font-inter font-medium text-foreground">⏱️ Estimated: 24-48 hours</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </AnimatedCard>
             )}
 
             {/* My Regimen Card */}
             {isAuthorized && latestOrder?.protocol_snapshot && (
-              <MyRegimenCard
-                protocolName={latestOrder.protocol_snapshot.protocol_name || patient?.current_protocol || "Your Treatment Plan"}
-                items={getRegimenItems()}
-              />
+              <AnimatedCard delay={300} animation="fadeUp">
+                <MyRegimenCard
+                  protocolName={latestOrder.protocol_snapshot.protocol_name || patient?.current_protocol || "Your Treatment Plan"}
+                  items={getRegimenItems()}
+                />
+              </AnimatedCard>
             )}
 
             {/* Request Review Button */}
             {latestLog && !isPendingReview && !isAuthorized && (
-              <Card className="bg-primary/5 border-primary/20 rounded-2xl overflow-hidden">
-                <CardContent className="p-5 text-center space-y-4">
-                  <h3 className="font-playfair text-lg text-foreground">
-                    Ready to optimize your protocol?
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-inter">
-                    Request a review to discuss your results and get your personalized treatment plan.
-                  </p>
-                  <Button
-                    onClick={handleRequestReview}
-                    disabled={isCreatingOrder}
-                    size="lg"
-                    className="bg-primary hover:bg-primary-dark"
-                  >
-                    {isCreatingOrder ? "Submitting..." : "Request Protocol Review"}
-                  </Button>
-                </CardContent>
-              </Card>
+              <AnimatedCard delay={300} animation="scaleIn">
+                <Card className="bg-primary/5 border-primary/20 rounded-2xl overflow-hidden">
+                  <CardContent className="p-5 text-center space-y-4">
+                    <h3 className="font-playfair text-lg text-foreground">
+                      Ready to optimize your protocol?
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-inter">
+                      Request a review to discuss your results and get your personalized treatment plan.
+                    </p>
+                    <Button
+                      onClick={handleRequestReview}
+                      disabled={isCreatingOrder}
+                      size="lg"
+                      className="bg-primary hover:bg-primary-dark"
+                    >
+                      {isCreatingOrder ? "Submitting..." : "Request Protocol Review"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </AnimatedCard>
             )}
 
             {/* Membership Card */}
             {canPurchaseMembership && !isAuthorized && (
-              <Card className="bg-gradient-to-br from-gold/10 to-gold/5 border-gold/30 rounded-2xl overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2.5 bg-gold/20 rounded-xl">
-                      <CreditCard className="w-5 h-5 text-gold" />
+              <AnimatedCard delay={350} animation="fadeUp">
+                <Card className="bg-gradient-to-br from-gold/10 to-gold/5 border-gold/30 rounded-2xl overflow-hidden">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="p-2.5 bg-gold/20 rounded-xl">
+                        <CreditCard className="w-5 h-5 text-gold" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-playfair font-semibold text-foreground">Your Protocol is Approved!</h3>
+                        <p className="text-sm text-muted-foreground font-inter mt-1">
+                          Your treatment plan is ready. Activate your membership to begin.
+                        </p>
+                        <Button 
+                          onClick={handlePurchaseMembership} 
+                          className="mt-4 bg-gold hover:bg-gold-dark text-primary-foreground"
+                        >
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Activate $399/mo Membership
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-playfair font-semibold text-foreground">Your Protocol is Approved!</h3>
-                      <p className="text-sm text-muted-foreground font-inter mt-1">
-                        Your treatment plan is ready. Activate your membership to begin.
-                      </p>
-                      <Button 
-                        onClick={handlePurchaseMembership} 
-                        className="mt-4 bg-gold hover:bg-gold-dark text-primary-foreground"
-                      >
-                        <CreditCard className="w-4 h-4 mr-2" />
-                        Activate $399/mo Membership
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </AnimatedCard>
             )}
 
             {/* Locked Membership Card */}
             {!canPurchaseMembership && patient?.intake_completed && !isAuthorized && (
-              <Card className="bg-muted/50 border-border/30 rounded-2xl overflow-hidden opacity-60">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2.5 bg-muted rounded-xl">
-                      <Lock className="w-5 h-5 text-muted-foreground" />
+              <AnimatedCard delay={400} animation="fadeIn">
+                <Card className="bg-muted/50 border-border/30 rounded-2xl overflow-hidden opacity-60">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="p-2.5 bg-muted rounded-xl">
+                        <Lock className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-inter font-semibold text-muted-foreground">Membership Locked</h3>
+                        <p className="text-sm text-muted-foreground font-inter mt-1">
+                          Available after your diagnostic results are reviewed.
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-inter font-semibold text-muted-foreground">Membership Locked</h3>
-                      <p className="text-sm text-muted-foreground font-inter mt-1">
-                        Available after your diagnostic results are reviewed.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </AnimatedCard>
             )}
 
             {/* Quick Actions */}
-            <div className="pt-2">
-              {patient?.intake_completed ? (
-                <Button
-                  onClick={() => navigate("/patient/checkin")}
-                  variant="outline"
-                  className="w-full rounded-xl h-12 border-border/50 font-inter"
-                  size="lg"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Log Monthly Symptoms
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => navigate("/patient/intake")}
-                  variant="outline"
-                  className="w-full rounded-xl h-12 border-border/50 font-inter"
-                  size="lg"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Begin Medical Intake
-                </Button>
-              )}
-            </div>
+            <AnimatedCard delay={450} animation="fadeUp">
+              <div className="pt-2">
+                {patient?.intake_completed ? (
+                  <Button
+                    onClick={() => navigate("/patient/checkin")}
+                    variant="outline"
+                    className="w-full rounded-xl h-12 border-border/50 font-inter"
+                    size="lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Log Monthly Symptoms
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => navigate("/patient/intake")}
+                    variant="outline"
+                    className="w-full rounded-xl h-12 border-border/50 font-inter"
+                    size="lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Begin Medical Intake
+                  </Button>
+                )}
+              </div>
+            </AnimatedCard>
           </>
         )}
       </main>
