@@ -92,7 +92,7 @@ const Pricing = () => {
                 "name": "Do you offer payment plans?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! We offer flexible financing options through CareCredit and Cherry, with plans ranging from 6-24 months. Many patients qualify for 0% APR. We also accept HSA/FSA cards for most services."
+                  "text": "Yes! We've partnered with Klarna and Affirm to offer flexible financing options. At checkout, you can choose to split your payment into 4 interest-free installments or select monthly financing up to 36 months. Approval takes seconds and won't affect your credit score for the soft check. We also accept HSA/FSA cards for most services."
                 }
               },
               {
@@ -227,6 +227,20 @@ const Pricing = () => {
       <Navbar />
 
       <main id="main-content" className="min-h-screen bg-background">
+        {/* Financing Banner */}
+        <section className="bg-gradient-to-r from-[#FFB3C7]/10 via-[#0FA0EA]/10 to-[#FFB3C7]/10 py-4 border-b border-gold/10">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+              <span className="text-sm font-lato text-foreground font-medium">
+                💳 Flexible Payment Plans Available
+              </span>
+              <span className="text-sm text-muted-foreground font-lato">
+                Pay in 4 interest-free payments with Klarna or Affirm • Approved in seconds at checkout
+              </span>
+            </div>
+          </div>
+        </section>
+
         {/* Hero Section */}
         <section className="relative py-20 lg:py-28 bg-gradient-to-b from-secondary to-background">
           <div className="container mx-auto px-4 text-center">
@@ -254,6 +268,10 @@ const Pricing = () => {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <BadgeCheck className="w-5 h-5 text-gold" />
                 <span>Board-Certified Providers</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Sparkles className="w-5 h-5 text-gold" />
+                <span>Pay in 4 with Klarna/Affirm</span>
               </div>
             </div>
 

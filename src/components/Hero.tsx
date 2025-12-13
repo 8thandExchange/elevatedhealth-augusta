@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/analytics";
+import PaymentMethodsBadge from "./PaymentMethodsBadge";
 
 interface HeroProps {
   onOpenBooking: () => void;
@@ -43,6 +44,14 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
           >
             Book Consultation
           </Button>
+        </div>
+
+        {/* Payment Plans Badge */}
+        <div className="mt-6 flex justify-center animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-gold/20 shadow-sm">
+            <span className="text-xs text-muted-foreground font-lato">Pay in 4 interest-free payments with</span>
+            <PaymentMethodsBadge variant="compact" showText={false} />
+          </div>
         </div>
       </div>
     </section>

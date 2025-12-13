@@ -146,6 +146,14 @@ const Hormones = () => {
               <p className="text-sm tracking-[0.3em] uppercase text-gold mb-6 font-lato font-light animate-fade-in">
                 Biological Reset
               </p>
+              
+              {/* As low as pricing badge */}
+              <div className="mb-4 animate-fade-in" style={{ animationDelay: "0.05s" }}>
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-white/20 text-white rounded-full text-xs font-medium">
+                  💳 As low as $75/month with Klarna
+                </span>
+              </div>
+              
               <h1 className="font-cormorant text-white mb-6 animate-fade-in text-4xl sm:text-5xl md:text-6xl" style={{ animationDelay: "0.1s" }}>
                 Precision Bio-Identical Therapy
               </h1>

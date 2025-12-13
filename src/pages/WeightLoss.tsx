@@ -230,6 +230,13 @@ const WeightLoss = () => {
                     Hormonal Weight Reset
                   </span>
                 </div>
+                
+                {/* As low as pricing badge */}
+                <div className="mb-4 animate-fade-in-up" style={{ animationDelay: "0.05s" }}>
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#FFB3C7]/20 text-[#17120F] rounded-full text-xs font-medium">
+                    💳 As low as $100/month with Klarna
+                  </span>
+                </div>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 animate-fade-in-up text-primary font-cormorant" style={{ animationDelay: "0.1s" }}>
                   Hormonal Weight Reset
                 </h1>

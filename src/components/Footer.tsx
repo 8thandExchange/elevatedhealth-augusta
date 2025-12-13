@@ -2,6 +2,7 @@ import { MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
+import PaymentMethodsBadge from "./PaymentMethodsBadge";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -154,6 +155,17 @@ const Footer = () => {
 
           {/* Divider */}
           <div className="w-full h-px bg-background/10 mb-12" />
+
+          {/* Payment Methods */}
+          <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-background/60 font-lato">Flexible Payment Options:</span>
+              <PaymentMethodsBadge variant="dark" showText={false} />
+            </div>
+            <p className="text-xs text-background/50 font-lato">
+              HSA/FSA Accepted • Insurance for SPRAVATO®
+            </p>
+          </div>
 
           {/* Disclaimer */}
           <div className="mb-12">
