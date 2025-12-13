@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollToTop from "@/components/ScrollToTop";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import CookieConsent from "@/components/CookieConsent";
+import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
 import Index from "./pages/Index";
 import Ketamine from "./pages/Ketamine";
 import WeightLoss from "./pages/WeightLoss";
@@ -64,6 +65,7 @@ const App = () => (
           Skip to main content
         </a>
         <CookieConsent />
+        <FloatingFinancingBanner />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
