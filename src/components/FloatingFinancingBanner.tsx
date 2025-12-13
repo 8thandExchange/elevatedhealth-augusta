@@ -53,8 +53,8 @@ const FloatingFinancingBanner = () => {
 
   return (
     <div 
-      className={`fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+      className={`fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 z-30 transition-all duration-300 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
       <div className="bg-foreground/95 backdrop-blur-md text-background px-4 py-2.5 rounded-full shadow-lg flex items-center gap-3 border border-gold/20">
