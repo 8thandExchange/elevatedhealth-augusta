@@ -211,7 +211,14 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           })}
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-4">
+        {/* Payment flexibility messaging */}
+        <div className="mt-4 text-center">
+          <p className="text-xs text-muted-foreground">
+            💳 Split into 4 interest-free payments with <span className="font-semibold">Klarna</span> or <span className="font-semibold">Affirm</span> at checkout
+          </p>
+        </div>
+
+        <p className="text-center text-xs text-muted-foreground mt-3">
           Questions? Call us at <a href={`tel:${SITE_CONFIG.phone}`} className="text-gold hover:underline">{SITE_CONFIG.phone}</a>
         </p>
       </DialogContent>
