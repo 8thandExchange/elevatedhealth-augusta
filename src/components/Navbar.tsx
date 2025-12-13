@@ -156,46 +156,59 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <button 
-              onClick={() => navigate(SITE_CONFIG.routes.ketamine)}
-              className="text-sm font-lato font-normal tracking-wide transition-colors elegant-underline hover:opacity-70"
-              style={{ color: '#2C3E50' }}
-            >
-              Ketamine
-            </button>
-
-            <button 
-              onClick={() => navigate(SITE_CONFIG.routes.weightloss)}
-              className="text-sm font-lato font-normal tracking-wide transition-colors elegant-underline hover:opacity-70"
-              style={{ color: '#2C3E50' }}
-            >
-              Weight Loss
-            </button>
-
-            <button 
-              onClick={() => navigate(SITE_CONFIG.routes.hormones)}
-              className="text-sm font-lato font-normal tracking-wide transition-colors elegant-underline hover:opacity-70"
-              style={{ color: '#2C3E50' }}
-            >
-              Hormones
-            </button>
-
-            <button 
-              onClick={() => navigate(SITE_CONFIG.routes.ivLounge)}
-              className="text-sm font-lato font-normal tracking-wide transition-colors elegant-underline hover:opacity-70"
-              style={{ color: '#2C3E50' }}
-            >
-              IV Lounge
-            </button>
-
-            <button 
-              onClick={() => navigate("/peptides")}
-              className="text-sm font-lato font-normal tracking-wide transition-colors elegant-underline hover:opacity-70"
-              style={{ color: '#2C3E50' }}
-            >
-              Peptides
-            </button>
+          <div className="hidden lg:flex items-center gap-8 flex-shrink-0">
+            {/* Services Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="text-sm font-lato font-normal tracking-wide transition-colors hover:opacity-70 flex items-center gap-1"
+                  style={{ color: '#2C3E50' }}
+                >
+                  Services
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="start" 
+                className="w-48 bg-white border border-border shadow-lg z-[100]"
+              >
+                <DropdownMenuItem 
+                  onClick={() => navigate(SITE_CONFIG.routes.ketamine)}
+                  className="cursor-pointer"
+                  style={{ color: '#2C3E50' }}
+                >
+                  Ketamine Therapy
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => navigate(SITE_CONFIG.routes.weightloss)}
+                  className="cursor-pointer"
+                  style={{ color: '#2C3E50' }}
+                >
+                  Weight Loss
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => navigate(SITE_CONFIG.routes.hormones)}
+                  className="cursor-pointer"
+                  style={{ color: '#2C3E50' }}
+                >
+                  Hormones
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => navigate(SITE_CONFIG.routes.ivLounge)}
+                  className="cursor-pointer"
+                  style={{ color: '#2C3E50' }}
+                >
+                  IV Lounge
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => navigate("/peptides")}
+                  className="cursor-pointer"
+                  style={{ color: '#2C3E50' }}
+                >
+                  Peptides
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <button 
               onClick={() => navigate("/pricing")}
@@ -215,7 +228,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -286,7 +299,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="lg:hidden p-2"
             style={{ color: '#2C3E50' }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
