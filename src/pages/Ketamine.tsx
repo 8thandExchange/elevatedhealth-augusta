@@ -35,7 +35,7 @@ const Ketamine = () => {
     },
     {
       q: "Do you test hormones before treatment?",
-      a: "Yes. Mental health is physical health. We routinely check cortisol, thyroid, and sex hormones before initiating treatment. Untreated hormone imbalances can mimic depression and anxiety, so we address both pathways."
+      a: "Treatment can begin right away. For patients interested in a deeper look at what's driving their symptoms, we offer optional neurotransmitter and hormone analysis that can help fine-tune your protocol over time."
     },
     {
       q: "What can I expect during a session?",
