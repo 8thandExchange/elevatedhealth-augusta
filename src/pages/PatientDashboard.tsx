@@ -68,11 +68,10 @@ interface NeurotransmitterPayment {
 interface MetabolicPayment {
   id: string;
   kit_status: string;
-}
-  tracking_number: string | null;
-  shipped_at: string | null;
-  sample_received_at: string | null;
-  results_ready_at: string | null;
+  tracking_number?: string | null;
+  shipped_at?: string | null;
+  sample_received_at?: string | null;
+  results_ready_at?: string | null;
 }
 
 const PatientDashboard = () => {
