@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -10,12 +10,12 @@ import {
   Zap,
   ShoppingCart,
   BookOpen,
-  Calendar
+  Calendar,
+  CheckCircle2
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface LabData {
-  // All lab values
   testosterone_t?: number | null;
   estradiol_e2?: number | null;
   cortisol_morning?: number | null;
@@ -142,7 +142,7 @@ const generateActionItems = (data: LabData | null, gender?: string): ActionItem[
     });
   }
 
-  // High Cortisol (adrenal dysfunction)
+  // High Cortisol
   if (data.cortisol_morning !== null && data.cortisol_morning !== undefined && data.cortisol_morning > 25) {
     actions.push({
       id: 'high-cortisol',
@@ -157,7 +157,7 @@ const generateActionItems = (data: LabData | null, gender?: string): ActionItem[
     });
   }
 
-  // Flat Cortisol Curve (adrenal exhaustion)
+  // Flat Cortisol Curve
   if (data.cortisol_morning !== null && data.cortisol_night !== null && 
       data.cortisol_morning !== undefined && data.cortisol_night !== undefined) {
     const ratio = data.cortisol_morning / (data.cortisol_night || 1);
@@ -279,14 +279,14 @@ const ActionPlanTab = ({ labData, gender }: ActionPlanTabProps) => {
 
   if (actionItems.length === 0) {
     return (
-      <Card className="border-green-200 bg-green-50/50 dark:bg-green-900/10 dark:border-green-900/30">
-        <CardContent className="pt-6">
-          <div className="text-center py-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <Leaf className="w-8 h-8 text-green-600 dark:text-green-400" />
+      <Card className="bg-card border-border/50 rounded-2xl overflow-hidden">
+        <CardContent className="p-6">
+          <div className="text-center py-6">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/10 flex items-center justify-center">
+              <CheckCircle2 className="w-8 h-8 text-green-500" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">Looking Great!</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
+            <h3 className="font-playfair text-xl text-foreground mb-2">Looking Great!</h3>
+            <p className="text-muted-foreground font-inter text-sm max-w-sm mx-auto">
               {labData ? 
                 "Your labs look optimal. Keep up the good work! Continue your current protocol and check back after your next lab panel." :
                 "Complete your lab testing to receive personalized action items based on your biology."
@@ -304,28 +304,28 @@ const ActionPlanTab = ({ labData, gender }: ActionPlanTabProps) => {
   return (
     <div className="space-y-4">
       {/* Summary Header */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-cormorant">Your Action Plan</CardTitle>
+      <Card className="bg-card border-border/50 rounded-2xl overflow-hidden">
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-playfair text-lg text-foreground">Your Action Plan</h3>
             <div className="flex gap-2">
               {redCount > 0 && (
-                <Badge variant="destructive" className="gap-1">
+                <Badge className="bg-red-500/10 text-red-500 border-0 gap-1 font-inter">
                   <AlertTriangle className="w-3 h-3" />
                   {redCount} Critical
                 </Badge>
               )}
               {yellowCount > 0 && (
-                <Badge variant="outline" className="gap-1 border-yellow-500 text-yellow-600">
-                  {yellowCount} Sub-optimal
+                <Badge className="bg-gold/10 text-gold border-0 gap-1 font-inter">
+                  {yellowCount} Attention
                 </Badge>
               )}
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground font-inter">
             Personalized recommendations based on your lab results
           </p>
-        </CardHeader>
+        </CardContent>
       </Card>
 
       {/* Action Items */}
@@ -343,55 +343,61 @@ const ActionPlanTab = ({ labData, gender }: ActionPlanTabProps) => {
           return (
             <Card 
               key={item.id} 
-              className={`border-l-4 ${
+              className={`rounded-2xl overflow-hidden border-l-4 ${
                 item.severity === 'red' 
-                  ? 'border-l-red-500 bg-red-50/30 dark:bg-red-900/10' 
-                  : 'border-l-yellow-500 bg-yellow-50/30 dark:bg-yellow-900/10'
+                  ? 'border-l-red-500 bg-red-500/5' 
+                  : 'border-l-gold bg-gold/5'
               }`}
             >
-              <CardContent className="pt-4 pb-4">
-                <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                  {/* Icon */}
-                  <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                    item.severity === 'red' 
-                      ? 'bg-red-100 dark:bg-red-900/30' 
-                      : 'bg-yellow-100 dark:bg-yellow-900/30'
-                  }`}>
-                    <Icon className={`w-5 h-5 ${
-                      item.severity === 'red' ? 'text-red-600' : 'text-yellow-600'
-                    }`} />
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-3">
+                  {/* Header Row */}
+                  <div className="flex items-start gap-3">
+                    <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
+                      item.severity === 'red' 
+                        ? 'bg-red-500/10' 
+                        : 'bg-gold/10'
+                    }`}>
+                      <Icon className={`w-5 h-5 ${
+                        item.severity === 'red' ? 'text-red-500' : 'text-gold'
+                      }`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="font-inter font-semibold text-foreground text-sm">{item.finding}</h4>
+                        <Badge 
+                          variant="outline" 
+                          className={`shrink-0 text-xs font-inter ${
+                            item.severity === 'red' 
+                              ? 'border-red-500/30 text-red-500 bg-red-500/5' 
+                              : 'border-gold/30 text-gold bg-gold/5'
+                          }`}
+                        >
+                          {item.severity === 'red' ? 'Critical' : 'Attention'}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground font-inter mt-1 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <h4 className="font-semibold text-foreground">{item.finding}</h4>
-                      <Badge 
-                        variant="outline" 
-                        className={`shrink-0 text-xs ${
-                          item.severity === 'red' 
-                            ? 'border-red-300 text-red-600' 
-                            : 'border-yellow-300 text-yellow-600'
-                        }`}
-                      >
-                        {item.severity === 'red' ? 'Critical' : 'Attention'}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {item.description}
+                  {/* Recommendation & Action */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pl-13 sm:pl-0">
+                    <p className="text-sm font-inter text-foreground/80 flex items-start gap-1">
+                      <span className="text-gold">→</span>
+                      <span>{item.recommendation}</span>
                     </p>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                      <p className="text-sm font-medium text-foreground">
-                        → {item.recommendation}
-                      </p>
-                      <Link to={item.actionLink}>
-                        <Button size="sm" variant="outline" className="gap-2 h-8">
-                          <ActionIcon className="w-3 h-3" />
-                          {item.actionLabel}
-                          <ArrowRight className="w-3 h-3" />
-                        </Button>
-                      </Link>
-                    </div>
+                    <Link to={item.actionLink} className="shrink-0">
+                      <Button 
+                        size="sm" 
+                        className="h-8 px-4 bg-navy hover:bg-navy-light text-white font-inter text-xs gap-1.5 rounded-xl w-full sm:w-auto"
+                      >
+                        <ActionIcon className="w-3 h-3" />
+                        {item.actionLabel}
+                        <ArrowRight className="w-3 h-3" />
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </CardContent>

@@ -3,8 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, Activity, Zap, Heart, Brain, Plus, Clock, CreditCard, Lock, FileText, Sparkles, ArrowRight, BookOpen } from "lucide-react";
+import { Loader2, Activity, Zap, Heart, Brain, Plus, Clock, CreditCard, Lock, FileText, Sparkles, ArrowRight, BookOpen, LayoutGrid, ClipboardList } from "lucide-react";
 import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
 import OnboardingProgress from "@/components/patient/OnboardingProgress";
@@ -19,6 +20,7 @@ import MinimalPatientHeader from "@/components/patient/MinimalPatientHeader";
 import BottomTabBar from "@/components/patient/BottomTabBar";
 import DailyProtocolCard from "@/components/patient/DailyProtocolCard";
 import HealthOverview from "@/components/patient/HealthOverview";
+import ActionPlanTab from "@/components/patient/ActionPlanTab";
 
 interface SymptomLog {
   id: string;
@@ -77,6 +79,21 @@ interface MetabolicPayment {
   results_ready_at?: string | null;
 }
 
+interface LabResult {
+  vitamin_d?: number | null;
+  magnesium?: number | null;
+  cortisol_morning?: number | null;
+  cortisol_night?: number | null;
+  fasting_insulin?: number | null;
+  a1c?: number | null;
+  tsh?: number | null;
+  mercury?: number | null;
+  lead_level?: number | null;
+  serotonin?: number | null;
+  gaba?: number | null;
+  triglycerides?: number | null;
+}
+
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -87,9 +104,10 @@ const PatientDashboard = () => {
   const [kitTracking, setKitTracking] = useState<KitTracking | null>(null);
   const [neuroPayment, setNeuroPayment] = useState<NeurotransmitterPayment | null>(null);
   const [metabolicPayment, setMetabolicPayment] = useState<MetabolicPayment | null>(null);
+  const [labResult, setLabResult] = useState<LabResult | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-
+  const [activeTab, setActiveTab] = useState("overview");
   useEffect(() => {
     loadDashboardData();
     
@@ -207,9 +225,21 @@ const PatientDashboard = () => {
             .maybeSingle();
           setMetabolicPayment(metabolicData);
         }
+
+        // Fetch latest lab results for Action Plan
+        const { data: labData } = await supabase
+          .from('lab_results')
+          .select('vitamin_d, magnesium, cortisol_morning, cortisol_night, fasting_insulin, a1c, tsh, mercury, lead_level, serotonin, gaba, triglycerides')
+          .eq('patient_id', patientData.id)
+          .order('collection_date', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        
+        setLabResult(labData);
       }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to load dashboard");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to load dashboard";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -399,35 +429,64 @@ const PatientDashboard = () => {
               hasSupplements={isAuthorized}
             />
 
-            {/* Health Overview - Biological Scorecard */}
-            <HealthOverview
-              patientId={patient?.id || ''}
-              patientEmail={patient?.email || ''}
-              patientName={patient?.full_name || ''}
-              labData={null}
-              gender={patient?.gender || undefined}
-              hasToxicityPayment={false}
-              hasElevatedArchitecturePayment={false}
-            />
+            {/* Tabbed Interface */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="w-full h-12 bg-card border border-border/50 rounded-xl p-1 grid grid-cols-2">
+                <TabsTrigger 
+                  value="overview" 
+                  className="rounded-lg font-inter text-sm data-[state=active]:bg-navy data-[state=active]:text-white"
+                >
+                  <LayoutGrid className="w-4 h-4 mr-2" />
+                  Health Overview
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="action-plan" 
+                  className="rounded-lg font-inter text-sm data-[state=active]:bg-navy data-[state=active]:text-white"
+                >
+                  <ClipboardList className="w-4 h-4 mr-2" />
+                  Action Plan
+                </TabsTrigger>
+              </TabsList>
 
-            {/* Onboarding Progress */}
-            {!isAuthorized && (
-              <OnboardingProgress
-                onboardingStatus={patient?.onboarding_status || null}
-                intakeCompleted={patient?.intake_completed || false}
-                hasAuthorizedOrder={isAuthorized}
-              />
-            )}
+              <TabsContent value="overview" className="mt-4 space-y-4">
+                {/* Health Overview - Biological Scorecard */}
+                <HealthOverview
+                  patientId={patient?.id || ''}
+                  patientEmail={patient?.email || ''}
+                  patientName={patient?.full_name || ''}
+                  labData={labResult}
+                  gender={patient?.gender || undefined}
+                  hasToxicityPayment={false}
+                  hasElevatedArchitecturePayment={false}
+                />
 
-            {/* Metabolic Architecture Card */}
-            {(patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) && (
-              <MetabolicArchitectureCard
-                patientId={patient.id}
-                patientEmail={patient.email || ''}
-                patientName={patient.full_name}
-                kitStatus={metabolicPayment?.kit_status}
-              />
-            )}
+                {/* Onboarding Progress */}
+                {!isAuthorized && (
+                  <OnboardingProgress
+                    onboardingStatus={patient?.onboarding_status || null}
+                    intakeCompleted={patient?.intake_completed || false}
+                    hasAuthorizedOrder={isAuthorized}
+                  />
+                )}
+
+                {/* Metabolic Architecture Card */}
+                {(patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) && (
+                  <MetabolicArchitectureCard
+                    patientId={patient.id}
+                    patientEmail={patient.email || ''}
+                    patientName={patient.full_name}
+                    kitStatus={metabolicPayment?.kit_status}
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="action-plan" className="mt-4">
+                <ActionPlanTab 
+                  labData={labResult} 
+                  gender={patient?.gender || undefined} 
+                />
+              </TabsContent>
+            </Tabs>
 
             {/* Kit Tracker */}
             {kitTracking && kitTracking.zrt_kit_status !== "not_ordered" && (
