@@ -13,8 +13,15 @@ import {
   Shield, 
   Sun,
   Check,
-  Loader2
+  Loader2,
+  Info
 } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import BoosterInfoCard from "@/components/BoosterInfoCard";
 
 interface IVTherapy {
   id: string;
@@ -34,6 +41,10 @@ interface IVAddon {
   description: string | null;
   price: number;
   stripe_price_id: string | null;
+  detailed_description: string | null;
+  benefits: string[] | null;
+  best_for: string[] | null;
+  icon_name: string | null;
 }
 
 const FEELING_FILTERS = [
@@ -264,23 +275,46 @@ const IVLounge = () => {
                     {addons.length > 0 && (
                       <div className="mb-4 pt-4 border-t border-border/30">
                         <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">
-                          Add Boosters
+                          Add Boosters <span className="text-primary/60">(hover for details)</span>
                         </p>
                         <div className="flex flex-wrap gap-2">
-                          {addons.slice(0, 3).map((addon) => {
+                          {addons.slice(0, 5).map((addon) => {
                             const isSelected = getTherapyAddons(therapy.id).includes(addon.id);
                             return (
-                              <button
-                                key={addon.id}
-                                onClick={() => toggleAddon(therapy.id, addon.id)}
-                                className={`px-2 py-1 text-xs rounded-full border transition-colors ${
-                                  isSelected
-                                    ? "bg-primary text-primary-foreground border-primary"
-                                    : "border-border hover:border-primary/50"
-                                }`}
-                              >
-                                {addon.name} +${addon.price}
-                              </button>
+                              <HoverCard key={addon.id} openDelay={100} closeDelay={100}>
+                                <HoverCardTrigger asChild>
+                                  <button
+                                    onClick={() => toggleAddon(therapy.id, addon.id)}
+                                    className={`group/btn flex items-center gap-1 px-2 py-1 text-xs rounded-full border transition-all duration-200 ${
+                                      isSelected
+                                        ? "bg-primary text-primary-foreground border-primary"
+                                        : "border-border hover:border-primary/50 hover:bg-secondary/50"
+                                    }`}
+                                  >
+                                    {isSelected && <Check className="w-3 h-3" />}
+                                    {addon.name} +${addon.price}
+                                    <Info className={`w-3 h-3 opacity-50 group-hover/btn:opacity-100 transition-opacity ${isSelected ? 'text-primary-foreground' : 'text-primary'}`} />
+                                  </button>
+                                </HoverCardTrigger>
+                                <HoverCardContent 
+                                  side="top" 
+                                  align="center" 
+                                  className="p-0 w-auto border-0 bg-transparent shadow-none"
+                                  sideOffset={8}
+                                >
+                                  <BoosterInfoCard
+                                    name={addon.name}
+                                    price={addon.price}
+                                    description={addon.description}
+                                    detailedDescription={addon.detailed_description}
+                                    benefits={addon.benefits || []}
+                                    bestFor={addon.best_for || []}
+                                    iconName={addon.icon_name}
+                                    isSelected={isSelected}
+                                    onToggle={() => toggleAddon(therapy.id, addon.id)}
+                                  />
+                                </HoverCardContent>
+                              </HoverCard>
                             );
                           })}
                         </div>
@@ -329,24 +363,52 @@ const IVLounge = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-6xl mx-auto">
               {addons.map((addon) => (
-                <Card
-                  key={addon.id}
-                  className="p-4 border border-border/50"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <span className="text-sm font-medium text-primary">
-                      +${addon.price}
-                    </span>
-                  </div>
-                  <h4 className="font-medium text-foreground text-sm mb-1">
-                    {addon.name}
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    {addon.description}
-                  </p>
-                </Card>
+                <HoverCard key={addon.id} openDelay={100} closeDelay={100}>
+                  <HoverCardTrigger asChild>
+                    <Card className="p-5 border border-primary/20 bg-card hover:shadow-lg hover:border-primary/40 transition-all duration-300 cursor-pointer group">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="p-1.5 bg-primary/10 rounded-full group-hover:bg-primary/20 transition-colors">
+                          {addon.icon_name === 'zap' && <Sparkles className="w-4 h-4 text-primary" />}
+                          {addon.icon_name === 'sparkles' && <Sparkles className="w-4 h-4 text-primary" />}
+                          {addon.icon_name === 'shield' && <Shield className="w-4 h-4 text-primary" />}
+                          {(!addon.icon_name || !['zap', 'sparkles', 'shield'].includes(addon.icon_name)) && <Sparkles className="w-4 h-4 text-primary" />}
+                        </div>
+                        <span className="px-2 py-0.5 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+                          +${addon.price}
+                        </span>
+                      </div>
+                      <h4 className="font-cormorant text-lg font-medium text-foreground mb-1">
+                        {addon.name}
+                      </h4>
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {addon.description}
+                      </p>
+                      <p className="text-xs text-primary/70 mt-2 flex items-center gap-1">
+                        <Info className="w-3 h-3" /> Hover for details
+                      </p>
+                    </Card>
+                  </HoverCardTrigger>
+                  <HoverCardContent 
+                    side="top" 
+                    align="center" 
+                    className="p-0 w-auto border-0 bg-transparent shadow-none"
+                    sideOffset={8}
+                  >
+                    <BoosterInfoCard
+                      name={addon.name}
+                      price={addon.price}
+                      description={addon.description}
+                      detailedDescription={addon.detailed_description}
+                      benefits={addon.benefits || []}
+                      bestFor={addon.best_for || []}
+                      iconName={addon.icon_name}
+                      isSelected={false}
+                      onToggle={() => {}}
+                    />
+                  </HoverCardContent>
+                </HoverCard>
               ))}
             </div>
           </div>

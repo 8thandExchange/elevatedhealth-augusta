@@ -489,8 +489,12 @@ export type Database = {
       }
       iv_addons: {
         Row: {
+          benefits: string[] | null
+          best_for: string[] | null
           created_at: string | null
           description: string | null
+          detailed_description: string | null
+          icon_name: string | null
           id: string
           is_active: boolean | null
           name: string
@@ -498,8 +502,12 @@ export type Database = {
           stripe_price_id: string | null
         }
         Insert: {
+          benefits?: string[] | null
+          best_for?: string[] | null
           created_at?: string | null
           description?: string | null
+          detailed_description?: string | null
+          icon_name?: string | null
           id?: string
           is_active?: boolean | null
           name: string
@@ -507,8 +515,12 @@ export type Database = {
           stripe_price_id?: string | null
         }
         Update: {
+          benefits?: string[] | null
+          best_for?: string[] | null
           created_at?: string | null
           description?: string | null
+          detailed_description?: string | null
+          icon_name?: string | null
           id?: string
           is_active?: boolean | null
           name?: string
