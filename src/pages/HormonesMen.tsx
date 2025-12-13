@@ -213,6 +213,10 @@ const HormonesMen = () => {
       a: "Many men notice improvements in energy and mood within 3-4 weeks. Sexual function and muscle mass improvements typically occur over 8-12 weeks. Full optimization usually takes 3-6 months with proper dosing."
     },
     {
+      q: "Cream vs. Injections: Which is right for me?",
+      a: "Both methods are highly effective—the best choice depends on your lifestyle. Transdermal Cream offers daily application that mimics your body's natural rhythm, provides stable hormone levels without peaks and valleys, and allows for easy dose adjustments. However, it requires daily use and has a small risk of transfer to others. Injections offer weekly dosing convenience, guaranteed 100% absorption, and zero transfer risk—ideal for fathers with young children. The trade-off is potential hormone fluctuations between doses. During your consultation, we'll help you choose based on your schedule, family situation, and personal preference."
+    },
+    {
       q: "Why transdermal cream instead of pellets?",
       a: "Unlike pellets, which lock you into a dose for months even if side effects occur, our Transdermal Cream and injection protocols allow for weekly micro-adjustments to ensure optimal levels. This precision dosing approach means we can fine-tune your therapy in real-time based on how you feel."
     },
