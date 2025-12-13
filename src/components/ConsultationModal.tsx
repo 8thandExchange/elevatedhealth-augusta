@@ -211,11 +211,24 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           })}
         </div>
 
-        {/* Payment flexibility messaging */}
-        <div className="mt-4 text-center">
-          <p className="text-xs text-muted-foreground">
-            💳 Split into 4 interest-free payments with <span className="font-semibold">Klarna</span> or <span className="font-semibold">Affirm</span> at checkout
-          </p>
+        {/* Payment flexibility messaging - Enhanced */}
+        <div className="mt-6 p-4 bg-gradient-to-r from-[#FFB3C7]/10 via-[#0FA0EA]/5 to-[#FFB3C7]/10 rounded-xl border border-gold/10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-gold" />
+              <span className="text-sm text-foreground font-lato font-medium">Pay over time</span>
+            </div>
+            <div className="hidden sm:block w-px h-4 bg-border" />
+            <div className="flex items-center gap-3">
+              <div className="px-2 py-1 bg-[#FFB3C7]/20 rounded">
+                <span className="font-bold text-xs text-[#E91E8A]">Klarna</span>
+              </div>
+              <div className="px-2 py-1 bg-[#0FA0EA]/10 rounded">
+                <span className="font-bold text-xs text-[#0FA0EA]">affirm</span>
+              </div>
+            </div>
+            <span className="text-xs text-muted-foreground">4 interest-free payments • Approved in seconds</span>
+          </div>
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-3">
