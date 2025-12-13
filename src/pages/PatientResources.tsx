@@ -214,6 +214,38 @@ const quickReferenceCards: Record<string, Array<{ title: string; content: string
     { title: "Sermorelin", content: "Bedtime injection on empty stomach. 2-3 hours after eating.", highlight: true },
     { title: "NAD+ Troche", content: "Dissolve under tongue. Do not eat/drink for 15 minutes after.", highlight: false },
     { title: "PT-141", content: "Take 1-4 hours before intimacy. Effects last 24-72 hours.", highlight: false }
+  ],
+  iv_hydration: [
+    { title: "Pre-Session", content: "Eat a light meal 1-2 hours before. Stay hydrated.", highlight: true },
+    { title: "During Session", content: "Relax and hydrate. Sessions last 45-60 minutes.", highlight: false },
+    { title: "Post-Session", content: "Continue hydrating. Results are immediate.", highlight: false }
+  ],
+  ketamine_therapy: [
+    { title: "Before Session", content: "No food 4 hours before. Clear liquids OK until 2 hours before.", highlight: true },
+    { title: "Transportation", content: "Arrange a ride. No driving for 24 hours post-treatment.", highlight: false },
+    { title: "Integration", content: "Journal after sessions. Set an intention beforehand.", highlight: false }
+  ]
+};
+
+// Suggested external resources when database is empty
+const suggestedResources: Record<string, Array<{ title: string; description: string; url: string; type: "video" | "article" }>> = {
+  hormone_therapy: [
+    { title: "Understanding Bio-Identical Hormones", description: "Learn how transdermal hormone therapy works and why it's safer than pills.", url: "https://www.youtube.com/watch?v=2MKNsI5CjKI", type: "video" },
+    { title: "Menopause Symptom Relief", description: "What to expect during the first weeks of hormone optimization.", url: "https://www.youtube.com/watch?v=8vNIgPjXPQQ", type: "video" }
+  ],
+  weight_loss: [
+    { title: "GLP-1 Injection Technique", description: "Step-by-step guide to self-injecting Semaglutide or Tirzepatide.", url: "https://www.youtube.com/watch?v=2HqzLgNQpCU", type: "video" },
+    { title: "Managing GLP-1 Side Effects", description: "Tips for reducing nausea and optimizing your weight loss journey.", url: "https://www.youtube.com/watch?v=bOOJxMQeRm4", type: "video" }
+  ],
+  ketamine_therapy: [
+    { title: "Preparing for Ketamine Therapy", description: "What to expect before, during, and after your IV ketamine session.", url: "https://www.youtube.com/watch?v=GsYoDBqDuBk", type: "video" },
+    { title: "Integration After Ketamine", description: "How to maximize the benefits of ketamine therapy with integration practices.", url: "https://www.youtube.com/watch?v=WsVGJDnV-Fc", type: "video" }
+  ],
+  peptide_therapy: [
+    { title: "How to Reconstitute Peptides", description: "Proper technique for mixing and storing your peptide medications.", url: "https://www.youtube.com/watch?v=1KqD-JaNcug", type: "video" }
+  ],
+  iv_hydration: [
+    { title: "Benefits of IV Therapy", description: "Understanding how IV hydration and vitamin infusions work.", url: "https://www.youtube.com/watch?v=Jui9L-TY6Ac", type: "video" }
   ]
 };
 
@@ -510,13 +542,44 @@ const PatientResources = () => {
                     </div>
                   )}
 
-                  {/* Show message when no database resources but interactive content exists */}
-                  {filteredResources.length === 0 && !showInteractiveContent && (
+                  {/* Suggested External Resources when no database resources */}
+                  {filteredResources.length === 0 && effectiveCategory !== "all" && suggestedResources[effectiveCategory] && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-6">
+                        <h2 className="font-cormorant text-2xl text-foreground flex items-center gap-2">
+                          <ExternalLink className="h-5 w-5 text-gold" />
+                          Recommended Resources
+                        </h2>
+                        <Badge variant="outline" className="text-xs">External</Badge>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {suggestedResources[effectiveCategory].map((resource, idx) => (
+                          <Card 
+                            key={idx}
+                            className="group cursor-pointer overflow-hidden border-border/50 hover:border-gold/50 transition-all duration-300 hover:shadow-lg"
+                            onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
+                          >
+                            <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+                              <Play className="h-12 w-12 text-primary/30 group-hover:text-primary/50 transition-colors" />
+                              <Badge className="absolute top-2 right-2 text-xs">External Video</Badge>
+                            </div>
+                            <CardContent className="p-4">
+                              <h3 className="font-cormorant text-lg text-foreground mb-1 line-clamp-2">{resource.title}</h3>
+                              <p className="text-sm text-muted-foreground font-light line-clamp-2">{resource.description}</p>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty state only when truly nothing available */}
+                  {filteredResources.length === 0 && !showInteractiveContent && (effectiveCategory === "all" || !suggestedResources[effectiveCategory]) && (
                     <div className="text-center py-16">
                       <BookOpen className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-                      <h3 className="font-cormorant text-2xl text-foreground mb-2">No Resources Yet</h3>
-                      <p className="text-muted-foreground font-light">
-                        Check back soon for educational content
+                      <h3 className="font-cormorant text-2xl text-foreground mb-2">Resources Coming Soon</h3>
+                      <p className="text-muted-foreground font-light max-w-md mx-auto">
+                        We're adding educational content for this category. In the meantime, check out our FAQ section below or select a specific service category.
                       </p>
                     </div>
                   )}

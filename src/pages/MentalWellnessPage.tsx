@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Brain, ArrowLeft, Sparkles, ArrowRight } from "lucide-react";
+import { Loader2, Brain, ArrowLeft, Sparkles, ArrowRight, BookOpen } from "lucide-react";
 import MindCareCard from "@/components/patient/MindCareCard";
 import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard";
 import PatientNavbar from "@/components/patient/PatientNavbar";
@@ -161,6 +161,32 @@ const MentalWellnessPage = () => {
                 Your ketamine therapy is coordinated through Osmind, our HIPAA-compliant mental health platform. 
                 Check your email for your secure portal invitation.
               </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Educational Resources */}
+        <Card className="bg-gradient-to-br from-purple-50 to-indigo-50/50 dark:from-purple-950/30 dark:to-indigo-900/20 border-purple-200 dark:border-purple-800">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-purple-500/20 rounded-full">
+                <BookOpen className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-foreground">Educational Resources</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Preparation guides, integration tips, and FAQs about ketamine therapy.
+                </p>
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate("/patient-resources?service=ketamine")}
+                  className="border-purple-300 hover:bg-purple-50"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  View Resources
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

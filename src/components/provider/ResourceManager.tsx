@@ -12,7 +12,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-type ResourceCategory = "injection_tutorials" | "nutrition_guides" | "stress_management";
+type ResourceCategory = 
+  | "hormone_therapy" 
+  | "weight_loss" 
+  | "ketamine_therapy" 
+  | "peptide_therapy" 
+  | "iv_hydration"
+  | "general_wellness"
+  | "injection_tutorials" 
+  | "nutrition_guides" 
+  | "stress_management";
+
 type ResourceType = "video" | "pdf";
 
 interface Resource {
@@ -27,6 +37,12 @@ interface Resource {
 }
 
 const categoryLabels: Record<ResourceCategory, string> = {
+  hormone_therapy: "Hormone Therapy",
+  weight_loss: "Weight Loss / GLP-1",
+  ketamine_therapy: "Mental Wellness / Ketamine",
+  peptide_therapy: "Peptide Therapy",
+  iv_hydration: "IV Hydration",
+  general_wellness: "General Wellness",
   injection_tutorials: "Injection Tutorials",
   nutrition_guides: "Nutrition Guides",
   stress_management: "Stress Management"

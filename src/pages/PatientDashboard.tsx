@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Activity, Zap, Heart, Brain, Plus, Clock, CreditCard, Lock, FileText, Sparkles, ArrowRight } from "lucide-react";
+import { Loader2, Activity, Zap, Heart, Brain, Plus, Clock, CreditCard, Lock, FileText, Sparkles, ArrowRight, BookOpen } from "lucide-react";
 import CircularGauge from "@/components/ui/CircularGauge";
 import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
@@ -585,6 +585,32 @@ const PatientDashboard = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Educational Resources Card */}
+            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50/50 dark:from-blue-950/30 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-blue-500/20 rounded-full">
+                    <BookOpen className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground">Educational Resources</h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Access video tutorials, guides, and FAQs to support your treatment journey.
+                    </p>
+                    <Button 
+                      variant="outline"
+                      onClick={() => navigate("/patient-resources?service=hormone")}
+                      className="border-blue-300 hover:bg-blue-50"
+                    >
+                      <BookOpen className="w-4 h-4 mr-2" />
+                      View Resources
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Explore More Services Card */}
             <Card className="bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
