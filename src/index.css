@@ -2,59 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Cool Luxury Design System - Dark Slate Blue with Silver Accents */
+/* Premium Medical Spa Design System - Navy, Gold & White */
 
 @layer base {
   :root {
-    /* Base colors - Pure White background */
-    --background: 0 0% 100%;
-    --foreground: 210 29% 24%;
+    /* Base colors - Clean White background */
+    --background: 0 0% 99%;
+    --foreground: 215 32% 15%;
 
     /* Card surfaces - pure white */
     --card: 0 0% 100%;
-    --card-foreground: 210 29% 24%;
+    --card-foreground: 215 32% 15%;
 
     /* Popover surfaces */
     --popover: 0 0% 100%;
-    --popover-foreground: 210 29% 24%;
+    --popover-foreground: 215 32% 15%;
 
-    /* Primary - Dark Slate Blue #2C3E50 */
-    --primary: 210 29% 24%;
+    /* Primary - Deep Navy Blue */
+    --primary: 215 32% 15%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 210 29% 34%;
-    --primary-dark: 210 29% 18%;
+    --primary-light: 215 28% 22%;
+    --primary-dark: 215 35% 10%;
 
     /* Secondary - Light Grey */
     --secondary: 210 10% 96%;
-    --secondary-foreground: 210 29% 24%;
+    --secondary-foreground: 215 32% 15%;
     --secondary-light: 210 10% 98%;
     --secondary-dark: 210 10% 90%;
 
-    /* Accent - Muted Silver/Blue (darkened for 4.5:1 contrast) */
+    /* Accent - Muted Teal */
     --accent: 184 8% 42%;
     --accent-foreground: 0 0% 100%;
     --accent-light: 184 6% 53%;
 
     /* Gold accent for luxury highlights */
     --gold: 43 74% 49%;
-    --gold-foreground: 0 0% 100%;
+    --gold-foreground: 215 32% 15%;
     --gold-light: 43 74% 59%;
     --gold-dark: 43 74% 39%;
 
-    /* Hope - Soft blue-grey (darkened for 4.5:1 contrast) */
+    /* Hope - Soft blue-grey */
     --hope: 200 18% 40%;
     --hope-foreground: 0 0% 100%;
     --hope-light: 200 15% 50%;
 
-    /* Feminine - Soft rose (darkened for accessibility) */
+    /* Feminine - Soft rose */
     --feminine: 350 30% 55%;
     --feminine-foreground: 0 0% 100%;
     --feminine-light: 350 25% 70%;
     --feminine-dark: 350 25% 45%;
 
-    /* Muted tones (darkened for 4.5:1 contrast) */
+    /* Muted tones */
     --muted: 210 10% 96%;
-    --muted-foreground: 210 12% 38%;
+    --muted-foreground: 215 15% 45%;
 
     /* Destructive */
     --destructive: 0 55% 50%;
@@ -63,21 +63,21 @@
     /* Borders and inputs - subtle grey */
     --border: 210 10% 90%;
     --input: 210 10% 96%;
-    --ring: 210 29% 24%;
+    --ring: 43 74% 49%;
 
     /* Border radius */
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Gradients - cool tones */
+    /* Gradients - premium navy to gold */
     --gradient-hero: linear-gradient(180deg, hsla(0 0% 100% / 0) 0%, hsla(0 0% 100% / 0.9) 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 10% 98%) 100%);
-    --gradient-overlay: linear-gradient(180deg, hsla(210 29% 24% / 0.2) 0%, hsla(210 29% 24% / 0.05) 100%);
+    --gradient-overlay: linear-gradient(180deg, hsla(215 32% 15% / 0.2) 0%, hsla(215 32% 15% / 0.05) 100%);
 
-    /* Shadows - subtle and elegant */
-    --shadow-sm: 0 2px 8px hsla(210 29% 24% / 0.04);
-    --shadow-md: 0 4px 20px hsla(210 29% 24% / 0.08);
-    --shadow-lg: 0 12px 40px hsla(210 29% 24% / 0.12);
-    --shadow-glow: 0 0 60px hsla(210 29% 24% / 0.1);
+    /* Shadows - soft and elegant */
+    --shadow-sm: 0 2px 8px hsla(215 32% 15% / 0.04);
+    --shadow-md: 0 4px 20px hsla(215 32% 15% / 0.08);
+    --shadow-lg: 0 12px 40px hsla(215 32% 15% / 0.12);
+    --shadow-glow: 0 0 60px hsla(43 74% 49% / 0.15);
 
     /* Transitions */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -85,25 +85,25 @@
   }
 
   .dark {
-    --background: 210 29% 10%;
+    --background: 215 32% 8%;
     --foreground: 210 10% 95%;
-    --card: 210 29% 12%;
+    --card: 215 32% 10%;
     --card-foreground: 210 10% 95%;
-    --popover: 210 29% 12%;
+    --popover: 215 32% 10%;
     --popover-foreground: 210 10% 95%;
-    --primary: 210 29% 60%;
-    --primary-foreground: 210 29% 10%;
-    --secondary: 210 15% 20%;
+    --primary: 43 74% 49%;
+    --primary-foreground: 215 32% 10%;
+    --secondary: 215 20% 18%;
     --secondary-foreground: 210 10% 95%;
     --accent: 184 6% 60%;
-    --accent-foreground: 210 29% 10%;
-    --muted: 210 15% 18%;
-    --muted-foreground: 210 10% 70%;
+    --accent-foreground: 215 32% 10%;
+    --muted: 215 20% 15%;
+    --muted-foreground: 210 10% 60%;
     --destructive: 0 55% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 15% 20%;
-    --input: 210 15% 18%;
-    --ring: 210 29% 60%;
+    --border: 215 20% 18%;
+    --input: 215 20% 15%;
+    --ring: 43 74% 49%;
   }
 }
 
@@ -122,30 +122,36 @@
     line-height: 1.7;
   }
 
-  /* Typography - Cormorant Garamond for Headings (High-End Medical Magazine) */
+  /* Typography - Playfair Display for Headings (Premium Swiss Watch) */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-cormorant text-foreground;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: 1.2;
+    @apply font-playfair text-foreground;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
   }
 
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl;
-  }
-
-  h2 {
     @apply text-3xl md:text-4xl lg:text-5xl;
   }
 
-  h3 {
-    @apply text-2xl md:text-3xl;
+  h2 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
   }
 
-  /* Body text - Lato with increased letter-spacing */
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  /* Body text - Inter for clinical precision, readable data */
   p, span, button, input, textarea, label, li, a {
-    @apply font-lato;
-    letter-spacing: 0.025em;
+    @apply font-inter;
+    letter-spacing: 0.01em;
+  }
+
+  /* Cormorant for elegant body text alternatives */
+  .font-serif-body {
+    @apply font-cormorant;
+    letter-spacing: 0.02em;
   }
 }
 
