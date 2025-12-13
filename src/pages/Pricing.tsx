@@ -667,6 +667,9 @@ const Pricing = () => {
                           <p className="text-sm text-muted-foreground font-lato">
                             At-home ZRT test + 45-min clinical review + protocol design
                           </p>
+                          <p className="text-xs text-gold font-lato mt-1">
+                            or 4 payments of $75 with Klarna
+                          </p>
                         </div>
                         <div className="text-right">
                           <span className="text-2xl font-cormorant text-foreground">$299</span>
@@ -703,7 +706,7 @@ const Pricing = () => {
                   <div className="space-y-4">
                     <Card className="border border-border hover:border-gold/30 transition-all">
                       <CardContent className="p-5">
-                        <div className="flex justify-between items-start mb-3">
+                        <div className="flex justify-between items-start mb-1">
                           <div>
                             <h4 className="font-cormorant text-xl text-foreground">Vitality Membership</h4>
                             <p className="text-sm text-muted-foreground font-lato">
@@ -715,6 +718,9 @@ const Pricing = () => {
                             <span className="text-muted-foreground font-lato">/mo</span>
                           </div>
                         </div>
+                        <p className="text-xs text-gold font-lato mb-3">
+                          or 4 payments of $50 with Klarna
+                        </p>
                         <ul className="space-y-2 mb-4">
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
@@ -740,7 +746,7 @@ const Pricing = () => {
                         <Badge className="bg-gold text-gold-foreground">Best Value</Badge>
                       </div>
                       <CardContent className="p-5">
-                        <div className="flex justify-between items-start mb-3">
+                        <div className="flex justify-between items-start mb-1">
                           <div>
                             <h4 className="font-cormorant text-xl text-foreground">Concierge Membership</h4>
                             <p className="text-sm text-muted-foreground font-lato">
@@ -752,6 +758,9 @@ const Pricing = () => {
                             <span className="text-muted-foreground font-lato">/mo</span>
                           </div>
                         </div>
+                        <p className="text-xs text-gold font-lato mb-3">
+                          or 4 payments of $100 with Klarna
+                        </p>
                         <ul className="space-y-2 mb-4">
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
@@ -812,10 +821,13 @@ const Pricing = () => {
                     </p>
                   </CardHeader>
                   <CardContent>
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <span className="text-3xl font-cormorant text-foreground">$149</span>
                       <span className="text-muted-foreground font-lato">/month</span>
                     </div>
+                    <p className="text-xs text-gold font-lato mb-4">
+                      or 4 payments of $37 with Klarna
+                    </p>
                     <ul className="space-y-2 mb-6">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
@@ -882,11 +894,13 @@ const Pricing = () => {
                     </p>
                   </CardHeader>
                   <CardContent>
-                    <div className="mb-4">
+                    <div className="mb-2">
                       <span className="text-3xl font-cormorant text-foreground">$225</span>
                       <span className="text-muted-foreground font-lato">/kit</span>
-                      <span className="block text-xs text-muted-foreground mt-1">10-dose kit • use as needed</span>
                     </div>
+                    <p className="text-xs text-gold font-lato mb-4">
+                      10-dose kit • or 4 payments of $56 with Klarna
+                    </p>
                     <ul className="space-y-2 mb-6">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
@@ -944,6 +958,9 @@ const Pricing = () => {
               </div>
 
               <div className="mt-6 text-center">
+                <p className="text-xs text-gold font-lato mb-2">
+                  Pay in 4 interest-free payments with Klarna at checkout
+                </p>
                 <p className="text-sm text-muted-foreground font-lato mb-4">
                   Add booster shots to any drip: <span className="text-foreground">+$25 each</span>
                 </p>
