@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
+import { LabInterpretationEngine } from "@/components/provider/LabInterpretationEngine";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
 import ZRTRequisitionGenerator from "@/components/provider/ZRTRequisitionGenerator";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
@@ -1867,6 +1868,13 @@ const ProviderDashboard = () => {
                   androgen: selectedPatient.latestLog.androgen_score || 0,
                   cortisol: selectedPatient.latestLog.cortisol_score || 0,
                 } : undefined}
+              />
+
+              {/* Lab Interpretation Engine - Holgate Logic */}
+              <LabInterpretationEngine
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientGender={selectedPatient.patient.gender || "female"}
               />
 
               {/* Mark Labs Reviewed Button */}

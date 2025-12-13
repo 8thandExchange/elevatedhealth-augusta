@@ -505,58 +505,97 @@ export type Database = {
           a1c: number | null
           alt: number | null
           ast: number | null
+          clinical_story: string | null
           collection_date: string
           correlation_alert: string | null
+          cortisol_evening: number | null
           cortisol_morning: number | null
+          cortisol_night: number | null
+          cortisol_noon: number | null
           created_at: string
           created_by: string | null
+          dhea_s: number | null
+          dopamine: number | null
+          epinephrine: number | null
           estradiol_e2: number | null
+          gaba: number | null
+          glutamate: number | null
           hematocrit: number | null
           id: string
+          kit_type: string | null
           lab_source: string | null
+          norepinephrine: number | null
           notes: string | null
           patient_id: string
           progesterone_pg: number | null
           psa: number | null
+          serotonin: number | null
           testosterone_t: number | null
+          treatment_plan: Json | null
         }
         Insert: {
           a1c?: number | null
           alt?: number | null
           ast?: number | null
+          clinical_story?: string | null
           collection_date: string
           correlation_alert?: string | null
+          cortisol_evening?: number | null
           cortisol_morning?: number | null
+          cortisol_night?: number | null
+          cortisol_noon?: number | null
           created_at?: string
           created_by?: string | null
+          dhea_s?: number | null
+          dopamine?: number | null
+          epinephrine?: number | null
           estradiol_e2?: number | null
+          gaba?: number | null
+          glutamate?: number | null
           hematocrit?: number | null
           id?: string
+          kit_type?: string | null
           lab_source?: string | null
+          norepinephrine?: number | null
           notes?: string | null
           patient_id: string
           progesterone_pg?: number | null
           psa?: number | null
+          serotonin?: number | null
           testosterone_t?: number | null
+          treatment_plan?: Json | null
         }
         Update: {
           a1c?: number | null
           alt?: number | null
           ast?: number | null
+          clinical_story?: string | null
           collection_date?: string
           correlation_alert?: string | null
+          cortisol_evening?: number | null
           cortisol_morning?: number | null
+          cortisol_night?: number | null
+          cortisol_noon?: number | null
           created_at?: string
           created_by?: string | null
+          dhea_s?: number | null
+          dopamine?: number | null
+          epinephrine?: number | null
           estradiol_e2?: number | null
+          gaba?: number | null
+          glutamate?: number | null
           hematocrit?: number | null
           id?: string
+          kit_type?: string | null
           lab_source?: string | null
+          norepinephrine?: number | null
           notes?: string | null
           patient_id?: string
           progesterone_pg?: number | null
           psa?: number | null
+          serotonin?: number | null
           testosterone_t?: number | null
+          treatment_plan?: Json | null
         }
         Relationships: [
           {
