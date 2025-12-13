@@ -16,24 +16,28 @@ const steps = [
   {
     id: "ordered",
     label: "Order Confirmed",
+    shortLabel: "Ordered",
     description: "Your diagnostic kit is being prepared",
     icon: Package,
   },
   {
     id: "shipped",
     label: "Kit on the Way",
+    shortLabel: "Shipped",
     description: "Your kit has been shipped",
     icon: Truck,
   },
   {
     id: "sample_received",
     label: "Lab Processing",
+    shortLabel: "Processing",
     description: "Your sample is being analyzed",
     icon: FlaskConical,
   },
   {
     id: "results_ready",
     label: "Results Ready",
+    shortLabel: "Ready",
     description: "Book your strategy call",
     icon: Calendar,
   },
@@ -52,6 +56,9 @@ const KitTracker = ({
   // Map analyzing to sample_received for display purposes
   const displayStatus = status === "analyzing" ? "sample_received" : status;
   const currentIndex = statusOrder.indexOf(displayStatus);
+
+  // Calculate progress percentage
+  const progressPercent = Math.round(((currentIndex - 1) / (steps.length - 1)) * 100);
 
   const getStepState = (stepId: string): "completed" | "current" | "upcoming" => {
     const stepIndex = statusOrder.indexOf(stepId);
@@ -78,16 +85,22 @@ const KitTracker = ({
   }
 
   return (
-    <Card className="bg-gradient-to-br from-card to-muted/30 border-gold/20">
+    <Card className="bg-gradient-to-br from-card to-muted/30 border-gold/20 overflow-hidden">
       <CardHeader className="pb-4">
-        <CardTitle className="font-cormorant text-xl text-foreground flex items-center gap-2">
-          <Package className="w-5 h-5 text-gold" />
-          Your Diagnostic Journey
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="font-cormorant text-xl text-foreground flex items-center gap-2">
+            <Package className="w-5 h-5 text-gold" />
+            Your Diagnostic Journey
+          </CardTitle>
+          {/* Progress percentage badge */}
+          <span className="text-xs font-medium px-2 py-1 rounded-full bg-gold/20 text-gold">
+            {progressPercent > 0 ? `${progressPercent}%` : "Started"}
+          </span>
+        </div>
       </CardHeader>
       <CardContent>
-        {/* Progress Steps */}
-        <div className="relative">
+        {/* Desktop: Horizontal Progress Steps */}
+        <div className="hidden sm:block relative">
           {/* Progress Line */}
           <div className="absolute top-6 left-0 right-0 h-0.5 bg-border" />
           <div
@@ -99,7 +112,7 @@ const KitTracker = ({
 
           {/* Steps */}
           <div className="relative flex justify-between">
-            {steps.map((step, index) => {
+            {steps.map((step) => {
               const state = getStepState(step.id);
               const Icon = step.icon;
 
@@ -108,10 +121,10 @@ const KitTracker = ({
                   {/* Step Circle */}
                   <div
                     className={cn(
-                      "w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10",
-                      state === "completed" && "bg-green-500 border-green-500 text-white",
-                      state === "current" && "bg-gold border-gold text-white animate-pulse",
-                      state === "upcoming" && "bg-background border-border text-muted-foreground"
+                      "w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-500 z-10",
+                      state === "completed" && "bg-green-500 border-green-500 text-white scale-100",
+                      state === "current" && "bg-gold border-gold text-white animate-pulse scale-110",
+                      state === "upcoming" && "bg-background border-border text-muted-foreground scale-90"
                     )}
                   >
                     {state === "completed" ? (
@@ -125,7 +138,7 @@ const KitTracker = ({
                   <div className="mt-3 text-center">
                     <p
                       className={cn(
-                        "text-sm font-medium",
+                        "text-sm font-medium transition-colors duration-300",
                         state === "completed" && "text-green-600 dark:text-green-400",
                         state === "current" && "text-gold",
                         state === "upcoming" && "text-muted-foreground"
@@ -133,7 +146,7 @@ const KitTracker = ({
                     >
                       {step.label}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">
+                    <p className="text-xs text-muted-foreground mt-0.5 hidden md:block">
                       {step.description}
                     </p>
                   </div>
@@ -143,13 +156,70 @@ const KitTracker = ({
           </div>
         </div>
 
+        {/* Mobile: Vertical Progress Steps */}
+        <div className="sm:hidden space-y-3">
+          {steps.map((step, index) => {
+            const state = getStepState(step.id);
+            const Icon = step.icon;
+            const isLast = index === steps.length - 1;
+
+            return (
+              <div key={step.id} className="flex items-start gap-3">
+                {/* Step indicator with connecting line */}
+                <div className="flex flex-col items-center">
+                  <div
+                    className={cn(
+                      "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 flex-shrink-0",
+                      state === "completed" && "bg-green-500 border-green-500 text-white",
+                      state === "current" && "bg-gold border-gold text-white animate-pulse",
+                      state === "upcoming" && "bg-background border-border text-muted-foreground"
+                    )}
+                  >
+                    {state === "completed" ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <Icon className="w-4 h-4" />
+                    )}
+                  </div>
+                  {/* Connecting line */}
+                  {!isLast && (
+                    <div
+                      className={cn(
+                        "w-0.5 h-6 mt-1 transition-colors duration-500",
+                        state === "completed" ? "bg-green-500" : "bg-border"
+                      )}
+                    />
+                  )}
+                </div>
+
+                {/* Step content */}
+                <div className="flex-1 min-w-0 pb-2">
+                  <p
+                    className={cn(
+                      "text-sm font-medium transition-colors duration-300",
+                      state === "completed" && "text-green-600 dark:text-green-400",
+                      state === "current" && "text-gold",
+                      state === "upcoming" && "text-muted-foreground"
+                    )}
+                  >
+                    {step.shortLabel}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
         {/* Action Buttons */}
         <div className="mt-6 pt-4 border-t border-border/50">
           {displayStatus === "shipped" && trackingNumber && (
             <Button
               variant="outline"
               size="sm"
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform"
               onClick={() => window.open(getTrackingUrl(trackingNumber), "_blank")}
             >
               <Truck className="w-4 h-4 mr-2" />
@@ -159,7 +229,10 @@ const KitTracker = ({
           )}
 
           {displayStatus === "results_ready" && onBookCall && (
-            <Button onClick={onBookCall} className="w-full sm:w-auto bg-gold hover:bg-gold/90">
+            <Button 
+              onClick={onBookCall} 
+              className="w-full sm:w-auto bg-gold hover:bg-gold/90 min-h-[44px] active:scale-95 transition-transform"
+            >
               <Calendar className="w-4 h-4 mr-2" />
               Book Your Strategy Call
             </Button>

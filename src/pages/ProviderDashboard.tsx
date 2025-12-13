@@ -942,52 +942,64 @@ const ProviderDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-11 mb-8">
-            <TabsTrigger value="triage" className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" />
-              <span className="hidden sm:inline">Action Needed</span> ({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})
-            </TabsTrigger>
-            <TabsTrigger value="highrisk" className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-red-500" />
-              <span className="hidden sm:inline">High-Risk</span> ({pendingPatients.filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review").length})
-            </TabsTrigger>
-            <TabsTrigger value="staff" className="flex items-center gap-2">
-              <CheckSquare className="w-4 h-4" />
-              <span className="hidden sm:inline">Staff Tasks</span>
-            </TabsTrigger>
-            <TabsTrigger value="consultations" className="flex items-center gap-2">
-              <CreditCard className="w-4 h-4" />
-              <span className="hidden sm:inline">Consultations</span>
-            </TabsTrigger>
-            <TabsTrigger value="pharmacy" className="flex items-center gap-2">
-              <Pill className="w-4 h-4" />
-              <span className="hidden sm:inline">Pharmacy</span> ({pendingPharmacy.length})
-            </TabsTrigger>
-            <TabsTrigger value="monitoring" className="flex items-center gap-2">
-              <Activity className="w-4 h-4" />
-              <span className="hidden sm:inline">Monitoring</span> ({recentCheckIns.length})
-            </TabsTrigger>
-            <TabsTrigger value="activations" className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              <span className="hidden sm:inline">Activations</span> ({pendingActivations.length})
-            </TabsTrigger>
-            <TabsTrigger value="messages" className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Messages</span>
-            </TabsTrigger>
-            <TabsTrigger value="resources" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              <span className="hidden sm:inline">Resources</span>
-            </TabsTrigger>
-            <TabsTrigger value="fax" className="flex items-center gap-2">
-              <Send className="w-4 h-4" />
-              <span className="hidden sm:inline">Fax Log</span>
-            </TabsTrigger>
-            <TabsTrigger value="team" className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">Team</span>
-            </TabsTrigger>
-          </TabsList>
+          {/* Mobile-optimized scrollable tabs */}
+          <div className="relative mb-8">
+            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+              <TabsList className="inline-flex w-max gap-1 p-1 lg:grid lg:w-full lg:grid-cols-11">
+                <TabsTrigger value="triage" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Action Needed</span>
+                  <span className="text-xs">({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="highrisk" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <ShieldAlert className="w-4 h-4 text-red-500 flex-shrink-0" />
+                  <span className="hidden lg:inline">High-Risk</span>
+                  <span className="text-xs">({pendingPatients.filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review").length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="staff" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <CheckSquare className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Staff Tasks</span>
+                </TabsTrigger>
+                <TabsTrigger value="consultations" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <CreditCard className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Consultations</span>
+                </TabsTrigger>
+                <TabsTrigger value="pharmacy" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <Pill className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Pharmacy</span>
+                  <span className="text-xs">({pendingPharmacy.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="monitoring" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <Activity className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Monitoring</span>
+                  <span className="text-xs">({recentCheckIns.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="activations" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <Clock className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Activations</span>
+                  <span className="text-xs">({pendingActivations.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="messages" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Messages</span>
+                </TabsTrigger>
+                <TabsTrigger value="resources" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <FileText className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Resources</span>
+                </TabsTrigger>
+                <TabsTrigger value="fax" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <Send className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Fax Log</span>
+                </TabsTrigger>
+                <TabsTrigger value="team" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <Users className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Team</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            {/* Scroll indicator gradient */}
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none lg:hidden" />
+          </div>
 
           {/* High-Risk Patients Tab */}
           <TabsContent value="highrisk">
@@ -1011,19 +1023,19 @@ const ProviderDashboard = () => {
                       .map(({ patient, highestCategory, riskLevel }) => (
                         <div 
                           key={patient.id}
-                          className="flex items-center justify-between p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800 cursor-pointer hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800 cursor-pointer hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
                           onClick={() => {
                             const patientWithLog = pendingPatients.find(p => p.patient.id === patient.id);
                             if (patientWithLog) selectPatient(patientWithLog);
                           }}
                         >
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
+                          <div className="flex items-center gap-4 min-w-0">
+                            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0">
                               <ShieldAlert className="w-5 h-5 text-red-600" />
                             </div>
-                            <div>
-                              <h3 className="font-medium text-foreground">{patient.full_name}</h3>
-                              <p className="text-sm text-muted-foreground">{patient.email}</p>
+                            <div className="min-w-0 flex-1">
+                              <h3 className="font-medium text-foreground truncate">{patient.full_name}</h3>
+                              <p className="text-sm text-muted-foreground truncate">{patient.email}</p>
                               {patient.safety_flags && Array.isArray(patient.safety_flags) && patient.safety_flags.length > 0 && (
                                 <div className="flex flex-wrap gap-1 mt-1">
                                   {patient.safety_flags.map((flag: string, i: number) => (
@@ -1035,12 +1047,12 @@ const ProviderDashboard = () => {
                               )}
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 sm:flex-shrink-0">
                             {getRiskBadge(riskLevel)}
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-red-300 text-red-600 hover:bg-red-100"
+                              className="border-red-300 text-red-600 hover:bg-red-100 min-h-[44px] min-w-[44px]"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const patientWithLog = pendingPatients.find(p => p.patient.id === patient.id);
@@ -1052,7 +1064,7 @@ const ProviderDashboard = () => {
                             <Button
                               size="sm"
                               variant="default"
-                              className="bg-green-600 hover:bg-green-700"
+                              className="bg-green-600 hover:bg-green-700 min-h-[44px]"
                               disabled={isClearingHighRisk === patient.id}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -1064,7 +1076,7 @@ const ProviderDashboard = () => {
                               ) : (
                                 <Check className="w-4 h-4 mr-1" />
                               )}
-                              Clear Flag
+                              Clear
                             </Button>
                           </div>
                         </div>
@@ -1240,76 +1252,135 @@ const ProviderDashboard = () => {
                     <p className="text-muted-foreground">All pharmacy orders complete! No pending actions.</p>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-border/50">
-                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
-                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Contact</th>
-                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Lab Path</th>
-                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Paid On</th>
-                          <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {pendingPharmacy.map((patient) => {
-                          const paidDate = patient.updated_at ? new Date(patient.updated_at).toLocaleDateString() : "Unknown";
-                          
-                          return (
-                            <tr key={patient.id} className="border-b border-border/30 bg-amber-50/50 dark:bg-amber-950/10">
-                              <td className="py-4 px-4">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                                    <Pill className="w-5 h-5 text-amber-600" />
+                  <>
+                    {/* Desktop: Table view */}
+                    <div className="hidden lg:block overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-border/50">
+                            <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
+                            <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Contact</th>
+                            <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Lab Path</th>
+                            <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Paid On</th>
+                            <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {pendingPharmacy.map((patient) => {
+                            const paidDate = patient.updated_at ? new Date(patient.updated_at).toLocaleDateString() : "Unknown";
+                            
+                            return (
+                              <tr key={patient.id} className="border-b border-border/30 bg-amber-50/50 dark:bg-amber-950/10">
+                                <td className="py-4 px-4">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                                      <Pill className="w-5 h-5 text-amber-600" />
+                                    </div>
+                                    <p className="font-medium text-foreground">{patient.full_name}</p>
                                   </div>
-                                  <p className="font-medium text-foreground">{patient.full_name}</p>
-                                </div>
-                              </td>
-                              <td className="py-4 px-4">
-                                <div className="space-y-1">
-                                  {patient.email && (
-                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                      <Mail className="w-3 h-3" />
-                                      {patient.email}
-                                    </p>
-                                  )}
-                                  {patient.phone && (
-                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                      <Phone className="w-3 h-3" />
-                                      {patient.phone}
-                                    </p>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="py-4 px-4">
-                                <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"}>
-                                  {patient.lab_path === "labcorp" ? "LabCorp Required" : "ZRT Kit"}
-                                </Badge>
-                              </td>
-                              <td className="py-4 px-4">
-                                <span className="text-sm text-muted-foreground">{paidDate}</span>
-                              </td>
-                              <td className="py-4 px-4 text-right">
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleCompletePharmacyOrder(patient.id)}
-                                  disabled={completingPharmacyId === patient.id}
-                                  className="bg-green-600 hover:bg-green-700 text-white"
-                                >
-                                  {completingPharmacyId === patient.id ? (
-                                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                                  ) : (
-                                    <Check className="w-3 h-3 mr-1" />
-                                  )}
-                                  {completingPharmacyId === patient.id ? "Completing..." : "Order Placed"}
-                                </Button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                                </td>
+                                <td className="py-4 px-4">
+                                  <div className="space-y-1">
+                                    {patient.email && (
+                                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                        <Mail className="w-3 h-3 flex-shrink-0" />
+                                        <span className="truncate">{patient.email}</span>
+                                      </p>
+                                    )}
+                                    {patient.phone && (
+                                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                        <Phone className="w-3 h-3 flex-shrink-0" />
+                                        {patient.phone}
+                                      </p>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="py-4 px-4">
+                                  <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"}>
+                                    {patient.lab_path === "labcorp" ? "LabCorp Required" : "ZRT Kit"}
+                                  </Badge>
+                                </td>
+                                <td className="py-4 px-4">
+                                  <span className="text-sm text-muted-foreground">{paidDate}</span>
+                                </td>
+                                <td className="py-4 px-4 text-right">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleCompletePharmacyOrder(patient.id)}
+                                    disabled={completingPharmacyId === patient.id}
+                                    className="bg-green-600 hover:bg-green-700 text-white min-h-[44px]"
+                                  >
+                                    {completingPharmacyId === patient.id ? (
+                                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                    ) : (
+                                      <Check className="w-3 h-3 mr-1" />
+                                    )}
+                                    {completingPharmacyId === patient.id ? "Completing..." : "Order Placed"}
+                                  </Button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile: Card view */}
+                    <div className="lg:hidden space-y-3">
+                      {pendingPharmacy.map((patient) => {
+                        const paidDate = patient.updated_at ? new Date(patient.updated_at).toLocaleDateString() : "Unknown";
+                        
+                        return (
+                          <div 
+                            key={patient.id} 
+                            className="p-4 bg-amber-50/50 dark:bg-amber-950/10 rounded-lg border border-amber-200 dark:border-amber-800/30 space-y-3"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                                <Pill className="w-5 h-5 text-amber-600" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="font-medium text-foreground truncate">{patient.full_name}</p>
+                                <p className="text-xs text-muted-foreground">Paid: {paidDate}</p>
+                              </div>
+                              <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"} className="flex-shrink-0">
+                                {patient.lab_path === "labcorp" ? "LabCorp" : "ZRT"}
+                              </Badge>
+                            </div>
+                            
+                            <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                              {patient.email && (
+                                <p className="flex items-center gap-1">
+                                  <Mail className="w-3 h-3 flex-shrink-0" />
+                                  <span className="truncate">{patient.email}</span>
+                                </p>
+                              )}
+                              {patient.phone && (
+                                <p className="flex items-center gap-1">
+                                  <Phone className="w-3 h-3 flex-shrink-0" />
+                                  {patient.phone}
+                                </p>
+                              )}
+                            </div>
+
+                            <Button
+                              size="sm"
+                              onClick={() => handleCompletePharmacyOrder(patient.id)}
+                              disabled={completingPharmacyId === patient.id}
+                              className="w-full bg-green-600 hover:bg-green-700 text-white min-h-[44px] active:scale-95 transition-transform"
+                            >
+                              {completingPharmacyId === patient.id ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              ) : (
+                                <Check className="w-4 h-4 mr-2" />
+                              )}
+                              {completingPharmacyId === patient.id ? "Completing..." : "Mark Order Placed"}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
