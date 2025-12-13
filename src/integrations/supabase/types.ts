@@ -261,6 +261,68 @@ export type Database = {
         }
         Relationships: []
       }
+      elevated_architecture_payments: {
+        Row: {
+          amount_paid: number | null
+          created_at: string
+          customer_email: string
+          customer_name: string | null
+          id: string
+          kit_status: string
+          patient_id: string | null
+          payment_status: string
+          results_ready_at: string | null
+          sample_received_at: string | null
+          shipped_at: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          tracking_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_paid?: number | null
+          created_at?: string
+          customer_email: string
+          customer_name?: string | null
+          id?: string
+          kit_status?: string
+          patient_id?: string | null
+          payment_status?: string
+          results_ready_at?: string | null
+          sample_received_at?: string | null
+          shipped_at?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_paid?: number | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string | null
+          id?: string
+          kit_status?: string
+          patient_id?: string | null
+          payment_status?: string
+          results_ready_at?: string | null
+          sample_received_at?: string | null
+          shipped_at?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "elevated_architecture_payments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hormone_mapping_payments: {
         Row: {
           amount_paid: number | null
@@ -504,9 +566,12 @@ export type Database = {
         Row: {
           a1c: number | null
           alt: number | null
+          arsenic: number | null
           ast: number | null
+          cadmium: number | null
           clinical_story: string | null
           collection_date: string
+          copper: number | null
           correlation_alert: string | null
           cortisol_evening: number | null
           cortisol_morning: number | null
@@ -526,14 +591,19 @@ export type Database = {
           hdl: number | null
           hematocrit: number | null
           id: string
+          iodine: number | null
           kit_type: string | null
           lab_source: string | null
           ldl: number | null
+          lead_level: number | null
+          magnesium: number | null
+          mercury: number | null
           norepinephrine: number | null
           notes: string | null
           patient_id: string
           progesterone_pg: number | null
           psa: number | null
+          selenium: number | null
           serotonin: number | null
           testosterone_t: number | null
           tpo_antibodies: number | null
@@ -541,13 +611,17 @@ export type Database = {
           triglycerides: number | null
           tsh: number | null
           vitamin_d: number | null
+          zinc: number | null
         }
         Insert: {
           a1c?: number | null
           alt?: number | null
+          arsenic?: number | null
           ast?: number | null
+          cadmium?: number | null
           clinical_story?: string | null
           collection_date: string
+          copper?: number | null
           correlation_alert?: string | null
           cortisol_evening?: number | null
           cortisol_morning?: number | null
@@ -567,14 +641,19 @@ export type Database = {
           hdl?: number | null
           hematocrit?: number | null
           id?: string
+          iodine?: number | null
           kit_type?: string | null
           lab_source?: string | null
           ldl?: number | null
+          lead_level?: number | null
+          magnesium?: number | null
+          mercury?: number | null
           norepinephrine?: number | null
           notes?: string | null
           patient_id: string
           progesterone_pg?: number | null
           psa?: number | null
+          selenium?: number | null
           serotonin?: number | null
           testosterone_t?: number | null
           tpo_antibodies?: number | null
@@ -582,13 +661,17 @@ export type Database = {
           triglycerides?: number | null
           tsh?: number | null
           vitamin_d?: number | null
+          zinc?: number | null
         }
         Update: {
           a1c?: number | null
           alt?: number | null
+          arsenic?: number | null
           ast?: number | null
+          cadmium?: number | null
           clinical_story?: string | null
           collection_date?: string
+          copper?: number | null
           correlation_alert?: string | null
           cortisol_evening?: number | null
           cortisol_morning?: number | null
@@ -608,14 +691,19 @@ export type Database = {
           hdl?: number | null
           hematocrit?: number | null
           id?: string
+          iodine?: number | null
           kit_type?: string | null
           lab_source?: string | null
           ldl?: number | null
+          lead_level?: number | null
+          magnesium?: number | null
+          mercury?: number | null
           norepinephrine?: number | null
           notes?: string | null
           patient_id?: string
           progesterone_pg?: number | null
           psa?: number | null
+          selenium?: number | null
           serotonin?: number | null
           testosterone_t?: number | null
           tpo_antibodies?: number | null
@@ -623,6 +711,7 @@ export type Database = {
           triglycerides?: number | null
           tsh?: number | null
           vitamin_d?: number | null
+          zinc?: number | null
         }
         Relationships: [
           {
@@ -1135,6 +1224,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "symptom_logs_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      toxicity_payments: {
+        Row: {
+          amount_paid: number | null
+          created_at: string
+          customer_email: string
+          customer_name: string | null
+          id: string
+          kit_status: string
+          patient_id: string | null
+          payment_status: string
+          results_ready_at: string | null
+          sample_received_at: string | null
+          shipped_at: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          tracking_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_paid?: number | null
+          created_at?: string
+          customer_email: string
+          customer_name?: string | null
+          id?: string
+          kit_status?: string
+          patient_id?: string | null
+          payment_status?: string
+          results_ready_at?: string | null
+          sample_received_at?: string | null
+          shipped_at?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_paid?: number | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string | null
+          id?: string
+          kit_status?: string
+          patient_id?: string | null
+          payment_status?: string
+          results_ready_at?: string | null
+          sample_received_at?: string | null
+          shipped_at?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "toxicity_payments_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"

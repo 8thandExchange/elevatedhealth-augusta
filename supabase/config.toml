@@ -131,3 +131,15 @@ verify_jwt = false
 
 [functions.verify-metabolic-payment]
 verify_jwt = false
+
+[functions.create-toxicity-checkout]
+verify_jwt = false
+
+[functions.verify-toxicity-payment]
+verify_jwt = false
+
+[functions.create-total-body-checkout]
+verify_jwt = false
+
+[functions.verify-total-body-payment]
+verify_jwt = false
