@@ -17,7 +17,9 @@ import {
   Dumbbell,
   Target,
   CreditCard,
-  Loader2
+  Loader2,
+  Droplet,
+  Syringe
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -393,6 +395,106 @@ const HormonesMen = () => {
                       </Card>
                     );
                   })}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Delivery Methods Section */}
+          <section className="py-16 md:py-24 bg-background">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-serif">
+                    Delivery Methods: Science, Not Guesswork
+                  </h2>
+                  <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                    At Elevated Health, we don't believe in a "one size fits all" approach to 
+                    Testosterone Replacement Therapy. We offer the two most effective delivery 
+                    methods available, customized to your lifestyle and biology.
+                  </p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Card 1: Liposomal Transdermal Cream */}
+                  <Card className="border-gold/30 hover:shadow-xl transition-all">
+                    <CardContent className="p-8">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
+                          <Droplet className="h-6 w-6 text-gold" />
+                        </div>
+                        <span className="text-xs font-semibold bg-gold/10 text-gold px-3 py-1 rounded-full">
+                          THE GOLD STANDARD
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold mb-3">
+                        Liposomal Transdermal Cream
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm font-semibold text-primary mb-1">Best For:</p>
+                          <p className="text-sm text-muted-foreground">
+                            Men seeking stable energy, mood consistency, and those wanting 
+                            to mimic the body's natural daily rhythm.
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-primary mb-1">How it Works:</p>
+                          <p className="text-sm text-muted-foreground">
+                            A high-potency, pharmaceutical-grade cream applied daily. Our 
+                            proprietary liposomal base ensures deep absorption without the 
+                            sticky residue of standard gels.
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-primary mb-1">The Benefit:</p>
+                          <p className="text-sm text-muted-foreground">
+                            Avoids the "peaks and valleys" of injections, leading to better 
+                            estrogen control and fewer side effects.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Card 2: Intramuscular Injections */}
+                  <Card className="border-primary/30 hover:shadow-xl transition-all">
+                    <CardContent className="p-8">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Syringe className="h-6 w-6 text-primary" />
+                        </div>
+                        <span className="text-xs font-semibold bg-primary/10 text-primary px-3 py-1 rounded-full">
+                          GUARANTEED ABSORPTION
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold mb-3">
+                        Intramuscular Injections
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm font-semibold text-primary mb-1">Best For:</p>
+                          <p className="text-sm text-muted-foreground">
+                            Men who prefer weekly dosing over daily application, or those 
+                            with young children where contact transfer is a concern.
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-primary mb-1">How it Works:</p>
+                          <p className="text-sm text-muted-foreground">
+                            A weekly self-administered injection that guarantees 100% absorption.
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-primary mb-1">The Benefit:</p>
+                          <p className="text-sm text-muted-foreground">
+                            Total certainty of dosage and zero risk of transferring 
+                            medication to loved ones.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
             </div>
