@@ -34,6 +34,8 @@ import {
   Activity,
   Lock,
   ShieldAlert,
+  Scissors,
+  HeartPulse,
 } from "lucide-react";
 
 const serviceCategories = [
@@ -43,6 +45,8 @@ const serviceCategories = [
   { id: "hormones", label: "Hormones", icon: Heart },
   { id: "peptides", label: "Peptides", icon: Syringe },
   { id: "iv", label: "IV Hydration", icon: Droplets },
+  { id: "hair", label: "Hair Restoration", icon: Scissors },
+  { id: "sexual", label: "Sexual Wellness", icon: HeartPulse },
 ];
 
 const serviceBookingUrls: Record<string, string> = {
@@ -51,6 +55,8 @@ const serviceBookingUrls: Record<string, string> = {
   hormones: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true",
   peptides: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true",
   iv: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true",
+  hair: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true",
+  sexual: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true",
   default: SITE_CONFIG.bookingUrl,
 };
 
@@ -1130,6 +1136,310 @@ const Pricing = () => {
                 </p>
                 <Button variant="outline" onClick={() => navigate("/iv-lounge")}>
                   View Full IV Menu <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Hair Restoration Section */}
+        {shouldShow("hair") && (
+          <section className="py-12 lg:py-16 bg-secondary/30">
+            <div className="container mx-auto px-4">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
+                  <Scissors className="w-6 h-6 text-gold" />
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
+                    Hair Restoration
+                  </h2>
+                  <p className="text-muted-foreground font-lato text-sm">
+                    Clinically proven treatments for hair loss & thinning
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Minoxidil + Finasteride */}
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                  <CardHeader className="pb-4">
+                    <Badge variant="outline" className="w-fit text-gold border-gold/30">
+                      Most Popular
+                    </Badge>
+                    <h3 className="text-xl font-cormorant text-foreground">Minoxidil + Finasteride</h3>
+                    <p className="text-sm text-muted-foreground font-lato">
+                      Topical combination therapy for hair regrowth
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <div className="mb-2">
+                      <span className="text-3xl font-cormorant text-foreground">$129</span>
+                      <span className="text-muted-foreground font-lato">/month</span>
+                    </div>
+                    <p className="text-xs text-gold font-lato mb-4">
+                      or 4 payments of $32 with Klarna
+                    </p>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        FDA-approved ingredients
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Blocks DHT & stimulates growth
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Easy topical application
+                      </li>
+                    </ul>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("hair")}>
+                      Book Consultation
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Dutasteride */}
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                  <CardHeader className="pb-4">
+                    <Badge variant="outline" className="w-fit text-muted-foreground">
+                      Advanced Option
+                    </Badge>
+                    <h3 className="text-xl font-cormorant text-foreground">Dutasteride</h3>
+                    <p className="text-sm text-muted-foreground font-lato">
+                      Stronger DHT blocker for stubborn hair loss
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <div className="mb-2">
+                      <span className="text-3xl font-cormorant text-foreground">$149</span>
+                      <span className="text-muted-foreground font-lato">/month</span>
+                    </div>
+                    <p className="text-xs text-gold font-lato mb-4">
+                      or 4 payments of $37 with Klarna
+                    </p>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        More potent than Finasteride
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        For advanced hair loss
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Once daily oral medication
+                      </li>
+                    </ul>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("hair")}>
+                      Book Consultation
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* GHK-Cu Scalp Therapy */}
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                  <CardHeader className="pb-4">
+                    <Badge variant="outline" className="w-fit text-purple-600 border-purple-500/30">
+                      Peptide Therapy
+                    </Badge>
+                    <h3 className="text-xl font-cormorant text-foreground">GHK-Cu Scalp Therapy</h3>
+                    <p className="text-sm text-muted-foreground font-lato">
+                      Copper peptide for scalp rejuvenation
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <div className="mb-2">
+                      <span className="text-3xl font-cormorant text-foreground">$149</span>
+                      <span className="text-muted-foreground font-lato">/month</span>
+                    </div>
+                    <p className="text-xs text-gold font-lato mb-4">
+                      or 4 payments of $37 with Klarna
+                    </p>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Promotes hair follicle health
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Improves scalp circulation
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Works with other treatments
+                      </li>
+                    </ul>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("hair")}>
+                      Book Consultation
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="mt-8 text-center">
+                <Button onClick={() => navigate("/hair-restoration")}>
+                  View Hair Restoration Details <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Sexual Wellness Section */}
+        {shouldShow("sexual") && (
+          <section className="py-12 lg:py-16 bg-background">
+            <div className="container mx-auto px-4">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-12 h-12 rounded-full bg-pink-500/10 flex items-center justify-center">
+                  <HeartPulse className="w-6 h-6 text-pink-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
+                    Sexual Wellness
+                  </h2>
+                  <p className="text-muted-foreground font-lato text-sm">
+                    Restore intimacy, desire & confidence
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Tadalafil */}
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                  <CardHeader className="pb-4">
+                    <Badge variant="outline" className="w-fit text-blue-600 border-blue-500/30">
+                      Men's Health
+                    </Badge>
+                    <h3 className="text-xl font-cormorant text-foreground">Tadalafil</h3>
+                    <p className="text-sm text-muted-foreground font-lato">
+                      Generic Cialis for ED treatment
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <div className="mb-2">
+                      <span className="text-3xl font-cormorant text-foreground">$99</span>
+                      <span className="text-muted-foreground font-lato">/month</span>
+                    </div>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Daily or as-needed dosing
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        36-hour effectiveness
+                      </li>
+                    </ul>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                      Book Consultation
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Sildenafil */}
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                  <CardHeader className="pb-4">
+                    <Badge variant="outline" className="w-fit text-blue-600 border-blue-500/30">
+                      Men's Health
+                    </Badge>
+                    <h3 className="text-xl font-cormorant text-foreground">Sildenafil</h3>
+                    <p className="text-sm text-muted-foreground font-lato">
+                      Generic Viagra for ED treatment
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <div className="mb-2">
+                      <span className="text-3xl font-cormorant text-foreground">$79</span>
+                      <span className="text-muted-foreground font-lato">/month</span>
+                    </div>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Fast-acting formula
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        4-6 hour effectiveness
+                      </li>
+                    </ul>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                      Book Consultation
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* PT-141 */}
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                  <CardHeader className="pb-4">
+                    <Badge variant="outline" className="w-fit text-pink-600 border-pink-500/30">
+                      For All
+                    </Badge>
+                    <h3 className="text-xl font-cormorant text-foreground">PT-141</h3>
+                    <p className="text-sm text-muted-foreground font-lato">
+                      Peptide for desire & arousal
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <div className="mb-2">
+                      <span className="text-3xl font-cormorant text-foreground">$225</span>
+                      <span className="text-muted-foreground font-lato">/kit</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2">10-dose kit</p>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Works on brain chemistry
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        For men and women
+                      </li>
+                    </ul>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                      Book Consultation
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Oxytocin */}
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                  <CardHeader className="pb-4">
+                    <Badge variant="outline" className="w-fit text-pink-600 border-pink-500/30">
+                      For All
+                    </Badge>
+                    <h3 className="text-xl font-cormorant text-foreground">Oxytocin Nasal Spray</h3>
+                    <p className="text-sm text-muted-foreground font-lato">
+                      Bonding & connection enhancement
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-col flex-grow">
+                    <div className="mb-2">
+                      <span className="text-3xl font-cormorant text-foreground">$89</span>
+                      <span className="text-muted-foreground font-lato">/month</span>
+                    </div>
+                    <ul className="space-y-2 mb-6 flex-grow">
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Enhances emotional bonding
+                      </li>
+                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
+                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                        Easy nasal administration
+                      </li>
+                    </ul>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                      Book Consultation
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="mt-8 text-center">
+                <Button onClick={() => navigate("/sexual-wellness")}>
+                  View Sexual Wellness Details <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </div>
