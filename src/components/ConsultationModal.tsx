@@ -142,7 +142,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl bg-white border border-gold/50 rounded-2xl shadow-2xl">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-gold/50 rounded-2xl shadow-2xl">
         <DialogHeader className="pb-2">
           <DialogTitle className="text-3xl font-cormorant font-medium text-center text-[#2C3E50] tracking-wide">
             Book Your Consultation
@@ -152,7 +152,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
           {consultationOptions.map((option, index) => {
             const Icon = option.icon;
             const isLoading = loadingService === option.serviceType;

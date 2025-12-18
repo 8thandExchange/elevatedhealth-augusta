@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ConsultationModal from "@/components/ConsultationModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,7 @@ import {
   ArrowRight,
   BadgeCheck,
   Calendar,
+  ChevronUp,
 } from "lucide-react";
 
 const serviceCategories = [
@@ -39,12 +41,48 @@ const serviceCategories = [
   { id: "iv", label: "IV Hydration", icon: Droplets },
 ];
 
+const serviceBookingUrls: Record<string, string> = {
+  mental: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true",
+  weight: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true",
+  hormones: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true",
+  peptides: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true",
+  iv: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true",
+  default: SITE_CONFIG.bookingUrl,
+};
+
 const Pricing = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleBookCall = () => {
-    window.open(SITE_CONFIG.bookingUrl, "_blank");
+  // Update URL when category changes
+  useEffect(() => {
+    if (activeCategory === "all") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", activeCategory);
+    }
+    setSearchParams(searchParams, { replace: true });
+  }, [activeCategory, searchParams, setSearchParams]);
+
+  // Show/hide back to top button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 500);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleBookCall = (service?: string) => {
+    const url = service ? serviceBookingUrls[service] || serviceBookingUrls.default : serviceBookingUrls.default;
+    window.open(url, "_blank");
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const shouldShow = (category: string) => {
@@ -224,12 +262,13 @@ const Pricing = () => {
         </script>
       </Helmet>
 
-      <Navbar />
+      <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
+      <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
 
       <main id="main-content" className="min-h-screen bg-background">
 
-        {/* Hero Section */}
-        <section className="relative py-20 lg:py-28 bg-gradient-to-b from-secondary to-background">
+        {/* Hero Section - Reduced padding */}
+        <section className="relative py-16 lg:py-20 bg-gradient-to-b from-secondary to-background">
           <div className="container mx-auto px-4 text-center">
             <Badge variant="outline" className="mb-6 px-4 py-1.5 border-gold/30 text-gold font-lato">
               Transparent Pricing
@@ -243,7 +282,7 @@ const Pricing = () => {
             </p>
 
             {/* Trust Badges */}
-            <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-12">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-10">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Shield className="w-5 h-5 text-gold" />
                 <span>Insurance Options</span>
@@ -281,9 +320,9 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* Mental Wellness / Ketamine Section */}
+        {/* Mental Wellness / Ketamine Section - Reduced padding */}
         {shouldShow("mental") && (
-          <section className="py-16 lg:py-20 bg-background">
+          <section className="py-12 lg:py-16 bg-background">
             <div className="container mx-auto px-4">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-12 h-12 rounded-full bg-hope/10 flex items-center justify-center">
@@ -301,7 +340,7 @@ const Pricing = () => {
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Single Session */}
-                <Card className="border border-border hover:border-gold/30 transition-all duration-300 hover:shadow-lg">
+                <Card className="border border-border hover:border-gold/30 transition-all duration-300 hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit mb-2 text-muted-foreground">
                       Try First
@@ -311,7 +350,7 @@ const Pricing = () => {
                       Single infusion with provider monitoring
                     </p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
                       <span className="text-4xl font-cormorant text-foreground">$400</span>
                       <span className="text-muted-foreground font-lato">/session</span>
@@ -319,7 +358,7 @@ const Pricing = () => {
                     <p className="text-xs text-gold font-lato mb-4">
                       or 4 payments of $100 with Klarna
                     </p>
-                    <ul className="space-y-2 mb-6">
+                    <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                         60-90 minute monitored infusion
@@ -333,14 +372,14 @@ const Pricing = () => {
                         Board-certified provider supervision
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full" onClick={handleBookCall}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("mental")}>
                       Book Session
                     </Button>
                   </CardContent>
                 </Card>
 
                 {/* 6-Session Series */}
-                <Card className="border-2 border-gold/50 relative hover:shadow-lg transition-all duration-300">
+                <Card className="border-2 border-gold/50 relative hover:shadow-lg transition-all duration-300 flex flex-col">
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className="bg-gold text-gold-foreground">
                       <Star className="w-3 h-3 mr-1" /> Best Value
@@ -355,7 +394,7 @@ const Pricing = () => {
                       Complete induction protocol
                     </p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
                       <span className="text-4xl font-cormorant text-foreground">$2,200</span>
                       <span className="text-muted-foreground font-lato ml-2 line-through text-sm">$2,400</span>
@@ -363,7 +402,7 @@ const Pricing = () => {
                     <p className="text-xs text-gold font-lato mb-4">
                       or ~$183/mo for 12 months with Affirm
                     </p>
-                    <ul className="space-y-2 mb-6">
+                    <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                         6 infusions over 2-3 weeks
@@ -381,14 +420,14 @@ const Pricing = () => {
                         Maintenance session discount
                       </li>
                     </ul>
-                    <Button className="w-full bg-gold hover:bg-gold-dark text-gold-foreground" onClick={handleBookCall}>
+                    <Button className="w-full bg-gold hover:bg-gold-dark text-gold-foreground mt-auto" onClick={() => handleBookCall("mental")}>
                       Start Treatment
                     </Button>
                   </CardContent>
                 </Card>
 
                 {/* SPRAVATO */}
-                <Card className="border border-border hover:border-gold/30 transition-all duration-300 hover:shadow-lg">
+                <Card className="border border-border hover:border-gold/30 transition-all duration-300 hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit mb-2 text-hope border-hope/30">
                       Insurance Covered
@@ -398,12 +437,12 @@ const Pricing = () => {
                       FDA-approved nasal spray treatment
                     </p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col flex-grow">
                     <div className="mb-4">
                       <span className="text-2xl font-cormorant text-foreground">Often $0-50</span>
                       <span className="text-muted-foreground font-lato text-sm block">with insurance coverage</span>
                     </div>
-                    <ul className="space-y-2 mb-6">
+                    <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                         BCBS, TRICARE & most major plans
@@ -417,7 +456,7 @@ const Pricing = () => {
                         REMS-certified administration
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full" onClick={handleBookCall}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("mental")}>
                       Check Coverage
                     </Button>
                   </CardContent>
@@ -443,9 +482,9 @@ const Pricing = () => {
           </section>
         )}
 
-        {/* Weight Loss Section */}
+        {/* Weight Loss Section - Reduced padding */}
         {shouldShow("weight") && (
-          <section className="py-16 lg:py-20 bg-secondary/30">
+          <section className="py-12 lg:py-16 bg-secondary/30">
             <div className="container mx-auto px-4">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
@@ -470,7 +509,7 @@ const Pricing = () => {
                     <span className="w-8 h-[1px] bg-border"></span>
                   </h3>
                   <div className="space-y-4">
-                    <Card className="border border-border hover:border-gold/30 transition-all">
+                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
                       <CardContent className="p-5 flex justify-between items-center">
                         <div>
                           <h4 className="font-cormorant text-lg text-foreground">Discovery Consultation</h4>
@@ -485,7 +524,7 @@ const Pricing = () => {
                       </CardContent>
                     </Card>
 
-                    <Card className="border border-border hover:border-gold/30 transition-all">
+                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
                       <CardContent className="p-5 flex justify-between items-center">
                         <div>
                           <h4 className="font-cormorant text-lg text-foreground">Metabolic Mapping</h4>
@@ -500,7 +539,7 @@ const Pricing = () => {
                       </CardContent>
                     </Card>
 
-                    <Card className="border border-border hover:border-gold/30 transition-all">
+                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
                       <CardContent className="p-5 flex justify-between items-center">
                         <div>
                           <h4 className="font-cormorant text-lg text-foreground">GLP-1 Starter Month</h4>
@@ -515,7 +554,7 @@ const Pricing = () => {
                       </CardContent>
                     </Card>
 
-                    <Card className="border border-border hover:border-gold/30 transition-all">
+                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
                       <CardContent className="p-5 flex justify-between items-center">
                         <div>
                           <h4 className="font-cormorant text-lg text-foreground">GLP-1 Continuation Month</h4>
@@ -533,14 +572,14 @@ const Pricing = () => {
                 </div>
 
                 {/* Membership */}
-                <div>
+                <div className="flex flex-col">
                   <h3 className="text-lg font-cormorant text-foreground mb-4 flex items-center gap-2">
                     <span className="w-8 h-[1px] bg-gold/50"></span>
                     <Star className="w-4 h-4 text-gold" />
                     Best Value
                     <span className="w-8 h-[1px] bg-gold/50"></span>
                   </h3>
-                  <Card className="border-2 border-gold/50 relative h-full">
+                  <Card className="border-2 border-gold/50 relative flex-grow flex flex-col">
                     <div className="absolute -top-3 right-4">
                       <Badge className="bg-gold text-gold-foreground">Most Popular</Badge>
                     </div>
@@ -550,7 +589,7 @@ const Pricing = () => {
                         Complete concierge weight loss with ongoing support
                       </p>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex flex-col flex-grow">
                       <div className="mb-4">
                         <span className="text-4xl font-cormorant text-foreground">$399</span>
                         <span className="text-muted-foreground font-lato">/month</span>
@@ -558,7 +597,7 @@ const Pricing = () => {
                           or 4 payments of $100 with Klarna • Save over $150/month vs à la carte
                         </p>
                       </div>
-                      <ul className="space-y-3 mb-8">
+                      <ul className="space-y-3 mb-8 flex-grow">
                         <li className="flex items-start gap-2 text-sm font-lato text-foreground">
                           <Check className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
                           <span><strong>GLP-1 medication</strong> (Semaglutide or Tirzepatide)</span>
@@ -581,9 +620,9 @@ const Pricing = () => {
                         </li>
                       </ul>
                       <Button 
-                        className="w-full bg-gold hover:bg-gold-dark text-gold-foreground" 
+                        className="w-full bg-gold hover:bg-gold-dark text-gold-foreground mt-auto" 
                         size="lg"
-                        onClick={handleBookCall}
+                        onClick={() => handleBookCall("weight")}
                       >
                         Start Your Transformation <ArrowRight className="w-4 h-4 ml-2" />
                       </Button>
@@ -615,9 +654,9 @@ const Pricing = () => {
           </section>
         )}
 
-        {/* Hormone Optimization Section */}
+        {/* Hormone Optimization Section - Reduced padding */}
         {shouldShow("hormones") && (
-          <section className="py-16 lg:py-20 bg-background">
+          <section className="py-12 lg:py-16 bg-background">
             <div className="container mx-auto px-4">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-12 h-12 rounded-full bg-feminine/10 flex items-center justify-center">
@@ -642,7 +681,7 @@ const Pricing = () => {
                     <span className="w-8 h-[1px] bg-border"></span>
                   </h3>
                   <div className="space-y-4">
-                    <Card className="border border-border hover:border-gold/30 transition-all">
+                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("hormones")}>
                       <CardContent className="p-5 flex justify-between items-center">
                         <div>
                           <h4 className="font-cormorant text-lg text-foreground">Hormone Consultation</h4>
@@ -657,7 +696,7 @@ const Pricing = () => {
                       </CardContent>
                     </Card>
 
-                    <Card className="border-2 border-gold/30 relative hover:border-gold/50 transition-all">
+                    <Card className="border-2 border-gold/30 relative hover:border-gold/50 transition-all cursor-pointer" onClick={() => handleBookCall("hormones")}>
                       <div className="absolute -top-2 right-3">
                         <Badge variant="outline" className="text-xs border-gold/50 text-gold">Most Popular</Badge>
                       </div>
@@ -710,18 +749,18 @@ const Pricing = () => {
                         <ul className="space-y-2 mb-4">
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                            Clinical management & provider access
+                            Quarterly ZRT hormone testing
                           </li>
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                            Quarterly hormone testing
+                            $50/month medication credit
                           </li>
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                            $50/month credit toward prescriptions
+                            Unlimited provider messaging
                           </li>
                         </ul>
-                        <Button variant="outline" className="w-full" onClick={handleBookCall}>
+                        <Button variant="outline" className="w-full" onClick={() => handleBookCall("hormones")}>
                           Learn More
                         </Button>
                       </CardContent>
@@ -748,9 +787,9 @@ const Pricing = () => {
                           or 4 payments of $100 with Klarna
                         </p>
                         <ul className="space-y-2 mb-4">
-                          <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                            <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                            Everything in Vitality, plus:
+                          <li className="flex items-start gap-2 text-sm font-lato text-foreground">
+                            <Check className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
+                            <strong>Everything in Vitality, plus:</strong>
                           </li>
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
@@ -758,32 +797,65 @@ const Pricing = () => {
                           </li>
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                            Unlimited provider messaging
+                            Adrenal support protocols
                           </li>
                           <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                             <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                            Adrenal support protocols
+                            Priority scheduling
                           </li>
                         </ul>
-                        <Button className="w-full bg-gold hover:bg-gold-dark text-gold-foreground" onClick={handleBookCall}>
-                          Get Started
+                        <Button className="w-full bg-gold hover:bg-gold-dark text-gold-foreground" onClick={() => handleBookCall("hormones")}>
+                          Get Started <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                       </CardContent>
                     </Card>
                   </div>
                 </div>
               </div>
+
+              {/* Gender-Specific Pages */}
+              <div className="mt-8 grid md:grid-cols-2 gap-4">
+                <Card className="border border-feminine/30 bg-feminine/5 hover:border-feminine/50 transition-all cursor-pointer" onClick={() => navigate("/hormones/women")}>
+                  <CardContent className="p-5 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-feminine/10 flex items-center justify-center">
+                      <Heart className="w-6 h-6 text-feminine" />
+                    </div>
+                    <div className="flex-grow">
+                      <h4 className="font-cormorant text-lg text-foreground">Elevated+ for Her</h4>
+                      <p className="text-sm text-muted-foreground font-lato">
+                        Menopause, perimenopause & women's hormone health
+                      </p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-feminine" />
+                  </CardContent>
+                </Card>
+
+                <Card className="border border-masculine/30 bg-masculine/5 hover:border-masculine/50 transition-all cursor-pointer" onClick={() => navigate("/hormones/men")}>
+                  <CardContent className="p-5 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-masculine/10 flex items-center justify-center">
+                      <Shield className="w-6 h-6 text-masculine" />
+                    </div>
+                    <div className="flex-grow">
+                      <h4 className="font-cormorant text-lg text-foreground">Elevated+ for Him</h4>
+                      <p className="text-sm text-muted-foreground font-lato">
+                        Testosterone therapy, energy & performance
+                      </p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-masculine" />
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </section>
         )}
 
-        {/* Peptides Section */}
+        {/* Peptides Section - Reduced padding */}
         {shouldShow("peptides") && (
-          <section className="py-16 lg:py-20 bg-secondary/30">
+          <section className="py-12 lg:py-16 bg-secondary/30">
             <div className="container mx-auto px-4">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                  <Syringe className="w-6 h-6 text-accent" />
+                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
+                  <Syringe className="w-6 h-6 text-gold" />
                 </div>
                 <div>
                   <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
@@ -796,7 +868,7 @@ const Pricing = () => {
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit mb-2 text-muted-foreground">
                       Growth & Recovery
@@ -806,7 +878,7 @@ const Pricing = () => {
                       Stimulates natural growth hormone production
                     </p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
                       <span className="text-3xl font-cormorant text-foreground">$149</span>
                       <span className="text-muted-foreground font-lato">/month</span>
@@ -814,7 +886,7 @@ const Pricing = () => {
                     <p className="text-xs text-gold font-lato mb-4">
                       or 4 payments of $37 with Klarna
                     </p>
-                    <ul className="space-y-2 mb-6">
+                    <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                         Improved sleep quality
@@ -828,13 +900,13 @@ const Pricing = () => {
                         Reduced body fat
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full" onClick={() => navigate("/peptides")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => navigate("/peptides")}>
                       Learn More
                     </Button>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit mb-2 text-muted-foreground">
                       Brain Restoration
@@ -844,7 +916,7 @@ const Pricing = () => {
                       Cellular energy & cognitive enhancement
                     </p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col flex-grow">
                     <div className="mb-4">
                       <span className="text-xl font-cormorant text-foreground">Troches</span>
                       <span className="text-3xl font-cormorant text-foreground ml-2">$99</span>
@@ -853,7 +925,7 @@ const Pricing = () => {
                     <div className="mb-4 text-sm text-muted-foreground">
                       or Injections <span className="font-cormorant text-foreground text-lg">$199</span>/mo
                     </div>
-                    <ul className="space-y-2 mb-6">
+                    <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                         Mental clarity & focus
@@ -863,13 +935,13 @@ const Pricing = () => {
                         Anti-aging benefits
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full" onClick={() => navigate("/peptides")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => navigate("/peptides")}>
                       Learn More
                     </Button>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit mb-2 text-muted-foreground">
                       Intimacy & Desire
@@ -879,7 +951,7 @@ const Pricing = () => {
                       Restore sexual desire naturally
                     </p>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
                       <span className="text-3xl font-cormorant text-foreground">$225</span>
                       <span className="text-muted-foreground font-lato">/kit</span>
@@ -887,7 +959,7 @@ const Pricing = () => {
                     <p className="text-xs text-gold font-lato mb-4">
                       10-dose kit • or 4 payments of $56 with Klarna
                     </p>
-                    <ul className="space-y-2 mb-6">
+                    <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
                         <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                         Works for men & women
@@ -897,7 +969,7 @@ const Pricing = () => {
                         Non-hormonal solution
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full" onClick={() => navigate("/peptides")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => navigate("/peptides")}>
                       Learn More
                     </Button>
                   </CardContent>
@@ -907,9 +979,9 @@ const Pricing = () => {
           </section>
         )}
 
-        {/* IV Lounge Section */}
+        {/* IV Lounge Section - Reduced padding + clickable cards */}
         {shouldShow("iv") && (
-          <section className="py-16 lg:py-20 bg-background">
+          <section className="py-12 lg:py-16 bg-background">
             <div className="container mx-auto px-4">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-12 h-12 rounded-full bg-hope/10 flex items-center justify-center">
@@ -932,7 +1004,11 @@ const Pricing = () => {
                   { name: "Immune Defense", price: "$179", desc: "Vitamin C + Zinc + Glutathione" },
                   { name: "Executive Recovery", price: "$199", desc: "Full vitamin complex + NAD+" },
                 ].map((drip) => (
-                  <Card key={drip.name} className="border border-border hover:border-gold/30 transition-all text-center">
+                  <Card 
+                    key={drip.name} 
+                    className="border border-border hover:border-gold/30 transition-all text-center cursor-pointer hover:shadow-lg"
+                    onClick={() => navigate("/iv-lounge")}
+                  >
                     <CardContent className="p-5">
                       <Droplets className="w-8 h-8 text-hope mx-auto mb-3" />
                       <h4 className="font-cormorant text-lg text-foreground mb-1">{drip.name}</h4>
@@ -958,8 +1034,8 @@ const Pricing = () => {
           </section>
         )}
 
-        {/* Dedicated Financing Section */}
-        <section className="py-16 lg:py-20 bg-gradient-to-b from-[#F5E6D3]/30 to-background">
+        {/* Dedicated Financing Section - Reduced padding + stronger borders */}
+        <section className="py-12 lg:py-16 bg-gradient-to-b from-[#F5E6D3]/30 to-background">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-10">
@@ -975,8 +1051,8 @@ const Pricing = () => {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6 mb-10">
-                {/* Klarna Card */}
-                <Card className="border-2 border-[#FFB3C7]/30 bg-gradient-to-br from-[#FFB3C7]/5 to-transparent">
+                {/* Klarna Card - Strengthened border */}
+                <Card className="border-2 border-[#FFB3C7]/50 bg-gradient-to-br from-[#FFB3C7]/5 to-transparent">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="px-4 py-2 bg-[#FFB3C7]/20 rounded-lg">
@@ -1005,8 +1081,8 @@ const Pricing = () => {
                   </CardContent>
                 </Card>
 
-                {/* Affirm Card */}
-                <Card className="border-2 border-[#0FA0EA]/30 bg-gradient-to-br from-[#0FA0EA]/5 to-transparent">
+                {/* Affirm Card - Strengthened border */}
+                <Card className="border-2 border-[#0FA0EA]/50 bg-gradient-to-br from-[#0FA0EA]/5 to-transparent">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="px-4 py-2 bg-[#0FA0EA]/10 rounded-lg">
@@ -1058,8 +1134,8 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-20 lg:py-28 bg-gradient-to-b from-secondary to-background">
+        {/* CTA Section - Reduced padding + fixed FREE badge */}
+        <section className="py-16 lg:py-20 bg-gradient-to-b from-secondary to-background">
           <div className="container mx-auto px-4 text-center">
             <Sparkles className="w-10 h-10 text-gold mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-cormorant text-foreground mb-4">
@@ -1073,17 +1149,17 @@ const Pricing = () => {
               This is a fit-check to see if our clinic is right for you. (No medical advice provided on this call.)
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-green-600 font-semibold mb-1">FREE • $0</span>
-                <Button 
-                  size="lg" 
-                  className="bg-gold hover:bg-gold-dark text-gold-foreground"
-                  onClick={handleBookCall}
-                >
-                  <Calendar className="w-5 h-5 mr-2" />
-                  Apply for Care
-                </Button>
-              </div>
+              <Button 
+                size="lg" 
+                className="bg-gold hover:bg-gold-dark text-gold-foreground"
+                onClick={() => handleBookCall()}
+              >
+                <span className="inline-flex items-center gap-2 bg-green-500/20 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full mr-2">
+                  FREE
+                </span>
+                <Calendar className="w-5 h-5 mr-2" />
+                Apply for Care
+              </Button>
               <Button 
                 variant="outline" 
                 size="lg"
@@ -1096,51 +1172,51 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section className="py-16 lg:py-20 bg-background">
+        {/* FAQ Section - Reduced padding + improved accordion spacing */}
+        <section className="py-12 lg:py-16 bg-background">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-2xl md:text-3xl font-cormorant text-foreground text-center mb-10">
               Frequently Asked Questions
             </h2>
             <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="border border-border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline">
+              <AccordionItem value="item-1" className="border border-border rounded-lg px-6 py-1">
+                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
                   Can I switch between programs?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato">
+                <AccordionContent className="text-muted-foreground font-lato pb-4">
                   Absolutely! Your health journey may evolve, and we're here to adapt with you. 
                   You can upgrade, downgrade, or switch programs at any time. Just message your 
                   provider and we'll adjust your plan.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-2" className="border border-border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline">
+              <AccordionItem value="item-2" className="border border-border rounded-lg px-6 py-1">
+                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
                   What if I need to pause my membership?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato">
+                <AccordionContent className="text-muted-foreground font-lato pb-4">
                   Life happens! You can pause your membership for up to 3 months without 
                   losing your spot. Just let us know at least 5 days before your next 
                   billing date.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-3" className="border border-border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline">
+              <AccordionItem value="item-3" className="border border-border rounded-lg px-6 py-1">
+                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
                   Do you offer payment plans?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato">
+                <AccordionContent className="text-muted-foreground font-lato pb-4">
                   Yes! For larger one-time purchases like the 6-session ketamine series, 
                   we offer interest-free payment plans through our payment processor. 
                   Ask about options during your consultation.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-4" className="border border-border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline">
+              <AccordionItem value="item-4" className="border border-border rounded-lg px-6 py-1">
+                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
                   Is any of this covered by insurance?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato">
+                <AccordionContent className="text-muted-foreground font-lato pb-4">
                   SPRAVATO® (esketamine) is often covered by insurance—we verify your 
                   benefits at no cost. Our other services are generally not covered by 
                   insurance, but we provide superbills you can submit for potential 
@@ -1149,11 +1225,11 @@ const Pricing = () => {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-5" className="border border-border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline">
+              <AccordionItem value="item-5" className="border border-border rounded-lg px-6 py-1">
+                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
                   What's included in the à la carte consultations?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato">
+                <AccordionContent className="text-muted-foreground font-lato pb-4">
                   Our $99 consultations include a thorough review of your symptoms and 
                   health history, discussion of treatment options, and a personalized 
                   recommendation. If you decide to proceed with treatment, the consultation 
@@ -1186,6 +1262,17 @@ const Pricing = () => {
       </main>
 
       <Footer />
+
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gold text-gold-foreground shadow-lg hover:bg-gold-dark transition-all duration-300 flex items-center justify-center"
+          aria-label="Back to top"
+        >
+          <ChevronUp className="w-6 h-6" />
+        </button>
+      )}
     </>
   );
 };
