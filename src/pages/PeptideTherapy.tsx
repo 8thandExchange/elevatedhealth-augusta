@@ -112,25 +112,17 @@ const peptideCategories = [
       {
         name: "Sermorelin",
         subtitle: "Growth Hormone Secretagogue",
-        benefit: "Stimulates your pituitary to release natural HGH. Improves sleep quality, reduces visceral fat, and enhances skin elasticity.",
+        benefit: "Supports your body's natural nighttime hormone rhythms. Improves sleep quality, reduces visceral fat, and enhances recovery.",
         price: "$149/mo",
         type: "recurring",
       },
       {
         name: "Tesamorelin",
-        subtitle: "Advanced GH Releasing Hormone",
-        benefit: "FDA-approved for visceral fat reduction. More potent than Sermorelin for stubborn abdominal fat.",
+        subtitle: "FDA-Approved GH Releasing Hormone",
+        benefit: "FDA-approved for visceral fat reduction. Affects growth hormone signaling to help reduce central adiposity in select patients.",
         price: "$399/mo",
         type: "recurring",
-        badge: "Premium",
-      },
-      {
-        name: "Pentadeca Arginate",
-        subtitle: "BPC-157 Alternative",
-        benefit: "Accelerates tissue repair, reduces inflammation, and supports gut healing without the regulatory concerns of BPC-157.",
-        price: "$149",
-        type: "one_time",
-        badge: "New",
+        badge: "FDA-Approved",
       },
     ],
   },
@@ -142,14 +134,14 @@ const peptideCategories = [
       {
         name: "NAD+ Troches",
         subtitle: "Sublingual NAD+ Precursor",
-        benefit: "Daily sublingual tablets to replenish NAD+ levels. Improves mental clarity, energy, and cellular repair.",
+        benefit: "Daily sublingual tablets to replenish NAD+ levels. Supports cellular energy production; some patients notice improved energy or mental clarity.",
         price: "$99/mo",
         type: "recurring",
       },
       {
         name: "NAD+ Injection",
         subtitle: "Direct NAD+ Delivery",
-        benefit: "Higher bioavailability for maximum cellular energy restoration. Ideal for brain fog, fatigue, and anti-aging.",
+        benefit: "Higher bioavailability for maximum cellular energy restoration. Ideal for fatigue and anti-aging protocols.",
         price: "$199/mo",
         type: "recurring",
       },
@@ -159,84 +151,36 @@ const peptideCategories = [
         benefit: "Rapid absorption through nasal mucosa. Convenient daily boost for cognitive performance.",
         price: "$99",
         type: "one_time",
-        badge: "New",
       },
     ],
   },
   {
-    category: "Intimacy & Mood",
+    category: "Sexual Wellness",
     icon: HeartPulseIcon,
-    description: "Restore desire, connection, and emotional well-being.",
+    description: "Restore desire, arousal, and intimate health.",
     products: [
       {
         name: "PT-141",
         subtitle: "Desire & Arousal",
-        benefit: "Neurologically activates desire in both men and women. Works through brain pathways, not hormones.",
+        benefit: "FDA-approved medication that works on the brain's desire pathways. Helps improve sexual interest and arousal in both men and women.",
         price: "$225/kit",
         type: "one_time",
         note: "10-dose kit",
-      },
-      {
-        name: "Oxytocin Nasal Spray",
-        subtitle: "The Connection Molecule",
-        benefit: "Enhances emotional bonding, reduces anxiety, and improves intimacy. Synergizes with PT-141 for comprehensive support.",
-        price: "$89",
-        type: "one_time",
-        badge: "New",
-      },
-      {
-        name: "Oxytocin Troches",
-        subtitle: "Sublingual Oxytocin",
-        benefit: "Daily sublingual for sustained mood support. Helps with anxiety, PTSD symptoms, and relationship wellness.",
-        price: "$79",
-        type: "one_time",
-        badge: "New",
+        badge: "FDA-Approved",
       },
     ],
   },
   {
-    category: "Metabolic Optimization",
-    icon: MetabolicIcon,
-    description: "Boost metabolism and accelerate fat burning.",
-    products: [
-      {
-        name: "5-Amino-1MQ",
-        subtitle: "Metabolic Enhancer",
-        benefit: "Blocks NNMT enzyme to increase NAD+ and boost metabolic rate. Supports weight loss and mitochondrial function.",
-        price: "$279/mo",
-        type: "recurring",
-        badge: "New",
-      },
-      {
-        name: "AOD-9604",
-        subtitle: "Fat Breakdown Peptide",
-        benefit: "Stimulates lipolysis without affecting blood sugar or insulin. Targets stubborn fat deposits.",
-        price: "$149",
-        type: "one_time",
-        badge: "New",
-      },
-      {
-        name: "Tesofensine",
-        subtitle: "Appetite & Energy",
-        benefit: "Reduces appetite and increases energy expenditure. Supports mood while promoting weight loss.",
-        price: "$249/mo",
-        type: "recurring",
-        badge: "Advanced",
-      },
-    ],
-  },
-  {
-    category: "Regeneration & Repair",
+    category: "Skin & Hair Regeneration",
     icon: RegenerationIcon,
-    description: "Heal tissue, restore skin, and stimulate hair growth.",
+    description: "Support skin repair and hair health with copper peptides.",
     products: [
       {
         name: "GHK-Cu Sublingual",
         subtitle: "Copper Peptide Complex",
-        benefit: "Powerful regenerative peptide for tissue repair, skin rejuvenation, and hair growth stimulation.",
+        benefit: "Supports skin repair and collagen signaling. Often used to improve skin quality and texture.",
         price: "$99",
         type: "one_time",
-        badge: "New",
       },
       {
         name: "GHK-Cu Topical",
@@ -244,7 +188,6 @@ const peptideCategories = [
         benefit: "Apply directly to skin for collagen synthesis, wound healing, and anti-aging benefits.",
         price: "$149",
         type: "one_time",
-        badge: "New",
       },
     ],
   },
@@ -303,7 +246,7 @@ const PeptideTherapy = () => {
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
-                  5 Categories • 15+ Protocols
+                  4 Categories • FDA-Compliant Protocols
                 </Badge>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cormorant mb-6 animate-fade-in-up text-foreground">
                   Cellular Optimization<br />& Longevity

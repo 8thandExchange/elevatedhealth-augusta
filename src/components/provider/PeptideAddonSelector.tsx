@@ -27,6 +27,7 @@ interface PeptideAddonSelectorProps {
 }
 
 // Stripe price IDs for peptide products - organized by category with healthy margins
+// Core Offerings: PT-141, Sermorelin, Tesamorelin, GHK-Cu, NAD+
 const PEPTIDE_CATEGORIES = {
   growth_recovery: {
     label: "Growth & Recovery",
@@ -37,26 +38,17 @@ const PEPTIDE_CATEGORIES = {
         price: "$149/mo",
         priceId: "price_1Sa3oyEOtKRY99puGS2t9EZv",
         type: "recurring" as const,
-        description: "Growth Hormone Support",
-        clinical: "Best for: Sleep issues, visceral fat, slow recovery",
+        description: "Sleep & Recovery Support",
+        clinical: "Best for: Sleep issues, recovery, natural GH support",
       },
       tesamorelin: {
         label: "Tesamorelin",
         price: "$399/mo",
         priceId: "price_1SfibZEOtKRY99pud5SNVeXI",
         type: "recurring" as const,
-        description: "Advanced GH Releasing Hormone",
-        clinical: "Best for: Stubborn abdominal fat, lipodystrophy",
-        badge: "Premium",
-      },
-      pentadeca: {
-        label: "Pentadeca Arginate",
-        price: "$149/mo",
-        priceId: "price_1SfibdEOtKRY99puyY5HLbmk",
-        type: "recurring" as const,
-        description: "BPC-157 Alternative",
-        clinical: "Best for: Tissue repair, gut healing, inflammation",
-        badge: "New",
+        description: "FDA-Approved GH Releasing Hormone",
+        clinical: "Best for: Central adiposity, visceral fat reduction",
+        badge: "FDA-Approved",
       },
     },
   },
@@ -87,12 +79,11 @@ const PEPTIDE_CATEGORIES = {
         type: "recurring" as const,
         description: "Fast-Acting NAD+",
         clinical: "Best for: Quick cognitive boost, convenience",
-        badge: "New",
       },
     },
   },
-  intimacy_mood: {
-    label: "Intimacy & Mood",
+  sexual_wellness: {
+    label: "Sexual Wellness",
     color: "bg-pink-500",
     products: {
       pt141: {
@@ -101,63 +92,13 @@ const PEPTIDE_CATEGORIES = {
         priceId: "price_1Sa3xIEOtKRY99puIXSB3L31",
         type: "one_time" as const,
         description: "Desire & Arousal",
-        clinical: "Best for: Low libido, both men & women",
-      },
-      oxytocin_nasal: {
-        label: "Oxytocin Nasal Spray",
-        price: "$89/mo",
-        priceId: "price_1SfibUEOtKRY99pujkcHdFLc",
-        type: "recurring" as const,
-        description: "Connection Molecule",
-        clinical: "Best for: Anxiety, bonding, intimacy enhancement",
-        badge: "New",
-      },
-      oxytocin_troche: {
-        label: "Oxytocin Troches",
-        price: "$79/mo",
-        priceId: "price_1SfibVEOtKRY99puwRrTXQAh",
-        type: "recurring" as const,
-        description: "Sublingual Oxytocin",
-        clinical: "Best for: Daily mood support, PTSD, anxiety",
-        badge: "New",
-      },
-    },
-  },
-  metabolic: {
-    label: "Metabolic Optimization",
-    color: "bg-green-500",
-    products: {
-      amino_1mq: {
-        label: "5-Amino-1MQ",
-        price: "$279/mo",
-        priceId: "price_1SfibYEOtKRY99puh4reYbu4",
-        type: "recurring" as const,
-        description: "Metabolic Enhancer",
-        clinical: "Best for: Weight loss plateau, low energy, NAD+ boost",
-        badge: "New",
-      },
-      aod_9604: {
-        label: "AOD-9604",
-        price: "$149/mo",
-        priceId: "price_1SfibcEOtKRY99pu4gBOV9YA",
-        type: "recurring" as const,
-        description: "Fat Breakdown Peptide",
-        clinical: "Best for: Stubborn fat, no insulin impact",
-        badge: "New",
-      },
-      tesofensine: {
-        label: "Tesofensine",
-        price: "$249/mo",
-        priceId: "price_1SfibbEOtKRY99puqSR0i9L3",
-        type: "recurring" as const,
-        description: "Appetite & Energy",
-        clinical: "Best for: Appetite control, energy, mood support",
-        badge: "Advanced",
+        clinical: "Best for: Low libido, HSDD, both men & women",
+        badge: "FDA-Approved",
       },
     },
   },
   regeneration: {
-    label: "Regeneration & Repair",
+    label: "Skin & Hair Regeneration",
     color: "bg-purple-500",
     products: {
       ghk_cu_sublingual: {
@@ -166,8 +107,7 @@ const PEPTIDE_CATEGORIES = {
         priceId: "price_1SfibXEOtKRY99puuRkJc5g3",
         type: "recurring" as const,
         description: "Copper Peptide Complex",
-        clinical: "Best for: Tissue repair, hair growth, anti-aging",
-        badge: "New",
+        clinical: "Best for: Skin repair, hair health, anti-aging",
       },
       ghk_cu_topical: {
         label: "GHK-Cu Topical",
@@ -176,7 +116,6 @@ const PEPTIDE_CATEGORIES = {
         type: "recurring" as const,
         description: "Targeted Skin Therapy",
         clinical: "Best for: Skin rejuvenation, wound healing",
-        badge: "New",
       },
     },
   },
@@ -271,7 +210,7 @@ const PeptideAddonSelector = ({
           Peptide Add-Ons
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          5 categories • 15+ protocols • Compatible with all memberships
+          4 categories • FDA-compliant protocols • Compatible with all memberships
         </p>
       </CardHeader>
       <CardContent className="space-y-4">

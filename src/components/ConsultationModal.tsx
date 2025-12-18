@@ -129,7 +129,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
     {
       icon: CellularIcon,
       title: "Peptide Therapy",
-      description: "Sermorelin, NAD+, BPC-157 & PT-141 for cellular optimization",
+      description: "Sermorelin, NAD+, PT-141 & GHK-Cu for cellular optimization",
       serviceType: "peptide",
       freeCallUrl: clinicalEligibilityUrl
     },
