@@ -43,7 +43,7 @@ const PEPTIDE_CATEGORIES = {
       tesamorelin: {
         label: "Tesamorelin",
         price: "$399/mo",
-        priceId: "", // TODO: Create in Stripe
+        priceId: "price_1SfibZEOtKRY99pud5SNVeXI",
         type: "recurring" as const,
         description: "Advanced GH Releasing Hormone",
         clinical: "Best for: Stubborn abdominal fat, lipodystrophy",
@@ -51,9 +51,9 @@ const PEPTIDE_CATEGORIES = {
       },
       pentadeca: {
         label: "Pentadeca Arginate",
-        price: "$149",
-        priceId: "", // TODO: Create in Stripe
-        type: "one_time" as const,
+        price: "$149/mo",
+        priceId: "price_1SfibdEOtKRY99puyY5HLbmk",
+        type: "recurring" as const,
         description: "BPC-157 Alternative",
         clinical: "Best for: Tissue repair, gut healing, inflammation",
         badge: "New",
@@ -82,9 +82,9 @@ const PEPTIDE_CATEGORIES = {
       },
       nad_nasal: {
         label: "NAD+ Nasal Spray",
-        price: "$99",
-        priceId: "", // TODO: Create in Stripe
-        type: "one_time" as const,
+        price: "$99/mo",
+        priceId: "price_1SfibeEOtKRY99puUPRACDHQ",
+        type: "recurring" as const,
         description: "Fast-Acting NAD+",
         clinical: "Best for: Quick cognitive boost, convenience",
         badge: "New",
@@ -105,18 +105,18 @@ const PEPTIDE_CATEGORIES = {
       },
       oxytocin_nasal: {
         label: "Oxytocin Nasal Spray",
-        price: "$89",
-        priceId: "", // TODO: Create in Stripe
-        type: "one_time" as const,
+        price: "$89/mo",
+        priceId: "price_1SfibUEOtKRY99pujkcHdFLc",
+        type: "recurring" as const,
         description: "Connection Molecule",
         clinical: "Best for: Anxiety, bonding, intimacy enhancement",
         badge: "New",
       },
       oxytocin_troche: {
         label: "Oxytocin Troches",
-        price: "$79",
-        priceId: "", // TODO: Create in Stripe
-        type: "one_time" as const,
+        price: "$79/mo",
+        priceId: "price_1SfibVEOtKRY99puwRrTXQAh",
+        type: "recurring" as const,
         description: "Sublingual Oxytocin",
         clinical: "Best for: Daily mood support, PTSD, anxiety",
         badge: "New",
@@ -130,7 +130,7 @@ const PEPTIDE_CATEGORIES = {
       amino_1mq: {
         label: "5-Amino-1MQ",
         price: "$279/mo",
-        priceId: "", // TODO: Create in Stripe
+        priceId: "price_1SfibYEOtKRY99puh4reYbu4",
         type: "recurring" as const,
         description: "Metabolic Enhancer",
         clinical: "Best for: Weight loss plateau, low energy, NAD+ boost",
@@ -138,9 +138,9 @@ const PEPTIDE_CATEGORIES = {
       },
       aod_9604: {
         label: "AOD-9604",
-        price: "$149",
-        priceId: "", // TODO: Create in Stripe
-        type: "one_time" as const,
+        price: "$149/mo",
+        priceId: "price_1SfibcEOtKRY99pu4gBOV9YA",
+        type: "recurring" as const,
         description: "Fat Breakdown Peptide",
         clinical: "Best for: Stubborn fat, no insulin impact",
         badge: "New",
@@ -148,7 +148,7 @@ const PEPTIDE_CATEGORIES = {
       tesofensine: {
         label: "Tesofensine",
         price: "$249/mo",
-        priceId: "", // TODO: Create in Stripe
+        priceId: "price_1SfibbEOtKRY99puqSR0i9L3",
         type: "recurring" as const,
         description: "Appetite & Energy",
         clinical: "Best for: Appetite control, energy, mood support",
@@ -162,18 +162,18 @@ const PEPTIDE_CATEGORIES = {
     products: {
       ghk_cu_sublingual: {
         label: "GHK-Cu Sublingual",
-        price: "$99",
-        priceId: "", // TODO: Create in Stripe
-        type: "one_time" as const,
+        price: "$99/mo",
+        priceId: "price_1SfibXEOtKRY99puuRkJc5g3",
+        type: "recurring" as const,
         description: "Copper Peptide Complex",
         clinical: "Best for: Tissue repair, hair growth, anti-aging",
         badge: "New",
       },
       ghk_cu_topical: {
         label: "GHK-Cu Topical",
-        price: "$149",
-        priceId: "", // TODO: Create in Stripe
-        type: "one_time" as const,
+        price: "$149/mo",
+        priceId: "price_1SfibXEOtKRY99puDbZKu1zw",
+        type: "recurring" as const,
         description: "Targeted Skin Therapy",
         clinical: "Best for: Skin rejuvenation, wound healing",
         badge: "New",
@@ -397,8 +397,7 @@ const PeptideAddonSelector = ({
         <div className="bg-secondary/50 rounded-lg p-3 text-sm text-muted-foreground">
           <p>
             <strong>Margins:</strong> All peptide pricing includes healthy profit margins.
-            Recurring items are added to subscriptions. One-time items open payment links.
-            Items marked "Coming Soon" need Stripe price IDs configured.
+            Recurring items are added to patient subscriptions. One-time items open payment links.
           </p>
         </div>
       </CardContent>
