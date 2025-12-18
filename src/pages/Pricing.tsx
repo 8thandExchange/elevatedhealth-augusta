@@ -30,6 +30,10 @@ import {
   BadgeCheck,
   Calendar,
   ChevronUp,
+  Stethoscope,
+  Activity,
+  Lock,
+  ShieldAlert,
 } from "lucide-react";
 
 const serviceCategories = [
@@ -482,171 +486,192 @@ const Pricing = () => {
           </section>
         )}
 
-        {/* Weight Loss Section - Reduced padding */}
+        {/* Weight Loss Section - Vertical Stepper Journey */}
         {shouldShow("weight") && (
-          <section className="py-12 lg:py-16 bg-secondary/30">
+          <section className="py-12 lg:py-16 bg-slate-50">
             <div className="container mx-auto px-4">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
-                  <Scale className="w-6 h-6 text-gold" />
+              {/* Section Header */}
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 mb-4">
+                  <Scale className="w-6 h-6 text-amber-600" />
+                  <span className="text-sm font-lato uppercase tracking-widest text-slate-500">Medical Weight Loss</span>
                 </div>
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
-                    Medical Weight Loss
-                  </h2>
-                  <p className="text-muted-foreground font-lato text-sm">
-                    GLP-1 medications with comprehensive metabolic support
-                  </p>
-                </div>
+                <h2 className="text-3xl md:text-4xl font-cormorant text-slate-900 mb-3">
+                  Your Path to Metabolic Reset
+                </h2>
+                <p className="text-slate-600 font-lato max-w-2xl mx-auto">
+                  A medically-supervised journey with clear milestones. Each step unlocks the next.
+                </p>
               </div>
 
-              <div className="grid lg:grid-cols-2 gap-8">
-                {/* À La Carte Options */}
-                <div>
-                  <h3 className="text-lg font-cormorant text-foreground mb-4 flex items-center gap-2">
-                    <span className="w-8 h-[1px] bg-border"></span>
-                    Try First
-                    <span className="w-8 h-[1px] bg-border"></span>
-                  </h3>
-                  <div className="space-y-4">
-                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
-                      <CardContent className="p-5 flex justify-between items-center">
-                        <div>
-                          <h4 className="font-cormorant text-lg text-foreground">Discovery Consultation</h4>
-                          <p className="text-sm text-muted-foreground font-lato">
-                            30-minute consult with metabolic specialist
-                          </p>
+              {/* Vertical Stepper */}
+              <div className="max-w-2xl mx-auto">
+                {/* Step 1: The Gatekeeper */}
+                <div className="relative">
+                  <Card className="bg-white rounded-2xl border-0 shadow-lg hover:shadow-xl transition-shadow p-8">
+                    <div className="flex items-start gap-6">
+                      {/* Step Number & Icon */}
+                      <div className="flex-shrink-0">
+                        <div className="w-14 h-14 rounded-full bg-amber-600 flex items-center justify-center shadow-md">
+                          <Stethoscope className="w-7 h-7 text-white stroke-[1.5]" />
                         </div>
-                        <div className="text-right">
-                          <span className="text-2xl font-cormorant text-foreground">$99</span>
-                          <span className="block text-xs text-muted-foreground">one-time</span>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-grow">
+                        <Badge className="bg-slate-100 text-slate-700 font-lato text-xs mb-3">
+                          Step 1: Clinical Intake
+                        </Badge>
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                          <div>
+                            <h3 className="text-xl font-cormorant text-slate-900 mb-2">
+                              Provider Strategy Session
+                            </h3>
+                            <p className="text-slate-600 font-lato text-sm leading-relaxed">
+                              Skip the waiting room. Meet directly with Lauren Bursey, NP to review your medical history and determine eligibility. The $99 fee is fully credited toward your Lab Kit.
+                            </p>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <span className="text-3xl font-cormorant text-slate-900">$99</span>
+                            <span className="block text-xs text-slate-500 font-lato">one-time</span>
+                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
-                      <CardContent className="p-5 flex justify-between items-center">
-                        <div>
-                          <h4 className="font-cormorant text-lg text-foreground">Metabolic Mapping</h4>
-                          <p className="text-sm text-muted-foreground font-lato">
-                            Complete lab panel + body composition + protocol design
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-2xl font-cormorant text-foreground">$299</span>
-                          <span className="block text-xs text-muted-foreground">one-time</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
-                      <CardContent className="p-5 flex justify-between items-center">
-                        <div>
-                          <h4 className="font-cormorant text-lg text-foreground">GLP-1 Starter Month</h4>
-                          <p className="text-sm text-muted-foreground font-lato">
-                            First month medication + supplies (no commitment)
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-2xl font-cormorant text-foreground">$349</span>
-                          <span className="block text-xs text-muted-foreground">one-time</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border border-border hover:border-gold/30 transition-all cursor-pointer" onClick={() => handleBookCall("weight")}>
-                      <CardContent className="p-5 flex justify-between items-center">
-                        <div>
-                          <h4 className="font-cormorant text-lg text-foreground">GLP-1 Continuation Month</h4>
-                          <p className="text-sm text-muted-foreground font-lato">
-                            Returning patients • medication + check-in
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-2xl font-cormorant text-foreground">$449</span>
-                          <span className="block text-xs text-muted-foreground">one-time</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        <Button 
+                          className="mt-6 bg-amber-600 hover:bg-amber-700 text-white rounded-full px-8"
+                          onClick={() => handleBookCall("weight")}
+                        >
+                          Book Strategy Session
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  {/* Connector Line */}
+                  <div className="absolute left-[2.25rem] top-full w-0.5 h-8 bg-gradient-to-b from-amber-500 to-slate-300" />
                 </div>
 
-                {/* Membership */}
-                <div className="flex flex-col">
-                  <h3 className="text-lg font-cormorant text-foreground mb-4 flex items-center gap-2">
-                    <span className="w-8 h-[1px] bg-gold/50"></span>
-                    <Star className="w-4 h-4 text-gold" />
-                    Best Value
-                    <span className="w-8 h-[1px] bg-gold/50"></span>
-                  </h3>
-                  <Card className="border-2 border-gold/50 relative flex-grow flex flex-col">
-                    <div className="absolute -top-3 right-4">
-                      <Badge className="bg-gold text-gold-foreground">Most Popular</Badge>
-                    </div>
-                    <CardHeader>
-                      <h3 className="text-2xl font-cormorant text-foreground">Metabolic Reset Program</h3>
-                      <p className="text-muted-foreground font-lato">
-                        Complete concierge weight loss with ongoing support
-                      </p>
-                    </CardHeader>
-                    <CardContent className="flex flex-col flex-grow">
-                      <div className="mb-4">
-                        <span className="text-4xl font-cormorant text-foreground">$399</span>
-                        <span className="text-muted-foreground font-lato">/month</span>
-                        <p className="text-xs text-gold font-lato mt-1">
-                          or 4 payments of $100 with Klarna • Save over $150/month vs à la carte
+                {/* Step 2: The Data */}
+                <div className="relative mt-8">
+                  <Card className="bg-white rounded-2xl border-0 shadow-md hover:shadow-lg transition-shadow p-8 opacity-95">
+                    <div className="flex items-start gap-6">
+                      {/* Step Number & Icon */}
+                      <div className="flex-shrink-0">
+                        <div className="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center">
+                          <Activity className="w-7 h-7 text-slate-600 stroke-[1.5]" />
+                        </div>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-grow">
+                        <Badge className="bg-slate-100 text-slate-700 font-lato text-xs mb-3">
+                          Step 2: Diagnostics
+                        </Badge>
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                          <div>
+                            <h3 className="text-xl font-cormorant text-slate-900 mb-2">
+                              Metabolic Mapping Panel
+                            </h3>
+                            <p className="text-slate-600 font-lato text-sm leading-relaxed">
+                              A comprehensive at-home Saliva & Blood Spot kit. We test Cortisol, Insulin, Thyroid, and Sex Hormones to engineer your custom protocol.
+                            </p>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <span className="text-3xl font-cormorant text-slate-900">$299</span>
+                            <span className="block text-xs text-slate-500 font-lato">one-time</span>
+                          </div>
+                        </div>
+                        <p className="mt-4 text-xs text-amber-600 font-lato flex items-center gap-1">
+                          <Lock className="w-3 h-3" />
+                          Unlocked after completing Step 1
                         </p>
                       </div>
-                      <ul className="space-y-3 mb-8 flex-grow">
-                        <li className="flex items-start gap-2 text-sm font-lato text-foreground">
-                          <Check className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
-                          <span><strong>GLP-1 medication</strong> (Semaglutide or Tirzepatide)</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm font-lato text-foreground">
-                          <Check className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
-                          <span><strong>Unlimited messaging</strong> with your provider</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm font-lato text-foreground">
-                          <Check className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
-                          <span><strong>Quarterly metabolic labs</strong> included</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm font-lato text-foreground">
-                          <Check className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
-                          <span><strong>Weekly check-ins</strong> with dose adjustments</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm font-lato text-foreground">
-                          <Check className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
-                          <span><strong>Nutritional guidance</strong> & behavioral support</span>
-                        </li>
-                      </ul>
-                      <Button 
-                        className="w-full bg-gold hover:bg-gold-dark text-gold-foreground mt-auto" 
-                        size="lg"
-                        onClick={() => handleBookCall("weight")}
-                      >
-                        Start Your Transformation <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                      <p className="text-center text-xs text-muted-foreground mt-3">
-                        Cancel anytime • No long-term contracts
-                      </p>
-                    </CardContent>
+                    </div>
+                  </Card>
+                  
+                  {/* Connector Line */}
+                  <div className="absolute left-[2.25rem] top-full w-0.5 h-8 bg-gradient-to-b from-slate-300 to-amber-500" />
+                </div>
+
+                {/* Step 3: The Transformation */}
+                <div className="relative mt-8">
+                  <Card className="bg-white rounded-2xl border-2 border-amber-500 shadow-lg hover:shadow-xl transition-shadow p-8">
+                    <div className="absolute -top-3 right-6">
+                      <Badge className="bg-amber-600 text-white font-lato text-xs">
+                        Premium Membership
+                      </Badge>
+                    </div>
+                    <div className="flex items-start gap-6">
+                      {/* Step Number & Icon */}
+                      <div className="flex-shrink-0">
+                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md">
+                          <Sparkles className="w-7 h-7 text-white stroke-[1.5]" />
+                        </div>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-grow">
+                        <Badge className="bg-amber-50 text-amber-700 font-lato text-xs mb-3">
+                          Step 3: Treatment
+                        </Badge>
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                          <div>
+                            <h3 className="text-xl font-cormorant text-slate-900 mb-2">
+                              Metabolic Reset Membership
+                            </h3>
+                            <p className="text-slate-600 font-lato text-sm leading-relaxed">
+                              Once medically cleared, you unlock the all-inclusive membership. Includes GLP-1 Medication (Semaglutide), supplies, and 24/7 provider access.
+                            </p>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <span className="text-3xl font-cormorant text-slate-900">$399</span>
+                            <span className="block text-xs text-slate-500 font-lato">/month</span>
+                          </div>
+                        </div>
+                        
+                        {/* Membership Benefits */}
+                        <ul className="mt-6 space-y-2">
+                          <li className="flex items-center gap-2 text-sm font-lato text-slate-700">
+                            <Check className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <span>GLP-1 medication (Semaglutide or Tirzepatide)</span>
+                          </li>
+                          <li className="flex items-center gap-2 text-sm font-lato text-slate-700">
+                            <Check className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <span>Unlimited provider messaging</span>
+                          </li>
+                          <li className="flex items-center gap-2 text-sm font-lato text-slate-700">
+                            <Check className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <span>Quarterly metabolic labs included</span>
+                          </li>
+                        </ul>
+                        
+                        <div className="mt-6 p-3 bg-slate-50 rounded-lg flex items-center gap-2">
+                          <ShieldAlert className="w-4 h-4 text-slate-500" />
+                          <span className="text-xs text-slate-600 font-lato">
+                            Requires Medical Clearance — Complete Steps 1 & 2 first
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </Card>
                 </div>
               </div>
 
               {/* Hormone Add-on */}
-              <div className="mt-8 p-6 bg-background rounded-xl border border-gold/20">
+              <div className="max-w-2xl mx-auto mt-12 p-6 bg-white rounded-2xl border border-amber-200 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
-                    <Badge variant="outline" className="mb-2 border-gold/30 text-gold">Premium Add-on</Badge>
-                    <h4 className="font-cormorant text-lg text-foreground">Hormone Optimization Bundle</h4>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <Badge variant="outline" className="mb-2 border-amber-400 text-amber-700 font-lato text-xs">
+                      Optional Add-on
+                    </Badge>
+                    <h4 className="font-cormorant text-lg text-slate-900">Hormone Optimization Bundle</h4>
+                    <p className="text-sm text-slate-600 font-lato">
                       Add bio-identical hormones to accelerate results & preserve muscle
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-cormorant text-foreground">+$149</span>
-                    <span className="text-muted-foreground font-lato">/month</span>
+                    <span className="text-2xl font-cormorant text-slate-900">+$149</span>
+                    <span className="text-slate-500 font-lato">/month</span>
                   </div>
                 </div>
               </div>
