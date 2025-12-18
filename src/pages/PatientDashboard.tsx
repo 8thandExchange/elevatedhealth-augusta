@@ -23,6 +23,7 @@ import DailyProtocolCard from "@/components/patient/DailyProtocolCard";
 import HealthOverview from "@/components/patient/HealthOverview";
 import ActionPlanTab from "@/components/patient/ActionPlanTab";
 import AnimatedCard from "@/components/patient/AnimatedCard";
+import MembershipSummary from "@/components/patient/MembershipSummary";
 
 interface SymptomLog {
   id: string;
@@ -46,6 +47,8 @@ interface Patient {
   safety_flags: any;
   treatment_request: string | null;
   gender?: string | null;
+  membership_tier?: string | null;
+  membership_renewal_date?: string | null;
 }
 
 interface Order {
@@ -503,7 +506,11 @@ const PatientDashboard = () => {
                     />
                   )}
 
-                  {/* Metabolic Architecture Card removed - $599 kit discontinued */}
+                  {/* Membership Summary */}
+                  <MembershipSummary 
+                    membershipTier={patient?.membership_tier as "vitality" | "concierge" | null}
+                    renewalDate={patient?.membership_renewal_date ? new Date(patient.membership_renewal_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : undefined}
+                  />
                 </TabsContent>
 
                 <TabsContent value="action-plan" className="mt-4">

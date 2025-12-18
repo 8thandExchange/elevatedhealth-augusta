@@ -1047,6 +1047,8 @@ export type Database = {
           lab_path: string | null
           mapping_completed: boolean | null
           medical_history: Json | null
+          membership_renewal_date: string | null
+          membership_tier: string | null
           onboarding_status: string | null
           phone: string | null
           primary_program: string | null
@@ -1078,6 +1080,8 @@ export type Database = {
           lab_path?: string | null
           mapping_completed?: boolean | null
           medical_history?: Json | null
+          membership_renewal_date?: string | null
+          membership_tier?: string | null
           onboarding_status?: string | null
           phone?: string | null
           primary_program?: string | null
@@ -1109,6 +1113,8 @@ export type Database = {
           lab_path?: string | null
           mapping_completed?: boolean | null
           medical_history?: Json | null
+          membership_renewal_date?: string | null
+          membership_tier?: string | null
           onboarding_status?: string | null
           phone?: string | null
           primary_program?: string | null
