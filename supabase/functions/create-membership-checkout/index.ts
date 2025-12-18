@@ -29,20 +29,39 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    // Check for authenticated user (optional - supports guest checkout)
+    // Check for authenticated user
     const authHeader = req.headers.get("Authorization");
-    let userEmail: string | undefined;
-    let userId: string | undefined;
+    if (!authHeader) throw new Error("Authentication required");
 
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const { data: userData } = await supabaseClient.auth.getUser(token);
-      if (userData.user?.email) {
-        userEmail = userData.user.email;
-        userId = userData.user.id;
-        logStep("Authenticated user found", { email: userEmail });
-      }
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData } = await supabaseClient.auth.getUser(token);
+    if (!userData.user?.email) throw new Error("User not authenticated");
+    
+    const userEmail = userData.user.email;
+    const userId = userData.user.id;
+    logStep("Authenticated user found", { email: userEmail });
+
+    // LAB REVIEW GATE: Check patient onboarding status
+    const { data: patient, error: patientError } = await supabaseClient
+      .from("patients")
+      .select("id, onboarding_status, full_name")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (patientError) throw new Error("Failed to fetch patient record");
+    if (!patient) throw new Error("Patient record not found");
+
+    // Only allow membership purchase if labs have been reviewed
+    const allowedStatuses = ["labs_reviewed", "protocol_approved", "treatment_active", "pending_pharmacy_order"];
+    if (!allowedStatuses.includes(patient.onboarding_status || "")) {
+      logStep("Membership blocked - labs not reviewed", { 
+        status: patient.onboarding_status,
+        allowed: allowedStatuses 
+      });
+      throw new Error("LAB_REVIEW_REQUIRED: Your lab results must be reviewed by a provider before purchasing a membership. Please schedule your Lab Review appointment.");
     }
+    
+    logStep("Lab review gate passed", { status: patient.onboarding_status });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 

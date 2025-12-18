@@ -226,12 +226,7 @@ export function LabInterpretationEngine({ patientId, patientName, patientGender 
                       Neuro-Reset (Neuro + Saliva)
                     </div>
                   </SelectItem>
-                  <SelectItem value="metabolic_thyroid">
-                    <div className="flex items-center gap-2">
-                      <Flame className="h-4 w-4 text-amber-500" />
-                      Metabolic Architecture ($599 Kit)
-                    </div>
-                  </SelectItem>
+                  {/* Metabolic Architecture ($599 Kit) - Discontinued */}
                 </SelectContent>
               </Select>
             </div>

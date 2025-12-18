@@ -150,6 +150,7 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           follow_up_date: string | null
+          followup_sent_at: string | null
           id: string
           notes: string | null
           service_type: string | null
@@ -168,6 +169,7 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           follow_up_date?: string | null
+          followup_sent_at?: string | null
           id?: string
           notes?: string | null
           service_type?: string | null
@@ -186,6 +188,7 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           follow_up_date?: string | null
+          followup_sent_at?: string | null
           id?: string
           notes?: string | null
           service_type?: string | null

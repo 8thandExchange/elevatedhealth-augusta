@@ -143,3 +143,9 @@ verify_jwt = false
 
 [functions.verify-total-body-payment]
 verify_jwt = false
+
+[functions.send-kit-payment-link]
+verify_jwt = false
+
+[functions.check-consultation-followup]
+verify_jwt = false

@@ -14,7 +14,7 @@ import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import KitTracker from "@/components/patient/KitTracker";
 import MindCareCard from "@/components/patient/MindCareCard";
 import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard";
-import { MetabolicArchitectureCard } from "@/components/patient/MetabolicArchitectureCard";
+// MetabolicArchitectureCard removed - $599 kit discontinued
 import SafetyGate from "@/components/patient/SafetyGate";
 import MinimalPatientHeader from "@/components/patient/MinimalPatientHeader";
 import BottomTabBar from "@/components/patient/BottomTabBar";
@@ -481,15 +481,7 @@ const PatientDashboard = () => {
                     />
                   )}
 
-                  {/* Metabolic Architecture Card */}
-                  {(patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) && (
-                    <MetabolicArchitectureCard
-                      patientId={patient.id}
-                      patientEmail={patient.email || ''}
-                      patientName={patient.full_name}
-                      kitStatus={metabolicPayment?.kit_status}
-                    />
-                  )}
+                  {/* Metabolic Architecture Card removed - $599 kit discontinued */}
                 </TabsContent>
 
                 <TabsContent value="action-plan" className="mt-4">
