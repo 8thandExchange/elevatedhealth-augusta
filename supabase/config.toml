@@ -149,3 +149,9 @@ verify_jwt = false
 
 [functions.check-consultation-followup]
 verify_jwt = false
+
+[functions.create-hair-restoration-checkout]
+verify_jwt = false
+
+[functions.create-sexual-wellness-checkout]
+verify_jwt = false
