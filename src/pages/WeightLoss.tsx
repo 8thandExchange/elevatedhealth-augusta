@@ -21,6 +21,7 @@ const WeightLoss = () => {
   const [isConsultationLoading, setIsConsultationLoading] = useState(false);
   const [isMappingLoading, setIsMappingLoading] = useState(false);
   const [isContinuationLoading, setIsContinuationLoading] = useState(false);
+  const [isTirzepatideLoading, setIsTirzepatideLoading] = useState(false);
   const [creditCode, setCreditCode] = useState("");
   const [creditApplied, setCreditApplied] = useState(false);
 
@@ -110,6 +111,32 @@ const WeightLoss = () => {
       toast.error("Failed to start checkout. Please try again or call us.");
     } finally {
       setIsContinuationLoading(false);
+    }
+  };
+
+  const handleTirzepatideCheckout = async () => {
+    setIsTirzepatideLoading(true);
+    trackEvent("cta_click", { cta_name: "tirzepatide_membership", destination: "checkout" });
+    try {
+      const { data, error } = await supabase.functions.invoke("create-metabolic-checkout", {
+        body: { 
+          priceId: "price_1SfidbEOtKRY99pulxINzzKl",
+          productType: "tirzepatide"
+        }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Tirzepatide checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsTirzepatideLoading(false);
     }
   };
 
@@ -636,72 +663,136 @@ const WeightLoss = () => {
                   The Elevated Membership
                 </h2>
                 <p className="text-lg text-muted-foreground font-lato">
-                  A private, all-inclusive approach to hormonal weight optimization
+                  Choose your GLP-1 medication • All-inclusive hormone-optimized care
                 </p>
               </div>
 
-              {/* Glassmorphism Membership Card */}
-              <div className="max-w-xl mx-auto">
+              {/* Two Membership Options */}
+              <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+                {/* Semaglutide - Standard */}
                 <div 
-                  className="relative p-8 md:p-10 rounded-2xl border border-gold/40 animate-fade-in-up"
+                  className="relative p-8 rounded-2xl border border-gold/30 animate-fade-in-up"
                   style={{
                     background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 50%, rgba(250,247,242,0.8) 100%)',
                     backdropFilter: 'blur(20px)',
-                    boxShadow: '0 8px 32px rgba(44, 62, 80, 0.12), inset 0 1px 0 rgba(255,255,255,0.8)'
+                    boxShadow: '0 8px 32px rgba(44, 62, 80, 0.08), inset 0 1px 0 rgba(255,255,255,0.8)'
                   }}
                 >
-                  {/* Subtle Gold Glow */}
-                  <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-gold/20 via-transparent to-gold/10 pointer-events-none" />
-                  
-                  {/* Content */}
                   <div className="relative z-10">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                      <h3 className="font-cormorant text-2xl md:text-3xl text-primary font-bold mb-4">
-                        The Hormonal Weight Reset
+                    <div className="text-center mb-6">
+                      <span className="inline-block px-3 py-1 bg-gold/10 text-gold text-xs font-medium rounded-full mb-3">
+                        Most Popular
+                      </span>
+                      <h3 className="font-cormorant text-2xl text-primary font-bold mb-2">
+                        Semaglutide
                       </h3>
-                      <div className="flex items-baseline justify-center gap-1">
-                        <span className="font-cormorant text-5xl md:text-6xl text-primary font-light">$399</span>
-                        <span className="text-primary/60 font-lato">/ month</span>
-                      </div>
-                      <p className="mt-3 text-sm text-primary/60 font-lato">
-                        All-inclusive care. No hidden lab fees. Cancel anytime.
+                      <p className="text-sm text-muted-foreground font-lato mb-4">
+                        The trusted GLP-1 for steady, sustainable weight loss
                       </p>
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="font-cormorant text-4xl text-primary font-light">$399</span>
+                        <span className="text-primary/60 font-lato text-sm">/ month</span>
+                      </div>
                     </div>
 
-                    {/* Divider */}
-                    <div className="h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent mb-8" />
+                    <div className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent mb-6" />
 
-                    {/* Inclusions */}
-                    <ul className="space-y-4 mb-8">
+                    <ul className="space-y-3 mb-6 text-sm">
                       {membershipInclusions.map((inclusion, index) => (
-                        <li 
-                          key={index} 
-                          className="flex items-start gap-3 animate-fade-in-up"
-                          style={{ animationDelay: `${index * 0.05}s` }}
-                        >
-                          <CheckCircle2 className="h-5 w-5 text-gold shrink-0 mt-0.5" />
-                          <span className="text-primary/80 font-lato text-sm md:text-base">{inclusion}</span>
+                        <li key={index} className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                          <span className="text-primary/70 font-lato">{inclusion}</span>
                         </li>
                       ))}
                     </ul>
 
-                    {/* CTA Button */}
                     <Button 
                       onClick={scrollToBooking} 
                       size="lg" 
-                      className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-white font-lato"
+                      className="w-full bg-primary hover:bg-primary/90 text-white font-lato"
                     >
-                      Apply for Membership
+                      Apply for Semaglutide
                     </Button>
+                  </div>
+                </div>
 
-                    {/* Subtle Footer */}
-                    <p className="mt-6 text-center text-xs text-primary/50 font-lato">
-                      Limited availability. We accept new members each month.
-                    </p>
+                {/* Tirzepatide - Premium */}
+                <div 
+                  className="relative p-8 rounded-2xl border-2 border-gold/60 animate-fade-in-up"
+                  style={{
+                    animationDelay: "0.1s",
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,247,242,0.9) 50%, rgba(212,160,23,0.05) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 8px 32px rgba(212, 160, 23, 0.15), inset 0 1px 0 rgba(255,255,255,0.9)'
+                  }}
+                >
+                  {/* Premium Badge */}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-gradient-to-r from-gold to-gold-dark text-white text-xs px-4 py-1 rounded-full font-lato font-medium shadow-lg">
+                      Premium Tier
+                    </span>
+                  </div>
+
+                  <div className="relative z-10">
+                    <div className="text-center mb-6 pt-2">
+                      <h3 className="font-cormorant text-2xl text-primary font-bold mb-2">
+                        Tirzepatide
+                      </h3>
+                      <p className="text-sm text-muted-foreground font-lato mb-4">
+                        Dual-action GLP-1/GIP for accelerated results
+                      </p>
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="font-cormorant text-4xl text-gold font-light">$599</span>
+                        <span className="text-primary/60 font-lato text-sm">/ month</span>
+                      </div>
+                      <p className="text-xs text-green-600 font-medium mt-1">
+                        Up to 22.5% weight loss in clinical trials
+                      </p>
+                    </div>
+
+                    <div className="h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mb-6" />
+
+                    <ul className="space-y-3 mb-6 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                        <span className="text-primary/70 font-lato">FDA-Approved Tirzepatide (dual GLP-1/GIP)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                        <span className="text-primary/70 font-lato">ZRT Saliva Diagnostic Kit included</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                        <span className="text-primary/70 font-lato">Hormone Blocker Analysis (Cortisol, E2, T)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                        <span className="text-primary/70 font-lato">Adrenal & Hormone Support Protocols</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                        <span className="text-primary/70 font-lato">Priority Shipping from our Partner</span>
+                      </li>
+                    </ul>
+
+                    <Button 
+                      onClick={handleTirzepatideCheckout}
+                      disabled={isTirzepatideLoading}
+                      size="lg" 
+                      className="w-full bg-gold hover:bg-gold-dark text-white font-lato"
+                    >
+                      {isTirzepatideLoading ? (
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      ) : null}
+                      {isTirzepatideLoading ? "Processing..." : "Apply for Tirzepatide"}
+                    </Button>
                   </div>
                 </div>
               </div>
+
+              <p className="mt-8 text-center text-xs text-primary/50 font-lato">
+                Limited availability. We accept new members each month. Cancel anytime.
+              </p>
             </div>
           </section>
 
