@@ -31,13 +31,15 @@ const FeminineIcon = ({ className, style }: { className?: string; style?: React.
   </svg>
 );
 
+import { SITE_CONFIG } from "@/lib/siteConfig";
+
 const treatments = [
   {
     id: "ketamine",
     title: "Neural Restoration",
     tagline: "Reset neural pathways altered by stress",
     icon: LotusIcon,
-    route: "/ketamine",
+    route: SITE_CONFIG.routes.ketamine,
     iconColor: "#1a8a9a",
   },
   {
@@ -45,7 +47,7 @@ const treatments = [
     title: "Metabolic Reset",
     tagline: "GLP-1s optimized by hormone testing",
     icon: DNAIcon,
-    route: "/weight-loss",
+    route: SITE_CONFIG.routes.weightloss,
     iconColor: "#D4A017",
   },
   {
@@ -53,7 +55,7 @@ const treatments = [
     title: "Biological Reset",
     tagline: "Precision bio-identical protocols",
     icon: FeminineIcon,
-    route: "/hormones",
+    route: SITE_CONFIG.routes.hormones,
     iconColor: "#1a8a9a",
   },
 ];

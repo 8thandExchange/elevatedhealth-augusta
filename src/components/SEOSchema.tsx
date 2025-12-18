@@ -1,15 +1,16 @@
 import { Helmet } from "react-helmet";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const SEOSchema = () => {
   const medicalClinicSchema = {
     "@context": "https://schema.org",
     "@type": "MedicalClinic",
-    "name": "Elevated Health Augusta",
+    "name": SITE_CONFIG.clinicName,
     "image": "https://elevatedhealthaugusta.com/og-image.jpg",
     "description": "Ketamine therapy, medical weight loss, and hormone replacement therapy in Augusta, GA. Evidence-based treatment for depression, PTSD, anxiety with BCBS, TRICARE, and VA insurance accepted.",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "7013 Evans Town Center Boulevard, Suite 203",
+      "streetAddress": SITE_CONFIG.address.line1,
       "addressLocality": "Evans",
       "addressRegion": "GA",
       "postalCode": "30809",
@@ -21,15 +22,12 @@ const SEOSchema = () => {
       "longitude": -82.1285
     },
     "url": "https://elevatedhealthaugusta.com",
-    "telephone": "+17064267383",
-    "priceRange": "$299-$400",
+    "telephone": `+1${SITE_CONFIG.phoneRaw}`,
+    "priceRange": "$199-$400",
     "openingHoursSpecification": [
       {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Tuesday",
-          "Thursday"
-        ],
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
         "opens": "09:00",
         "closes": "17:00"
       }
@@ -39,6 +37,19 @@ const SEOSchema = () => {
       "Mental Health",
       "Weight Management",
       "Hormone Therapy"
+    ],
+    "areaServed": {
+      "@type": "GeoCircle",
+      "geoMidpoint": {
+        "@type": "GeoCoordinates",
+        "latitude": 33.5343,
+        "longitude": -82.1285
+      },
+      "geoRadius": "50"
+    },
+    "sameAs": [
+      "https://www.facebook.com/elevatedhealthaugusta",
+      "https://www.instagram.com/elevatedhealthaugusta"
     ]
   };
 

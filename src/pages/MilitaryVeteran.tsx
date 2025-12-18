@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, Copy, Send } from "lucide-react";
+import { CheckCircle2, Copy, Send, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ReferralRequestModal } from "@/components/ReferralRequestModal";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { Link } from "react-router-dom";
+
 const MilitaryVeteran = () => {
   const {
     toast
@@ -58,7 +61,63 @@ Thank you for considering my request.`;
     });
   };
   const advocacyItems = ["Dedicated TRICARE and VA benefit advocates on staff", "Support with referral documentation and prior authorization submissions", "Complimentary benefit verification to check coverage eligibility", "Guidance navigating military healthcare systems and Community Care networks"];
+
+  // Schema for AEO
+  const veteranSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does TRICARE cover ketamine therapy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "TRICARE typically covers FDA-approved SPRAVATO® (esketamine) for treatment-resistant depression. Coverage varies by plan. IV ketamine may require prior authorization or referral. We help you navigate the process and verify your benefits before treatment."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can Veterans get ketamine therapy through the VA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Veterans enrolled in VA care may access ketamine therapy through VA Community Care. We help you request authorization and provide all documentation needed for your VA care team to approve treatment at Elevated Health Augusta."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I get a referral for ketamine therapy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Contact your primary care manager or mental health provider with our referral template. We provide pre-written messages for both TRICARE and VA requests. Our staff can also help you navigate the referral process and verify coverage."
+        }
+      }
+    ]
+  };
+
   return <div className="min-h-screen">
+      <Helmet>
+        <title>Veteran Mental Health Augusta | TRICARE & VA Ketamine Therapy | Elevated Health</title>
+        <meta 
+          name="description" 
+          content="Ketamine therapy for Veterans in Augusta, GA. TRICARE and VA Community Care accepted. Free benefits verification. PTSD and depression treatment for military members." 
+        />
+        <meta 
+          name="keywords" 
+          content="TRICARE ketamine therapy, VA ketamine Augusta, veteran mental health Georgia, military PTSD treatment, Community Care ketamine" 
+        />
+        <link rel="canonical" href="https://elevatedhealthaugusta.com/military-veteran" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="Veteran Mental Health | TRICARE & VA Ketamine | Elevated Health" />
+        <meta property="og:description" content="Ketamine therapy for Veterans. TRICARE and VA Community Care accepted. Free benefits verification." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/military-veteran" />
+        
+        {/* Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify(veteranSchema)}
+        </script>
+      </Helmet>
       <Navbar />
       
       <main>

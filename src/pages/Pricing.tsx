@@ -192,14 +192,15 @@ const Pricing = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "MedicalBusiness",
-            "name": "Elevated Health Augusta",
+            "name": SITE_CONFIG.clinicName,
             "address": {
               "@type": "PostalAddress",
-              "streetAddress": "105 Davis Rd, Building 2, Suites 1-2",
-              "addressLocality": "Augusta",
+              "streetAddress": SITE_CONFIG.address.line1,
+              "addressLocality": "Evans",
               "addressRegion": "GA",
-              "postalCode": "30907"
+              "postalCode": "30809"
             },
+            "telephone": SITE_CONFIG.phone,
             "hasOfferCatalog": {
               "@type": "OfferCatalog",
               "name": "Healthcare Services",
