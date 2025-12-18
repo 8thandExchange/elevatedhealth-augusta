@@ -9,6 +9,7 @@ import { Loader2, Activity, Zap, Heart, Brain, Plus, Clock, CreditCard, Lock, Fi
 import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
 import OnboardingProgress from "@/components/patient/OnboardingProgress";
+import NextActionCard from "@/components/patient/NextActionCard";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import KitTracker from "@/components/patient/KitTracker";
@@ -431,14 +432,33 @@ const PatientDashboard = () => {
         ) : (
           /* HORMONE PATIENT DASHBOARD */
           <>
-            {/* Daily Protocol Hero Card */}
-            <AnimatedCard delay={0} animation="fadeUp">
-              <DailyProtocolCard 
-                patientName={patient?.full_name}
-                hasInjections={isAuthorized}
-                hasSupplements={isAuthorized}
-              />
-            </AnimatedCard>
+            {/* Next Action Card - Prominently shows what patient needs to do */}
+            {!isAuthorized && (
+              <AnimatedCard delay={0} animation="fadeUp">
+                <NextActionCard
+                  onboardingStatus={patient?.onboarding_status || null}
+                  kitStatus={kitTracking?.zrt_kit_status}
+                  hasAuthorizedOrder={isAuthorized}
+                  onBookConsultation={() => navigate("/schedule-consult")}
+                  onPayForLabs={() => {
+                    // This would typically be handled by provider sending kit link
+                    toast.info("Check your email for a payment link from your provider.");
+                  }}
+                  onActivateMembership={handlePurchaseMembership}
+                />
+              </AnimatedCard>
+            )}
+
+            {/* Daily Protocol Hero Card - Only for active treatment */}
+            {isAuthorized && (
+              <AnimatedCard delay={100} animation="fadeUp">
+                <DailyProtocolCard 
+                  patientName={patient?.full_name}
+                  hasInjections={true}
+                  hasSupplements={true}
+                />
+              </AnimatedCard>
+            )}
 
             {/* Tabbed Interface */}
             <AnimatedCard delay={100} animation="fadeUp">
@@ -472,12 +492,14 @@ const PatientDashboard = () => {
                     hasElevatedArchitecturePayment={false}
                   />
 
-                  {/* Onboarding Progress */}
+                  {/* Onboarding Progress with Kit Tracking Integration */}
                   {!isAuthorized && (
                     <OnboardingProgress
                       onboardingStatus={patient?.onboarding_status || null}
                       intakeCompleted={patient?.intake_completed || false}
                       hasAuthorizedOrder={isAuthorized}
+                      kitStatus={kitTracking?.zrt_kit_status}
+                      trackingNumber={kitTracking?.tracking_number}
                     />
                   )}
 
