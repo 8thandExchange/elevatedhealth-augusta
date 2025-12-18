@@ -832,20 +832,81 @@ const Pricing = () => {
 
                 {/* Concierge Upgrade */}
                 <div className="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                      <Badge variant="outline" className="mb-2 border-amber-400 text-amber-700 font-lato text-xs">
-                        All-Inclusive Option
-                      </Badge>
-                      <h4 className="font-cormorant text-lg text-slate-900">Concierge Membership</h4>
-                      <p className="text-sm text-slate-600 font-lato">
-                        Everything in Vitality + GLP-1 medication + adrenal support
-                      </p>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                      <div>
+                        <Badge variant="outline" className="mb-2 border-amber-400 text-amber-700 font-lato text-xs">
+                          All-Inclusive Option
+                        </Badge>
+                        <h4 className="font-cormorant text-lg text-slate-900">Concierge Membership</h4>
+                        <p className="text-sm text-slate-600 font-lato">
+                          Complete metabolic + hormonal optimization in one plan
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-2xl font-cormorant text-slate-900">$399</span>
+                        <span className="text-slate-500 font-lato">/month</span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-2xl font-cormorant text-slate-900">$399</span>
-                      <span className="text-slate-500 font-lato">/month</span>
+                    
+                    {/* Expanded Feature List */}
+                    <div className="grid md:grid-cols-3 gap-4 pt-4 border-t border-slate-200">
+                      <div>
+                        <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Vitality Base</p>
+                        <ul className="space-y-1.5 text-sm text-slate-600 font-lato">
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            Quarterly ZRT testing
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            $50/mo medication credit
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            Unlimited provider messaging
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">+ GLP-1 Weight Loss</p>
+                        <ul className="space-y-1.5 text-sm text-slate-600 font-lato">
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            Semaglutide or Tirzepatide
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            Monthly dosing adjustments
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            B12/Lipotropic support
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">+ Adrenal Protocol</p>
+                        <ul className="space-y-1.5 text-sm text-slate-600 font-lato">
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            DHEA + Pregnenolone
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            Adaptogenic herbs (AdreneVive)
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            Cortisol rhythm optimization
+                          </li>
+                        </ul>
+                      </div>
                     </div>
+                    
+                    <p className="text-xs text-slate-500 font-lato italic mt-2">
+                      Addresses HPA-axis dysfunction for patients with chronic fatigue, burnout, or stress-related hormone imbalances.
+                    </p>
                   </div>
                 </div>
               </div>
