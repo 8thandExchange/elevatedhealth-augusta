@@ -2066,6 +2066,15 @@ const ProviderDashboard = () => {
                 latestLabResult={selectedPatientLabResult}
               />
 
+              {/* Membership Assignment Card */}
+              <MembershipAssignmentCard
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                currentTier={selectedPatient.patient.membership_tier || null}
+                currentRenewalDate={selectedPatient.patient.membership_renewal_date || null}
+                onUpdate={() => loadData()}
+              />
+
               {/* Superbill Generator */}
               <Card className="border-border/50">
                 <CardHeader className="pb-2">

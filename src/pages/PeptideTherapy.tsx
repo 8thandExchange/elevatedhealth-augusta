@@ -176,6 +176,28 @@ const peptideCategories = [
         note: "10-dose kit",
         badge: "FDA-Approved",
       },
+      {
+        name: "Oxytocin Nasal Spray",
+        subtitle: "Bonding & Connection",
+        benefit: "Often called the 'love hormone,' oxytocin supports emotional bonding, intimacy, and connection. May help reduce anxiety in social and intimate settings.",
+        price: "$79/mo",
+        type: "recurring",
+      },
+    ],
+  },
+  {
+    category: "Metabolic Enhancement",
+    icon: MetabolicIcon,
+    description: "Target stubborn fat and optimize metabolic pathways.",
+    products: [
+      {
+        name: "5-Amino-1MQ",
+        subtitle: "NNMT Inhibitor",
+        benefit: "Targets the NNMT enzyme to help the body use fat for energy more efficiently. Supports metabolic health and may help reduce stubborn adipose tissue.",
+        price: "$279/mo",
+        type: "recurring",
+        badge: "Advanced",
+      },
     ],
   },
   {
@@ -254,7 +276,7 @@ const PeptideTherapy = () => {
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
-                  4 Categories • FDA-Compliant Protocols
+                  5 Categories • FDA-Compliant Protocols
                 </Badge>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cormorant mb-6 animate-fade-in-up text-foreground">
                   Cellular Optimization<br />& Longevity

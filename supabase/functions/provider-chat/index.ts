@@ -91,21 +91,84 @@ Everything in Vitality PLUS:
 
 ## Peptide Therapy
 
-### Sermorelin (Growth Hormone)
+### Growth & Recovery Peptides
+
+**Sermorelin** - $149/month
 - Dose: Inject subcutaneously at bedtime
 - Empty stomach required (2-3 hours after eating)
-- Benefits: Sleep, recovery, body composition
+- Benefits: Sleep quality, recovery, body composition, natural GH support
 - Timeline: 4-8 weeks for noticeable effects
+- Instructions: Refrigerate medication, rotate injection sites
 
-### NAD+ (Cellular Energy)
-- Available as troche or injection
+**CJC-1295/Ipamorelin** - $179/month
+- Dose: Inject subcutaneously at bedtime
+- Short-acting GH pulse stimulation
+- Benefits: Similar to Sermorelin but often better tolerated
+- Timeline: 4-6 weeks for effects
+- Note: Alternative for patients who don't respond well to Sermorelin
+
+**Tesamorelin** - $399/month (FDA-Approved)
+- FDA-approved for visceral fat reduction
+- Dose: Inject subcutaneously daily
+- Benefits: Reduces central adiposity, improves body composition
+- Timeline: 8-12 weeks for visible results
+- Best for: Patients with significant visceral fat
+
+### Cellular Energy Peptides
+
+**NAD+ Troches** - $99/month
+- Daily sublingual tablets
 - Benefits: Mental clarity, energy, anti-aging
 - Timeline: 1-2 weeks for effects
+- Instructions: Dissolve under tongue, do not chew
 
-### PT-141 (Sexual Function)
+**NAD+ Injection** - $199/month
+- Higher bioavailability than troches
+- Benefits: Maximum cellular energy restoration
+- Best for: Severe fatigue, anti-aging protocols
+
+**NAD+ Nasal Spray** - $99 (one-time)
+- Fast-acting, rapid absorption
+- Benefits: Quick cognitive boost
+- Use: As needed for mental performance
+
+### Sexual Wellness Peptides
+
+**PT-141** - $225/kit (10 doses, FDA-Approved)
 - Works within 1-4 hours of dose
 - Effects last 24-72 hours
 - Use as needed, not daily
+- Works on brain's desire pathways
+- Effective for both men and women
+
+**Oxytocin Nasal Spray** - $79/month
+- Often called the "love hormone"
+- Benefits: Emotional bonding, intimacy, connection
+- May reduce social anxiety
+- Use: 1-2 sprays before intimate settings
+- Timeline: Effects within 30-60 minutes
+
+### Skin & Hair Regeneration
+
+**GHK-Cu Sublingual** - $99 (one-time)
+- Copper peptide complex
+- Benefits: Skin repair, collagen signaling
+- Supports skin quality and texture
+
+**GHK-Cu Topical** - $149 (one-time)
+- Apply directly to skin
+- Benefits: Collagen synthesis, wound healing, anti-aging
+- Best for: Targeted skin concerns
+
+### Metabolic Enhancement
+
+**5-Amino-1MQ** - $279/month
+- NNMT enzyme inhibitor
+- Benefits: Improves fat metabolism, targets stubborn adipose tissue
+- Mechanism: Helps body use fat for energy more efficiently
+- Best for: Patients with metabolic syndrome or stubborn fat
+- Timeline: 4-8 weeks for noticeable effects
+- Note: Often combined with GLP-1 for enhanced results
 
 ## Ketamine Therapy
 
