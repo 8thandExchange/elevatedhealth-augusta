@@ -16,6 +16,10 @@ const CALENDAR_URLS: Record<string, string> = {
   // Ketamine Candidacy Review (15 min) - for paid $99 consultations
   ketamine: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true",
   peptide: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true",
+  // Hair Restoration consultations
+  hair: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
+  // Sexual Wellness consultations
+  sexual: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
 };
 
 // Service type labels
@@ -62,6 +66,28 @@ const SERVICE_LABELS: Record<string, { title: string; specialist: string; credit
       "Speak with our peptide specialist to discuss your optimization goals",
       "If you're a good fit, your $99 credit applies to your peptide protocol",
       "Begin your cellular optimization journey"
+    ]
+  },
+  hair: {
+    title: "Hair Restoration Consultation",
+    specialist: "hair restoration specialist",
+    creditInfo: "Your $99 consultation fee will be credited toward your hair restoration protocol.",
+    steps: [
+      "Book your consultation using the calendar above",
+      "Speak with our specialist about your hair loss concerns and goals",
+      "Review FDA-approved treatment options (Finasteride, Minoxidil, Dutasteride, GHK-Cu)",
+      "Begin your personalized hair restoration protocol"
+    ]
+  },
+  sexual: {
+    title: "Sexual Wellness Consultation",
+    specialist: "sexual wellness specialist",
+    creditInfo: "Your $99 consultation fee will be credited toward your treatment protocol.",
+    steps: [
+      "Book your private consultation using the calendar above",
+      "Discuss your concerns confidentially with our specialist",
+      "Review treatment options (Tadalafil, Sildenafil, PT-141)",
+      "Start your discreet, personalized treatment plan"
     ]
   },
 };
