@@ -124,7 +124,7 @@ const Pricing = () => {
                 "name": "What is the cheapest way to get started at Elevated Health?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The most affordable entry point is our free 15-minute Discovery Call to discuss your goals. For committed patients, our $99 Discovery Consultation provides a comprehensive assessment. If you're interested in weight loss or hormone therapy, the $299 Metabolic or Hormone Mapping provides the best diagnostic value."
+                  "text": "The most affordable entry point is our free New Patient Application Call—speak with our Care Coordination Team to discuss pricing, insurance, and logistics (no medical advice provided). For committed patients, our $99 Discovery Consultation provides a comprehensive clinical assessment. If you're interested in weight loss or hormone therapy, the $299 Metabolic or Hormone Mapping provides the best diagnostic value."
                 }
               },
               {
