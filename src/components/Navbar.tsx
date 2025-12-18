@@ -211,6 +211,20 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                 >
                   Peptides
                 </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => navigate("/hair-restoration")}
+                  className="cursor-pointer"
+                  style={{ color: '#2C3E50' }}
+                >
+                  Hair Restoration
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => navigate("/sexual-wellness")}
+                  className="cursor-pointer"
+                  style={{ color: '#2C3E50' }}
+                >
+                  Sexual Wellness
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -382,6 +396,26 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
                 className="mobile-menu-link"
               >
                 Peptides
+              </button>
+
+              <button 
+                onClick={() => {
+                  navigate("/hair-restoration");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="mobile-menu-link"
+              >
+                Hair Restoration
+              </button>
+
+              <button 
+                onClick={() => {
+                  navigate("/sexual-wellness");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="mobile-menu-link"
+              >
+                Sexual Wellness
               </button>
 
               <button 
