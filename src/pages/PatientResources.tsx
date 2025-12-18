@@ -35,7 +35,9 @@ type ResourceCategory =
   | "general_wellness"
   | "injection_tutorials" 
   | "nutrition_guides" 
-  | "stress_management";
+  | "stress_management"
+  | "billing_payment"
+  | "getting_started";
 
 interface Resource {
   id: string;
@@ -101,6 +103,18 @@ const categoryConfig: Record<string, { label: string; icon: any; description: st
     icon: Heart,
     description: "Techniques for hormonal balance and mental wellness",
     color: "purple"
+  },
+  billing_payment: {
+    label: "Billing & Payment",
+    icon: FileText,
+    description: "HSA/FSA, insurance, superbills, and membership info",
+    color: "gold"
+  },
+  getting_started: {
+    label: "Getting Started",
+    icon: BookOpen,
+    description: "Your journey from intake to treatment",
+    color: "teal"
   }
 };
 
@@ -194,6 +208,50 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
     {
       question: "Which IV drip is right for me?",
       answer: "The Meyers: General wellness boost. The Shield: Immunity support (cold season, travel). The Glow: Beauty/skin health. The Resurrection: Hangover/recovery. Beast Mode: Athletic performance. Not sure? Our team can recommend based on your needs."
+    }
+  ],
+  billing_payment: [
+    {
+      question: "Can I use my HSA or FSA card to pay?",
+      answer: "Yes! HSA (Health Savings Account) and FSA (Flexible Spending Account) cards work just like credit cards at checkout. Our hormone therapy, weight loss, and mental wellness services are typically eligible expenses. Simply use your HSA/FSA card when paying online or in-clinic."
+    },
+    {
+      question: "What is a superbill and how do I use it?",
+      answer: "A superbill is an itemized receipt showing the medical services you received, including diagnosis codes (ICD-10) and procedure codes (CPT). You can download your superbill from the patient portal or request one from your provider. Submit it to your insurance for potential out-of-network reimbursement."
+    },
+    {
+      question: "Does insurance cover hormone therapy?",
+      answer: "While we don't bill insurance directly, many patients receive partial reimbursement for out-of-network services. We provide superbills with proper medical coding. Hormone therapy is often covered as a medical necessity. Contact your insurance to verify your out-of-network benefits."
+    },
+    {
+      question: "What's included in the Vitality Membership?",
+      answer: "The Vitality Membership ($199/mo) includes bio-identical hormone therapy with transdermal creams, quarterly lab testing, unlimited provider messaging, symptom tracking, and medication adjustments. All compounding pharmacy costs are included—no surprise charges."
+    },
+    {
+      question: "What's included in the Concierge Membership?",
+      answer: "The Concierge Membership ($499/mo) includes everything in Vitality PLUS GLP-1 weight loss medication, adrenal support protocol (DHEA, Pregnenolone, adaptogenic herbs), cortisol rhythm optimization, and priority scheduling. It's our most comprehensive metabolic optimization program."
+    },
+    {
+      question: "When is my membership renewal date?",
+      answer: "Your membership renews on the same day each month that you initially enrolled. You can view your renewal date in the Patient Dashboard under 'Membership Summary'. You'll receive an email reminder 3 days before each renewal."
+    }
+  ],
+  getting_started: [
+    {
+      question: "What happens after I complete the intake form?",
+      answer: "After you submit your intake and symptom questionnaire, our team reviews your information within 24-48 hours. You'll receive a ZRT test kit shipped to your home. Complete your saliva collection and return it using the prepaid mailer. Results typically take 7-10 business days."
+    },
+    {
+      question: "How long until I start treatment?",
+      answer: "The typical timeline is: Intake (Day 1) → Lab kit arrives (3-5 days) → Complete testing → Results ready (7-10 days) → Provider review (1-2 days) → Treatment authorized → Pharmacy ships (2-3 days). Most patients start treatment within 3 weeks of signing up."
+    },
+    {
+      question: "How do I message my provider?",
+      answer: "Use the 'Messages' tab in your Patient Dashboard to send secure messages directly to your care team. We typically respond within 24 hours on business days. For urgent matters, call the clinic directly during office hours."
+    },
+    {
+      question: "How do I track my progress?",
+      answer: "Complete the Symptom Check-In on your dashboard weekly (it takes just 2 minutes). This helps your provider see trends over time and adjust your protocol accordingly. You'll also have access to your lab results and Health Report showing your progress."
     }
   ]
 };

@@ -48,6 +48,8 @@ import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
 import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
 import PatientStatusCard from "@/components/provider/PatientStatusCard";
 import { SendKitLinkCard } from "@/components/provider/SendKitLinkCard";
+import MembershipAssignmentCard from "@/components/provider/MembershipAssignmentCard";
+import ProviderAssistant from "@/components/provider/ProviderAssistant";
 
 interface Patient {
   id: string;
@@ -69,6 +71,8 @@ interface Patient {
   allergies?: string | null;
   onboarding_status?: string;
   is_archived?: boolean;
+  membership_tier?: string | null;
+  membership_renewal_date?: string | null;
 }
 
 interface SymptomLog {
@@ -2359,6 +2363,10 @@ const ProviderDashboard = () => {
           }}
         />
       )}
+      )}
+
+      {/* Provider AI Assistant - Floating Chat */}
+      <ProviderAssistant />
     </div>
   );
 };
