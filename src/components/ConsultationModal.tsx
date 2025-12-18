@@ -78,6 +78,26 @@ const CellularIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const HairIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+    {/* Hair follicle / restoration */}
+    <ellipse cx="24" cy="38" rx="8" ry="4" />
+    <path d="M20 38 C20 30 16 24 16 16 C16 10 20 6 24 6" />
+    <path d="M28 38 C28 30 32 24 32 16 C32 10 28 6 24 6" />
+    <path d="M24 38 C24 28 24 20 24 6" />
+    <circle cx="24" cy="6" r="2" />
+  </svg>
+);
+
+const WellnessIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+    {/* Intimate wellness / vitality heart */}
+    <path d="M24 42 C24 42 6 28 6 18 C6 10 12 6 18 6 C22 6 24 10 24 10 C24 10 26 6 30 6 C36 6 42 10 42 18 C42 28 24 42 24 42Z" />
+    <path d="M24 18 L24 30" />
+    <path d="M18 24 L30 24" />
+  </svg>
+);
+
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
   const [loadingService, setLoadingService] = useState<string | null>(null);
 
@@ -111,6 +131,20 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
       title: "Peptide Therapy",
       description: "Sermorelin, NAD+, BPC-157 & PT-141 for cellular optimization",
       serviceType: "peptide",
+      freeCallUrl: clinicalEligibilityUrl
+    },
+    {
+      icon: HairIcon,
+      title: "Hair Restoration",
+      description: "Finasteride, minoxidil & PRP therapy for hair regrowth",
+      serviceType: "hair",
+      freeCallUrl: clinicalEligibilityUrl
+    },
+    {
+      icon: WellnessIcon,
+      title: "Sexual Wellness",
+      description: "Discreet treatment for ED, low libido & intimate health",
+      serviceType: "sexual",
       freeCallUrl: clinicalEligibilityUrl
     }
   ];
