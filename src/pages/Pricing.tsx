@@ -678,20 +678,6 @@ const Pricing = () => {
                       </CardContent>
                     </Card>
 
-                    <Card className="border border-border hover:border-gold/30 transition-all">
-                      <CardContent className="p-5 flex justify-between items-center">
-                        <div>
-                          <h4 className="font-cormorant text-lg text-foreground">Comprehensive Panel</h4>
-                          <p className="text-sm text-muted-foreground font-lato">
-                            Full hormone + thyroid + metabolic blood panel
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-2xl font-cormorant text-foreground">$399</span>
-                          <span className="block text-xs text-muted-foreground">one-time</span>
-                        </div>
-                      </CardContent>
-                    </Card>
                   </div>
                 </div>
 
