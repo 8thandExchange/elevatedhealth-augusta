@@ -14,7 +14,9 @@ import {
   Syringe, 
   Check, 
   Plus,
-  ArrowRight
+  ArrowRight,
+  Scissors,
+  Heart
 } from "lucide-react";
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import EditProfileModal from "@/components/patient/EditProfileModal";
@@ -88,6 +90,28 @@ const SERVICES: Service[] = [
     color: "teal",
     journeyPage: "/iv-lounge",
     actionLabel: "Book Session",
+  },
+  {
+    id: "hair_restoration",
+    name: "Hair Restoration",
+    description: "FDA-approved medications and peptide therapy for hair loss and regrowth.",
+    icon: <Scissors className="w-6 h-6" />,
+    treatmentKey: "hair_restoration",
+    publicPage: "/hair-restoration",
+    color: "amber",
+    journeyPage: "/patient/hormone-journey",
+    actionLabel: "View Protocol",
+  },
+  {
+    id: "sexual_wellness",
+    name: "Sexual Wellness",
+    description: "Discreet ED treatments and intimacy enhancement. Private consultations.",
+    icon: <Heart className="w-6 h-6" />,
+    treatmentKey: "sexual_wellness",
+    publicPage: "/sexual-wellness",
+    color: "rose",
+    journeyPage: "/patient/hormone-journey",
+    actionLabel: "View Treatment",
   },
 ];
 
@@ -189,6 +213,8 @@ const PatientServices = () => {
       purple: "from-purple-50 to-purple-100/50 border-purple-200 dark:from-purple-950/30 dark:to-purple-900/20 dark:border-purple-800",
       blue: "from-blue-50 to-blue-100/50 border-blue-200 dark:from-blue-950/30 dark:to-blue-900/20 dark:border-blue-800",
       teal: "from-teal-50 to-teal-100/50 border-teal-200 dark:from-teal-950/30 dark:to-teal-900/20 dark:border-teal-800",
+      amber: "from-amber-50 to-amber-100/50 border-amber-200 dark:from-amber-950/30 dark:to-amber-900/20 dark:border-amber-800",
+      rose: "from-rose-50 to-rose-100/50 border-rose-200 dark:from-rose-950/30 dark:to-rose-900/20 dark:border-rose-800",
     };
     return colors[color] || colors.blue;
   };
@@ -200,6 +226,8 @@ const PatientServices = () => {
       purple: "bg-purple-500/20 text-purple-600",
       blue: "bg-blue-500/20 text-blue-600",
       teal: "bg-teal-500/20 text-teal-600",
+      amber: "bg-amber-500/20 text-amber-600",
+      rose: "bg-rose-500/20 text-rose-600",
     };
     return colors[color] || colors.blue;
   };

@@ -27,6 +27,8 @@ import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
 import ZRTRequisitionGenerator from "@/components/provider/ZRTRequisitionGenerator";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
+import HairRestorationAddonSelector from "@/components/provider/HairRestorationAddonSelector";
+import SexualWellnessAddonSelector from "@/components/provider/SexualWellnessAddonSelector";
 import PharmacyOrderCard from "@/components/provider/PharmacyOrderCard";
 import EditPatientProfileModal from "@/components/provider/EditPatientProfileModal";
 import InvitePatientCard from "@/components/provider/InvitePatientCard";
@@ -2001,6 +2003,25 @@ const ProviderDashboard = () => {
                 patientId={selectedPatient.patient.id}
                 patientName={selectedPatient.patient.full_name}
                 currentPeptides={(selectedPatient.patient.medical_history as Record<string, any>)?.peptide_protocols || []}
+              />
+
+              {/* Hair Restoration Add-On Selector */}
+              <HairRestorationAddonSelector
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientEmail={selectedPatient.patient.email || ""}
+                currentProducts={(selectedPatient.patient.medical_history as Record<string, any>)?.hair_restoration_products || []}
+                onUpdate={() => loadData()}
+              />
+
+              {/* Sexual Wellness Add-On Selector */}
+              <SexualWellnessAddonSelector
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientEmail={selectedPatient.patient.email || ""}
+                patientGender={selectedPatient.patient.gender || "male"}
+                currentProducts={(selectedPatient.patient.medical_history as Record<string, any>)?.sexual_wellness_products || []}
+                onUpdate={() => loadData()}
               />
 
               {/* IV Ketamine Billing - Show for ketamine patients or always visible */}

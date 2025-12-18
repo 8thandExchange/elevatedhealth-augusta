@@ -41,6 +41,17 @@ const DIAGNOSIS_MAP: Record<string, { code: string; description: string }[]> = {
     { code: "R53.83", description: "Other Fatigue" },
     { code: "F52.0", description: "Hypoactive Sexual Desire Disorder" },
   ],
+  hair_restoration: [
+    { code: "L63.9", description: "Alopecia Areata, Unspecified" },
+    { code: "L64.9", description: "Androgenic Alopecia, Unspecified" },
+    { code: "L65.9", description: "Nonscarring Hair Loss, Unspecified" },
+  ],
+  sexual_wellness: [
+    { code: "F52.21", description: "Male Erectile Disorder" },
+    { code: "N52.9", description: "Male Erectile Dysfunction, Unspecified" },
+    { code: "F52.0", description: "Hypoactive Sexual Desire Disorder" },
+    { code: "F52.22", description: "Female Sexual Arousal Disorder" },
+  ],
 };
 
 interface PatientData {

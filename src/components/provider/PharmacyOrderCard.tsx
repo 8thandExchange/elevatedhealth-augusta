@@ -139,6 +139,66 @@ const FORMULARY = [
     category: "peptide",
     defaultCadence: "30",
   },
+  
+  // === HAIR RESTORATION ===
+  {
+    id: "minoxidil_finasteride",
+    name: "Minoxidil + Finasteride Combo",
+    strength: "5% Minoxidil / 0.1% Finasteride",
+    sig: "Apply to scalp once daily at bedtime.",
+    category: "hair_restoration",
+    defaultCadence: "30",
+  },
+  {
+    id: "dutasteride",
+    name: "Dutasteride",
+    strength: "0.5mg",
+    sig: "Take one capsule by mouth daily.",
+    category: "hair_restoration",
+    defaultCadence: "30",
+  },
+  {
+    id: "ghk_cu_scalp",
+    name: "GHK-Cu Scalp Therapy",
+    strength: "GHK-Cu 200mcg/mL",
+    sig: "Apply to scalp daily. May use with dermaroller weekly.",
+    category: "hair_restoration",
+    defaultCadence: "30",
+  },
+
+  // === SEXUAL WELLNESS ===
+  {
+    id: "tadalafil_daily",
+    name: "Tadalafil (Daily)",
+    strength: "5mg",
+    sig: "Take one tablet by mouth daily.",
+    category: "sexual_wellness",
+    defaultCadence: "30",
+  },
+  {
+    id: "tadalafil_prn",
+    name: "Tadalafil (As Needed)",
+    strength: "20mg",
+    sig: "Take one tablet by mouth 30-60 minutes before activity as needed.",
+    category: "sexual_wellness",
+    defaultCadence: "30",
+  },
+  {
+    id: "sildenafil",
+    name: "Sildenafil (Viagra)",
+    strength: "100mg",
+    sig: "Take one tablet by mouth 30-60 minutes before activity as needed.",
+    category: "sexual_wellness",
+    defaultCadence: "30",
+  },
+  {
+    id: "oxytocin_nasal",
+    name: "Oxytocin Nasal Spray",
+    strength: "24 IU/spray",
+    sig: "1-2 sprays intranasally 30 minutes before intimacy.",
+    category: "sexual_wellness",
+    defaultCadence: "30",
+  },
 ];
 
 const CATEGORIES = [
@@ -148,6 +208,8 @@ const CATEGORIES = [
   { id: "sleep_support", label: "Sleep Stack" },
   { id: "weight_loss", label: "Weight Loss" },
   { id: "peptide", label: "Peptide" },
+  { id: "hair_restoration", label: "Hair Restoration" },
+  { id: "sexual_wellness", label: "Sexual Wellness" },
 ];
 
 const CADENCE_OPTIONS = [
