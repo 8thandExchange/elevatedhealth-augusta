@@ -43,13 +43,13 @@ const MobileBookNow = () => {
           </DialogHeader>
           <div className="h-full overflow-hidden">
             <iframe
-              src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
+              src="https://calendar.app.google/hf3NNdiqJDueUuSN9"
               width="100%"
               height="100%"
               frameBorder="0"
               className="border-0"
               title="Schedule Consultation"
-              onLoad={() => trackEvent('booking_iframe_loaded', { link_id: 'long_schedule' })}
+              onLoad={() => trackEvent('booking_iframe_loaded', { link_id: 'new_patient_application' })}
             />
             <div className="p-4 text-center text-sm text-muted-foreground border-t">
               Prefer to talk? <a href="tel:+17067603470" className="text-accent hover:underline font-semibold">Call (706) 760-3470</a>

@@ -81,34 +81,37 @@ const CellularIcon = ({ className }: { className?: string }) => (
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
   const [loadingService, setLoadingService] = useState<string | null>(null);
 
+  // Clinical Eligibility URL for all free discovery calls
+  const clinicalEligibilityUrl = "https://calendar.app.google/5whDnpmP8vGhhEAx6";
+
   const consultationOptions = [
     {
       icon: NeuralIcon,
       title: "Ketamine Therapy",
       description: "IV infusions & SPRAVATO® for depression, PTSD, and anxiety",
       serviceType: "ketamine",
-      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
+      freeCallUrl: clinicalEligibilityUrl
     },
     {
       icon: DNAIcon,
       title: "Medical Weight Loss",
       description: "Physician-supervised semaglutide (GLP-1) therapy",
       serviceType: "weight_loss",
-      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true"
+      freeCallUrl: clinicalEligibilityUrl
     },
     {
       icon: VitalityIcon,
       title: "Hormone Replacement",
       description: "Bioidentical hormone therapy to restore vitality",
       serviceType: "hormone",
-      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true"
+      freeCallUrl: clinicalEligibilityUrl
     },
     {
       icon: CellularIcon,
       title: "Peptide Therapy",
       description: "Sermorelin, NAD+, BPC-157 & PT-141 for cellular optimization",
       serviceType: "peptide",
-      freeCallUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true"
+      freeCallUrl: clinicalEligibilityUrl
     }
   ];
 

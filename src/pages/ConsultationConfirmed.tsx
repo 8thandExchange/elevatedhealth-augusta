@@ -11,15 +11,12 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 
 // Calendar URLs by service type
 const CALENDAR_URLS: Record<string, string> = {
-  hormone: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
-  weight_loss: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
-  // Ketamine Candidacy Review (15 min) - for paid $99 consultations
-  ketamine: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true",
-  peptide: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true",
-  // Hair Restoration consultations
-  hair: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
-  // Sexual Wellness consultations
-  sexual: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
+  hormone: "https://calendar.app.google/npnih9qTAXu5PKLX6", // Hormone Optimization Strategy Session
+  weight_loss: "https://calendar.app.google/Nr1ruba57eqELJG19", // Medical Weight Loss Strategy Session
+  ketamine: "https://calendar.app.google/Cmwuzg5TYMeACQ4i6", // Ketamine Candidacy Review
+  peptide: "https://calendar.app.google/TwKGsbXLpGdTBpp9A", // Peptide Optimization Strategy Session
+  hair: "https://calendar.app.google/qicauwUqfSerdEi16", // Hair Restoration Strategy Session
+  sexual: "https://calendar.app.google/RkzUZ7uJZ3EJwyzy5", // Sexual Wellness Private Consultation
 };
 
 // Service type labels

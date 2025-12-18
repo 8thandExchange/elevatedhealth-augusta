@@ -25,10 +25,10 @@ const BookingWidget = () => {
             {/* Book Consultation Button */}
             <div className="text-center">
               <a 
-                href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
+                href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackCTAClick('book_consultation', 'google_calendar')}
+                onClick={() => trackCTAClick('book_consultation', 'new_patient_application')}
                 className="inline-block px-8 py-4 bg-accent text-white rounded-lg text-lg font-semibold hover:bg-accent/90 transition-colors shadow-lg hover:shadow-xl"
               >
                 Book Your Free Consultation →
