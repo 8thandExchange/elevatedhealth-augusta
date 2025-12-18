@@ -44,6 +44,8 @@ import StaffTasksTab from "@/components/provider/StaffTasksTab";
 import ConsultationTracker from "@/components/provider/ConsultationTracker";
 import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
 import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
+import PatientStatusCard from "@/components/provider/PatientStatusCard";
+import { SendKitLinkCard } from "@/components/provider/SendKitLinkCard";
 
 interface Patient {
   id: string;
@@ -1688,6 +1690,65 @@ const ProviderDashboard = () => {
                   </Button>
                 </CardContent>
               </Card>
+
+              {/* Patient Status Card - Shows current step and action needed */}
+              <PatientStatusCard
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientEmail={selectedPatient.patient.email || null}
+                onboardingStatus={selectedPatient.patient.onboarding_status || null}
+                onMarkConsultComplete={async () => {
+                  try {
+                    await supabase.from("patients").update({ 
+                      onboarding_status: "consultation_complete" 
+                    }).eq("id", selectedPatient.patient.id);
+                    toast.success("Consultation marked complete. You can now send the lab kit link.");
+                    await loadData();
+                    await selectPatient(selectedPatient);
+                  } catch (error: any) {
+                    toast.error(error.message);
+                  }
+                }}
+                onSendKitLink={() => {
+                  // SendKitLinkCard is shown below
+                  toast.info("Use the Send Kit Link card below to send payment link.");
+                }}
+                onMarkLabsReviewed={async () => {
+                  try {
+                    await supabase.from("patients").update({ 
+                      onboarding_status: "labs_reviewed" 
+                    }).eq("id", selectedPatient.patient.id);
+                    toast.success("Labs marked as reviewed.");
+                    await loadData();
+                    await selectPatient(selectedPatient);
+                  } catch (error: any) {
+                    toast.error(error.message);
+                  }
+                }}
+                onApproveProtocol={async () => {
+                  try {
+                    await supabase.from("patients").update({ 
+                      onboarding_status: "protocol_approved" 
+                    }).eq("id", selectedPatient.patient.id);
+                    toast.success("Protocol approved! Patient can now activate membership.");
+                    await loadData();
+                    await selectPatient(selectedPatient);
+                  } catch (error: any) {
+                    toast.error(error.message);
+                  }
+                }}
+              />
+
+              {/* Send Kit Link Card - Show when consultation is complete */}
+              {(selectedPatient.patient.onboarding_status === "consultation_complete" || 
+                selectedPatient.patient.onboarding_status === "intake_complete") && 
+                selectedPatient.patient.email && (
+                <SendKitLinkCard
+                  patientId={selectedPatient.patient.id}
+                  patientName={selectedPatient.patient.full_name}
+                  patientEmail={selectedPatient.patient.email}
+                />
+              )}
 
               {/* Safety Flags */}
               {(selectedPatient.patient.safety_flags?.length > 0 || selectedPatient.patient.risk_status === "high_risk_review") && (
