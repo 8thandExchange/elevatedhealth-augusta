@@ -149,7 +149,7 @@ const Veterans = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="default" size="xl" asChild className="gap-2">
                 <a
-                  href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true"
+                  href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -50,14 +50,14 @@ const serviceCategories = [
 ];
 
 const serviceBookingUrls: Record<string, string> = {
-  mental: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true",
-  weight: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true",
-  hormones: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true",
-  peptides: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MR6nvUsM4Se9w_L8puDzb-0hWDSKLm6mlgwgeS-q0bBr0lVhS2PXET0ujlCE5ci9gzE0QPMis?gv=true",
-  iv: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true",
-  hair: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true",
-  sexual: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true",
-  default: SITE_CONFIG.bookingUrl,
+  mental: "https://calendar.app.google/Cmwuzg5TYMeACQ4i6", // Ketamine Candidacy Review
+  weight: "https://calendar.app.google/Nr1ruba57eqELJG19", // Medical Weight Loss Strategy Session
+  hormones: "https://calendar.app.google/npnih9qTAXu5PKLX6", // Hormone Optimization Strategy Session
+  peptides: "https://calendar.app.google/TwKGsbXLpGdTBpp9A", // Peptide Optimization Strategy Session
+  iv: "https://calendar.app.google/tho8888rMkQpURzn7", // IV Therapy Session
+  hair: "https://calendar.app.google/qicauwUqfSerdEi16", // Hair Restoration Strategy Session
+  sexual: "https://calendar.app.google/RkzUZ7uJZ3EJwyzy5", // Sexual Wellness Private Consultation
+  default: SITE_CONFIG.bookingUrl, // New Patient Application Call
 };
 
 const Pricing = () => {

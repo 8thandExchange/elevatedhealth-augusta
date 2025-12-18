@@ -307,7 +307,7 @@ const ChatBot = () => {
           {messages.length > 2 && (
             <div className="px-4 py-2 border-t border-border bg-accent/30">
               <a
-                href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1TXM4LhPdRGp7nOBvJPbfiFFOquxK3lpKR6YXEgwYfF9HYSUCMqUJRlEJxsVCw7nJ1MhPCDXhT"
+                href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 text-sm text-primary hover:text-primary/80 font-medium"
