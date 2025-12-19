@@ -91,24 +91,51 @@ const PatientLogin = () => {
   // Ref to prevent race conditions with navigation
   const hasNavigatedRef = useRef(false);
 
-  // Check for existing session on mount - validate before redirecting
+  // Check for existing session on mount with timeout protection
   useEffect(() => {
-    const checkExistingSession = async () => {
-      // Check if session is actually valid with the server
-      const valid = await isSessionValid();
-      
-      if (valid && !hasNavigatedRef.current) {
-        hasNavigatedRef.current = true;
-        navigate("/patient/dashboard", { replace: true });
-      } else {
-        // No valid session - clear any stale data and show login
-        if (!valid) {
-          clearAuthStorage();
-        }
+    let isMounted = true;
+    let timeoutId: NodeJS.Timeout;
+    
+    // Aggressive timeout - show login form after 3 seconds no matter what
+    timeoutId = setTimeout(() => {
+      if (isMounted && checkingSession) {
+        console.warn("[PatientLogin] Session check timed out - forcing login form");
+        clearAuthStorage();
         setCheckingSession(false);
       }
+    }, 3000);
+
+    const checkExistingSession = async () => {
+      try {
+        console.log("[PatientLogin] Checking existing session...");
+        const valid = await isSessionValid();
+        
+        if (!isMounted) return;
+        
+        if (valid && !hasNavigatedRef.current) {
+          console.log("[PatientLogin] Valid session found - redirecting");
+          hasNavigatedRef.current = true;
+          navigate("/patient/dashboard", { replace: true });
+        } else {
+          console.log("[PatientLogin] No valid session - showing login form");
+          clearAuthStorage();
+          setCheckingSession(false);
+        }
+      } catch (error) {
+        console.error("[PatientLogin] Session check error:", error);
+        if (isMounted) {
+          clearAuthStorage();
+          setCheckingSession(false);
+        }
+      }
     };
+    
     checkExistingSession();
+    
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
   }, [navigate]);
 
   // Handle Google OAuth sign in
