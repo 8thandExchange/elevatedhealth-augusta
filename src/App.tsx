@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollToTop from "@/components/ScrollToTop";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import SecurePatientRoute from "@/components/auth/SecurePatientRoute";
 import CookieConsent from "@/components/CookieConsent";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
 import Index from "./pages/Index";
@@ -107,48 +108,48 @@ const App = () => (
           
           {/* Protected Patient Routes */}
           <Route path="/symptom-checker" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <SymptomChecker />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           <Route path="/patient/login" element={<PatientLogin />} />
           {/* Patient Dashboard = Services Hub (main entry point) */}
           <Route path="/patient/dashboard" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <PatientServices />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           {/* Legacy route redirect */}
           <Route path="/patient/services" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <PatientServices />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           {/* Service-specific journey pages */}
           <Route path="/patient/mental-wellness" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <MentalWellnessPage />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           <Route path="/patient/hormone-journey" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <HormoneJourneyPage />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           <Route path="/patient/intake" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <PatientIntake />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           <Route path="/patient/checkin" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <SymptomCheckIn />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           <Route path="/patient/health-report" element={
-            <ProtectedRoute>
+            <SecurePatientRoute>
               <HealthReport />
-            </ProtectedRoute>
+            </SecurePatientRoute>
           } />
           
           {/* Admin/Provider Routes */}
