@@ -845,7 +845,7 @@ const Pricing = () => {
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="text-2xl font-cormorant text-slate-900">$399</span>
+                        <span className="text-2xl font-cormorant text-slate-900">$499</span>
                         <span className="text-slate-500 font-lato">/month</span>
                       </div>
                     </div>
@@ -1167,12 +1167,13 @@ const Pricing = () => {
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 {[
-                  { name: "Hydration Basics", price: "$139", desc: "Fluids + Electrolytes" },
-                  { name: "Energy Boost", price: "$159", desc: "B-Complex + B12 + Fluids" },
-                  { name: "Immune Defense", price: "$179", desc: "Vitamin C + Zinc + Glutathione" },
-                  { name: "Executive Recovery", price: "$199", desc: "Full vitamin complex + NAD+" },
+                  { name: "The Meyers", price: "$149", desc: "Classic vitamin infusion" },
+                  { name: "The Shield", price: "$179", desc: "Immunity boost" },
+                  { name: "The Glow", price: "$169", desc: "Beauty & skin hydration" },
+                  { name: "The Resurrection", price: "$169", desc: "Hangover recovery" },
+                  { name: "Beast Mode", price: "$189", desc: "Athletic recovery" },
                 ].map((drip) => (
                   <Card 
                     key={drip.name} 
@@ -1194,7 +1195,7 @@ const Pricing = () => {
                   Pay in 4 interest-free payments with Klarna at checkout
                 </p>
                 <p className="text-sm text-muted-foreground font-lato mb-4">
-                  Add booster shots to any drip: <span className="text-foreground">+$25 each</span>
+                  Add-ons: <span className="text-foreground">B12 $25</span> • <span className="text-foreground">Glutathione $35</span> • <span className="text-foreground">NAD+ Booster $50</span>
                 </p>
                 <Button variant="outline" onClick={() => navigate("/iv-lounge")}>
                   View Full IV Menu <ArrowRight className="w-4 h-4 ml-2" />
@@ -1314,11 +1315,11 @@ const Pricing = () => {
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$149</span>
-                      <span className="text-muted-foreground font-lato">/month</span>
+                      <span className="text-3xl font-cormorant text-foreground">$99</span>
+                      <span className="text-muted-foreground font-lato"> one-time</span>
                     </div>
                     <p className="text-xs text-gold font-lato mb-4">
-                      or 4 payments of $37 with Klarna
+                      or 4 payments of $25 with Klarna
                     </p>
                     <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
