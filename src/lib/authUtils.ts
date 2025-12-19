@@ -54,29 +54,46 @@ export const forceLogout = async (redirectPath = '/patient/login') => {
   window.location.href = redirectPath;
 };
 
+const SESSION_VALIDATION_TIMEOUT_MS = 3000; // 3 second timeout
+
 /**
  * Validates if the current session is actually valid by checking with the server
  * Returns true if session is valid, false otherwise
+ * Includes a timeout to prevent hanging on slow/unresponsive network
  */
 export const isSessionValid = async (): Promise<boolean> => {
-  try {
-    // First check if we have a session token
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError || !session) {
+  const timeoutPromise = new Promise<boolean>((resolve) => {
+    setTimeout(() => {
+      console.warn("[Auth] Session validation timed out");
+      resolve(false);
+    }, SESSION_VALIDATION_TIMEOUT_MS);
+  });
+
+  const validationPromise = (async (): Promise<boolean> => {
+    try {
+      // First check if we have a session token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        console.log("[Auth] No session found or session error");
+        return false;
+      }
+      
+      // Verify the session is actually valid by checking with the server
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        console.log("[Auth] Session invalid - user verification failed");
+        return false;
+      }
+      
+      console.log("[Auth] Session validated successfully");
+      return true;
+    } catch (error) {
+      console.error("[Auth] Session validation error:", error);
       return false;
     }
-    
-    // Verify the session is actually valid by checking with the server
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      return false;
-    }
-    
-    return true;
-  } catch (error) {
-    console.error("Session validation error:", error);
-    return false;
-  }
+  })();
+
+  return Promise.race([validationPromise, timeoutPromise]);
 };
