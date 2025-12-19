@@ -100,50 +100,121 @@ serve(async (req) => {
       <!DOCTYPE html>
       <html>
       <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; }
-          .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-          .header { text-align: center; margin-bottom: 30px; }
-          .logo { font-size: 24px; font-weight: bold; color: #2C3E50; }
-          .content { background: #f8f9fa; border-radius: 12px; padding: 30px; margin-bottom: 30px; }
-          .cta-button { display: inline-block; background: #2C3E50; color: white !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; margin: 20px 0; }
-          .price { font-size: 32px; font-weight: bold; color: #2C3E50; }
-          .includes { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; }
-          .includes li { margin: 8px 0; color: #4a5568; }
-          .footer { text-align: center; color: #7F8C8D; font-size: 14px; margin-top: 30px; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; margin: 0; padding: 0; background: #f8f9fa; }
+          .wrapper { background: #f8f9fa; padding: 40px 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+          .header { background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 40px 30px; text-align: center; }
+          .logo { font-size: 28px; font-weight: 300; color: white; letter-spacing: 0.5px; margin: 0; }
+          .tagline { color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; }
+          .content { padding: 40px 30px; }
+          .greeting { font-size: 24px; font-weight: 600; color: #2C3E50; margin-bottom: 16px; }
+          .intro { color: #4a5568; font-size: 16px; margin-bottom: 24px; }
+          .price-box { background: linear-gradient(135deg, #f7f9fb 0%, #eef2f5 100%); border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0; border: 1px solid #e2e8f0; }
+          .price { font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0; }
+          .price-label { font-size: 14px; color: #7F8C8D; margin-top: 4px; }
+          .includes { background: #fafbfc; border-radius: 12px; padding: 24px; margin: 24px 0; }
+          .includes-title { font-weight: 600; color: #2C3E50; margin-bottom: 16px; font-size: 16px; }
+          .includes ul { margin: 0; padding: 0; list-style: none; }
+          .includes li { margin: 12px 0; color: #4a5568; font-size: 15px; display: flex; align-items: flex-start; gap: 10px; }
+          .check { color: #10b981; font-weight: bold; flex-shrink: 0; }
+          .cta-container { text-align: center; margin: 32px 0; }
+          .cta-button { display: inline-block; background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); color: white !important; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 4px 16px rgba(44,62,80,0.3); }
+          .cta-button:hover { transform: translateY(-2px); }
+          
+          .steps-section { background: #f0f9ff; border-radius: 12px; padding: 24px; margin: 24px 0; border: 1px solid #bae6fd; }
+          .steps-title { font-weight: 600; color: #0369a1; margin-bottom: 16px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+          .step { display: flex; gap: 12px; margin: 12px 0; }
+          .step-num { width: 24px; height: 24px; background: #0ea5e9; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+          .step-text { color: #0369a1; font-size: 14px; }
+          
+          .magic-link-note { background: #fef3c7; border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid #fcd34d; }
+          .magic-link-title { font-weight: 600; color: #92400e; margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+          .magic-link-text { color: #92400e; font-size: 13px; line-height: 1.5; }
+          
+          .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
+          .footer-text { color: #7F8C8D; font-size: 14px; margin: 8px 0; }
+          .footer-address { color: #a0aec0; font-size: 12px; margin-top: 16px; }
+          
+          @media (max-width: 600px) {
+            .content { padding: 24px 20px; }
+            .header { padding: 30px 20px; }
+            .price { font-size: 28px; }
+          }
         </style>
       </head>
       <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">Elevated Health Augusta</div>
-          </div>
-          <div class="content">
-            <h2>Welcome, ${firstName}!</h2>
-            <p>Lauren Bursey, NP-C has invited you to begin your personalized hormone optimization journey with Elevated Health.</p>
-            
-            <p class="price">$299 One-Time</p>
-            <p style="font-size: 14px; color: #7F8C8D; margin-top: 0;">Hormone Mapping Experience</p>
-            
-            <div class="includes">
-              <strong>What's Included:</strong>
-              <ul>
-                <li>✓ At-home ZRT Saliva Test Kit (shipped to you)</li>
-                <li>✓ Comprehensive hormone panel analysis</li>
-                <li>✓ 45-minute deep-dive clinical review with Lauren</li>
-                <li>✓ Customized protocol design</li>
-              </ul>
+        <div class="wrapper">
+          <div class="container">
+            <div class="header">
+              <h1 class="logo">Elevated Health</h1>
+              <p class="tagline">Restore · Renew · Rebalance</p>
             </div>
-            
-            <div style="text-align: center;">
-              <a href="${paymentLink}" class="cta-button">Begin Your Journey →</a>
+            <div class="content">
+              <h2 class="greeting">Welcome, ${firstName}!</h2>
+              <p class="intro">Lauren Bursey, NP-C has personally invited you to begin your hormone optimization journey with Elevated Health Augusta. We're excited to help you feel your best.</p>
+              
+              <div class="price-box">
+                <p class="price">$299</p>
+                <p class="price-label">Hormone Mapping Experience • One-Time</p>
+              </div>
+              
+              <div class="includes">
+                <p class="includes-title">What's Included:</p>
+                <ul>
+                  <li><span class="check">✓</span> At-home ZRT Saliva Test Kit shipped directly to you</li>
+                  <li><span class="check">✓</span> Comprehensive hormone panel analysis</li>
+                  <li><span class="check">✓</span> 45-minute deep-dive clinical review with Lauren</li>
+                  <li><span class="check">✓</span> Personalized treatment protocol design</li>
+                  <li><span class="check">✓</span> Secure patient portal access for ongoing care</li>
+                </ul>
+              </div>
+              
+              <div class="cta-container">
+                <a href="${paymentLink}" class="cta-button">Begin Your Journey →</a>
+              </div>
+              
+              <div class="steps-section">
+                <p class="steps-title">
+                  <span style="font-size: 18px;">📋</span> Your Next Steps
+                </p>
+                <div class="step">
+                  <span class="step-num">1</span>
+                  <span class="step-text"><strong>Complete payment</strong> using the secure link above</span>
+                </div>
+                <div class="step">
+                  <span class="step-num">2</span>
+                  <span class="step-text"><strong>Create your account</strong> — you can use Google sign-in or email</span>
+                </div>
+                <div class="step">
+                  <span class="step-num">3</span>
+                  <span class="step-text"><strong>Complete intake forms</strong> in your secure patient portal</span>
+                </div>
+                <div class="step">
+                  <span class="step-num">4</span>
+                  <span class="step-text"><strong>Receive your test kit</strong> and follow simple at-home instructions</span>
+                </div>
+              </div>
+              
+              <div class="magic-link-note">
+                <p class="magic-link-title">
+                  <span style="font-size: 16px;">✨</span> Easy Sign-In Tip
+                </p>
+                <p class="magic-link-text">
+                  Already have an account? Visit <strong>elevatedhealthaugusta.com</strong> and scroll to the footer. Click "Returning Patient?" and use our <strong>Magic Link</strong> option — just enter your email and we'll send you a secure sign-in link. No password needed!
+                </p>
+              </div>
             </div>
-            
-            <p style="font-size: 14px; color: #7F8C8D;">After payment, you'll create your secure patient portal account and complete your medical intake form.</p>
-          </div>
-          <div class="footer">
-            <p>Questions? Reply to this email or call us at (706) 821-7354</p>
-            <p>Elevated Health Augusta<br/>3540 Wheeler Road, Suite 601<br/>Augusta, GA 30909</p>
+            <div class="footer">
+              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 821-7354</strong></p>
+              <p class="footer-address">
+                Elevated Health Augusta<br/>
+                3540 Wheeler Road, Suite 601<br/>
+                Augusta, GA 30909
+              </p>
+            </div>
           </div>
         </div>
       </body>
@@ -153,7 +224,7 @@ serve(async (req) => {
     const emailResponse = await resend.emails.send({
       from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
       to: [patient_email],
-      subject: "Welcome to Elevated Health – Begin Your Hormone Mapping",
+      subject: `${firstName}, Your Personalized Hormone Journey Awaits`,
       html: emailHtml,
     });
 
