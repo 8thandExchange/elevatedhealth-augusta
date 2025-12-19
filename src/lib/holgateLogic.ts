@@ -480,7 +480,7 @@ function generateProtocols(findings: Finding[]): Protocol[] {
     });
     protocols.push({
       name: 'Consider Ketamine Therapy',
-      dosage: 'Evaluate for IV or at-home ketamine protocol',
+      dosage: 'Evaluate for IV ketamine protocol',
       timing: 'After baseline stabilization',
       priority: priority++,
       rationale: 'Ketamine is highly effective for glutamate dysregulation',
