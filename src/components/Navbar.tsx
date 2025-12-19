@@ -114,20 +114,37 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("Logout error:", error);
-        toast.error("Failed to log out. Please try again.");
-        return;
+      // Try signOut with local scope to ensure local session is cleared
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (error) {
+      console.error("SignOut error:", error);
+    } finally {
+      // Force clear all auth-related storage regardless of signOut result
+      try {
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+          if (key.startsWith('sb-') && key.includes('-auth-')) {
+            localStorage.removeItem(key);
+          }
+        });
+        sessionStorage.clear();
+        
+        // Clear service worker caches
+        if ('serviceWorker' in navigator && 'caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+      } catch (e) {
+        console.error("Storage clear error:", e);
       }
+      
       setIsLoggedIn(false);
       setUserName(null);
       setUserAvatar(null);
       toast.success("Logged out successfully");
-      navigate("/");
-    } catch (err) {
-      console.error("Logout exception:", err);
-      toast.error("An error occurred during logout.");
+      // Force hard navigation to prevent any caching issues
+      window.location.href = '/';
     }
   };
 

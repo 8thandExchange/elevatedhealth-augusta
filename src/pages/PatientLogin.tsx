@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check, Heart, Brain, Calendar, Phone } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
+import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
 
 type PrimaryProgram = "hormone" | "ketamine";
 
@@ -86,14 +87,24 @@ const PatientLogin = () => {
   const [createdPatientName, setCreatedPatientName] = useState("");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [confirmedNoneApply, setConfirmedNoneApply] = useState(false);
+  
+  // Ref to prevent race conditions with navigation
+  const hasNavigatedRef = useRef(false);
 
-  // Check for existing session on mount - redirect if already logged in
+  // Check for existing session on mount - validate before redirecting
   useEffect(() => {
     const checkExistingSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      // Check if session is actually valid with the server
+      const valid = await isSessionValid();
+      
+      if (valid && !hasNavigatedRef.current) {
+        hasNavigatedRef.current = true;
         navigate("/patient/dashboard", { replace: true });
       } else {
+        // No valid session - clear any stale data and show login
+        if (!valid) {
+          clearAuthStorage();
+        }
         setCheckingSession(false);
       }
     };
@@ -120,13 +131,14 @@ const PatientLogin = () => {
   // Sync profile from Google metadata on auth state change
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // Only handle SIGNED_IN for Google OAuth users
-      if (event === 'SIGNED_IN' && session?.user) {
+      // Only handle SIGNED_IN for Google OAuth users - prevent race condition
+      if (event === 'SIGNED_IN' && session?.user && !hasNavigatedRef.current) {
         const user = session.user;
         const provider = user.app_metadata?.provider;
         
         // Only sync for Google OAuth users - defer Supabase calls with setTimeout
         if (provider === 'google') {
+          hasNavigatedRef.current = true;
           setTimeout(async () => {
             try {
               const metadata = user.user_metadata;

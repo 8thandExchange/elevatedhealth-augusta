@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { IdleWarningModal } from "@/components/auth/IdleWarningModal";
+import { clearAuthStorage, clearServiceWorkerCache } from "@/lib/authUtils";
 
 interface SessionSecurityContextType {
   resetIdleTimer: () => void;
@@ -31,17 +32,11 @@ export const SessionSecurityProvider = ({ children }: SessionSecurityProviderPro
       console.error("Logout error:", error);
     } finally {
       // Force clear storage
-      try {
-        const keys = Object.keys(localStorage);
-        keys.forEach(key => {
-          if (key.startsWith('sb-') && key.includes('-auth-')) {
-            localStorage.removeItem(key);
-          }
-        });
-        sessionStorage.clear();
-      } catch (e) {
-        console.error("Storage clear error:", e);
-      }
+      clearAuthStorage();
+      
+      // Clear service worker cache
+      await clearServiceWorkerCache();
+      
       window.location.href = '/patient/login';
     }
   }, []);
