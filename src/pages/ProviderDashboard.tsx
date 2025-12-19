@@ -44,6 +44,7 @@ import BloodWorkHistory from "@/components/provider/BloodWorkHistory";
 import TeamManagement from "@/components/provider/TeamManagement";
 import StaffTasksTab from "@/components/provider/StaffTasksTab";
 import ConsultationTracker from "@/components/provider/ConsultationTracker";
+import PatientPipeline from "@/components/provider/PatientPipeline";
 import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
 import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
 import PatientStatusCard from "@/components/provider/PatientStatusCard";
@@ -954,11 +955,15 @@ const ProviderDashboard = () => {
           {/* Mobile-optimized scrollable tabs */}
           <div className="relative mb-8">
             <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
-              <TabsList className="inline-flex w-max gap-1 p-1 lg:grid lg:w-full lg:grid-cols-11">
+              <TabsList className="inline-flex w-max gap-1 p-1 lg:grid lg:w-full lg:grid-cols-12">
                 <TabsTrigger value="triage" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
                   <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                   <span className="hidden lg:inline">Action Needed</span>
                   <span className="text-xs">({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="pipeline" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                  <TrendingUp className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">Pipeline</span>
                 </TabsTrigger>
                 <TabsTrigger value="highrisk" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
                   <ShieldAlert className="w-4 h-4 text-red-500 flex-shrink-0" />
@@ -1104,6 +1109,11 @@ const ProviderDashboard = () => {
           {/* Consultations Tab */}
           <TabsContent value="consultations">
             <ConsultationTracker />
+          </TabsContent>
+
+          {/* Pipeline Tab */}
+          <TabsContent value="pipeline">
+            <PatientPipeline />
           </TabsContent>
 
           {/* Triage Tab */}

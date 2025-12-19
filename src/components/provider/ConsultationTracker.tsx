@@ -21,10 +21,14 @@ import {
   CheckCircle2,
   XCircle,
   ArrowRight,
-  TrendingUp
+  TrendingUp,
+  UserPlus,
+  Loader2,
+  CalendarPlus,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import LogFreeConsultationModal from "./LogFreeConsultationModal";
 
 interface ConsultationBooking {
   id: string;
@@ -50,6 +54,8 @@ const ConsultationTracker = () => {
   const [editStatus, setEditStatus] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [isConverting, setIsConverting] = useState<string | null>(null);
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
 
   useEffect(() => {
     loadConsultations();
@@ -94,6 +100,45 @@ const ConsultationTracker = () => {
       toast.error("Failed to update consultation");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const convertToPatient = async (consult: ConsultationBooking) => {
+    if (!consult.customer_email || !consult.customer_name) {
+      toast.error("Customer name and email are required");
+      return;
+    }
+
+    setIsConverting(consult.id);
+    try {
+      // Call the send-patient-invite edge function
+      const { data, error } = await supabase.functions.invoke("send-patient-invite", {
+        body: {
+          patient_email: consult.customer_email,
+          patient_name: consult.customer_name,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        // Update consultation status
+        await supabase
+          .from("consultation_bookings")
+          .update({ status: "converted_to_mapping" })
+          .eq("id", consult.id);
+
+        toast.success(`$299 payment link sent to ${consult.customer_email}`);
+        loadConsultations();
+        setSelectedConsultation(null);
+      } else {
+        throw new Error(data?.error || "Failed to send invite");
+      }
+    } catch (err: any) {
+      console.error("Convert error:", err);
+      toast.error(err.message || "Failed to convert to patient");
+    } finally {
+      setIsConverting(null);
     }
   };
 
@@ -183,8 +228,8 @@ const ConsultationTracker = () => {
         </Card>
       </div>
 
-      {/* Filter */}
-      <div className="flex items-center gap-4">
+      {/* Filter and Actions */}
+      <div className="flex flex-wrap items-center gap-4">
         <Label>Filter by status:</Label>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-48">
@@ -202,6 +247,11 @@ const ConsultationTracker = () => {
         </Select>
         <Button variant="outline" size="sm" onClick={loadConsultations}>
           Refresh
+        </Button>
+        <div className="flex-1" />
+        <Button onClick={() => setIsLogModalOpen(true)} className="gap-2">
+          <CalendarPlus className="h-4 w-4" />
+          Log Free Consultation
         </Button>
       </div>
 
@@ -310,10 +360,30 @@ const ConsultationTracker = () => {
                 rows={3}
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button onClick={updateConsultation} disabled={isSaving}>
                 {isSaving ? "Saving..." : "Save Changes"}
               </Button>
+              {selectedConsultation.status !== "converted_to_mapping" && (
+                <Button 
+                  variant="default"
+                  className="bg-green-600 hover:bg-green-700 gap-2"
+                  onClick={() => convertToPatient(selectedConsultation)}
+                  disabled={isConverting === selectedConsultation.id || !selectedConsultation.customer_name}
+                >
+                  {isConverting === selectedConsultation.id ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="h-4 w-4" />
+                      Convert to Patient
+                    </>
+                  )}
+                </Button>
+              )}
               <Button variant="outline" onClick={() => setSelectedConsultation(null)}>
                 Cancel
               </Button>
@@ -321,6 +391,13 @@ const ConsultationTracker = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Log Free Consultation Modal */}
+      <LogFreeConsultationModal
+        isOpen={isLogModalOpen}
+        onClose={() => setIsLogModalOpen(false)}
+        onSuccess={loadConsultations}
+      />
     </div>
   );
 };
