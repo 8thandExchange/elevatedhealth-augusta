@@ -18,10 +18,10 @@ Elevated Health Augusta is a hormone optimization and wellness clinic in Augusta
 ### Vitality Membership - $199/month
 - Bio-identical hormone therapy (transdermal creams)
 - Quarterly ZRT saliva lab testing
+- $50/month medication credit
 - Unlimited provider messaging
 - Symptom tracking and dashboard access
 - Medication adjustments as needed
-- All compounding pharmacy costs included
 
 ### Concierge Membership - $499/month
 Everything in Vitality PLUS:
@@ -29,7 +29,7 @@ Everything in Vitality PLUS:
 - Adrenal support protocol:
   - DHEA supplementation
   - Pregnenolone
-  - Adaptogenic herbs
+  - Adaptogenic herbs (AdreneVive)
 - Cortisol rhythm optimization
 - Priority scheduling
 
@@ -179,22 +179,22 @@ Everything in Vitality PLUS:
 - Recovery: No driving for 24 hours post-treatment
 
 ### Pricing
-- Single IV Ketamine Infusion: $450
-- 6-Session Package: $2,400 ($400/session)
+- Single IV Ketamine Infusion: $400
+- 6-Session Package: $2,200 (save $200)
 
 ## IV Hydration Therapy
 
 ### Available Drips
-- The Meyers: General wellness ($149)
-- The Shield: Immunity support ($179)
-- The Glow: Beauty/skin health ($169)
+- The Meyers: Classic vitamin infusion ($149)
+- The Shield: Immunity boost ($179)
+- The Glow: Beauty & skin hydration ($169)
 - The Resurrection: Hangover recovery ($169)
-- Beast Mode: Athletic performance ($189)
+- Beast Mode: Athletic recovery ($189)
 
-### Boosters (Add-on)
-- Vitamin B12: $25
+### Boosters (Add-ons)
+- B12: $25
 - Glutathione: $35
-- NAD+: $50
+- NAD+ Booster: $50
 
 ## Patient Onboarding Flow
 1. Patient pays for Hormone Mapping Kit ($299) or Consultation ($99)
