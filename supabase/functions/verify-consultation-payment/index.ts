@@ -107,16 +107,44 @@ serve(async (req) => {
 
     logStep("Consultation booking recorded", { bookingId: booking.id, creditCode });
 
+    // Service-specific email configuration
+    const SERVICE_EMAIL_CONFIG: Record<string, { title: string; creditUse: string }> = {
+      ketamine: {
+        title: "Ketamine Therapy Consultation",
+        creditUse: "your first IV ketamine infusion session"
+      },
+      weight_loss: {
+        title: "Medical Weight Loss Consultation",
+        creditUse: "your weight loss treatment protocol"
+      },
+      hormone: {
+        title: "Hormone Replacement Consultation",
+        creditUse: "Hormone Mapping ($299 → $200)"
+      },
+      peptide: {
+        title: "Peptide Therapy Consultation",
+        creditUse: "your peptide therapy protocol"
+      },
+      hair: {
+        title: "Hair Restoration Consultation",
+        creditUse: "your hair restoration protocol"
+      },
+      sexual: {
+        title: "Sexual Wellness Consultation",
+        creditUse: "your treatment protocol"
+      }
+    };
+
+    const emailConfig = SERVICE_EMAIL_CONFIG[serviceType] || SERVICE_EMAIL_CONFIG.hormone;
+
     // Send emails
     if (resend) {
-      const serviceLabel = serviceType === 'weight-loss' ? 'Metabolic Mapping' : 'Hormone Mapping';
-      
       // Send patient confirmation email with credit code
       try {
         await resend.emails.send({
           from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
           to: [customerEmail],
-          subject: `Your $99 Credit Code - Elevated Health`,
+          subject: `Your $99 Credit Code for ${emailConfig.title} - Elevated Health`,
           html: `
             <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
               <h1 style="color: #2C3E50; font-size: 28px; margin-bottom: 24px;">Thank You for Booking!</h1>
@@ -126,22 +154,22 @@ serve(async (req) => {
               </p>
               
               <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
-                Your $99 Discovery Consultation has been confirmed. We're excited to help you on your wellness journey!
+                Your ${emailConfig.title} has been confirmed. We're excited to help you on your wellness journey!
               </p>
               
               <div style="background: linear-gradient(135deg, #F9F9F7 0%, #f0ebe3 100%); border: 2px solid #D4A017; border-radius: 12px; padding: 24px; margin: 32px 0; text-align: center;">
                 <p style="color: #2C3E50; font-size: 14px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Your Credit Code</p>
                 <p style="color: #D4A017; font-size: 32px; font-weight: bold; margin: 0; letter-spacing: 2px;">${creditCode}</p>
-                <p style="color: #718096; font-size: 14px; margin-top: 12px;">Worth $99 toward your ${serviceLabel}</p>
+                <p style="color: #718096; font-size: 14px; margin-top: 12px;">Worth $99 toward ${emailConfig.creditUse}</p>
               </div>
               
               <h2 style="color: #2C3E50; font-size: 20px; margin-top: 32px;">How to Use Your Credit</h2>
               
               <ol style="color: #4a5568; font-size: 16px; line-height: 1.8; padding-left: 20px;">
-                <li><strong>Complete your consultation</strong> with our provider</li>
-                <li><strong>When you're ready</strong> to proceed with ${serviceLabel} ($299)</li>
+                <li><strong>Complete your 45-minute consultation</strong> with our specialist</li>
+                <li><strong>When you're ready</strong> to proceed with treatment</li>
                 <li><strong>Enter your credit code</strong> at checkout to receive $99 off</li>
-                <li><strong>Pay only $200</strong> for your comprehensive diagnostic panel</li>
+                <li><strong>Begin your personalized wellness journey</strong></li>
               </ol>
               
               <div style="background: #f7fafc; border-left: 4px solid #D4A017; padding: 16px; margin: 24px 0;">
@@ -172,17 +200,17 @@ serve(async (req) => {
         await resend.emails.send({
           from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
           to: ["booking@elevatedhealthaugusta.com"],
-          subject: `New $99 Discovery Consultation Booked`,
+          subject: `New ${emailConfig.title} Booked`,
           html: `
-            <h2>New Discovery Consultation Payment</h2>
+            <h2>New ${emailConfig.title} Payment</h2>
             <p><strong>Customer:</strong> ${customerEmail}</p>
             <p><strong>Name:</strong> ${session.customer_details?.name || "Not provided"}</p>
             <p><strong>Service Type:</strong> ${serviceType}</p>
             <p><strong>Credit Code:</strong> ${creditCode}</p>
             <p><strong>Amount:</strong> $${(session.amount_total || 0) / 100}</p>
             <hr/>
-            <p>The patient has been instructed to book their consultation via Google Calendar.</p>
-            <p>Their credit code <strong>${creditCode}</strong> can be used for $99 off ${serviceLabel} ($299 → $200).</p>
+            <p>The patient has been instructed to book their 45-minute consultation via Google Calendar.</p>
+            <p>Their credit code <strong>${creditCode}</strong> can be used for $99 off ${emailConfig.creditUse}.</p>
           `,
         });
         logStep("Admin notification sent");

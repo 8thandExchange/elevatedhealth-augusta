@@ -44,11 +44,11 @@ const SERVICE_LABELS: Record<string, { title: string; specialist: string; credit
     ]
   },
   ketamine: {
-    title: "Ketamine Candidacy Review",
+    title: "Ketamine Therapy Consultation",
     specialist: "clinical team",
     creditInfo: "Your $99 will be credited toward your first ketamine infusion session when you move forward with treatment.",
     steps: [
-      "Book your 15-minute Candidacy Review using the calendar above",
+      "Book your 45-minute consultation using the calendar above",
       "We'll confirm your medical history and discuss your mental health goals",
       "If cleared, we'll book your comprehensive intake and first session immediately",
       "Your $99 credit applies to your first infusion—you'll only pay the balance"
