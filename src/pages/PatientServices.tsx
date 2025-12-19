@@ -61,7 +61,7 @@ const SERVICES: Service[] = [
   {
     id: "ketamine",
     name: "Ketamine Therapy",
-    description: "IV and at-home ketamine for treatment-resistant depression, anxiety, and PTSD.",
+    description: "IV ketamine therapy for treatment-resistant depression, anxiety, and PTSD.",
     icon: <Brain className="w-6 h-6" />,
     treatmentKey: "ketamine",
     publicPage: "/ketamine",
