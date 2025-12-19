@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle, Loader2, Lock, CreditCard, AlertTriangle, Calendar } from "lucide-react";
+import { CheckCircle, Loader2, Lock, CreditCard, AlertTriangle, Calendar, ArrowLeft } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -150,6 +150,15 @@ const ScheduleConsult = () => {
 
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-4 max-w-4xl">
+          {/* Back Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/patient/dashboard")}
+            className="gap-2 mb-6 -ml-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Patient Portal
+          </Button>
           {loading ? (
             <div className="text-center py-20">
               <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />

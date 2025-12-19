@@ -119,55 +119,67 @@ const PatientLogin = () => {
 
   // Sync profile from Google metadata on auth state change
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only handle SIGNED_IN for Google OAuth users
       if (event === 'SIGNED_IN' && session?.user) {
         const user = session.user;
         const provider = user.app_metadata?.provider;
         
-        // Only sync for Google OAuth users
+        // Only sync for Google OAuth users - defer Supabase calls with setTimeout
         if (provider === 'google') {
-          const metadata = user.user_metadata;
-          const fullName = metadata?.full_name || metadata?.name;
-          const avatarUrl = metadata?.avatar_url || metadata?.picture;
-          
-          if (fullName || avatarUrl) {
-            // Check if patient record exists and update
-            const { data: existingPatient } = await supabase
-              .from('patients')
-              .select('id, full_name, avatar_url')
-              .eq('user_id', user.id)
-              .maybeSingle();
-            
-            if (existingPatient) {
-              // Update existing patient with Google info if not already set
-              const updates: Record<string, string> = {};
-              if (!existingPatient.full_name && fullName) updates.full_name = fullName;
-              if (!existingPatient.avatar_url && avatarUrl) updates.avatar_url = avatarUrl;
+          setTimeout(async () => {
+            try {
+              const metadata = user.user_metadata;
+              const fullName = metadata?.full_name || metadata?.name;
+              const avatarUrl = metadata?.avatar_url || metadata?.picture;
               
-              if (Object.keys(updates).length > 0) {
-                await supabase
+              if (fullName || avatarUrl) {
+                // Check if patient record exists and update
+                const { data: existingPatient } = await supabase
                   .from('patients')
-                  .update(updates)
-                  .eq('id', existingPatient.id);
+                  .select('id, full_name, avatar_url')
+                  .eq('user_id', user.id)
+                  .maybeSingle();
+                
+                if (existingPatient) {
+                  // Update existing patient with Google info if not already set
+                  const updates: Record<string, string> = {};
+                  if (!existingPatient.full_name && fullName) updates.full_name = fullName;
+                  if (!existingPatient.avatar_url && avatarUrl) updates.avatar_url = avatarUrl;
+                  
+                  if (Object.keys(updates).length > 0) {
+                    await supabase
+                      .from('patients')
+                      .update(updates)
+                      .eq('id', existingPatient.id);
+                  }
+                } else {
+                  // Create new patient record for Google user
+                  await supabase.from('patients').insert([{
+                    user_id: user.id,
+                    full_name: fullName || user.email?.split('@')[0] || 'Patient',
+                    email: user.email,
+                    avatar_url: avatarUrl,
+                    primary_program: 'hormone',
+                    onboarding_status: 'account_created',
+                  }]);
+                }
               }
-            } else {
-              // Create new patient record for Google user
-              await supabase.from('patients').insert([{
-                user_id: user.id,
-                full_name: fullName || user.email?.split('@')[0] || 'Patient',
-                email: user.email,
-                avatar_url: avatarUrl,
-                primary_program: 'hormone',
-                onboarding_status: 'account_created',
-              }]);
+              
+              // Navigate after patient record is created/updated
+              navigate("/patient/dashboard", { replace: true });
+            } catch (err) {
+              console.error("Error syncing Google profile:", err);
+              // Still navigate even if sync fails
+              navigate("/patient/dashboard", { replace: true });
             }
-          }
+          }, 0);
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

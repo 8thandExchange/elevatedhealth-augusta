@@ -39,13 +39,16 @@ const PatientNavbar = ({ patientName, avatarUrl, onEditProfile }: PatientNavbarP
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        toast.error("Failed to logout");
+        console.error("Logout error:", error);
+        toast.error("Failed to logout. Please try again.");
         return;
       }
       toast.success("Logged out successfully");
-      navigate("/patient/login");
+      // Use replace to prevent back navigation to protected pages
+      navigate("/patient/login", { replace: true });
     } catch (error) {
-      toast.error("Failed to logout");
+      console.error("Logout exception:", error);
+      toast.error("Failed to logout. Please try again.");
     }
   };
 
