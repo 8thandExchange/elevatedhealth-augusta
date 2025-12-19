@@ -158,3 +158,6 @@ verify_jwt = false
 
 [functions.provider-chat]
 verify_jwt = false
+
+[functions.send-appointment-reminder]
+verify_jwt = false
