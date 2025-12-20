@@ -194,6 +194,9 @@ const ProviderDashboard = () => {
     testosterone_t: number | null;
     estradiol_e2: number | null;
   } | null>(null);
+  // Quick pharmacy order modal state
+  const [pharmacyOrderPatient, setPharmacyOrderPatient] = useState<PendingPharmacyPatient | null>(null);
+  const [isPharmacyModalOpen, setIsPharmacyModalOpen] = useState(false);
 
   // Provider lookup based on email - expand this as you add more providers
   const getProviderInfo = (email: string) => {
@@ -1323,19 +1326,33 @@ const ProviderDashboard = () => {
                                   <span className="text-sm text-muted-foreground">{paidDate}</span>
                                 </td>
                                 <td className="py-4 px-4 text-right">
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleCompletePharmacyOrder(patient.id)}
-                                    disabled={completingPharmacyId === patient.id}
-                                    className="bg-green-600 hover:bg-green-700 text-white min-h-[44px]"
-                                  >
-                                    {completingPharmacyId === patient.id ? (
-                                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                                    ) : (
-                                      <Check className="w-3 h-3 mr-1" />
-                                    )}
-                                    {completingPharmacyId === patient.id ? "Completing..." : "Order Placed"}
-                                  </Button>
+                                  <div className="flex items-center justify-end gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        setPharmacyOrderPatient(patient);
+                                        setIsPharmacyModalOpen(true);
+                                      }}
+                                      className="min-h-[44px]"
+                                    >
+                                      <Pill className="w-3 h-3 mr-1" />
+                                      Order Rx
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleCompletePharmacyOrder(patient.id)}
+                                      disabled={completingPharmacyId === patient.id}
+                                      className="bg-green-600 hover:bg-green-700 text-white min-h-[44px]"
+                                    >
+                                      {completingPharmacyId === patient.id ? (
+                                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                      ) : (
+                                        <Check className="w-3 h-3 mr-1" />
+                                      )}
+                                      {completingPharmacyId === patient.id ? "..." : "Done"}
+                                    </Button>
+                                  </div>
                                 </td>
                               </tr>
                             );
@@ -1384,6 +1401,18 @@ const ProviderDashboard = () => {
 
                             <Button
                               size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setPharmacyOrderPatient(patient);
+                                setIsPharmacyModalOpen(true);
+                              }}
+                              className="w-full min-h-[44px] mb-2"
+                            >
+                              <Pill className="w-4 h-4 mr-2" />
+                              Order Rx
+                            </Button>
+                            <Button
+                              size="sm"
                               onClick={() => handleCompletePharmacyOrder(patient.id)}
                               disabled={completingPharmacyId === patient.id}
                               className="w-full bg-green-600 hover:bg-green-700 text-white min-h-[44px] active:scale-95 transition-transform"
@@ -1403,6 +1432,34 @@ const ProviderDashboard = () => {
                 )}
               </CardContent>
             </Card>
+
+            {/* Quick Pharmacy Order Modal */}
+            {isPharmacyModalOpen && pharmacyOrderPatient && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                <div className="bg-background rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                  <div className="p-4 border-b flex items-center justify-between">
+                    <h3 className="font-semibold">Order for {pharmacyOrderPatient.full_name}</h3>
+                    <Button variant="ghost" size="sm" onClick={() => setIsPharmacyModalOpen(false)}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="p-4">
+                    <PharmacyOrderCard 
+                      patient={{
+                        id: pharmacyOrderPatient.id,
+                        full_name: pharmacyOrderPatient.full_name,
+                        email: pharmacyOrderPatient.email,
+                        phone: pharmacyOrderPatient.phone,
+                      }}
+                      onOrderCreated={() => {
+                        setIsPharmacyModalOpen(false);
+                        loadData();
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </TabsContent>
 
           {/* Patient Monitoring Tab */}

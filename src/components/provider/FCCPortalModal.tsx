@@ -24,11 +24,14 @@ const DIAGNOSIS_MAP: Record<string, { code: string; description: string }[]> = {
     { code: "E28.39", description: "Primary Ovarian Failure, Other" },
     { code: "N95.1", description: "Menopausal and Female Climacteric States" },
     { code: "E34.9", description: "Endocrine Disorder, Unspecified" },
+    { code: "E28.2", description: "Polycystic Ovarian Syndrome" },
+    { code: "E28.9", description: "Ovarian Dysfunction, Unspecified" },
   ],
   sleep_support: [
     { code: "G47.00", description: "Insomnia, Unspecified" },
     { code: "F51.01", description: "Primary Insomnia" },
     { code: "N95.1", description: "Menopausal and Female Climacteric States" },
+    { code: "F41.9", description: "Anxiety Disorder, Unspecified" },
   ],
   weight_loss: [
     { code: "E66.9", description: "Obesity, Unspecified" },
@@ -418,28 +421,36 @@ const FCCPortalModal = ({
         <div className="flex flex-col gap-3 mt-6">
           {/* Primary: Fax to Holgate */}
           {faxStatus !== 'sent' && (
-            <Button
-              onClick={handleFaxToHolgate}
-              disabled={faxStatus === 'transmitting' || !medication}
-              className="w-full bg-gold hover:bg-gold-dark text-white"
-            >
-              {faxStatus === 'transmitting' ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Transmitting...
-                </>
-              ) : faxStatus === 'failed' ? (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  Try Fax Again
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  📠 Fax Rx to Holgate
-                </>
+            <>
+              {!selectedDiagnosis && (
+                <div className="flex items-center gap-2 text-amber-600 text-sm bg-amber-50 dark:bg-amber-950/30 p-2 rounded-lg border border-amber-200 dark:border-amber-800">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>Please select a diagnosis code before faxing</span>
+                </div>
               )}
-            </Button>
+              <Button
+                onClick={handleFaxToHolgate}
+                disabled={faxStatus === 'transmitting' || !medication || !selectedDiagnosis}
+                className="w-full bg-gold hover:bg-gold-dark text-white disabled:opacity-50"
+              >
+                {faxStatus === 'transmitting' ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Transmitting...
+                  </>
+                ) : faxStatus === 'failed' ? (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Try Fax Again
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    📠 Fax Rx to Holgate
+                  </>
+                )}
+              </Button>
+            </>
           )}
 
           {/* Secondary Actions */}

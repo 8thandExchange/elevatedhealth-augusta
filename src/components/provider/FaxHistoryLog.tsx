@@ -18,7 +18,11 @@ import { format } from "date-fns";
 
 interface ProtocolSnapshot {
   medication?: string;
+  medication_name?: string;
   strength?: string;
+  medication_strength?: string;
+  sig?: string;
+  medication_sig?: string;
   quantity?: string;
   refills?: string;
   diagnosis_code?: string;
@@ -104,34 +108,23 @@ const FaxHistoryLog = () => {
 
     setRetryingId(order.id);
     try {
-      // Get patient details
-      const { data: patient } = await supabase
-        .from("patients")
-        .select("full_name, dob, street_address, city, state, zip_code, allergies")
-        .eq("id", order.patient_id)
-        .single();
-
-      if (!patient) throw new Error("Patient not found");
-
       const { data: { user } } = await supabase.auth.getUser();
 
       const snapshot = order.protocol_snapshot;
+      
+      // Use correct parameter names matching the send-rx-fax edge function
       const response = await supabase.functions.invoke("send-rx-fax", {
         body: {
-          patientId: order.patient_id,
-          patientName: patient.full_name,
-          patientDob: patient.dob,
-          patientAddress: [patient.street_address, patient.city, patient.state, patient.zip_code]
-            .filter(Boolean)
-            .join(", "),
-          patientAllergies: patient.allergies || "NKDA",
-          medicationName: snapshot.medication || "",
-          strength: snapshot.strength || "",
-          quantity: snapshot.quantity || "",
-          refills: snapshot.refills || "0",
+          patient_id: order.patient_id,
+          medication_name: snapshot.medication || "",
+          medication_strength: snapshot.strength || "",
+          medication_sig: snapshot.sig || "Use as directed",
+          quantity: parseInt(snapshot.quantity || "30", 10),
+          refills: parseInt(snapshot.refills || "0", 10),
+          supply_days: 30,
+          provider_email: user?.email || "",
           diagnosis_code: snapshot.diagnosis_code || "",
           diagnosis_description: snapshot.diagnosis_description || "",
-          providerEmail: user?.email || "",
         },
       });
 

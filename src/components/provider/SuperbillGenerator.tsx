@@ -71,6 +71,8 @@ interface SuperbillGeneratorProps {
   serviceType?: string; // "saliva_profile_iii" | "weight_management" | "consult" | "neurotransmitter"
   chargeAmount?: number;
   onGenerated?: () => void;
+  providerName?: string;
+  providerCredentials?: string;
 }
 
 const SuperbillGenerator = ({
@@ -78,6 +80,8 @@ const SuperbillGenerator = ({
   serviceType = "saliva_profile_iii",
   chargeAmount = 299,
   onGenerated,
+  providerName = "Lauren Bursey",
+  providerCredentials = "NP-C",
 }: SuperbillGeneratorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -437,7 +441,7 @@ const SuperbillGenerator = ({
             <div class="signature-line"></div>
             <div class="signature-label">Provider Signature</div>
             <div style="margin-top: 8px; font-size: 11px;">
-              <strong>Lauren Bursey, NP-C</strong><br/>
+              <strong>${providerName}, ${providerCredentials}</strong><br/>
               NPI: ${clinicSettings?.provider_npi || ""}
             </div>
           </div>
