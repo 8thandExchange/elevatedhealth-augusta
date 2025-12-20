@@ -143,6 +143,8 @@ export type Database = {
         Row: {
           amount_paid: number | null
           booked_for: string | null
+          booking_reminder_sent_at: string | null
+          calendar_booked_at: string | null
           created_at: string
           credit_code: string | null
           credit_used_at: string | null
@@ -162,6 +164,8 @@ export type Database = {
         Insert: {
           amount_paid?: number | null
           booked_for?: string | null
+          booking_reminder_sent_at?: string | null
+          calendar_booked_at?: string | null
           created_at?: string
           credit_code?: string | null
           credit_used_at?: string | null
@@ -181,6 +185,8 @@ export type Database = {
         Update: {
           amount_paid?: number | null
           booked_for?: string | null
+          booking_reminder_sent_at?: string | null
+          calendar_booked_at?: string | null
           created_at?: string
           credit_code?: string | null
           credit_used_at?: string | null
