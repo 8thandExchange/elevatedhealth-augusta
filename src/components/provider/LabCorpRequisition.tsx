@@ -13,6 +13,8 @@ interface LabCorpRequisitionProps {
   isEmailing?: boolean;
   providerName?: string;
   providerCredentials?: string;
+  providerNpi?: string;
+  providerSignatureUrl?: string;
 }
 
 const PANEL_DETAILS = {
@@ -57,6 +59,8 @@ const LabCorpRequisition = ({
   isEmailing,
   providerName = "Provider",
   providerCredentials = "NP-C",
+  providerNpi,
+  providerSignatureUrl,
 }: LabCorpRequisitionProps) => {
   const panel = PANEL_DETAILS[panelType];
   const today = new Date().toLocaleDateString("en-US", {
@@ -147,11 +151,17 @@ const LabCorpRequisition = ({
 
         <div class="section" style="margin-top: 40px;">
           <div class="section-title">Provider Authorization</div>
-          <div class="signature-line"></div>
-          <div class="signature-label">Provider Signature / Date</div>
+          ${providerSignatureUrl 
+            ? `<div style="margin: 20px 0;">
+                <img src="${providerSignatureUrl}" alt="Provider Signature" style="max-height: 60px; max-width: 250px;" />
+                <div style="font-size: 11px; color: #666; margin-top: 5px;">Electronically signed on ${today}</div>
+              </div>`
+            : `<div class="signature-line"></div>
+               <div class="signature-label">Provider Signature / Date</div>`
+          }
           <p style="margin-top: 20px; font-size: 12px;">
             <strong>Ordering Provider:</strong> ${providerName}, ${providerCredentials}<br/>
-            <strong>NPI:</strong> _______________<br/>
+            <strong>NPI:</strong> ${providerNpi || "_______________"}<br/>
             <strong>License:</strong> Georgia NP License
           </p>
         </div>
