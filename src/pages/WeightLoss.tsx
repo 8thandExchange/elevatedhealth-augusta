@@ -345,7 +345,7 @@ const WeightLoss = () => {
                 <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-primary/60 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-gold" />
-                    <span>Saliva+Blood</span>
+                    <span>ZRT Saliva+Blood</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-gold" />
