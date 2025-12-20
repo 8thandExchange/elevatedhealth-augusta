@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, MapPin, Phone, Clock } from "lucide-react";
+import { ArrowRight, MapPin, Phone, Clock, CheckCircle2, Sparkles } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { toast } from "sonner";
@@ -23,6 +23,8 @@ const contactSchema = z.object({
 
 const Contact = ({ onOpenBooking }: ContactProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [submittedName, setSubmittedName] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -65,7 +67,8 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
         // Still show success since lead was stored
       }
       
-      toast.success("Thank you! We'll be in touch within 24 hours.");
+      setSubmittedName(validated.name.split(" ")[0]);
+      setIsSuccess(true);
       setFormData({ name: "", email: "", phone: "", message: "" });
       trackCTAClick('contact_form_submit', 'contact_section');
     } catch (error) {
@@ -99,89 +102,154 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Left Column - Contact Form */}
+            {/* Left Column - Contact Form or Success State */}
             <div className="bg-background rounded-2xl p-8 lg:p-10 border border-border/50 shadow-sm">
-              <h3 className="font-cormorant text-2xl text-foreground mb-6">
-                Send Us a Message
-              </h3>
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <Label htmlFor="contact-name" className="font-lato text-sm text-foreground/80 mb-2 block">
-                    Full Name *
-                  </Label>
-                  <Input
-                    id="contact-name"
-                    type="text"
-                    placeholder="Your name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    className="bg-background border-border/50 focus:border-primary"
-                  />
+              {isSuccess ? (
+                /* Success State with Animation */
+                <div className="flex flex-col items-center justify-center text-center py-8 animate-fade-in">
+                  {/* Animated checkmark circle */}
+                  <div className="relative mb-6">
+                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center animate-scale-in">
+                      <CheckCircle2 className="w-10 h-10 text-primary" />
+                    </div>
+                    {/* Sparkle accents */}
+                    <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-gold animate-pulse" />
+                    <Sparkles className="absolute -bottom-1 -left-3 w-5 h-5 text-gold/70 animate-pulse" style={{ animationDelay: '0.3s' }} />
+                  </div>
+                  
+                  <h3 className="font-cormorant text-3xl text-foreground mb-3">
+                    Thank You, {submittedName}!
+                  </h3>
+                  
+                  <p className="font-lato text-muted-foreground font-light mb-6 max-w-sm leading-relaxed">
+                    Your message has been received. A member of our care team will reach out within 24 hours.
+                  </p>
+                  
+                  <div className="w-full space-y-4">
+                    <div className="bg-secondary/50 rounded-xl p-4 border border-border/30">
+                      <p className="font-lato text-sm text-foreground/80 mb-1">What happens next?</p>
+                      <ul className="font-lato text-sm text-muted-foreground font-light space-y-2 text-left">
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">•</span>
+                          We'll review your message and health goals
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">•</span>
+                          A care coordinator will call or email you
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">•</span>
+                          We'll help you schedule a consultation
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <Button 
+                      onClick={handleBooking}
+                      size="lg"
+                      className="w-full font-lato tracking-wide text-base py-6"
+                    >
+                      Skip Ahead — Book Now
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    
+                    <button
+                      onClick={() => {
+                        setIsSuccess(false);
+                        setFormData({ name: "", email: "", phone: "", message: "" });
+                      }}
+                      className="font-lato text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Send another message
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="contact-email" className="font-lato text-sm text-foreground/80 mb-2 block">
-                    Email Address *
-                  </Label>
-                  <Input
-                    id="contact-email"
-                    type="email"
-                    placeholder="you@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    className="bg-background border-border/50 focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="contact-phone" className="font-lato text-sm text-foreground/80 mb-2 block">
-                    Phone Number *
-                  </Label>
-                  <Input
-                    id="contact-phone"
-                    type="tel"
-                    placeholder="(706) 555-1234"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    required
-                    className="bg-background border-border/50 focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="contact-message" className="font-lato text-sm text-foreground/80 mb-2 block">
-                    How can we help? *
-                  </Label>
-                  <Textarea
-                    id="contact-message"
-                    placeholder="Tell us about your health goals..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    rows={4}
-                    className="bg-background border-border/50 focus:border-primary resize-none"
-                  />
-                </div>
-                <Button 
-                  type="submit"
-                  size="lg"
-                  disabled={isSubmitting}
-                  className="w-full font-lato tracking-wide text-base py-6"
-                >
-                  {isSubmitting ? "Sending..." : "Send Message"}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </form>
+              ) : (
+                /* Contact Form */
+                <>
+                  <h3 className="font-cormorant text-2xl text-foreground mb-6">
+                    Send Us a Message
+                  </h3>
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                      <Label htmlFor="contact-name" className="font-lato text-sm text-foreground/80 mb-2 block">
+                        Full Name *
+                      </Label>
+                      <Input
+                        id="contact-name"
+                        type="text"
+                        placeholder="Your name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                        className="bg-background border-border/50 focus:border-primary"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-email" className="font-lato text-sm text-foreground/80 mb-2 block">
+                        Email Address *
+                      </Label>
+                      <Input
+                        id="contact-email"
+                        type="email"
+                        placeholder="you@email.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                        className="bg-background border-border/50 focus:border-primary"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-phone" className="font-lato text-sm text-foreground/80 mb-2 block">
+                        Phone Number *
+                      </Label>
+                      <Input
+                        id="contact-phone"
+                        type="tel"
+                        placeholder="(706) 555-1234"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        required
+                        className="bg-background border-border/50 focus:border-primary"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-message" className="font-lato text-sm text-foreground/80 mb-2 block">
+                        How can we help? *
+                      </Label>
+                      <Textarea
+                        id="contact-message"
+                        placeholder="Tell us about your health goals..."
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        rows={4}
+                        className="bg-background border-border/50 focus:border-primary resize-none"
+                      />
+                    </div>
+                    <Button 
+                      type="submit"
+                      size="lg"
+                      disabled={isSubmitting}
+                      className="w-full font-lato tracking-wide text-base py-6"
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </form>
 
-              <div className="mt-6 pt-6 border-t border-border/30">
-                <p className="text-sm text-muted-foreground font-lato text-center">
-                  Prefer to schedule directly?{" "}
-                  <button 
-                    onClick={handleBooking}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    Book a consultation
-                  </button>
-                </p>
-              </div>
+                  <div className="mt-6 pt-6 border-t border-border/30">
+                    <p className="text-sm text-muted-foreground font-lato text-center">
+                      Prefer to schedule directly?{" "}
+                      <button 
+                        onClick={handleBooking}
+                        className="text-primary hover:underline font-medium"
+                      >
+                        Book a consultation
+                      </button>
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Right Column - Location Info & Map */}
