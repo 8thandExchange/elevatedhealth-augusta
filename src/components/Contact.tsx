@@ -52,43 +52,60 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
     }
   };
 
+  const [submitStatus, setSubmitStatus] = useState("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus("Validating...");
     console.log("[Contact Form] Starting submission...", formData);
 
     try {
       const validated = contactSchema.parse(formData);
       console.log("[Contact Form] Validation passed:", validated);
       
-      // Store lead in database
-      const { error: insertError } = await supabase.from("chat_leads").insert({
-        name: validated.name,
-        email: validated.email,
-        phone: validated.phone,
-        chat_summary: validated.message,
-        interest: "contact_form",
-        source: "website_contact",
-        status: "new"
-      });
+      setSubmitStatus("Saving your message...");
+      
+      // Store lead in database with explicit verification
+      const { data: insertData, error: insertError } = await supabase
+        .from("chat_leads")
+        .insert({
+          name: validated.name,
+          email: validated.email,
+          phone: validated.phone,
+          chat_summary: validated.message,
+          interest: "contact_form",
+          source: "website_contact",
+          status: "new"
+        })
+        .select()
+        .single();
 
       if (insertError) {
         console.error("[Contact Form] Database insert failed:", insertError);
+        throw new Error(`Failed to save your message: ${insertError.message}`);
+      }
+      
+      if (!insertData) {
+        console.error("[Contact Form] Insert returned no data");
         throw new Error("Failed to save your message. Please try again.");
       }
       
-      console.log("[Contact Form] Lead stored successfully, sending notification email...");
+      console.log("[Contact Form] Lead stored successfully with ID:", insertData.id);
+      toast.success("Message saved! Sending notification...");
+      
+      setSubmitStatus("Sending notification...");
 
       // Send notification email via edge function
-      const { error: emailError } = await supabase.functions.invoke("send-contact-email", {
+      const { data: emailData, error: emailError } = await supabase.functions.invoke("send-contact-email", {
         body: validated
       });
 
       if (emailError) {
         console.error("[Contact Form] Email notification failed:", emailError);
-        // Still show success since lead was stored
+        toast.warning("Your message was saved, but we couldn't send the notification. We'll still follow up!");
       } else {
-        console.log("[Contact Form] Email notification sent successfully");
+        console.log("[Contact Form] Email notification sent successfully:", emailData);
       }
       
       setSubmittedName(validated.name.split(" ")[0]);
@@ -106,6 +123,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
       }
     } finally {
       setIsSubmitting(false);
+      setSubmitStatus("");
     }
   };
 
@@ -258,8 +276,8 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
                       disabled={isSubmitting}
                       className="w-full font-lato tracking-wide text-base py-6"
                     >
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      {isSubmitting ? (submitStatus || "Sending...") : "Send Message"}
+                      {!isSubmitting && <ArrowRight className="ml-2 h-5 w-5" />}
                     </Button>
                   </form>
 
