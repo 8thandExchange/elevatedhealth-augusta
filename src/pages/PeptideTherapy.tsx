@@ -263,7 +263,7 @@ const PeptideTherapy = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <Navbar />
+        <Navbar onOpenBooking={() => setIsConsultOpen(true)} />
 
         <main>
           {/* Hero Section */}

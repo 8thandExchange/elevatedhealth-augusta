@@ -29,7 +29,7 @@ const MobileBookNow = () => {
           <DialogHeader className="p-6 pb-0">
             <div className="flex items-center justify-between">
               <DialogTitle className="font-playfair text-2xl text-primary">
-                Book Your Free Consultation
+                Book Your $99 Consultation
               </DialogTitle>
               <Button
                 onClick={() => setIsOpen(false)}

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
 import { VoiceAgent } from "@/utils/VoiceAgent";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface Message {
   role: "user" | "assistant";
@@ -349,7 +350,7 @@ const AssistantHub = () => {
               <span className="font-medium">Voice Agent</span>
             </Button>
             <a
-              href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
+              href={SITE_CONFIG.bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-3 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 font-medium ${isMobile ? 'w-full justify-start h-12 px-4 rounded-xl' : 'rounded-full px-4 py-2 text-sm'}`}

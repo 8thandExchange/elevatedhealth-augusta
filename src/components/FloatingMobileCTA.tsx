@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { X, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const STORAGE_KEY = "floatingCTA_dismissed";
 
@@ -20,7 +21,7 @@ export const FloatingMobileCTA = () => {
   };
 
   const handleBook = () => {
-    window.open("https://elevatedhealthaugusta.janeapp.com/", "_blank");
+    window.open(SITE_CONFIG.bookingUrl, "_blank");
   };
 
   if (!isMobile || isDismissed) return null;

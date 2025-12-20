@@ -133,7 +133,7 @@ const HairRestoration = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <Navbar />
+        <Navbar onOpenBooking={() => setIsConsultOpen(true)} />
 
         <main id="main-content">
           {/* Hero Section */}

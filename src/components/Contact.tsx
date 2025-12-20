@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, MapPin, Phone, Clock, CheckCircle2 } from "lucide-react";
+import { ArrowRight, MapPin, Phone, Clock } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { toast } from "sonner";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ContactProps {
   onOpenBooking?: () => void;
@@ -17,7 +18,7 @@ const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
   email: z.string().trim().email("Please enter a valid email"),
   phone: z.string().trim().min(10, "Please enter a valid phone number").max(20),
-  message: z.string().trim().max(1000, "Message is too long").optional(),
+  message: z.string().trim().min(10, "Please include a brief message (10+ characters)").max(2000, "Message is too long"),
 });
 
 const Contact = ({ onOpenBooking }: ContactProps) => {
@@ -43,7 +44,27 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
     try {
       const validated = contactSchema.parse(formData);
       
-      // For now, just show success - backend integration can be added later
+      // Store lead in database
+      await supabase.from("chat_leads").insert({
+        name: validated.name,
+        email: validated.email,
+        phone: validated.phone,
+        chat_summary: validated.message,
+        interest: "contact_form",
+        source: "website_contact",
+        status: "new"
+      });
+
+      // Send notification email via edge function
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: validated
+      });
+
+      if (error) {
+        console.error("Email send error:", error);
+        // Still show success since lead was stored
+      }
+      
       toast.success("Thank you! We'll be in touch within 24 hours.");
       setFormData({ name: "", email: "", phone: "", message: "" });
       trackCTAClick('contact_form_submit', 'contact_section');
@@ -51,7 +72,8 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
       } else {
-        toast.error("Something went wrong. Please try again.");
+        console.error("Contact form error:", error);
+        toast.error("Something went wrong. Please try again or call us.");
       }
     } finally {
       setIsSubmitting(false);
@@ -127,7 +149,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
                 </div>
                 <div>
                   <Label htmlFor="contact-message" className="font-lato text-sm text-foreground/80 mb-2 block">
-                    How can we help? (Optional)
+                    How can we help? *
                   </Label>
                   <Textarea
                     id="contact-message"

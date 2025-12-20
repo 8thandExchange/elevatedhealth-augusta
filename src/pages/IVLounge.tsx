@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 import { 
   Droplets, 
   Sparkles, 
@@ -164,7 +165,7 @@ const IVLounge = () => {
         />
       </Helmet>
 
-      <Navbar />
+      <Navbar onOpenBooking={() => window.open(SITE_CONFIG.bookingLinks.iv, "_blank")} />
 
       <main id="main-content" className="min-h-screen bg-background">
         {/* Hero Section */}
