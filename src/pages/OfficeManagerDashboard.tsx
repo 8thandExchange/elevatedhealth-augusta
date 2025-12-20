@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,7 +59,6 @@ interface ChatLead {
 }
 
 const OfficeManagerDashboard = () => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -74,36 +72,8 @@ const OfficeManagerDashboard = () => {
   const [leadSearchTerm, setLeadSearchTerm] = useState("");
 
   useEffect(() => {
-    checkAuthAndLoad();
+    loadData();
   }, []);
-
-  const checkAuthAndLoad = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/admin/login");
-        return;
-      }
-
-      // Check if user has staff or admin role
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-
-      const hasAccess = roles?.some(r => r.role === "admin" || r.role === "staff");
-      if (!hasAccess) {
-        toast.error("Access denied");
-        navigate("/admin/login");
-        return;
-      }
-
-      await loadData();
-    } catch (error) {
-      console.error("Auth check error:", error);
-      navigate("/admin/login");
-    }
-  };
 
   const loadData = async () => {
     try {

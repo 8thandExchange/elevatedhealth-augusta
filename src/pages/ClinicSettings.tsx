@@ -34,35 +34,34 @@ const ClinicSettings = () => {
   });
 
   useEffect(() => {
-    checkAuthAndLoad();
+    loadSettings();
   }, []);
 
-  const checkAuthAndLoad = async () => {
+  const loadSettings = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/admin/login");
-        return;
+      if (user) {
+        setUserEmail(user.email || "");
       }
 
-      setUserEmail(user.email || "");
+      const { data, error } = await supabase
+        .from("clinic_settings")
+        .select("key, value");
 
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
+      if (error) throw error;
 
-      const hasAccess = roles?.some(r => r.role === "admin" || r.role === "staff");
-      if (!hasAccess) {
-        toast.error("Access denied");
-        navigate("/admin/login");
-        return;
+      if (data) {
+        const settingsMap: Record<string, string> = {};
+        data.forEach((s) => {
+          settingsMap[s.key] = s.value;
+        });
+        setSettings((prev) => ({ ...prev, ...settingsMap }));
       }
-
-      await loadSettings();
-    } catch (error: any) {
-      toast.error(error.message);
-      navigate("/admin/login");
+    } catch (err) {
+      console.error("Error loading settings:", err);
+      toast.error("Failed to load settings");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,28 +94,6 @@ const ClinicSettings = () => {
     }
   };
 
-  const loadSettings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("clinic_settings")
-        .select("key, value");
-
-      if (error) throw error;
-
-      if (data) {
-        const settingsMap: Record<string, string> = {};
-        data.forEach((s) => {
-          settingsMap[s.key] = s.value;
-        });
-        setSettings((prev) => ({ ...prev, ...settingsMap }));
-      }
-    } catch (err) {
-      console.error("Error loading settings:", err);
-      toast.error("Failed to load settings");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     setIsSaving(true);

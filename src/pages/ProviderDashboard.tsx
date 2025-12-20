@@ -214,38 +214,22 @@ const ProviderDashboard = () => {
   };
 
   useEffect(() => {
-    checkAuthAndLoad();
+    initializeProvider();
   }, []);
 
-  const checkAuthAndLoad = async () => {
+  const initializeProvider = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/admin/login");
-        return;
-      }
-
+      
       // Set provider info based on logged-in user
-      if (user.email) {
+      if (user?.email) {
         setProviderInfo(getProviderInfo(user.email));
-      }
-
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-
-      const hasAccess = roles?.some(r => r.role === "admin" || r.role === "staff");
-      if (!hasAccess) {
-        toast.error("Access denied");
-        navigate("/admin/login");
-        return;
       }
 
       await loadData();
     } catch (error: any) {
-      toast.error(error.message);
-      navigate("/admin/login");
+      console.error("Error initializing provider:", error);
+      toast.error("Failed to load dashboard");
     }
   };
 

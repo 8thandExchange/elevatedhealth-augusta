@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -44,7 +43,6 @@ interface OperationalBlocker {
 }
 
 const BusinessDashboard = () => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [stripeMetrics, setStripeMetrics] = useState<StripeMetrics | null>(null);
@@ -53,38 +51,8 @@ const BusinessDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
-    checkAuthAndLoad();
+    loadAllData();
   }, []);
-
-  const checkAuthAndLoad = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/admin/login");
-        return;
-      }
-
-      // Check if user has business_admin, admin, or staff role
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-
-      const hasAccess = roles?.some(r => 
-        r.role === "admin" || r.role === "staff" || r.role === "business_admin"
-      );
-      if (!hasAccess) {
-        toast.error("Access denied - Business Admin role required");
-        navigate("/admin/login");
-        return;
-      }
-
-      await loadAllData();
-    } catch (error) {
-      console.error("Auth check error:", error);
-      navigate("/admin/login");
-    }
-  };
 
   const loadAllData = async () => {
     await Promise.all([

@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollToTop from "@/components/ScrollToTop";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import SecurePatientRoute from "@/components/auth/SecurePatientRoute";
 import CookieConsent from "@/components/CookieConsent";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
@@ -55,6 +54,7 @@ import MentalWellnessPage from "./pages/MentalWellnessPage";
 import HormoneJourneyPage from "./pages/HormoneJourneyPage";
 import IVPaymentSuccess from "./pages/IVPaymentSuccess";
 import Affordability from "./pages/Affordability";
+import ProviderLayout from "./components/provider/ProviderLayout";
 
 const queryClient = new QueryClient();
 
@@ -154,27 +154,27 @@ const App = () => (
             </SecurePatientRoute>
           } />
           
-          {/* Admin/Provider Routes */}
+          {/* Admin/Provider Routes - Wrapped with ProviderLayout */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/provider/dashboard" element={
-            <ProtectedRoute requireAdmin>
+            <ProviderLayout title="Provider Dashboard" subtitle="Clinical Operations" showNavbar={false}>
               <ProviderDashboard />
-            </ProtectedRoute>
+            </ProviderLayout>
           } />
           <Route path="/admin/settings" element={
-            <ProtectedRoute requireAdmin>
+            <ProviderLayout title="Clinic Settings" subtitle="Configuration" showNavbar={false}>
               <ClinicSettings />
-            </ProtectedRoute>
+            </ProviderLayout>
           } />
           <Route path="/office/dashboard" element={
-            <ProtectedRoute requireAdmin>
+            <ProviderLayout title="Office Manager" subtitle="Patient Overview" showNavbar={false}>
               <OfficeManagerDashboard />
-            </ProtectedRoute>
+            </ProviderLayout>
           } />
           <Route path="/admin/business" element={
-            <ProtectedRoute requireAdmin>
+            <ProviderLayout title="Business Dashboard" subtitle="Revenue & Operations" showNavbar={false}>
               <BusinessDashboard />
-            </ProtectedRoute>
+            </ProviderLayout>
           } />
           
           <Route path="*" element={<NotFound />} />
