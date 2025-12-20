@@ -14,29 +14,12 @@ interface FaxRequest {
   quantity: number;
   refills: number;
   supply_days: number;
-  provider_email: string;
+  provider_name: string;
+  provider_credentials: string;
+  provider_npi: string;
   provider_notes?: string;
   diagnosis_code?: string;
   diagnosis_description?: string;
-}
-
-// Provider NPI mapping based on email
-const PROVIDER_MAP: Record<string, { name: string; credentials: string; npiKey: string }> = {
-  "lauren": { name: "Lauren Bursey", credentials: "FNP-C", npiKey: "provider_npi_lauren_bursey" },
-  "troy": { name: "Troy Akers", credentials: "DO", npiKey: "provider_npi_troy_akers" },
-  "michael": { name: "Michael Bursey", credentials: "DO", npiKey: "provider_npi_michael_bursey" },
-  "dennis": { name: "Dennis Williams", credentials: "MD", npiKey: "provider_npi_dennis_williams" },
-};
-
-function getProviderFromEmail(email: string): { name: string; credentials: string; npiKey: string } | null {
-  const emailLower = email.toLowerCase();
-  for (const [key, value] of Object.entries(PROVIDER_MAP)) {
-    if (emailLower.includes(key)) {
-      return value;
-    }
-  }
-  // Default to Lauren if no match
-  return PROVIDER_MAP["lauren"];
 }
 
 function generatePrescriptionHtml(
@@ -186,13 +169,16 @@ serve(async (req) => {
       quantity, 
       refills, 
       supply_days, 
-      provider_email,
+      provider_name,
+      provider_credentials,
+      provider_npi,
       provider_notes,
       diagnosis_code,
       diagnosis_description
     } = body;
 
     console.log("Processing fax request for patient:", patient_id);
+    console.log("Provider:", provider_name, provider_credentials, "NPI:", provider_npi);
 
     // Fetch patient data
     const { data: patient, error: patientError } = await supabase
@@ -205,29 +191,14 @@ serve(async (req) => {
       throw new Error(`Failed to fetch patient: ${patientError?.message}`);
     }
 
-    // Get provider info from email
-    const providerInfo = getProviderFromEmail(provider_email);
-    if (!providerInfo) {
-      throw new Error("Could not determine provider from email");
-    }
-
-    // Fetch provider NPI from clinic_settings
-    const { data: npiSetting } = await supabase
-      .from("clinic_settings")
-      .select("value")
-      .eq("key", providerInfo.npiKey)
-      .single();
-
-    const providerNpi = npiSetting?.value || "1578971552"; // Default to Lauren's NPI
-
-    // Generate the prescription HTML
+    // Generate the prescription HTML using the provider data passed from frontend
     const prescriptionHtml = generatePrescriptionHtml(
       patient,
       { name: medication_name, strength: medication_strength, sig: medication_sig },
       quantity,
       refills,
       supply_days,
-      { name: providerInfo.name, credentials: providerInfo.credentials, npi: providerNpi },
+      { name: provider_name, credentials: provider_credentials, npi: provider_npi },
       provider_notes,
       diagnosis_code && diagnosis_description ? { code: diagnosis_code, description: diagnosis_description } : undefined
     );
@@ -275,7 +246,7 @@ serve(async (req) => {
           quantity,
           refills,
           supply_days,
-          provider: providerInfo.name,
+          provider: provider_name,
         },
         fax_id: faxId,
         fax_status: "queued",

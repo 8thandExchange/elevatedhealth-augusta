@@ -79,6 +79,15 @@ interface MedicationData {
   category?: string;
 }
 
+interface ProviderData {
+  id: string;
+  name: string;
+  credentials: string;
+  npi: string;
+  email: string;
+  isPrimary: boolean;
+}
+
 interface FCCPortalModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -155,6 +164,9 @@ const FCCPortalModal = ({
   const [faxError, setFaxError] = useState<string | null>(null);
   const [providerEmail, setProviderEmail] = useState<string>("");
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<string>("");
+  const [matchedProvider, setMatchedProvider] = useState<ProviderData | null>(null);
+  const [availableProviders, setAvailableProviders] = useState<ProviderData[]>([]);
+  const [isLoadingProviders, setIsLoadingProviders] = useState(true);
 
   // Get diagnosis options based on medication category
   const diagnosisOptions = medication?.category 
@@ -169,15 +181,68 @@ const FCCPortalModal = ({
     }
   }, [medication]);
 
-  // Get current user's email for provider identification
+  // Get current user's email and load providers for auto-matching
   useEffect(() => {
-    const getProviderEmail = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email) {
-        setProviderEmail(user.email);
+    const loadProvidersAndMatchUser = async () => {
+      setIsLoadingProviders(true);
+      try {
+        // Get current user email
+        const { data: { user } } = await supabase.auth.getUser();
+        const userEmail = user?.email || "";
+        setProviderEmail(userEmail);
+
+        // Fetch all provider settings
+        const { data: settings, error } = await supabase
+          .from("clinic_settings")
+          .select("key, value")
+          .like("key", "provider_%");
+
+        if (error) throw error;
+
+        // Parse provider data from settings
+        const providersData: Record<string, Partial<ProviderData>> = {};
+        
+        settings?.forEach((setting) => {
+          const match = setting.key.match(/^provider_([^_]+)_(.+)$/);
+          if (match) {
+            const [, id, field] = match;
+            if (!providersData[id]) {
+              providersData[id] = { id };
+            }
+            if (field === "name") providersData[id].name = setting.value;
+            if (field === "credentials") providersData[id].credentials = setting.value;
+            if (field === "npi") providersData[id].npi = setting.value;
+            if (field === "email") providersData[id].email = setting.value;
+            if (field === "is_primary") providersData[id].isPrimary = setting.value === "true";
+          }
+        });
+
+        const providersList = Object.values(providersData).filter(
+          (p) => p.name && p.npi
+        ) as ProviderData[];
+
+        setAvailableProviders(providersList);
+
+        // Try to match provider by email
+        const matched = providersList.find(
+          (p) => p.email && userEmail.toLowerCase() === p.email.toLowerCase()
+        );
+        
+        if (matched) {
+          setMatchedProvider(matched);
+        } else {
+          // Fall back to primary provider
+          const primary = providersList.find((p) => p.isPrimary);
+          setMatchedProvider(primary || providersList[0] || null);
+        }
+      } catch (err) {
+        console.error("Error loading providers:", err);
+      } finally {
+        setIsLoadingProviders(false);
       }
     };
-    getProviderEmail();
+
+    loadProvidersAndMatchUser();
   }, []);
 
   // Reset fax status when modal opens
@@ -240,6 +305,10 @@ const FCCPortalModal = ({
 
   const handleFaxToHolgate = async () => {
     if (!medication) return;
+    if (!matchedProvider) {
+      toast.error("Please select a prescribing provider");
+      return;
+    }
     
     setFaxStatus('transmitting');
     setFaxError(null);
@@ -257,7 +326,9 @@ const FCCPortalModal = ({
           quantity,
           refills,
           supply_days: supplyDays,
-          provider_email: providerEmail,
+          provider_name: matchedProvider.name,
+          provider_credentials: matchedProvider.credentials,
+          provider_npi: matchedProvider.npi,
           diagnosis_code: diagnosisCode,
           diagnosis_description: diagnosisDescription,
         },
@@ -374,6 +445,50 @@ const FCCPortalModal = ({
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Provider Selector */}
+        <div className="space-y-2 mt-4">
+          <Label className="text-sm font-medium text-foreground">Prescribing Provider</Label>
+          {isLoadingProviders ? (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm p-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Loading providers...
+            </div>
+          ) : availableProviders.length === 0 ? (
+            <div className="flex items-center gap-2 text-amber-600 text-sm bg-amber-50 dark:bg-amber-950/30 p-2 rounded-lg border border-amber-200 dark:border-amber-800">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>No providers configured. Add providers in Clinic Settings.</span>
+            </div>
+          ) : (
+            <Select 
+              value={matchedProvider?.id || ""} 
+              onValueChange={(id) => {
+                const provider = availableProviders.find(p => p.id === id);
+                setMatchedProvider(provider || null);
+              }}
+            >
+              <SelectTrigger className="bg-background border-gold/30">
+                <SelectValue placeholder="Select provider..." />
+              </SelectTrigger>
+              <SelectContent className="bg-background border">
+                {availableProviders.map((provider) => (
+                  <SelectItem key={provider.id} value={provider.id}>
+                    {provider.name}{provider.credentials ? `, ${provider.credentials}` : ""} 
+                    {provider.isPrimary && " (Primary)"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {matchedProvider && (
+            <p className="text-xs text-muted-foreground">
+              NPI: <code className="bg-muted px-1 rounded">{matchedProvider.npi}</code>
+              {matchedProvider.email === providerEmail && (
+                <span className="ml-2 text-green-600">✓ Matched to your account</span>
+              )}
+            </p>
+          )}
         </div>
 
         {/* Diagnosis Selector */}
