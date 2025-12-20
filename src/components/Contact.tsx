@@ -21,6 +21,14 @@ const contactSchema = z.object({
   message: z.string().trim().min(10, "Please include a brief message (10+ characters)").max(2000, "Message is too long"),
 });
 
+const formatPhoneNumber = (value: string): string => {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+};
+
 const Contact = ({ onOpenBooking }: ContactProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -31,6 +39,11 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
     phone: "",
     message: "",
   });
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setFormData({ ...formData, phone: formatted });
+  };
 
   const handleBooking = () => {
     trackCTAClick('cta_request_access', 'booking_calendar');
@@ -208,7 +221,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
                         type="tel"
                         placeholder="(706) 555-1234"
                         value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        onChange={handlePhoneChange}
                         required
                         className="bg-background border-border/50 focus:border-primary"
                       />
