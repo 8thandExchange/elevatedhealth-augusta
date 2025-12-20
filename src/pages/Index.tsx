@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import FinancingBanner from "@/components/FinancingBanner";
 import OurTreatments from "@/components/OurTreatments";
 import MissionStatement from "@/components/MissionStatement";
+import NotReadyToBook from "@/components/NotReadyToBook";
 import WhyUsCompare from "@/components/WhyUsCompare";
 import ClinicVideo from "@/components/ClinicVideo";
 import InsuranceLogos from "@/components/InsuranceLogos";
@@ -27,6 +28,9 @@ const Index = () => {
         <FinancingBanner />
         <MissionStatement onOpenBooking={() => setIsBookingOpen(true)} />
         <OurTreatments onOpenBooking={() => setIsBookingOpen(true)} />
+        <div className="container mx-auto px-4 py-12">
+          <NotReadyToBook />
+        </div>
         <WhyUsCompare onOpenBooking={() => setIsBookingOpen(true)} />
         <ClinicVideo />
         <InsuranceLogos />
