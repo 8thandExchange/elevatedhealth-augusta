@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +41,11 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
   });
   const [honeypot, setHoneypot] = useState("");
 
+  // Clear honeypot on mount in case browser autofilled before React took control
+  useEffect(() => {
+    setHoneypot("");
+  }, []);
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
     setFormData({ ...formData, phone: formatted });
@@ -69,7 +74,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
       
       // Send everything to edge function which handles DB insert + email
       const { data, error } = await supabase.functions.invoke("send-contact-email", {
-        body: { ...validated, _website: honeypot }
+        body: { ...validated, _fax: honeypot }
       });
 
       if (error) {
@@ -195,9 +200,12 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
                     <div className="absolute -left-[9999px]" aria-hidden="true">
                       <input
                         type="text"
-                        name="website"
+                        name="company_fax"
+                        id="company_fax_field"
                         tabIndex={-1}
-                        autoComplete="off"
+                        autoComplete="new-password"
+                        data-lpignore="true"
+                        data-form-type="other"
                         value={honeypot}
                         onChange={(e) => setHoneypot(e.target.value)}
                       />
