@@ -8,12 +8,43 @@ interface LeadCaptureData {
   notes?: string;
 }
 
+// Safari/iOS detection utilities
+const isSafari = (): boolean => {
+  const ua = navigator.userAgent;
+  return /^((?!chrome|android).)*safari/i.test(ua);
+};
+
+const isIOS = (): boolean => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
+
+// Unlock audio context on user gesture (required for Safari/iOS)
+const unlockAudioContext = async (): Promise<AudioContext> => {
+  const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+  const audioContext = new AudioContextClass();
+  
+  if (audioContext.state === 'suspended') {
+    await audioContext.resume();
+  }
+  
+  // Create and play a silent buffer to unlock audio
+  const buffer = audioContext.createBuffer(1, 1, 22050);
+  const source = audioContext.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioContext.destination);
+  source.start(0);
+  
+  return audioContext;
+};
+
 export class VoiceAgent {
   private pc: RTCPeerConnection | null = null;
   private dc: RTCDataChannel | null = null;
   private audioEl: HTMLAudioElement;
   private localStream: MediaStream | null = null;
   private pendingFunctionCalls: Map<string, string> = new Map();
+  private audioContext: AudioContext | null = null;
 
   constructor(
     private onMessage: (event: any) => void,
@@ -22,12 +53,31 @@ export class VoiceAgent {
     private onLeadCaptured?: (lead: LeadCaptureData) => void
   ) {
     this.audioEl = document.createElement("audio");
+    // Safari/iOS compatibility attributes
     this.audioEl.autoplay = true;
+    this.audioEl.setAttribute('playsinline', 'true');
+    this.audioEl.setAttribute('webkit-playsinline', 'true');
+    // Start muted for Safari autoplay, will unmute after user interaction
+    if (isSafari() || isIOS()) {
+      this.audioEl.muted = true;
+    }
   }
 
   async init() {
     try {
       console.log("Initializing voice agent...");
+      console.log("Browser detection - Safari:", isSafari(), "iOS:", isIOS());
+      
+      // Unlock audio context for Safari/iOS
+      if (isSafari() || isIOS()) {
+        console.log("Unlocking audio context for Safari/iOS...");
+        try {
+          this.audioContext = await unlockAudioContext();
+          console.log("Audio context unlocked");
+        } catch (audioErr) {
+          console.warn("Audio context unlock failed, continuing anyway:", audioErr);
+        }
+      }
       
       // Get ephemeral token from edge function
       const { data, error } = await supabase.functions.invoke("voice-session");
@@ -45,23 +95,63 @@ export class VoiceAgent {
       const EPHEMERAL_KEY = data.client_secret.value;
       console.log("Got ephemeral key, creating peer connection...");
 
-      // Create peer connection
-      this.pc = new RTCPeerConnection();
+      // Create peer connection with Safari-compatible config
+      const rtcConfig: RTCConfiguration = {
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+      };
+      
+      // Use prefixed version if available (older Safari)
+      const RTCPeerConnectionClass = window.RTCPeerConnection || 
+        (window as any).webkitRTCPeerConnection || 
+        (window as any).mozRTCPeerConnection;
+      
+      if (!RTCPeerConnectionClass) {
+        throw new Error("WebRTC is not supported in this browser");
+      }
+      
+      this.pc = new RTCPeerConnectionClass(rtcConfig);
 
       // Set up remote audio playback
       this.pc.ontrack = (e) => {
         console.log("Received remote track");
         this.audioEl.srcObject = e.streams[0];
+        
+        // Unmute after receiving track (Safari/iOS)
+        if (this.audioEl.muted) {
+          this.audioEl.muted = false;
+        }
+        
+        // Attempt to play (may fail on Safari without user gesture)
+        this.audioEl.play().catch(playErr => {
+          console.warn("Auto-play blocked, user interaction required:", playErr);
+        });
       };
 
-      // Get local audio and add track
-      this.localStream = await navigator.mediaDevices.getUserMedia({ 
+      // Get local audio with Safari-compatible constraints
+      const audioConstraints: MediaStreamConstraints = {
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          autoGainControl: true
-        } 
-      });
+          autoGainControl: true,
+          // Safari may not support all constraints
+          ...(isIOS() ? {} : { sampleRate: 48000 })
+        }
+      };
+      
+      // Use prefixed getUserMedia for older Safari
+      const getUserMediaFn = navigator.mediaDevices?.getUserMedia?.bind(navigator.mediaDevices) ||
+        ((constraints: MediaStreamConstraints) => {
+          const legacyGetUserMedia = (navigator as any).webkitGetUserMedia || 
+            (navigator as any).mozGetUserMedia;
+          if (!legacyGetUserMedia) {
+            return Promise.reject(new Error('getUserMedia is not supported'));
+          }
+          return new Promise<MediaStream>((resolve, reject) => {
+            legacyGetUserMedia.call(navigator, constraints, resolve, reject);
+          });
+        });
+      
+      this.localStream = await getUserMediaFn(audioConstraints);
       this.pc.addTrack(this.localStream.getTracks()[0]);
       console.log("Added local audio track");
 
@@ -76,6 +166,10 @@ export class VoiceAgent {
       this.dc.addEventListener("close", () => {
         console.log("Data channel closed");
         this.onConnectionChange(false);
+      });
+
+      this.dc.addEventListener("error", (e) => {
+        console.error("Data channel error:", e);
       });
 
       this.dc.addEventListener("message", (e) => {
@@ -144,6 +238,23 @@ export class VoiceAgent {
       console.error("Error initializing voice agent:", error);
       this.disconnect();
       throw error;
+    }
+  }
+
+  // Call this method after a user gesture to ensure audio works on Safari/iOS
+  async unlockAudio(): Promise<void> {
+    if (this.audioEl.muted) {
+      this.audioEl.muted = false;
+    }
+    
+    try {
+      await this.audioEl.play();
+    } catch {
+      // No audio to play yet, that's fine
+    }
+    
+    if (this.audioContext && this.audioContext.state === 'suspended') {
+      await this.audioContext.resume();
     }
   }
 
@@ -249,6 +360,11 @@ export class VoiceAgent {
       this.pc = null;
     }
     
+    if (this.audioContext) {
+      this.audioContext.close().catch(() => {});
+      this.audioContext = null;
+    }
+    
     this.audioEl.srcObject = null;
     this.pendingFunctionCalls.clear();
     this.onConnectionChange(false);
@@ -257,5 +373,12 @@ export class VoiceAgent {
 
   isConnected(): boolean {
     return this.dc?.readyState === 'open';
+  }
+
+  // Check if browser supports required features
+  static isSupported(): boolean {
+    const hasWebRTC = !!(window.RTCPeerConnection || (window as any).webkitRTCPeerConnection);
+    const hasGetUserMedia = !!(navigator.mediaDevices?.getUserMedia || (navigator as any).webkitGetUserMedia);
+    return hasWebRTC && hasGetUserMedia;
   }
 }
