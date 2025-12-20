@@ -44,17 +44,71 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
+    // Initialize Supabase clients
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    
+    // Create client for auth verification
+    const supabaseAuth = createClient(supabaseUrl!, supabaseAnonKey!);
+    
+    // Verify authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      logStep("ERROR: No authorization header");
+      return new Response(JSON.stringify({ error: "Unauthorized: No authorization header" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
+    
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: authError } = await supabaseAuth.auth.getUser(token);
+    
+    if (authError || !userData.user) {
+      logStep("ERROR: Invalid token", { error: authError?.message });
+      return new Response(JSON.stringify({ error: "Unauthorized: Invalid token" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
+    
+    logStep("User authenticated", { userId: userData.user.id });
+    
+    // Use service role client for admin operations
+    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
+    
+    // Verify user has admin or staff role
+    const { data: roles, error: rolesError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userData.user.id);
+    
+    if (rolesError) {
+      logStep("ERROR: Failed to fetch roles", { error: rolesError.message });
+      return new Response(JSON.stringify({ error: "Failed to verify permissions" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
+    
+    const hasPermission = roles?.some(r => r.role === "admin" || r.role === "staff" || r.role === "business_admin");
+    if (!hasPermission) {
+      logStep("ERROR: Insufficient permissions", { userId: userData.user.id, roles });
+      return new Response(JSON.stringify({ error: "Forbidden: Insufficient permissions" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 403,
+      });
+    }
+    
+    logStep("Authorization verified", { userId: userData.user.id, roles });
+
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
     const resendKey = Deno.env.get("RESEND_API_KEY");
     logStep("Resend key check", { hasKey: !!resendKey });
-
-    // Initialize Supabase client for tracking
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
     const body = await req.json();
     const { 

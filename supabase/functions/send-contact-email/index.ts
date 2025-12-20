@@ -9,6 +9,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// HTML escape function to prevent XSS in emails
+const escapeHtml = (str: string): string => str
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;');
+
 // Validation schema matching frontend
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -83,26 +91,26 @@ const handler = async (req: Request): Promise<Response> => {
               <div class="content">
                 <div class="field">
                   <div class="field-label">Name:</div>
-                  <div class="field-value">${validatedData.name}</div>
+                  <div class="field-value">${escapeHtml(validatedData.name)}</div>
                 </div>
                 
                 <div class="field">
                   <div class="field-label">Email:</div>
                   <div class="field-value">
-                    <a href="mailto:${validatedData.email}">${validatedData.email}</a>
+                    <a href="mailto:${escapeHtml(validatedData.email)}">${escapeHtml(validatedData.email)}</a>
                   </div>
                 </div>
                 
                 <div class="field">
                   <div class="field-label">Phone:</div>
                   <div class="field-value">
-                    <a href="tel:${validatedData.phone}">${validatedData.phone}</a>
+                    <a href="tel:${escapeHtml(validatedData.phone)}">${escapeHtml(validatedData.phone)}</a>
                   </div>
                 </div>
                 
                 <div class="field">
                   <div class="field-label">Message:</div>
-                  <div class="message-box">${validatedData.message}</div>
+                  <div class="message-box">${escapeHtml(validatedData.message)}</div>
                 </div>
                 
                 <div class="field">
