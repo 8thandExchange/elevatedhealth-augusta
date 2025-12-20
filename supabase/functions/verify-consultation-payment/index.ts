@@ -13,6 +13,16 @@ const logStep = (step: string, details?: any) => {
   console.log(`[VERIFY-CONSULTATION-PAYMENT] ${step}${detailsStr}`);
 };
 
+// Generate a unique credit code for the $99 consultation credit
+const generateCreditCode = (): string => {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "EH-";
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
+
 // Helper to send SMS via Sinch
 async function sendSMS(to: string, message: string): Promise<boolean> {
   const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
@@ -31,8 +41,8 @@ async function sendSMS(to: string, message: string): Promise<boolean> {
         "Authorization": "Bearer " + sinchSecretKey,
       },
       body: JSON.stringify({
-        from: "+18339765929", // Elevated Health Sinch number
-        to: [to.replace(/\D/g, '')], // Strip non-digits
+        from: "+18339765929",
+        to: [to.replace(/\D/g, '')],
         body: message,
       }),
     });
@@ -51,154 +61,6 @@ async function sendSMS(to: string, message: string): Promise<boolean> {
   }
 }
 
-// Helper to create Google Calendar event
-async function createCalendarEvent(
-  customerEmail: string,
-  customerName: string,
-  serviceType: string,
-  creditCode: string
-): Promise<boolean> {
-  const serviceAccountKeyStr = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_KEY");
-  
-  if (!serviceAccountKeyStr) {
-    logStep("Google Calendar credentials not configured");
-    return false;
-  }
-
-  try {
-    const serviceAccount = JSON.parse(serviceAccountKeyStr);
-    
-    // Create JWT for Google API authentication
-    const header = { alg: "RS256", typ: "JWT" };
-    const now = Math.floor(Date.now() / 1000);
-    const claim = {
-      iss: serviceAccount.client_email,
-      scope: "https://www.googleapis.com/auth/calendar",
-      aud: "https://oauth2.googleapis.com/token",
-      iat: now,
-      exp: now + 3600,
-    };
-
-    // Import the private key
-    const pemHeader = "-----BEGIN PRIVATE KEY-----";
-    const pemFooter = "-----END PRIVATE KEY-----";
-    const pemContents = serviceAccount.private_key
-      .replace(pemHeader, "")
-      .replace(pemFooter, "")
-      .replace(/\n/g, "");
-    
-    const binaryKey = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
-    
-    const cryptoKey = await crypto.subtle.importKey(
-      "pkcs8",
-      binaryKey,
-      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-      false,
-      ["sign"]
-    );
-
-    // Create JWT
-    const encoder = new TextEncoder();
-    const headerB64 = btoa(JSON.stringify(header)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-    const claimB64 = btoa(JSON.stringify(claim)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-    const signatureInput = encoder.encode(`${headerB64}.${claimB64}`);
-    
-    const signature = await crypto.subtle.sign(
-      "RSASSA-PKCS1-v1_5",
-      cryptoKey,
-      signatureInput
-    );
-    
-    const signatureB64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
-      .replace(/=/g, "")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_");
-    
-    const jwt = `${headerB64}.${claimB64}.${signatureB64}`;
-
-    // Get access token
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion: jwt,
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      const errorText = await tokenResponse.text();
-      logStep("Failed to get Google access token", { error: errorText });
-      return false;
-    }
-
-    const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
-
-    // Service type labels
-    const serviceLabels: Record<string, string> = {
-      ketamine: "Ketamine Therapy",
-      weight_loss: "Medical Weight Loss",
-      hormone: "Hormone Replacement",
-      peptide: "Peptide Therapy",
-      hair: "Hair Restoration",
-      sexual: "Sexual Wellness",
-    };
-
-    const serviceLabel = serviceLabels[serviceType] || "Consultation";
-
-    // Create a placeholder event on the admin calendar (they'll need to manually schedule)
-    // This creates an all-day event for today as a reminder
-    const today = new Date().toISOString().split("T")[0];
-    
-    const event = {
-      summary: `NEW CONSULT PAID: ${customerName || customerEmail} - ${serviceLabel}`,
-      description: `
-New consultation payment received!
-
-Patient: ${customerName || "Not provided"}
-Email: ${customerEmail}
-Service: ${serviceLabel}
-Credit Code: ${creditCode}
-
-ACTION NEEDED: Patient has been instructed to book via calendar link. Watch for their booking confirmation.
-
-This event was auto-created when payment was received.
-      `.trim(),
-      start: { date: today },
-      end: { date: today },
-      colorId: "11", // Red color for attention
-    };
-
-    // Use the admin calendar ID (you may need to replace this with the actual calendar ID)
-    const calendarId = "primary"; // Uses the service account's primary calendar
-    
-    const calendarResponse = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(event),
-      }
-    );
-
-    if (!calendarResponse.ok) {
-      const errorText = await calendarResponse.text();
-      logStep("Failed to create calendar event", { error: errorText });
-      return false;
-    }
-
-    logStep("Calendar event created successfully");
-    return true;
-  } catch (error) {
-    logStep("Calendar error", { error: error instanceof Error ? error.message : String(error) });
-    return false;
-  }
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -207,11 +69,11 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const { session_id, credit_code } = await req.json();
+    const { session_id } = await req.json();
     if (!session_id) {
       throw new Error("session_id is required");
     }
-    logStep("Session ID received", { session_id, credit_code });
+    logStep("Session ID received", { session_id });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     const resendKey = Deno.env.get("RESEND_API_KEY");
@@ -244,54 +106,90 @@ serve(async (req) => {
     }
 
     const customerEmail = session.customer_email || session.customer_details?.email;
-    const creditCode = credit_code || session.metadata?.credit_code;
+    const customerName = session.customer_details?.name || session.metadata?.patient_name;
     const serviceType = session.metadata?.service_type || "hormone";
 
     if (!customerEmail) {
       throw new Error("Customer email not found in session");
     }
 
-    // Check if already recorded
+    // Check if already recorded (with credit code)
     const { data: existing } = await supabaseClient
       .from("consultation_bookings")
-      .select("id")
+      .select("id, credit_code, customer_name")
       .eq("stripe_session_id", session_id)
       .maybeSingle();
 
-    if (existing) {
-      logStep("Payment already recorded", { existingId: existing.id });
+    if (existing?.credit_code) {
+      logStep("Payment already recorded with credit code", { existingId: existing.id, creditCode: existing.credit_code });
       return new Response(JSON.stringify({ 
         success: true, 
         already_recorded: true,
-        credit_code: creditCode 
+        credit_code: existing.credit_code 
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
     }
 
-    // Record the consultation booking
-    const { data: booking, error: insertError } = await supabaseClient
-      .from("consultation_bookings")
-      .insert({
-        customer_email: customerEmail,
-        customer_name: session.customer_details?.name || null,
-        stripe_session_id: session_id,
-        stripe_payment_intent_id: session.payment_intent as string,
-        amount_paid: session.amount_total ? session.amount_total / 100 : 99,
-        status: "pending",
-        credit_code: creditCode,
-        service_type: serviceType,
-      })
-      .select()
-      .single();
+    // Generate credit code NOW (after payment confirmed)
+    const creditCode = generateCreditCode();
+    logStep("Generated credit code after payment", { creditCode });
 
-    if (insertError) {
-      logStep("Insert error", { error: insertError });
-      throw insertError;
+    // Update or insert the consultation booking with credit code
+    if (existing) {
+      // Update existing record with credit code
+      const { error: updateError } = await supabaseClient
+        .from("consultation_bookings")
+        .update({
+          credit_code: creditCode,
+          stripe_payment_intent_id: session.payment_intent as string,
+          amount_paid: session.amount_total ? session.amount_total / 100 : 99,
+          status: "paid",
+          customer_name: customerName || existing.customer_name,
+        })
+        .eq("id", existing.id);
+
+      if (updateError) {
+        logStep("Update error", { error: updateError });
+        throw updateError;
+      }
+      logStep("Updated existing booking with credit code", { bookingId: existing.id });
+    } else {
+      // Create new record
+      const { data: booking, error: insertError } = await supabaseClient
+        .from("consultation_bookings")
+        .insert({
+          customer_email: customerEmail,
+          customer_name: customerName || null,
+          stripe_session_id: session_id,
+          stripe_payment_intent_id: session.payment_intent as string,
+          amount_paid: session.amount_total ? session.amount_total / 100 : 99,
+          status: "paid",
+          credit_code: creditCode,
+          service_type: serviceType,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        logStep("Insert error", { error: insertError });
+        throw insertError;
+      }
+      logStep("Created new consultation booking with credit code", { bookingId: booking.id });
     }
 
-    logStep("Consultation booking recorded", { bookingId: booking.id, creditCode });
+    // Update patient onboarding status
+    const { error: patientUpdateError } = await supabaseClient
+      .from("patients")
+      .update({ onboarding_status: "consultation_paid" })
+      .eq("email", customerEmail);
+
+    if (patientUpdateError) {
+      logStep("Patient status update warning", { error: patientUpdateError.message });
+    } else {
+      logStep("Patient status updated to consultation_paid");
+    }
 
     // Service-specific email configuration
     const SERVICE_EMAIL_CONFIG: Record<string, { title: string; creditUse: string }> = {
@@ -305,7 +203,7 @@ serve(async (req) => {
       },
       hormone: {
         title: "Hormone Replacement Consultation",
-        creditUse: "Hormone Mapping ($299 → $200)"
+        creditUse: "Hormone Mapping ($349 → $250)"
       },
       peptide: {
         title: "Peptide Therapy Consultation",
@@ -322,58 +220,98 @@ serve(async (req) => {
     };
 
     const emailConfig = SERVICE_EMAIL_CONFIG[serviceType] || SERVICE_EMAIL_CONFIG.hormone;
+    const firstName = customerName ? customerName.split(" ")[0] : "there";
 
-    // Send emails
+    // Send credit code email to patient (only sent AFTER payment)
     if (resend) {
-      // Send patient confirmation email with credit code
       try {
         await resend.emails.send({
           from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
           to: [customerEmail],
-          subject: `Your $99 Credit Code for ${emailConfig.title} - Elevated Health`,
+          subject: `Your $99 Credit Code is Here! - Elevated Health`,
           html: `
-            <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-              <h1 style="color: #2C3E50; font-size: 28px; margin-bottom: 24px;">Thank You for Booking!</h1>
-              
-              <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
-                Dear ${session.customer_details?.name || "Valued Patient"},
-              </p>
-              
-              <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
-                Your ${emailConfig.title} has been confirmed. We're excited to help you on your wellness journey!
-              </p>
-              
-              <div style="background: linear-gradient(135deg, #F9F9F7 0%, #f0ebe3 100%); border: 2px solid #D4A017; border-radius: 12px; padding: 24px; margin: 32px 0; text-align: center;">
-                <p style="color: #2C3E50; font-size: 14px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Your Credit Code</p>
-                <p style="color: #D4A017; font-size: 32px; font-weight: bold; margin: 0; letter-spacing: 2px;">${creditCode}</p>
-                <p style="color: #718096; font-size: 14px; margin-top: 12px;">Worth $99 toward ${emailConfig.creditUse}</p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; margin: 0; padding: 0; background: #f8f9fa; }
+                .wrapper { background: #f8f9fa; padding: 40px 20px; }
+                .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+                .header { background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 40px 30px; text-align: center; }
+                .logo { font-size: 28px; font-weight: 300; color: white; letter-spacing: 0.5px; margin: 0; }
+                .content { padding: 40px 30px; }
+                .greeting { font-size: 24px; font-weight: 600; color: #2C3E50; margin-bottom: 16px; }
+                
+                .credit-box { background: linear-gradient(135deg, #F9F9F7 0%, #f0ebe3 100%); border: 2px solid #D4A017; border-radius: 12px; padding: 32px; margin: 24px 0; text-align: center; }
+                .credit-label { font-size: 14px; color: #7F8C8D; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+                .credit-code { font-size: 36px; font-weight: 700; color: #D4A017; letter-spacing: 3px; margin: 0; font-family: monospace; }
+                .credit-value { font-size: 14px; color: #155724; margin-top: 12px; background: #d4edda; padding: 8px 16px; border-radius: 20px; display: inline-block; }
+                
+                .steps { background: #f0f9ff; border-radius: 12px; padding: 24px; margin: 24px 0; }
+                .steps-title { font-weight: 600; color: #0369a1; margin-bottom: 16px; font-size: 16px; }
+                .step { display: flex; gap: 12px; margin: 16px 0; }
+                .step-num { width: 28px; height: 28px; background: #0ea5e9; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+                .step-content { flex: 1; color: #0369a1; font-size: 14px; }
+                
+                .tip { background: #f7fafc; border-left: 4px solid #D4A017; padding: 16px; margin: 24px 0; }
+                .tip-text { color: #2C3E50; font-size: 14px; margin: 0; }
+                
+                .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
+                .footer-text { color: #7F8C8D; font-size: 14px; margin: 8px 0; }
+              </style>
+            </head>
+            <body>
+              <div class="wrapper">
+                <div class="container">
+                  <div class="header">
+                    <h1 class="logo">Elevated Health</h1>
+                  </div>
+                  <div class="content">
+                    <h2 class="greeting">Thank You, ${firstName}!</h2>
+                    <p style="color: #4a5568; font-size: 16px;">Your ${emailConfig.title} payment has been confirmed. Here's your exclusive credit code:</p>
+                    
+                    <div class="credit-box">
+                      <p class="credit-label">Your Credit Code</p>
+                      <p class="credit-code">${creditCode}</p>
+                      <span class="credit-value">Worth $99 toward ${emailConfig.creditUse}</span>
+                    </div>
+                    
+                    <div class="steps">
+                      <p class="steps-title">📋 Next Steps</p>
+                      <div class="step">
+                        <span class="step-num">1</span>
+                        <div class="step-content"><strong>Schedule your consultation</strong> - Use the calendar on the confirmation page</div>
+                      </div>
+                      <div class="step">
+                        <span class="step-num">2</span>
+                        <div class="step-content"><strong>Complete your 45-minute call</strong> with our specialist</div>
+                      </div>
+                      <div class="step">
+                        <span class="step-num">3</span>
+                        <div class="step-content"><strong>When ready to proceed</strong>, use your credit code for $99 off</div>
+                      </div>
+                    </div>
+                    
+                    <div class="tip">
+                      <p class="tip-text"><strong>💡 Save this email!</strong> Your credit code <strong>${creditCode}</strong> never expires and can be applied when you're ready to move forward with treatment.</p>
+                    </div>
+                    
+                    <p style="color: #4a5568; font-size: 16px; margin-top: 32px;">
+                      We're excited to help you on your wellness journey!<br/><br/>
+                      Warmly,<br/>
+                      <strong>The Elevated Health Team</strong><br/>
+                      <span style="color: #718096;">(706) 821-7354 | Augusta, GA</span>
+                    </p>
+                  </div>
+                  <div class="footer">
+                    <p class="footer-text">Questions? Reply to this email or call us.</p>
+                  </div>
+                </div>
               </div>
-              
-              <h2 style="color: #2C3E50; font-size: 20px; margin-top: 32px;">How to Use Your Credit</h2>
-              
-              <ol style="color: #4a5568; font-size: 16px; line-height: 1.8; padding-left: 20px;">
-                <li><strong>Complete your 45-minute consultation</strong> with our specialist</li>
-                <li><strong>When you're ready</strong> to proceed with treatment</li>
-                <li><strong>Enter your credit code</strong> at checkout to receive $99 off</li>
-                <li><strong>Begin your personalized wellness journey</strong></li>
-              </ol>
-              
-              <div style="background: #f7fafc; border-left: 4px solid #D4A017; padding: 16px; margin: 24px 0;">
-                <p style="color: #2C3E50; font-size: 14px; margin: 0;">
-                  <strong>💡 Pro Tip:</strong> Save this email! Your credit code never expires and can be applied when you're ready to move forward with treatment.
-                </p>
-              </div>
-              
-              <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-top: 32px;">
-                If you have any questions before your consultation, don't hesitate to reach out.
-              </p>
-              
-              <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
-                Warmly,<br/>
-                <strong>The Elevated Health Team</strong><br/>
-                <span style="color: #718096;">706-922-7958 | Augusta, GA</span>
-              </p>
-            </div>
+            </body>
+            </html>
           `,
         });
         logStep("Patient credit code email sent");
@@ -386,11 +324,11 @@ serve(async (req) => {
         await resend.emails.send({
           from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
           to: ["booking@elevatedhealthaugusta.com"],
-          subject: `New ${emailConfig.title} Booked`,
+          subject: `New ${emailConfig.title} Booked - ${customerName || customerEmail}`,
           html: `
             <h2>New ${emailConfig.title} Payment</h2>
             <p><strong>Customer:</strong> ${customerEmail}</p>
-            <p><strong>Name:</strong> ${session.customer_details?.name || "Not provided"}</p>
+            <p><strong>Name:</strong> ${customerName || "Not provided"}</p>
             <p><strong>Service Type:</strong> ${serviceType}</p>
             <p><strong>Credit Code:</strong> ${creditCode}</p>
             <p><strong>Amount:</strong> $${(session.amount_total || 0) / 100}</p>
@@ -405,12 +343,11 @@ serve(async (req) => {
       }
     }
 
-    // Send SMS alerts to staff (background task - don't block response)
+    // Send SMS alerts to staff
     const staffPhoneNumbers = Deno.env.get("STAFF_NOTIFICATION_PHONE");
     if (staffPhoneNumbers) {
-      const smsMessage = `🎉 NEW CONSULT PAID!\n\n${session.customer_details?.name || customerEmail}\nService: ${emailConfig.title}\nCredit: ${creditCode}\n\nPatient instructed to book via calendar link.`;
+      const smsMessage = `🎉 NEW CONSULT PAID!\n\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCredit: ${creditCode}\n\nPatient instructed to book via calendar.`;
       
-      // Parse multiple phone numbers (comma-separated)
       const phoneNumbers = staffPhoneNumbers.split(",").map(p => p.trim());
       
       for (const phone of phoneNumbers) {
@@ -423,19 +360,8 @@ serve(async (req) => {
       logStep("SMS notifications queued", { phones: phoneNumbers });
     }
 
-    // Create Google Calendar placeholder event (background task)
-    createCalendarEvent(
-      customerEmail,
-      session.customer_details?.name || "",
-      serviceType,
-      creditCode || ""
-    ).catch(err => {
-      logStep("Calendar event error (non-blocking)", { error: err });
-    });
-
     return new Response(JSON.stringify({ 
       success: true, 
-      booking_id: booking.id,
       credit_code: creditCode 
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

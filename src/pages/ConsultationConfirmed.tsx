@@ -92,10 +92,10 @@ const SERVICE_LABELS: Record<string, { title: string; specialist: string; credit
 const ConsultationConfirmed = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const creditCode = searchParams.get("credit");
   const serviceType = searchParams.get("service") || "hormone";
   const [isVerifying, setIsVerifying] = useState(true);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
+  const [creditCode, setCreditCode] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   const serviceInfo = SERVICE_LABELS[serviceType] || SERVICE_LABELS.hormone;
@@ -110,13 +110,17 @@ const ConsultationConfirmed = () => {
 
       try {
         const { data, error } = await supabase.functions.invoke("verify-consultation-payment", {
-          body: { session_id: sessionId, credit_code: creditCode }
+          body: { session_id: sessionId }
         });
 
         if (error) throw error;
 
         if (data?.success) {
           setVerificationSuccess(true);
+          // Credit code is generated and returned from the verification function
+          if (data.credit_code) {
+            setCreditCode(data.credit_code);
+          }
         }
       } catch (err) {
         console.error("Verification error:", err);
@@ -127,7 +131,7 @@ const ConsultationConfirmed = () => {
     };
 
     verifyPayment();
-  }, [sessionId, creditCode]);
+  }, [sessionId]);
 
   const handleCopyCode = () => {
     if (creditCode) {
