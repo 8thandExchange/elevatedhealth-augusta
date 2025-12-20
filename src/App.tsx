@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import SecurePatientRoute from "@/components/auth/SecurePatientRoute";
 import CookieConsent from "@/components/CookieConsent";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
+import { ServiceWorkerUpdater } from "@/components/ServiceWorkerUpdater";
 import Index from "./pages/Index";
 import Ketamine from "./pages/Ketamine";
 import WeightLoss from "./pages/WeightLoss";
@@ -62,6 +63,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <ServiceWorkerUpdater />
       <BrowserRouter>
         <ScrollToTop />
         <a href="#main-content" className="skip-to-main">
