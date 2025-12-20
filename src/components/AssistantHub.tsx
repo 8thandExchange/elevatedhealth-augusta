@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Phone, Calendar, User, Mail, Sparkles, Mic, MicOff } from "lucide-react";
+import { MessageCircle, X, Send, Phone, Calendar, User, Mail, Sparkles, Mic, MicOff, CreditCard } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
@@ -33,7 +33,7 @@ const AssistantHub = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Welcome to Elevated Health Augusta! I'm here to help you explore our services and answer your questions. What brings you here today?",
+      content: "Welcome to Elevated Health Augusta! I can help with questions about our process, pricing, and insurance. What would you like to know?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -152,7 +152,7 @@ const AssistantHub = () => {
 
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. Someone will reach out within one business day to help you take the next step. In the meantime, feel free to ask me any other questions!`
+        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $99 consultation, and someone will follow up within one business day. Feel free to ask me any other questions!`
       }]);
     } catch (error) {
       console.error("Lead capture error:", error);
@@ -206,7 +206,7 @@ const AssistantHub = () => {
           console.log("Voice lead captured:", lead);
           toast({
             title: "Contact Info Saved",
-            description: `${lead.name ? `Thanks ${lead.name}! ` : ''}Our team will follow up soon.`,
+            description: `${lead.name ? `Thanks ${lead.name}! ` : ''}We'll send you booking info for your $99 consultation.`,
           });
         }
       );
@@ -287,10 +287,22 @@ const AssistantHub = () => {
               rel="noopener noreferrer"
               className="flex items-center gap-2 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 px-4 py-2 text-sm font-medium"
             >
-              <Calendar className="h-4 w-4" />
-              Book Now
+              <CreditCard className="h-4 w-4" />
+              $99 Consultation
+            </a>
+            <a
+              href="tel:+17067603470"
+              className="flex items-center gap-2 rounded-full shadow-lg bg-card border border-border text-foreground hover:bg-muted px-4 py-2 text-sm font-medium"
+            >
+              <Phone className="h-4 w-4" />
+              Call Care Team
             </a>
           </div>
+          
+          {/* Disclaimer */}
+          <p className="text-[10px] text-muted-foreground text-right max-w-[180px] mr-2">
+            Admin questions only • No medical advice
+          </p>
           
           {/* Close Button */}
           <Button
@@ -313,8 +325,8 @@ const AssistantHub = () => {
                 <MessageCircle className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm">Text Chat</h3>
-                <p className="text-xs opacity-80">Type your questions</p>
+                <h3 className="font-semibold text-sm">Care Coordination</h3>
+                <p className="text-xs opacity-80">Admin questions • No medical advice</p>
               </div>
             </div>
             <Button
@@ -427,7 +439,7 @@ const AssistantHub = () => {
             </div>
           </ScrollArea>
 
-          {/* Apply for Care CTA */}
+          {/* $99 Consultation CTA */}
           {messages.length > 2 && (
             <div className="px-4 py-2 border-t border-border bg-accent/30">
               <a
@@ -436,8 +448,8 @@ const AssistantHub = () => {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 text-sm text-primary hover:text-primary/80 font-medium"
               >
-                <Calendar className="h-4 w-4" />
-                <span className="text-green-600 font-semibold text-xs mr-1">FREE</span> Apply for Care
+                <CreditCard className="h-4 w-4" />
+                Book $99 Medical Consultation
               </a>
             </div>
           )}
@@ -541,16 +553,21 @@ const AssistantHub = () => {
               </Button>
             )}
 
-            {/* Apply for Care CTA */}
+            {/* $99 Consultation CTA */}
             <a
               href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 text-sm text-primary hover:text-primary/80 font-medium"
             >
-              <Calendar className="h-4 w-4" />
-              <span className="text-green-600 font-semibold text-xs mr-1">FREE</span> Apply for Care
+              <CreditCard className="h-4 w-4" />
+              Book $99 Medical Consultation
             </a>
+            
+            {/* Disclaimer */}
+            <p className="text-[10px] text-muted-foreground text-center">
+              Admin questions only • No medical advice
+            </p>
           </div>
         </div>
       )}

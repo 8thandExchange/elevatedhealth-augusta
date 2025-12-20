@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Loader2, CreditCard, Phone } from "lucide-react";
+import { Loader2, CreditCard, Phone, MessageCircle } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface ConsultationModalProps {
@@ -172,11 +172,6 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
     }
   };
 
-  const handleFreeCall = (url: string) => {
-    window.open(url, "_blank");
-    onClose();
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-white border border-gold/50 rounded-2xl shadow-2xl">
@@ -238,18 +233,41 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           })}
         </div>
 
-        {/* Not Sure Option */}
-        <div className="mt-6 p-4 bg-secondary/50 rounded-xl border border-border/30 text-center">
-          <p className="text-sm text-muted-foreground font-lato mb-3">
-            Not sure which service is right for you?
+        {/* Not Ready Section - Updated Copy */}
+        <div className="mt-6 p-4 bg-secondary/50 rounded-xl border border-border/30">
+          <p className="text-sm font-medium text-foreground mb-2 text-center">
+            Not ready to book? Let's chat first.
           </p>
-          <button
-            onClick={() => handleFreeCall(consultationOptions[0].freeCallUrl)}
-            className="inline-flex items-center gap-2 text-gold hover:text-gold-dark font-lato font-medium transition-colors"
-          >
-            <Phone className="h-4 w-4" />
-            <span>Schedule a FREE 15-min Discovery Call</span>
-          </button>
+          <p className="text-xs text-muted-foreground text-center mb-3">
+            Questions about our process, insurance, or pricing? Our Care Coordination team is here to help.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
+            <a
+              href="tel:+17067603470"
+              className="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium transition-colors"
+            >
+              <Phone className="h-4 w-4" />
+              <span>Call our Concierge: (706) 760-3470</span>
+            </a>
+            <span className="hidden sm:inline text-muted-foreground">•</span>
+            <button
+              onClick={() => {
+                onClose();
+                // Small delay to let modal close, then open chat
+                setTimeout(() => {
+                  const chatButton = document.querySelector('[aria-label="Open assistant"]');
+                  if (chatButton) (chatButton as HTMLButtonElement).click();
+                }, 300);
+              }}
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>Chat with AI assistant</span>
+            </button>
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center mt-3 italic">
+            Admin questions only • No medical advice provided
+          </p>
         </div>
 
         {/* Payment flexibility messaging */}

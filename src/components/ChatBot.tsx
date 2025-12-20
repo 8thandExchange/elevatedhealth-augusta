@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Phone, Calendar, User, Mail, Sparkles } from "lucide-react";
+import { MessageCircle, X, Send, Phone, User, Mail, Sparkles, CreditCard } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
@@ -30,7 +30,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Welcome to Elevated Health Augusta! I'm here to help you explore our services and answer your questions. What brings you here today?",
+      content: "Welcome to Elevated Health Augusta! I can help with questions about our process, pricing, and insurance. What would you like to know?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -137,7 +137,7 @@ const ChatBot = () => {
       // Add confirmation message to chat
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. Someone will reach out within one business day to help you take the next step. In the meantime, feel free to ask me any other questions!`
+        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $99 consultation, and someone will follow up within one business day. Feel free to ask me any other questions!`
       }]);
     } catch (error) {
       console.error("Lead capture error:", error);
@@ -179,8 +179,8 @@ const ChatBot = () => {
                 <Sparkles className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm">Elevated Health Assistant</h3>
-                <p className="text-xs opacity-80">Here to help you feel better</p>
+                <h3 className="font-semibold text-sm">Care Coordination</h3>
+                <p className="text-xs opacity-80">Admin questions • No medical advice</p>
               </div>
             </div>
             <Button
@@ -303,7 +303,7 @@ const ChatBot = () => {
             </div>
           </ScrollArea>
 
-          {/* Apply for Care CTA */}
+          {/* $99 Consultation CTA */}
           {messages.length > 2 && (
             <div className="px-4 py-2 border-t border-border bg-accent/30">
               <a
@@ -312,8 +312,8 @@ const ChatBot = () => {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 text-sm text-primary hover:text-primary/80 font-medium"
               >
-                <Calendar className="h-4 w-4" />
-                <span className="text-green-600 font-semibold text-xs mr-1">FREE</span> Apply for Care
+                <CreditCard className="h-4 w-4" />
+                Book $99 Medical Consultation
               </a>
             </div>
           )}
