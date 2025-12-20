@@ -1,13 +1,84 @@
-import { Phone, MessageCircle, Heart, Clock } from "lucide-react";
+import { Phone, MessageCircle, Heart, Clock, Star, Quote } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface NotReadyToBookProps {
   onOpenChat?: () => void;
-  variant?: "default" | "compact" | "a" | "b";
+  variant?: "default" | "compact" | "a" | "b" | "c";
   className?: string;
 }
 
 const NotReadyToBook = ({ onOpenChat, variant = "default", className = "" }: NotReadyToBookProps) => {
+  // Variant C: Testimonial-focused with social proof
+  if (variant === "c") {
+    return (
+      <section className={`bg-gradient-to-br from-secondary/30 to-primary/5 rounded-2xl p-8 border border-border/20 ${className}`}>
+        <div className="max-w-2xl mx-auto">
+          <div className="flex justify-center gap-1 mb-4">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="h-5 w-5 fill-accent text-accent" />
+            ))}
+          </div>
+          
+          <div className="relative mb-6">
+            <Quote className="absolute -top-2 -left-2 h-8 w-8 text-accent/20" />
+            <p className="text-lg text-foreground italic text-center px-6">
+              "I was nervous about the cost and process, but the Care Team walked me through everything. 
+              They even helped me understand my insurance benefits. Best decision I ever made."
+            </p>
+            <p className="text-sm text-muted-foreground text-center mt-3">
+              — Sarah M., Augusta patient since 2023
+            </p>
+          </div>
+          
+          <div className="bg-background/50 rounded-xl p-4 mb-6">
+            <p className="text-center text-sm text-muted-foreground mb-3">
+              <span className="font-semibold text-foreground">500+ patients</span> have started their journey with a simple conversation
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                Insurance questions answered
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                No pressure, no obligation
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                Real humans, real answers
+              </span>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+            <a 
+              href="tel:+17067603470" 
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-full font-medium hover:bg-accent/90 transition-colors"
+            >
+              <Phone className="h-5 w-5" />
+              Talk to Our Care Team
+            </a>
+            
+            {onOpenChat && (
+              <Button 
+                onClick={onOpenChat} 
+                variant="outline" 
+                className="gap-2 rounded-full"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Chat Now
+              </Button>
+            )}
+          </div>
+          
+          <p className="text-xs text-muted-foreground italic text-center mt-4">
+            Administrative support only • No medical advice provided
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   // Variant B: More empathetic, urgency-focused copy
   if (variant === "b") {
     return (
