@@ -55,7 +55,7 @@ const contactSchema = z.object({
   email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
   phone: z.string().trim().regex(/^[0-9+\(\)\-\s]+$/, "Phone number can only contain numbers and +()-").max(20, "Phone number must be less than 20 characters"),
   message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000, "Message must be less than 2000 characters"),
-  _website: z.string().optional() // Honeypot field
+  _fax: z.string().optional() // Honeypot field - named to avoid browser autofill
 });
 
 const handler = async (req: Request): Promise<Response> => {
@@ -97,7 +97,7 @@ const handler = async (req: Request): Promise<Response> => {
     const validatedData = contactSchema.parse(requestData);
     
     // Honeypot check - if filled, it's a bot
-    if (validatedData._website && validatedData._website.length > 0) {
+    if (validatedData._fax && validatedData._fax.length > 0) {
       console.log("Honeypot triggered - bot detected");
       // Return success to not alert the bot, but don't process
       return new Response(
