@@ -955,67 +955,122 @@ const ProviderDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          {/* Mobile-optimized scrollable tabs */}
+          {/* Clean scrollable tabs with proper spacing */}
           <div className="relative mb-8">
-            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
-              <TabsList className="inline-flex w-max gap-1 p-1 lg:grid lg:w-full lg:grid-cols-12">
-                <TabsTrigger value="triage" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
+              <TabsList className="inline-flex h-auto gap-2 p-1.5 bg-muted/50 rounded-xl flex-nowrap">
+                <TabsTrigger 
+                  value="triage" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Action Needed</span>
-                  <span className="text-xs">({pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length})</span>
+                  <span>Action</span>
+                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                    {pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length}
+                  </Badge>
                 </TabsTrigger>
-                <TabsTrigger value="pipeline" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="pipeline" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <TrendingUp className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Pipeline</span>
+                  <span>Pipeline</span>
                 </TabsTrigger>
-                <TabsTrigger value="highrisk" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="highrisk" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <ShieldAlert className="w-4 h-4 text-red-500 flex-shrink-0" />
-                  <span className="hidden lg:inline">High-Risk</span>
-                  <span className="text-xs">({pendingPatients.filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review").length})</span>
+                  <span>High-Risk</span>
+                  {pendingPatients.filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review").length > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-5 px-1.5 text-xs">
+                      {pendingPatients.filter(p => p.riskLevel === "red" || p.patient.risk_status === "high_risk_review").length}
+                    </Badge>
+                  )}
                 </TabsTrigger>
-                <TabsTrigger value="staff" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="staff" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <CheckSquare className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Staff Tasks</span>
+                  <span>Tasks</span>
                 </TabsTrigger>
-                <TabsTrigger value="consultations" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="consultations" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <CreditCard className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Consultations</span>
+                  <span>Consults</span>
                 </TabsTrigger>
-                <TabsTrigger value="pharmacy" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="pharmacy" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <Pill className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Pharmacy</span>
-                  <span className="text-xs">({pendingPharmacy.length})</span>
+                  <span>Pharmacy</span>
+                  {pendingPharmacy.length > 0 && (
+                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                      {pendingPharmacy.length}
+                    </Badge>
+                  )}
                 </TabsTrigger>
-                <TabsTrigger value="monitoring" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="monitoring" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <Activity className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Monitoring</span>
-                  <span className="text-xs">({recentCheckIns.length})</span>
+                  <span>Monitor</span>
+                  {recentCheckIns.length > 0 && (
+                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                      {recentCheckIns.length}
+                    </Badge>
+                  )}
                 </TabsTrigger>
-                <TabsTrigger value="activations" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="activations" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <Clock className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Activations</span>
-                  <span className="text-xs">({pendingActivations.length})</span>
+                  <span>Activations</span>
+                  {pendingActivations.length > 0 && (
+                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                      {pendingActivations.length}
+                    </Badge>
+                  )}
                 </TabsTrigger>
-                <TabsTrigger value="messages" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="messages" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <MessageCircle className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Messages</span>
+                  <span>Messages</span>
                 </TabsTrigger>
-                <TabsTrigger value="resources" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="resources" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <FileText className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Resources</span>
+                  <span>Resources</span>
                 </TabsTrigger>
-                <TabsTrigger value="fax" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="fax" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <Send className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Fax Log</span>
+                  <span>Fax</span>
                 </TabsTrigger>
-                <TabsTrigger value="team" className="flex items-center gap-1.5 px-3 min-w-max whitespace-nowrap">
+                <TabsTrigger 
+                  value="team" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
                   <Users className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden lg:inline">Team</span>
+                  <span>Team</span>
                 </TabsTrigger>
               </TabsList>
             </div>
-            {/* Scroll indicator gradient */}
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none lg:hidden" />
+            {/* Scroll fade indicators */}
+            <div className="absolute left-0 top-0 bottom-2 w-6 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-2 w-6 bg-gradient-to-l from-background to-transparent pointer-events-none" />
           </div>
 
           {/* High-Risk Patients Tab */}
