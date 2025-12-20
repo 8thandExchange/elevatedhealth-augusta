@@ -55,12 +55,14 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    console.log("[Contact Form] Starting submission...", formData);
 
     try {
       const validated = contactSchema.parse(formData);
+      console.log("[Contact Form] Validation passed:", validated);
       
       // Store lead in database
-      await supabase.from("chat_leads").insert({
+      const { error: insertError } = await supabase.from("chat_leads").insert({
         name: validated.name,
         email: validated.email,
         phone: validated.phone,
@@ -70,26 +72,37 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
         status: "new"
       });
 
+      if (insertError) {
+        console.error("[Contact Form] Database insert failed:", insertError);
+        throw new Error("Failed to save your message. Please try again.");
+      }
+      
+      console.log("[Contact Form] Lead stored successfully, sending notification email...");
+
       // Send notification email via edge function
-      const { error } = await supabase.functions.invoke("send-contact-email", {
+      const { error: emailError } = await supabase.functions.invoke("send-contact-email", {
         body: validated
       });
 
-      if (error) {
-        console.error("Email send error:", error);
+      if (emailError) {
+        console.error("[Contact Form] Email notification failed:", emailError);
         // Still show success since lead was stored
+      } else {
+        console.log("[Contact Form] Email notification sent successfully");
       }
       
       setSubmittedName(validated.name.split(" ")[0]);
       setIsSuccess(true);
       setFormData({ name: "", email: "", phone: "", message: "" });
       trackCTAClick('contact_form_submit', 'contact_section');
+      console.log("[Contact Form] Submission complete!");
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("[Contact Form] Validation error:", error.errors);
         toast.error(error.errors[0].message);
       } else {
-        console.error("Contact form error:", error);
-        toast.error("Something went wrong. Please try again or call us.");
+        console.error("[Contact Form] Submission error:", error);
+        toast.error(error instanceof Error ? error.message : "Something went wrong. Please try again or call us.");
       }
     } finally {
       setIsSubmitting(false);
