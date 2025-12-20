@@ -86,6 +86,7 @@ interface ProviderData {
   npi: string;
   email: string;
   isPrimary: boolean;
+  signatureUrl?: string;
 }
 
 interface FCCPortalModalProps {
@@ -214,6 +215,7 @@ const FCCPortalModal = ({
             if (field === "npi") providersData[id].npi = setting.value;
             if (field === "email") providersData[id].email = setting.value;
             if (field === "is_primary") providersData[id].isPrimary = setting.value === "true";
+            if (field === "signature_url") providersData[id].signatureUrl = setting.value;
           }
         });
 
@@ -331,6 +333,7 @@ const FCCPortalModal = ({
           provider_npi: matchedProvider.npi,
           diagnosis_code: diagnosisCode,
           diagnosis_description: diagnosisDescription,
+          provider_signature_url: matchedProvider.signatureUrl,
         },
       });
 
@@ -482,12 +485,24 @@ const FCCPortalModal = ({
             </Select>
           )}
           {matchedProvider && (
-            <p className="text-xs text-muted-foreground">
-              NPI: <code className="bg-muted px-1 rounded">{matchedProvider.npi}</code>
-              {matchedProvider.email === providerEmail && (
-                <span className="ml-2 text-green-600">✓ Matched to your account</span>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                NPI: <code className="bg-muted px-1 rounded">{matchedProvider.npi}</code>
+                {matchedProvider.email === providerEmail && (
+                  <span className="ml-2 text-green-600">✓ Matched to your account</span>
+                )}
+              </p>
+              {matchedProvider.signatureUrl && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Signature:</span>
+                  <img 
+                    src={matchedProvider.signatureUrl} 
+                    alt="Provider signature"
+                    className="max-h-6 max-w-24 object-contain border border-border/50 rounded px-1"
+                  />
+                </div>
               )}
-            </p>
+            </div>
           )}
         </div>
 

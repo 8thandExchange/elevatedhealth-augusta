@@ -20,6 +20,7 @@ interface FaxRequest {
   provider_notes?: string;
   diagnosis_code?: string;
   diagnosis_description?: string;
+  provider_signature_url?: string;
 }
 
 function generatePrescriptionHtml(
@@ -28,7 +29,7 @@ function generatePrescriptionHtml(
   quantity: number,
   refills: number,
   supplyDays: number,
-  provider: { name: string; credentials: string; npi: string },
+  provider: { name: string; credentials: string; npi: string; signatureUrl?: string },
   providerNotes?: string,
   diagnosis?: { code: string; description: string }
 ): string {
@@ -76,6 +77,7 @@ function generatePrescriptionHtml(
     .notes { margin: 20px 0; padding: 15px; background: #fff8e7; border: 1px dashed #C5A059; font-style: italic; }
     .signature-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; }
     .signature-line { border-bottom: 1px solid #000; width: 300px; height: 40px; margin-bottom: 5px; }
+    .signature-image { max-height: 60px; max-width: 280px; object-fit: contain; margin-bottom: 5px; }
     .signature-name { font-size: 14px; font-weight: bold; }
     .electronic-sig { font-size: 11px; color: #888; font-style: italic; margin-top: 10px; }
     .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 15px; }
@@ -128,7 +130,10 @@ function generatePrescriptionHtml(
   ` : ''}
 
   <div class="signature-section">
-    <div class="signature-line"></div>
+    ${provider.signatureUrl 
+      ? `<img src="${provider.signatureUrl}" alt="Provider Signature" class="signature-image" />`
+      : `<div class="signature-line"></div>`
+    }
     <p class="signature-name">${provider.name}, ${provider.credentials}</p>
     <p class="electronic-sig">Electronically signed at ${timestamp} EST</p>
   </div>
@@ -174,7 +179,8 @@ serve(async (req) => {
       provider_npi,
       provider_notes,
       diagnosis_code,
-      diagnosis_description
+      diagnosis_description,
+      provider_signature_url
     } = body;
 
     console.log("Processing fax request for patient:", patient_id);
@@ -198,7 +204,7 @@ serve(async (req) => {
       quantity,
       refills,
       supply_days,
-      { name: provider_name, credentials: provider_credentials, npi: provider_npi },
+      { name: provider_name, credentials: provider_credentials, npi: provider_npi, signatureUrl: provider_signature_url },
       provider_notes,
       diagnosis_code && diagnosis_description ? { code: diagnosis_code, description: diagnosis_description } : undefined
     );

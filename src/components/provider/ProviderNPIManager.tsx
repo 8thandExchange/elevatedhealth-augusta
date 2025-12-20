@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -14,7 +14,9 @@ import {
   AlertCircle,
   Check,
   Edit2,
-  X
+  X,
+  Upload,
+  Pen
 } from "lucide-react";
 import {
   Table,
@@ -53,6 +55,7 @@ interface Provider {
   npi: string;
   email: string;
   isPrimary: boolean;
+  signatureUrl?: string;
 }
 
 const ProviderNPIManager = () => {
@@ -66,8 +69,11 @@ const ProviderNPIManager = () => {
     credentials: "",
     npi: "",
     email: "",
-    isPrimary: false
+    isPrimary: false,
+    signatureUrl: ""
   });
+  const [isUploadingSignature, setIsUploadingSignature] = useState(false);
+  const signatureInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadProviders();
@@ -99,6 +105,7 @@ const ProviderNPIManager = () => {
           if (field === "npi") providersData[id].npi = setting.value;
           if (field === "email") providersData[id].email = setting.value;
           if (field === "is_primary") providersData[id].isPrimary = setting.value === "true";
+          if (field === "signature_url") providersData[id].signatureUrl = setting.value;
         }
       });
 
@@ -162,6 +169,7 @@ const ProviderNPIManager = () => {
         { key: `provider_${providerId}_npi`, value: formData.npi },
         { key: `provider_${providerId}_email`, value: formData.email },
         { key: `provider_${providerId}_is_primary`, value: formData.isPrimary.toString() },
+        { key: `provider_${providerId}_signature_url`, value: formData.signatureUrl || "" },
       ];
 
       for (const setting of settings) {
@@ -205,6 +213,14 @@ const ProviderNPIManager = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
+      // Delete signature file if exists
+      if (provider.signatureUrl) {
+        const path = provider.signatureUrl.split('/provider-signatures/')[1];
+        if (path) {
+          await supabase.storage.from('provider-signatures').remove([path]);
+        }
+      }
+
       // Delete all settings for this provider
       const keysToDelete = [
         `provider_${provider.id}_name`,
@@ -212,6 +228,7 @@ const ProviderNPIManager = () => {
         `provider_${provider.id}_npi`,
         `provider_${provider.id}_email`,
         `provider_${provider.id}_is_primary`,
+        `provider_${provider.id}_signature_url`,
       ];
 
       for (const key of keysToDelete) {
@@ -236,7 +253,8 @@ const ProviderNPIManager = () => {
       credentials: provider.credentials,
       npi: provider.npi,
       email: provider.email || "",
-      isPrimary: provider.isPrimary
+      isPrimary: provider.isPrimary,
+      signatureUrl: provider.signatureUrl || ""
     });
     setIsDialogOpen(true);
   };
@@ -247,8 +265,75 @@ const ProviderNPIManager = () => {
       credentials: "",
       npi: "",
       email: "",
-      isPrimary: providers.length === 0
+      isPrimary: providers.length === 0,
+      signatureUrl: ""
     });
+  };
+
+  const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please upload an image file (PNG, JPG, etc.)");
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Signature image must be less than 2MB");
+      return;
+    }
+
+    setIsUploadingSignature(true);
+    try {
+      const providerId = editingProvider?.id || Date.now().toString();
+      const fileExt = file.name.split('.').pop();
+      const fileName = `signature_${providerId}.${fileExt}`;
+
+      // Delete old signature if exists
+      if (formData.signatureUrl) {
+        const oldPath = formData.signatureUrl.split('/provider-signatures/')[1];
+        if (oldPath) {
+          await supabase.storage.from('provider-signatures').remove([oldPath]);
+        }
+      }
+
+      // Upload new signature
+      const { error: uploadError } = await supabase.storage
+        .from('provider-signatures')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('provider-signatures')
+        .getPublicUrl(fileName);
+
+      setFormData(prev => ({ ...prev, signatureUrl: publicUrl }));
+      toast.success("Signature uploaded successfully");
+    } catch (err: any) {
+      console.error("Error uploading signature:", err);
+      toast.error(err.message || "Failed to upload signature");
+    } finally {
+      setIsUploadingSignature(false);
+      if (signatureInputRef.current) {
+        signatureInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemoveSignature = async () => {
+    if (formData.signatureUrl) {
+      const path = formData.signatureUrl.split('/provider-signatures/')[1];
+      if (path) {
+        await supabase.storage.from('provider-signatures').remove([path]);
+      }
+    }
+    setFormData(prev => ({ ...prev, signatureUrl: "" }));
+    toast.success("Signature removed");
   };
 
   const openAddDialog = () => {
@@ -364,6 +449,74 @@ const ProviderNPIManager = () => {
                     Set as primary provider (used as default on superbills)
                   </Label>
                 </div>
+
+                {/* Signature Upload Section */}
+                <div className="space-y-2 pt-4 border-t border-border">
+                  <Label className="flex items-center gap-2">
+                    <Pen className="w-4 h-4" />
+                    Provider Signature
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Upload signature image for prescriptions and superbills
+                  </p>
+                  
+                  {formData.signatureUrl ? (
+                    <div className="space-y-2">
+                      <div className="border border-border rounded-lg p-3 bg-muted/30">
+                        <img 
+                          src={formData.signatureUrl} 
+                          alt="Provider signature"
+                          className="max-h-16 max-w-full object-contain"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => signatureInputRef.current?.click()}
+                          disabled={isUploadingSignature}
+                        >
+                          <Upload className="w-3 h-3 mr-1" />
+                          Replace
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={handleRemoveSignature}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-3 h-3 mr-1" />
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => signatureInputRef.current?.click()}
+                      disabled={isUploadingSignature}
+                      className="w-full"
+                    >
+                      {isUploadingSignature ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4 mr-2" />
+                      )}
+                      {isUploadingSignature ? "Uploading..." : "Upload Signature Image"}
+                    </Button>
+                  )}
+                  <input
+                    ref={signatureInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleSignatureUpload}
+                    className="hidden"
+                  />
+                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
@@ -395,7 +548,7 @@ const ProviderNPIManager = () => {
               <TableRow>
                 <TableHead>Provider</TableHead>
                 <TableHead>NPI</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>Signature</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -418,8 +571,16 @@ const ProviderNPIManager = () => {
                       {provider.npi}
                     </code>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {provider.email || "—"}
+                  <TableCell>
+                    {provider.signatureUrl ? (
+                      <img 
+                        src={provider.signatureUrl} 
+                        alt="Signature"
+                        className="max-h-8 max-w-20 object-contain"
+                      />
+                    ) : (
+                      <span className="text-muted-foreground text-xs">Not uploaded</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">

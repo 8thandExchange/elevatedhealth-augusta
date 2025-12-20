@@ -64,6 +64,7 @@ interface ClinicSettings {
   provider_npi: string;
   clinic_address: string;
   clinic_phone: string;
+  provider_signature_url?: string;
 }
 
 interface SuperbillGeneratorProps {
@@ -137,12 +138,23 @@ const SuperbillGenerator = ({
         .select("key, value");
 
       if (settingsData) {
+        // Find primary provider signature
+        const primaryProviderId = settingsData
+          .filter(s => s.key.endsWith("_is_primary") && s.value === "true")
+          .map(s => s.key.match(/^provider_([^_]+)_is_primary$/)?.[1])
+          .find(Boolean);
+
+        const primarySignatureUrl = primaryProviderId 
+          ? settingsData.find(s => s.key === `provider_${primaryProviderId}_signature_url`)?.value
+          : undefined;
+
         const settings: ClinicSettings = {
           clinic_legal_name: settingsData.find(s => s.key === "clinic_legal_name")?.value || "Elevated Health Augusta",
           clinic_tax_id: settingsData.find(s => s.key === "clinic_tax_id")?.value || "",
           provider_npi: settingsData.find(s => s.key === "provider_npi")?.value || "",
           clinic_address: settingsData.find(s => s.key === "clinic_address")?.value || "",
           clinic_phone: settingsData.find(s => s.key === "clinic_phone")?.value || "",
+          provider_signature_url: primarySignatureUrl,
         };
         setClinicSettings(settings);
       }
@@ -349,6 +361,7 @@ const SuperbillGenerator = ({
         .footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd; }
         .signature-section { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 30px; }
         .signature-line { border-bottom: 1px solid #000; padding-top: 40px; }
+        .signature-image { max-height: 50px; max-width: 250px; object-fit: contain; margin-bottom: 5px; }
         .signature-label { font-size: 10px; color: #666; margin-top: 4px; }
         .watermark { text-align: center; color: #999; font-size: 10px; margin-top: 30px; font-style: italic; }
         @media print { body { padding: 20px; } }
@@ -438,7 +451,10 @@ const SuperbillGenerator = ({
         </p>
         <div class="signature-section">
           <div>
-            <div class="signature-line"></div>
+            ${clinicSettings?.provider_signature_url 
+              ? `<img src="${clinicSettings.provider_signature_url}" alt="Provider Signature" class="signature-image" />`
+              : `<div class="signature-line"></div>`
+            }
             <div class="signature-label">Provider Signature</div>
             <div style="margin-top: 8px; font-size: 11px;">
               <strong>${providerName}, ${providerCredentials}</strong><br/>
