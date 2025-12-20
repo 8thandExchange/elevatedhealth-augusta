@@ -13,16 +13,6 @@ const logStep = (step: string, details?: any) => {
   console.log(`[SEND-CONSULTATION-INVITE] ${step}${detailsStr}`);
 };
 
-// Generate a unique credit code for the $99 consultation credit
-const generateCreditCode = (): string => {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let code = "EH-";
-  for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-};
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -73,11 +63,8 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const origin = "https://elevatedhealthaugusta.com";
 
-    // Generate a credit code for the $99 credit
-    const creditCode = generateCreditCode();
-    logStep("Generated credit code", { creditCode });
-
     // Create Stripe Checkout session for $99 Discovery Consultation
+    // NOTE: Credit code will be generated AFTER payment is confirmed
     const session = await stripe.checkout.sessions.create({
       customer_email: patient_email,
       line_items: [
@@ -86,7 +73,7 @@ serve(async (req) => {
             currency: "usd",
             product_data: {
               name: "Discovery Consultation",
-              description: "45-minute consultation with Lauren Bursey, NP-C. Includes $99 credit toward your Hormone Mapping Kit.",
+              description: "45-minute consultation with Lauren Bursey, NP-C.",
             },
             unit_amount: 9900, // $99
           },
@@ -94,12 +81,11 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/consultation-confirmed?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(patient_email)}&name=${encodeURIComponent(patient_name)}`,
+      success_url: `${origin}/consultation-confirmed?session_id={CHECKOUT_SESSION_ID}&service=hormone`,
       cancel_url: `${origin}/`,
       metadata: {
         patient_email,
         patient_name,
-        credit_code: creditCode,
         product: "discovery_consultation",
         invite_type: "provider_consultation_invite",
       },
@@ -110,13 +96,12 @@ serve(async (req) => {
     const paymentLink = session.url;
     const firstName = patient_name.split(" ")[0];
 
-    // Create a consultation booking record with the credit code
+    // Create a consultation booking record (no credit code yet - will be added after payment)
     const { error: bookingError } = await supabase
       .from("consultation_bookings")
       .insert({
         customer_email: patient_email,
         customer_name: patient_name,
-        credit_code: creditCode,
         service_type: "hormone_therapy",
         status: "pending",
         stripe_session_id: session.id,
@@ -125,10 +110,10 @@ serve(async (req) => {
     if (bookingError) {
       logStep("Booking record creation warning", { error: bookingError.message });
     } else {
-      logStep("Consultation booking record created with credit code");
+      logStep("Consultation booking record created");
     }
 
-    // Send invite email via Resend
+    // Send invite email via Resend - NO credit code mentioned yet
     const resend = new Resend(resendKey);
     
     const emailHtml = `
@@ -152,10 +137,6 @@ serve(async (req) => {
           .price { font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0; }
           .price-label { font-size: 14px; color: #7F8C8D; margin-top: 4px; }
           
-          .credit-highlight { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid #28a745; text-align: center; }
-          .credit-title { font-weight: 600; color: #155724; margin-bottom: 8px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-          .credit-text { color: #155724; font-size: 14px; line-height: 1.5; }
-          
           .includes { background: #fafbfc; border-radius: 12px; padding: 24px; margin: 24px 0; }
           .includes-title { font-weight: 600; color: #2C3E50; margin-bottom: 16px; font-size: 16px; }
           .includes ul { margin: 0; padding: 0; list-style: none; }
@@ -164,15 +145,6 @@ serve(async (req) => {
           
           .cta-container { text-align: center; margin: 32px 0; }
           .cta-button { display: inline-block; background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); color: white !important; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 4px 16px rgba(44,62,80,0.3); }
-          
-          .journey-section { background: #f0f9ff; border-radius: 12px; padding: 24px; margin: 24px 0; border: 1px solid #bae6fd; }
-          .journey-title { font-weight: 600; color: #0369a1; margin-bottom: 16px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-          .step { display: flex; gap: 12px; margin: 16px 0; }
-          .step-num { width: 28px; height: 28px; background: #0ea5e9; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
-          .step-content { flex: 1; }
-          .step-label { font-weight: 600; color: #0369a1; font-size: 14px; }
-          .step-desc { color: #0369a1; font-size: 13px; margin-top: 2px; }
-          .step-price { background: #0ea5e9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 8px; }
           
           .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
           .footer-text { color: #7F8C8D; font-size: 14px; margin: 8px 0; }
@@ -201,23 +173,13 @@ serve(async (req) => {
                 <p class="price-label">Discovery Consultation • 45 Minutes</p>
               </div>
               
-              <div class="credit-highlight">
-                <p class="credit-title">
-                  <span style="font-size: 18px;">💎</span> $99 Credit Included
-                </p>
-                <p class="credit-text">
-                  Your consultation fee becomes a <strong>$99 credit</strong> toward your Hormone Mapping Kit ($349). 
-                  You'll only pay $250 for the kit after consultation!
-                </p>
-              </div>
-              
               <div class="includes">
                 <p class="includes-title">Your Consultation Includes:</p>
                 <ul>
                   <li><span class="check">✓</span> 45-minute one-on-one with Lauren Bursey, NP-C</li>
                   <li><span class="check">✓</span> Complete symptom assessment</li>
                   <li><span class="check">✓</span> Personalized treatment path discussion</li>
-                  <li><span class="check">✓</span> $99 credit toward your diagnostic testing</li>
+                  <li><span class="check">✓</span> <strong>$99 credit toward your Hormone Mapping Kit</strong></li>
                 </ul>
               </div>
               
@@ -225,32 +187,9 @@ serve(async (req) => {
                 <a href="${paymentLink}" class="cta-button">Book Your Consultation →</a>
               </div>
               
-              <div class="journey-section">
-                <p class="journey-title">
-                  <span style="font-size: 18px;">🗓️</span> Your Complete Journey
-                </p>
-                <div class="step">
-                  <span class="step-num">1</span>
-                  <div class="step-content">
-                    <span class="step-label">Discovery Consultation <span class="step-price">$99</span></span>
-                    <p class="step-desc">Pay today & schedule your 45-min consultation</p>
-                  </div>
-                </div>
-                <div class="step">
-                  <span class="step-num">2</span>
-                  <div class="step-content">
-                    <span class="step-label">Hormone Mapping Kit <span class="step-price">$250</span></span>
-                    <p class="step-desc">After consultation, we'll send your kit link ($349 - $99 credit)</p>
-                  </div>
-                </div>
-                <div class="step">
-                  <span class="step-num">3</span>
-                  <div class="step-content">
-                    <span class="step-label">Lab Review & Treatment Plan</span>
-                    <p class="step-desc">Deep-dive into your results with personalized protocol</p>
-                  </div>
-                </div>
-              </div>
+              <p style="text-align: center; color: #718096; font-size: 14px; margin-top: 24px;">
+                After payment, you'll receive your credit code via email and can schedule your consultation.
+              </p>
             </div>
             <div class="footer">
               <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 821-7354</strong></p>
@@ -288,7 +227,6 @@ serve(async (req) => {
 
     if (patientError) {
       logStep("Patient record creation warning", { error: patientError.message });
-      // Don't fail if patient already exists
     } else {
       logStep("Patient record created with consultation_invited status");
     }
@@ -297,7 +235,6 @@ serve(async (req) => {
       success: true, 
       payment_link: paymentLink,
       email_sent: true,
-      credit_code: creditCode,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
