@@ -36,19 +36,13 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AssistantHub from "@/components/AssistantHub";
-import { CreditCodeInput } from "@/components/CreditCodeInput";
+
 
 const HormonesWomen = () => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
-  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
-  const [isMetabolicCheckoutLoading, setIsMetabolicCheckoutLoading] = useState(false);
   const [isMembershipLoading, setIsMembershipLoading] = useState(false);
   const [isVitalityLoading, setIsVitalityLoading] = useState(false);
   const [isConsultationLoading, setIsConsultationLoading] = useState(false);
-  const [hormoneCreditCode, setHormoneCreditCode] = useState("");
-  const [metabolicCreditCode, setMetabolicCreditCode] = useState("");
-  const [hormoneCreditApplied, setHormoneCreditApplied] = useState(false);
-  const [metabolicCreditApplied, setMetabolicCreditApplied] = useState(false);
 
   const scrollToBooking = () => {
     const bookingSection = document.getElementById('booking-section');
@@ -76,60 +70,6 @@ const HormonesWomen = () => {
       toast.error("Failed to start checkout. Please try again or call us.");
     } finally {
       setIsConsultationLoading(false);
-    }
-  };
-
-  const handleCheckout = async (mappingType: "hormone" | "metabolic" = "hormone") => {
-    if (mappingType === "metabolic") {
-      setIsMetabolicCheckoutLoading(true);
-    } else {
-      setIsCheckoutLoading(true);
-    }
-    try {
-      const creditCode = mappingType === "metabolic" ? metabolicCreditCode : hormoneCreditCode;
-      const { data, error } = await supabase.functions.invoke("create-hormone-checkout", {
-        body: { 
-          mappingType,
-          creditCode: creditCode || undefined
-        }
-      });
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        throw new Error("No checkout URL returned");
-      }
-    } catch (err) {
-      console.error("Checkout error:", err);
-      toast.error("Failed to start checkout. Please try again or call us.");
-    } finally {
-      setIsCheckoutLoading(false);
-      setIsMetabolicCheckoutLoading(false);
-    }
-  };
-
-  const handleApplyCreditCode = (type: "hormone" | "metabolic") => {
-    const code = type === "hormone" ? hormoneCreditCode : metabolicCreditCode;
-    if (code && code.length >= 5) {
-      if (type === "hormone") {
-        setHormoneCreditApplied(true);
-        toast.success("Credit code applied! You'll save $99 at checkout.");
-      } else {
-        setMetabolicCreditApplied(true);
-        toast.success("Credit code applied! You'll save $99 at checkout.");
-      }
-    }
-  };
-
-  const handleClearCreditCode = (type: "hormone" | "metabolic") => {
-    if (type === "hormone") {
-      setHormoneCreditCode("");
-      setHormoneCreditApplied(false);
-    } else {
-      setMetabolicCreditCode("");
-      setMetabolicCreditApplied(false);
     }
   };
 
@@ -563,26 +503,16 @@ const HormonesWomen = () => {
                             Customized Protocol Design
                           </li>
                         </ul>
-                        <CreditCodeInput
-                          value={hormoneCreditCode}
-                          onChange={setHormoneCreditCode}
-                          isApplied={hormoneCreditApplied}
-                          onApply={() => handleApplyCreditCode("hormone")}
-                          onClear={() => handleClearCreditCode("hormone")}
-                          className="mb-3"
-                        />
+                        <p className="text-xs text-green-600 font-medium mb-3">
+                          Book consultation first to receive $99 credit → $250
+                        </p>
                         <Button 
-                          onClick={() => handleCheckout("hormone")}
-                          disabled={isCheckoutLoading}
+                          onClick={scrollToBooking}
                           variant="outline"
                           className="w-full border-feminine hover:bg-feminine hover:text-feminine-foreground"
                         >
-                          {isCheckoutLoading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            <CreditCard className="mr-2 h-4 w-4" />
-                          )}
-                          {isCheckoutLoading ? "Processing..." : hormoneCreditApplied ? "Get Started - $250" : "Get Started - $349"}
+                          <Calendar className="mr-2 h-4 w-4" />
+                          Book Consultation First
                         </Button>
                       </div>
                       
@@ -593,41 +523,32 @@ const HormonesWomen = () => {
                             <h4 className="font-bold text-base">Metabolic Mapping</h4>
                             <p className="text-xs text-muted-foreground">For Weight Loss patients</p>
                           </div>
-                          <div className="text-2xl font-bold text-feminine">$399</div>
+                          <div className="text-2xl font-bold text-feminine">$349</div>
                         </div>
                         <ul className="text-xs text-muted-foreground space-y-1 mb-3">
                           <li className="flex items-start gap-2">
                             <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
-                            Everything in Hormone Mapping, PLUS:
+                            ZRT Weight Management Profile
                           </li>
                           <li className="flex items-start gap-2">
                             <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
-                            Weight Management Profile (includes HbA1c & Insulin)
+                            Blood Spot Panel (HbA1c, Insulin, Thyroid)
                           </li>
                           <li className="flex items-start gap-2">
                             <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0 mt-0.5" />
                             GLP-1 Candidacy Assessment
                           </li>
                         </ul>
-                        <CreditCodeInput
-                          value={metabolicCreditCode}
-                          onChange={setMetabolicCreditCode}
-                          isApplied={metabolicCreditApplied}
-                          onApply={() => handleApplyCreditCode("metabolic")}
-                          onClear={() => handleClearCreditCode("metabolic")}
-                          className="mb-3"
-                        />
+                        <p className="text-xs text-green-600 font-medium mb-3">
+                          Book consultation first to receive $99 credit → $250
+                        </p>
                         <Button 
-                          onClick={() => handleCheckout("metabolic")}
-                          disabled={isMetabolicCheckoutLoading}
-                          className="w-full bg-feminine hover:bg-feminine-light text-feminine-foreground"
+                          onClick={scrollToBooking}
+                          variant="outline"
+                          className="w-full border-feminine hover:bg-feminine hover:text-feminine-foreground"
                         >
-                          {isMetabolicCheckoutLoading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            <CreditCard className="mr-2 h-4 w-4" />
-                          )}
-                          {isMetabolicCheckoutLoading ? "Processing..." : metabolicCreditApplied ? "Get Started - $300" : "Get Started - $399"}
+                          <Calendar className="mr-2 h-4 w-4" />
+                          Book Consultation First
                         </Button>
                       </div>
                       

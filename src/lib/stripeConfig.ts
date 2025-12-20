@@ -332,8 +332,8 @@ export const CONSULTATION_CREDIT = {
 | Category           | Product                          | Price    | Price ID                               | Mode         |
 |--------------------|----------------------------------|----------|----------------------------------------|--------------|
 | Consultations      | Discovery Consultation           | $99      | (dynamic)                              | payment      |
-| Diagnostic Kits    | Hormone Mapping                  | $299     | price_1SZiRMEOtKRY99pua6QMu12h         | payment      |
-| Diagnostic Kits    | Metabolic Mapping                | $399     | price_1Sa4bNEOtKRY99pulS73hT1V         | payment      |
+| Diagnostic Kits    | Hormone Mapping                  | $349     | price_1SZiRMEOtKRY99pua6QMu12h         | payment      |
+| Diagnostic Kits    | Metabolic Mapping                | $349     | price_1Sa4bNEOtKRY99pulS73hT1V         | payment      |
 | Diagnostic Kits    | Neurotransmitter Analysis        | $399     | (dynamic)                              | payment      |
 | Diagnostic Kits    | Toxicity Panel                   | $299     | (dynamic)                              | payment      |
 | Diagnostic Kits    | Elevated Architecture Protocol   | $999     | (dynamic)                              | payment      |
@@ -350,4 +350,6 @@ export const CONSULTATION_CREDIT = {
 | Sexual Wellness    | PT-141                           | $225     | price_1Sa67YEOtKRY99puQlYCjH4m         | payment      |
 | Sexual Wellness    | Oxytocin Nasal                   | $89/mo   | price_1SfijWEOtKRY99puB9Rq4Lm3         | subscription |
 | Admin              | Rebooking Fee                    | varies   | price_1Sa5UFEOtKRY99pupEQlaFvN         | payment      |
+| Credit             | Consultation Credit              | $99      | n/a                                    | credit       |
+| Credit Applied     | Hormone/Metabolic Mapping        | $250     | (calculated at checkout)               | payment      |
 */
