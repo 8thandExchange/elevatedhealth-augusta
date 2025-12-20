@@ -1,13 +1,62 @@
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle, Heart, Clock } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface NotReadyToBookProps {
   onOpenChat?: () => void;
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "a" | "b";
   className?: string;
 }
 
 const NotReadyToBook = ({ onOpenChat, variant = "default", className = "" }: NotReadyToBookProps) => {
+  // Variant B: More empathetic, urgency-focused copy
+  if (variant === "b") {
+    return (
+      <section className={`bg-gradient-to-br from-secondary/40 to-accent/5 rounded-2xl p-8 text-center border border-accent/20 ${className}`}>
+        <div className="flex justify-center mb-4">
+          <Heart className="h-8 w-8 text-accent" />
+        </div>
+        <h3 className="text-2xl font-cormorant font-medium text-foreground mb-3">
+          Questions? We're here for you.
+        </h3>
+        <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+          Taking the first step toward better health can feel overwhelming. Our dedicated Care Team has helped 
+          hundreds of patients just like you navigate insurance, understand our approach, and feel confident 
+          about their decision.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-6">
+          <a 
+            href="tel:+17067603470" 
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-full font-medium hover:bg-accent/90 transition-colors"
+          >
+            <Phone className="h-5 w-5" />
+            Speak with Our Care Team Now
+          </a>
+          
+          {onOpenChat && (
+            <Button 
+              onClick={onOpenChat} 
+              variant="outline" 
+              className="gap-2 rounded-full"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Quick Chat
+            </Button>
+          )}
+        </div>
+        
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Clock className="h-4 w-4" />
+          <span>Average response time: under 2 minutes</span>
+        </div>
+        
+        <p className="text-xs text-muted-foreground italic mt-4">
+          Administrative support only • No medical advice provided
+        </p>
+      </section>
+    );
+  }
+
   if (variant === "compact") {
     return (
       <div className={`p-4 bg-secondary/50 rounded-xl border border-border/30 ${className}`}>
@@ -42,6 +91,7 @@ const NotReadyToBook = ({ onOpenChat, variant = "default", className = "" }: Not
     );
   }
 
+  // Variant A (default): Original "Let's chat first" copy
   return (
     <section className={`bg-secondary/30 rounded-2xl p-8 text-center border border-border/20 ${className}`}>
       <h3 className="text-2xl font-cormorant font-medium text-foreground mb-3">
