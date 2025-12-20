@@ -13,20 +13,20 @@ const logStep = (step: string, details?: any) => {
   console.log(`[SEND-KIT-PAYMENT-LINK] ${step}${detailsStr}`);
 };
 
-// Kit pricing configuration
+// Kit pricing configuration - Updated Dec 2024: Both kits now $349 (comprehensive Saliva + Blood Spot)
 const KIT_TIERS = {
   hormone: {
     name: "Hormone Mapping Kit",
-    fullPrice: 29900, // $299 in cents
-    creditPrice: 20000, // $200 after $99 credit
-    description: "At-home Saliva Profile III test kit + lab review consultation",
+    fullPrice: 34900, // $349 in cents
+    creditPrice: 25000, // $250 after $99 credit
+    description: "Comprehensive at-home Saliva & Blood Spot test kit (Insulin, Thyroid, Cortisol, Hormones) + lab review consultation",
     priceId: "price_1SZiRMEOtKRY99pua6QMu12h",
   },
   metabolic: {
     name: "Metabolic Mapping Kit",
-    fullPrice: 39900, // $399 in cents
-    creditPrice: 30000, // $300 after $99 credit
-    description: "At-home Weight Management Panel test kit + lab review consultation",
+    fullPrice: 34900, // $349 in cents
+    creditPrice: 25000, // $250 after $99 credit
+    description: "Comprehensive at-home Saliva & Blood Spot test kit (Insulin, Thyroid, Cortisol, Hormones) + lab review consultation",
     priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
   },
 };

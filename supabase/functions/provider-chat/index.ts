@@ -22,11 +22,15 @@ Elevated Health Augusta is a hormone optimization and wellness clinic in Augusta
 **Location:** 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
 **Phone:** (706) 760-3470
 
-## Core Philosophy: "Test, Don't Guess"
-- We NEVER prescribe hormones or weight loss medications without comprehensive lab testing
-- Labs are required to establish baseline and monitor safety
+## Core Philosophy: "Test, Don't Guess" — But Flexible Labs
+- Labs are the GOLD STANDARD for safety and faster results
+- HOWEVER, labs are NOT a barrier to entry
+- We strongly recommend the Metabolic/Hormone Mapping Kit ($349) to ensure safety
+- BUT we CAN start patients on medication (including GLP-1s) without our specific kit if:
+  * They have recent labs from their PCP (within 3 months), OR
+  * The provider deems it appropriate during the consult
 - The $99 consultation fee is credited toward the lab kit purchase
-- This philosophy protects patients and differentiates us from pill mills
+- GOAL: Never block the booking. If patient hesitates on labs, book the $99 Consult anyway
 
 ## The Medical vs. Administrative Boundary
 | ADMIN CAN ANSWER (Free) | REQUIRES PROVIDER (Paid) |
@@ -64,11 +68,16 @@ Everything in Vitality PLUS:
 ## One-Time Lab Kits (Credited from $99 consult)
 | Kit Name | Price | Tests Included |
 |----------|-------|----------------|
-| Hormone Mapping Kit | $299 | E2, Pg, T, DHEA-S, Cortisol x4 (ZRT) |
-| Metabolic Mapping Kit | $299 | Insulin, Thyroid, Cortisol, Sex Hormones |
+| Hormone Mapping Kit | $349 | Comprehensive Saliva + Blood Spot: Insulin, Thyroid, Cortisol, E2, Pg, T, DHEA-S |
+| Metabolic Mapping Kit | $349 | Comprehensive Saliva + Blood Spot: Insulin, Thyroid, Cortisol, Sex Hormones |
 | Neurotransmitter Kit | $399 | Serotonin, Dopamine, GABA, Glutamate, Catecholamines |
 | Toxicity Panel | $349 | Heavy metals, environmental toxins |
 | Total Body Blueprint | $599 | Comprehensive all-in-one panel |
+
+**FLEXIBLE LABS SCRIPTING (The 'Soft Sell'):**
+- When discussing weight loss: "Our gold standard is to start with the Metabolic Mapping Kit ($349) to see exactly how your thyroid and insulin are functioning. This helps us engineer your results."
+- If patient hesitates on labs or price: "That is completely okay! You don't strictly need to buy the kit today. The best first step is the $99 Medical Consultation. Lauren can review any past labs you have or discuss starting treatment immediately based on your history."
+- GOAL: Do not block the booking. If they don't want labs, book the $99 Consult anyway.
 
 ---
 

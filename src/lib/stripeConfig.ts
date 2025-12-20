@@ -33,20 +33,20 @@ export const CONSULTATION_PRICES = {
 export const DIAGNOSTIC_KIT_PRICES = {
   hormone: {
     priceId: "price_1SZiRMEOtKRY99pua6QMu12h",
-    amount: 29900, // $299
-    displayPrice: "$299",
+    amount: 34900, // $349
+    displayPrice: "$349",
     name: "Hormone Mapping Kit",
-    description: "ZRT Saliva Profile III - At-home saliva test kit + lab review consultation",
+    description: "ZRT Saliva & Blood Spot Panel - Comprehensive at-home test kit covering Insulin, Thyroid, Cortisol, and Hormones + lab review consultation",
     zrtPanel: "saliva_iii",
     mode: "payment" as const,
     edgeFunction: "create-hormone-checkout",
   },
   metabolic: {
     priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
-    amount: 39900, // $399
-    displayPrice: "$399",
+    amount: 34900, // $349
+    displayPrice: "$349",
     name: "Metabolic Mapping Kit",
-    description: "ZRT Weight Management Panel - At-home blood spot + saliva test kit + lab review consultation",
+    description: "ZRT Saliva & Blood Spot Panel - Comprehensive at-home test kit covering Insulin, Thyroid, Cortisol, and Hormones + lab review consultation",
     zrtPanel: "weight_management",
     mode: "payment" as const,
     edgeFunction: "create-hormone-checkout",
@@ -263,20 +263,20 @@ export const ADMIN_PRICES = {
 export const PROVIDER_KIT_PRICES = {
   hormone: {
     priceId: "price_1SZiRMEOtKRY99pua6QMu12h",
-    fullPrice: 29900, // $299
-    creditPrice: 20000, // $200 after $99 credit
-    displayPrice: "$299 (or $200 with credit)",
+    fullPrice: 34900, // $349
+    creditPrice: 25000, // $250 after $99 credit
+    displayPrice: "$349 (or $250 with credit)",
     name: "Hormone Mapping Kit",
-    description: "At-home Saliva Profile III test kit + lab review consultation",
+    description: "Comprehensive at-home Saliva & Blood Spot test kit + lab review consultation",
     edgeFunction: "send-kit-payment-link",
   },
   metabolic: {
     priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
-    fullPrice: 39900, // $399
-    creditPrice: 30000, // $300 after $99 credit
-    displayPrice: "$399 (or $300 with credit)",
+    fullPrice: 34900, // $349
+    creditPrice: 25000, // $250 after $99 credit
+    displayPrice: "$349 (or $250 with credit)",
     name: "Metabolic Mapping Kit",
-    description: "At-home Weight Management Panel test kit + lab review consultation",
+    description: "Comprehensive at-home Saliva & Blood Spot test kit + lab review consultation",
     edgeFunction: "send-kit-payment-link",
   },
 } as const;

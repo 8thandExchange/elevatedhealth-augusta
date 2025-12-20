@@ -547,7 +547,7 @@ const HormonesWomen = () => {
                             <h4 className="font-bold text-base">Hormone Mapping</h4>
                             <p className="text-xs text-muted-foreground">For HRT / Menopause patients</p>
                           </div>
-                          <div className="text-2xl font-bold text-feminine">$299</div>
+                          <div className="text-2xl font-bold text-feminine">$349</div>
                         </div>
                         <ul className="text-xs text-muted-foreground space-y-1 mb-3">
                           <li className="flex items-start gap-2">
@@ -582,7 +582,7 @@ const HormonesWomen = () => {
                           ) : (
                             <CreditCard className="mr-2 h-4 w-4" />
                           )}
-                          {isCheckoutLoading ? "Processing..." : hormoneCreditApplied ? "Get Started - $200" : "Get Started - $299"}
+                          {isCheckoutLoading ? "Processing..." : hormoneCreditApplied ? "Get Started - $250" : "Get Started - $349"}
                         </Button>
                       </div>
                       

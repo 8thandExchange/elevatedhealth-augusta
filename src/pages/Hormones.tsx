@@ -379,11 +379,11 @@ const Hormones = () => {
                       <p className="text-3xl font-cormorant text-foreground mb-2">
                         {creditApplied ? (
                           <>
-                            <span className="line-through text-muted-foreground text-xl mr-2">$299</span>
-                            $200
+                            <span className="line-through text-muted-foreground text-xl mr-2">$349</span>
+                            $250
                           </>
                         ) : (
-                          "$299"
+                          "$349"
                         )}
                       </p>
                       {creditApplied && (
@@ -410,7 +410,7 @@ const Hormones = () => {
                         {isMappingLoading ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : null}
-                        {isMappingLoading ? "Processing..." : creditApplied ? "Pay $200" : "Map Your Hormones"}
+                        {isMappingLoading ? "Processing..." : creditApplied ? "Pay $250" : "Map Your Hormones"}
                       </Button>
                     </CardContent>
                   </Card>

@@ -58,7 +58,7 @@ const WeightLoss = () => {
     setIsMappingLoading(true);
     trackEvent("cta_click", { cta_name: "hormone_mapping_weightloss", destination: "checkout" });
     try {
-      // Using "hormone" tier for $299 ZRT saliva panel (not "metabolic" which is $399 with blood spot)
+      // Using "hormone" tier for $349 comprehensive Saliva + Blood Spot panel
       const { data, error } = await supabase.functions.invoke("create-hormone-checkout", {
         body: { 
           mappingType: "hormone",
@@ -688,7 +688,7 @@ const WeightLoss = () => {
                         Metabolic Mapping
                       </h3>
                       <p className="text-3xl font-cormorant text-primary mb-2">
-                        {creditApplied ? "$200" : "$299"}
+                        {creditApplied ? "$250" : "$349"}
                       </p>
                       {creditApplied && (
                         <p className="text-xs text-green-600 font-medium mb-2">

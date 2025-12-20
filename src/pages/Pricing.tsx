@@ -172,7 +172,7 @@ const Pricing = () => {
                 "name": "What is the cheapest way to get started at Elevated Health?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The most affordable entry point is our free New Patient Application Call—speak with our Care Coordination Team to discuss pricing, insurance, and logistics (no medical advice provided). For committed patients, our $99 Discovery Consultation provides a comprehensive clinical assessment. If you're interested in weight loss or hormone therapy, the $299 Metabolic or Hormone Mapping provides the best diagnostic value."
+                  "text": "The most affordable entry point is our free New Patient Application Call—speak with our Care Coordination Team to discuss pricing, insurance, and logistics (no medical advice provided). For committed patients, our $99 Discovery Consultation provides a comprehensive clinical assessment. If you're interested in weight loss or hormone therapy, the $349 Metabolic or Hormone Mapping provides the best diagnostic value."
                 }
               },
               {
@@ -264,7 +264,7 @@ const Pricing = () => {
                     "name": "Hormone Mapping Experience",
                     "description": "Comprehensive hormone testing and protocol design"
                   },
-                  "price": "299",
+                  "price": "349",
                   "priceCurrency": "USD"
                 }
               ]
@@ -584,7 +584,7 @@ const Pricing = () => {
                             </p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">$299</span>
+                            <span className="text-3xl font-cormorant text-slate-900">$349</span>
                             <span className="block text-xs text-slate-500 font-lato">one-time</span>
                           </div>
                         </div>
@@ -774,7 +774,7 @@ const Pricing = () => {
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">$299</span>
+                            <span className="text-3xl font-cormorant text-slate-900">$349</span>
                             <p className="text-xs text-slate-500 font-lato">one-time</p>
                           </div>
                         </div>

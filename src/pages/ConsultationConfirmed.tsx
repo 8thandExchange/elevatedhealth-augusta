@@ -24,7 +24,7 @@ const SERVICE_LABELS: Record<string, { title: string; specialist: string; credit
   hormone: {
     title: "Hormone Consultation",
     specialist: "hormone specialist",
-    creditInfo: "Use this code when purchasing Hormone Mapping to receive $99 off (pay only $200 instead of $299).",
+    creditInfo: "Use this code when purchasing Hormone Mapping to receive $99 off (pay only $250 instead of $349).",
     steps: [
       "Book your consultation using the calendar above",
       "Speak with our hormone specialist to discuss your goals and symptoms",
@@ -35,7 +35,7 @@ const SERVICE_LABELS: Record<string, { title: string; specialist: string; credit
   weight_loss: {
     title: "Weight Loss Consultation",
     specialist: "weight management specialist",
-    creditInfo: "Use this code when purchasing Metabolic Mapping to receive $99 off (pay only $200 instead of $299).",
+    creditInfo: "Use this code when purchasing Metabolic Mapping to receive $99 off (pay only $250 instead of $349).",
     steps: [
       "Book your consultation using the calendar above",
       "Speak with our weight management specialist to discuss your goals",

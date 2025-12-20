@@ -12,19 +12,19 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-HORMONE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// Two diagnostic tiers based on ZRT costs
+// Two diagnostic tiers - both now $349 (comprehensive Saliva + Blood Spot)
 const MAPPING_TIERS = {
   hormone: {
-    priceId: "price_1SZiRMEOtKRY99pua6QMu12h", // Hormone Mapping $299
+    priceId: "price_1SZiRMEOtKRY99pua6QMu12h", // Hormone Mapping $349
     name: "Hormone Mapping",
     zrtPanel: "saliva_iii",
-    amount: 29900, // cents
+    amount: 34900, // cents - $349
   },
   metabolic: {
-    priceId: "price_1Sa4bNEOtKRY99pulS73hT1V", // Metabolic Mapping $399
+    priceId: "price_1Sa4bNEOtKRY99pulS73hT1V", // Metabolic Mapping $349
     name: "Metabolic Mapping",
     zrtPanel: "weight_management",
-    amount: 39900, // cents
+    amount: 34900, // cents - $349
   },
 };
 
