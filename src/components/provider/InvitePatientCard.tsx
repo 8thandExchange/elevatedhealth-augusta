@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Mail, UserPlus, Check } from "lucide-react";
+import { Loader2, Mail, UserPlus, Check, Calendar } from "lucide-react";
 
 interface InvitePatientCardProps {
   onInviteSent?: () => void;
@@ -34,7 +34,7 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
     setSent(false);
 
     try {
-      const { data, error } = await supabase.functions.invoke("send-patient-invite", {
+      const { data, error } = await supabase.functions.invoke("send-consultation-invite", {
         body: {
           patient_email: email.trim(),
           patient_name: name.trim(),
@@ -45,7 +45,7 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
 
       if (data?.success) {
         setSent(true);
-        toast.success(`Invite sent to ${email}!`);
+        toast.success(`Consultation invite sent to ${email}!`);
         setEmail("");
         setName("");
         onInviteSent?.();
@@ -73,9 +73,20 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-xs text-muted-foreground">
-          Send a welcome email with the $349 Hormone Mapping payment link. After payment, 
-          they'll be prompted to create their account.
+          Send a $99 Discovery Consultation invite. After payment, they'll schedule their consultation. 
+          The $99 becomes a credit toward their $349 Hormone Mapping Kit.
         </p>
+        
+        <div className="text-xs bg-muted/50 rounded-lg p-3 border border-border/50">
+          <p className="font-medium text-foreground mb-1 flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5" />
+            Patient Journey:
+          </p>
+          <ol className="list-decimal list-inside text-muted-foreground space-y-0.5">
+            <li>Pay $99 consultation → schedule call</li>
+            <li>After consult, send $250 kit link (using Send Kit Link)</li>
+          </ol>
+        </div>
 
         <div className="space-y-3">
           <div>
@@ -127,7 +138,7 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
           ) : (
             <>
               <Mail className="w-4 h-4 mr-2" />
-              Send $349 Payment Invite
+              Send $99 Consultation Invite
             </>
           )}
         </Button>

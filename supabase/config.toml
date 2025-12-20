@@ -15,6 +15,9 @@ verify_jwt = false
 [functions.send-patient-invite]
 verify_jwt = false
 
+[functions.send-consultation-invite]
+verify_jwt = false
+
 [functions.send-quiz-result]
 verify_jwt = false
 
