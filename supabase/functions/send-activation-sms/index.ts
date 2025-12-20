@@ -13,6 +13,38 @@ const logStep = (step: string, details?: any) => {
   console.log(`[SEND-ACTIVATION] ${step}${detailsStr}`);
 };
 
+// Rate limiting: 10 requests per user per 5 minutes
+const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_MAX_REQUESTS = 10;
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+const checkRateLimit = (identifier: string): { allowed: boolean; retryAfter?: number } => {
+  const now = Date.now();
+  const record = rateLimitMap.get(identifier);
+  
+  // Clean up expired entries periodically
+  if (rateLimitMap.size > 1000) {
+    for (const [key, value] of rateLimitMap.entries()) {
+      if (now > value.resetTime) {
+        rateLimitMap.delete(key);
+      }
+    }
+  }
+  
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(identifier, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true };
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    const retryAfter = Math.ceil((record.resetTime - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  record.count++;
+  return { allowed: true };
+};
+
 // Stripe price IDs for memberships and add-ons
 const PRICE_IDS = {
   // Base memberships
@@ -102,6 +134,27 @@ serve(async (req) => {
     }
     
     logStep("Authorization verified", { userId: userData.user.id, roles });
+
+    // Rate limiting by user ID
+    const rateLimitCheck = checkRateLimit(userData.user.id);
+    if (!rateLimitCheck.allowed) {
+      logStep("Rate limit exceeded", { userId: userData.user.id });
+      return new Response(
+        JSON.stringify({ 
+          error: "Too many requests",
+          message: "Please wait before generating another activation link",
+          retryAfter: rateLimitCheck.retryAfter
+        }),
+        {
+          status: 429,
+          headers: { 
+            "Content-Type": "application/json",
+            "Retry-After": String(rateLimitCheck.retryAfter),
+            ...corsHeaders 
+          },
+        }
+      );
+    }
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");

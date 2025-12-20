@@ -9,6 +9,40 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Rate limiting: 5 requests per IP per 15 minutes
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+const checkRateLimit = (identifier: string): { allowed: boolean; retryAfter?: number } => {
+  const now = Date.now();
+  const record = rateLimitMap.get(identifier);
+  
+  // Clean up expired entries periodically
+  if (rateLimitMap.size > 1000) {
+    for (const [key, value] of rateLimitMap.entries()) {
+      if (now > value.resetTime) {
+        rateLimitMap.delete(key);
+      }
+    }
+  }
+  
+  if (!record || now > record.resetTime) {
+    // First request or window expired - reset
+    rateLimitMap.set(identifier, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true };
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    const retryAfter = Math.ceil((record.resetTime - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  // Increment count
+  record.count++;
+  return { allowed: true };
+};
+
 // HTML escape function to prevent XSS in emails
 const escapeHtml = (str: string): string => str
   .replace(/&/g, '&amp;')
@@ -29,6 +63,32 @@ const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Rate limiting by IP address
+  const clientIP = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
+                   req.headers.get("cf-connecting-ip") || 
+                   req.headers.get("x-real-ip") || 
+                   "unknown";
+  
+  const rateLimitCheck = checkRateLimit(clientIP);
+  if (!rateLimitCheck.allowed) {
+    console.log(`Rate limit exceeded for IP: ${clientIP}`);
+    return new Response(
+      JSON.stringify({ 
+        error: "Too many requests",
+        message: "Please wait before submitting another message",
+        retryAfter: rateLimitCheck.retryAfter
+      }),
+      {
+        status: 429,
+        headers: { 
+          "Content-Type": "application/json",
+          "Retry-After": String(rateLimitCheck.retryAfter),
+          ...corsHeaders 
+        },
+      }
+    );
   }
 
   try {
