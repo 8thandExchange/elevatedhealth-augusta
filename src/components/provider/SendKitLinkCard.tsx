@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Send, Package, Loader2, Check, DollarSign } from "lucide-react";
+import { Send, Package, Loader2, Check, DollarSign, Sparkles } from "lucide-react";
 
 interface SendKitLinkCardProps {
   patientId: string;
@@ -38,13 +38,49 @@ export function SendKitLinkCard({
   patientId,
   patientName,
   patientEmail,
-  consultationCreditCode,
+  consultationCreditCode: propCreditCode,
   onSuccess,
 }: SendKitLinkCardProps) {
   const [selectedKit, setSelectedKit] = useState<string>("hormone");
   const [isSending, setIsSending] = useState(false);
   const [linkSent, setLinkSent] = useState(false);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [creditCode, setCreditCode] = useState<string | null>(propCreditCode || null);
+  const [isLoadingCredit, setIsLoadingCredit] = useState(!propCreditCode);
+
+  // Auto-fetch credit code if not provided via props
+  useEffect(() => {
+    if (propCreditCode) {
+      setCreditCode(propCreditCode);
+      setIsLoadingCredit(false);
+      return;
+    }
+
+    const fetchCreditCode = async () => {
+      try {
+        // Look up credit code from consultation_bookings by email
+        const { data, error } = await supabase
+          .from("consultation_bookings")
+          .select("credit_code, status")
+          .eq("customer_email", patientEmail)
+          .eq("status", "paid")
+          .not("credit_code", "is", null)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!error && data?.credit_code) {
+          setCreditCode(data.credit_code);
+        }
+      } catch (err) {
+        console.error("Error fetching credit code:", err);
+      } finally {
+        setIsLoadingCredit(false);
+      }
+    };
+
+    fetchCreditCode();
+  }, [patientEmail, propCreditCode]);
 
   const handleSendKitLink = async () => {
     if (!selectedKit) {
@@ -60,7 +96,7 @@ export function SendKitLinkCard({
           patientName,
           patientEmail,
           kitType: selectedKit,
-          creditCode: consultationCreditCode,
+          creditCode: creditCode,
         },
       });
 
@@ -88,7 +124,7 @@ export function SendKitLinkCard({
   };
 
   const selectedKitInfo = KIT_OPTIONS.find((k) => k.id === selectedKit);
-  const hasCredit = !!consultationCreditCode;
+  const hasCredit = !!creditCode;
   const displayPrice = hasCredit ? selectedKitInfo?.creditPrice : selectedKitInfo?.fullPrice;
 
   if (linkSent) {
@@ -141,10 +177,19 @@ export function SendKitLinkCard({
           Select which diagnostic kit to send to <strong>{patientName}</strong>
         </p>
 
-        {hasCredit && (
-          <Badge variant="secondary" className="bg-green-100 text-green-800">
-            <DollarSign className="h-3 w-3 mr-1" />
-            $99 Credit Available (Code: {consultationCreditCode})
+        {isLoadingCredit ? (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            Checking for consultation credit...
+          </div>
+        ) : hasCredit ? (
+          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+            <Sparkles className="h-3 w-3 mr-1" />
+            $99 Consultation Credit Applied (Code: {creditCode})
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="text-muted-foreground">
+            No consultation credit found
           </Badge>
         )}
 
@@ -190,11 +235,18 @@ export function SendKitLinkCard({
         <div className="pt-2 border-t">
           <div className="flex justify-between items-center mb-3">
             <span className="text-sm text-muted-foreground">Patient will pay:</span>
-            <span className="text-lg font-bold">${displayPrice}</span>
+            <div className="flex items-center gap-2">
+              {hasCredit && (
+                <Badge variant="outline" className="text-green-600 border-green-600 text-xs">
+                  $99 saved
+                </Badge>
+              )}
+              <span className="text-lg font-bold">${displayPrice}</span>
+            </div>
           </div>
           <Button
             onClick={handleSendKitLink}
-            disabled={isSending || !selectedKit}
+            disabled={isSending || !selectedKit || isLoadingCredit}
             className="w-full"
           >
             {isSending ? (
@@ -205,7 +257,7 @@ export function SendKitLinkCard({
             ) : (
               <>
                 <Send className="mr-2 h-4 w-4" />
-                Send Payment Link to Patient
+                Send ${displayPrice} Payment Link
               </>
             )}
           </Button>

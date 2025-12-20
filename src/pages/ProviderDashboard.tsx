@@ -1852,7 +1852,8 @@ const ProviderDashboard = () => {
               />
 
               {/* Send Kit Link Card - Show when consultation is complete */}
-              {(selectedPatient.patient.onboarding_status === "consultation_complete" || 
+              {(selectedPatient.patient.onboarding_status === "consultation_paid" ||
+                selectedPatient.patient.onboarding_status === "consultation_complete" || 
                 selectedPatient.patient.onboarding_status === "intake_complete") && 
                 selectedPatient.patient.email && (
                 <SendKitLinkCard

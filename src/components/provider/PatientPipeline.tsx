@@ -15,6 +15,7 @@ import {
   Loader2,
   Phone,
   Mail,
+  Package,
 } from "lucide-react";
 
 interface PipelineStage {
@@ -70,13 +71,23 @@ const PatientPipeline = () => {
         c.status === "pending" || c.status === "scheduled"
       ) || [];
       
+      const paidConsults = consultations?.filter(c => 
+        c.status === "paid"
+      ) || [];
+      
       const completedConsults = consultations?.filter(c => 
         c.status === "completed"
       ) || [];
 
       // Categorize patients
+      const consultationPaidPatients = patients?.filter(p => 
+        p.onboarding_status === "consultation_paid" || 
+        p.onboarding_status === "consultation_invited"
+      ) || [];
+      
       const invitedPatients = patients?.filter(p => 
-        p.onboarding_status === "invited"
+        p.onboarding_status === "invited" ||
+        p.onboarding_status === "kit_link_sent"
       ) || [];
 
       const intakePatients = patients?.filter(p => 
@@ -103,11 +114,11 @@ const PatientPipeline = () => {
       const pipelineStages: PipelineStage[] = [
         {
           id: "consultation",
-          name: "Discovery Call",
+          name: "Pending Consult",
           icon: <Calendar className="h-4 w-4" />,
           color: "bg-blue-500",
-          count: pendingConsults.length + completedConsults.length,
-          items: [...pendingConsults, ...completedConsults].map(c => ({
+          count: pendingConsults.length,
+          items: pendingConsults.map(c => ({
             id: c.id,
             name: c.customer_name || "Unknown",
             email: c.customer_email,
@@ -119,9 +130,37 @@ const PatientPipeline = () => {
           })),
         },
         {
-          id: "invited",
-          name: "Payment Sent",
+          id: "consultation_paid",
+          name: "Needs Kit Link",
           icon: <UserPlus className="h-4 w-4" />,
+          color: "bg-amber-500",
+          count: paidConsults.length + consultationPaidPatients.length,
+          items: [
+            ...paidConsults.map(c => ({
+              id: c.id,
+              name: c.customer_name || "Unknown",
+              email: c.customer_email,
+              phone: c.customer_phone,
+              stage: "consultation_paid",
+              created_at: c.created_at,
+              service_type: c.service_type,
+              amount_paid: c.amount_paid,
+              credit_code: c.credit_code,
+            })),
+            ...consultationPaidPatients.map(p => ({
+              id: p.id,
+              name: p.full_name,
+              email: p.email || "",
+              phone: p.phone,
+              stage: p.onboarding_status || "",
+              created_at: p.created_at || "",
+            })),
+          ],
+        },
+        {
+          id: "invited",
+          name: "Kit Link Sent",
+          icon: <Package className="h-4 w-4" />,
           color: "bg-yellow-500",
           count: invitedPatients.length,
           items: invitedPatients.map(p => ({
@@ -129,7 +168,7 @@ const PatientPipeline = () => {
             name: p.full_name,
             email: p.email || "",
             phone: p.phone,
-            stage: "invited",
+            stage: "kit_link_sent",
             created_at: p.created_at || "",
           })),
         },
