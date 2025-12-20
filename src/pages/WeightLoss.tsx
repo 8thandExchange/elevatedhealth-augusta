@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   CheckCircle2, Award, Heart, Users, TrendingDown, Activity, 
   Apple, Scale, Droplet, LineChart, Brain, Pill, Clock, 
-  MessageCircle, Shield, Sparkles, CreditCard, Loader2, RefreshCw
+  MessageCircle, Shield, Sparkles, CreditCard, Loader2, RefreshCw, Calendar
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -687,37 +687,25 @@ const WeightLoss = () => {
                       <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
                         Metabolic Mapping
                       </h3>
-                      <p className="text-3xl font-cormorant text-primary mb-2">
-                        {creditApplied ? "$250" : "$349"}
+                      <p className="text-3xl font-cormorant text-primary mb-2">$349</p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Ordered after your consultation
                       </p>
-                      {creditApplied && (
-                        <p className="text-xs text-green-600 font-medium mb-2">
-                          $99 credit applied!
-                        </p>
-                      )}
                       <p className="text-sm text-muted-foreground mb-4 font-lato">
-                        Complete ZRT hormone panel + provider review to identify your unique metabolic blockers.
+                        Complete ZRT at-home kit (Saliva + Blood Spot) covering Insulin, Thyroid, Cortisol & Hormones — includes provider review.
                       </p>
-                      <CreditCodeInput
-                        value={creditCode}
-                        onChange={setCreditCode}
-                        isApplied={creditApplied}
-                        onApply={handleApplyCreditCode}
-                        onClear={handleClearCreditCode}
-                        className="mb-3"
-                      />
                       <Button 
                         variant="outline" 
-                        onClick={handleMappingCheckout}
-                        disabled={isMappingLoading}
+                        onClick={handleConsultationCheckout}
+                        disabled={isConsultationLoading}
                         className="w-full border-gold/30 hover:bg-gold/5"
                       >
-                        {isMappingLoading ? (
+                        {isConsultationLoading ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : (
-                          <CreditCard className="mr-2 h-4 w-4" />
+                          <Calendar className="mr-2 h-4 w-4" />
                         )}
-                        {isMappingLoading ? "..." : "Get Your Labs"}
+                        {isConsultationLoading ? "..." : "Book Consultation First"}
                       </Button>
                     </CardContent>
                   </Card>
