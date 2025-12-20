@@ -39,6 +39,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
     phone: "",
     message: "",
   });
+  const [honeypot, setHoneypot] = useState("");
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
@@ -68,7 +69,7 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
       
       // Send everything to edge function which handles DB insert + email
       const { data, error } = await supabase.functions.invoke("send-contact-email", {
-        body: validated
+        body: { ...validated, _website: honeypot }
       });
 
       if (error) {
@@ -190,6 +191,17 @@ const Contact = ({ onOpenBooking }: ContactProps) => {
                     Send Us a Message
                   </h3>
                   <form onSubmit={handleSubmit} className="space-y-5">
+                    {/* Honeypot field - hidden from humans, bots will fill it */}
+                    <div className="absolute -left-[9999px]" aria-hidden="true">
+                      <input
+                        type="text"
+                        name="website"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                      />
+                    </div>
                     <div>
                       <Label htmlFor="contact-name" className="font-lato text-sm text-foreground/80 mb-2 block">
                         Full Name *
