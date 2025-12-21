@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export interface Patient {
   id: string;
@@ -46,6 +47,24 @@ export interface Order {
 export interface KitTracking {
   id: string;
   zrt_kit_status: string;
+  tracking_number: string | null;
+  shipped_at: string | null;
+  sample_received_at: string | null;
+  results_ready_at: string | null;
+}
+
+export interface NeurotransmitterPayment {
+  id: string;
+  kit_status: string;
+  tracking_number: string | null;
+  shipped_at: string | null;
+  sample_received_at: string | null;
+  results_ready_at: string | null;
+}
+
+export interface MetabolicPayment {
+  id: string;
+  kit_status: string;
   tracking_number: string | null;
   shipped_at: string | null;
   sample_received_at: string | null;
@@ -229,6 +248,93 @@ export function useUpdatePatient() {
 }
 
 /**
+ * Hook to create a new order for protocol review
+ */
+export function useCreateOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ patientId, symptomLog }: { patientId: string; symptomLog: SymptomLog }) => {
+      const { data, error } = await supabase
+        .from("orders")
+        .insert({
+          patient_id: patientId,
+          status: "pending_review",
+          protocol_snapshot: {
+            symptom_scores: {
+              estrogen: symptomLog.estrogen_score,
+              progesterone: symptomLog.progesterone_score,
+              androgen: symptomLog.androgen_score,
+              cortisol: symptomLog.cortisol_score,
+            },
+            date_requested: new Date().toISOString(),
+          },
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.latestOrder(variables.patientId) });
+      toast.success("Review request submitted! A provider will contact you soon.");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to submit review request");
+    },
+  });
+}
+
+/**
+ * Fetches the latest neurotransmitter payment for a patient
+ */
+export function useNeurotransmitterPayment(patientId: string | undefined) {
+  return useQuery({
+    queryKey: patientId ? ["neurotransmitterPayment", patientId] : ["neurotransmitterPayment", "none"],
+    queryFn: async (): Promise<NeurotransmitterPayment | null> => {
+      const { data, error } = await supabase
+        .from("neurotransmitter_payments")
+        .select("id, kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
+        .eq("patient_id", patientId!)
+        .eq("payment_status", "paid")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!patientId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Fetches the latest metabolic payment for a patient
+ */
+export function useMetabolicPayment(patientId: string | undefined) {
+  return useQuery({
+    queryKey: patientId ? ["metabolicPayment", patientId] : ["metabolicPayment", "none"],
+    queryFn: async (): Promise<MetabolicPayment | null> => {
+      const { data, error } = await supabase
+        .from("metabolic_payments")
+        .select("id, kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
+        .eq("patient_id", patientId!)
+        .eq("payment_status", "paid")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!patientId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
  * Hook to invalidate all patient-related queries (useful after major updates)
  */
 export function useInvalidatePatientData() {
@@ -242,6 +348,8 @@ export function useInvalidatePatientData() {
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.latestOrder(patientId) });
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.kitTracking(patientId) });
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.latestLabResult(patientId) });
+        queryClient.invalidateQueries({ queryKey: ["neurotransmitterPayment", patientId] });
+        queryClient.invalidateQueries({ queryKey: ["metabolicPayment", patientId] });
       }
     },
     invalidatePatient: () => {
@@ -255,6 +363,12 @@ export function useInvalidatePatientData() {
     },
     invalidateLabResults: (patientId: string) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.latestLabResult(patientId) });
+    },
+    invalidateNeurotransmitterPayment: (patientId: string) => {
+      queryClient.invalidateQueries({ queryKey: ["neurotransmitterPayment", patientId] });
+    },
+    invalidateMetabolicPayment: (patientId: string) => {
+      queryClient.invalidateQueries({ queryKey: ["metabolicPayment", patientId] });
     },
   };
 }
