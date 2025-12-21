@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ConsultationModal from "@/components/ConsultationModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +64,6 @@ const Pricing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const navigate = useNavigate();
 
   // Update URL when category changes

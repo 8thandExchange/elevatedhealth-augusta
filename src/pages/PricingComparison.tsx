@@ -428,6 +428,7 @@ const PricingComparison = () => {
       </main>
 
       <Footer />
+      <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </>
   );
 };
