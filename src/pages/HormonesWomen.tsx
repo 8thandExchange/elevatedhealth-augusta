@@ -246,6 +246,15 @@ const HormonesWomen = () => {
         <title>Women's Hormone Therapy Augusta | Menopause Treatment GA - Elevated Health</title>
         <meta name="description" content="Women's hormone therapy in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Menopause and perimenopause care starting at $149/month." />
         <meta name="keywords" content="women's hormone therapy Augusta, menopause treatment Augusta, perimenopause treatment GA, estrogen progesterone balance, female hormone testing Augusta, BHRT for women" />
+        <meta property="og:title" content="Women's Hormone Therapy | $99 Consultation Credited | Elevated Health Augusta" />
+        <meta property="og:description" content="Women's hormone therapy in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/hormones/women" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Women's Hormone Therapy Augusta | $99 Consultation" />
+        <meta name="twitter:description" content="$99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Starting at $149/month." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <script type="application/ld+json">
           {JSON.stringify(schema)}
         </script>

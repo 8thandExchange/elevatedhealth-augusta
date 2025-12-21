@@ -114,6 +114,19 @@ const Pricing = () => {
         />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/pricing" />
         
+        {/* Open Graph */}
+        <meta property="og:title" content="Transparent Healthcare Pricing | $99 Consultation Credited | Elevated Health Augusta" />
+        <meta property="og:description" content="Transparent pricing for all services. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/pricing" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Healthcare Pricing | $99 Consultation Credited" />
+        <meta name="twitter:description" content="Transparent pricing. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        
         {/* FAQ Schema for Rich Snippets */}
         <script type="application/ld+json">
           {JSON.stringify({

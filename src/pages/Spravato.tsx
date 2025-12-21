@@ -93,10 +93,17 @@ const Spravato = () => {
         <link rel="canonical" href="https://elevatedhealthaugusta.com/spravato" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="SPRAVATO® Nasal Spray | Elevated Health Augusta" />
-        <meta property="og:description" content="FDA-approved esketamine for treatment-resistant depression. Often covered by insurance." />
+        <meta property="og:title" content="SPRAVATO® Augusta | $99 Consultation to Verify Insurance | Elevated Health" />
+        <meta property="og:description" content="SPRAVATO® esketamine nasal spray in Augusta, GA. $99 consultation to verify insurance coverage. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/spravato" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="SPRAVATO® Augusta | Often $0-50 Copays" />
+        <meta name="twitter:description" content="$99 consultation to verify insurance coverage. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         
         {/* Schema */}
         <script type="application/ld+json">

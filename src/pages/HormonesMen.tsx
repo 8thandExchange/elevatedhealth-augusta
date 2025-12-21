@@ -229,6 +229,15 @@ const HormonesMen = () => {
         <title>Testosterone Therapy Augusta | TRT Clinic GA - Elevated Health</title>
         <meta name="description" content="Men's testosterone therapy in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Board-certified TRT starting at $149/month." />
         <meta name="keywords" content="testosterone therapy Augusta, TRT clinic Augusta, men's hormone therapy GA, low testosterone treatment Augusta, men's health optimization, male hormone testing" />
+        <meta property="og:title" content="Testosterone Therapy | $99 Consultation Credited | Elevated Health Augusta" />
+        <meta property="og:description" content="Men's testosterone therapy in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/hormones/men" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="TRT Clinic Augusta | $99 Consultation" />
+        <meta name="twitter:description" content="$99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Board-certified TRT starting at $149/month." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <script type="application/ld+json">
           {JSON.stringify(schema)}
         </script>

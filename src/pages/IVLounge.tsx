@@ -163,6 +163,15 @@ const IVLounge = () => {
           name="description"
           content="Premium IV hydration therapy in Augusta, GA. Chat with our Virtual Care Team to find your perfect drip. Hangover relief, immune boosters, beauty drips, and athletic recovery."
         />
+        <meta property="og:title" content="IV Lounge | Premium Hydration Therapy | Elevated Health Augusta" />
+        <meta property="og:description" content="Premium IV hydration therapy in Augusta, GA. Chat with our Virtual Care Team 24/7. Hangover relief, immune boosters, beauty drips." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/iv-lounge" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="IV Lounge Augusta | Premium Hydration" />
+        <meta name="twitter:description" content="Chat with our Virtual Care Team to find your perfect drip. Hangover relief, immune boosters, beauty drips." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
       <Navbar onOpenBooking={() => window.open(SITE_CONFIG.bookingLinks.iv, "_blank")} />

@@ -55,10 +55,17 @@ const IVKetamine = () => {
         <link rel="canonical" href="https://elevatedhealthaugusta.com/iv-ketamine" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="IV Ketamine Therapy | Elevated Health Augusta" />
-        <meta property="og:description" content="IV ketamine infusion therapy for treatment-resistant depression, anxiety, and PTSD. Professional monitoring in Augusta, GA." />
+        <meta property="og:title" content="IV Ketamine Therapy | $99 Consultation Credited | Elevated Health Augusta" />
+        <meta property="og:description" content="IV ketamine infusion therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/iv-ketamine" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="IV Ketamine Therapy Augusta | $99 Consultation" />
+        <meta name="twitter:description" content="$99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         
         {/* Schema */}
         <script type="application/ld+json">

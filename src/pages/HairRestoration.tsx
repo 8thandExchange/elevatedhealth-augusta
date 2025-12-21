@@ -129,6 +129,15 @@ const HairRestoration = () => {
         <title>Hair Restoration Augusta | Minoxidil, Finasteride, Dutasteride, GHK-Cu - Elevated Health</title>
         <meta name="description" content="Hair restoration in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Minoxidil, Finasteride, Dutasteride, GHK-Cu protocols." />
         <meta name="keywords" content="hair restoration Augusta, hair loss treatment Augusta GA, Minoxidil Augusta, Finasteride Augusta, Dutasteride hair loss, GHK-Cu hair growth, male pattern baldness treatment Georgia" />
+        <meta property="og:title" content="Hair Restoration Augusta | $99 Consultation Credited | Elevated Health" />
+        <meta property="og:description" content="Hair restoration in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/hair-restoration" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Hair Restoration Augusta | $99 Consultation" />
+        <meta name="twitter:description" content="$99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. FDA-approved protocols." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
       </Helmet>
 

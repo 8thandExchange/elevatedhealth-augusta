@@ -108,10 +108,17 @@ Thank you for considering my request.`;
         <link rel="canonical" href="https://elevatedhealthaugusta.com/military-veteran" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="Veteran Mental Health | TRICARE & VA Ketamine | Elevated Health" />
-        <meta property="og:description" content="Ketamine therapy for Veterans. TRICARE and VA Community Care accepted. Free benefits verification." />
+        <meta property="og:title" content="Veteran Mental Health | $99 Consultation + Free Benefits Verification | Elevated Health" />
+        <meta property="og:description" content="Ketamine therapy for Veterans in Augusta, GA. $99 consultation with free benefits verification. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/military-veteran" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Veteran Ketamine Therapy | TRICARE & VA Accepted" />
+        <meta name="twitter:description" content="$99 consultation with free benefits verification. Chat with our Virtual Care Team 24/7." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         
         {/* Schema */}
         <script type="application/ld+json">

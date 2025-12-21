@@ -54,6 +54,15 @@ const Ketamine = () => {
         <title>Neural Restoration Therapy Augusta | Ketamine Treatment - Elevated Health</title>
         <meta name="description" content="Advanced ketamine therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." />
         <meta name="keywords" content="ketamine therapy Augusta, neural restoration Augusta GA, SPRAVATO Augusta, treatment-resistant depression Augusta, ketamine infusion Georgia" />
+        <meta property="og:title" content="Neural Restoration Therapy Augusta | Ketamine Treatment - Elevated Health" />
+        <meta property="og:description" content="Advanced ketamine therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/ketamine" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Neural Restoration Therapy Augusta | Ketamine Treatment" />
+        <meta name="twitter:description" content="$99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
       <div className="min-h-screen bg-background">

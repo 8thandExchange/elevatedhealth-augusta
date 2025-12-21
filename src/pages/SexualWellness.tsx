@@ -106,6 +106,15 @@ const SexualWellness = () => {
         <title>Sexual Wellness for Men Augusta | Tadalafil, Sildenafil - Elevated Health</title>
         <meta name="description" content="Discreet sexual wellness for men in Augusta, GA. $99 private consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Tadalafil and Sildenafil prescriptions." />
         <meta name="keywords" content="sexual wellness Augusta, ED treatment Augusta GA, Tadalafil Augusta, Sildenafil Augusta, mens health clinic Georgia, erectile dysfunction treatment" />
+        <meta property="og:title" content="Sexual Wellness for Men | $99 Private Consultation | Elevated Health Augusta" />
+        <meta property="og:description" content="Discreet sexual wellness in Augusta, GA. $99 private consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/sexual-wellness" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Men's Sexual Wellness Augusta | $99 Private Consultation" />
+        <meta name="twitter:description" content="$99 private consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Discreet delivery." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
       </Helmet>
 

@@ -259,6 +259,15 @@ const PeptideTherapy = () => {
         <title>Peptide Therapy Augusta | Sermorelin, NAD+, PT-141, Oxytocin, GHK-Cu - Elevated Health</title>
         <meta name="description" content="Peptide therapy in Augusta, GA. $99 strategy session credited toward treatment. Chat with our Virtual Care Team 24/7. Sermorelin, NAD+, PT-141, Oxytocin, GHK-Cu protocols." />
         <meta name="keywords" content="peptide therapy Augusta, Sermorelin Augusta GA, NAD+ therapy Augusta, PT-141 Augusta, Oxytocin therapy, GHK-Cu peptide, 5-Amino-1MQ, anti-aging peptides Georgia" />
+        <meta property="og:title" content="Peptide Therapy Augusta | $99 Strategy Session Credited | Elevated Health" />
+        <meta property="og:description" content="Peptide therapy in Augusta, GA. $99 strategy session credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/peptide-therapy" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Peptide Therapy Augusta | $99 Strategy Session" />
+        <meta name="twitter:description" content="$99 strategy session credited toward treatment. Chat with our Virtual Care Team 24/7. Sermorelin, NAD+, PT-141." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
       </Helmet>
 

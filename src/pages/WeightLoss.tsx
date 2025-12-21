@@ -224,6 +224,15 @@ const WeightLoss = () => {
         <title>Metabolic Optimization Program - Weight Loss Augusta | Elevated Health</title>
         <meta name="description" content="Medical weight loss in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + ZRT hormone testing + metabolic analysis." />
         <meta name="keywords" content="metabolic optimization Augusta, semaglutide Augusta GA, tirzepatide Augusta, GLP-1 Augusta, weight loss clinic Georgia, ZRT testing Augusta, metabolic labs" />
+        <meta property="og:title" content="Metabolic Optimization Program - Weight Loss Augusta | Elevated Health" />
+        <meta property="og:description" content="Medical weight loss in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + hormone testing." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/weight-loss" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Medical Weight Loss Augusta | Metabolic Optimization" />
+        <meta name="twitter:description" content="$99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 + hormone testing." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
       <div className="min-h-screen">

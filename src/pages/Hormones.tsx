@@ -130,6 +130,15 @@ const Hormones = () => {
         <title>Precision Bio-Identical Therapy Augusta | Hormone Optimization - Elevated Health</title>
         <meta name="description" content="Bioidentical hormone replacement therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. ZRT diagnostics for men and women." />
         <meta name="keywords" content="bioidentical hormones Augusta, BHRT Augusta GA, testosterone therapy, menopause treatment, hormone optimization Augusta, ZRT testing" />
+        <meta property="og:title" content="Precision Bio-Identical Therapy Augusta | Hormone Optimization - Elevated Health" />
+        <meta property="og:description" content="Bioidentical hormone replacement therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/hormones" />
+        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Hormone Optimization Augusta | Bio-Identical Therapy" />
+        <meta name="twitter:description" content="$99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. ZRT diagnostics." />
+        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
       <div className="min-h-screen">
