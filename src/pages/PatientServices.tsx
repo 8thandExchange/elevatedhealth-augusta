@@ -1,28 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import { 
-  Loader2, 
-  Brain, 
-  Scale, 
-  Sparkles, 
-  Droplets, 
-  Syringe, 
-  Check, 
-  ArrowRight,
-  Scissors,
-  Heart,
-  Calendar
-} from "lucide-react";
+import { Loader2, Brain, Scale, Sparkles, Droplets, Syringe, Check, ArrowRight, Scissors, Heart, Calendar } from "lucide-react";
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
 import SafetyGate from "@/components/patient/SafetyGate";
 import OAuthOnboarding from "@/components/patient/OAuthOnboarding";
+import { usePatient, useInvalidatePatientData } from "@/hooks/usePatient";
 
 interface Service {
   id: string;
@@ -118,78 +105,14 @@ const SERVICES: Service[] = [
 
 const PatientServices = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [patient, setPatient] = useState<any>(null);
-  const [currentInterests, setCurrentInterests] = useState<string[]>([]);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  
+  // Use React Query hook for patient data
+  const { data: patient, isLoading, error } = usePatient();
+  const { invalidateAll, invalidatePatient } = useInvalidatePatientData();
 
-  useEffect(() => {
-    loadPatientData();
-  }, []);
-
-  const loadPatientData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/patient/login");
-        return;
-      }
-
-      let { data: patientData, error } = await supabase
-        .from("patients")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      
-      // If no patient record exists but user is authenticated via Google OAuth, create one
-      if (!patientData) {
-        const provider = user.app_metadata?.provider;
-        if (provider === 'google') {
-          console.log("[PatientServices] Creating patient record for new Google OAuth user");
-          const metadata = user.user_metadata;
-          const fullName = metadata?.full_name || metadata?.name || user.email?.split('@')[0] || 'Patient';
-          const avatarUrl = metadata?.avatar_url || metadata?.picture;
-          
-          const { data: newPatient, error: insertError } = await supabase
-            .from('patients')
-            .insert([{
-              user_id: user.id,
-              full_name: fullName,
-              email: user.email,
-              avatar_url: avatarUrl,
-              primary_program: null,
-              onboarding_status: 'needs_program_selection',
-              intake_completed: false,
-            }])
-            .select()
-            .single();
-          
-          if (insertError) {
-            console.error("Failed to create patient record:", insertError);
-            toast.error("Failed to create your profile. Please try again.");
-            return;
-          }
-          
-          patientData = newPatient;
-        } else {
-          toast.error("Patient profile not found");
-          return;
-        }
-      }
-
-      setPatient(patientData);
-      
-      // Parse current interests
-      const interests = patientData.treatment_request?.split(",").filter(Boolean) || [];
-      setCurrentInterests(interests);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to load data");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Parse current interests from patient data
+  const currentInterests = patient?.treatment_request?.split(",").filter(Boolean) || [];
 
   const hasService = (treatmentKey: string) => currentInterests.includes(treatmentKey);
 
@@ -219,6 +142,7 @@ const PatientServices = () => {
     return colors[color] || colors.blue;
   };
 
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -227,28 +151,51 @@ const PatientServices = () => {
     );
   }
 
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="max-w-md mx-4">
+          <CardContent className="pt-6 text-center">
+            <h2 className="text-lg font-semibold mb-2">Unable to load services</h2>
+            <p className="text-muted-foreground text-sm mb-4">
+              {error instanceof Error ? error.message : "Please try again later."}
+            </p>
+            <Button onClick={() => window.location.reload()}>Retry</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // No patient found - redirect to login
+  if (!patient) {
+    navigate("/patient/login");
+    return null;
+  }
+
   // Show OAuth onboarding for new Google users who haven't selected a program
-  if (patient && patient.onboarding_status === 'needs_program_selection') {
+  if (patient.onboarding_status === 'needs_program_selection') {
     return (
       <OAuthOnboarding
         patientId={patient.id}
         patientName={patient.full_name}
         patientEmail={patient.email || ""}
-        onComplete={() => loadPatientData()}
+        onComplete={() => invalidatePatient()}
       />
     );
   }
 
   // Show welcome intake if not completed (only for non-ketamine patients)
-  if (patient && !patient.intake_completed && patient.primary_program !== "ketamine") {
+  if (!patient.intake_completed && patient.primary_program !== "ketamine") {
     return <WelcomeIntake patientName={patient.full_name} />;
   }
 
   // HARD GATE: Block flagged patients
-  const isFlaggedPatient = patient?.risk_status === "high_risk_review" || 
-    (Array.isArray(patient?.safety_flags) && patient.safety_flags.length > 0);
+  const isFlaggedPatient = patient.risk_status === "high_risk_review" || 
+    (Array.isArray(patient.safety_flags) && patient.safety_flags.length > 0);
   
-  if (patient && isFlaggedPatient) {
+  if (isFlaggedPatient) {
     const safetyFlags = Array.isArray(patient.safety_flags) ? patient.safety_flags : [];
     const treatmentType = patient.treatment_request || patient.primary_program || "hormone therapy";
     
@@ -269,8 +216,8 @@ const PatientServices = () => {
   return (
     <div className="min-h-screen bg-background">
       <PatientNavbar 
-        patientName={patient?.full_name || "Patient"}
-        avatarUrl={patient?.avatar_url}
+        patientName={patient.full_name}
+        avatarUrl={patient.avatar_url}
         onEditProfile={() => setIsEditProfileOpen(true)}
       />
 
@@ -278,7 +225,7 @@ const PatientServices = () => {
         {/* Welcome Header */}
         <div className="text-center mb-8">
           <p className="text-sm text-muted-foreground uppercase tracking-widest mb-1">Welcome back</p>
-          <h1 className="font-cormorant text-3xl text-foreground mb-2">{patient?.full_name}</h1>
+          <h1 className="font-cormorant text-3xl text-foreground mb-2">{patient.full_name}</h1>
           <p className="text-muted-foreground">
             Your personalized health journey
           </p>
@@ -370,7 +317,7 @@ const PatientServices = () => {
           patientId={patient.id}
           currentName={patient.full_name}
           currentAvatarUrl={patient.avatar_url}
-          onUpdate={(newName, newAvatarUrl) => setPatient({ ...patient, full_name: newName, avatar_url: newAvatarUrl })}
+          onUpdate={() => invalidatePatient()}
         />
       )}
     </div>
