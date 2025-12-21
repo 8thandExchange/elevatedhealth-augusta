@@ -131,8 +131,8 @@ const Consult = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Book Your $99 Medical Consultation | Elevated Health Augusta</title>
-        <meta name="description" content="Book your $99 medical consultation—credited toward treatment. Choose ketamine therapy, medical weight loss, or hormone replacement. Chat with our Virtual Care Team 24/7." />
+        <title>Rebook Your Appointment | Elevated Health Augusta</title>
+        <meta name="description" content="Returning patients can easily rebook appointments for ketamine therapy, medical weight loss, or hormone replacement. Access your care calendar." />
       </Helmet>
       <Navbar />
       
@@ -140,10 +140,10 @@ const Consult = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12 animate-fade-in-up">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Book Your $99 Medical Consultation
+              Rebook Your Appointment
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Your first conversation with a provider—credited toward your treatment
+              Welcome back! Select a service below to schedule your next visit.
             </p>
           </div>
 
