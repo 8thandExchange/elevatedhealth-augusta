@@ -53,6 +53,7 @@ import { SendKitLinkCard } from "@/components/provider/SendKitLinkCard";
 import MembershipAssignmentCard from "@/components/provider/MembershipAssignmentCard";
 import ProviderAssistant from "@/components/provider/ProviderAssistant";
 import OsmindInviteCard from "@/components/provider/OsmindInviteCard";
+import ConsentPDFCard from "@/components/provider/ConsentPDFCard";
 
 interface Patient {
   id: string;
@@ -79,6 +80,7 @@ interface Patient {
   consent_sent_at?: string | null;
   consent_completed_at?: string | null;
   consent_method?: string | null;
+  consent_signature?: string | null;
 }
 
 interface SymptomLog {
@@ -1226,6 +1228,7 @@ const ProviderDashboard = () => {
                           </button>
                         </th>
                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Consent</th>
                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Highest Category</th>
                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Risk Level</th>
                         <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
@@ -1278,6 +1281,28 @@ const ProviderDashboard = () => {
                                 )}
                               </div>
                             </div>
+                          </td>
+                          <td className="py-4 px-4" onClick={() => selectPatient(p)}>
+                            {/* Consent Status Badge */}
+                            {p.patient.treatment_request?.includes("ketamine") ? (
+                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                Osmind
+                              </Badge>
+                            ) : p.patient.consent_completed_at ? (
+                              <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100">
+                                <Check className="w-3 h-3 mr-1" />
+                                Signed
+                              </Badge>
+                            ) : p.patient.consent_sent_at ? (
+                              <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
+                                <Clock className="w-3 h-3 mr-1" />
+                                Pending
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-xs text-muted-foreground">
+                                —
+                              </Badge>
+                            )}
                           </td>
                           <td className="py-4 px-4" onClick={() => selectPatient(p)}>
                             <span className="text-sm text-foreground">{p.highestCategory}</span>
@@ -2167,6 +2192,18 @@ const ProviderDashboard = () => {
                   consentCompletedAt={selectedPatient.patient.consent_completed_at || null}
                   consentMethod={selectedPatient.patient.consent_method || null}
                   onUpdate={() => loadData()}
+                />
+              )}
+
+              {/* Consent PDF Card - For non-ketamine patients with consent */}
+              {!selectedPatient.patient.treatment_request?.includes("ketamine") && (
+                <ConsentPDFCard
+                  patientId={selectedPatient.patient.id}
+                  patientName={selectedPatient.patient.full_name}
+                  patientEmail={selectedPatient.patient.email || null}
+                  consentSignature={selectedPatient.patient.consent_signature || null}
+                  consentCompletedAt={selectedPatient.patient.consent_completed_at || null}
+                  consentMethod={selectedPatient.patient.consent_method || null}
                 />
               )}
 
