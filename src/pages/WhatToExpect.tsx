@@ -36,7 +36,7 @@ const WhatToExpectPage = () => {
   const steps = [
     {
       icon: MessageCircle,
-      title: "1. Chat with Our AI Assistant",
+      title: "1. Chat with Our Virtual Care Team",
       description: "Get instant answers about pricing, insurance, and our process. Available 24/7 for all your administrative questions.",
       duration: "Instant • 24/7 • FREE",
       color: "text-accent"

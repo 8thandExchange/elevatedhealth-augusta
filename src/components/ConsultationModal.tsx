@@ -224,10 +224,10 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           })}
         </div>
 
-        {/* Not Ready Section - AI Chat First */}
+        {/* Not Ready Section - Virtual Care Team Chat First */}
         <div className="mt-6 p-4 bg-secondary/50 rounded-xl border border-border/30">
           <p className="text-sm font-medium text-foreground mb-2 text-center">
-            Have questions? Chat with our AI assistant first.
+            Have questions? Chat with our virtual care team first.
           </p>
           <p className="text-xs text-muted-foreground text-center mb-3">
             Get instant answers about pricing, insurance, and our process—24/7.
@@ -245,7 +245,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
               className="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium transition-colors"
             >
               <MessageCircle className="h-4 w-4" />
-              <span>Chat with AI Assistant</span>
+              <span>Chat with Virtual Care Team</span>
             </button>
             <span className="hidden sm:inline text-muted-foreground">•</span>
             <a

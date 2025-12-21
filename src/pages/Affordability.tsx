@@ -256,7 +256,7 @@ const Affordability = () => {
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>24/7 AI Chat Support (FREE)</span>
+                      <span>24/7 Virtual Care Team Support (FREE)</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />

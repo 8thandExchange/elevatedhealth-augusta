@@ -58,7 +58,7 @@ const BookingWidget = () => {
             {/* Secondary Options */}
             <div className="bg-secondary/30 rounded-xl p-6 border border-border/20">
               <h3 className="text-lg font-semibold text-foreground text-center mb-2">
-                Have questions? Chat with our AI assistant.
+                Have questions? Chat with our virtual care team.
               </h3>
               <p className="text-sm text-muted-foreground text-center mb-4">
                 Get instant answers about pricing, insurance, and our process—24/7.
@@ -70,7 +70,7 @@ const BookingWidget = () => {
                   className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  Chat with AI Assistant
+                  Chat with Virtual Care Team
                 </Button>
                 
                 <a 

@@ -152,7 +152,7 @@ This is the starting point for most services. Here's why it matters:
 
 ## HOW OUR PROCESS WORKS
 
-**Step 1: Chat with AI (You're Here!)**
+**Step 1: Chat with Our Virtual Care Team (You're Here!)**
 Ask me anything about pricing, insurance, logistics, or our process. I'm available 24/7.
 
 **Step 2: $99 Medical Consultation**

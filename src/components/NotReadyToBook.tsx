@@ -68,7 +68,7 @@ const NotReadyToBook = ({
                 className="gap-2 rounded-full bg-accent text-accent-foreground hover:bg-accent/90"
               >
                 <MessageCircle className="h-5 w-5" />
-                {ctaText || "Chat with AI Assistant"}
+                {ctaText || "Chat with Virtual Care Team"}
               </Button>
             )}
             
@@ -110,7 +110,7 @@ const NotReadyToBook = ({
               className="gap-2 rounded-full bg-accent text-accent-foreground hover:bg-accent/90"
             >
               <MessageCircle className="h-5 w-5" />
-              {ctaText || "Chat with AI Assistant"}
+              {ctaText || "Chat with Virtual Care Team"}
             </Button>
           )}
           
@@ -142,7 +142,7 @@ const NotReadyToBook = ({
           {title || "Not ready to book? Let's chat first."}
         </p>
         <p className="text-xs text-muted-foreground mb-3">
-          {description || "Questions about our process, insurance, or pricing? Our AI assistant can help instantly."}
+          {description || "Questions about our process, insurance, or pricing? Our virtual care team can help instantly."}
         </p>
         <div className="flex flex-col gap-2">
           {onOpenChat && (
@@ -151,7 +151,7 @@ const NotReadyToBook = ({
               className="inline-flex items-center justify-center gap-2 text-accent hover:text-accent/80 font-medium text-sm transition-colors"
             >
               <MessageCircle className="h-4 w-4" />
-              <span>{ctaText || "Chat with AI Assistant"}</span>
+              <span>{ctaText || "Chat with Virtual Care Team"}</span>
             </button>
           )}
           <a 
@@ -176,7 +176,7 @@ const NotReadyToBook = ({
         {title || "Have Questions? Chat with Us First."}
       </h3>
       <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-        {description || "Our AI assistant can instantly answer your questions about pricing, insurance, and our process—24/7."}
+        {description || "Our virtual care team can instantly answer your questions about pricing, insurance, and our process—24/7."}
       </p>
       
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-4">
@@ -186,7 +186,7 @@ const NotReadyToBook = ({
             className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90"
           >
             <MessageCircle className="h-5 w-5" />
-            {ctaText || "Chat with AI Assistant"}
+            {ctaText || "Chat with Virtual Care Team"}
           </Button>
         )}
         
