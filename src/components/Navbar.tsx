@@ -13,11 +13,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import ConsultationModal from "./ConsultationModal";
+import { useBooking } from "@/contexts/BookingContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { openBooking } = useBooking();
   const isHomePage = location.pathname === '/';
   const [isScrolled, setIsScrolled] = useState(!isHomePage);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,7 +27,6 @@ const Navbar = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isProvider, setIsProvider] = useState(false);
-  const [showConsultModal, setShowConsultModal] = useState(false);
 
   const getInitials = (name: string) => {
     return name
@@ -384,7 +384,7 @@ const Navbar = () => {
             ) : null}
             <Button 
               className="font-lato font-normal text-sm tracking-wide px-6 py-2"
-              onClick={() => setShowConsultModal(true)}
+              onClick={openBooking}
             >
               Book Consultation
             </Button>
@@ -518,7 +518,7 @@ const Navbar = () => {
               <Button 
                 className="w-full font-lato text-sm tracking-wide py-6 bg-primary text-white"
                 onClick={() => {
-                  setShowConsultModal(true);
+                  openBooking();
                   setIsMobileMenuOpen(false);
                 }}
               >
@@ -613,11 +613,6 @@ const Navbar = () => {
         </div>
       )}
       </nav>
-
-      <ConsultationModal 
-        isOpen={showConsultModal} 
-        onClose={() => setShowConsultModal(false)} 
-      />
     </>
   );
 };

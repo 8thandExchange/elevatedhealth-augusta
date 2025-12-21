@@ -4,6 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollToTop from "@/components/ScrollToTop";
+import { BookingProvider } from "@/contexts/BookingContext";
+import ConsultationModal from "@/components/ConsultationModal";
+import { useBooking } from "@/contexts/BookingContext";
 import SecurePatientRoute from "@/components/auth/SecurePatientRoute";
 import CookieConsent from "@/components/CookieConsent";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
@@ -60,19 +63,26 @@ import ProviderLayout from "./components/provider/ProviderLayout";
 
 const queryClient = new QueryClient();
 
+const GlobalBookingModal = () => {
+  const { isBookingOpen, closeBooking } = useBooking();
+  return <ConsultationModal isOpen={isBookingOpen} onClose={closeBooking} />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <ServiceWorkerUpdater />
-      <BrowserRouter>
-        <ScrollToTop />
-        <a href="#main-content" className="skip-to-main">
-          Skip to main content
-        </a>
-        <CookieConsent />
-        <FloatingFinancingBanner />
+      <BookingProvider>
+        <Toaster />
+        <Sonner />
+        <ServiceWorkerUpdater />
+        <BrowserRouter>
+          <ScrollToTop />
+          <a href="#main-content" className="skip-to-main">
+            Skip to main content
+          </a>
+          <CookieConsent />
+          <FloatingFinancingBanner />
+          <GlobalBookingModal />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
@@ -187,7 +197,8 @@ const App = () => (
           
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+      </BookingProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
