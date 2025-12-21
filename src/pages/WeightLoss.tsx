@@ -23,12 +23,31 @@ const WeightLoss = () => {
   const [isMappingLoading, setIsMappingLoading] = useState(false);
   const [isContinuationLoading, setIsContinuationLoading] = useState(false);
   const [isTirzepatideLoading, setIsTirzepatideLoading] = useState(false);
+  const [isStarterLoading, setIsStarterLoading] = useState(false);
   const [creditCode, setCreditCode] = useState("");
   const [creditApplied, setCreditApplied] = useState(false);
 
-  const scrollToBooking = () => {
-    trackEvent("cta_click", { cta_name: "weight_loss_booking", destination: SITE_CONFIG.bookingUrl });
-    window.open(SITE_CONFIG.bookingUrl, "_blank");
+  const handleGLP1StarterCheckout = async () => {
+    setIsStarterLoading(true);
+    trackEvent("cta_click", { cta_name: "glp1_starter", destination: "checkout" });
+    try {
+      const { data, error } = await supabase.functions.invoke("create-glp1-starter-checkout", {
+        body: {}
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("GLP-1 Starter checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us.");
+    } finally {
+      setIsStarterLoading(false);
+    }
   };
 
   const handleConsultationCheckout = async () => {
@@ -738,10 +757,16 @@ const WeightLoss = () => {
                         First month of Semaglutide + provider consultation. No commitment.
                       </p>
                       <Button 
-                        onClick={scrollToBooking}
+                        onClick={handleGLP1StarterCheckout}
+                        disabled={isStarterLoading}
                         className="w-full bg-gold hover:bg-gold-dark text-white"
                       >
-                        Start Your Trial
+                        {isStarterLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <CreditCard className="mr-2 h-4 w-4" />
+                        )}
+                        {isStarterLoading ? "Processing..." : "Start Your Trial - $349"}
                       </Button>
                     </CardContent>
                   </Card>
@@ -842,11 +867,15 @@ const WeightLoss = () => {
                     </ul>
 
                     <Button 
-                      onClick={scrollToBooking} 
+                      onClick={handleGLP1StarterCheckout}
+                      disabled={isStarterLoading}
                       size="lg" 
                       className="w-full bg-primary hover:bg-primary/90 text-white font-lato"
                     >
-                      Apply for Semaglutide
+                      {isStarterLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : null}
+                      {isStarterLoading ? "Processing..." : "Start with Semaglutide - $349"}
                     </Button>
                   </div>
                 </div>
@@ -974,8 +1003,18 @@ const WeightLoss = () => {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                  <Button onClick={scrollToBooking} size="lg" className="text-lg px-8 py-6">
-                    Book $99 Consultation
+                  <Button 
+                    onClick={handleConsultationCheckout}
+                    disabled={isConsultationLoading}
+                    size="lg" 
+                    className="text-lg px-8 py-6"
+                  >
+                    {isConsultationLoading ? (
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    ) : (
+                      <CreditCard className="mr-2 h-5 w-5" />
+                    )}
+                    {isConsultationLoading ? "Processing..." : "Book $99 Consultation"}
                   </Button>
                   <Button 
                     onClick={() => {

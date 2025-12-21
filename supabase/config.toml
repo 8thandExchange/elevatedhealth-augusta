@@ -182,3 +182,9 @@ verify_jwt = false
 
 [functions.generate-consent-pdf]
 verify_jwt = false
+
+[functions.create-glp1-starter-checkout]
+verify_jwt = false
+
+[functions.create-glp1-continuation-checkout]
+verify_jwt = false
