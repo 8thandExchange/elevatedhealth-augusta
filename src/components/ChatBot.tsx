@@ -25,6 +25,31 @@ const QUICK_PROMPTS = [
   { label: "How to Start", value: "How do I get started as a new patient?" },
 ];
 
+// Helper to render URLs as clickable links
+const renderMessageWithLinks = (content: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = content.split(urlRegex);
+  
+  return parts.map((part, index) => {
+    if (urlRegex.test(part)) {
+      // Reset regex lastIndex since we're using global flag
+      urlRegex.lastIndex = 0;
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline hover:text-primary/80 break-all"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
+
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -196,7 +221,7 @@ const ChatBot = () => {
           {/* Messages */}
           <ScrollArea className="flex-1 p-4" ref={scrollRef}>
             <div className="space-y-4">
-              {messages.map((message, index) => (
+          {messages.map((message, index) => (
                 <div
                   key={index}
                   className={`flex ${
@@ -210,7 +235,12 @@ const ChatBot = () => {
                         : "bg-muted text-foreground rounded-bl-md"
                     }`}
                   >
-                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                      {message.role === "assistant" 
+                        ? renderMessageWithLinks(message.content)
+                        : message.content
+                      }
+                    </p>
                   </div>
                 </div>
               ))}
@@ -305,12 +335,12 @@ const ChatBot = () => {
 
           {/* $99 Consultation CTA */}
           {messages.length > 2 && (
-            <div className="px-4 py-2 border-t border-border bg-accent/30">
+            <div className="px-4 py-3 border-t border-border bg-primary/10">
               <a
                 href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 text-sm text-primary hover:text-primary/80 font-medium"
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors shadow-sm"
               >
                 <CreditCard className="h-4 w-4" />
                 Book $99 Medical Consultation

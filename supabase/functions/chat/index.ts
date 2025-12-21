@@ -199,10 +199,11 @@ We are not an emergency service. For urgent but non-emergency concerns, call our
 
 ---
 
-## BOOKING LINKS
+## BOOKING
 
-- General Consultation: https://calendar.app.google/hf3NNdiqJDueUuSN9
-- Phone: (706) 760-3470
+When someone wants to book, tell them: "You can book using the button below the chat, or call us at (706) 760-3470."
+
+**IMPORTANT:** Do NOT paste raw URLs in your responses. Instead, direct users to the booking button that appears in the chat interface, or tell them to call the office.
 `;
 
 serve(async (req) => {
@@ -339,7 +340,7 @@ Give specific prices from the knowledge base. Emphasize value (medical supervisi
 "That's completely understandable. The $99 consultation exists exactly for this—you'll meet with a provider who can review your situation and help you decide. And that $99 applies as credit toward treatment, so you're not paying twice."
 
 ### "How do I get started?"
-"The first step is our $99 Medical Consultation. You can book online or give us a call. You'll meet with a provider who will review your goals and create a personalized plan. That $99 applies as credit toward your first lab kit or treatment."
+"The first step is our $99 Medical Consultation—you can use the booking button below to schedule. You'll meet with a provider who will review your goals and create a personalized plan. That $99 applies as credit toward your first lab kit or treatment."
 
 ### When discussing weight loss (THE SOFT SELL):
 Lead with the gold standard: "Our gold standard is to start with the Metabolic Mapping Kit ($349) to see exactly how your thyroid and insulin are functioning. This helps us engineer your results."
