@@ -30,7 +30,7 @@ const ADDON_TIERS = [
 
 const BASE_PRICES = {
   metabolic: 399,
-  vitality: 199,
+  vitality: 249,
 };
 
 const HormoneAddonSelector = ({
@@ -185,7 +185,7 @@ const HormoneAddonSelector = ({
               <SelectItem value="vitality">
                 <div className="flex items-center justify-between w-full">
                   <span>Vitality Membership (HRT Only)</span>
-                  <span className="text-muted-foreground ml-4">$199/mo</span>
+                  <span className="text-muted-foreground ml-4">$249/mo</span>
                 </div>
               </SelectItem>
             </SelectContent>

@@ -87,9 +87,9 @@ export const DIAGNOSTIC_KIT_PRICES = {
 
 export const MEMBERSHIP_PRICES = {
   vitality: {
-    priceId: "price_1SZickEOtKRY99pu7j2PtWZm",
-    amount: 19900, // $199/mo
-    displayPrice: "$199/mo",
+    priceId: "price_1Sga64EOtKRY99pu6NpP45Qq",
+    amount: 24900, // $249/mo
+    displayPrice: "$249/mo",
     name: "Vitality Membership",
     description: "Monthly hormone optimization with provider support",
     mode: "subscription" as const,
@@ -106,6 +106,58 @@ export const MEMBERSHIP_PRICES = {
     interval: "month",
     edgeFunction: "create-membership-checkout",
     requiresLabReview: true,
+  },
+} as const;
+
+// ============================================================================
+// À LA CARTE MEDICATIONS (One-time payments for non-members)
+// ============================================================================
+
+export const ALACARTE_PRICES = {
+  testosterone: {
+    priceId: "price_1Sga66EOtKRY99puQgPWACIy",
+    amount: 14900, // $149
+    displayPrice: "$149",
+    name: "Testosterone Cream",
+    description: "10-week testosterone cream fill (non-member pricing)",
+    mode: "payment" as const,
+    edgeFunction: "create-alacarte-checkout",
+  },
+  biEst: {
+    priceId: "price_1Sga67EOtKRY99puoS8b5U6h",
+    amount: 8900, // $89
+    displayPrice: "$89",
+    name: "Bi-Est Cream",
+    description: "30-day bi-estrogen cream fill (non-member pricing)",
+    mode: "payment" as const,
+    edgeFunction: "create-alacarte-checkout",
+  },
+  progesterone: {
+    priceId: "price_1Sga69EOtKRY99puO8NJ5bpx",
+    amount: 7900, // $79
+    displayPrice: "$79",
+    name: "Progesterone",
+    description: "30-day progesterone fill (non-member pricing)",
+    mode: "payment" as const,
+    edgeFunction: "create-alacarte-checkout",
+  },
+  followUp: {
+    priceId: "price_1Sga6AEOtKRY99puEx0mC3jx",
+    amount: 9900, // $99
+    displayPrice: "$99",
+    name: "Follow-up Consultation",
+    description: "Provider follow-up consultation (non-member pricing)",
+    mode: "payment" as const,
+    edgeFunction: "create-alacarte-checkout",
+  },
+  labPanel: {
+    priceId: "price_1Sga6CEOtKRY99puOXGAaRwh",
+    amount: 14900, // $149
+    displayPrice: "$149",
+    name: "Lab Panel",
+    description: "Comprehensive hormone lab panel (non-member pricing)",
+    mode: "payment" as const,
+    edgeFunction: "create-alacarte-checkout",
   },
 } as const;
 
@@ -288,6 +340,7 @@ export const PROVIDER_KIT_PRICES = {
 export type ConsultationPriceKey = keyof typeof CONSULTATION_PRICES;
 export type DiagnosticKitPriceKey = keyof typeof DIAGNOSTIC_KIT_PRICES;
 export type MembershipPriceKey = keyof typeof MEMBERSHIP_PRICES;
+export type AlacartePriceKey = keyof typeof ALACARTE_PRICES;
 export type KetaminePriceKey = keyof typeof KETAMINE_PRICES;
 export type WeightLossPriceKey = keyof typeof WEIGHT_LOSS_PRICES;
 export type HairRestorationPriceKey = keyof typeof HAIR_RESTORATION_PRICES;
@@ -337,8 +390,13 @@ export const CONSULTATION_CREDIT = {
 | Diagnostic Kits    | Neurotransmitter Analysis        | $399     | (dynamic)                              | payment      |
 | Diagnostic Kits    | Toxicity Panel                   | $299     | (dynamic)                              | payment      |
 | Diagnostic Kits    | Elevated Architecture Protocol   | $999     | (dynamic)                              | payment      |
-| Memberships        | Vitality Membership              | $199/mo  | price_1SZickEOtKRY99pu7j2PtWZm         | subscription |
+| Memberships        | Vitality Membership              | $249/mo  | price_1Sga64EOtKRY99pu6NpP45Qq         | subscription |
 | Memberships        | Elevated Concierge               | $399/mo  | price_1SZiXTEOtKRY99puR7PQUExU         | subscription |
+| À La Carte         | Testosterone Cream               | $149     | price_1Sga66EOtKRY99puQgPWACIy         | payment      |
+| À La Carte         | Bi-Est Cream                     | $89      | price_1Sga67EOtKRY99puoS8b5U6h         | payment      |
+| À La Carte         | Progesterone                     | $79      | price_1Sga69EOtKRY99puO8NJ5bpx         | payment      |
+| À La Carte         | Follow-up Consultation           | $99      | price_1Sga6AEOtKRY99puEx0mC3jx         | payment      |
+| À La Carte         | Lab Panel                        | $149     | price_1Sga6CEOtKRY99puOXGAaRwh         | payment      |
 | Ketamine           | Therapy Deposit                  | $150     | price_1Sa5jwEOtKRY99puYK2lpDw5         | payment      |
 | Ketamine           | IV Infusion                      | $400     | price_1SaYv3EOtKRY99pulkr4H1At         | payment      |
 | Weight Loss        | GLP-1 Continuation               | $449     | price_1Sd8ChEOtKRY99pu7iaAF3Jd         | payment      |

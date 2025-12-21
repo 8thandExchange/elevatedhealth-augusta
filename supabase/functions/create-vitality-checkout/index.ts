@@ -58,13 +58,13 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    // Create checkout session for Vitality Membership ($199/mo)
+    // Create checkout session for Vitality Membership ($249/mo)
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : userEmail,
       line_items: [
         {
-          price: "price_1SZickEOtKRY99pu7j2PtWZm", // Vitality Membership $199/mo
+          price: "price_1Sga64EOtKRY99pu6NpP45Qq", // Vitality Membership $249/mo
           quantity: 1,
         },
       ],

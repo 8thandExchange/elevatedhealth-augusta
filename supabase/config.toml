@@ -170,3 +170,6 @@ verify_jwt = false
 
 [functions.send-consultation-booking-reminder]
 verify_jwt = false
+
+[functions.create-alacarte-checkout]
+verify_jwt = false
