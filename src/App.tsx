@@ -102,7 +102,11 @@ const App = () => (
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/accessibility" element={<Accessibility />} />
-          <Route path="/consult" element={<Consult />} />
+          <Route path="/consult" element={
+            <SecurePatientRoute>
+              <Consult />
+            </SecurePatientRoute>
+          } />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/ketamine-payment-success" element={<KetaminePaymentSuccess />} />
           <Route path="/patient-resources" element={<PatientResources />} />
