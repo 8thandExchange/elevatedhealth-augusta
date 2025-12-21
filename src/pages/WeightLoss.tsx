@@ -273,8 +273,8 @@ const WeightLoss = () => {
                   FDA-Approved GLP-1s. Optimized by Your Biology.
                 </p>
                 <p className="text-lg md:text-xl text-primary/70 leading-relaxed mb-10 max-w-3xl mx-auto animate-fade-in-up font-lato" style={{ animationDelay: "0.2s" }}>
-                  Weight loss isn't just about calories—it's about hormones. We combine Semaglutide therapy 
-                  with advanced Saliva Diagnostics to identify and treat the hidden blockers (like High Cortisol 
+                  Weight loss isn't just about calories—it's about hormones. We combine state-of-the-art GLP-1 therapy 
+                  with advanced saliva diagnostics to identify and treat the hidden blockers (like High Cortisol 
                   or Estrogen Dominance) that stall your progress.
                 </p>
 
@@ -345,7 +345,7 @@ const WeightLoss = () => {
                 <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-primary/60 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-gold" />
-                    <span>ZRT Saliva+Blood</span>
+                    <span>Powered by ZRT Diagnostics</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-gold" />
