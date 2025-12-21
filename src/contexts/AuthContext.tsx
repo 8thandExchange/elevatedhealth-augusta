@@ -25,27 +25,48 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   const fetchUserDetails = async (userId: string, userEmail: string | undefined) => {
-    // Check if user is a provider (admin or staff)
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId);
-    
-    const hasProviderRole = roles?.some(r => r.role === "admin" || r.role === "staff" || r.role === "business_admin");
-    setIsProvider(hasProviderRole || false);
-    
-    if (!hasProviderRole) {
-      // Try to get patient name and avatar
-      const { data: patient } = await supabase
-        .from("patients")
-        .select("full_name, avatar_url")
-        .eq("user_id", userId)
-        .maybeSingle();
-      setUserName(patient?.full_name || null);
-      setUserAvatar(patient?.avatar_url || null);
-    } else {
-      // For providers, use email as display name
-      setUserName(userEmail?.split("@")[0] || "Provider");
+    try {
+      console.log('[AuthContext] Fetching user details for:', userId);
+      
+      // Check if user is a provider (admin or staff)
+      const { data: roles, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId);
+      
+      if (rolesError) {
+        console.error('[AuthContext] Error fetching roles:', rolesError);
+      }
+      
+      const hasProviderRole = roles?.some(r => r.role === "admin" || r.role === "staff" || r.role === "business_admin");
+      setIsProvider(hasProviderRole || false);
+      console.log('[AuthContext] Is provider:', hasProviderRole);
+      
+      if (!hasProviderRole) {
+        // Try to get patient name and avatar
+        const { data: patient, error: patientError } = await supabase
+          .from("patients")
+          .select("full_name, avatar_url")
+          .eq("user_id", userId)
+          .maybeSingle();
+        
+        if (patientError) {
+          console.error('[AuthContext] Error fetching patient:', patientError);
+        }
+        
+        setUserName(patient?.full_name || null);
+        setUserAvatar(patient?.avatar_url || null);
+        console.log('[AuthContext] Patient name:', patient?.full_name);
+      } else {
+        // For providers, use email as display name
+        setUserName(userEmail?.split("@")[0] || "Provider");
+        setUserAvatar(null);
+      }
+    } catch (error) {
+      console.error('[AuthContext] Error in fetchUserDetails:', error);
+      // Reset to safe defaults on error
+      setIsProvider(false);
+      setUserName(null);
       setUserAvatar(null);
     }
   };
@@ -59,12 +80,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    console.log('[AuthContext] Initializing auth state listener');
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('[AuthContext] Auth state changed:', event, session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
       if (event === 'SIGNED_OUT') {
+        console.log('[AuthContext] User signed out');
         clearAuthState();
         return;
       }
@@ -79,6 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('[AuthContext] Initial session check:', session?.user?.email || 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       
