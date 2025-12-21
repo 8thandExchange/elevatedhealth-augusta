@@ -1,10 +1,9 @@
 import { ArrowRight } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 
-interface MissionStatementProps {
-  onOpenBooking: () => void;
-}
-
-const MissionStatement = ({ onOpenBooking }: MissionStatementProps) => {
+const MissionStatement = () => {
+  const { openBooking } = useBooking();
+  
   return (
     <section className="py-10 md:py-12 bg-secondary/30">
       <div className="container mx-auto px-6 lg:px-8">
@@ -46,7 +45,7 @@ const MissionStatement = ({ onOpenBooking }: MissionStatementProps) => {
           {/* CTA */}
           <div className="text-center mt-10">
             <button
-              onClick={onOpenBooking}
+              onClick={openBooking}
               className="inline-flex items-center gap-2 text-primary font-lato text-sm tracking-wide hover:gap-3 transition-all duration-300"
             >
               <span className="elegant-underline">Request a personalized consultation</span>

@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/analytics";
-import PaymentMethodsBadge from "./PaymentMethodsBadge";
+import { useBooking } from "@/contexts/BookingContext";
 
-interface HeroProps {
-  onOpenBooking: () => void;
-}
-
-const Hero = ({ onOpenBooking }: HeroProps) => {
+const Hero = () => {
+  const { openBooking } = useBooking();
+  
   const handleRequestAccess = () => {
     trackCTAClick('hero_request_access', 'contact_section');
     const element = document.getElementById("contact");
@@ -39,7 +37,7 @@ const Hero = ({ onOpenBooking }: HeroProps) => {
         <div className="animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
           <Button 
             size="lg"
-            onClick={onOpenBooking}
+            onClick={openBooking}
             className="bg-[#1a8a9a] hover:bg-[#158080] text-white font-lato font-normal tracking-[0.15em] uppercase text-sm px-12 py-6 rounded-full transition-all duration-300"
           >
             Book Consultation

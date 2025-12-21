@@ -10,41 +10,39 @@ import InsuranceLogos from "@/components/InsuranceLogos";
 import MediaFeature from "@/components/MediaFeature";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import ConsultationModal from "@/components/ConsultationModal";
 import SEOSchema from "@/components/SEOSchema";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import AssistantHub from "@/components/AssistantHub";
 import { FloatingMobileCTA } from "@/components/FloatingMobileCTA";
 import { FloatingMobileChatCTA } from "@/components/FloatingMobileChatCTA";
-import { useState } from "react";
+import { useBooking } from "@/contexts/BookingContext";
 
 const Index = () => {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const { openBooking } = useBooking();
 
   return (
     <div className="min-h-screen">
       <SEOSchema />
       <Navbar />
       <main>
-        <Hero onOpenBooking={() => setIsBookingOpen(true)} />
+        <Hero />
         <FinancingBanner />
-        <MissionStatement onOpenBooking={() => setIsBookingOpen(true)} />
-        <OurTreatments onOpenBooking={() => setIsBookingOpen(true)} />
+        <MissionStatement />
+        <OurTreatments onOpenBooking={openBooking} />
         <div className="container mx-auto px-4 py-12">
           <NotReadyToBook />
         </div>
-        <WhyUsCompare onOpenBooking={() => setIsBookingOpen(true)} />
+        <WhyUsCompare onOpenBooking={openBooking} />
         <ClinicVideo />
         <InsuranceLogos />
         <MediaFeature />
-        <Contact onOpenBooking={() => setIsBookingOpen(true)} />
+        <Contact onOpenBooking={openBooking} />
       </main>
       <Footer />
       <AssistantHub />
       <FloatingMobileCTA />
       <FloatingMobileChatCTA />
       <PWAInstallPrompt />
-      <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </div>
   );
 };
