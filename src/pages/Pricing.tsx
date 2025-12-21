@@ -254,7 +254,7 @@ const Pricing = () => {
                     "name": "Vitality Membership (Monthly)",
                     "description": "Hormone optimization without GLP-1 medication"
                   },
-                  "price": "199",
+                  "price": "249",
                   "priceCurrency": "USD"
                 },
                 {
@@ -822,7 +822,7 @@ const Pricing = () => {
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">$199</span>
+                            <span className="text-3xl font-cormorant text-slate-900">$249</span>
                             <p className="text-xs text-slate-500 font-lato">/month</p>
                           </div>
                         </div>
@@ -1517,6 +1517,186 @@ const Pricing = () => {
             </div>
           </section>
         )}
+
+        {/* À La Carte Pricing Section */}
+        <section className="py-12 lg:py-16 bg-secondary/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-10">
+              <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
+                No Membership Required
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-cormorant text-foreground mb-4">
+                À La Carte Pricing
+              </h2>
+              <p className="text-lg text-muted-foreground font-lato max-w-2xl mx-auto">
+                Need individual medications without a membership? We offer pay-as-you-go options 
+                for patients who prefer flexibility over commitment.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {/* Testosterone Cream */}
+              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="outline" className="text-masculine border-masculine/30">
+                      Men's HRT
+                    </Badge>
+                    <span className="text-xs text-muted-foreground font-lato">10-week fill</span>
+                  </div>
+                  <h3 className="text-xl font-cormorant text-foreground mb-1">Testosterone Cream</h3>
+                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                    Compounded testosterone cream for optimization
+                  </p>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-3xl font-cormorant text-foreground">$149</span>
+                    <span className="text-sm text-muted-foreground line-through">$249 membership</span>
+                  </div>
+                  <p className="text-xs text-gold font-lato">
+                    Save $100/month with Vitality Membership
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Bi-Est Cream */}
+              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="outline" className="text-feminine border-feminine/30">
+                      Women's HRT
+                    </Badge>
+                    <span className="text-xs text-muted-foreground font-lato">30-day fill</span>
+                  </div>
+                  <h3 className="text-xl font-cormorant text-foreground mb-1">Bi-Est Cream</h3>
+                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                    Bioidentical estrogen (estriol + estradiol)
+                  </p>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-3xl font-cormorant text-foreground">$89</span>
+                    <span className="text-sm text-muted-foreground line-through">$249 membership</span>
+                  </div>
+                  <p className="text-xs text-gold font-lato">
+                    Save with Vitality Membership (includes labs)
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Progesterone */}
+              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="outline" className="text-feminine border-feminine/30">
+                      Women's HRT
+                    </Badge>
+                    <span className="text-xs text-muted-foreground font-lato">30-day fill</span>
+                  </div>
+                  <h3 className="text-xl font-cormorant text-foreground mb-1">Progesterone</h3>
+                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                    Bioidentical progesterone capsules
+                  </p>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-3xl font-cormorant text-foreground">$79</span>
+                    <span className="text-sm text-muted-foreground line-through">$249 membership</span>
+                  </div>
+                  <p className="text-xs text-gold font-lato">
+                    Save with Vitality Membership (includes labs)
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Follow-up Consultation */}
+              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="outline" className="text-muted-foreground">
+                      Consultation
+                    </Badge>
+                    <span className="text-xs text-muted-foreground font-lato">30 minutes</span>
+                  </div>
+                  <h3 className="text-xl font-cormorant text-foreground mb-1">Follow-up Consult</h3>
+                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                    Video or in-person follow-up visit
+                  </p>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-3xl font-cormorant text-foreground">$99</span>
+                    <span className="text-sm text-muted-foreground">one-time</span>
+                  </div>
+                  <p className="text-xs text-gold font-lato">
+                    FREE with any active membership
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Lab Panel */}
+              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="outline" className="text-muted-foreground">
+                      Diagnostics
+                    </Badge>
+                    <span className="text-xs text-muted-foreground font-lato">Individual</span>
+                  </div>
+                  <h3 className="text-xl font-cormorant text-foreground mb-1">Lab Panel</h3>
+                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                    Comprehensive hormone or metabolic panel
+                  </p>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-3xl font-cormorant text-foreground">$149</span>
+                    <span className="text-sm text-muted-foreground">one-time</span>
+                  </div>
+                  <p className="text-xs text-gold font-lato">
+                    Quarterly labs included in membership
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Membership Savings CTA */}
+              <Card className="border-2 border-gold bg-gold/5 hover:bg-gold/10 transition-all">
+                <CardContent className="p-6 flex flex-col h-full justify-center text-center">
+                  <Sparkles className="w-8 h-8 text-gold mx-auto mb-4" />
+                  <h3 className="text-xl font-cormorant text-foreground mb-2">Save with Membership</h3>
+                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                    Vitality members save up to <span className="text-gold font-semibold">60%</span> compared to à la carte pricing
+                  </p>
+                  <Button 
+                    className="bg-gold hover:bg-gold-dark text-gold-foreground w-full"
+                    onClick={() => navigate("/pricing-comparison")}
+                  >
+                    Compare Pricing
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Comparison Banner */}
+            <div className="mt-10 max-w-4xl mx-auto bg-card rounded-xl border border-border p-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="text-center md:text-left">
+                  <h4 className="font-cormorant text-xl text-foreground mb-2">
+                    Annual Cost Comparison
+                  </h4>
+                  <p className="text-sm text-muted-foreground font-lato">
+                    See how much you could save with a Vitality Membership
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="text-center px-6 py-3 bg-secondary/50 rounded-lg">
+                    <p className="text-xs text-muted-foreground font-lato uppercase tracking-wide mb-1">À La Carte</p>
+                    <p className="text-2xl font-cormorant text-foreground">$4,500+</p>
+                    <p className="text-xs text-muted-foreground font-lato">/year</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gold hidden sm:block" />
+                  <div className="text-center px-6 py-3 bg-gold/10 border border-gold/30 rounded-lg">
+                    <p className="text-xs text-gold font-lato uppercase tracking-wide mb-1">Membership</p>
+                    <p className="text-2xl font-cormorant text-foreground">$2,988</p>
+                    <p className="text-xs text-muted-foreground font-lato">/year</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Dedicated Financing Section - Reduced padding + stronger borders */}
         <section className="py-12 lg:py-16 bg-gradient-to-b from-[#F5E6D3]/30 to-background">
