@@ -52,6 +52,7 @@ import PatientStatusCard from "@/components/provider/PatientStatusCard";
 import { SendKitLinkCard } from "@/components/provider/SendKitLinkCard";
 import MembershipAssignmentCard from "@/components/provider/MembershipAssignmentCard";
 import ProviderAssistant from "@/components/provider/ProviderAssistant";
+import OsmindInviteCard from "@/components/provider/OsmindInviteCard";
 
 interface Patient {
   id: string;
@@ -75,6 +76,9 @@ interface Patient {
   is_archived?: boolean;
   membership_tier?: string | null;
   membership_renewal_date?: string | null;
+  consent_sent_at?: string | null;
+  consent_completed_at?: string | null;
+  consent_method?: string | null;
 }
 
 interface SymptomLog {
@@ -2152,6 +2156,19 @@ const ProviderDashboard = () => {
                 patientEmail={selectedPatient.patient.email || ""}
                 patientPhone={selectedPatient.patient.phone || ""}
               />
+
+              {/* Osmind Invite Card - For Ketamine Patients */}
+              {selectedPatient.patient.treatment_request?.includes("ketamine") && (
+                <OsmindInviteCard
+                  patientId={selectedPatient.patient.id}
+                  patientName={selectedPatient.patient.full_name}
+                  patientEmail={selectedPatient.patient.email || ""}
+                  consentSentAt={selectedPatient.patient.consent_sent_at || null}
+                  consentCompletedAt={selectedPatient.patient.consent_completed_at || null}
+                  consentMethod={selectedPatient.patient.consent_method || null}
+                  onUpdate={() => loadData()}
+                />
+              )}
 
               {/* Pharmacy Order Card */}
               <PharmacyOrderCard

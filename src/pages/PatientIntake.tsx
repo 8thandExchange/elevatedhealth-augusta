@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight, CheckCircle, ShieldAlert, Loader2, User, Che
 import Navbar from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 import { PageLoader } from "@/components/ui/PageLoader";
+import ConsentStep from "@/components/patient/ConsentStep";
 
 interface Question {
   id: string;
@@ -138,6 +139,7 @@ const STEPS = [
   { id: "safety", label: "Safety" },
   { id: "medical", label: "History" },
   { id: "mentalWellness", label: "Mental Wellness" },
+  { id: "consent", label: "Consent" },
 ];
 
 const PatientIntake = () => {
@@ -145,7 +147,7 @@ const PatientIntake = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [patientInterests, setPatientInterests] = useState<string[]>([]);
   const [primaryProgram, setPrimaryProgram] = useState<string>("hormone");
-  const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical" | "mentalWellness">("profile");
+  const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical" | "mentalWellness" | "consent">("profile");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fullName, setFullName] = useState<string>("");
   const [gender, setGender] = useState<string>("");
@@ -234,6 +236,11 @@ const PatientIntake = () => {
     
     if (hasKetamineInterest) {
       steps.push({ id: "mentalWellness", label: "Mental Wellness" });
+    }
+    
+    // Consent step for hormone/weight loss patients (ketamine uses Osmind)
+    if (hasHormoneInterests && !hasKetamineInterest) {
+      steps.push({ id: "consent", label: "Consent" });
     }
     
     return steps;
@@ -340,7 +347,7 @@ const PatientIntake = () => {
     return { path: "zrt", panel: null, reason: null };
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (consentSignature?: string) => {
     setIsSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -429,6 +436,14 @@ const PatientIntake = () => {
         zip_code: zipCode.trim() || null,
         allergies: allergies.trim() || "NKDA",
       };
+
+      // Add consent data if signature provided (hormone/weight loss patients)
+      if (consentSignature) {
+        updateData.consent_signature = consentSignature;
+        updateData.consent_signature_date = new Date().toISOString();
+        updateData.consent_completed_at = new Date().toISOString();
+        updateData.consent_method = "internal";
+      }
 
       if (highRisk) {
         updateData.risk_status = "high_risk_review";
@@ -1033,14 +1048,32 @@ const PatientIntake = () => {
                     Continue
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
+                ) : hasHormoneInterests ? (
+                  <Button onClick={() => setStep("consent")} className="flex-1">
+                    Continue to Consent
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
                 ) : (
-                  <Button onClick={handleSubmit} disabled={isSubmitting} className="flex-1">
+                  <Button onClick={() => handleSubmit()} disabled={isSubmitting} className="flex-1">
                     {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />}
                     Submit Intake
                   </Button>
                 )}
               </div>
             </>
+          )}
+
+          {/* Consent Step - For Hormone/Weight Loss Patients */}
+          {step === "consent" && (
+            <ConsentStep
+              treatmentType={treatmentRequests.includes("weight_loss") ? "weight_loss" : "hormone"}
+              patientName={fullName}
+              onBack={() => setStep("medical")}
+              onSubmit={async (signature) => {
+                await handleSubmit(signature);
+              }}
+              isSubmitting={isSubmitting}
+            />
           )}
 
           {/* Mental Wellness Step - PHQ-9 and GAD-7 */}
@@ -1123,7 +1156,7 @@ const PatientIntake = () => {
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   Back
                 </Button>
-                <Button onClick={handleSubmit} disabled={isSubmitting} className="flex-1">
+                <Button onClick={() => handleSubmit()} disabled={isSubmitting} className="flex-1">
                   {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />}
                   Submit Intake
                 </Button>
