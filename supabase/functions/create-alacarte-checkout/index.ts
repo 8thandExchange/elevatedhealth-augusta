@@ -92,7 +92,7 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/payment-success?product=${product_key}`,
+      success_url: `${origin}/alacarte-success?product=${product_key}`,
       cancel_url: `${origin}/pricing`,
       metadata: {
         patient_id: patient_id || "",

@@ -173,3 +173,6 @@ verify_jwt = false
 
 [functions.create-alacarte-checkout]
 verify_jwt = false
+
+[functions.send-alacarte-payment-link]
+verify_jwt = false

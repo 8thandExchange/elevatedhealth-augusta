@@ -63,8 +63,8 @@ const AlaCartePaymentCard = ({
         setGeneratedLink(data.url);
         
         if (sendEmail) {
-          // Send email with payment link
-          const { error: emailError } = await supabase.functions.invoke("send-kit-payment-link", {
+          // Send email with payment link using dedicated à la carte email function
+          const { error: emailError } = await supabase.functions.invoke("send-alacarte-payment-link", {
             body: {
               patient_email: patientEmail,
               patient_name: patientName,

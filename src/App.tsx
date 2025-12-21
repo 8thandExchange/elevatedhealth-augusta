@@ -55,6 +55,7 @@ import MentalWellnessPage from "./pages/MentalWellnessPage";
 import HormoneJourneyPage from "./pages/HormoneJourneyPage";
 import IVPaymentSuccess from "./pages/IVPaymentSuccess";
 import Affordability from "./pages/Affordability";
+import AlaCartePaymentSuccess from "./pages/AlaCartePaymentSuccess";
 import ProviderLayout from "./components/provider/ProviderLayout";
 
 const queryClient = new QueryClient();
@@ -108,6 +109,7 @@ const App = () => (
           <Route path="/schedule-consult" element={<ScheduleConsult />} />
           <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
           <Route path="/iv-payment-success" element={<IVPaymentSuccess />} />
+          <Route path="/alacarte-success" element={<AlaCartePaymentSuccess />} />
           <Route path="/patient/create-account" element={<CreateAccount />} />
           
           {/* Protected Patient Routes */}
