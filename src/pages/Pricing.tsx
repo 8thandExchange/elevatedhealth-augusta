@@ -287,8 +287,7 @@ const Pricing = () => {
         </script>
       </Helmet>
 
-      <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
-      <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
+      <Navbar />
 
       <main id="main-content" className="min-h-screen bg-background">
 

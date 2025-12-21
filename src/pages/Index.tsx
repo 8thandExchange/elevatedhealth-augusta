@@ -24,7 +24,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <SEOSchema />
-      <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
+      <Navbar />
       <main>
         <Hero onOpenBooking={() => setIsBookingOpen(true)} />
         <FinancingBanner />
