@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check, Heart, Brain, Calendar, Phone, Mail } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
+import ConsultationModal from "@/components/ConsultationModal";
 import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
 
 type PrimaryProgram = "hormone" | "ketamine";
@@ -90,6 +91,7 @@ const PatientLogin = () => {
   const [createdPatientName, setCreatedPatientName] = useState("");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [confirmedNoneApply, setConfirmedNoneApply] = useState(false);
+  const [showConsultModal, setShowConsultModal] = useState(false);
   
   // Ref to prevent race conditions with navigation
   const hasNavigatedRef = useRef(false);
@@ -1206,6 +1208,20 @@ const PatientLogin = () => {
           </CardContent>
         </Card>
 
+        {/* New Patient CTA */}
+        <div className="mt-6 p-4 bg-gold/5 border border-gold/20 rounded-lg text-center">
+          <p className="text-sm text-muted-foreground mb-2">
+            Not a patient yet?
+          </p>
+          <Button 
+            variant="outline" 
+            className="border-gold text-gold hover:bg-gold hover:text-white"
+            onClick={() => setShowConsultModal(true)}
+          >
+            Book Your $99 Consultation
+          </Button>
+        </div>
+
         <div className="text-center mt-6">
           <Link 
             to="/" 
@@ -1215,6 +1231,11 @@ const PatientLogin = () => {
             Back to Website
           </Link>
         </div>
+
+        <ConsultationModal 
+          isOpen={showConsultModal} 
+          onClose={() => setShowConsultModal(false)} 
+        />
       </div>
     </div>
   );
