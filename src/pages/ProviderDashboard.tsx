@@ -2141,6 +2141,7 @@ const ProviderDashboard = () => {
                 patientId={selectedPatient.patient.id}
                 patientName={selectedPatient.patient.full_name}
                 patientEmail={selectedPatient.patient.email}
+                patientPhone={selectedPatient.patient.phone}
                 hasMembership={!!selectedPatient.patient.membership_tier}
               />
 

@@ -176,3 +176,6 @@ verify_jwt = false
 
 [functions.send-alacarte-payment-link]
 verify_jwt = false
+
+[functions.send-alacarte-payment-sms]
+verify_jwt = false
