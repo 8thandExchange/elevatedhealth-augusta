@@ -259,7 +259,7 @@ const HormonesWomen = () => {
         
         <main>
           {/* Gender Toggle */}
-          <div className="bg-card border-b sticky top-16 z-40">
+          <div className="bg-card border-b sticky top-[112px] z-40">
             <div className="container mx-auto px-4 py-3">
               <div className="flex justify-center gap-4">
                 <Button
@@ -697,15 +697,26 @@ const HormonesWomen = () => {
 
                 <Card className="shadow-2xl overflow-hidden">
                   <CardContent className="p-8 md:p-12">
-                    <div className="mb-8">
-                      <h3 className="text-2xl font-bold mb-6 text-center">Schedule Your $99 Consultation</h3>
-                      <div className="w-full h-[600px] rounded-lg overflow-hidden">
-                        <iframe 
-                          src="https://calendar.app.google/npnih9qTAXu5PKLX6"
-                          className="w-full h-full border-0"
-                          title="Book Women's Hormone Consultation"
-                        />
-                      </div>
+                    <div className="text-center mb-8">
+                      <h3 className="text-2xl font-bold mb-4">Book Your $99 Discovery Consultation</h3>
+                      <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
+                        Your $99 consultation fee is credited toward your labs or membership when you proceed with treatment.
+                      </p>
+                      <Button
+                        onClick={handleConsultationCheckout}
+                        disabled={isConsultationLoading}
+                        size="lg"
+                        className="bg-feminine hover:bg-feminine-light text-feminine-foreground text-lg px-10 py-7 shadow-lg"
+                      >
+                        {isConsultationLoading ? (
+                          "Processing..."
+                        ) : (
+                          <>
+                            <Calendar className="mr-2 h-5 w-5" />
+                            Pay $99 & Schedule Your Consultation
+                          </>
+                        )}
+                      </Button>
                     </div>
 
                     <div className="border-t pt-8">
@@ -716,7 +727,8 @@ const HormonesWomen = () => {
                         <Button
                           asChild
                           size="lg"
-                          className="bg-feminine hover:bg-feminine-light text-feminine-foreground text-lg px-8 py-6 w-full sm:w-auto"
+                          variant="outline"
+                          className="border-2 border-feminine hover:bg-feminine hover:text-feminine-foreground text-lg px-8 py-6 w-full sm:w-auto"
                         >
                           <a href={`tel:${SITE_CONFIG.phoneRaw}`}>
                             <Phone className="mr-2 h-5 w-5" />
