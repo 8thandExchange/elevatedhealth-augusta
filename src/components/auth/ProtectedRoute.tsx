@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import { Session } from "@supabase/supabase-js";
 import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,10 +13,9 @@ interface ProtectedRouteProps {
 const LOADING_TIMEOUT_MS = 10000; // 10 second timeout (increased for slow networks)
 
 const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  // Use undefined to distinguish "not loaded yet" from "no session" (null)
-  const [session, setSession] = useState<Session | null | undefined>(undefined);
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isLoading: authLoading, isLoggedIn, isProvider, session } = useAuth();
+  const [isValidating, setIsValidating] = useState(true);
+  const [isSessionValidated, setIsSessionValidated] = useState(false);
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
   const location = useLocation();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -24,12 +23,11 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
   // Timeout fallback - if loading takes too long, assume no valid session
   useEffect(() => {
     timeoutRef.current = setTimeout(() => {
-      if (isLoading || session === undefined) {
+      if (isValidating && !isSessionValidated) {
         console.warn("ProtectedRoute: Loading timeout reached, clearing auth");
         setLoadingTimedOut(true);
         clearAuthStorage();
-        setSession(null);
-        setIsLoading(false);
+        setIsValidating(false);
       }
     }, LOADING_TIMEOUT_MS);
 
@@ -40,79 +38,39 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
     };
   }, []);
 
+  // Validate session with server when auth context is ready
   useEffect(() => {
-    let isMounted = true;
-
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (!isMounted) return;
-        setSession(session);
-        if (session?.user) {
-          // Defer role check to avoid deadlock
-          setTimeout(() => {
-            if (isMounted) checkRole(session.user.id);
-          }, 0);
-        } else {
-          setIsAdmin(false);
-          setIsLoading(false);
-        }
-      }
-    );
-
-    // THEN validate the session with the server
+    if (authLoading) return;
+    
     const validateSession = async () => {
+      if (!isLoggedIn) {
+        setIsValidating(false);
+        setIsSessionValidated(false);
+        return;
+      }
+      
       const valid = await isSessionValid();
       
-      if (!isMounted) return;
-      
-      if (valid) {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        if (session?.user) {
-          checkRole(session.user.id);
-        } else {
-          setSession(null);
-          setIsLoading(false);
-        }
-      } else {
-        // Invalid session - clear any stale data
+      if (!valid) {
         clearAuthStorage();
-        setSession(null);
-        setIsLoading(false);
+        setIsSessionValidated(false);
+      } else {
+        setIsSessionValidated(true);
       }
-    };
-
-    validateSession();
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const checkRole = async (userId: string) => {
-    try {
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId);
-
-      const hasAdminRole = roles?.some(r => r.role === "admin" || r.role === "staff") || false;
-      setIsAdmin(hasAdminRole);
-    } catch (error) {
-      setIsAdmin(false);
-    } finally {
-      setIsLoading(false);
+      
+      setIsValidating(false);
+      
       // Clear timeout since we finished loading
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-    }
-  };
+    };
+
+    validateSession();
+  }, [authLoading, isLoggedIn]);
 
   // Still loading - show spinner (with timeout protection)
-  if ((isLoading || session === undefined) && !loadingTimedOut) {
+  if ((authLoading || isValidating) && !loadingTimedOut) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -120,14 +78,14 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
     );
   }
 
-  // Session is explicitly null (no session after loading) - redirect to login
-  if (session === null) {
+  // No valid session - redirect to login
+  if (!isLoggedIn || !isSessionValidated) {
     const redirectPath = requireAdmin ? "/admin/login" : "/patient/login";
     return <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 
-  // Has session but needs admin and isn't admin
-  if (requireAdmin && !isAdmin) {
+  // Has session but needs admin and isn't admin/provider
+  if (requireAdmin && !isProvider) {
     return <Navigate to="/patient/dashboard" replace />;
   }
 

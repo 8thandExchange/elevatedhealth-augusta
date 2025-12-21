@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import { supabase } from "@/integrations/supabase/client";
 import { IdleWarningModal } from "@/components/auth/IdleWarningModal";
 import { clearAuthStorage, clearServiceWorkerCache } from "@/lib/authUtils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SessionSecurityContextType {
   resetIdleTimer: () => void;
@@ -20,26 +21,15 @@ interface SessionSecurityProviderProps {
 }
 
 export const SessionSecurityProvider = ({ children }: SessionSecurityProviderProps) => {
+  const { logout, isLoggedIn } = useAuth();
   const [isIdle, setIsIdle] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(WARNING_DURATION_MS / 1000);
   const [lastActivity, setLastActivity] = useState(Date.now());
 
   const handleLogout = useCallback(async () => {
-    try {
-      await supabase.auth.signOut({ scope: 'local' });
-    } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      // Force clear storage
-      clearAuthStorage();
-      
-      // Clear service worker cache
-      await clearServiceWorkerCache();
-      
-      window.location.href = '/patient/login';
-    }
-  }, []);
+    await logout();
+  }, [logout]);
 
   const resetIdleTimer = useCallback(() => {
     setLastActivity(Date.now());
@@ -110,12 +100,10 @@ export const SessionSecurityProvider = ({ children }: SessionSecurityProviderPro
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible" && !showWarning) {
-        // User returned to tab - check if session is still valid
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          if (!session) {
-            window.location.href = '/patient/login';
-          }
-        });
+        // User returned to tab - check if session is still valid using context
+        if (!isLoggedIn) {
+          window.location.href = '/patient/login';
+        }
       }
     };
 
@@ -124,7 +112,7 @@ export const SessionSecurityProvider = ({ children }: SessionSecurityProviderPro
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [showWarning]);
+  }, [showWarning, isLoggedIn]);
 
   return (
     <SessionSecurityContext.Provider value={{ resetIdleTimer, isIdle, remainingTime }}>
