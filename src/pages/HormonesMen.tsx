@@ -110,27 +110,21 @@ const HormonesMen = () => {
   const howItWorks = [
     {
       step: 1,
-      icon: ClipboardList,
-      title: "Complete Your Evaluation",
-      description: "Fill out our comprehensive men's health assessment"
+      icon: Calendar,
+      title: "Book Your Consultation",
+      description: "$99 Discovery Call to discuss your goals and determine candidacy (credited toward labs)"
     },
     {
       step: 2,
       icon: TestTube,
-      title: "Lab Testing",
-      description: "Complete hormone panel including total/free testosterone, estradiol, thyroid"
+      title: "Hormone Mapping",
+      description: "ZRT comprehensive hormone panel to measure total/free testosterone, estradiol, and more"
     },
     {
       step: 3,
-      icon: UserCheck,
-      title: "Expert Consultation",
-      description: "Review results and create your personalized testosterone therapy plan"
-    },
-    {
-      step: 4,
       icon: TrendingUp,
-      title: "Treatment & Optimization",
-      description: "Begin therapy with regular monitoring and dose optimization"
+      title: "Start Your Membership",
+      description: "Begin the Concierge Membership with your personalized TRT protocol and ongoing support"
     }
   ];
 
@@ -354,7 +348,7 @@ const HormonesMen = () => {
                   </p>
                 </div>
                 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid md:grid-cols-3 gap-8">
                   {howItWorks.map((item, index) => {
                     const Icon = item.icon;
                     return (
