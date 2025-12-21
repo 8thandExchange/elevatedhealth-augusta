@@ -13,12 +13,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ConsultationModal from "./ConsultationModal";
 
-interface NavbarProps {
-  onOpenBooking?: () => void;
-}
-
-const Navbar = ({ onOpenBooking }: NavbarProps) => {
+const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
@@ -29,6 +26,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
   const [userName, setUserName] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isProvider, setIsProvider] = useState(false);
+  const [showConsultModal, setShowConsultModal] = useState(false);
 
   const getInitials = (name: string) => {
     return name
@@ -386,9 +384,7 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
             ) : null}
             <Button 
               className="font-lato font-normal text-sm tracking-wide px-6 py-2"
-              onClick={() => {
-                if (onOpenBooking) onOpenBooking();
-              }}
+              onClick={() => setShowConsultModal(true)}
             >
               Book Consultation
             </Button>
@@ -518,12 +514,11 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
               </button>
             </nav>
 
-            {/* Action Buttons */}
             <div className="mt-auto pt-8 space-y-3 border-t border-gray-200">
               <Button 
                 className="w-full font-lato text-sm tracking-wide py-6 bg-primary text-white"
                 onClick={() => {
-                  if (onOpenBooking) onOpenBooking();
+                  setShowConsultModal(true);
                   setIsMobileMenuOpen(false);
                 }}
               >
@@ -618,6 +613,11 @@ const Navbar = ({ onOpenBooking }: NavbarProps) => {
         </div>
       )}
       </nav>
+
+      <ConsultationModal 
+        isOpen={showConsultModal} 
+        onClose={() => setShowConsultModal(false)} 
+      />
     </>
   );
 };

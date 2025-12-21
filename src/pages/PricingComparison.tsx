@@ -95,8 +95,7 @@ const PricingComparison = () => {
         <link rel="canonical" href="https://elevatedhealthaugusta.com/pricing-comparison" />
       </Helmet>
 
-      <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
-      <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
+      <Navbar />
 
       <main className="min-h-screen bg-background">
         {/* Hero */}

@@ -66,7 +66,7 @@ const Ketamine = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
+        <Navbar />
         
         <main>
         {/* Hero Section - Neural Restoration */}

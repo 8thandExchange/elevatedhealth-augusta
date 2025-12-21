@@ -174,7 +174,7 @@ const IVLounge = () => {
         <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
-      <Navbar onOpenBooking={() => window.open(SITE_CONFIG.bookingLinks.iv, "_blank")} />
+      <Navbar />
 
       <main id="main-content" className="min-h-screen bg-background">
         {/* Hero Section */}

@@ -236,7 +236,7 @@ const WeightLoss = () => {
       </Helmet>
 
       <div className="min-h-screen">
-        <Navbar onOpenBooking={handleConsultationCheckout} />
+        <Navbar />
         
         <main>
           {/* Hero Section - Warm Alabaster with Golden Balance */}

@@ -142,7 +142,7 @@ const Hormones = () => {
       </Helmet>
 
       <div className="min-h-screen">
-        <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
+        <Navbar />
         
         <main>
           {/* Hero Section */}
