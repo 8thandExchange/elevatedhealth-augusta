@@ -33,6 +33,7 @@ import AlaCartePaymentCard from "@/components/provider/AlaCartePaymentCard";
 import PharmacyOrderCard from "@/components/provider/PharmacyOrderCard";
 import EditPatientProfileModal from "@/components/provider/EditPatientProfileModal";
 import InvitePatientCard from "@/components/provider/InvitePatientCard";
+import AddExistingPatientCard from "@/components/provider/AddExistingPatientCard";
 import SuperbillGenerator from "@/components/provider/SuperbillGenerator";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 import ProviderInbox from "@/components/chat/ProviderInbox";
@@ -1165,11 +1166,11 @@ const ProviderDashboard = () => {
             <PatientPipeline />
           </TabsContent>
 
-          {/* Triage Tab */}
           <TabsContent value="triage">
-            {/* Invite Patient Card */}
-            <div className="mb-6">
+            {/* Patient Add Options - Side by Side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <InvitePatientCard onInviteSent={() => loadData()} />
+              <AddExistingPatientCard onPatientAdded={() => loadData()} />
             </div>
             
             {/* Archive Toggle */}
