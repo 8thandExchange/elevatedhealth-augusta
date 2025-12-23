@@ -417,7 +417,7 @@ const Ketamine = () => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <p className="mt-6 text-sm text-primary-foreground/60 font-light">
-                  Have questions first? Call us at (762) 333-3018 or use our chat.
+                  Have questions first? Call us at {SITE_CONFIG.phone} or use our chat.
                 </p>
               </div>
             </div>
