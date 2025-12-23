@@ -55,6 +55,8 @@ import MembershipAssignmentCard from "@/components/provider/MembershipAssignment
 import ProviderAssistant from "@/components/provider/ProviderAssistant";
 import OsmindInviteCard from "@/components/provider/OsmindInviteCard";
 import ConsentPDFCard from "@/components/provider/ConsentPDFCard";
+import CreditCodeLookup from "@/components/provider/CreditCodeLookup";
+import ResendWelcomeEmailButton from "@/components/provider/ResendWelcomeEmailButton";
 
 interface Patient {
   id: string;
@@ -1168,9 +1170,10 @@ const ProviderDashboard = () => {
 
           <TabsContent value="triage">
             {/* Patient Add Options - Side by Side */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               <InvitePatientCard onInviteSent={() => loadData()} />
               <AddExistingPatientCard onPatientAdded={() => loadData()} />
+              <CreditCodeLookup />
             </div>
             
             {/* Archive Toggle */}
@@ -1831,6 +1834,17 @@ const ProviderDashboard = () => {
                     )}
                     {isSavingContact ? "Saving..." : "Save Contact Info"}
                   </Button>
+                  
+                  {/* Resend Welcome Email Button */}
+                  {selectedPatient.patient.email && (
+                    <div className="pt-2 border-t border-border/50 mt-3">
+                      <ResendWelcomeEmailButton
+                        patientName={selectedPatient.patient.full_name}
+                        patientEmail={selectedPatient.patient.email}
+                        primaryProgram={selectedPatient.patient.treatment_request || "hormone"}
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
