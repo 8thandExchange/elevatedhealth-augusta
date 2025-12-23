@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -10,9 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, UserCheck, Check, Users } from "lucide-react";
+import { Loader2, UserCheck, Check, Users, Mail, CreditCard, ChevronDown } from "lucide-react";
 
 interface AddExistingPatientCardProps {
   onPatientAdded?: () => void;
@@ -37,6 +43,9 @@ const AddExistingPatientCard = ({ onPatientAdded }: AddExistingPatientCardProps)
   const [phone, setPhone] = useState("");
   const [serviceType, setServiceType] = useState<string>("hormone");
   const [patientStatus, setPatientStatus] = useState<string>("existing_patient");
+  const [sendWelcomeEmail, setSendWelcomeEmail] = useState(true);
+  const [creditCode, setCreditCode] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -64,6 +73,8 @@ const AddExistingPatientCard = ({ onPatientAdded }: AddExistingPatientCardProps)
           patient_phone: phone.trim() || null,
           service_type: serviceType,
           patient_status: patientStatus,
+          send_welcome_email: sendWelcomeEmail,
+          credit_code: creditCode.trim() || null,
         },
       });
 
@@ -72,12 +83,22 @@ const AddExistingPatientCard = ({ onPatientAdded }: AddExistingPatientCardProps)
       if (data?.success) {
         setAdded(true);
         const statusLabel = PATIENT_STATUS_OPTIONS.find(s => s.value === patientStatus)?.label || "Patient";
-        toast.success(`${name} added as ${statusLabel}!`);
+        let successMessage = `${name} added as ${statusLabel}!`;
+        if (data.email_sent) {
+          successMessage += " Welcome email sent.";
+        }
+        if (data.credit_applied) {
+          successMessage += " Consultation credit applied.";
+        }
+        toast.success(successMessage);
         setEmail("");
         setName("");
         setPhone("");
         setServiceType("hormone");
         setPatientStatus("existing_patient");
+        setSendWelcomeEmail(true);
+        setCreditCode("");
+        setShowAdvanced(false);
         onPatientAdded?.();
         
         // Reset added state after 3 seconds
@@ -198,6 +219,61 @@ const AddExistingPatientCard = ({ onPatientAdded }: AddExistingPatientCardProps)
               </SelectContent>
             </Select>
           </div>
+
+          {/* Welcome Email Checkbox */}
+          <div className="flex items-center space-x-2 pt-1">
+            <Checkbox
+              id="send-welcome"
+              checked={sendWelcomeEmail}
+              onCheckedChange={(checked) => setSendWelcomeEmail(checked as boolean)}
+              disabled={isAdding}
+            />
+            <Label 
+              htmlFor="send-welcome" 
+              className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1.5"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              Send welcome email to patient
+            </Label>
+          </div>
+
+          {/* Advanced Options */}
+          <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between text-xs text-muted-foreground hover:text-foreground p-0 h-auto"
+                disabled={isAdding}
+              >
+                <span className="flex items-center gap-1.5">
+                  <CreditCard className="w-3.5 h-3.5" />
+                  Advanced Options
+                </span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-3 space-y-3">
+              <div className="bg-muted/30 rounded-lg p-3 border border-border/50">
+                <Label htmlFor="credit-code" className="text-xs text-muted-foreground">
+                  Apply Consultation Credit Code (Optional)
+                </Label>
+                <Input
+                  id="credit-code"
+                  type="text"
+                  value={creditCode}
+                  onChange={(e) => setCreditCode(e.target.value.toUpperCase())}
+                  placeholder="e.g., EH-ABC123"
+                  className="mt-1 font-mono"
+                  disabled={isAdding}
+                />
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  Enter a credit code if this patient previously paid for a $99 consultation.
+                  The $99 will be applied toward their Hormone Mapping Kit.
+                </p>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
 
         <Button
