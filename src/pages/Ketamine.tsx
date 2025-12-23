@@ -254,7 +254,7 @@ const Ketamine = () => {
                     Your Path to Healing
                   </p>
                   <h2 className="font-cormorant text-foreground mb-6">
-                    Three Steps to Neural Restoration
+                    Two Steps to Neural Restoration
                   </h2>
                   <p className="text-lg text-muted-foreground font-light">
                     A clear pathway from assessment to transformation.
@@ -306,56 +306,19 @@ const Ketamine = () => {
                     <div className="w-0.5 h-8 bg-gradient-to-b from-gold to-border" />
                   </div>
 
-                  {/* STEP 2 - Neurotransmitter Analysis (Optional) */}
-                  <Card className="relative bg-card rounded-2xl border border-border/50 p-8 shadow-sm opacity-90">
-                    <div className="flex items-start gap-6">
-                      <div className="flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center font-cormorant text-lg">
-                          2
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="inline-block mb-3 px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs font-lato">
-                          Step 2: Brain Chemistry Mapping (Optional)
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                          <div>
-                            <h3 className="text-xl font-cormorant text-foreground mb-1">
-                              Neurotransmitter Analysis
-                            </h3>
-                            <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                              Optional ZRT urine panel measuring Serotonin, Dopamine, and GABA levels to help fine-tune your ketamine protocol for optimal results.
-                            </p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <span className="text-3xl font-cormorant text-foreground">$399</span>
-                            <p className="text-xs text-muted-foreground">one-time</p>
-                          </div>
-                        </div>
-                        <div className="mt-4 flex items-center gap-2 text-muted-foreground">
-                          <TestTube className="w-5 h-5" />
-                          <span className="text-xs font-lato">Unlocked after Step 1 — Enhances protocol precision</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
+                  {/* TEMPORARILY HIDDEN - Neurotransmitter Analysis step removed, only offering Hormone Mapping Kit */}
 
-                  {/* Connecting Line */}
-                  <div className="flex justify-start ml-[1.4rem]">
-                    <div className="w-0.5 h-8 bg-gradient-to-b from-border to-gold" />
-                  </div>
-
-                  {/* STEP 3 - Treatment Protocol */}
+                  {/* STEP 2 - Treatment Protocol */}
                   <Card className="relative bg-card rounded-2xl border-2 border-gold/50 p-8 shadow-lg">
                     <div className="flex items-start gap-6">
                       <div className="flex flex-col items-center">
                         <div className="w-12 h-12 rounded-full bg-gold text-white flex items-center justify-center font-cormorant text-lg">
-                          3
+                          2
                         </div>
                       </div>
                       <div className="flex-1">
                         <div className="inline-block mb-3 px-3 py-1 bg-gold/10 text-gold rounded-full text-xs font-lato">
-                          Step 3: Treatment
+                          Step 2: Treatment
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>

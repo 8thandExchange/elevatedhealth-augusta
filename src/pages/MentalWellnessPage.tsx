@@ -6,19 +6,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Brain, ArrowLeft, Sparkles, ArrowRight, BookOpen } from "lucide-react";
 import MindCareCard from "@/components/patient/MindCareCard";
-import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard";
+// import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard"; // TEMPORARILY HIDDEN
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
 
-interface NeurotransmitterPayment {
-  id: string;
-  kit_status: string;
-  tracking_number: string | null;
-  shipped_at: string | null;
-  sample_received_at: string | null;
-  results_ready_at: string | null;
-}
+// TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+// interface NeurotransmitterPayment {
+//   id: string;
+//   kit_status: string;
+//   tracking_number: string | null;
+//   shipped_at: string | null;
+//   sample_received_at: string | null;
+//   results_ready_at: string | null;
+// }
 
 interface Patient {
   id: string;
@@ -32,36 +33,21 @@ const MentalWellnessPage = () => {
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [neuroPayment, setNeuroPayment] = useState<NeurotransmitterPayment | null>(null);
+  // const [neuroPayment, setNeuroPayment] = useState<NeurotransmitterPayment | null>(null); // TEMPORARILY HIDDEN
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   useEffect(() => {
     loadData();
     
-    // Check for neurotransmitter payment success
-    const sessionId = searchParams.get("session_id");
-    if (searchParams.get("neurotransmitter") === "success" && sessionId) {
-      verifyNeurotransmitterPayment(sessionId);
-    }
+    // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+    // const sessionId = searchParams.get("session_id");
+    // if (searchParams.get("neurotransmitter") === "success" && sessionId) {
+    //   verifyNeurotransmitterPayment(sessionId);
+    // }
   }, []);
 
-  const verifyNeurotransmitterPayment = async (sessionId: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-neurotransmitter-payment', {
-        body: { sessionId }
-      });
-      
-      if (error) throw error;
-      
-      if (data?.verified) {
-        toast.success("Neurotransmitter Analysis purchased! Your kit will ship within 3-5 business days.");
-        loadData();
-      }
-    } catch (err) {
-      console.error('Payment verification error:', err);
-      toast.success("Payment received! Your kit will ship soon.");
-    }
-  };
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // const verifyNeurotransmitterPayment = async (sessionId: string) => { ... };
 
   const loadData = async () => {
     try {
@@ -82,17 +68,16 @@ const MentalWellnessPage = () => {
 
       setPatient(patientData);
 
-      // Fetch neurotransmitter payment
-      const { data: neuroData } = await supabase
-        .from("neurotransmitter_payments")
-        .select("id, kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
-        .eq("patient_id", patientData.id)
-        .eq("payment_status", "paid")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      setNeuroPayment(neuroData);
+      // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+      // const { data: neuroData } = await supabase
+      //   .from("neurotransmitter_payments")
+      //   .select("id, kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
+      //   .eq("patient_id", patientData.id)
+      //   .eq("payment_status", "paid")
+      //   .order("created_at", { ascending: false })
+      //   .limit(1)
+      //   .maybeSingle();
+      // setNeuroPayment(neuroData);
     } catch (error: any) {
       toast.error(error.message || "Failed to load data");
     } finally {
@@ -141,13 +126,13 @@ const MentalWellnessPage = () => {
         {/* Mind Care Card - Osmind Portal */}
         <MindCareCard />
 
-        {/* Neurotransmitter Analysis Add-on */}
-        <NeurotransmitterCard 
+        {/* TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now */}
+        {/* <NeurotransmitterCard 
           patientEmail={patient?.email || undefined}
           patientName={patient?.full_name}
           patientId={patient?.id}
           existingPayment={neuroPayment}
-        />
+        /> */}
 
         {/* Treatment Journey Info */}
         <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">

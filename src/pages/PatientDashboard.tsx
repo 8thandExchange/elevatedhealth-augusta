@@ -14,7 +14,7 @@ import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import KitTracker from "@/components/patient/KitTracker";
 import MindCareCard from "@/components/patient/MindCareCard";
-import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard";
+// import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard"; // TEMPORARILY HIDDEN
 import SafetyGate from "@/components/patient/SafetyGate";
 import MinimalPatientHeader from "@/components/patient/MinimalPatientHeader";
 import BottomTabBar from "@/components/patient/BottomTabBar";
@@ -30,16 +30,16 @@ import {
   useLatestOrder, 
   useKitTracking, 
   useLatestLabResult,
-  useNeurotransmitterPayment,
-  useMetabolicPayment,
+  // useNeurotransmitterPayment, // TEMPORARILY HIDDEN
+  // useMetabolicPayment, // TEMPORARILY HIDDEN
   useCreateOrder,
   useInvalidatePatientData,
   Patient,
   SymptomLog,
   Order,
   KitTracking as KitTrackingType,
-  NeurotransmitterPayment,
-  MetabolicPayment,
+  // NeurotransmitterPayment, // TEMPORARILY HIDDEN
+  // MetabolicPayment, // TEMPORARILY HIDDEN
   LabResult
 } from "@/hooks/usePatient";
 
@@ -55,64 +55,33 @@ const PatientDashboard = () => {
   const { data: latestOrder } = useLatestOrder(patient?.id);
   const { data: kitTracking } = useKitTracking(patient?.id);
   const { data: labResult } = useLatestLabResult(patient?.id);
-  const { data: neuroPayment } = useNeurotransmitterPayment(
-    patient?.primary_program === "ketamine" ? patient?.id : undefined
-  );
-  const { data: metabolicPayment } = useMetabolicPayment(
-    (patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) 
-      ? patient?.id 
-      : undefined
-  );
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // const { data: neuroPayment } = useNeurotransmitterPayment(
+  //   patient?.primary_program === "ketamine" ? patient?.id : undefined
+  // );
+  // const { data: metabolicPayment } = useMetabolicPayment(
+  //   (patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) 
+  //     ? patient?.id 
+  //     : undefined
+  // );
   
   const createOrderMutation = useCreateOrder();
-  const { invalidateAll, invalidateNeurotransmitterPayment, invalidateMetabolicPayment } = useInvalidatePatientData();
+  const { invalidateAll } = useInvalidatePatientData();
 
-  // Handle payment verification on mount
-  useEffect(() => {
-    const sessionId = searchParams.get("session_id");
-    if (searchParams.get("neurotransmitter") === "success" && sessionId) {
-      verifyNeurotransmitterPayment(sessionId);
-    }
-    if (searchParams.get("metabolic") === "success" && sessionId) {
-      verifyMetabolicPayment(sessionId);
-    }
-  }, [searchParams]);
+  // TEMPORARILY HIDDEN - Payment verification for kits we're not currently offering
+  // useEffect(() => {
+  //   const sessionId = searchParams.get("session_id");
+  //   if (searchParams.get("neurotransmitter") === "success" && sessionId) {
+  //     verifyNeurotransmitterPayment(sessionId);
+  //   }
+  //   if (searchParams.get("metabolic") === "success" && sessionId) {
+  //     verifyMetabolicPayment(sessionId);
+  //   }
+  // }, [searchParams]);
 
-  const verifyNeurotransmitterPayment = async (sessionId: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-neurotransmitter-payment', {
-        body: { sessionId }
-      });
-      if (error) throw error;
-      if (data?.verified) {
-        toast.success("Neurotransmitter Analysis purchased! Your kit will ship within 3-5 business days.");
-        if (patient?.id) {
-          invalidateNeurotransmitterPayment(patient.id);
-        }
-      }
-    } catch (err) {
-      console.error('Payment verification error:', err);
-      toast.success("Payment received! Your kit will ship soon.");
-    }
-  };
-
-  const verifyMetabolicPayment = async (sessionId: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-metabolic-payment', {
-        body: { sessionId }
-      });
-      if (error) throw error;
-      if (data?.verified) {
-        toast.success("Metabolic Architecture Kit purchased! Your kit will ship within 3-5 business days.");
-        if (patient?.id) {
-          invalidateMetabolicPayment(patient.id);
-        }
-      }
-    } catch (err) {
-      console.error('Payment verification error:', err);
-      toast.success("Payment received! Your kit will ship soon.");
-    }
-  };
+  // TEMPORARILY HIDDEN - Verification functions for kits we're not currently offering
+  // const verifyNeurotransmitterPayment = async (sessionId: string) => { ... };
+  // const verifyMetabolicPayment = async (sessionId: string) => { ... };
 
   const handleRequestReview = async () => {
     if (!patient || !latestLog) return;
@@ -294,14 +263,15 @@ const PatientDashboard = () => {
               <MindCareCard />
             </AnimatedCard>
 
-            <AnimatedCard delay={200} animation="fadeUp">
+            {/* TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now */}
+            {/* <AnimatedCard delay={200} animation="fadeUp">
               <NeurotransmitterCard 
                 patientEmail={patient.email || undefined}
                 patientName={patient.full_name}
                 patientId={patient.id}
                 existingPayment={neuroPayment}
               />
-            </AnimatedCard>
+            </AnimatedCard> */}
 
             <AnimatedCard delay={300} animation="scaleIn">
               <Card className="bg-card border-border/50 rounded-2xl overflow-hidden">

@@ -41,44 +41,45 @@ export const DIAGNOSTIC_KIT_PRICES = {
     mode: "payment" as const,
     edgeFunction: "create-hormone-checkout",
   },
-  metabolic: {
-    priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
-    amount: 34900, // $349
-    displayPrice: "$349",
-    name: "Metabolic Mapping Kit",
-    description: "ZRT Weight Management Profile - Comprehensive metabolic panel + lab review consultation",
-    zrtPanel: "weight_management",
-    mode: "payment" as const,
-    edgeFunction: "create-hormone-checkout",
-  },
-  neurotransmitter: {
-    priceId: null, // Uses price_data at $399
-    amount: 39900, // $399
-    displayPrice: "$399",
-    name: "Neurotransmitter Analysis Kit",
-    description: "ZRT Neurotransmitter Profile - Comprehensive brain chemistry analysis",
-    zrtPanel: "neurotransmitter",
-    mode: "payment" as const,
-    edgeFunction: "create-neurotransmitter-checkout",
-  },
-  toxicity: {
-    priceId: null, // Uses price_data at $299
-    amount: 29900, // $299
-    displayPrice: "$299",
-    name: "Toxicity Panel Kit",
-    description: "Heavy metals and environmental toxin analysis",
-    mode: "payment" as const,
-    edgeFunction: "create-toxicity-checkout",
-  },
-  totalBody: {
-    priceId: null, // Uses price_data at $999
-    amount: 99900, // $999
-    displayPrice: "$999",
-    name: "The Elevated Architecture™ Protocol",
-    description: "Complete diagnostic workup with hormones, metabolic, neurotransmitter, and toxicity panels",
-    mode: "payment" as const,
-    edgeFunction: "create-total-body-checkout",
-  },
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // metabolic: {
+  //   priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
+  //   amount: 34900, // $349
+  //   displayPrice: "$349",
+  //   name: "Metabolic Mapping Kit",
+  //   description: "ZRT Weight Management Profile - Comprehensive metabolic panel + lab review consultation",
+  //   zrtPanel: "weight_management",
+  //   mode: "payment" as const,
+  //   edgeFunction: "create-hormone-checkout",
+  // },
+  // neurotransmitter: {
+  //   priceId: null, // Uses price_data at $399
+  //   amount: 39900, // $399
+  //   displayPrice: "$399",
+  //   name: "Neurotransmitter Analysis Kit",
+  //   description: "ZRT Neurotransmitter Profile - Comprehensive brain chemistry analysis",
+  //   zrtPanel: "neurotransmitter",
+  //   mode: "payment" as const,
+  //   edgeFunction: "create-neurotransmitter-checkout",
+  // },
+  // toxicity: {
+  //   priceId: null, // Uses price_data at $299
+  //   amount: 29900, // $299
+  //   displayPrice: "$299",
+  //   name: "Toxicity Panel Kit",
+  //   description: "Heavy metals and environmental toxin analysis",
+  //   mode: "payment" as const,
+  //   edgeFunction: "create-toxicity-checkout",
+  // },
+  // totalBody: {
+  //   priceId: null, // Uses price_data at $999
+  //   amount: 99900, // $999
+  //   displayPrice: "$999",
+  //   name: "The Elevated Architecture™ Protocol",
+  //   description: "Complete diagnostic workup with hormones, metabolic, neurotransmitter, and toxicity panels",
+  //   mode: "payment" as const,
+  //   edgeFunction: "create-total-body-checkout",
+  // },
 } as const;
 
 // ============================================================================
@@ -322,15 +323,16 @@ export const PROVIDER_KIT_PRICES = {
     description: "ZRT Saliva Profile III - Comprehensive at-home saliva test kit + lab review consultation",
     edgeFunction: "send-kit-payment-link",
   },
-  metabolic: {
-    priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
-    fullPrice: 34900, // $349
-    creditPrice: 25000, // $250 after $99 credit
-    displayPrice: "$349 (or $250 with credit)",
-    name: "Metabolic Mapping Kit",
-    description: "ZRT Weight Management Profile - Comprehensive metabolic panel + lab review consultation",
-    edgeFunction: "send-kit-payment-link",
-  },
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // metabolic: {
+  //   priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
+  //   fullPrice: 34900, // $349
+  //   creditPrice: 25000, // $250 after $99 credit
+  //   displayPrice: "$349 (or $250 with credit)",
+  //   name: "Metabolic Mapping Kit",
+  //   description: "ZRT Weight Management Profile - Comprehensive metabolic panel + lab review consultation",
+  //   edgeFunction: "send-kit-payment-link",
+  // },
 } as const;
 
 // ============================================================================
@@ -364,7 +366,7 @@ export const getAllPriceIds = (): string[] => {
   ];
   
   return allPrices
-    .map((p) => p.priceId)
+    .map((p) => p.priceId as string | null)
     .filter((id): id is string => id !== null);
 };
 

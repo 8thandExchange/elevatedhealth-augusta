@@ -150,35 +150,37 @@ const HealthOverview = ({
   const scores = [hormonalScore, metabolicScore, brainScore, toxicityScore, nutrientScore].filter(s => s !== null) as number[];
   const overallScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
 
-  const handleUnlockToxicity = async () => {
-    setLoadingCheckout('toxicity');
-    try {
-      const { data, error } = await supabase.functions.invoke('create-toxicity-checkout', {
-        body: { patientId, patientEmail, patientName }
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch {
-      toast.error('Failed to start checkout');
-    } finally {
-      setLoadingCheckout(null);
-    }
-  };
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // const handleUnlockToxicity = async () => {
+  //   setLoadingCheckout('toxicity');
+  //   try {
+  //     const { data, error } = await supabase.functions.invoke('create-toxicity-checkout', {
+  //       body: { patientId, patientEmail, patientName }
+  //     });
+  //     if (error) throw error;
+  //     if (data?.url) window.open(data.url, '_blank');
+  //   } catch {
+  //     toast.error('Failed to start checkout');
+  //   } finally {
+  //     setLoadingCheckout(null);
+  //   }
+  // };
 
-  const handleUnlockBundle = async () => {
-    setLoadingCheckout('bundle');
-    try {
-      const { data, error } = await supabase.functions.invoke('create-total-body-checkout', {
-        body: { patientId, patientEmail, patientName }
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch {
-      toast.error('Failed to start checkout');
-    } finally {
-      setLoadingCheckout(null);
-    }
-  };
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // const handleUnlockBundle = async () => {
+  //   setLoadingCheckout('bundle');
+  //   try {
+  //     const { data, error } = await supabase.functions.invoke('create-total-body-checkout', {
+  //       body: { patientId, patientEmail, patientName }
+  //     });
+  //     if (error) throw error;
+  //     if (data?.url) window.open(data.url, '_blank');
+  //   } catch {
+  //     toast.error('Failed to start checkout');
+  //   } finally {
+  //     setLoadingCheckout(null);
+  //   }
+  // };
 
   return (
     <div className="bg-card rounded-2xl border border-border/50 overflow-hidden">
@@ -221,8 +223,9 @@ const HealthOverview = ({
             score={hasToxicityPayment || hasElevatedArchitecturePayment ? toxicityScore : null}
             label="Toxicity"
             unlockPrice={299}
-            onUnlock={handleUnlockToxicity}
-            isLoading={loadingCheckout === 'toxicity'}
+            // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+            // onUnlock={handleUnlockToxicity}
+            // isLoading={loadingCheckout === 'toxicity'}
           />
           <HealthPillarRing
             pillar="nutrient"
@@ -233,28 +236,13 @@ const HealthOverview = ({
         </div>
       </div>
 
-      {/* Bundle Promo */}
-      {!hasElevatedArchitecturePayment && (
+      {/* TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now */}
+      {/* Bundle Promo - Elevated Architecture Protocol */}
+      {/* {!hasElevatedArchitecturePayment && (
         <div className="mx-4 mb-4 p-4 rounded-xl bg-gradient-to-r from-primary/5 via-gold/5 to-primary/5 border border-gold/20">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-gold shrink-0" />
-              <div>
-                <p className="text-sm font-inter font-semibold text-foreground">Unlock All Pillars</p>
-                <p className="text-xs text-muted-foreground">The Elevated Architecture™ Protocol</p>
-              </div>
-            </div>
-            <Button
-              size="sm"
-              onClick={handleUnlockBundle}
-              disabled={loadingCheckout === 'bundle'}
-              className="bg-gold hover:bg-gold-dark text-primary-foreground font-inter text-xs h-8"
-            >
-              {loadingCheckout === 'bundle' ? '...' : '$999'}
-            </Button>
-          </div>
+          ...
         </div>
-      )}
+      )} */}
     </div>
   );
 };

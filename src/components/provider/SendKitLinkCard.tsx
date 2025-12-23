@@ -23,15 +23,16 @@ const KIT_OPTIONS = [
     name: "Hormone Mapping Kit",
     fullPrice: 349,
     creditPrice: 250, // After $99 credit
-    description: "ZRT Saliva+Blood Panel - For hormone optimization patients",
+    description: "ZRT Saliva Profile III - Cortisol, DHEA-S, Estradiol, Progesterone & Testosterone",
   },
-  {
-    id: "metabolic",
-    name: "Metabolic Mapping Kit", 
-    fullPrice: 349,
-    creditPrice: 250, // After $99 credit
-    description: "ZRT Saliva+Blood Panel - For weight loss patients",
-  },
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // {
+  //   id: "metabolic",
+  //   name: "Metabolic Mapping Kit", 
+  //   fullPrice: 349,
+  //   creditPrice: 250, // After $99 credit
+  //   description: "ZRT Weight Management Profile - For weight loss patients",
+  // },
 ];
 
 export function SendKitLinkCard({

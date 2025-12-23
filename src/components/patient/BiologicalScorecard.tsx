@@ -217,41 +217,43 @@ const BiologicalScorecard = ({
   const scores = [hormonalScore, metabolicScore, brainScore, toxicityScore, nutrientScore].filter(s => s !== null) as number[];
   const overallScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
 
-  const handleUnlockToxicity = async () => {
-    setLoadingCheckout('toxicity');
-    try {
-      const { data, error } = await supabase.functions.invoke('create-toxicity-checkout', {
-        body: { patientId, patientEmail, patientName }
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (err) {
-      console.error('Checkout error:', err);
-      toast.error('Failed to start checkout');
-    } finally {
-      setLoadingCheckout(null);
-    }
-  };
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // const handleUnlockToxicity = async () => {
+  //   setLoadingCheckout('toxicity');
+  //   try {
+  //     const { data, error } = await supabase.functions.invoke('create-toxicity-checkout', {
+  //       body: { patientId, patientEmail, patientName }
+  //     });
+  //     if (error) throw error;
+  //     if (data?.url) {
+  //       window.open(data.url, '_blank');
+  //     }
+  //   } catch (err) {
+  //     console.error('Checkout error:', err);
+  //     toast.error('Failed to start checkout');
+  //   } finally {
+  //     setLoadingCheckout(null);
+  //   }
+  // };
 
-  const handleUnlockBundle = async () => {
-    setLoadingCheckout('bundle');
-    try {
-      const { data, error } = await supabase.functions.invoke('create-total-body-checkout', {
-        body: { patientId, patientEmail, patientName }
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (err) {
-      console.error('Checkout error:', err);
-      toast.error('Failed to start checkout');
-    } finally {
-      setLoadingCheckout(null);
-    }
-  };
+  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+  // const handleUnlockBundle = async () => {
+  //   setLoadingCheckout('bundle');
+  //   try {
+  //     const { data, error } = await supabase.functions.invoke('create-total-body-checkout', {
+  //       body: { patientId, patientEmail, patientName }
+  //     });
+  //     if (error) throw error;
+  //     if (data?.url) {
+  //       window.open(data.url, '_blank');
+  //     }
+  //   } catch (err) {
+  //     console.error('Checkout error:', err);
+  //     toast.error('Failed to start checkout');
+  //   } finally {
+  //     setLoadingCheckout(null);
+  //   }
+  // };
 
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-card to-card/80">
@@ -298,8 +300,9 @@ const BiologicalScorecard = ({
             score={hasToxicityPayment || hasElevatedArchitecturePayment ? toxicityScore : null}
             label="Toxicity Load"
             unlockPrice={299}
-            onUnlock={handleUnlockToxicity}
-            isLoading={loadingCheckout === 'toxicity'}
+            // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
+            // onUnlock={handleUnlockToxicity}
+            // isLoading={loadingCheckout === 'toxicity'}
           />
           <PillarRing
             pillar="nutrient"
@@ -309,30 +312,13 @@ const BiologicalScorecard = ({
           />
         </div>
 
+        {/* TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now */}
         {/* Elevated Architecture Bundle Promo */}
-        {!hasElevatedArchitecturePayment && (
+        {/* {!hasElevatedArchitecturePayment && (
           <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 p-4 border border-primary/20">
-            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
-            <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h4 className="font-semibold text-foreground flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  The Elevated Architecture™ Protocol
-                </h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Complete analysis: Hormones + Metabolism + Heavy Metals. Unlock all 5 pillars.
-                </p>
-              </div>
-              <Button
-                onClick={handleUnlockBundle}
-                disabled={loadingCheckout === 'bundle'}
-                className="shrink-0 bg-primary hover:bg-primary/90"
-              >
-                {loadingCheckout === 'bundle' ? 'Loading...' : 'Unlock All — $999'}
-              </Button>
-            </div>
+            ...
           </div>
-        )}
+        )} */}
       </CardContent>
     </Card>
   );
