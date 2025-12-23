@@ -61,6 +61,7 @@ import IVPaymentSuccess from "./pages/IVPaymentSuccess";
 import Affordability from "./pages/Affordability";
 import AlaCartePaymentSuccess from "./pages/AlaCartePaymentSuccess";
 import ProviderLayout from "./components/provider/ProviderLayout";
+import StaffPricingCheatsheet from "./pages/StaffPricingCheatsheet";
 
 const queryClient = new QueryClient();
 
@@ -126,6 +127,7 @@ const App = () => (
           <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
           <Route path="/iv-payment-success" element={<IVPaymentSuccess />} />
           <Route path="/alacarte-success" element={<AlaCartePaymentSuccess />} />
+          <Route path="/staff-pricing-cheatsheet" element={<StaffPricingCheatsheet />} />
           <Route path="/patient/create-account" element={<CreateAccount />} />
           
           {/* Protected Patient Routes */}
