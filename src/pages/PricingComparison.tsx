@@ -288,6 +288,128 @@ const PricingComparison = () => {
                 </div>
               </div>
             )}
+
+            {/* What's Included Comparison Table */}
+            <div className="max-w-5xl mx-auto mt-12">
+              <h2 className="text-2xl md:text-3xl font-cormorant text-center mb-8">
+                What's <span className="text-gold">Included</span>
+              </h2>
+              
+              <Card className="overflow-hidden">
+                <div className="grid grid-cols-3 bg-secondary/50 border-b">
+                  <div className="p-4 font-medium text-muted-foreground text-sm">Feature</div>
+                  <div className="p-4 font-medium text-primary text-sm text-center border-l">
+                    <div className="flex items-center justify-center gap-2">
+                      <Crown className="w-4 h-4" />
+                      Membership
+                    </div>
+                  </div>
+                  <div className="p-4 font-medium text-amber-600 text-sm text-center border-l">
+                    <div className="flex items-center justify-center gap-2">
+                      <ShoppingBag className="w-4 h-4" />
+                      À La Carte
+                    </div>
+                  </div>
+                </div>
+
+                {/* Medications Section */}
+                <div className="border-b">
+                  <div className="grid grid-cols-3 bg-secondary/20">
+                    <div className="p-3 font-medium text-sm flex items-center gap-2 col-span-3">
+                      <Pill className="w-4 h-4 text-primary" />
+                      Medications
+                    </div>
+                  </div>
+                  {[
+                    { name: "Testosterone Cream", price: "$149/fill" },
+                    { name: "Bi-Est Cream", price: "$89/mo" },
+                    { name: "Progesterone", price: "$79/mo" },
+                  ].map((med) => (
+                    <div key={med.name} className="grid grid-cols-3 border-t">
+                      <div className="p-3 text-sm text-muted-foreground">{med.name}</div>
+                      <div className="p-3 text-center border-l">
+                        <div className="flex items-center justify-center gap-1.5 text-primary">
+                          <Check className="w-4 h-4" />
+                          <span className="text-sm">Included</span>
+                        </div>
+                      </div>
+                      <div className="p-3 text-center border-l">
+                        <span className="text-sm text-amber-600 font-medium">{med.price}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Labs & Testing Section */}
+                <div className="border-b">
+                  <div className="grid grid-cols-3 bg-secondary/20">
+                    <div className="p-3 font-medium text-sm flex items-center gap-2 col-span-3">
+                      <TestTube className="w-4 h-4 text-primary" />
+                      Labs & Testing
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 border-t">
+                    <div className="p-3 text-sm text-muted-foreground">Initial Diagnostic Kit</div>
+                    <div className="p-3 text-center border-l">
+                      <span className="text-sm text-primary font-medium">$250</span>
+                      <span className="text-xs text-muted-foreground block">(after credit)</span>
+                    </div>
+                    <div className="p-3 text-center border-l">
+                      <span className="text-sm text-amber-600 font-medium">$349</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 border-t">
+                    <div className="p-3 text-sm text-muted-foreground">Quarterly Lab Panels</div>
+                    <div className="p-3 text-center border-l">
+                      <div className="flex items-center justify-center gap-1.5 text-primary">
+                        <Check className="w-4 h-4" />
+                        <span className="text-sm">4/year</span>
+                      </div>
+                    </div>
+                    <div className="p-3 text-center border-l">
+                      <span className="text-sm text-amber-600 font-medium">$149/panel</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Care & Support Section */}
+                <div>
+                  <div className="grid grid-cols-3 bg-secondary/20">
+                    <div className="p-3 font-medium text-sm flex items-center gap-2 col-span-3">
+                      <MessageSquare className="w-4 h-4 text-primary" />
+                      Care & Support
+                    </div>
+                  </div>
+                  {[
+                    { name: "Unlimited Provider Messaging", membership: true, alacarte: null },
+                    { name: "Follow-up Consultations", membership: true, alacarte: "$99/visit" },
+                    { name: "Priority Scheduling", membership: true, alacarte: null },
+                    { name: "Weekly Symptom Check-ins", membership: true, alacarte: null },
+                    { name: "Protocol Adjustments", membership: true, alacarte: "Additional fee" },
+                  ].map((feature) => (
+                    <div key={feature.name} className="grid grid-cols-3 border-t">
+                      <div className="p-3 text-sm text-muted-foreground">{feature.name}</div>
+                      <div className="p-3 text-center border-l">
+                        <div className="flex items-center justify-center gap-1.5 text-primary">
+                          <Check className="w-4 h-4" />
+                          <span className="text-sm">Included</span>
+                        </div>
+                      </div>
+                      <div className="p-3 text-center border-l">
+                        {feature.alacarte ? (
+                          <span className="text-sm text-amber-600 font-medium">{feature.alacarte}</span>
+                        ) : (
+                          <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
+                            <X className="w-4 h-4" />
+                            <span className="text-sm">Not available</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
           </div>
         </section>
 
