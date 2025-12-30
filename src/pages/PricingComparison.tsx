@@ -273,16 +273,16 @@ const PricingComparison = () => {
 
             {/* Savings Banner */}
             {savings > 0 && (
-              <div className="max-w-5xl mx-auto mt-8">
-                <div className="bg-gradient-to-r from-primary/20 to-gold/20 rounded-xl p-6 text-center">
+              <div className="max-w-5xl mx-auto mt-6 md:mt-8">
+                <div className="bg-gradient-to-r from-primary/20 to-gold/20 rounded-xl p-4 md:p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
-                    <TrendingUp className="w-6 h-6 text-primary" />
-                    <span className="text-lg font-medium text-foreground">Membership Saves You</span>
+                    <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                    <span className="text-base md:text-lg font-medium text-foreground">Membership Saves You</span>
                   </div>
-                  <p className="text-4xl font-cormorant text-primary">
-                    ${savings.toLocaleString()} <span className="text-xl text-muted-foreground">({savingsPercent}%)</span>
+                  <p className="text-3xl md:text-4xl font-cormorant text-primary">
+                    ${savings.toLocaleString()} <span className="text-lg md:text-xl text-muted-foreground">({savingsPercent}%)</span>
                   </p>
-                  <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-xs md:text-sm text-muted-foreground mt-2">
                     annually compared to à la carte pricing
                   </p>
                 </div>
@@ -290,12 +290,13 @@ const PricingComparison = () => {
             )}
 
             {/* What's Included Comparison Table */}
-            <div className="max-w-5xl mx-auto mt-12">
-              <h2 className="text-2xl md:text-3xl font-cormorant text-center mb-8">
+            <div className="max-w-5xl mx-auto mt-8 md:mt-12">
+              <h2 className="text-2xl md:text-3xl font-cormorant text-center mb-6 md:mb-8">
                 What's <span className="text-gold">Included</span>
               </h2>
               
-              <Card className="overflow-hidden">
+              {/* Desktop Table - Hidden on mobile */}
+              <Card className="overflow-hidden hidden md:block">
                 <div className="grid grid-cols-3 bg-secondary/50 border-b">
                   <div className="p-4 font-medium text-muted-foreground text-sm">Feature</div>
                   <div className="p-4 font-medium text-primary text-sm text-center border-l">
@@ -409,6 +410,111 @@ const PricingComparison = () => {
                   ))}
                 </div>
               </Card>
+
+              {/* Mobile Card Layout - Hidden on desktop */}
+              <div className="md:hidden space-y-4">
+                {/* Medications Card */}
+                <Card>
+                  <CardHeader className="pb-2 px-4 pt-4">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Pill className="w-4 h-4 text-primary" />
+                      Medications
+                    </div>
+                  </CardHeader>
+                  <CardContent className="px-4 pb-4 space-y-3">
+                    {[
+                      { name: "Testosterone Cream", price: "$149/fill" },
+                      { name: "Bi-Est Cream", price: "$89/mo" },
+                      { name: "Progesterone", price: "$79/mo" },
+                    ].map((med, idx, arr) => (
+                      <div key={med.name} className={`flex justify-between items-center py-2 ${idx < arr.length - 1 ? 'border-b border-border/50' : ''}`}>
+                        <span className="text-sm text-muted-foreground">{med.name}</span>
+                        <div className="flex gap-3 text-xs">
+                          <span className="text-primary flex items-center gap-1">
+                            <Check className="w-3 h-3" /> Included
+                          </span>
+                          <span className="text-amber-600 font-medium">{med.price}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Labs & Testing Card */}
+                <Card>
+                  <CardHeader className="pb-2 px-4 pt-4">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <TestTube className="w-4 h-4 text-primary" />
+                      Labs & Testing
+                    </div>
+                  </CardHeader>
+                  <CardContent className="px-4 pb-4 space-y-3">
+                    <div className="flex justify-between items-center py-2 border-b border-border/50">
+                      <span className="text-sm text-muted-foreground">Initial Kit</span>
+                      <div className="flex gap-3 text-xs">
+                        <span className="text-primary font-medium">$250</span>
+                        <span className="text-amber-600 font-medium">$349</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-sm text-muted-foreground">Quarterly Labs</span>
+                      <div className="flex gap-3 text-xs">
+                        <span className="text-primary flex items-center gap-1">
+                          <Check className="w-3 h-3" /> 4/year
+                        </span>
+                        <span className="text-amber-600 font-medium">$149/ea</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Care & Support Card */}
+                <Card>
+                  <CardHeader className="pb-2 px-4 pt-4">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <MessageSquare className="w-4 h-4 text-primary" />
+                      Care & Support
+                    </div>
+                  </CardHeader>
+                  <CardContent className="px-4 pb-4 space-y-3">
+                    {[
+                      { name: "Unlimited Messaging", alacarte: null },
+                      { name: "Follow-ups", alacarte: "$99/visit" },
+                      { name: "Priority Scheduling", alacarte: null },
+                      { name: "Symptom Check-ins", alacarte: null },
+                      { name: "Protocol Adjustments", alacarte: "Extra fee" },
+                    ].map((feature, idx, arr) => (
+                      <div key={feature.name} className={`flex justify-between items-center py-2 ${idx < arr.length - 1 ? 'border-b border-border/50' : ''}`}>
+                        <span className="text-sm text-muted-foreground">{feature.name}</span>
+                        <div className="flex gap-3 text-xs">
+                          <span className="text-primary flex items-center gap-1">
+                            <Check className="w-3 h-3" /> Included
+                          </span>
+                          {feature.alacarte ? (
+                            <span className="text-amber-600 font-medium">{feature.alacarte}</span>
+                          ) : (
+                            <span className="text-muted-foreground flex items-center gap-1">
+                              <X className="w-3 h-3" /> N/A
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Mobile Legend */}
+                <div className="flex justify-center gap-6 text-xs text-muted-foreground pt-2">
+                  <div className="flex items-center gap-1">
+                    <Crown className="w-3 h-3 text-primary" />
+                    <span>Membership</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <ShoppingBag className="w-3 h-3 text-amber-600" />
+                    <span>À La Carte</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -441,8 +547,8 @@ const PricingComparison = () => {
 
                   {/* Labs Per Year */}
                   <div>
-                    <div className="flex justify-between mb-2">
-                      <label className="text-sm font-medium">Lab Panels Per Year (À La Carte)</label>
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0 mb-2">
+                      <label className="text-sm font-medium">Lab Panels/Year <span className="text-muted-foreground font-normal">(À La Carte)</span></label>
                       <span className="text-sm text-amber-600 font-medium">{labsPerYear} panels</span>
                     </div>
                     <Slider
@@ -457,8 +563,8 @@ const PricingComparison = () => {
 
                   {/* Follow-ups Per Year */}
                   <div>
-                    <div className="flex justify-between mb-2">
-                      <label className="text-sm font-medium">Follow-up Visits Per Year (À La Carte)</label>
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0 mb-2">
+                      <label className="text-sm font-medium">Follow-up Visits/Year <span className="text-muted-foreground font-normal">(À La Carte)</span></label>
                       <span className="text-sm text-amber-600 font-medium">{followUpsPerYear} visits</span>
                     </div>
                     <Slider
