@@ -28,15 +28,18 @@ import {
 const PricingComparison = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [monthsPlanned, setMonthsPlanned] = useState(12);
-  const [labsPerYear, setLabsPerYear] = useState(2);
-  const [followUpsPerYear, setFollowUpsPerYear] = useState(4);
-  const [medsNeeded, setMedsNeeded] = useState<string[]>(["testosterone", "progesterone"]);
+  // Realistic defaults: quarterly labs, bi-monthly follow-ups, typical HRT stack
+  const [labsPerYear, setLabsPerYear] = useState(4);
+  const [followUpsPerYear, setFollowUpsPerYear] = useState(6);
+  const [medsNeeded, setMedsNeeded] = useState<string[]>(["testosterone", "progesterone", "biEst"]);
 
-  // Calculate à la carte annual cost
+  // À la carte: Full price for consultation (no credit), full price for kit, pay per service
   const calculateAlaCarteCost = () => {
-    const consultation = CONSULTATION_PRICES.discovery.amount / 100;
-    const labKit = DIAGNOSTIC_KIT_PRICES.hormone.amount / 100;
-    const labCost = labsPerYear * (ALACARTE_PRICES.labPanel.amount / 100);
+    const consultation = CONSULTATION_PRICES.discovery.amount / 100; // $99
+    const labKit = DIAGNOSTIC_KIT_PRICES.hormone.amount / 100; // $349
+    // Additional labs beyond initial kit (subtract 1 since initial kit counts as first lab)
+    const additionalLabs = Math.max(0, labsPerYear - 1);
+    const labCost = additionalLabs * (ALACARTE_PRICES.labPanel.amount / 100);
     const followUpCost = followUpsPerYear * (ALACARTE_PRICES.followUp.amount / 100);
     
     // Calculate medication costs per year (assuming monthly refills)
@@ -50,24 +53,35 @@ const PricingComparison = () => {
       return total;
     }, 0);
 
+    const initial = consultation + labKit;
+    const recurring = labCost + followUpCost + medCosts;
+
     return {
-      initial: consultation + labKit,
-      annual: labCost + followUpCost + medCosts,
-      total: consultation + labKit + labCost + followUpCost + medCosts,
+      initial,
+      recurring,
+      total: initial + recurring,
     };
   };
 
-  // Calculate membership annual cost
+  // Membership: $99 consultation credit applied toward kit, then monthly membership
+  // Membership INCLUDES: all medications, quarterly labs, unlimited messaging, follow-ups
   const calculateMembershipCost = () => {
-    const consultation = CONSULTATION_PRICES.discovery.amount / 100;
-    const labKit = DIAGNOSTIC_KIT_PRICES.hormone.amount / 100;
+    const consultation = CONSULTATION_PRICES.discovery.amount / 100; // $99
+    const labKit = DIAGNOSTIC_KIT_PRICES.hormone.amount / 100; // $349
+    const consultationCredit = consultation; // $99 credit applied to kit
+    const netKitCost = labKit - consultationCredit; // $250 net
+    
     const monthlyRate = MEMBERSHIP_PRICES.vitality.amount / 100;
-    const annualMembership = monthlyRate * monthsPlanned;
+    const membershipTotal = monthlyRate * monthsPlanned;
+
+    // Initial cost: consultation + kit, but credit makes net initial $250 + $99 = $349 total
+    // However, the $99 is credited, so effectively you pay $99 then $250 = $349 total initial
+    const initial = consultation + netKitCost; // $99 + $250 = $349
 
     return {
-      initial: consultation + labKit,
-      annual: annualMembership,
-      total: consultation + labKit + annualMembership,
+      initial,
+      recurring: membershipTotal,
+      total: initial + membershipTotal,
     };
   };
 
@@ -168,12 +182,15 @@ const PricingComparison = () => {
                   </div>
 
                   <div className="bg-primary/10 rounded-lg p-4 mt-6">
-                    <p className="text-sm font-medium text-primary">Your Annual Cost</p>
+                    <p className="text-sm font-medium text-primary">Your {monthsPlanned}-Month Cost</p>
                     <p className="text-3xl font-cormorant text-foreground">
                       ${membership.total.toLocaleString()}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      (${membership.initial} initial + ${membership.annual}/yr membership)
+                      ${membership.initial} onboarding + ${membership.recurring.toLocaleString()} membership
+                    </p>
+                    <p className="text-xs text-primary mt-2 font-medium">
+                      ✓ All meds, labs & follow-ups included
                     </p>
                   </div>
                 </CardContent>
@@ -239,12 +256,15 @@ const PricingComparison = () => {
                   </div>
 
                   <div className="bg-amber-500/10 rounded-lg p-4 mt-6">
-                    <p className="text-sm font-medium text-amber-600">Your Estimated Annual Cost</p>
+                    <p className="text-sm font-medium text-amber-600">Your Estimated {monthsPlanned}-Month Cost</p>
                     <p className="text-3xl font-cormorant text-foreground">
                       ${alaCarte.total.toLocaleString()}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Based on your selections below
+                      ${alaCarte.initial} onboarding + ${alaCarte.recurring.toLocaleString()} services
+                    </p>
+                    <p className="text-xs text-amber-600 mt-2">
+                      No consultation credit • Pay per service
                     </p>
                   </div>
                 </CardContent>
