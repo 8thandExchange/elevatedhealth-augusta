@@ -73,7 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       scoresHtml = `
         <div style="background-color: #f3f4f6; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <h3 style="color: #374151; margin: 0 0 12px 0;">Symptom Scores (Dr. Holgate Method)</h3>
+          <h3 style="color: #374151; margin: 0 0 12px 0;">Symptom Scores</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px; color: #6b7280;">Estrogen</td>

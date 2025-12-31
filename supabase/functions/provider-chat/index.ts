@@ -521,7 +521,7 @@ Before administration, screen for:
 10. **Provider Review** → Labs analyzed, plan created
 11. **Lab Review Call** → Results discussed with patient
 12. **Treatment Authorization** → Patient approves plan
-13. **Pharmacy Order** → Holgate compounds medication
+13. **Pharmacy Order** → FCC compounds medication
 14. **Medication Shipped** → 2-3 day delivery
 15. **Treatment Begins** → Patient starts protocol
 
@@ -592,7 +592,7 @@ Before administration, screen for:
 # SECTION 9: PHARMACY & FULFILLMENT
 
 ## Primary Pharmacy Partner
-**Holgate Pharmacy (Compounding)**
+**FCC Compounding Pharmacy**
 - Phone: 404-555-0199
 - Fax: Via portal integration
 - Turnaround: 2-3 business days
@@ -617,7 +617,7 @@ Before administration, screen for:
 ## Rx Workflow
 1. Provider authorizes treatment in portal
 2. Staff generates prescription
-3. Fax sent to Holgate via integration
+3. Fax sent to FCC via integration
 4. Pharmacy confirms receipt (usually same day)
 5. Medication compounded
 6. Shipped directly to patient
@@ -743,7 +743,7 @@ Every superbill must include:
 - **Website:** elevatedhealthaugusta.com
 
 ## Pharmacy Contacts
-- **Holgate Pharmacy:** 404-555-0199
+- **FCC Compounding Pharmacy:** 404-555-0199
 
 ## Emergency Contacts
 - **Suicide Lifeline:** 988

@@ -188,7 +188,7 @@ const SymptomChecker = () => {
                 Your Hormone Profile
               </h1>
               <p className="text-muted-foreground">
-                Based on Dr. Holgate's clinical methodology
+                Based on evidence-based clinical methodology
               </p>
             </div>
 

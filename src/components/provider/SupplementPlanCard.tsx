@@ -56,7 +56,7 @@ const SupplementPlanCard = ({ patient, latestLabResult, onPlanUpdate }: Suppleme
   const patientAge = getPatientAge();
   const isMale = patient.gender === "male";
 
-  // Auto-recommendation logic based on Dr. Holgate's protocols
+  // Auto-recommendation logic based on clinic protocols
   const shouldRecommendZinc = (): boolean => {
     // Zinc for high estrogen/conversion control (males with E2 > 30)
     if (isMale && latestLabResult?.estradiol_e2 && latestLabResult.estradiol_e2 > 30) {
@@ -125,7 +125,7 @@ const SupplementPlanCard = ({ patient, latestLabResult, onPlanUpdate }: Suppleme
           Supplement Plan
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Dr. Holgate's supplement protocols
+          Recommended supplement protocols
         </p>
       </CardHeader>
       <CardContent className="space-y-4">

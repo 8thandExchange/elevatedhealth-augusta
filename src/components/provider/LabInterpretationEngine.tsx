@@ -415,7 +415,7 @@ export function LabInterpretationEngine({ patientId, patientName, patientGender 
         ) : (
           <>
             <Sparkles className="h-4 w-4 mr-2" />
-            Analyze with Holgate Logic
+            Analyze Labs
           </>
         )}
       </Button>

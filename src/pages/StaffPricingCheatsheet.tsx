@@ -34,7 +34,7 @@ const serviceCategories = [
   {
     id: "getting-started",
     title: "Getting Started",
-    keywords: ["discovery", "consultation", "99", "initial", "assessment", "holgate", "labs", "review"]
+    keywords: ["discovery", "consultation", "99", "initial", "assessment", "labs", "review"]
   },
   {
     id: "diagnostics",
@@ -220,7 +220,7 @@ const StaffPricingCheatsheet = () => {
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">
                       <p className="font-medium mb-1">💡 Pro Tip:</p>
                       <p className="text-muted-foreground">
-                        Patients who already have labs from another provider (Holgate, etc.) can still book a $99 consult to have our providers review their existing labs.
+                        Patients who already have labs from another provider can still book a $99 consult to have our providers review their existing labs.
                       </p>
                     </div>
                   </div>
@@ -596,7 +596,7 @@ const StaffPricingCheatsheet = () => {
                 </div>
 
                 <div className="border-l-2 border-primary pl-4">
-                  <p className="font-medium text-sm">"They have labs from Holgate/another provider"</p>
+                  <p className="font-medium text-sm">"They have labs from another provider"</p>
                   <p className="text-sm text-muted-foreground">
                     Offer $99 consult to review their existing labs and discuss our protocols.
                   </p>

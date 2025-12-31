@@ -305,7 +305,7 @@ const FCCPortalModal = ({
     return "Not on file";
   };
 
-  const handleFaxToHolgate = async () => {
+  const handleFaxToPharmacy = async () => {
     if (!medication) return;
     if (!matchedProvider) {
       toast.error("Please select a prescribing provider");
@@ -348,7 +348,7 @@ const FCCPortalModal = ({
         dateStyle: 'short',
         timeStyle: 'short',
       }));
-      toast.success("Prescription faxed to Dr. Holgate!");
+      toast.success("Prescription faxed to pharmacy!");
       onOrderCreated?.();
     } catch (error: any) {
       console.error("Fax error:", error);
@@ -549,7 +549,7 @@ const FCCPortalModal = ({
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 mt-6">
-          {/* Primary: Fax to Holgate */}
+          {/* Primary: Fax to Pharmacy */}
           {faxStatus !== 'sent' && (
             <>
               {!selectedDiagnosis && (
@@ -559,7 +559,7 @@ const FCCPortalModal = ({
                 </div>
               )}
               <Button
-                onClick={handleFaxToHolgate}
+                onClick={handleFaxToPharmacy}
                 disabled={faxStatus === 'transmitting' || !medication || !selectedDiagnosis}
                 className="w-full bg-gold hover:bg-gold-dark text-white disabled:opacity-50"
               >
@@ -576,7 +576,7 @@ const FCCPortalModal = ({
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    📠 Fax Rx to Holgate
+                    📠 Fax Rx to Pharmacy
                   </>
                 )}
               </Button>

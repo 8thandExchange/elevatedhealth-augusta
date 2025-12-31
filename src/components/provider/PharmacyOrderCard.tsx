@@ -28,7 +28,7 @@ interface PharmacyOrderCardProps {
   onOrderCreated?: () => void;
 }
 
-// Dr. Holgate's Approved Formulary - Updated with specific protocols
+// Clinic Approved Formulary - Updated with specific protocols
 const FORMULARY = [
   // === MALE TESTOSTERONE PROTOCOLS (No 50mg - "doesn't work" per Dr. Holgate) ===
   {
@@ -262,10 +262,10 @@ const PharmacyOrderCard = ({ patient, onOrderCreated }: PharmacyOrderCardProps) 
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <Pill className="w-5 h-5 text-gold" />
-            Pharmacy Order (Holgate Rx)
+            Pharmacy Order
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Dr. Holgate's approved protocols
+            Clinic approved protocols
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
