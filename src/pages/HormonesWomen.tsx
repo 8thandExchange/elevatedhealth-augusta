@@ -128,14 +128,14 @@ const HormonesWomen = () => {
     {
       step: 1,
       icon: Calendar,
-      title: "Book Your Consultation",
-      description: "$99 Discovery Call to discuss your goals and determine candidacy (credited toward labs)"
+      title: "In-Person Consultation",
+      description: "$99 for a 30-minute visit at our Evans clinic with Lauren (credited toward labs)"
     },
     {
       step: 2,
       icon: TestTube,
-      title: "Hormone Mapping",
-      description: "ZRT Saliva Panel to measure estrogen, progesterone, testosterone, DHEAS & cortisol"
+      title: "Receive Your Kit",
+      description: "Lauren hands you your ZRT Saliva Panel and explains exactly how to complete it at home"
     },
     {
       step: 3,

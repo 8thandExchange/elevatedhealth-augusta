@@ -1,4 +1,4 @@
-import { Package, Truck, FlaskConical, Calendar, Check, ExternalLink } from "lucide-react";
+import { Package, FlaskConical, Calendar, Check, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,18 +14,18 @@ interface KitTrackerProps {
 
 const steps = [
   {
-    id: "ordered",
-    label: "Order Confirmed",
-    shortLabel: "Ordered",
-    description: "Your diagnostic kit is being prepared",
+    id: "received",
+    label: "Kit Received",
+    shortLabel: "Received",
+    description: "You received your kit at your clinic visit",
     icon: Package,
   },
   {
-    id: "shipped",
-    label: "Kit on the Way",
-    shortLabel: "Shipped",
-    description: "Your kit has been shipped",
-    icon: Truck,
+    id: "sample_completed",
+    label: "Sample Completed",
+    shortLabel: "Completed",
+    description: "Complete your sample at home",
+    icon: CheckCircle,
   },
   {
     id: "sample_received",
@@ -43,18 +43,26 @@ const steps = [
   },
 ];
 
-const statusOrder = ["not_ordered", "ordered", "shipped", "sample_received", "analyzing", "results_ready"];
+// Map old status values to new ones for backwards compatibility
+const mapStatus = (status: string): string => {
+  const statusMap: Record<string, string> = {
+    "ordered": "received",
+    "shipped": "received",
+    "analyzing": "sample_received",
+  };
+  return statusMap[status] || status;
+};
+
+const statusOrder = ["not_ordered", "received", "sample_completed", "sample_received", "results_ready"];
 
 const KitTracker = ({
   status,
-  trackingNumber,
-  shippedAt,
   sampleReceivedAt,
   resultsReadyAt,
   onBookCall,
 }: KitTrackerProps) => {
-  // Map analyzing to sample_received for display purposes
-  const displayStatus = status === "analyzing" ? "sample_received" : status;
+  // Map status for backwards compatibility
+  const displayStatus = mapStatus(status);
   const currentIndex = statusOrder.indexOf(displayStatus);
 
   // Calculate progress percentage
@@ -65,19 +73,6 @@ const KitTracker = ({
     if (stepIndex < currentIndex) return "completed";
     if (stepIndex === currentIndex) return "current";
     return "upcoming";
-  };
-
-  const getTrackingUrl = (trackingNum: string) => {
-    // Auto-detect carrier based on tracking number format
-    if (trackingNum.startsWith("1Z")) {
-      return `https://www.ups.com/track?tracknum=${trackingNum}`;
-    } else if (trackingNum.length === 12 || trackingNum.length === 15) {
-      return `https://www.fedex.com/fedextrack/?trknbr=${trackingNum}`;
-    } else if (trackingNum.length === 22) {
-      return `https://tools.usps.com/go/TrackConfirmAction?tLabels=${trackingNum}`;
-    }
-    // Default to Google search
-    return `https://www.google.com/search?q=${trackingNum}+tracking`;
   };
 
   if (status === "not_ordered" || !status) {
@@ -215,17 +210,22 @@ const KitTracker = ({
 
         {/* Action Buttons */}
         <div className="mt-6 pt-4 border-t border-border/50">
-          {displayStatus === "shipped" && trackingNumber && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform"
-              onClick={() => window.open(getTrackingUrl(trackingNumber), "_blank")}
-            >
-              <Truck className="w-4 h-4 mr-2" />
-              Track Package
-              <ExternalLink className="w-3 h-3 ml-2" />
-            </Button>
+          {displayStatus === "received" && (
+            <p className="text-sm text-muted-foreground text-center">
+              Complete your sample at home and drop it off at the clinic or use the prepaid mailer.
+            </p>
+          )}
+
+          {displayStatus === "sample_completed" && (
+            <p className="text-sm text-muted-foreground text-center">
+              Thank you! Drop off your sample at the clinic or mail it using the prepaid mailer.
+            </p>
+          )}
+
+          {displayStatus === "sample_received" && (
+            <p className="text-sm text-muted-foreground text-center">
+              Your sample is being analyzed. Results typically take 5-7 business days.
+            </p>
           )}
 
           {displayStatus === "results_ready" && onBookCall && (
@@ -236,18 +236,6 @@ const KitTracker = ({
               <Calendar className="w-4 h-4 mr-2" />
               Book Your Strategy Call
             </Button>
-          )}
-
-          {displayStatus === "sample_received" && (
-            <p className="text-sm text-muted-foreground text-center">
-              Your sample is being analyzed. Results typically take 5-7 business days.
-            </p>
-          )}
-
-          {displayStatus === "ordered" && (
-            <p className="text-sm text-muted-foreground text-center">
-              Your kit will ship within 1-2 business days.
-            </p>
           )}
         </div>
       </CardContent>

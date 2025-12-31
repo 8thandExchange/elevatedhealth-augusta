@@ -286,10 +286,14 @@ serve(async (req) => {
                       </div>
                       <div class="step">
                         <span class="step-num">2</span>
-                        <div class="step-content"><strong>Complete your 45-minute call</strong> with our specialist</div>
+                        <div class="step-content"><strong>Visit our Evans clinic</strong> for your 30-minute in-person consultation with Lauren</div>
                       </div>
                       <div class="step">
                         <span class="step-num">3</span>
+                        <div class="step-content"><strong>Receive your diagnostic kit</strong> - Lauren will hand it to you and explain how to use it</div>
+                      </div>
+                      <div class="step">
+                        <span class="step-num">4</span>
                         <div class="step-content"><strong>When ready to proceed</strong>, use your credit code for $99 off</div>
                       </div>
                     </div>
@@ -299,10 +303,10 @@ serve(async (req) => {
                     </div>
                     
                     <p style="color: #4a5568; font-size: 16px; margin-top: 32px;">
-                      We're excited to help you on your wellness journey!<br/><br/>
+                      We're excited to meet you in person!<br/><br/>
                       Warmly,<br/>
                       <strong>The Elevated Health Team</strong><br/>
-                      <span style="color: #718096;">(706) 821-7354 | Augusta, GA</span>
+                      <span style="color: #718096;">(706) 821-7354 | 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</span>
                     </p>
                   </div>
                   <div class="footer">
@@ -333,7 +337,7 @@ serve(async (req) => {
             <p><strong>Credit Code:</strong> ${creditCode}</p>
             <p><strong>Amount:</strong> $${(session.amount_total || 0) / 100}</p>
             <hr/>
-            <p>The patient has been instructed to book their 45-minute consultation via Google Calendar.</p>
+            <p>The patient has been instructed to book their 30-minute in-person consultation via Google Calendar.</p>
             <p>Their credit code <strong>${creditCode}</strong> can be used for $99 off ${emailConfig.creditUse}.</p>
           `,
         });
@@ -346,7 +350,7 @@ serve(async (req) => {
     // Send SMS alerts to staff
     const staffPhoneNumbers = Deno.env.get("STAFF_NOTIFICATION_PHONE");
     if (staffPhoneNumbers) {
-      const smsMessage = `🎉 NEW CONSULT PAID!\n\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCredit: ${creditCode}\n\nPatient instructed to book via calendar.`;
+      const smsMessage = `🎉 NEW CONSULT PAID!\n\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCredit: ${creditCode}\n\nPatient instructed to book in-person visit via calendar.`;
       
       const phoneNumbers = staffPhoneNumbers.split(",").map(p => p.trim());
       

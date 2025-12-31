@@ -16,27 +16,27 @@ const logStep = (step: string, details?: any) => {
 const SERVICE_CONFIG: Record<string, { name: string; description: string }> = {
   ketamine: {
     name: "Ketamine Therapy Consultation",
-    description: "45-minute consultation to discuss IV ketamine infusions & SPRAVATO® for depression, PTSD, and anxiety. Includes $99 credit toward treatment."
+    description: "30-minute in-person consultation at our Evans clinic to discuss IV ketamine infusions & SPRAVATO® for depression, PTSD, and anxiety. Includes $99 credit toward treatment."
   },
   weight_loss: {
     name: "Medical Weight Loss Consultation",
-    description: "45-minute consultation to discuss physician-supervised semaglutide (GLP-1) therapy. Includes $99 credit toward treatment."
+    description: "30-minute in-person consultation at our Evans clinic to discuss physician-supervised semaglutide (GLP-1) therapy. Includes $99 credit toward treatment."
   },
   hormone: {
     name: "Hormone Replacement Consultation",
-    description: "45-minute consultation to discuss bioidentical hormone therapy. Includes $99 credit toward Hormone Mapping."
+    description: "30-minute in-person consultation at our Evans clinic to discuss bioidentical hormone therapy. Receive your diagnostic kit directly from Lauren. Includes $99 credit toward Hormone Mapping."
   },
   peptide: {
     name: "Peptide Therapy Consultation",
-    description: "45-minute consultation to discuss Sermorelin, NAD+, PT-141 & GHK-Cu for cellular optimization. Includes $99 credit toward treatment."
+    description: "30-minute in-person consultation at our Evans clinic to discuss Sermorelin, NAD+, PT-141 & GHK-Cu for cellular optimization. Includes $99 credit toward treatment."
   },
   hair: {
     name: "Hair Restoration Consultation",
-    description: "45-minute consultation to discuss finasteride, minoxidil & PRP therapy for hair regrowth. Includes $99 credit toward treatment."
+    description: "30-minute in-person consultation at our Evans clinic to discuss finasteride, minoxidil & PRP therapy for hair regrowth. Includes $99 credit toward treatment."
   },
   sexual: {
     name: "Sexual Wellness Consultation",
-    description: "45-minute discreet consultation for ED, low libido & intimate health solutions. Includes $99 credit toward treatment."
+    description: "30-minute discreet in-person consultation at our Evans clinic for ED, low libido & intimate health solutions. Includes $99 credit toward treatment."
   }
 };
 

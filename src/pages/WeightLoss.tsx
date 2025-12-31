@@ -165,8 +165,8 @@ const WeightLoss = () => {
   const processSteps = [
     {
       step: "01",
-      headline: "Test, Don't Guess.",
-      body: "We ship a ZRT Saliva Test kit directly to your door. No labs, no needles, and no waiting rooms. Simply complete the swab at home to reveal your cortisol, estrogen, and testosterone levels."
+      headline: "Meet Lauren In-Person.",
+      body: "Book a $99 consultation at our Evans clinic. During your 30-minute visit, Lauren will hand you your ZRT Saliva Test kit and explain exactly how to complete it at home."
     },
     {
       step: "02",
