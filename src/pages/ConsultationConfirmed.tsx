@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CheckCircle2, Calendar, Gift, Copy, Check, Phone, MapPin, ExternalLink } from "lucide-react";
+import { CheckCircle2, Calendar, Gift, Copy, Check, Phone, MapPin, ExternalLink, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
@@ -264,6 +264,44 @@ const ConsultationConfirmed = () => {
                       </li>
                     ))}
                   </ol>
+                </CardContent>
+              </Card>
+
+              {/* Email Confirmation Preview */}
+              <Card className="border-blue-200/50 bg-blue-50/30 dark:border-blue-900/30 dark:bg-blue-950/20">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                      <Mail className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-2">Check Your Inbox</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        We've sent a confirmation email to your inbox with:
+                      </p>
+                      <ul className="text-sm text-muted-foreground space-y-2">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>Your payment receipt</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>Your $99 credit code (save this!)</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>Clinic address and directions</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>What to bring to your appointment</span>
+                        </li>
+                      </ul>
+                      <p className="text-xs text-muted-foreground mt-4">
+                        Don't see it? Check your spam folder or contact us at {SITE_CONFIG.phone}
+                      </p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
