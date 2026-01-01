@@ -401,7 +401,7 @@ const Hormones = () => {
                         </p>
                       )}
                       <p className="text-sm text-muted-foreground mb-4 font-light">
-                        Complete ZRT saliva panel + 45-minute deep-dive review of your hormone landscape.
+                        Complete ZRT saliva panel + clinical lab review with your hormone specialist.
                       </p>
                       <CreditCodeInput
                         value={creditCode}
