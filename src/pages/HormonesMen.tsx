@@ -33,6 +33,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { HRTQuizModal } from "@/components/HRTQuizModal";
+import { WhyTransdermalCream } from "@/components/WhyTransdermalCream";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -462,6 +463,9 @@ const HormonesMen = () => {
               </div>
             </div>
           </section>
+
+          {/* Why Transdermal Cream Educational Section */}
+          <WhyTransdermalCream onBookConsultation={scrollToBooking} />
 
           {/* Treatment Options */}
           <section className="py-16 md:py-24 bg-background">

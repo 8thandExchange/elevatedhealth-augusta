@@ -90,11 +90,22 @@ const questions = [
     type: "textarea",
     question: "If yes, please provide details about your past hormone therapy",
     subtext: "Leave blank if you've never had hormone therapy",
-    placeholder: "e.g., type of therapy, duration, results...",
+    placeholder: "e.g., pellets, injections, creams, patches — duration — how you felt...",
     optional: true
   },
   {
     id: 7,
+    type: "radio",
+    question: "What type of hormone delivery method would you prefer?",
+    subtext: "We specialize in transdermal cream for its precision and adjustability",
+    options: [
+      { value: "Transdermal Cream", label: "Topical/Transdermal Cream (daily application, easy dose adjustments)" },
+      { value: "Provider Recommendation", label: "I'm open to provider recommendation" },
+      { value: "Not Sure", label: "Not sure / Need more information" }
+    ]
+  },
+  {
+    id: 8,
     type: "textarea",
     question: "Do you have any medical conditions we should know about?",
     subtext: "Heart disease, diabetes, cancer, etc. or write 'None'",
@@ -102,7 +113,7 @@ const questions = [
     optional: true
   },
   {
-    id: 8,
+    id: 9,
     type: "textarea",
     question: "Are you currently taking any medications?",
     subtext: "Include prescriptions, supplements, etc. or write 'None'",
@@ -110,13 +121,13 @@ const questions = [
     optional: true
   },
   {
-    id: 9,
+    id: 10,
     type: "textarea",
     question: "What are your primary goals for hormone therapy?",
     placeholder: "e.g., increase energy, improve sleep, manage weight, enhance mood..."
   },
   {
-    id: 10,
+    id: 11,
     type: "radio",
     question: "Do you have insurance coverage?",
     options: [
@@ -127,7 +138,7 @@ const questions = [
     ]
   },
   {
-    id: 11,
+    id: 12,
     type: "contact",
     question: "Contact Information",
     subtext: "We'll reach out to schedule your $99 Medical Consultation"
@@ -225,10 +236,11 @@ export const HRTQuizModal = ({ isOpen, onClose }: HRTQuizModalProps) => {
         gender: answers[3] || "",
         past_hrt: answers[4] || "",
         past_hrt_details: answers[5] || "",
-        medical_conditions: answers[6] || "",
-        current_medications: answers[7] || "",
-        primary_goal: answers[8] || "",
-        insurance: answers[9] || ""
+        delivery_preference: answers[6] || "",
+        medical_conditions: answers[7] || "",
+        current_medications: answers[8] || "",
+        primary_goal: answers[9] || "",
+        insurance: answers[10] || ""
       };
 
       // Call edge function to send email
