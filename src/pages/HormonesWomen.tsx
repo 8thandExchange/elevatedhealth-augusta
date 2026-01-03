@@ -159,16 +159,8 @@ const HormonesWomen = () => {
       description: "Precision dosing with daily micro-adjustments—unlike pellets, you're never locked into a dose"
     },
     {
-      title: "Thyroid Optimization",
-      description: "Support metabolism, energy, and mood with thyroid hormone balance"
-    },
-    {
       title: "Testosterone (for Women)",
       description: "Low-dose testosterone to restore energy, libido, and muscle tone"
-    },
-    {
-      title: "Peptide Add-Ons",
-      description: "Advanced therapies for enhanced results and anti-aging benefits"
     }
   ];
 

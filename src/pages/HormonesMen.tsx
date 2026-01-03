@@ -18,8 +18,7 @@ import {
   Target,
   CreditCard,
   Loader2,
-  Droplet,
-  Syringe
+  Droplet
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -130,28 +129,20 @@ const HormonesMen = () => {
 
   const treatmentOptions = [
     {
-      title: "Testosterone Injections",
-      description: "Weekly or bi-weekly injections for steady hormone levels and optimal results"
+      title: "Testosterone Transdermal Cream",
+      description: "Our gold standard: pharmaceutical-grade liposomal cream with precision daily dosing. Unlike pellets that lock you in for months, adjust your dose weekly based on labs and how you feel."
     },
     {
-      title: "Topical Transdermal Cream",
-      description: "Precision dosing with daily micro-adjustments—unlike pellets, you're never locked into a dose"
+      title: "Precision Daily Dosing",
+      description: "Mimics your body's natural testosterone rhythm with stable morning application. No peaks and valleys—just consistent energy, mood, and drive all day."
     },
     {
-      title: "HCG Therapy",
-      description: "Preserve fertility and natural testosterone production alongside TRT"
-    },
-    {
-      title: "Thyroid Optimization",
-      description: "Enhance energy, metabolism, and mental clarity with thyroid support"
+      title: "Zero Injection Protocol",
+      description: "100% needle-free TRT. No painful injections, no anxiety, no injection site reactions. Just smooth, effective hormone delivery through the skin."
     },
     {
       title: "Estrogen Management",
-      description: "Control estrogen levels to maximize testosterone benefits"
-    },
-    {
-      title: "Performance Peptides",
-      description: "Advanced peptide therapies for muscle growth, recovery, and anti-aging"
+      description: "Control estrogen levels to maximize testosterone benefits and prevent side effects like water retention or gynecomastia."
     }
   ];
 
@@ -169,12 +160,12 @@ const HormonesMen = () => {
       a: "Many men notice improvements in energy and mood within 3-4 weeks. Sexual function and muscle mass improvements typically occur over 8-12 weeks. Full optimization usually takes 3-6 months with proper dosing."
     },
     {
-      q: "Cream vs. Injections: Which is right for me?",
-      a: "Both methods are highly effective—the best choice depends on your lifestyle. Transdermal Cream offers daily application that mimics your body's natural rhythm, provides stable hormone levels without peaks and valleys, and allows for easy dose adjustments. However, it requires daily use and has a small risk of transfer to others. Injections offer weekly dosing convenience, guaranteed 100% absorption, and zero transfer risk—ideal for fathers with young children. The trade-off is potential hormone fluctuations between doses. During your consultation, we'll help you choose based on your schedule, family situation, and personal preference."
+      q: "Why transdermal cream instead of pellets or injections?",
+      a: "Our pharmaceutical-grade liposomal transdermal cream is the gold standard for TRT. Unlike pellets that lock you into a fixed dose for months (even if side effects occur), our cream allows for weekly micro-adjustments. Unlike injections that cause hormone peaks and valleys, cream provides stable daily levels that mimic your body's natural rhythm. Plus, there's no needle anxiety, no injection site reactions, and no trips to the clinic for shots."
     },
     {
-      q: "Why transdermal cream instead of pellets?",
-      a: "Unlike pellets, which lock you into a dose for months even if side effects occur, our Transdermal Cream and injection protocols allow for weekly micro-adjustments to ensure optimal levels. This precision dosing approach means we can fine-tune your therapy in real-time based on how you feel."
+      q: "Why doesn't Elevated Health offer injections?",
+      a: "After years of clinical experience, we've found that transdermal cream delivers superior results for most men. Injections cause hormone fluctuations between doses (high right after injection, low before the next), which can affect mood, energy, and estrogen levels. Cream provides stable, consistent hormone levels every day. It's also completely painless, easy to adjust, and allows for true precision dosing."
     },
     {
       q: "Is TRT safe for men?",
@@ -375,92 +366,95 @@ const HormonesMen = () => {
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-serif">
-                    Delivery Methods: Science, Not Guesswork
+                    The Gold Standard in Testosterone Delivery
                   </h2>
                   <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                    At Elevated Health, we don't believe in a "one size fits all" approach to 
-                    Testosterone Replacement Therapy. We offer the two most effective delivery 
-                    methods available, customized to your lifestyle and biology.
+                    We use pharmaceutical-grade Liposomal Transdermal Cream—the pinnacle of TRT technology. 
+                    Unlike pellets that lock you into a dose for months, or injections that cause peaks and valleys, 
+                    our cream allows for precision daily dosing with weekly micro-adjustments based on how you feel.
                   </p>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-8">
-                  {/* Card 1: Liposomal Transdermal Cream */}
+                <div className="max-w-3xl mx-auto">
+                  {/* Single Card: Liposomal Transdermal Cream */}
                   <Card className="border-gold/30 hover:shadow-xl transition-all">
-                    <CardContent className="p-8">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
-                          <Droplet className="h-6 w-6 text-gold" />
+                    <CardContent className="p-8 md:p-10">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center">
+                          <Droplet className="h-7 w-7 text-gold" />
                         </div>
-                        <span className="text-xs font-semibold bg-gold/10 text-gold px-3 py-1 rounded-full">
-                          THE GOLD STANDARD
-                        </span>
+                        <div>
+                          <span className="text-xs font-semibold bg-gold/10 text-gold px-3 py-1 rounded-full">
+                            EXCLUSIVE DELIVERY METHOD
+                          </span>
+                        </div>
                       </div>
-                      <h3 className="text-xl font-bold mb-3">
+                      <h3 className="text-2xl font-bold mb-4">
                         Liposomal Transdermal Cream
                       </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-sm font-semibold text-primary mb-1">Best For:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Men seeking stable energy, mood consistency, and those wanting 
-                            to mimic the body's natural daily rhythm.
-                          </p>
+                      <p className="text-muted-foreground mb-6">
+                        A high-potency, pharmaceutical-grade cream applied daily to large hairless muscle areas 
+                        (shoulder or thigh). Our proprietary liposomal base ensures deep absorption without the 
+                        sticky residue of standard gels.
+                      </p>
+                      
+                      <div className="grid sm:grid-cols-2 gap-6 mb-6">
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-sm">Mimics Natural Rhythm</p>
+                              <p className="text-xs text-muted-foreground">Morning application matches your body's circadian testosterone cycle</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-sm">No Peaks & Valleys</p>
+                              <p className="text-xs text-muted-foreground">Stable energy and mood all day, unlike injection fluctuations</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-sm">Weekly Dose Adjustments</p>
+                              <p className="text-xs text-muted-foreground">Fine-tune your protocol based on labs and how you feel</p>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-semibold text-primary mb-1">How it Works:</p>
-                          <p className="text-sm text-muted-foreground">
-                            A high-potency, pharmaceutical-grade cream applied daily. Our 
-                            proprietary liposomal base ensures deep absorption without the 
-                            sticky residue of standard gels.
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-primary mb-1">The Benefit:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Avoids the "peaks and valleys" of injections, leading to better 
-                            estrogen control and fewer side effects.
-                          </p>
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-sm">Zero Needle Anxiety</p>
+                              <p className="text-xs text-muted-foreground">No injections, no pain, no injection site reactions</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-sm">Superior Absorption</p>
+                              <p className="text-xs text-muted-foreground">Liposomal technology for pharmaceutical-grade delivery</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-sm">Better Estrogen Control</p>
+                              <p className="text-xs text-muted-foreground">Steady levels = fewer estrogen-related side effects</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Card 2: Intramuscular Injections */}
-                  <Card className="border-primary/30 hover:shadow-xl transition-all">
-                    <CardContent className="p-8">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Syringe className="h-6 w-6 text-primary" />
-                        </div>
-                        <span className="text-xs font-semibold bg-primary/10 text-primary px-3 py-1 rounded-full">
-                          GUARANTEED ABSORPTION
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold mb-3">
-                        Intramuscular Injections
-                      </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-sm font-semibold text-primary mb-1">Best For:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Men who prefer weekly dosing over daily application, or those 
-                            with young children where contact transfer is a concern.
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-primary mb-1">How it Works:</p>
-                          <p className="text-sm text-muted-foreground">
-                            A weekly self-administered injection that guarantees 100% absorption.
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-primary mb-1">The Benefit:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Total certainty of dosage and zero risk of transferring 
-                            medication to loved ones.
-                          </p>
-                        </div>
+                      
+                      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                        <p className="text-sm text-center">
+                          <span className="font-semibold">Why not pellets?</span>{" "}
+                          <span className="text-muted-foreground">
+                            Pellets lock you into a dose for months—even if side effects occur. 
+                            With cream, we can adjust your dose weekly based on real results.
+                          </span>
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
