@@ -16,6 +16,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import NotReadyToBook from "@/components/NotReadyToBook";
+import HowGLP1Works from "@/components/HowGLP1Works";
 
 const WeightLoss = () => {
   const [isConsultationLoading, setIsConsultationLoading] = useState(false);
@@ -427,6 +428,9 @@ const WeightLoss = () => {
               </div>
             </div>
           </section>
+
+          {/* How GLP-1 Works - Educational Section */}
+          <HowGLP1Works />
 
           {/* Why Elevated Health is Different */}
           <section className="py-16 md:py-24">
