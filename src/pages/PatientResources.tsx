@@ -225,7 +225,7 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
     },
     {
       question: "What's included in the Vitality Membership?",
-      answer: "The Vitality Membership ($199/mo) includes bio-identical hormone therapy with transdermal creams, quarterly lab testing, unlimited provider messaging, symptom tracking, and medication adjustments. All compounding pharmacy costs are included—no surprise charges."
+      answer: "The Vitality Membership ($249/mo) includes bio-identical hormone therapy with transdermal creams, quarterly lab testing, unlimited provider messaging, symptom tracking, and medication adjustments. Prescriptions are billed separately through the pharmacy."
     },
     {
       question: "What's included in the Concierge Membership?",

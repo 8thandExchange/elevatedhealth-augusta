@@ -128,7 +128,7 @@ const ConsultationTracker = () => {
           .update({ status: "converted_to_mapping" })
           .eq("id", consult.id);
 
-        toast.success(`$299 payment link sent to ${consult.customer_email}`);
+        toast.success(`Kit payment link sent to ${consult.customer_email} ($250 with credit)`);
         loadConsultations();
         setSelectedConsultation(null);
       } else {

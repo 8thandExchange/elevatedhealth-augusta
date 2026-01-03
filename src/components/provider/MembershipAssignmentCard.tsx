@@ -119,7 +119,7 @@ const MembershipAssignmentCard = ({
               <SelectItem value="vitality">
                 <span className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 text-primary" />
-                  Vitality ($199/mo)
+                  Vitality ($249/mo)
                 </span>
               </SelectItem>
               <SelectItem value="concierge">

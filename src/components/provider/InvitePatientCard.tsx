@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Mail, UserPlus, Check, Calendar } from "lucide-react";
+import { Loader2, Mail, MessageSquare, UserPlus, Check, Calendar } from "lucide-react";
 
 interface InvitePatientCardProps {
   onInviteSent?: () => void;
@@ -28,58 +28,93 @@ const SERVICE_TYPES = [
 const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [serviceType, setServiceType] = useState<string>("hormone");
-  const [isSending, setIsSending] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [isSendingSMS, setIsSendingSMS] = useState(false);
+  const [sent, setSent] = useState<"email" | "sms" | null>(null);
 
-  const handleSendInvite = async () => {
-    if (!email.trim() || !name.trim()) {
-      toast.error("Please enter both name and email");
+  const handleSendInvite = async (method: "email" | "sms") => {
+    if (!name.trim()) {
+      toast.error("Please enter patient name");
+      return;
+    }
+
+    if (method === "email" && !email.trim()) {
+      toast.error("Please enter patient email");
+      return;
+    }
+
+    if (method === "sms" && !phone.trim()) {
+      toast.error("Please enter patient phone number for SMS");
       return;
     }
 
     // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address");
-      return;
+    if (method === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast.error("Please enter a valid email address");
+        return;
+      }
     }
 
-    setIsSending(true);
-    setSent(false);
+    const isSMS = method === "sms";
+    isSMS ? setIsSendingSMS(true) : setIsSendingEmail(true);
 
     try {
+      // First, create the consultation invite (this creates the Stripe checkout and sends email)
       const { data, error } = await supabase.functions.invoke("send-consultation-invite", {
         body: {
-          patient_email: email.trim(),
+          patient_email: email.trim() || `${phone.replace(/\D/g, "")}@sms.placeholder.com`, // Use placeholder if no email
           patient_name: name.trim(),
           service_type: serviceType,
         },
       });
 
       if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Failed to send invite");
 
-      if (data?.success) {
-        setSent(true);
+      // If SMS method selected, also send SMS with the payment link
+      if (isSMS && data?.paymentLink) {
+        const { error: smsError } = await supabase.functions.invoke("send-consultation-invite-sms", {
+          body: {
+            patient_name: name.trim(),
+            patient_phone: phone.trim(),
+            service_type: serviceType,
+            payment_url: data.paymentLink,
+          },
+        });
+
+        if (smsError) throw smsError;
+        setSent("sms");
+        toast.success(`$99 consultation invite texted to ${phone}`);
+      } else {
+        setSent("email");
         const serviceLabel = SERVICE_TYPES.find(s => s.value === serviceType)?.label || "Consultation";
-        toast.success(`${serviceLabel} invite sent to ${email}!`);
+        toast.success(`${serviceLabel} invite emailed to ${email}!`);
+      }
+
+      // Reset form after short delay
+      setTimeout(() => {
         setEmail("");
         setName("");
+        setPhone("");
         setServiceType("hormone");
+        setSent(null);
         onInviteSent?.();
-        
-        // Reset sent state after 3 seconds
-        setTimeout(() => setSent(false), 3000);
-      } else {
-        throw new Error(data?.error || "Failed to send invite");
-      }
+      }, 3000);
+
     } catch (err: any) {
       console.error("Invite error:", err);
-      toast.error(err.message || "Failed to send invitation email");
+      toast.error(err.message || "Failed to send invitation");
     } finally {
-      setIsSending(false);
+      setIsSendingEmail(false);
+      setIsSendingSMS(false);
     }
   };
+
+  const isLoading = isSendingEmail || isSendingSMS;
 
   return (
     <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
@@ -109,7 +144,7 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
         <div className="space-y-3">
           <div>
             <Label htmlFor="invite-name" className="text-xs text-muted-foreground">
-              Patient Name
+              Patient Name *
             </Label>
             <Input
               id="invite-name"
@@ -118,7 +153,7 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
               onChange={(e) => setName(e.target.value)}
               placeholder="John Smith"
               className="mt-1"
-              disabled={isSending}
+              disabled={isLoading}
             />
           </div>
           
@@ -133,7 +168,22 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="patient@example.com"
               className="mt-1"
-              disabled={isSending}
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="invite-phone" className="text-xs text-muted-foreground">
+              Patient Phone (for SMS)
+            </Label>
+            <Input
+              id="invite-phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="(555) 123-4567"
+              className="mt-1"
+              disabled={isLoading}
             />
           </div>
 
@@ -141,7 +191,7 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
             <Label htmlFor="invite-service" className="text-xs text-muted-foreground">
               Service Interest
             </Label>
-            <Select value={serviceType} onValueChange={setServiceType} disabled={isSending}>
+            <Select value={serviceType} onValueChange={setServiceType} disabled={isLoading}>
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select service type" />
               </SelectTrigger>
@@ -156,28 +206,52 @@ const InvitePatientCard = ({ onInviteSent }: InvitePatientCardProps) => {
           </div>
         </div>
 
-        <Button
-          onClick={handleSendInvite}
-          disabled={isSending || !email.trim() || !name.trim()}
-          className="w-full"
-        >
-          {isSending ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Sending...
-            </>
-          ) : sent ? (
-            <>
-              <Check className="w-4 h-4 mr-2" />
-              Invite Sent!
-            </>
-          ) : (
-            <>
-              <Mail className="w-4 h-4 mr-2" />
-              Send $99 Consultation Invite
-            </>
-          )}
-        </Button>
+        {/* Email/SMS Send Buttons */}
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            onClick={() => handleSendInvite("email")}
+            disabled={isLoading || !name.trim() || !email.trim()}
+          >
+            {isSendingEmail ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : sent === "email" ? (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Emailed!
+              </>
+            ) : (
+              <>
+                <Mail className="w-4 h-4 mr-2" />
+                Email Invite
+              </>
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleSendInvite("sms")}
+            disabled={isLoading || !name.trim() || !phone.trim()}
+          >
+            {isSendingSMS ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : sent === "sms" ? (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Texted!
+              </>
+            ) : (
+              <>
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Text Invite
+              </>
+            )}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

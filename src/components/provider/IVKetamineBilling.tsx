@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Copy, Check, ExternalLink, Syringe, DollarSign, Send } from "lucide-react";
+import { Loader2, Copy, Check, ExternalLink, Syringe, DollarSign, Mail, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface IVKetamineBillingProps {
@@ -26,8 +26,11 @@ const IVKetamineBilling = ({
   const [patientPhone, setPatientPhone] = useState(initialPhone);
   const [sessionNumber, setSessionNumber] = useState("1");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [isSendingSMS, setIsSendingSMS] = useState(false);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [sent, setSent] = useState<"email" | "sms" | null>(null);
 
   const handleGenerateLink = async () => {
     if (!patientEmail) {
@@ -59,6 +62,65 @@ const IVKetamineBilling = ({
     }
   };
 
+  const handleSendEmail = async () => {
+    if (!paymentLink || !patientEmail) return;
+
+    setIsSendingEmail(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-iv-ketamine-payment-email", {
+        body: {
+          patient_name: patientName,
+          patient_email: patientEmail,
+          session_number: parseInt(sessionNumber) || 1,
+          payment_url: paymentLink,
+          amount: 400,
+        },
+      });
+
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+
+      setSent("email");
+      toast.success(`Payment link emailed to ${patientEmail}`);
+    } catch (error: any) {
+      console.error("Error sending email:", error);
+      toast.error(error.message || "Failed to send email");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
+  const handleSendSMS = async () => {
+    if (!paymentLink || !patientPhone) {
+      toast.error("Patient phone number is required for SMS");
+      return;
+    }
+
+    setIsSendingSMS(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-iv-ketamine-payment-sms", {
+        body: {
+          patient_name: patientName,
+          patient_phone: patientPhone,
+          session_number: parseInt(sessionNumber) || 1,
+          payment_url: paymentLink,
+          amount: 400,
+        },
+      });
+
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+
+      setSent("sms");
+      toast.success(`Payment link texted to ${patientPhone}`);
+    } catch (error: any) {
+      console.error("Error sending SMS:", error);
+      toast.error(error.message || "Failed to send SMS");
+    } finally {
+      setIsSendingSMS(false);
+    }
+  };
+
   const copyToClipboard = async () => {
     if (!paymentLink) return;
     
@@ -69,32 +131,6 @@ const IVKetamineBilling = ({
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Failed to copy link");
-    }
-  };
-
-  const copyEmailTemplate = async () => {
-    if (!paymentLink) return;
-
-    const emailBody = `Hi ${patientName || "there"},
-
-Your IV Ketamine Infusion Session #${sessionNumber} is scheduled. Please complete payment before your appointment:
-
-Payment Amount: $400
-Pay Here: ${paymentLink}
-
-Please complete payment at least 24 hours before your session.
-
-If you have any questions, please don't hesitate to reach out.
-
-Best regards,
-Elevated Health Augusta
-(706) 750-4265`;
-
-    try {
-      await navigator.clipboard.writeText(emailBody);
-      toast.success("Email template copied to clipboard");
-    } catch {
-      toast.error("Failed to copy email template");
     }
   };
 
@@ -114,7 +150,7 @@ Elevated Health Augusta
               IV Ketamine Infusion Billing
             </CardTitle>
             <CardDescription className="mt-1">
-              Generate payment link for $400 per infusion
+              Generate and send payment link ($400/infusion)
             </CardDescription>
           </div>
           <Badge variant="outline" className="bg-hope/10 text-hope border-hope/30">
@@ -160,7 +196,7 @@ Elevated Health Augusta
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Patient Phone</Label>
+          <Label className="text-xs text-muted-foreground">Patient Phone (for SMS)</Label>
           <Input
             type="tel"
             placeholder="(555) 123-4567"
@@ -195,9 +231,46 @@ Elevated Health Augusta
               <p className="text-sm font-mono break-all text-foreground">{paymentLink}</p>
             </div>
 
+            {/* Send via Email/SMS buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant={sent === "email" ? "secondary" : "default"}
+                size="sm"
+                onClick={handleSendEmail}
+                disabled={isSendingEmail || isSendingSMS || !patientEmail}
+                className="flex-1"
+              >
+                {isSendingEmail ? (
+                  <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                ) : sent === "email" ? (
+                  <Check className="w-3 h-3 mr-1.5" />
+                ) : (
+                  <Mail className="w-3 h-3 mr-1.5" />
+                )}
+                {sent === "email" ? "Emailed!" : "Send via Email"}
+              </Button>
+              <Button
+                variant={sent === "sms" ? "secondary" : "outline"}
+                size="sm"
+                onClick={handleSendSMS}
+                disabled={isSendingEmail || isSendingSMS || !patientPhone}
+                className="flex-1"
+              >
+                {isSendingSMS ? (
+                  <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                ) : sent === "sms" ? (
+                  <Check className="w-3 h-3 mr-1.5" />
+                ) : (
+                  <MessageSquare className="w-3 h-3 mr-1.5" />
+                )}
+                {sent === "sms" ? "Texted!" : "Send via SMS"}
+              </Button>
+            </div>
+
+            {/* Copy/Open fallback buttons */}
             <div className="flex gap-2">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={copyToClipboard}
                 className="flex-1"
@@ -215,7 +288,7 @@ Elevated Health Augusta
                 )}
               </Button>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={openPaymentLink}
                 className="flex-1"
@@ -224,16 +297,6 @@ Elevated Health Augusta
                 Open
               </Button>
             </div>
-
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={copyEmailTemplate}
-              className="w-full"
-            >
-              <Send className="w-3 h-3 mr-1" />
-              Copy Email Template
-            </Button>
           </div>
         )}
       </CardContent>
