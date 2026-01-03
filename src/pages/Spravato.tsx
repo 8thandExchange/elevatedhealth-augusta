@@ -119,7 +119,7 @@ const Spravato = () => {
       <main>
         {/* Hero Section */}
         <section className="py-16 md:py-24 bg-gradient-to-b from-muted/30 to-background">
-          <div className="container mx-auto px-4 sm:px-6">
+          <div className="container mx-auto px-3 sm:px-4 md:px-6">
             <div className="max-w-4xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full mb-6">
                 <Shield className="h-4 w-4" />

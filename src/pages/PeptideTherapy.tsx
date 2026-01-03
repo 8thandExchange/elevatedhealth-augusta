@@ -283,7 +283,7 @@ const PeptideTherapy = () => {
               <DNAHelixIcon className="absolute bottom-20 left-10 w-32 h-32 text-primary" />
             </div>
             
-            <div className="container mx-auto px-4 sm:px-6 relative z-10">
+            <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
                   5 Categories • FDA-Compliant Protocols

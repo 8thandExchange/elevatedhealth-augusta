@@ -78,7 +78,7 @@ const IVKetamine = () => {
       <main>
         {/* Hero Section */}
         <section id="iv-intro" className="py-16 md:py-24 bg-gradient-to-b from-muted/30 to-background">
-          <div className="container mx-auto px-4 sm:px-6">
+          <div className="container mx-auto px-3 sm:px-4 md:px-6">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">
                 IV Ketamine Therapy

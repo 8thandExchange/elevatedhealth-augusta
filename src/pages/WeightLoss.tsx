@@ -210,7 +210,7 @@ const WeightLoss = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#f5f0e8]/50" />
             </div>
 
-            <div className="container mx-auto px-4 sm:px-6 relative z-10">
+            <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
               <div className="max-w-5xl mx-auto text-center">
                 <div className="inline-block mb-6 animate-fade-in-up">
                   <span className="px-4 py-2 bg-primary/10 text-primary border border-gold/30 rounded-full text-sm font-semibold">

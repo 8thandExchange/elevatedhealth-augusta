@@ -74,7 +74,7 @@ const Ketamine = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-[hsl(200,25%,35%)]" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/50" />
             
-          <div className="relative z-10 container mx-auto px-6 text-center py-32">
+          <div className="relative z-10 container mx-auto px-3 sm:px-4 md:px-6 text-center py-32">
             <p className="text-sm tracking-[0.3em] uppercase text-gold mb-6 font-lato font-light animate-fade-in">
               Neural Optimization
             </p>

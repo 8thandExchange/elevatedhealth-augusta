@@ -179,7 +179,7 @@ const IVLounge = () => {
       <main id="main-content" className="min-h-screen bg-background">
         {/* Hero Section */}
         <section className="pt-32 pb-16 bg-gradient-to-b from-secondary/30 to-background">
-          <div className="container mx-auto px-4 text-center">
+          <div className="container mx-auto px-3 sm:px-4 md:px-6 text-center">
             <span className="inline-block px-4 py-1 mb-4 text-xs tracking-[0.2em] uppercase text-primary border border-primary/30 rounded-full">
               The IV Lounge
             </span>
