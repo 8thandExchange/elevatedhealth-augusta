@@ -124,7 +124,7 @@ const HormonesMen = () => {
       step: 3,
       icon: TrendingUp,
       title: "Start Your Membership",
-      description: "Begin the Concierge Membership with your personalized TRT protocol and ongoing support"
+      description: "Begin the Vitality Membership with your personalized TRT protocol and ongoing support"
     }
   ];
 
@@ -609,15 +609,18 @@ const HormonesMen = () => {
                     <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
                     <CardContent className="p-8">
                       <div className="text-5xl font-bold text-primary/20 mb-4">03</div>
-                      <h3 className="text-xl font-bold mb-2">The Concierge Membership</h3>
-                      <div className="text-3xl font-bold text-primary mb-4">$399<span className="text-lg font-normal">/mo</span></div>
+                      <h3 className="text-xl font-bold mb-2">Vitality Membership</h3>
+                      <div className="text-3xl font-bold text-primary mb-2">$249<span className="text-lg font-normal">/mo</span></div>
+                      <p className="text-xs text-green-600 font-medium mb-4">
+                        Includes $50/mo credit toward prescriptions
+                      </p>
                       <p className="text-sm text-muted-foreground mb-4">
                         Once your protocol is designed, your monthly membership covers:
                       </p>
                       <ul className="text-sm text-muted-foreground space-y-2 mb-6">
                         <li className="flex items-start gap-2">
                           <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          Your testosterone prescription
+                          Testosterone prescription (billed separately, ~$40-60/mo)
                         </li>
                         <li className="flex items-start gap-2">
                           <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
