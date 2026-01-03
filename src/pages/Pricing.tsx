@@ -560,7 +560,7 @@ const Pricing = () => {
                               Provider Strategy Session
                             </h3>
                             <p className="text-slate-600 font-lato text-sm leading-relaxed">
-                              Skip the waiting room. Meet directly with Lauren Bursey, NP to review your medical history and determine eligibility. The $99 fee is fully credited toward your Lab Kit.
+                              Skip the waiting room. Meet directly with Lauren Bursey, NP to review your medical history and determine eligibility. The $99 fee is credited toward your first treatment.
                             </p>
                           </div>
                           <div className="text-right flex-shrink-0">

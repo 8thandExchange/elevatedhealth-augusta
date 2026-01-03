@@ -674,7 +674,7 @@ const WeightLoss = () => {
                   </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid md:grid-cols-3 gap-6">
                   {/* Discovery Consultation */}
                   <Card className="border border-border/50 hover:border-gold/40 transition-all">
                     <CardContent className="p-6 text-center">
@@ -685,9 +685,6 @@ const WeightLoss = () => {
                         Discovery Consultation
                       </h3>
                       <p className="text-3xl font-cormorant text-primary mb-2">$99</p>
-                      <p className="text-xs text-green-600 font-medium mb-2">
-                        Credit toward Metabolic Mapping
-                      </p>
                       <p className="text-sm text-muted-foreground mb-4 font-lato">
                         30-minute in-person strategy session at our Evans clinic to assess your eligibility and discuss options.
                       </p>
@@ -702,38 +699,6 @@ const WeightLoss = () => {
                           <CreditCard className="mr-2 h-4 w-4" />
                         )}
                         {isConsultationLoading ? "..." : "Book - $99"}
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  {/* Metabolic Labs Only */}
-                  <Card className="border border-border/50 hover:border-gold/40 transition-all">
-                    <CardContent className="p-6 text-center">
-                      <div className="inline-flex p-3 bg-gold/10 rounded-full mb-4">
-                        <Droplet className="h-6 w-6 text-gold" />
-                      </div>
-                      <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
-                        Metabolic Mapping
-                      </h3>
-                      <p className="text-3xl font-cormorant text-primary mb-2">$349</p>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        Ordered after your consultation
-                      </p>
-                      <p className="text-sm text-muted-foreground mb-4 font-lato">
-                        Complete ZRT at-home kit (Saliva + Blood Spot) covering Insulin, Thyroid, Cortisol & Hormones — includes provider review.
-                      </p>
-                      <Button 
-                        variant="outline" 
-                        onClick={handleConsultationCheckout}
-                        disabled={isConsultationLoading}
-                        className="w-full border-gold/30 hover:bg-gold/5"
-                      >
-                        {isConsultationLoading ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Calendar className="mr-2 h-4 w-4" />
-                        )}
-                        {isConsultationLoading ? "..." : "Book Consultation First"}
                       </Button>
                     </CardContent>
                   </Card>

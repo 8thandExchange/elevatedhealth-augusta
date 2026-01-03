@@ -20,7 +20,7 @@ export const CONSULTATION_PRICES = {
     amount: 9900, // $99
     displayPrice: "$99",
     name: "Discovery Consultation",
-    description: "45-minute consultation with $99 credit toward treatment",
+    description: "30-minute in-person consultation with $99 credit toward treatment",
     mode: "payment" as const,
     edgeFunction: "create-consultation-checkout",
   },
