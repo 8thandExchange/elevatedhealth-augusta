@@ -49,7 +49,7 @@ Labs are the Gold Standard, but NOT a barrier to entry. We strongly recommend di
 **Our Approach:** Bioidentical hormones via transdermal creams (NOT pellets) for safe, adjustable dosing
 **Pricing:**
 - Hormone Mapping Kit: $349 (handed to you during your in-clinic consultation so Lauren can walk you through exactly how to complete it)
-- Vitality Membership: $299/month (includes hormones, monitoring, provider access)
+- Vitality Membership: $249/month (includes hormones, monitoring, provider access, plus $50/mo credit toward prescriptions)
 **Process:** $99 In-Person Strategy Session → Receive Kit at Clinic → Lab Review → Treatment
 
 ### 3. MEDICAL WEIGHT LOSS (GLP-1s)
