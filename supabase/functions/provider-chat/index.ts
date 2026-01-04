@@ -45,14 +45,22 @@ Elevated Health Augusta is a hormone optimization and wellness clinic in Augusta
 
 # SECTION 2: MEMBERSHIP TIERS & PRICING
 
-## Vitality Membership - $199/month
+## Vitality Membership - $249/month
 **Target:** Hormone optimization patients (HRT/TRT)
 - Bio-identical hormone therapy (transdermal creams)
 - Quarterly ZRT saliva lab testing
-- $50/month medication credit
+- $50/month medication credit toward prescriptions (prescriptions billed separately at member rate $40-60/mo)
 - Unlimited provider messaging
 - Symptom tracking and dashboard access
 - Medication adjustments as needed
+
+## Initial Consultation - $99 (30 minutes, IN-PERSON)
+**All new patients start here:**
+- First visit is IN-PERSON at our Evans, GA clinic (7013 Evans Town Center Blvd, Suite 203)
+- 30-minute consultation with Lauren
+- $99 fee is CREDITED toward first lab kit or treatment
+- Hormone patients receive their Hormone Mapping Kit directly from Lauren during the visit
+- Follow-up appointments may be conducted via telehealth
 
 ## Concierge Membership - $499/month
 **Target:** Weight loss + comprehensive optimization
