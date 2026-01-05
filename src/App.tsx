@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,7 @@ import SecurePatientRoute from "@/components/auth/SecurePatientRoute";
 import CookieConsent from "@/components/CookieConsent";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
 import { ServiceWorkerUpdater } from "@/components/ServiceWorkerUpdater";
+import { CACHE_VERSION } from "@/lib/cacheVersion";
 import Index from "./pages/Index";
 import Ketamine from "./pages/Ketamine";
 import WeightLoss from "./pages/WeightLoss";
@@ -71,7 +73,31 @@ const GlobalBookingModal = () => {
   return <ConsultationModal isOpen={isBookingOpen} onClose={closeBooking} />;
 };
 
-const App = () => (
+// Clear outdated caches on version mismatch
+const clearOutdatedCaches = async () => {
+  if ('caches' in window) {
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
+    } catch (e) {
+      console.error('[App] Error clearing caches:', e);
+    }
+  }
+};
+
+const App = () => {
+  // Version check on app load
+  useEffect(() => {
+    const storedVersion = localStorage.getItem('app-cache-version');
+    if (storedVersion !== CACHE_VERSION) {
+      console.log(`[App] Cache version mismatch: ${storedVersion} → ${CACHE_VERSION}`);
+      clearOutdatedCaches().then(() => {
+        localStorage.setItem('app-cache-version', CACHE_VERSION);
+      });
+    }
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
@@ -217,6 +243,7 @@ const App = () => (
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

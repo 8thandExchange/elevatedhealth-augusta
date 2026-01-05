@@ -34,6 +34,40 @@ export const clearServiceWorkerCache = async () => {
 };
 
 /**
+ * Force hard refresh - clears all caches, unregisters service workers, and reloads
+ * Useful for Firefox and other browsers with aggressive caching
+ */
+export const forceHardRefresh = async () => {
+  // 1. Unregister all service workers
+  if ('serviceWorker' in navigator) {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(reg => reg.unregister()));
+      console.log('[AuthUtils] Unregistered all service workers');
+    } catch (e) {
+      console.error('[AuthUtils] Error unregistering service workers:', e);
+    }
+  }
+
+  // 2. Clear all caches
+  if ('caches' in window) {
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
+      console.log('[AuthUtils] Cleared all caches');
+    } catch (e) {
+      console.error('[AuthUtils] Error clearing caches:', e);
+    }
+  }
+
+  // 3. Clear localStorage cache markers
+  localStorage.removeItem('app-cache-version');
+
+  // 4. Force hard reload
+  window.location.reload();
+};
+
+/**
  * Force logout - clears all session data and redirects to login
  */
 export const forceLogout = async (redirectPath = '/patient/login') => {
