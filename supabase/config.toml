@@ -9,6 +9,18 @@ verify_jwt = false
 [functions.create-hormone-addon-checkout]
 verify_jwt = false
 
+[functions.send-labs-reviewed-sms]
+verify_jwt = false
+
+[functions.send-vitality-activation-sms]
+verify_jwt = false
+
+[functions.send-glp1-activation-sms]
+verify_jwt = false
+
+[functions.send-hormone-addon-sms]
+verify_jwt = false
+
 [functions.voice-session]
 verify_jwt = false
 
