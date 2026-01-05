@@ -239,3 +239,9 @@ verify_jwt = false
 
 [functions.send-welcome-sms]
 verify_jwt = false
+
+[functions.send-staff-alert-sms]
+verify_jwt = false
+
+[functions.daily-appointment-reminders]
+verify_jwt = false
