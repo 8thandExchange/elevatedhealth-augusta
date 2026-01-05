@@ -57,6 +57,7 @@ import OsmindInviteCard from "@/components/provider/OsmindInviteCard";
 import ConsentPDFCard from "@/components/provider/ConsentPDFCard";
 import CreditCodeLookup from "@/components/provider/CreditCodeLookup";
 import ResendWelcomeEmailButton from "@/components/provider/ResendWelcomeEmailButton";
+import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 
 interface Patient {
   id: string;
@@ -946,6 +947,9 @@ const ProviderDashboard = () => {
         isRefreshing={isRefreshing}
         onNavigateToMessages={() => setActiveTab("messages")}
       />
+
+      {/* Quick Actions Toolbar */}
+      <ProviderQuickActions onRefresh={loadData} />
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -2150,8 +2154,8 @@ const ProviderDashboard = () => {
                 patientName={selectedPatient.patient.full_name}
                 patientEmail={selectedPatient.patient.email}
                 patientPhone={selectedPatient.patient.phone}
-                currentTier={(selectedPatient.patient.medical_history as Record<string, any>)?.hormone_addon_tier || "none"}
-                baseMembership="metabolic"
+                currentHasAddon={!!(selectedPatient.patient.medical_history as Record<string, any>)?.has_hormone_addon}
+                baseMembership="semaglutide"
               />
 
               {/* SUNSETTED ADD-ON SELECTORS - Hidden but code preserved for future reactivation

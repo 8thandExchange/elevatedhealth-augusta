@@ -7,19 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Hormone add-on price tiers
-const ADDON_PRICES = {
-  none: null,
-  tier1: "price_1SZijiEOtKRY99puzJbPH0H0", // $75/mo - Single Hormone
-  tier2: "price_1SZj9tEOtKRY99pujZd5xMd9", // $125/mo - Dual Hormone
-  tier3: "price_1SZjAAEOtKRY99puFwqI2CTV", // $175/mo - Trifecta
-};
-
-// Base membership prices (for reference)
-const BASE_PRICES = {
-  metabolic: "price_1SZiXTEOtKRY99puR7PQUExU", // $399/mo
-  vitality: "price_1SZickEOtKRY99pu7j2PtWZm",  // $199/mo
-};
+// Single flat hormone add-on price
+const HORMONE_ADDON_PRICE_ID = "price_1SmMlOEOtKRY99puBAxTpw99"; // $149/mo
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -61,10 +50,10 @@ serve(async (req) => {
 
     logStep("Admin authorized", { userId: userData.user.id });
 
-    const { customer_email, addon_tier, patient_id } = await req.json();
+    const { customer_email, include_hormone_addon, patient_id } = await req.json();
     
     if (!customer_email) throw new Error("Customer email is required");
-    logStep("Request received", { customer_email, addon_tier, patient_id });
+    logStep("Request received", { customer_email, include_hormone_addon, patient_id });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
@@ -90,27 +79,22 @@ serve(async (req) => {
     const subscription = subscriptions.data[0];
     logStep("Found subscription", { subscriptionId: subscription.id });
 
-    // Find existing addon item (if any) - items that are NOT the base membership
+    // Find existing addon item (if any)
     const existingAddonItem = subscription.items.data.find((item: any) => {
-      const priceId = item.price.id;
-      return Object.values(ADDON_PRICES).includes(priceId);
+      return item.price.id === HORMONE_ADDON_PRICE_ID;
     });
-
-    const newAddonPriceId = ADDON_PRICES[addon_tier as keyof typeof ADDON_PRICES];
 
     // Build items array for subscription update
     const items: any[] = [];
 
-    // If there's an existing addon, mark it for deletion
-    if (existingAddonItem) {
+    if (include_hormone_addon && !existingAddonItem) {
+      // Add the hormone addon
+      items.push({ price: HORMONE_ADDON_PRICE_ID, quantity: 1 });
+      logStep("Adding hormone addon", { priceId: HORMONE_ADDON_PRICE_ID });
+    } else if (!include_hormone_addon && existingAddonItem) {
+      // Remove the hormone addon
       items.push({ id: existingAddonItem.id, deleted: true });
-      logStep("Removing existing addon", { itemId: existingAddonItem.id });
-    }
-
-    // If new tier is not "none", add the new addon
-    if (newAddonPriceId) {
-      items.push({ price: newAddonPriceId, quantity: 1 });
-      logStep("Adding new addon", { priceId: newAddonPriceId });
+      logStep("Removing hormone addon", { itemId: existingAddonItem.id });
     }
 
     // Update subscription if there are changes
@@ -134,23 +118,29 @@ serve(async (req) => {
       monthlyTotal += (item.price.unit_amount || 0) * (item.quantity || 1);
     }
 
-    // Update patient record with addon tier (optional tracking)
+    // Update patient record with addon status
     if (patient_id) {
+      const { data: patientData } = await supabaseClient
+        .from("patients")
+        .select("medical_history")
+        .eq("id", patient_id)
+        .single();
+      
       await supabaseClient
         .from("patients")
         .update({ 
           medical_history: {
-            ...((await supabaseClient.from("patients").select("medical_history").eq("id", patient_id).single()).data?.medical_history || {}),
-            hormone_addon_tier: addon_tier,
+            ...(patientData?.medical_history || {}),
+            has_hormone_addon: include_hormone_addon,
           }
         })
         .eq("id", patient_id);
-      logStep("Patient record updated", { patient_id, addon_tier });
+      logStep("Patient record updated", { patient_id, has_hormone_addon: include_hormone_addon });
     }
 
     return new Response(JSON.stringify({ 
       success: true,
-      addon_tier,
+      has_hormone_addon: include_hormone_addon,
       monthly_total_cents: monthlyTotal,
       monthly_total_formatted: `$${(monthlyTotal / 100).toFixed(2)}/mo`
     }), {

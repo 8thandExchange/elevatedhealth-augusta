@@ -97,16 +97,15 @@ export const MEMBERSHIP_PRICES = {
     interval: "month",
     edgeFunction: "create-vitality-checkout",
   },
-  concierge: {
-    priceId: "price_1SZiXTEOtKRY99puR7PQUExU",
-    amount: 39900, // $399/mo
-    displayPrice: "$399/mo",
-    name: "Elevated Concierge Membership",
-    description: "Premium hormone therapy with priority support and additional services",
+  hormoneAddon: {
+    priceId: "price_1SmMlOEOtKRY99puBAxTpw99",
+    amount: 14900, // $149/mo
+    displayPrice: "$149/mo",
+    name: "Hormone Add-On for GLP-1 Members",
+    description: "Discounted hormone therapy add-on for Semaglutide or Tirzepatide members. Includes Bi-Est, Testosterone, and/or Progesterone as needed.",
     mode: "subscription" as const,
     interval: "month",
-    edgeFunction: "create-membership-checkout",
-    requiresLabReview: true,
+    edgeFunction: "create-hormone-addon-checkout",
   },
 } as const;
 

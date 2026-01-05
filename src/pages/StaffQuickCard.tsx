@@ -67,16 +67,16 @@ const StaffQuickCard = () => {
                   <span className="font-mono font-bold">$249/mo</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-border">
-                  <span>Concierge Membership</span>
-                  <span className="font-mono font-bold">$399/mo</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-border">
                   <span>Semaglutide (GLP-1)</span>
                   <span className="font-mono font-bold">$399/mo</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-border">
                   <span>Tirzepatide</span>
                   <span className="font-mono font-bold">$499/mo</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-border">
+                  <span>Hormone Add-On (GLP-1)</span>
+                  <span className="font-mono font-bold">+$149/mo</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-border">
                   <span>IV Ketamine (single)</span>

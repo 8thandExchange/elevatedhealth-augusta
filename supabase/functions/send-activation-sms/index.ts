@@ -14,7 +14,7 @@ const logStep = (step: string, details?: any) => {
 };
 
 // Rate limiting: 10 requests per user per 5 minutes
-const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 10;
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
@@ -22,7 +22,6 @@ const checkRateLimit = (identifier: string): { allowed: boolean; retryAfter?: nu
   const now = Date.now();
   const record = rateLimitMap.get(identifier);
   
-  // Clean up expired entries periodically
   if (rateLimitMap.size > 1000) {
     for (const [key, value] of rateLimitMap.entries()) {
       if (now > value.resetTime) {
@@ -45,28 +44,21 @@ const checkRateLimit = (identifier: string): { allowed: boolean; retryAfter?: nu
   return { allowed: true };
 };
 
-// Stripe price IDs for memberships and add-ons
+// Simplified Stripe price IDs
 const PRICE_IDS = {
-  // Base memberships
-  metabolic: "price_1SZiXTEOtKRY99puR7PQUExU", // $399/mo Metabolic Membership
-  vitality: "price_1SZickEOtKRY99pu7j2PtWZm", // $199/mo Vitality Membership
-  // Hormone add-on tiers
-  tier1: "price_1SZijiEOtKRY99puzJbPH0H0", // $75/mo Tier 1 - Single Hormone
-  tier2: "price_1SZj9tEOtKRY99pujZd5xMd9", // $125/mo Tier 2 - Dual Hormone
-  tier3: "price_1SZjAAEOtKRY99puFwqI2CTV", // $175/mo Tier 3 - Trifecta
+  semaglutide: "price_1SlZnwEOtKRY99puaBhrh2iB", // $399/mo
+  tirzepatide: "price_1SlZnyEOtKRY99puE9JNOrTR", // $499/mo
+  vitality: "price_1Sga64EOtKRY99pu6NpP45Qq", // $249/mo
+  hormoneAddon: "price_1SmMlOEOtKRY99puBAxTpw99", // $149/mo
 };
 
 const BASE_PRICES: Record<string, number> = {
-  metabolic: 399,
-  vitality: 199,
+  semaglutide: 399,
+  tirzepatide: 499,
+  vitality: 249,
 };
 
-const ADDON_PRICES: Record<string, number> = {
-  none: 0,
-  tier1: 75,
-  tier2: 125,
-  tier3: 175,
-};
+const HORMONE_ADDON_PRICE = 149;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -76,15 +68,12 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    // Initialize Supabase clients
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
-    // Create client for auth verification
     const supabaseAuth = createClient(supabaseUrl!, supabaseAnonKey!);
     
-    // Verify authentication
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       logStep("ERROR: No authorization header");
@@ -107,10 +96,8 @@ serve(async (req) => {
     
     logStep("User authenticated", { userId: userData.user.id });
     
-    // Use service role client for admin operations
     const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
     
-    // Verify user has admin or staff role
     const { data: roles, error: rolesError } = await supabase
       .from("user_roles")
       .select("role")
@@ -135,7 +122,6 @@ serve(async (req) => {
     
     logStep("Authorization verified", { userId: userData.user.id, roles });
 
-    // Rate limiting by user ID
     const rateLimitCheck = checkRateLimit(userData.user.id);
     if (!rateLimitCheck.allowed) {
       logStep("Rate limit exceeded", { userId: userData.user.id });
@@ -167,14 +153,14 @@ serve(async (req) => {
     const { 
       first_name, 
       phone, 
-      base_membership = "metabolic", 
-      addon_tier = "none",
+      base_membership = "semaglutide", 
+      include_hormone_addon = false,
       patient_email,
       patient_id,
       send_email = false,
     } = body;
 
-    logStep("Request body received", { first_name, phone, base_membership, addon_tier, patient_email, send_email });
+    logStep("Request body received", { first_name, phone, base_membership, include_hormone_addon, patient_email, send_email });
 
     if (!first_name) {
       throw new Error("Missing required field: first_name is required");
@@ -182,7 +168,7 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    // Build line items based on selected membership and tier
+    // Build line items based on selected membership
     const lineItems: Array<{ price: string; quantity: number }> = [];
 
     // Add base membership
@@ -193,18 +179,15 @@ serve(async (req) => {
     lineItems.push({ price: basePriceId, quantity: 1 });
     logStep("Added base membership", { base_membership, price_id: basePriceId });
 
-    // Add hormone add-on tier if selected (not "none")
-    if (addon_tier && addon_tier !== "none") {
-      const addonPriceId = PRICE_IDS[addon_tier as keyof typeof PRICE_IDS];
-      if (addonPriceId) {
-        lineItems.push({ price: addonPriceId, quantity: 1 });
-        logStep("Added hormone addon tier", { addon_tier, price_id: addonPriceId });
-      }
+    // Add hormone add-on if selected
+    if (include_hormone_addon) {
+      lineItems.push({ price: PRICE_IDS.hormoneAddon, quantity: 1 });
+      logStep("Added hormone addon", { price_id: PRICE_IDS.hormoneAddon });
     }
 
     // Calculate total for email
     const basePrice = BASE_PRICES[base_membership] || 399;
-    const addonPrice = ADDON_PRICES[addon_tier] || 0;
+    const addonPrice = include_hormone_addon ? HORMONE_ADDON_PRICE : 0;
     const totalMonthly = basePrice + addonPrice;
 
     // Create Stripe Checkout session for subscription
@@ -220,7 +203,7 @@ serve(async (req) => {
         first_name,
         phone: phone || "",
         base_membership,
-        addon_tier,
+        include_hormone_addon: String(include_hormone_addon),
       },
     });
 
@@ -229,10 +212,16 @@ serve(async (req) => {
     const paymentLink = session.url;
     let emailSent = false;
 
-    // Send email if requested and we have the email
+    // Send email if requested
     if (send_email && patient_email && resendKey) {
       try {
         const resend = new Resend(resendKey);
+        
+        const membershipName = base_membership === "tirzepatide" 
+          ? "Tirzepatide Membership" 
+          : base_membership === "vitality"
+          ? "Vitality Membership"
+          : "Semaglutide Membership";
         
         const emailHtml = `
           <!DOCTYPE html>
@@ -246,6 +235,7 @@ serve(async (req) => {
               .content { background: #f8f9fa; border-radius: 12px; padding: 30px; margin-bottom: 30px; }
               .cta-button { display: inline-block; background: #2C3E50; color: white !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-weight: 600; margin: 20px 0; }
               .price { font-size: 28px; font-weight: bold; color: #2C3E50; }
+              .breakdown { background: white; border-radius: 8px; padding: 15px; margin: 15px 0; }
               .footer { text-align: center; color: #7F8C8D; font-size: 14px; margin-top: 30px; }
             </style>
           </head>
@@ -256,18 +246,23 @@ serve(async (req) => {
               </div>
               <div class="content">
                 <h2>Hi ${first_name},</h2>
-                <p>Great news! Lauren has reviewed and approved your hormone protocol.</p>
-                <p>Your personalized membership is ready to activate:</p>
-                <p class="price">$${totalMonthly}/month</p>
-                <p>Click the secure button below to activate your membership and finalize your pharmacy order:</p>
+                <p>Great news! Your personalized treatment plan is ready.</p>
+                
+                <div class="breakdown">
+                  <p><strong>${membershipName}:</strong> $${basePrice}/mo</p>
+                  ${include_hormone_addon ? `<p><strong>Hormone Add-On:</strong> +$${HORMONE_ADDON_PRICE}/mo</p>` : ''}
+                </div>
+                
+                <p class="price">Total: $${totalMonthly}/month</p>
+                <p>Click the secure button below to activate your membership:</p>
                 <div style="text-align: center;">
                   <a href="${paymentLink}" class="cta-button">Activate My Membership</a>
                 </div>
                 <p style="font-size: 14px; color: #7F8C8D;">If the button doesn't work, copy and paste this link into your browser:<br/>${paymentLink}</p>
               </div>
               <div class="footer">
-                <p>Questions? Reply to this email or call us at (706) 710-2704</p>
-                <p>Elevated Health Augusta<br/>3540 Wheeler Road, Suite 601<br/>Augusta, GA 30909</p>
+                <p>Questions? Call us at (706) 760-3470</p>
+                <p>Elevated Health Augusta<br/>7013 Evans Town Center Blvd, Suite 203<br/>Evans, GA 30809</p>
               </div>
             </div>
           </body>
@@ -285,7 +280,6 @@ serve(async (req) => {
         emailSent = true;
       } catch (emailError) {
         logStep("Email send error", { error: String(emailError) });
-        // Don't throw - we still want to return the link
       }
     }
 
@@ -300,7 +294,7 @@ serve(async (req) => {
             patient_email: patient_email,
             patient_phone: phone || null,
             base_membership: base_membership,
-            addon_tier: addon_tier,
+            addon_tier: include_hormone_addon ? "hormone_addon" : "none",
             total_monthly: totalMonthly,
             stripe_checkout_url: paymentLink,
             status: "pending",

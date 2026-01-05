@@ -280,23 +280,23 @@ const StaffPricingCheatsheet = () => {
                     <div className="border-b border-border/50 pb-3">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <p className="font-medium">Women's Vitality Membership</p>
-                          <p className="text-sm text-muted-foreground">Bi-Est, Progesterone, low-dose Testosterone, Thyroid optimization</p>
+                          <p className="font-medium">Vitality Membership</p>
+                          <p className="text-sm text-muted-foreground">Bi-Est, Progesterone, Testosterone, Thyroid optimization</p>
                         </div>
                         <Badge className="font-mono bg-primary">$249/mo</Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">Form: Transdermal creams ONLY</p>
+                      <p className="text-xs text-muted-foreground">For all hormone therapy patients (men & women)</p>
                     </div>
                     
                     <div className="border-b border-border/50 pb-3">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <p className="font-medium">Men's Concierge Membership</p>
-                          <p className="text-sm text-muted-foreground">Testosterone, HCG, Estrogen management, Thyroid</p>
+                          <p className="font-medium">Hormone Add-On for GLP-1 Patients</p>
+                          <p className="text-sm text-muted-foreground">Add hormones to weight loss membership</p>
                         </div>
-                        <Badge className="font-mono bg-primary">$399/mo</Badge>
+                        <Badge className="font-mono bg-primary">+$149/mo</Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">Form: Creams or injections (patient choice)</p>
+                      <p className="text-xs text-muted-foreground">Includes any combination of Bi-Est, Testosterone, Progesterone</p>
                     </div>
 
                     <div className="space-y-2">

@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Calendar, Loader2, Save, Sparkles } from "lucide-react";
+import { Crown, Calendar, Loader2, Save, Sparkles, Scale } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -34,12 +34,39 @@ const MembershipAssignmentCard = ({
 
   const getTierBadgeStyle = (tierValue: string) => {
     switch (tierValue) {
-      case "concierge":
-        return "bg-gradient-to-r from-amber-500 to-yellow-500 text-white";
       case "vitality":
         return "bg-gradient-to-r from-primary to-primary/80 text-white";
+      case "semaglutide":
+        return "bg-gradient-to-r from-green-500 to-green-600 text-white";
+      case "tirzepatide":
+        return "bg-gradient-to-r from-blue-500 to-blue-600 text-white";
       default:
         return "bg-muted text-muted-foreground";
+    }
+  };
+
+  const getTierIcon = (tierValue: string) => {
+    switch (tierValue) {
+      case "vitality":
+        return <Sparkles className="w-3 h-3 mr-1" />;
+      case "semaglutide":
+      case "tirzepatide":
+        return <Scale className="w-3 h-3 mr-1" />;
+      default:
+        return null;
+    }
+  };
+
+  const getTierLabel = (tierValue: string) => {
+    switch (tierValue) {
+      case "vitality":
+        return "Vitality";
+      case "semaglutide":
+        return "Semaglutide";
+      case "tirzepatide":
+        return "Tirzepatide";
+      default:
+        return "None";
     }
   };
 
@@ -81,19 +108,8 @@ const MembershipAssignmentCard = ({
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Current:</span>
             <Badge className={getTierBadgeStyle(currentTier)}>
-              {currentTier === "concierge" ? (
-                <>
-                  <Crown className="w-3 h-3 mr-1" />
-                  Concierge
-                </>
-              ) : currentTier === "vitality" ? (
-                <>
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  Vitality
-                </>
-              ) : (
-                "None"
-              )}
+              {getTierIcon(currentTier)}
+              {getTierLabel(currentTier)}
             </Badge>
             {currentRenewalDate && (
               <span className="text-xs text-muted-foreground">
@@ -122,10 +138,16 @@ const MembershipAssignmentCard = ({
                   Vitality ($249/mo)
                 </span>
               </SelectItem>
-              <SelectItem value="concierge">
+              <SelectItem value="semaglutide">
                 <span className="flex items-center gap-2">
-                  <Crown className="w-3.5 h-3.5 text-amber-500" />
-                  Concierge ($499/mo)
+                  <Scale className="w-3.5 h-3.5 text-green-500" />
+                  Semaglutide ($399/mo)
+                </span>
+              </SelectItem>
+              <SelectItem value="tirzepatide">
+                <span className="flex items-center gap-2">
+                  <Scale className="w-3.5 h-3.5 text-blue-500" />
+                  Tirzepatide ($499/mo)
                 </span>
               </SelectItem>
             </SelectContent>
@@ -162,15 +184,16 @@ const MembershipAssignmentCard = ({
           </div>
         )}
 
-        {tier === "concierge" && (
-          <div className="text-xs text-muted-foreground p-3 bg-amber-500/10 rounded-lg">
-            <p className="font-medium text-amber-700 dark:text-amber-400 mb-1">Concierge Includes:</p>
+        {(tier === "semaglutide" || tier === "tirzepatide") && (
+          <div className="text-xs text-muted-foreground p-3 bg-green-500/10 rounded-lg">
+            <p className="font-medium text-green-700 dark:text-green-400 mb-1">
+              {tier === "semaglutide" ? "Semaglutide" : "Tirzepatide"} Includes:
+            </p>
             <ul className="space-y-0.5">
-              <li>• Everything in Vitality PLUS:</li>
-              <li>• GLP-1 weight loss medication</li>
-              <li>• Adrenal support protocol</li>
-              <li>• DHEA + Pregnenolone</li>
-              <li>• Cortisol rhythm optimization</li>
+              <li>• Monthly GLP-1 medication supply</li>
+              <li>• Supplies and shipping included</li>
+              <li>• Ongoing provider supervision</li>
+              <li>• +$149/mo to add hormones</li>
             </ul>
           </div>
         )}

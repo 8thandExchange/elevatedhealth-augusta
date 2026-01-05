@@ -17,40 +17,35 @@ interface HormoneAddonSelectorProps {
   patientName: string;
   patientEmail?: string;
   patientPhone?: string;
-  currentTier?: string;
-  baseMembership?: "metabolic" | "vitality" | null;
+  currentHasAddon?: boolean;
+  baseMembership?: "semaglutide" | "tirzepatide" | null;
 }
 
-const ADDON_TIERS = [
-  { value: "none", label: "None (GLP-1 Only)", price: 0, description: "No hormone add-on" },
-  { value: "tier1", label: "Tier 1 - Single Hormone", price: 75, description: "Bi-Est, Testosterone, or Progesterone" },
-  { value: "tier2", label: "Tier 2 - Dual Hormone", price: 125, description: "Two hormones (e.g., Bi-Est + Progesterone)" },
-  { value: "tier3", label: "Tier 3 - Trifecta", price: 175, description: "All three: Bi-Est, Testosterone, Progesterone" },
+const BASE_MEMBERSHIPS = [
+  { value: "semaglutide", label: "Semaglutide Membership", price: 399 },
+  { value: "tirzepatide", label: "Tirzepatide Membership", price: 499 },
 ];
 
-const BASE_PRICES = {
-  metabolic: 399,
-  vitality: 249,
-};
+const HORMONE_ADDON_PRICE = 149;
 
 const HormoneAddonSelector = ({
   patientId,
   patientName,
   patientEmail,
   patientPhone,
-  currentTier = "none",
-  baseMembership = "metabolic",
+  currentHasAddon = false,
+  baseMembership = "semaglutide",
 }: HormoneAddonSelectorProps) => {
-  const [selectedTier, setSelectedTier] = useState(currentTier);
-  const [selectedMembership, setSelectedMembership] = useState<"metabolic" | "vitality">(baseMembership || "metabolic");
+  const [includeHormones, setIncludeHormones] = useState(currentHasAddon);
+  const [selectedMembership, setSelectedMembership] = useState<"semaglutide" | "tirzepatide">(baseMembership || "semaglutide");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
   const [emailSent, setEmailSent] = useState(false);
 
-  const selectedAddon = ADDON_TIERS.find(t => t.value === selectedTier);
-  const basePrice = BASE_PRICES[selectedMembership];
-  const addonPrice = selectedAddon?.price || 0;
+  const selectedBase = BASE_MEMBERSHIPS.find(m => m.value === selectedMembership);
+  const basePrice = selectedBase?.price || 399;
+  const addonPrice = includeHormones ? HORMONE_ADDON_PRICE : 0;
   const totalMonthly = basePrice + addonPrice;
 
   const firstName = patientName.split(" ")[0] || patientName;
@@ -66,7 +61,7 @@ const HormoneAddonSelector = ({
       const { data, error } = await supabase.functions.invoke("update-subscription-addon", {
         body: {
           customer_email: patientEmail,
-          addon_tier: selectedTier,
+          include_hormone_addon: includeHormones,
           patient_id: patientId,
         },
       });
@@ -100,7 +95,7 @@ const HormoneAddonSelector = ({
           first_name: firstName,
           phone: patientPhone || "",
           base_membership: selectedMembership,
-          addon_tier: selectedTier,
+          include_hormone_addon: includeHormones,
           patient_email: patientEmail,
           patient_id: patientId,
           send_email: true,
@@ -129,7 +124,6 @@ const HormoneAddonSelector = ({
   };
 
   const handleCopyLink = async () => {
-    // If we don't have a link yet, generate one first
     if (!generatedLink) {
       try {
         const { data, error } = await supabase.functions.invoke("send-activation-sms", {
@@ -137,7 +131,7 @@ const HormoneAddonSelector = ({
             first_name: firstName,
             phone: patientPhone || "",
             base_membership: selectedMembership,
-            addon_tier: selectedTier,
+            include_hormone_addon: includeHormones,
             patient_email: patientEmail,
             send_email: false,
             send_sms: false,
@@ -165,54 +159,54 @@ const HormoneAddonSelector = ({
       <CardHeader className="pb-3">
         <CardTitle className="text-sm flex items-center gap-2 text-primary">
           <Pill className="w-4 h-4" />
-          Membership & Hormone Protocol Pricing
+          GLP-1 + Hormone Pricing
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="text-xs text-muted-foreground block mb-1.5">Base Membership</label>
-          <Select value={selectedMembership} onValueChange={(v: "metabolic" | "vitality") => setSelectedMembership(v)}>
+          <label className="text-xs text-muted-foreground block mb-1.5">GLP-1 Medication</label>
+          <Select value={selectedMembership} onValueChange={(v: "semaglutide" | "tirzepatide") => setSelectedMembership(v)}>
             <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Select membership" />
+              <SelectValue placeholder="Select medication" />
             </SelectTrigger>
             <SelectContent className="bg-background z-50">
-              <SelectItem value="metabolic">
-                <div className="flex items-center justify-between w-full">
-                  <span>Metabolic Membership (GLP-1)</span>
-                  <span className="text-muted-foreground ml-4">$399/mo</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="vitality">
-                <div className="flex items-center justify-between w-full">
-                  <span>Vitality Membership (HRT Only)</span>
-                  <span className="text-muted-foreground ml-4">$249/mo</span>
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="text-xs text-muted-foreground block mb-1.5">Hormone Add-On Tier</label>
-          <Select value={selectedTier} onValueChange={setSelectedTier}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Select hormone tier" />
-            </SelectTrigger>
-            <SelectContent className="bg-background z-50">
-              {ADDON_TIERS.map((tier) => (
-                <SelectItem key={tier.value} value={tier.value}>
+              {BASE_MEMBERSHIPS.map((membership) => (
+                <SelectItem key={membership.value} value={membership.value}>
                   <div className="flex items-center justify-between w-full">
-                    <span>{tier.label}</span>
-                    <span className="text-muted-foreground ml-4">
-                      {tier.price > 0 ? `+$${tier.price}/mo` : "No charge"}
-                    </span>
+                    <span>{membership.label}</span>
+                    <span className="text-muted-foreground ml-4">${membership.price}/mo</span>
                   </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          {selectedAddon && (
-            <p className="text-xs text-muted-foreground mt-1">{selectedAddon.description}</p>
+        </div>
+
+        <div>
+          <label className="text-xs text-muted-foreground block mb-1.5">Add Hormone Therapy?</label>
+          <Select value={includeHormones ? "yes" : "no"} onValueChange={(v) => setIncludeHormones(v === "yes")}>
+            <SelectTrigger className="bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-background z-50">
+              <SelectItem value="no">
+                <div className="flex items-center justify-between w-full">
+                  <span>No Hormone Add-On</span>
+                  <span className="text-muted-foreground ml-4">+$0/mo</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="yes">
+                <div className="flex items-center justify-between w-full">
+                  <span>Add Hormone Therapy</span>
+                  <span className="text-muted-foreground ml-4">+$149/mo</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          {includeHormones && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Includes Bi-Est, Testosterone, and/or Progesterone as needed
+            </p>
           )}
         </div>
 
@@ -223,15 +217,13 @@ const HormoneAddonSelector = ({
           </div>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                {selectedMembership === "vitality" ? "Vitality Membership" : "Metabolic Membership"}
-              </span>
+              <span className="text-muted-foreground">{selectedBase?.label}</span>
               <span>${basePrice}</span>
             </div>
-            {addonPrice > 0 && (
+            {includeHormones && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">{selectedAddon?.label}</span>
-                <span>+${addonPrice}</span>
+                <span className="text-muted-foreground">Hormone Add-On</span>
+                <span>+${HORMONE_ADDON_PRICE}</span>
               </div>
             )}
             <div className="border-t border-border pt-2 mt-2 flex justify-between font-semibold">
@@ -279,7 +271,7 @@ const HormoneAddonSelector = ({
         {patientEmail && (
           <Button
             onClick={handleUpdateMembership}
-            disabled={isUpdating || selectedTier === currentTier}
+            disabled={isUpdating || includeHormones === currentHasAddon}
             variant="outline"
             className="w-full"
           >
@@ -292,9 +284,9 @@ const HormoneAddonSelector = ({
           </Button>
         )}
 
-        {selectedTier === currentTier && patientEmail && (
+        {includeHormones === currentHasAddon && patientEmail && (
           <p className="text-xs text-center text-muted-foreground">
-            Select a different tier to update existing subscription
+            Change hormone add-on selection to update subscription
           </p>
         )}
       </CardContent>
