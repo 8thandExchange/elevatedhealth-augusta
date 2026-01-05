@@ -40,7 +40,7 @@ const MESSAGE_TYPES = [
     label: "Welcome", 
     description: "Welcome to Elevated Health + portal access",
     emailFunction: "send-welcome-email",
-    smsFunction: null,
+    smsFunction: "send-welcome-sms",
   },
   { 
     value: "kit_payment", 

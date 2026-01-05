@@ -1,8 +1,10 @@
-import { MapPin, Phone } from "lucide-react";
+import { MapPin, Phone, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackCTAClick } from "@/lib/analytics";
 import PaymentMethodsBadge from "./PaymentMethodsBadge";
+import { forceHardRefresh } from "@/lib/authUtils";
+import { toast } from "sonner";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -22,6 +24,11 @@ const Footer = () => {
         }
       }, 100);
     }
+  };
+
+  const handleClearCache = async () => {
+    toast.info("Clearing cache...", { duration: 2000 });
+    await forceHardRefresh();
   };
 
   return (
@@ -202,6 +209,14 @@ const Footer = () => {
                 className="hover:text-background/60 transition-colors"
               >
                 Accessibility
+              </button>
+              <button 
+                onClick={handleClearCache}
+                className="hover:text-background/60 transition-colors flex items-center gap-1"
+                title="Clear cache and refresh"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Clear Cache
               </button>
             </div>
           </div>
