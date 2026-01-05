@@ -3,6 +3,12 @@ project_id = "szcbfgnucdhwtccsolru"
 [functions.chat]
 verify_jwt = false
 
+[functions.send-hormone-addon-activation]
+verify_jwt = false
+
+[functions.create-hormone-addon-checkout]
+verify_jwt = false
+
 [functions.voice-session]
 verify_jwt = false
 

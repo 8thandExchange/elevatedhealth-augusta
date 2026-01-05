@@ -36,7 +36,9 @@ const EMAIL_TYPES = [
   { value: "welcome", label: "Welcome Email", description: "Welcome to Elevated Health + portal access" },
   { value: "kit_payment", label: "Kit Payment Request", description: "Request payment for hormone mapping kit" },
   { value: "labs_reviewed", label: "Labs Reviewed", description: "Notify patient their labs are ready" },
-  { value: "activation", label: "Membership Activation", description: "Send membership payment link" },
+  { value: "vitality_activation", label: "Vitality Activation", description: "Send $249/mo Vitality membership link" },
+  { value: "glp1_activation", label: "GLP-1 Activation", description: "Send Semaglutide/Tirzepatide payment link" },
+  { value: "hormone_addon", label: "Hormone Add-On", description: "Send $149/mo hormone add-on link (GLP-1 members)" },
 ];
 
 const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps) => {
@@ -76,7 +78,9 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
       case "welcome": return "send-welcome-email";
       case "kit_payment": return "send-kit-payment-link";
       case "labs_reviewed": return "send-labs-reviewed-notification";
-      case "activation": return "send-activation-sms";
+      case "vitality_activation": return "send-vitality-activation";
+      case "glp1_activation": return "send-glp1-activation";
+      case "hormone_addon": return "send-hormone-addon-activation";
       default: return "send-welcome-email";
     }
   };

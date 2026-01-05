@@ -207,7 +207,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
                 <div className="text-right shrink-0">
                   <span className="text-xl font-cormorant font-semibold text-foreground">$99</span>
                   <p className="text-[10px] text-green-600 font-medium">
-                    Credit toward treatment
+                    Applied as credit if you proceed
                   </p>
                 </div>
 
@@ -262,6 +262,12 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
             Admin questions only • No medical advice provided
           </p>
         </div>
+
+        {/* Consultation fee terms */}
+        <p className="text-[10px] text-muted-foreground text-center mt-4 max-w-md mx-auto">
+          The $99 consultation fee is non-refundable. If you move forward with treatment, 
+          this fee is applied as a credit toward your first service.
+        </p>
 
         {/* Payment flexibility messaging */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
