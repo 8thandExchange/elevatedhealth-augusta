@@ -7,9 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, CheckCircle, Lock, Mail, User, Eye, EyeOff } from "lucide-react";
+import { Loader2, CheckCircle, Lock, Mail, User, Eye, EyeOff, Phone } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+
+// Phone number formatting helper
+const formatPhoneNumber = (value: string) => {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+};
 
 const CreateAccount = () => {
   const [searchParams] = useSearchParams();
@@ -23,6 +31,8 @@ const CreateAccount = () => {
   const [verified, setVerified] = useState(false);
   const [email, setEmail] = useState(emailParam || "");
   const [name, setName] = useState(nameParam || "");
+  const [phone, setPhone] = useState("");
+  const [existingPhone, setExistingPhone] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -46,7 +56,23 @@ const CreateAccount = () => {
         if (error) throw error;
         if (data?.verified) {
           setVerified(true);
-          if (data?.email) setEmail(data.email);
+          if (data?.email) {
+            setEmail(data.email);
+            // Fetch existing patient data to get phone number
+            const { data: patientData } = await supabase
+              .from("patients")
+              .select("phone, full_name")
+              .eq("email", data.email)
+              .maybeSingle();
+            
+            if (patientData?.phone) {
+              setExistingPhone(patientData.phone);
+              setPhone(formatPhoneNumber(patientData.phone.replace(/\D/g, "")));
+            }
+            if (patientData?.full_name && !nameParam) {
+              setName(patientData.full_name);
+            }
+          }
         } else {
           setError("Payment verification failed. Please contact support.");
         }
@@ -89,6 +115,10 @@ const CreateAccount = () => {
       if (signUpError) throw signUpError;
 
       if (signUpData.user) {
+        // Clean phone number for storage
+        const cleanPhone = phone.replace(/\D/g, "");
+        const formattedPhoneForStorage = cleanPhone.length === 10 ? cleanPhone : null;
+
         // Update the existing patient record to link to this user
         const { data: patientData, error: updateError } = await supabase
           .from("patients")
@@ -96,13 +126,14 @@ const CreateAccount = () => {
             user_id: signUpData.user.id,
             onboarding_status: "account_created",
             full_name: name || email.split("@")[0],
+            ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
           })
           .eq("email", email)
           .select("primary_program, phone")
           .single();
 
         let primaryProgram = patientData?.primary_program;
-        let patientPhone = patientData?.phone;
+        let patientPhone = formattedPhoneForStorage || patientData?.phone;
 
         if (updateError) {
           console.error("Patient update error:", updateError);
@@ -112,7 +143,9 @@ const CreateAccount = () => {
             email: email,
             full_name: name || email.split("@")[0],
             onboarding_status: "account_created",
+            ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
           });
+          patientPhone = formattedPhoneForStorage;
         }
 
         // Send welcome email (fire and forget - don't block account creation)
@@ -256,6 +289,27 @@ const CreateAccount = () => {
                     disabled={!!emailParam}
                     className="mt-1"
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="phone" className="flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    Phone Number
+                    <span className="text-xs text-muted-foreground font-normal">(for SMS reminders)</span>
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+                    placeholder="(555) 123-4567"
+                    className="mt-1"
+                  />
+                  {!existingPhone && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Optional but recommended for appointment reminders
+                    </p>
+                  )}
                 </div>
 
                 <div>
