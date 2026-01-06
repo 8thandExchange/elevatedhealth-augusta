@@ -52,13 +52,19 @@ serve(async (req) => {
     logStep("Authorization verified");
 
     const body = await req.json();
-    const { patient_email, patient_name, service_type = "hormone" } = body;
+    const { 
+      patient_email, 
+      patient_name, 
+      service_type = "hormone",
+      invite_type = "needs_booking", // "needs_booking" or "already_booked"
+      scheduled_date = null 
+    } = body;
 
     if (!patient_email || !patient_name) {
       throw new Error("Missing required fields: patient_email and patient_name");
     }
 
-    logStep("Request body", { patient_email, patient_name, service_type });
+    logStep("Request body", { patient_email, patient_name, service_type, invite_type, scheduled_date });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const origin = "https://elevatedhealthaugusta.com";
@@ -73,7 +79,6 @@ serve(async (req) => {
     const serviceLabel = serviceLabels[service_type] || "Discovery Consultation";
 
     // Create Stripe Checkout session for $99 Discovery Consultation
-    // NOTE: Credit code will be generated AFTER payment is confirmed
     const session = await stripe.checkout.sessions.create({
       customer_email: patient_email,
       line_items: [
@@ -82,7 +87,7 @@ serve(async (req) => {
             currency: "usd",
             product_data: {
               name: "Discovery Consultation",
-              description: `45-minute ${serviceLabel} consultation with Lauren Bursey, NP-C.`,
+              description: `30-minute ${serviceLabel} consultation with Lauren Bursey, NP-C.`,
             },
             unit_amount: 9900, // $99
           },
@@ -97,7 +102,8 @@ serve(async (req) => {
         patient_name,
         product: "discovery_consultation",
         service_type,
-        invite_type: "provider_consultation_invite",
+        invite_type,
+        scheduled_date: scheduled_date || "",
       },
     });
 
@@ -106,15 +112,16 @@ serve(async (req) => {
     const paymentLink = session.url;
     const firstName = patient_name.split(" ")[0];
 
-    // Create a consultation booking record (no credit code yet - will be added after payment)
+    // Create a consultation booking record
     const { error: bookingError } = await supabase
       .from("consultation_bookings")
       .insert({
         customer_email: patient_email,
         customer_name: patient_name,
         service_type: "hormone_therapy",
-        status: "pending",
+        status: invite_type === "already_booked" ? "pending_payment" : "pending",
         stripe_session_id: session.id,
+        booked_for: scheduled_date || null,
       });
 
     if (bookingError) {
@@ -123,102 +130,205 @@ serve(async (req) => {
       logStep("Consultation booking record created");
     }
 
-    // Send invite email via Resend - NO credit code mentioned yet
+    // Send invite email via Resend - different templates based on invite_type
     const resend = new Resend(resendKey);
     
-    const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; margin: 0; padding: 0; background: #f8f9fa; }
-          .wrapper { background: #f8f9fa; padding: 40px 20px; }
-          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-          .header { background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 40px 30px; text-align: center; }
-          .logo { font-size: 28px; font-weight: 300; color: white; letter-spacing: 0.5px; margin: 0; }
-          .tagline { color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; }
-          .content { padding: 40px 30px; }
-          .greeting { font-size: 24px; font-weight: 600; color: #2C3E50; margin-bottom: 16px; }
-          .intro { color: #4a5568; font-size: 16px; margin-bottom: 24px; }
-          
-          .price-box { background: linear-gradient(135deg, #f7f9fb 0%, #eef2f5 100%); border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0; border: 1px solid #e2e8f0; }
-          .price { font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0; }
-          .price-label { font-size: 14px; color: #7F8C8D; margin-top: 4px; }
-          
-          .includes { background: #fafbfc; border-radius: 12px; padding: 24px; margin: 24px 0; }
-          .includes-title { font-weight: 600; color: #2C3E50; margin-bottom: 16px; font-size: 16px; }
-          .includes ul { margin: 0; padding: 0; list-style: none; }
-          .includes li { margin: 12px 0; color: #4a5568; font-size: 15px; display: flex; align-items: flex-start; gap: 10px; }
-          .check { color: #10b981; font-weight: bold; flex-shrink: 0; }
-          
-          .cta-container { text-align: center; margin: 32px 0; }
-          .cta-button { display: inline-block; background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); color: white !important; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 4px 16px rgba(44,62,80,0.3); }
-          
-          .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
-          .footer-text { color: #7F8C8D; font-size: 14px; margin: 8px 0; }
-          .footer-address { color: #a0aec0; font-size: 12px; margin-top: 16px; }
-          
-          @media (max-width: 600px) {
-            .content { padding: 24px 20px; }
-            .header { padding: 30px 20px; }
-            .price { font-size: 28px; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="wrapper">
-          <div class="container">
-            <div class="header">
-              <h1 class="logo">Elevated Health</h1>
-              <p class="tagline">Restore · Renew · Rebalance</p>
-            </div>
-            <div class="content">
-              <h2 class="greeting">Welcome, ${firstName}!</h2>
-              <p class="intro">Lauren Bursey, NP-C has personally invited you to begin your hormone optimization journey with Elevated Health Augusta. Let's start with a personalized consultation to understand your unique needs.</p>
-              
-              <div class="price-box">
-                <p class="price">$99</p>
-                <p class="price-label">Discovery Consultation • 45 Minutes</p>
+    let emailHtml: string;
+    let emailSubject: string;
+
+    if (invite_type === "already_booked") {
+      // Payment-only email for already booked patients
+      const dateDisplay = scheduled_date 
+        ? new Date(scheduled_date).toLocaleDateString('en-US', { 
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+            hour: 'numeric', minute: '2-digit'
+          })
+        : "your scheduled time";
+
+      emailSubject = `${firstName}, Complete Your Consultation Payment`;
+      emailHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; margin: 0; padding: 0; background: #f8f9fa; }
+            .wrapper { background: #f8f9fa; padding: 40px 20px; }
+            .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+            .header { background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 40px 30px; text-align: center; }
+            .logo { font-size: 28px; font-weight: 300; color: white; letter-spacing: 0.5px; margin: 0; }
+            .tagline { color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; }
+            .content { padding: 40px 30px; }
+            .greeting { font-size: 24px; font-weight: 600; color: #2C3E50; margin-bottom: 16px; }
+            .intro { color: #4a5568; font-size: 16px; margin-bottom: 24px; }
+            
+            .appointment-box { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0; color: white; }
+            .appointment-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+            .appointment-date { font-size: 18px; font-weight: 600; margin-top: 4px; }
+            
+            .price-box { background: linear-gradient(135deg, #f7f9fb 0%, #eef2f5 100%); border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0; border: 1px solid #e2e8f0; }
+            .price { font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0; }
+            .price-label { font-size: 14px; color: #7F8C8D; margin-top: 4px; }
+            
+            .credit-note { background: #fef3c7; border-radius: 8px; padding: 12px 16px; margin: 20px 0; border-left: 4px solid #f59e0b; }
+            .credit-note p { margin: 0; color: #92400e; font-size: 14px; }
+            
+            .cta-container { text-align: center; margin: 32px 0; }
+            .cta-button { display: inline-block; background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); color: white !important; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 4px 16px rgba(44,62,80,0.3); }
+            
+            .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
+            .footer-text { color: #7F8C8D; font-size: 14px; margin: 8px 0; }
+            .footer-address { color: #a0aec0; font-size: 12px; margin-top: 16px; }
+            
+            @media (max-width: 600px) {
+              .content { padding: 24px 20px; }
+              .header { padding: 30px 20px; }
+              .price { font-size: 28px; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="wrapper">
+            <div class="container">
+              <div class="header">
+                <h1 class="logo">Elevated Health</h1>
+                <p class="tagline">Restore · Renew · Rebalance</p>
               </div>
-              
-              <div class="includes">
-                <p class="includes-title">Your Consultation Includes:</p>
-                <ul>
-                  <li><span class="check">✓</span> 45-minute one-on-one with Lauren Bursey, NP-C</li>
-                  <li><span class="check">✓</span> Complete symptom assessment</li>
-                  <li><span class="check">✓</span> Personalized treatment path discussion</li>
-                  <li><span class="check">✓</span> <strong>$99 credit toward your Hormone Mapping Kit</strong></li>
-                </ul>
+              <div class="content">
+                <h2 class="greeting">Hi ${firstName}!</h2>
+                <p class="intro">You have a ${serviceLabel} consultation scheduled with Lauren Bursey, NP-C. Please complete your payment to confirm your appointment.</p>
+                
+                ${scheduled_date ? `
+                <div class="appointment-box">
+                  <p class="appointment-label">Your Appointment</p>
+                  <p class="appointment-date">${dateDisplay}</p>
+                </div>
+                ` : ''}
+                
+                <div class="price-box">
+                  <p class="price">$99</p>
+                  <p class="price-label">Consultation Fee • 30 Minutes</p>
+                </div>
+                
+                <div class="credit-note">
+                  <p>💡 This $99 becomes a <strong>credit toward your Hormone Mapping Kit</strong> if you decide to proceed with treatment.</p>
+                </div>
+                
+                <div class="cta-container">
+                  <a href="${paymentLink}" class="cta-button">Complete Payment →</a>
+                </div>
               </div>
-              
-              <div class="cta-container">
-                <a href="${paymentLink}" class="cta-button">Book Your Consultation →</a>
+              <div class="footer">
+                <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 821-7354</strong></p>
+                <p class="footer-address">
+                  Elevated Health Augusta<br/>
+                  3540 Wheeler Road, Suite 601<br/>
+                  Augusta, GA 30909
+                </p>
               </div>
-              
-              <p style="text-align: center; color: #718096; font-size: 14px; margin-top: 24px;">
-                After payment, you'll receive your credit code via email and can schedule your consultation.
-              </p>
-            </div>
-            <div class="footer">
-              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 821-7354</strong></p>
-              <p class="footer-address">
-                Elevated Health Augusta<br/>
-                3540 Wheeler Road, Suite 601<br/>
-                Augusta, GA 30909
-              </p>
             </div>
           </div>
-        </div>
-      </body>
-      </html>
-    `;
+        </body>
+        </html>
+      `;
+    } else {
+      // Standard invite email - needs to book
+      emailSubject = `${firstName}, Your Consultation Invitation from Elevated Health`;
+      emailHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; margin: 0; padding: 0; background: #f8f9fa; }
+            .wrapper { background: #f8f9fa; padding: 40px 20px; }
+            .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+            .header { background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 40px 30px; text-align: center; }
+            .logo { font-size: 28px; font-weight: 300; color: white; letter-spacing: 0.5px; margin: 0; }
+            .tagline { color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; }
+            .content { padding: 40px 30px; }
+            .greeting { font-size: 24px; font-weight: 600; color: #2C3E50; margin-bottom: 16px; }
+            .intro { color: #4a5568; font-size: 16px; margin-bottom: 24px; }
+            
+            .price-box { background: linear-gradient(135deg, #f7f9fb 0%, #eef2f5 100%); border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0; border: 1px solid #e2e8f0; }
+            .price { font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0; }
+            .price-label { font-size: 14px; color: #7F8C8D; margin-top: 4px; }
+            
+            .includes { background: #fafbfc; border-radius: 12px; padding: 24px; margin: 24px 0; }
+            .includes-title { font-weight: 600; color: #2C3E50; margin-bottom: 16px; font-size: 16px; }
+            .includes ul { margin: 0; padding: 0; list-style: none; }
+            .includes li { margin: 12px 0; color: #4a5568; font-size: 15px; display: flex; align-items: flex-start; gap: 10px; }
+            .check { color: #10b981; font-weight: bold; flex-shrink: 0; }
+            
+            .cta-container { text-align: center; margin: 32px 0; }
+            .cta-button { display: inline-block; background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); color: white !important; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 4px 16px rgba(44,62,80,0.3); }
+            
+            .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
+            .footer-text { color: #7F8C8D; font-size: 14px; margin: 8px 0; }
+            .footer-address { color: #a0aec0; font-size: 12px; margin-top: 16px; }
+            
+            @media (max-width: 600px) {
+              .content { padding: 24px 20px; }
+              .header { padding: 30px 20px; }
+              .price { font-size: 28px; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="wrapper">
+            <div class="container">
+              <div class="header">
+                <h1 class="logo">Elevated Health</h1>
+                <p class="tagline">Restore · Renew · Rebalance</p>
+              </div>
+              <div class="content">
+                <h2 class="greeting">Welcome, ${firstName}!</h2>
+                <p class="intro">Lauren Bursey, NP-C has personally invited you to begin your hormone optimization journey with Elevated Health Augusta. Let's start with a personalized consultation to understand your unique needs.</p>
+                
+                <div class="price-box">
+                  <p class="price">$99</p>
+                  <p class="price-label">Discovery Consultation • 30 Minutes</p>
+                </div>
+                
+                <div class="includes">
+                  <p class="includes-title">Your Consultation Includes:</p>
+                  <ul>
+                    <li><span class="check">✓</span> 30-minute one-on-one with Lauren Bursey, NP-C</li>
+                    <li><span class="check">✓</span> Complete symptom assessment</li>
+                    <li><span class="check">✓</span> Personalized treatment path discussion</li>
+                    <li><span class="check">✓</span> <strong>$99 credit toward your Hormone Mapping Kit</strong></li>
+                  </ul>
+                </div>
+                
+                <div class="cta-container">
+                  <a href="${paymentLink}" class="cta-button">Book Your Consultation →</a>
+                </div>
+                
+                <p style="text-align: center; color: #718096; font-size: 14px; margin-top: 24px;">
+                  After payment, you'll receive confirmation and can schedule your consultation.
+                </p>
+              </div>
+              <div class="footer">
+                <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 821-7354</strong></p>
+                <p class="footer-address">
+                  Elevated Health Augusta<br/>
+                  3540 Wheeler Road, Suite 601<br/>
+                  Augusta, GA 30909
+                </p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+    }
 
     const emailResponse = await resend.emails.send({
       from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
       to: [patient_email],
-      subject: `${firstName}, Your Consultation Invitation from Elevated Health`,
+      subject: emailSubject,
       html: emailHtml,
     });
 
@@ -243,6 +353,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ 
       success: true, 
+      paymentLink: paymentLink,
       payment_link: paymentLink,
       email_sent: true,
     }), {
