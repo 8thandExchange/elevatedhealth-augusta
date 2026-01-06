@@ -55,9 +55,11 @@ const handler = async (req: Request): Promise<Response> => {
     
     const programText = primary_program === 'ketamine' 
       ? 'mental wellness'
+      : primary_program === 'weight_loss'
+      ? 'weight loss'
       : 'personalized wellness';
     
-    const message = `Welcome to Elevated Health, ${firstName}! 🌟 We're excited to start your ${programText} journey. Complete your intake at elevatedhealthaugusta.com/patient/intake to get started. Questions? (706) 760-3470`;
+    const message = `Hi ${firstName}! 🌟 Your Elevated Health patient portal is ready. Log in anytime at elevatedhealthaugusta.com/patient/login. Your next step: complete your health intake. Questions? (706) 760-3470`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

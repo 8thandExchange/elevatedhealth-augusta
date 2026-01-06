@@ -98,10 +98,11 @@ const CreateAccount = () => {
             full_name: name || email.split("@")[0],
           })
           .eq("email", email)
-          .select("primary_program")
+          .select("primary_program, phone")
           .single();
 
         let primaryProgram = patientData?.primary_program;
+        let patientPhone = patientData?.phone;
 
         if (updateError) {
           console.error("Patient update error:", updateError);
@@ -122,6 +123,18 @@ const CreateAccount = () => {
             primary_program: primaryProgram,
           },
         }).catch(err => console.error("Welcome email error:", err));
+
+        // Send welcome SMS if phone number is available
+        if (patientPhone) {
+          supabase.functions.invoke("send-welcome-sms", {
+            body: {
+              patient_name: name || email.split("@")[0],
+              patient_phone: patientPhone,
+              first_name: name?.split(" ")[0],
+              primary_program: primaryProgram,
+            },
+          }).catch(err => console.error("Welcome SMS error:", err));
+        }
 
         toast.success("Account created! Redirecting to intake form...");
         
