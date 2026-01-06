@@ -446,8 +446,9 @@ const AssistantHub = () => {
               onClick={closeAll}
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-primary-foreground hover:bg-primary-foreground/20"
+              className="h-10 w-10 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground"
               style={{ minWidth: '44px', minHeight: '44px' }}
+              aria-label="Close chat"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -615,8 +616,9 @@ const AssistantHub = () => {
               onClick={closeAll}
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-primary-foreground hover:bg-primary-foreground/20"
+              className="h-10 w-10 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground"
               style={{ minWidth: '44px', minHeight: '44px' }}
+              aria-label="Close voice chat"
             >
               <X className="h-5 w-5" />
             </Button>
