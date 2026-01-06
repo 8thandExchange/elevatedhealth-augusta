@@ -65,6 +65,7 @@ import AlaCartePaymentSuccess from "./pages/AlaCartePaymentSuccess";
 import ProviderLayout from "./components/provider/ProviderLayout";
 import StaffPricingCheatsheet from "./pages/StaffPricingCheatsheet";
 import StaffQuickCard from "./pages/StaffQuickCard";
+import EmailTemplates from "./pages/EmailTemplates";
 
 const queryClient = new QueryClient();
 
@@ -233,6 +234,11 @@ const App = () => {
           <Route path="/admin/business" element={
             <ProviderLayout title="Business Dashboard" subtitle="Revenue & Operations" showNavbar={false}>
               <BusinessDashboard />
+            </ProviderLayout>
+          } />
+          <Route path="/admin/email-templates" element={
+            <ProviderLayout title="Email Templates" subtitle="Template Management" showNavbar={false}>
+              <EmailTemplates />
             </ProviderLayout>
           } />
           
