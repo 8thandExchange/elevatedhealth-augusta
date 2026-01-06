@@ -60,6 +60,7 @@ import ResendWelcomeEmailButton from "@/components/provider/ResendWelcomeEmailBu
 import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 import PatientDatabase from "@/components/provider/PatientDatabase";
 import DashboardActivityWidget from "@/components/provider/DashboardActivityWidget";
+import NextActionsWidget from "@/components/provider/NextActionsWidget";
 import CommunicationLog from "@/components/provider/CommunicationLog";
 import { PatientJourneyTracker } from "@/components/provider/PatientJourneyTracker";
 import MedicalClearanceCard from "@/components/provider/MedicalClearanceCard";
@@ -1185,9 +1186,36 @@ const ProviderDashboard = () => {
           </TabsContent>
 
           <TabsContent value="triage">
-            {/* Activity Overview Widget */}
-            <DashboardActivityWidget />
-            
+            {/* Activity & Actions Widgets - Side by Side */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <DashboardActivityWidget />
+              <NextActionsWidget 
+                onPatientClick={(patientId) => {
+                  const found = pendingPatients.find(p => p.patient.id === patientId);
+                  if (found) {
+                    selectPatient(found);
+                  } else {
+                    // Load patient directly if not in pending list
+                    supabase
+                      .from("patients")
+                      .select("*")
+                      .eq("id", patientId)
+                      .single()
+                      .then(({ data }) => {
+                        if (data) {
+                          selectPatient({
+                            patient: data as Patient,
+                            latestLog: null,
+                            highestCategory: "Unknown",
+                            riskLevel: "green",
+                          });
+                        }
+                      });
+                  }
+                }}
+                onRefresh={loadData}
+              />
+            </div>
             {/* Patient Add Options - Side by Side */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 mt-6">
               <InvitePatientCard onInviteSent={() => loadData()} />
