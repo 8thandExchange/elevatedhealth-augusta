@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,6 +18,7 @@ interface KitPaymentSMSRequest {
   payment_url: string;
   amount: number;
   has_credit: boolean;
+  patient_id?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -34,13 +36,13 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Sinch API credentials not configured");
     }
 
-    const { patient_name, patient_phone, kit_type, payment_url, amount, has_credit }: KitPaymentSMSRequest = await req.json();
+    const { patient_name, patient_phone, kit_type, payment_url, amount, has_credit, patient_id }: KitPaymentSMSRequest = await req.json();
 
     if (!patient_phone || !payment_url) {
       throw new Error("Missing required fields: patient_phone and payment_url");
     }
 
-    logStep("Preparing SMS", { patient_phone, kit_type, amount });
+    logStep("Preparing SMS", { patient_phone, kit_type, amount, patient_id });
 
     // Clean and format phone number to E.164
     let formattedPhone = patient_phone.replace(/\D/g, "");
@@ -81,6 +83,27 @@ const handler = async (req: Request): Promise<Response> => {
 
     const result = await response.json();
     logStep("SMS sent successfully", { batchId: result.id });
+
+    // Log to communication_logs if patient_id provided
+    if (patient_id) {
+      try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        await supabase.from("communication_logs").insert({
+          patient_id,
+          template_key: "kit_payment_sms",
+          subject: `${kitName} Payment Link`,
+          body_preview: `SMS sent to ${formattedPhone}: ${kitName} payment link ($${amount})${creditNote}`,
+          delivery_method: "sms",
+          status: "sent",
+        });
+        logStep("Communication logged");
+      } catch (logError) {
+        logStep("Failed to log communication", { error: logError });
+      }
+    }
 
     return new Response(
       JSON.stringify({ success: true, batchId: result.id }),

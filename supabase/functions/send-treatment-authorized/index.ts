@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,13 +23,13 @@ serve(async (req) => {
     const resendKey = Deno.env.get("RESEND_API_KEY");
     if (!resendKey) throw new Error("RESEND_API_KEY is not set");
 
-    const { patient_name, patient_email, protocol_name } = await req.json();
+    const { patient_name, patient_email, protocol_name, patient_id } = await req.json();
 
     if (!patient_email || !patient_name) {
       throw new Error("patient_email and patient_name are required");
     }
 
-    logStep("Request received", { patient_name, patient_email, protocol_name });
+    logStep("Request received", { patient_name, patient_email, protocol_name, patient_id });
 
     const resend = new Resend(resendKey);
 
@@ -134,6 +135,27 @@ serve(async (req) => {
     });
 
     logStep("Email sent", { emailId: emailResponse.data?.id });
+
+    // Log to communication_logs if patient_id provided
+    if (patient_id) {
+      try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        await supabase.from("communication_logs").insert({
+          patient_id,
+          template_key: "treatment_authorized",
+          subject: "Your Treatment Has Been Authorized – Next Steps Inside",
+          body_preview: `Treatment authorized notification sent${protocol_name ? ` for ${protocol_name}` : ''}`,
+          delivery_method: "email",
+          status: "sent",
+        });
+        logStep("Communication logged");
+      } catch (logError) {
+        logStep("Failed to log communication", { error: logError });
+      }
+    }
 
     return new Response(JSON.stringify({ success: true, emailId: emailResponse.data?.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

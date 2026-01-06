@@ -61,6 +61,8 @@ import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 import PatientDatabase from "@/components/provider/PatientDatabase";
 import DashboardActivityWidget from "@/components/provider/DashboardActivityWidget";
 import CommunicationLog from "@/components/provider/CommunicationLog";
+import { PatientJourneyTracker } from "@/components/provider/PatientJourneyTracker";
+import MedicalClearanceCard from "@/components/provider/MedicalClearanceCard";
 
 interface Patient {
   id: string;
@@ -1904,8 +1906,29 @@ const ProviderDashboard = () => {
                 </CardContent>
               </Card>
 
+              {/* Patient Journey Tracker - Visual stepper */}
+              <PatientJourneyTracker
+                onboardingStatus={selectedPatient.patient.onboarding_status || null}
+                primaryProgram={selectedPatient.patient.treatment_request || null}
+              />
+
               {/* Communication History Log */}
               <CommunicationLog patientId={selectedPatient.patient.id} />
+
+              {/* Medical Clearance Card - For Weight Loss patients */}
+              {(selectedPatient.patient.treatment_request === "weight_loss" || 
+                selectedPatient.patient.treatment_request === "glp1") && (
+                <MedicalClearanceCard
+                  patientId={selectedPatient.patient.id}
+                  patientName={selectedPatient.patient.full_name}
+                  patientEmail={selectedPatient.patient.email || null}
+                  onboardingStatus={selectedPatient.patient.onboarding_status || null}
+                  onStatusUpdate={async () => {
+                    await loadData();
+                    await selectPatient(selectedPatient);
+                  }}
+                />
+              )}
 
               {/* Patient Status Card - Shows current step and action needed */}
               <PatientStatusCard

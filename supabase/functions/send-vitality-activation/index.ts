@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -8,10 +9,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
+  console.log(`[SEND-VITALITY-ACTIVATION] ${step}${detailsStr}`);
+};
+
 interface VitalityActivationRequest {
   patient_name: string;
   patient_email: string;
   payment_link?: string;
+  patient_id?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,9 +27,11 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { patient_name, patient_email, payment_link }: VitalityActivationRequest = await req.json();
+    logStep("Function started");
 
-    console.log(`Sending Vitality activation email to ${patient_email}`);
+    const { patient_name, patient_email, payment_link, patient_id }: VitalityActivationRequest = await req.json();
+
+    logStep("Request received", { patient_name, patient_email, patient_id });
 
     const firstName = patient_name.split(' ')[0];
     const activationLink = payment_link || "https://elevatedhealthaugusta.com/consult";
@@ -108,14 +117,35 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Vitality activation email sent successfully:", emailResponse);
+    logStep("Email sent successfully", { emailId: emailResponse.data?.id });
+
+    // Log to communication_logs if patient_id provided
+    if (patient_id) {
+      try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        await supabase.from("communication_logs").insert({
+          patient_id,
+          template_key: "vitality_activation",
+          subject: "Your Personalized Hormone Protocol is Ready",
+          body_preview: `Vitality Membership activation email sent to ${patient_email}`,
+          delivery_method: "email",
+          status: "sent",
+        });
+        logStep("Communication logged");
+      } catch (logError) {
+        logStep("Failed to log communication", { error: logError });
+      }
+    }
 
     return new Response(JSON.stringify({ success: true, emailResponse }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    console.error("Error sending Vitality activation email:", error);
+    logStep("ERROR", { message: error.message });
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
