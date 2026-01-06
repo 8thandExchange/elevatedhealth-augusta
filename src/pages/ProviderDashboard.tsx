@@ -60,6 +60,7 @@ import ResendWelcomeEmailButton from "@/components/provider/ResendWelcomeEmailBu
 import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 import PatientDatabase from "@/components/provider/PatientDatabase";
 import DashboardActivityWidget from "@/components/provider/DashboardActivityWidget";
+import CommunicationLog from "@/components/provider/CommunicationLog";
 
 interface Patient {
   id: string;
@@ -1902,6 +1903,9 @@ const ProviderDashboard = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Communication History Log */}
+              <CommunicationLog patientId={selectedPatient.patient.id} />
 
               {/* Patient Status Card - Shows current step and action needed */}
               <PatientStatusCard
