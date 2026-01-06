@@ -1,56 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Loader2, ShieldAlert, ChevronRight, ChevronLeft, Eye, EyeOff, ArrowLeft, Check, Heart, Brain, Calendar, Phone, Mail } from "lucide-react";
+import { Loader2, Eye, EyeOff, Mail, Calendar } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
 import ConsultationModal from "@/components/ConsultationModal";
 import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
 
 type PrimaryProgram = "hormone" | "ketamine";
-
-interface HormoneSafetyScreening {
-  breastCancer: boolean;
-  uterineCancer: boolean;
-  bloodClot: boolean;
-  pregnantBreastfeeding: boolean;
-}
-
-interface KetamineSafetyScreening {
-  activePsychosis: boolean;
-  uncontrolledHypertension: boolean;
-  seizureDisorder: boolean;
-  pregnancy: boolean;
-}
-
-// Interest options for multi-select
-const INTEREST_OPTIONS = [
-  { id: "hormone", label: "Hormone Replacement Therapy", description: "Bio-identical hormones, menopause, perimenopause, testosterone" },
-  { id: "weight_loss", label: "Medical Weight Loss", description: "GLP-1 therapy, metabolic optimization" },
-  { id: "ketamine", label: "Ketamine Therapy / Mental Wellness", description: "IV ketamine infusions, Spravato®, depression & anxiety" },
-  { id: "peptides", label: "Peptide Therapy", description: "Sermorelin, NAD+, PT-141, cellular optimization" },
-];
-
-const HORMONE_HIGH_RISK_CONDITIONS = [
-  { id: "breastCancer", label: "Breast Cancer (Personal History)", description: "Have you ever been diagnosed with breast cancer?" },
-  { id: "uterineCancer", label: "Uterine/Endometrial Cancer", description: "Have you ever been diagnosed with uterine or endometrial cancer?" },
-  { id: "bloodClot", label: "Active Blood Clot (DVT/PE)", description: "Do you currently have or recently had a blood clot (deep vein thrombosis or pulmonary embolism)?" },
-  { id: "pregnantBreastfeeding", label: "Pregnant or Breastfeeding", description: "Are you currently pregnant or breastfeeding?" },
-];
-
-const KETAMINE_HIGH_RISK_CONDITIONS = [
-  { id: "activePsychosis", label: "Active Psychosis", description: "Are you currently experiencing psychotic symptoms or have been diagnosed with schizophrenia?" },
-  { id: "uncontrolledHypertension", label: "Uncontrolled High Blood Pressure", description: "Do you have high blood pressure that is not well-controlled with medication?" },
-  { id: "seizureDisorder", label: "Seizure Disorder", description: "Do you have a history of seizures or epilepsy?" },
-  { id: "pregnancy", label: "Pregnant or Trying to Conceive", description: "Are you currently pregnant or actively trying to become pregnant?" },
-];
 
 const PatientLogin = () => {
   const navigate = useNavigate();
@@ -59,40 +20,15 @@ const PatientLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loginMethod, setLoginMethod] = useState<"password" | "magic">("password");
   const [magicLinkEmail, setMagicLinkEmail] = useState("");
   const [magicLinkSent, setMagicLinkSent] = useState(false);
-  const [signupStep, setSignupStep] = useState<"info" | "program" | "safety" | "complete">("info");
-  const [signupData, setSignupData] = useState({ 
-    email: "", 
-    password: "", 
-    confirmPassword: "",
-    fullName: "",
-    dob: ""
-  });
-  const [primaryProgram, setPrimaryProgram] = useState<PrimaryProgram | null>(null);
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [hormoneSafetyScreening, setHormoneSafetyScreening] = useState<HormoneSafetyScreening>({
-    breastCancer: false,
-    uterineCancer: false,
-    bloodClot: false,
-    pregnantBreastfeeding: false,
-  });
-  const [ketamineSafetyScreening, setKetamineSafetyScreening] = useState<KetamineSafetyScreening>({
-    activePsychosis: false,
-    uncontrolledHypertension: false,
-    seizureDisorder: false,
-    pregnancy: false,
-  });
   const [showSafetyGate, setShowSafetyGate] = useState(false);
   const [createdPatientName, setCreatedPatientName] = useState("");
-  const [signupSuccess, setSignupSuccess] = useState(false);
-  const [confirmedNoneApply, setConfirmedNoneApply] = useState(false);
+  const [primaryProgram, setPrimaryProgram] = useState<PrimaryProgram | null>(null);
   const [showConsultModal, setShowConsultModal] = useState(false);
   
   // Ref to prevent race conditions with navigation
@@ -148,7 +84,7 @@ const PatientLogin = () => {
     };
   }, [navigate]);
 
-  // Handle Google OAuth sign in
+  // Handle Google OAuth sign in (existing patients only)
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
@@ -203,33 +139,20 @@ const PatientLogin = () => {
                     .eq('id', existingPatient.id);
                 }
                 
-                // Check if they need to complete onboarding
-                if (existingPatient.onboarding_status === 'needs_program_selection') {
-                  console.log("[PatientLogin] Existing Google user needs onboarding");
-                  navigate("/patient/dashboard", { replace: true });
-                } else {
-                  console.log("[PatientLogin] Existing Google user - going to dashboard");
-                  navigate("/patient/dashboard", { replace: true });
-                }
-              } else {
-                // NEW Google user - create patient with needs_program_selection status
-                console.log("[PatientLogin] Creating new Google OAuth patient - needs program selection");
-                await supabase.from('patients').insert([{
-                  user_id: user.id,
-                  full_name: fullName || user.email?.split('@')[0] || 'Patient',
-                  email: user.email,
-                  avatar_url: avatarUrl,
-                  primary_program: null, // Will be set during onboarding
-                  onboarding_status: 'needs_program_selection',
-                  intake_completed: false,
-                }]);
-                
-                // Navigate to dashboard where they'll see onboarding
+                console.log("[PatientLogin] Existing Google user - going to dashboard");
                 navigate("/patient/dashboard", { replace: true });
+              } else {
+                // NEW Google user without patient record - they need to go through proper onboarding
+                // Show error and redirect to booking
+                console.log("[PatientLogin] New Google user without patient record - need consultation first");
+                toast.error("No patient account found. Please book a consultation first.", {
+                  duration: 5000
+                });
+                await supabase.auth.signOut();
+                hasNavigatedRef.current = false;
               }
             } catch (err) {
-              console.error("Error syncing Google profile:", err);
-              // Still navigate even if sync fails
+              console.error("Error checking Google profile:", err);
               navigate("/patient/dashboard", { replace: true });
             }
           }, 0);
@@ -321,181 +244,6 @@ const PatientLogin = () => {
     }
   };
 
-  const isHighRisk = () => {
-    if (primaryProgram === "hormone") {
-      return hormoneSafetyScreening.breastCancer || 
-             hormoneSafetyScreening.uterineCancer || 
-             hormoneSafetyScreening.bloodClot || 
-             hormoneSafetyScreening.pregnantBreastfeeding;
-    } else if (primaryProgram === "ketamine") {
-      return ketamineSafetyScreening.activePsychosis || 
-             ketamineSafetyScreening.uncontrolledHypertension || 
-             ketamineSafetyScreening.seizureDisorder || 
-             ketamineSafetyScreening.pregnancy;
-    }
-    return false;
-  };
-
-  const getSafetyFlags = () => {
-    if (primaryProgram === "hormone") {
-      return Object.entries(hormoneSafetyScreening)
-        .filter(([_, value]) => value)
-        .map(([key]) => {
-          const condition = HORMONE_HIGH_RISK_CONDITIONS.find(c => c.id === key);
-          return condition?.label || key;
-        });
-    } else if (primaryProgram === "ketamine") {
-      return Object.entries(ketamineSafetyScreening)
-        .filter(([_, value]) => value)
-        .map(([key]) => {
-          const condition = KETAMINE_HIGH_RISK_CONDITIONS.find(c => c.id === key);
-          return condition?.label || key;
-        });
-    }
-    return [];
-  };
-
-  const handleSignupStep1 = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (signupData.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-    
-    if (signupData.password !== signupData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-    
-    setSignupStep("program");
-  };
-
-  const handleInterestToggle = (interestId: string) => {
-    setSelectedInterests(prev => 
-      prev.includes(interestId) 
-        ? prev.filter(id => id !== interestId)
-        : [...prev, interestId]
-    );
-  };
-
-  const handleContinueFromProgram = () => {
-    // Determine primary program based on interests
-    // Ketamine takes priority for workflow routing if selected
-    if (selectedInterests.includes("ketamine")) {
-      setPrimaryProgram("ketamine");
-    } else {
-      setPrimaryProgram("hormone");
-    }
-    setSignupStep("safety");
-  };
-
-  // Check if any hormone-related interests are selected
-  const hasHormoneInterests = () => {
-    return selectedInterests.some(i => ["hormone", "weight_loss", "peptides"].includes(i));
-  };
-
-  // Check if ketamine is the ONLY interest selected
-  const isKetamineOnly = () => {
-    return selectedInterests.length === 1 && selectedInterests.includes("ketamine");
-  };
-
-  const handleSignupComplete = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const redirectUrl = `${window.location.origin}/patient/dashboard`;
-      
-      // Sign up the user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: signupData.email,
-        password: signupData.password,
-        options: {
-          emailRedirectTo: redirectUrl
-        }
-      });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("Signup failed");
-
-      const highRisk = isHighRisk();
-      const safetyFlags = getSafetyFlags();
-      const medicalHistory = primaryProgram === "hormone" 
-        ? hormoneSafetyScreening 
-        : ketamineSafetyScreening;
-
-      // Create patient record with safety screening and primary program
-      // Skip intake only if ketamine is the ONLY interest selected
-      const skipIntake = isKetamineOnly();
-      const { error: patientError } = await supabase.from("patients").insert([{
-        user_id: authData.user.id,
-        full_name: signupData.fullName,
-        email: signupData.email, // Store email in patients table
-        dob: signupData.dob || null,
-        primary_program: primaryProgram,
-        treatment_request: selectedInterests.join(","), // Store all selected interests
-        risk_status: highRisk ? "high_risk_review" : "standard",
-        medical_history: medicalHistory as unknown as Record<string, boolean>,
-        safety_flags: highRisk ? safetyFlags : [],
-        intake_completed: skipIntake,
-        onboarding_status: skipIntake ? "intake_complete" : "account_created",
-      }]);
-
-      if (patientError) throw patientError;
-
-      // Send notification to providers about new patient signup
-      try {
-        await supabase.functions.invoke("send-patient-signup-notification", {
-          body: {
-            patientName: signupData.fullName,
-            patientEmail: signupData.email,
-            primaryProgram,
-            isHighRisk: highRisk,
-            safetyFlags: highRisk ? safetyFlags : [],
-          },
-        });
-        console.log("[PatientLogin] Provider notification sent");
-      } catch (notifyError) {
-        // Don't block signup if notification fails
-        console.error("[PatientLogin] Failed to send provider notification:", notifyError);
-      }
-
-      setSignupSuccess(true);
-      
-      if (highRisk) {
-        setCreatedPatientName(signupData.fullName);
-        setTimeout(() => {
-          setShowSafetyGate(true);
-          toast.info("Account created. Manual review required.");
-        }, 800);
-      } else {
-        toast.success("Account created! Welcome to Elevated Health.");
-        // Both hormone and ketamine patients go to dashboard
-        // Ketamine patients skip intake (intake_completed = true)
-        setTimeout(() => navigate("/patient/dashboard"), 800);
-      }
-    } catch (error: any) {
-      // Handle "User already registered" error
-      if (error.message?.includes("already registered") || error.code === "user_already_exists") {
-        toast.error("This email is already registered. Please sign in instead.", {
-          action: {
-            label: "Sign In",
-            onClick: () => {
-              setLoginData({ email: signupData.email, password: "" });
-              setSignupStep("info");
-            }
-          },
-          duration: 8000
-        });
-      } else {
-        toast.error(error.message || "Signup failed");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Show loading while checking session
   if (checkingSession) {
     return (
@@ -563,39 +311,6 @@ const PatientLogin = () => {
     );
   }
 
-  const currentSafetyConditions = primaryProgram === "hormone" 
-    ? HORMONE_HIGH_RISK_CONDITIONS 
-    : KETAMINE_HIGH_RISK_CONDITIONS;
-  
-  const currentSafetyScreening = primaryProgram === "hormone"
-    ? hormoneSafetyScreening
-    : ketamineSafetyScreening;
-
-  const setCurrentSafetyScreening = (id: string, checked: boolean) => {
-    if (primaryProgram === "hormone") {
-      setHormoneSafetyScreening({
-        ...hormoneSafetyScreening,
-        [id]: checked
-      });
-    } else {
-      setKetamineSafetyScreening({
-        ...ketamineSafetyScreening,
-        [id]: checked
-      });
-    }
-    // Reset confirmation when any condition changes
-    setConfirmedNoneApply(false);
-  };
-
-  const isKetamineHighRisk = () => {
-    return ketamineSafetyScreening.activePsychosis || 
-           ketamineSafetyScreening.uncontrolledHypertension || 
-           ketamineSafetyScreening.seizureDisorder || 
-           ketamineSafetyScreening.pregnancy;
-  };
-
-  const KETAMINE_CONSULT_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0XA11WP_5kIZjLuXt6N_cJq5cpLLRdm3T19lrV6w-gjh-VeN5JN0yybyGHXEP1Qo8rjBOpzMyW?gv=true";
-
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -606,643 +321,195 @@ const PatientLogin = () => {
 
         <Card className="bg-card border-border/50">
           <CardHeader>
-            <CardTitle className="font-cormorant text-xl">Welcome</CardTitle>
+            <CardTitle className="font-cormorant text-xl">Welcome Back</CardTitle>
             <CardDescription>Sign in to access your wellness dashboard</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="login">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">New Patient</TabsTrigger>
-              </TabsList>
+          <CardContent className="space-y-4">
+            {/* Google OAuth Button */}
+            <div className="space-y-1">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full bg-white hover:bg-gray-50 text-gray-700 border-gray-300 font-medium"
+                onClick={handleGoogleSignIn}
+                disabled={isLoading}
+              >
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+              </Button>
+              <p className="text-xs text-center text-muted-foreground">For existing patients only</p>
+            </div>
 
-              <TabsContent value="login" className="space-y-4 mt-4">
-                {/* Google OAuth Button */}
-                <div className="space-y-1">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full bg-white hover:bg-gray-50 text-gray-700 border-gray-300 font-medium"
-                    onClick={handleGoogleSignIn}
-                    disabled={isLoading}
-                  >
-                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Continue with Google
-                  </Button>
-                  <p className="text-xs text-center text-muted-foreground">Works for new and existing accounts</p>
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">Or sign in with email</span>
+              </div>
+            </div>
+
+            {/* Login Method Toggle */}
+            <div className="flex gap-2 p-1 bg-muted rounded-lg">
+              <button
+                type="button"
+                onClick={() => { setLoginMethod("password"); setMagicLinkSent(false); }}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+                  loginMethod === "password" 
+                    ? "bg-background text-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Password
+              </button>
+              <button
+                type="button"
+                onClick={() => { setLoginMethod("magic"); setMagicLinkSent(false); }}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-1.5 ${
+                  loginMethod === "magic" 
+                    ? "bg-background text-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Mail className="w-3.5 h-3.5" />
+                Magic Link
+              </button>
+            </div>
+
+            {/* Password Login Form */}
+            {loginMethod === "password" && (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">Email</Label>
+                  <Input
+                    id="login-email"
+                    type="email"
+                    value={loginData.email}
+                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                    required
+                  />
                 </div>
-
-                {/* Divider */}
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">Or sign in with email</span>
-                  </div>
-                </div>
-
-                {/* Login Method Toggle */}
-                <div className="flex gap-2 p-1 bg-muted rounded-lg">
-                  <button
-                    type="button"
-                    onClick={() => { setLoginMethod("password"); setMagicLinkSent(false); }}
-                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-                      loginMethod === "password" 
-                        ? "bg-background text-foreground shadow-sm" 
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    Password
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setLoginMethod("magic"); setMagicLinkSent(false); }}
-                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-1.5 ${
-                      loginMethod === "magic" 
-                        ? "bg-background text-foreground shadow-sm" 
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    Magic Link
-                  </button>
-                </div>
-
-                {/* Password Login Form */}
-                {loginMethod === "password" && (
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="login-email">Email</Label>
-                      <Input
-                        id="login-email"
-                        type="email"
-                        value={loginData.email}
-                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="login-password">Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="login-password"
-                          type={showLoginPassword ? "text" : "password"}
-                          value={loginData.password}
-                          onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                          required
-                          className="pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowLoginPassword(!showLoginPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-10"
-                          tabIndex={-1}
-                        >
-                          {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                      Sign In
-                    </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="login-password"
+                      type={showLoginPassword ? "text" : "password"}
+                      value={loginData.password}
+                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                      required
+                      className="pr-10"
+                    />
                     <button
                       type="button"
-                      onClick={() => setShowForgotPassword(true)}
-                      className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                      onClick={() => setShowLoginPassword(!showLoginPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-10"
+                      tabIndex={-1}
                     >
-                      Forgot password?
-                    </button>
-                  </form>
-                )}
-
-                {/* Magic Link Form */}
-                {loginMethod === "magic" && !magicLinkSent && (
-                  <form onSubmit={handleMagicLink} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="magic-email">Email</Label>
-                      <Input
-                        id="magic-email"
-                        type="email"
-                        placeholder="your@email.com"
-                        value={magicLinkEmail}
-                        onChange={(e) => setMagicLinkEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                      <Mail className="w-4 h-4 mr-2" />
-                      Send Magic Link
-                    </Button>
-                    <p className="text-xs text-center text-muted-foreground">
-                      We'll email you a secure link to sign in — no password needed
-                    </p>
-                  </form>
-                )}
-
-                {/* Magic Link Sent Confirmation */}
-                {loginMethod === "magic" && magicLinkSent && (
-                  <div className="text-center space-y-4 py-4">
-                    <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                      <Mail className="w-8 h-8 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-foreground">Check your email</h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        We sent a sign-in link to <strong>{magicLinkEmail}</strong>
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => { setMagicLinkSent(false); setMagicLinkEmail(""); }}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      Use a different email
+                      {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                )}
-              </TabsContent>
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  Sign In
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </form>
+            )}
 
-              <TabsContent value="signup" className="mt-4">
-                {/* Step 1: Basic Info */}
-                {signupStep === "info" && (
-                  <div className="space-y-4">
-                    {/* Google OAuth Button for Registration */}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full bg-white hover:bg-gray-50 text-gray-700 border-gray-300 font-medium"
-                      onClick={handleGoogleSignIn}
-                      disabled={isLoading}
-                    >
-                      <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                      </svg>
-                      Register with Google
-                    </Button>
+            {/* Magic Link Form */}
+            {loginMethod === "magic" && !magicLinkSent && (
+              <form onSubmit={handleMagicLink} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="magic-email">Email</Label>
+                  <Input
+                    id="magic-email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={magicLinkEmail}
+                    onChange={(e) => setMagicLinkEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send Magic Link
+                </Button>
+                <p className="text-xs text-center text-muted-foreground">
+                  We'll email you a secure link to sign in — no password needed
+                </p>
+              </form>
+            )}
 
-                    {/* Divider */}
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-border" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-card px-2 text-muted-foreground">Or register with email</span>
-                      </div>
-                    </div>
-
-                    <form onSubmit={handleSignupStep1} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-name">Full Name</Label>
-                      <Input
-                        id="signup-name"
-                        value={signupData.fullName}
-                        onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
-                      <Input
-                        id="signup-email"
-                        type="email"
-                        value={signupData.email}
-                        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-dob">Date of Birth</Label>
-                      <Input
-                        id="signup-dob"
-                        type="date"
-                        value={signupData.dob}
-                        onChange={(e) => setSignupData({ ...signupData, dob: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password">Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="signup-password"
-                          type={showSignupPassword ? "text" : "password"}
-                          value={signupData.password}
-                          onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                          required
-                          minLength={6}
-                          className="pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowSignupPassword(!showSignupPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-10"
-                          tabIndex={-1}
-                        >
-                          {showSignupPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-confirm-password">Confirm Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="signup-confirm-password"
-                          type={showConfirmPassword ? "text" : "password"}
-                          value={signupData.confirmPassword}
-                          onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
-                          required
-                          minLength={6}
-                          className="pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-10"
-                          tabIndex={-1}
-                        >
-                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full">
-                      Continue
-                      <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
-                    </form>
-                  </div>
-                )}
-
-                {/* Step 2: Program Selection - Multi-Select */}
-                {signupStep === "program" && (
-                  <div className="space-y-4">
-                    <div className="text-center mb-4">
-                      <h3 className="font-cormorant text-lg font-medium text-foreground">
-                        What are you interested in?
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Select all that apply — you can explore multiple options
-                      </p>
-                    </div>
-
-                    <div className="space-y-3">
-                      {INTEREST_OPTIONS.map((option) => {
-                        const isSelected = selectedInterests.includes(option.id);
-                        const IconComponent = option.id === "ketamine" ? Brain : Heart;
-                        const iconBgClass = option.id === "ketamine" 
-                          ? "bg-primary/10" 
-                          : option.id === "weight_loss"
-                          ? "bg-green-100 dark:bg-green-900/30"
-                          : option.id === "peptides"
-                          ? "bg-purple-100 dark:bg-purple-900/30"
-                          : "bg-pink-100 dark:bg-pink-900/30";
-                        const iconColorClass = option.id === "ketamine"
-                          ? "text-primary"
-                          : option.id === "weight_loss"
-                          ? "text-green-600 dark:text-green-400"
-                          : option.id === "peptides"
-                          ? "text-purple-600 dark:text-purple-400"
-                          : "text-pink-600 dark:text-pink-400";
-                        
-                        return (
-                          <label
-                            key={option.id}
-                            htmlFor={`interest-${option.id}`}
-                            className={`w-full p-4 rounded-lg border-2 transition-all text-left cursor-pointer block ${
-                              isSelected 
-                                ? "border-primary bg-primary/5" 
-                                : "border-border bg-card hover:border-primary/50"
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className={`p-2 rounded-full ${iconBgClass} transition-colors`}>
-                                <IconComponent className={`w-5 h-5 ${iconColorClass}`} />
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="font-medium text-foreground">{option.label}</h4>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {option.description}
-                                </p>
-                              </div>
-                              <Checkbox
-                                id={`interest-${option.id}`}
-                                checked={isSelected}
-                                onCheckedChange={() => handleInterestToggle(option.id)}
-                                className="mt-2"
-                              />
-                            </div>
-                          </label>
-                        );
-                      })}
-                    </div>
-
-                    <div className="flex gap-3 pt-2">
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        onClick={() => setSignupStep("info")}
-                        className="flex-1"
-                      >
-                        <ChevronLeft className="w-4 h-4 mr-2" />
-                        Back
-                      </Button>
-                      <Button 
-                        type="button"
-                        onClick={handleContinueFromProgram}
-                        className="flex-1"
-                        disabled={selectedInterests.length === 0}
-                      >
-                        Continue
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 3: Safety Screening */}
-                {signupStep === "safety" && primaryProgram && (
-                  <div className="space-y-4">
-                    {/* Show Ketamine Safety if ketamine selected */}
-                    {selectedInterests.includes("ketamine") && (
-                      <>
-                        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
-                          <div className="flex items-center gap-2 mb-2">
-                            <ShieldAlert className="w-5 h-5 text-amber-600" />
-                            <h3 className="font-medium text-amber-700 dark:text-amber-400">
-                              Ketamine Therapy Safety Screening
-                            </h3>
-                          </div>
-                          <p className="text-sm text-amber-600 dark:text-amber-300">
-                            Please answer honestly. This helps us ensure your safety and provide appropriate care.
-                          </p>
-                        </div>
-
-                        <div className="space-y-4">
-                          {KETAMINE_HIGH_RISK_CONDITIONS.map((condition) => (
-                            <div 
-                              key={condition.id}
-                              className={`p-4 rounded-lg border transition-colors ${
-                                ketamineSafetyScreening[condition.id as keyof KetamineSafetyScreening]
-                                  ? "border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
-                                  : "border-border bg-card"
-                              }`}
-                            >
-                              <div className="flex items-start gap-3">
-                                <Checkbox
-                                  id={`ketamine-${condition.id}`}
-                                  checked={ketamineSafetyScreening[condition.id as keyof KetamineSafetyScreening]}
-                                  onCheckedChange={(checked) => 
-                                    setKetamineSafetyScreening({
-                                      ...ketamineSafetyScreening,
-                                      [condition.id]: checked === true
-                                    })
-                                  }
-                                  className="mt-1"
-                                />
-                                <div className="flex-1">
-                                  <Label 
-                                    htmlFor={`ketamine-${condition.id}`}
-                                    className="text-foreground font-medium cursor-pointer"
-                                  >
-                                    {condition.label}
-                                  </Label>
-                                  <p className="text-sm text-muted-foreground mt-1">
-                                    {condition.description}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    {/* Show Hormone Safety if hormone interests selected */}
-                    {hasHormoneInterests() && (
-                      <>
-                        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
-                          <div className="flex items-center gap-2 mb-2">
-                            <ShieldAlert className="w-5 h-5 text-amber-600" />
-                            <h3 className="font-medium text-amber-700 dark:text-amber-400">
-                              Hormone Therapy Safety Screening
-                            </h3>
-                          </div>
-                          <p className="text-sm text-amber-600 dark:text-amber-300">
-                            Please answer honestly. This helps us ensure your safety and provide appropriate care.
-                          </p>
-                        </div>
-
-                        <div className="space-y-4">
-                          {HORMONE_HIGH_RISK_CONDITIONS.map((condition) => (
-                            <div 
-                              key={condition.id}
-                              className={`p-4 rounded-lg border transition-colors ${
-                                hormoneSafetyScreening[condition.id as keyof HormoneSafetyScreening]
-                                  ? "border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
-                                  : "border-border bg-card"
-                              }`}
-                            >
-                              <div className="flex items-start gap-3">
-                                <Checkbox
-                                  id={`hormone-${condition.id}`}
-                                  checked={hormoneSafetyScreening[condition.id as keyof HormoneSafetyScreening]}
-                                  onCheckedChange={(checked) => 
-                                    setHormoneSafetyScreening({
-                                      ...hormoneSafetyScreening,
-                                      [condition.id]: checked === true
-                                    })
-                                  }
-                                  className="mt-1"
-                                />
-                                <div className="flex-1">
-                                  <Label 
-                                    htmlFor={`hormone-${condition.id}`}
-                                    className="text-foreground font-medium cursor-pointer"
-                                  >
-                                    {condition.label}
-                                  </Label>
-                                  <p className="text-sm text-muted-foreground mt-1">
-                                    {condition.description}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    {/* Ketamine Disqualification Message - Routes to Clinical Eligibility Review */}
-                    {primaryProgram === "ketamine" && isKetamineHighRisk() && (
-                      <div className="bg-card border border-gold/30 rounded-lg p-6">
-                        <div className="text-center mb-4">
-                          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center">
-                            <Heart className="w-6 h-6 text-gold" />
-                          </div>
-                          <h3 className="font-cormorant text-xl font-semibold text-foreground mb-2">
-                            Safety First. Let's Clarify Your Options.
-                          </h3>
-                          <p className="text-muted-foreground text-sm mb-4">
-                            Your medical intake flagged a potential contraindication for treatment. 
-                            At Elevated Health, we prioritize your safety above all else.
-                          </p>
-                          <p className="text-muted-foreground text-sm">
-                            This brief 30-minute triage call is designed to:
-                          </p>
-                          <ul className="text-sm text-muted-foreground text-left mt-3 space-y-2 max-w-sm mx-auto">
-                            <li className="flex items-start gap-2">
-                              <span className="text-gold font-semibold">•</span>
-                              <span><strong>Clarify:</strong> Review the specific answer that triggered the safety flag</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-gold font-semibold">•</span>
-                              <span><strong>Re-Evaluate:</strong> Determine if the issue is a hard stop or can be managed</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-gold font-semibold">•</span>
-                              <span><strong>Redirect:</strong> Explore other modalities if this therapy isn't safe for you</span>
-                            </li>
-                          </ul>
-                        </div>
-                        
-                        <p className="text-sm font-medium text-foreground mb-2">Book your Clinical Eligibility Review:</p>
-                        <div className="rounded-lg overflow-hidden border border-border mb-4">
-                          {/* Clinical Eligibility Review Calendar */}
-                          <iframe 
-                            src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ26DhPKdGVdKetVQ6WQKaaGYWWrjCKd3c7P7E4dTNfiAbxcYX4Q2OO9lBS25v8X3yYT7KIPsZ9x?gv=true" 
-                            style={{ border: 0 }} 
-                            width="100%" 
-                            height="400"
-                            title="Clinical Eligibility Review"
-                          />
-                        </div>
-                        
-                        <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-                          <Phone className="w-3 h-3" />
-                          Or call us at (706) 750-9973
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Hormone High Risk Warning (existing behavior) */}
-                    {primaryProgram === "hormone" && isHighRisk() && (
-                      <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                        <p className="text-sm text-red-700 dark:text-red-300">
-                          <strong>Note:</strong> Based on your responses, your account will require 
-                          manual review by our medical team before receiving automated recommendations. 
-                          This is for your safety.
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Ketamine: Confirm None Apply (only when ketamine selected and no conditions checked) */}
-                    {selectedInterests.includes("ketamine") && !isKetamineHighRisk() && (
-                      <div className="p-4 rounded-lg border border-border bg-card">
-                        <div className="flex items-start gap-3">
-                          <Checkbox
-                            id="confirm-none-apply"
-                            checked={confirmedNoneApply}
-                            onCheckedChange={(checked) => setConfirmedNoneApply(checked === true)}
-                            className="mt-1"
-                          />
-                          <Label 
-                            htmlFor="confirm-none-apply"
-                            className="text-foreground font-medium cursor-pointer"
-                          >
-                            I confirm I have none of these conditions
-                          </Label>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Navigation */}
-                    <div className="flex gap-3 pt-2">
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        onClick={() => {
-                          setSignupStep("program");
-                          setConfirmedNoneApply(false);
-                        }}
-                        className="flex-1"
-                      >
-                        <ChevronLeft className="w-4 h-4 mr-2" />
-                        Back
-                      </Button>
-                      
-                      {/* Show create account button - disabled if ketamine high risk and ketamine only */}
-                      {!(selectedInterests.includes("ketamine") && isKetamineHighRisk() && isKetamineOnly()) && (
-                        <Button 
-                          type="button"
-                          onClick={handleSignupComplete}
-                          className="flex-1" 
-                          disabled={
-                            isLoading || 
-                            signupSuccess || 
-                            (selectedInterests.includes("ketamine") && !isKetamineHighRisk() && !confirmedNoneApply)
-                          }
-                        >
-                          {signupSuccess ? (
-                            <>
-                              <Check className="w-4 h-4 mr-2 text-green-500" />
-                              Account Created
-                            </>
-                          ) : isLoading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Creating...
-                            </>
-                          ) : (
-                            "Create Account"
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </TabsContent>
-            </Tabs>
+            {/* Magic Link Sent Confirmation */}
+            {loginMethod === "magic" && magicLinkSent && (
+              <div className="text-center space-y-4 py-4">
+                <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                  <Mail className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-foreground">Check your email</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    We sent a sign-in link to <strong>{magicLinkEmail}</strong>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setMagicLinkSent(false); setMagicLinkEmail(""); }}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Use a different email
+                </button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         {/* New Patient CTA */}
-        <div className="mt-6 p-4 bg-gold/5 border border-gold/20 rounded-lg text-center">
-          <p className="text-sm text-muted-foreground mb-2">
-            Not a patient yet?
+        <div className="mt-6 p-4 bg-muted/50 rounded-lg border border-border/50 text-center">
+          <p className="text-sm text-muted-foreground mb-3">
+            New to Elevated Health?
           </p>
           <Button 
             variant="outline" 
-            className="border-gold text-gold hover:bg-gold hover:text-white"
+            className="w-full"
             onClick={() => setShowConsultModal(true)}
           >
-            Book Your $99 Consultation
+            <Calendar className="w-4 h-4 mr-2" />
+            Book Your Consultation
           </Button>
+          <p className="text-xs text-muted-foreground mt-2">
+            Your portal access will be created after your first visit
+          </p>
         </div>
 
-        <div className="text-center mt-6">
-          <Link 
-            to="/" 
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Website
+        {/* Back to Home Link */}
+        <div className="mt-4 text-center">
+          <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            ← Back to website
           </Link>
         </div>
-
-        <ConsultationModal 
-          isOpen={showConsultModal} 
-          onClose={() => setShowConsultModal(false)} 
-        />
       </div>
+
+      {/* Consultation Modal */}
+      <ConsultationModal 
+        isOpen={showConsultModal} 
+        onClose={() => setShowConsultModal(false)} 
+      />
     </div>
   );
 };
