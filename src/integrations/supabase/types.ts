@@ -139,6 +139,50 @@ export type Database = {
         }
         Relationships: []
       }
+      communication_logs: {
+        Row: {
+          body_preview: string | null
+          delivery_method: string
+          id: string
+          patient_id: string
+          sent_at: string
+          sent_by: string | null
+          status: string
+          subject: string | null
+          template_key: string | null
+        }
+        Insert: {
+          body_preview?: string | null
+          delivery_method?: string
+          id?: string
+          patient_id: string
+          sent_at?: string
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          template_key?: string | null
+        }
+        Update: {
+          body_preview?: string | null
+          delivery_method?: string
+          id?: string
+          patient_id?: string
+          sent_at?: string
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          template_key?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_logs_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultation_bookings: {
         Row: {
           amount_paid: number | null
@@ -331,6 +375,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_templates: {
+        Row: {
+          body_html: string
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          merge_fields: string[] | null
+          name: string
+          sms_text: string | null
+          subject: string
+          template_key: string
+          updated_at: string
+        }
+        Insert: {
+          body_html: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          merge_fields?: string[] | null
+          name: string
+          sms_text?: string | null
+          subject: string
+          template_key: string
+          updated_at?: string
+        }
+        Update: {
+          body_html?: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          merge_fields?: string[] | null
+          name?: string
+          sms_text?: string | null
+          subject?: string
+          template_key?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       hormone_mapping_payments: {
         Row: {

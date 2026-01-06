@@ -8,6 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -17,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Search, Mail, Send, MessageSquare, Zap } from "lucide-react";
+import { Loader2, Search, Mail, Send, MessageSquare, Zap, Eye, Edit, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Patient {
   id: string;
@@ -34,6 +36,16 @@ interface QuickEmailModalProps {
 
 type DeliveryMethod = "email" | "sms" | "both";
 
+interface EmailTemplate {
+  id: string;
+  name: string;
+  template_key: string;
+  subject: string;
+  body_html: string;
+  sms_text: string | null;
+  merge_fields: string[];
+}
+
 const MESSAGE_TYPES = [
   { 
     value: "welcome", 
@@ -41,6 +53,13 @@ const MESSAGE_TYPES = [
     description: "Welcome to Elevated Health + portal access",
     emailFunction: "send-welcome-email",
     smsFunction: "send-welcome-sms",
+  },
+  { 
+    value: "consultation_invite", 
+    label: "$99 Consultation Invite", 
+    description: "Send $99 consultation payment link",
+    emailFunction: "send-consultation-invite",
+    smsFunction: "send-consultation-invite-sms",
   },
   { 
     value: "kit_payment", 
@@ -78,18 +97,18 @@ const MESSAGE_TYPES = [
     smsFunction: "send-hormone-addon-sms",
   },
   { 
-    value: "consultation_invite", 
-    label: "Consultation Invite", 
-    description: "Send $99 consultation payment link",
-    emailFunction: "send-consultation-invite",
-    smsFunction: "send-consultation-invite-sms",
-  },
-  { 
     value: "iv_ketamine", 
     label: "IV Ketamine Payment", 
     description: "Send $400 IV ketamine payment link",
     emailFunction: "send-iv-ketamine-payment-email",
     smsFunction: "send-iv-ketamine-payment-sms",
+  },
+  { 
+    value: "intake_reminder", 
+    label: "Intake Reminder", 
+    description: "Remind patient to complete intake forms",
+    emailFunction: "send-intake-reminder",
+    smsFunction: null,
   },
 ];
 
@@ -101,6 +120,16 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("email");
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  
+  // Preview/Edit state
+  const [step, setStep] = useState<"select" | "preview">("select");
+  const [template, setTemplate] = useState<EmailTemplate | null>(null);
+  const [editedSubject, setEditedSubject] = useState("");
+  const [editedBody, setEditedBody] = useState("");
+  const [editedSms, setEditedSms] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoadingTemplate, setIsLoadingTemplate] = useState(false);
+  const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
 
   useEffect(() => {
     if (open && searchQuery.length >= 2) {
@@ -124,6 +153,97 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const loadTemplate = async () => {
+    if (!messageType) return;
+    
+    setIsLoadingTemplate(true);
+    try {
+      const { data, error } = await supabase
+        .from("email_templates")
+        .select("*")
+        .eq("template_key", messageType)
+        .single();
+
+      if (error) {
+        // Template not found in DB, use defaults
+        console.log("Template not found in DB, using default");
+        setTemplate(null);
+        setEditedSubject(getDefaultSubject(messageType));
+        setEditedBody(getDefaultBody(messageType));
+        setEditedSms(getDefaultSms(messageType));
+      } else {
+        setTemplate(data as EmailTemplate);
+        setEditedSubject(data.subject);
+        setEditedBody(data.body_html);
+        setEditedSms(data.sms_text || "");
+      }
+    } catch (err) {
+      console.error("Error loading template:", err);
+    } finally {
+      setIsLoadingTemplate(false);
+    }
+  };
+
+  const getDefaultSubject = (type: string): string => {
+    const subjects: Record<string, string> = {
+      welcome: "Welcome to Elevated Health Augusta, {{patient_name}}!",
+      consultation_invite: "Your $99 Discovery Consultation Awaits",
+      kit_payment: "Complete Your Lab Kit Payment",
+      labs_reviewed: "Your Lab Results Are Ready",
+      vitality_activation: "Your Vitality Membership Awaits",
+      glp1_activation: "Start Your Weight Loss Journey",
+      hormone_addon: "Add Hormone Therapy to Your Plan",
+      iv_ketamine: "IV Ketamine Therapy Payment",
+      intake_reminder: "Complete Your Health Intake",
+    };
+    return subjects[type] || "Message from Elevated Health Augusta";
+  };
+
+  const getDefaultBody = (type: string): string => {
+    return `<p>Dear {{patient_name}},</p><p>Thank you for choosing Elevated Health Augusta.</p><p>Questions? Call (706) 922-7454</p>`;
+  };
+
+  const getDefaultSms = (type: string): string => {
+    return `Hi {{first_name}}, thank you for choosing Elevated Health Augusta! Questions? Call (706) 922-7454`;
+  };
+
+  const mergePlaceholders = (text: string) => {
+    if (!text || !selectedPatient) return text || "";
+    return text
+      .replace(/\{\{patient_name\}\}/g, selectedPatient.full_name)
+      .replace(/\{\{first_name\}\}/g, selectedPatient.full_name.split(" ")[0])
+      .replace(/\{\{email\}\}/g, selectedPatient.email || "")
+      .replace(/\{\{phone\}\}/g, selectedPatient.phone || "")
+      .replace(/\{\{clinic_phone\}\}/g, "(706) 922-7454")
+      .replace(/\{\{payment_link\}\}/g, "[Payment Link]")
+      .replace(/\{\{portal_link\}\}/g, "[Portal Link]");
+  };
+
+  const handleProceedToPreview = async () => {
+    await loadTemplate();
+    setStep("preview");
+  };
+
+  const handleBackToSelect = () => {
+    setStep("select");
+    setIsEditing(false);
+    setActiveTab("preview");
+  };
+
+  const resetToDefault = () => {
+    if (template) {
+      setEditedSubject(template.subject);
+      setEditedBody(template.body_html);
+      setEditedSms(template.sms_text || "");
+    } else {
+      setEditedSubject(getDefaultSubject(messageType));
+      setEditedBody(getDefaultBody(messageType));
+      setEditedSms(getDefaultSms(messageType));
+    }
+    setIsEditing(false);
+    setActiveTab("preview");
   };
 
   const selectedMessageInfo = MESSAGE_TYPES.find(m => m.value === messageType);
@@ -169,7 +289,25 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
         patient_phone: selectedPatient.phone,
         first_name: selectedPatient.full_name.split(" ")[0],
         send_email: true,
+        custom_subject: isEditing ? editedSubject : undefined,
+        custom_body: isEditing ? editedBody : undefined,
+        custom_sms: isEditing ? editedSms : undefined,
       };
+
+      // Log the communication
+      try {
+        await supabase
+          .from("communication_logs")
+          .insert({
+            patient_id: selectedPatient.id,
+            template_key: messageType,
+            subject: mergePlaceholders(editedSubject),
+            body_preview: mergePlaceholders(editedBody).substring(0, 200).replace(/<[^>]*>/g, ''),
+            delivery_method: deliveryMethod,
+          });
+      } catch (logErr) {
+        console.error("Failed to log communication:", logErr);
+      }
 
       // Send Email
       if ((deliveryMethod === "email" || deliveryMethod === "both") && selectedPatient.email && selectedMessageInfo.emailFunction) {
@@ -238,6 +376,13 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
     setSelectedPatient(null);
     setMessageType("");
     setDeliveryMethod("email");
+    setStep("select");
+    setTemplate(null);
+    setEditedSubject("");
+    setEditedBody("");
+    setEditedSms("");
+    setIsEditing(false);
+    setActiveTab("preview");
   };
 
   // Auto-switch to email if SMS not available for selected type
@@ -266,161 +411,319 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
 
   return (
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o) resetForm(); }}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {getDeliveryIcon()}
-            Send Notification
+            {step === "select" ? "Send Notification" : "Preview & Send"}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Patient Search */}
-          <div className="space-y-2">
-            <Label>Search Patient</Label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name or email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            
-            {isLoading && <p className="text-sm text-muted-foreground">Searching...</p>}
-            
-            {patients.length > 0 && !selectedPatient && (
-              <div className="border rounded-lg max-h-40 overflow-y-auto">
-                {patients.map((patient) => (
-                  <button
-                    key={patient.id}
-                    onClick={() => setSelectedPatient(patient)}
-                    className="w-full text-left px-3 py-2 hover:bg-muted/50 border-b last:border-b-0"
-                  >
-                    <p className="font-medium">{patient.full_name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {patient.email || "No email"} • {patient.phone || "No phone"}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Selected Patient */}
-          {selectedPatient && (
-            <div className="bg-primary/5 rounded-lg p-3">
-              <p className="font-medium">{selectedPatient.full_name}</p>
-              <div className="text-sm text-muted-foreground space-y-0.5">
-                <p className={!selectedPatient.email ? "text-amber-600" : ""}>
-                  ✉️ {selectedPatient.email || "No email on file"}
-                </p>
-                <p className={!selectedPatient.phone ? "text-amber-600" : ""}>
-                  📱 {selectedPatient.phone || "No phone on file"}
-                </p>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setSelectedPatient(null)}
-                className="mt-1"
-              >
-                Change Patient
-              </Button>
-            </div>
-          )}
-
-          {/* Message Type */}
-          <div className="space-y-2">
-            <Label>Message Type</Label>
-            <Select value={messageType} onValueChange={setMessageType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select message type..." />
-              </SelectTrigger>
-              <SelectContent>
-                {MESSAGE_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    <span className="flex items-center gap-2">
-                      {type.label}
-                      {type.smsFunction && (
-                        <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">SMS</span>
-                      )}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {selectedMessageInfo && (
-              <p className="text-xs text-muted-foreground">{selectedMessageInfo.description}</p>
-            )}
-          </div>
-
-          {/* Delivery Method Toggle */}
-          {messageType && (
+        {step === "select" ? (
+          <div className="space-y-4 overflow-y-auto">
+            {/* Patient Search */}
             <div className="space-y-2">
-              <Label>Send via</Label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant={deliveryMethod === "email" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setDeliveryMethod("email")}
-                  disabled={!canSendEmail}
-                  className="flex-1"
-                >
-                  <Mail className="w-4 h-4 mr-1" />
-                  Email
-                </Button>
-                <Button
-                  type="button"
-                  variant={deliveryMethod === "sms" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setDeliveryMethod("sms")}
-                  disabled={!canSendSms}
-                  className="flex-1"
-                >
-                  <MessageSquare className="w-4 h-4 mr-1" />
-                  SMS
-                </Button>
-                <Button
-                  type="button"
-                  variant={deliveryMethod === "both" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setDeliveryMethod("both")}
-                  disabled={!canSendBoth}
-                  className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                >
-                  <Zap className="w-4 h-4 mr-1" />
-                  Both
-                </Button>
+              <Label>Search Patient</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name or email..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-              {!canSendSms && messageType && (
-                <p className="text-xs text-muted-foreground">SMS not available for this message type</p>
+              
+              {isLoading && <p className="text-sm text-muted-foreground">Searching...</p>}
+              
+              {patients.length > 0 && !selectedPatient && (
+                <div className="border rounded-lg max-h-40 overflow-y-auto">
+                  {patients.map((patient) => (
+                    <button
+                      key={patient.id}
+                      onClick={() => setSelectedPatient(patient)}
+                      className="w-full text-left px-3 py-2 hover:bg-muted/50 border-b last:border-b-0"
+                    >
+                      <p className="font-medium">{patient.full_name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {patient.email || "No email"} • {patient.phone || "No phone"}
+                      </p>
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
-          )}
 
-          {/* Send Button */}
-          <Button
-            onClick={handleSend}
-            disabled={!selectedPatient || !messageType || !hasRequiredContact() || isSending}
-            className={`w-full ${deliveryMethod === "both" ? "bg-gradient-to-r from-primary to-accent hover:opacity-90" : ""}`}
-          >
-            {isSending ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4 mr-2" />
+            {/* Selected Patient */}
+            {selectedPatient && (
+              <div className="bg-primary/5 rounded-lg p-3">
+                <p className="font-medium">{selectedPatient.full_name}</p>
+                <div className="text-sm text-muted-foreground space-y-0.5">
+                  <p className={!selectedPatient.email ? "text-amber-600" : ""}>
+                    ✉️ {selectedPatient.email || "No email on file"}
+                  </p>
+                  <p className={!selectedPatient.phone ? "text-amber-600" : ""}>
+                    📱 {selectedPatient.phone || "No phone on file"}
+                  </p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedPatient(null)}
+                  className="mt-1"
+                >
+                  Change Patient
+                </Button>
+              </div>
             )}
-            {getButtonLabel()}
-          </Button>
 
-          {selectedPatient && getMissingContactMessage() && (
-            <p className="text-xs text-center text-amber-600">
-              {getMissingContactMessage()}
-            </p>
-          )}
-        </div>
+            {/* Message Type */}
+            <div className="space-y-2">
+              <Label>Message Type</Label>
+              <Select value={messageType} onValueChange={setMessageType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select message type..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {MESSAGE_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      <span className="flex items-center gap-2">
+                        {type.label}
+                        {type.smsFunction && (
+                          <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">SMS</span>
+                        )}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedMessageInfo && (
+                <p className="text-xs text-muted-foreground">{selectedMessageInfo.description}</p>
+              )}
+            </div>
+
+            {/* Delivery Method Toggle */}
+            {messageType && (
+              <div className="space-y-2">
+                <Label>Send via</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={deliveryMethod === "email" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDeliveryMethod("email")}
+                    disabled={!canSendEmail}
+                    className="flex-1"
+                  >
+                    <Mail className="w-4 h-4 mr-1" />
+                    Email
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={deliveryMethod === "sms" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDeliveryMethod("sms")}
+                    disabled={!canSendSms}
+                    className="flex-1"
+                  >
+                    <MessageSquare className="w-4 h-4 mr-1" />
+                    SMS
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={deliveryMethod === "both" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDeliveryMethod("both")}
+                    disabled={!canSendBoth}
+                    className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                  >
+                    <Zap className="w-4 h-4 mr-1" />
+                    Both
+                  </Button>
+                </div>
+                {!canSendSms && messageType && (
+                  <p className="text-xs text-muted-foreground">SMS not available for this message type</p>
+                )}
+              </div>
+            )}
+
+            {/* Next Button */}
+            <Button
+              onClick={handleProceedToPreview}
+              disabled={!selectedPatient || !messageType || !hasRequiredContact()}
+              className="w-full"
+            >
+              Preview Message
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </Button>
+
+            {selectedPatient && getMissingContactMessage() && (
+              <p className="text-xs text-center text-amber-600">
+                {getMissingContactMessage()}
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto space-y-4">
+            {/* Back Button */}
+            <Button variant="ghost" size="sm" onClick={handleBackToSelect}>
+              <ChevronLeft className="w-4 h-4 mr-1" />
+              Back
+            </Button>
+
+            {/* Recipient Info */}
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="font-medium">{selectedPatient?.full_name}</p>
+              <div className="text-sm text-muted-foreground flex gap-4">
+                <span>✉️ {selectedPatient?.email || "No email"}</span>
+                <span>📱 {selectedPatient?.phone || "No phone"}</span>
+              </div>
+            </div>
+
+            {isLoadingTemplate ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : (
+              <>
+                {/* Tabs */}
+                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "preview" | "edit")}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="preview" className="flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Preview
+                    </TabsTrigger>
+                    <TabsTrigger value="edit" className="flex items-center gap-2">
+                      <Edit className="w-4 h-4" />
+                      Edit
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="preview" className="space-y-4 mt-4">
+                    {/* Email Preview */}
+                    {(deliveryMethod === "email" || deliveryMethod === "both") && (
+                      <div className="border rounded-lg overflow-hidden">
+                        <div className="bg-muted px-4 py-2 border-b">
+                          <p className="text-sm font-medium">Subject: {mergePlaceholders(editedSubject)}</p>
+                        </div>
+                        <div 
+                          className="p-4 bg-white text-foreground prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: mergePlaceholders(editedBody) }}
+                        />
+                      </div>
+                    )}
+
+                    {/* SMS Preview */}
+                    {(deliveryMethod === "sms" || deliveryMethod === "both") && editedSms && (
+                      <div className="border rounded-lg overflow-hidden">
+                        <div className="bg-muted px-4 py-2 border-b flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4" />
+                          <p className="text-sm font-medium">SMS Message</p>
+                        </div>
+                        <div className="p-4 bg-green-50 dark:bg-green-950/20">
+                          <p className="text-sm">{mergePlaceholders(editedSms)}</p>
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="edit" className="space-y-4 mt-4">
+                    {(deliveryMethod === "email" || deliveryMethod === "both") && (
+                      <>
+                        <div className="space-y-2">
+                          <Label>Subject Line</Label>
+                          <Input 
+                            value={editedSubject}
+                            onChange={(e) => {
+                              setEditedSubject(e.target.value);
+                              setIsEditing(true);
+                            }}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Email Body (HTML)</Label>
+                          <Textarea 
+                            value={editedBody}
+                            onChange={(e) => {
+                              setEditedBody(e.target.value);
+                              setIsEditing(true);
+                            }}
+                            rows={8}
+                            className="font-mono text-sm"
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {(deliveryMethod === "sms" || deliveryMethod === "both") && (
+                      <div className="space-y-2">
+                        <Label>SMS Message</Label>
+                        <Textarea 
+                          value={editedSms}
+                          onChange={(e) => {
+                            setEditedSms(e.target.value);
+                            setIsEditing(true);
+                          }}
+                          rows={3}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          {editedSms.length}/160 characters
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg flex-wrap">
+                      <span className="font-medium">Merge Fields:</span>
+                      {["patient_name", "first_name", "clinic_phone"].map((field) => (
+                        <code 
+                          key={field} 
+                          className="bg-background px-1.5 py-0.5 rounded text-xs cursor-pointer hover:bg-primary/10"
+                          onClick={() => {
+                            navigator.clipboard.writeText(`{{${field}}}`);
+                            toast.success(`Copied {{${field}}}`);
+                          }}
+                        >
+                          {`{{${field}}}`}
+                        </code>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+
+                {/* Footer Actions */}
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <div className="flex items-center gap-2">
+                    {isEditing && (
+                      <>
+                        <Button variant="ghost" size="sm" onClick={resetToDefault}>
+                          <RotateCcw className="w-4 h-4 mr-1" />
+                          Reset
+                        </Button>
+                        <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-1 rounded">
+                          Personalized
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  
+                  <Button
+                    onClick={handleSend}
+                    disabled={isSending || !hasRequiredContact()}
+                    className={deliveryMethod === "both" ? "bg-gradient-to-r from-primary to-accent hover:opacity-90" : ""}
+                  >
+                    {isSending ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4 mr-2" />
+                    )}
+                    {getButtonLabel()}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

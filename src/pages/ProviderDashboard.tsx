@@ -970,6 +970,13 @@ const ProviderDashboard = () => {
                   </Badge>
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="allpatients" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
+                  <User className="w-4 h-4 flex-shrink-0" />
+                  <span>All Patients</span>
+                </TabsTrigger>
+                <TabsTrigger 
                   value="pipeline" 
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
                 >
@@ -1065,13 +1072,6 @@ const ProviderDashboard = () => {
                 >
                   <Users className="w-4 h-4 flex-shrink-0" />
                   <span>Team</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="allpatients" 
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
-                >
-                  <User className="w-4 h-4 flex-shrink-0" />
-                  <span>All Patients</span>
                 </TabsTrigger>
               </TabsList>
             </div>
