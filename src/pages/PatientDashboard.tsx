@@ -299,6 +299,7 @@ const PatientDashboard = () => {
                   onboardingStatus={patient.onboarding_status || null}
                   kitStatus={kitTracking?.zrt_kit_status}
                   hasAuthorizedOrder={isAuthorized}
+                  primaryProgram={patient.primary_program}
                   onBookConsultation={() => navigate("/schedule-consult")}
                   onPayForLabs={() => {
                     toast.info("Check your email for a payment link from your provider.");

@@ -50,27 +50,43 @@ const KitStatusAdmin = ({
         tracking_number: trackingNumber || null,
       };
 
-      // Add timestamps based on status changes
+      // Get patient ID for status updates
+      const { data: payment } = await supabase
+        .from("hormone_mapping_payments")
+        .select("patient_id")
+        .eq("id", paymentId)
+        .single();
+
+      // PHASE 2: Add status updates that sync with patient onboarding_status
       if (status === "shipped" && currentStatus !== "shipped") {
         updates.shipped_at = new Date().toISOString();
-      }
-      if (status === "sample_received" && currentStatus !== "sample_received") {
-        updates.sample_received_at = new Date().toISOString();
-      }
-      if (status === "results_ready" && currentStatus !== "results_ready") {
-        updates.results_ready_at = new Date().toISOString();
-        
-        // Also update the patient's onboarding status to unlock booking
-        const { data: payment } = await supabase
-          .from("hormone_mapping_payments")
-          .select("patient_id")
-          .eq("id", paymentId)
-          .single();
-
+        // Update patient status to kit_shipped
         if (payment?.patient_id) {
           await supabase
             .from("patients")
-            .update({ onboarding_status: "labs_reviewed" })
+            .update({ onboarding_status: "kit_shipped" })
+            .eq("id", payment.patient_id);
+        }
+      }
+      
+      if (status === "sample_received" && currentStatus !== "sample_received") {
+        updates.sample_received_at = new Date().toISOString();
+        // Update patient status to sample_received
+        if (payment?.patient_id) {
+          await supabase
+            .from("patients")
+            .update({ onboarding_status: "sample_received" })
+            .eq("id", payment.patient_id);
+        }
+      }
+      
+      if (status === "results_ready" && currentStatus !== "results_ready") {
+        updates.results_ready_at = new Date().toISOString();
+        // Update patient status to results_ready (labs_reviewed comes after provider reviews)
+        if (payment?.patient_id) {
+          await supabase
+            .from("patients")
+            .update({ onboarding_status: "results_ready" })
             .eq("id", payment.patient_id);
         }
       }

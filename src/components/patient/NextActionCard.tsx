@@ -1,4 +1,4 @@
-import { ArrowRight, Calendar, CreditCard, Mail, TestTube, Sparkles, Clock } from "lucide-react";
+import { ArrowRight, Calendar, CreditCard, Mail, TestTube, Sparkles, Clock, CheckCircle, Pill, Stethoscope, FileCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ interface NextActionCardProps {
   onboardingStatus: string | null;
   kitStatus?: string | null;
   hasAuthorizedOrder: boolean;
+  primaryProgram?: string | null;
   onBookConsultation?: () => void;
   onPayForLabs?: () => void;
   onActivateMembership?: () => void;
@@ -16,20 +17,102 @@ export const NextActionCard = ({
   onboardingStatus,
   kitStatus,
   hasAuthorizedOrder,
+  primaryProgram,
   onBookConsultation,
   onPayForLabs,
   onActivateMembership,
 }: NextActionCardProps) => {
   const status = onboardingStatus || "pending_invite";
+  const isWeightLoss = primaryProgram === "weight_loss" || primaryProgram === "glp1";
+  const isKetamine = primaryProgram === "ketamine";
 
   // Define action based on current status
   const getActionConfig = () => {
-    // Step 1 states
-    if (["pending_invite", "account_created"].includes(status)) {
+    // ===== PHASE 1: NEW STATUSES FOR INVITE FLOW =====
+    if (status === "invited" || status === "pending_invite") {
+      return {
+        icon: <Mail className="w-6 h-6" />,
+        title: "Complete Your Payment",
+        description: "Check your email for a payment link to begin your journey with Elevated Health.",
+        buttonText: null,
+        buttonAction: null,
+        timeEstimate: "Check your inbox",
+        accentColor: "amber",
+      };
+    }
+
+    if (status === "kit_link_sent") {
+      return {
+        icon: <CreditCard className="w-6 h-6" />,
+        title: "Kit Payment Pending",
+        description: "Check your email or text messages for a payment link to receive your at-home testing kit.",
+        buttonText: null,
+        buttonAction: null,
+        timeEstimate: "Complete payment to proceed",
+        accentColor: "amber",
+      };
+    }
+
+    // ===== WEIGHT LOSS / GLP-1 SPECIFIC STATUSES =====
+    if (isWeightLoss) {
+      if (status === "awaiting_medical_clearance" || status === "intake_complete" || status === "consultation_complete") {
+        return {
+          icon: <Stethoscope className="w-6 h-6" />,
+          title: "Medical Review in Progress",
+          description: "Your provider is reviewing your information to ensure GLP-1 therapy is right for you.",
+          buttonText: null,
+          buttonAction: null,
+          timeEstimate: "Typically within 24-48 hours",
+          accentColor: "blue",
+        };
+      }
+
+      if (status === "glp1_approved" || status === "medical_clearance_complete") {
+        return {
+          icon: <CheckCircle className="w-6 h-6" />,
+          title: "GLP-1 Approved!",
+          description: "Great news! You've been approved for GLP-1 therapy. Your prescription is being sent to the pharmacy.",
+          buttonText: null,
+          buttonAction: null,
+          timeEstimate: "Rx ships in 3-5 business days",
+          accentColor: "green",
+        };
+      }
+
+      if (status === "glp1_rx_sent" || status === "rx_sent") {
+        return {
+          icon: <Pill className="w-6 h-6" />,
+          title: "Prescription Sent!",
+          description: "Your GLP-1 medication has been sent to the pharmacy. Watch for shipping updates.",
+          buttonText: null,
+          buttonAction: null,
+          timeEstimate: "Arrives in 3-5 business days",
+          accentColor: "green",
+        };
+      }
+    }
+
+    // ===== KETAMINE SPECIFIC STATUSES =====
+    if (isKetamine) {
+      if (status === "ketamine_screening" || status === "intake_complete" || status === "consultation_complete") {
+        return {
+          icon: <FileCheck className="w-6 h-6" />,
+          title: "Ketamine Screening Complete",
+          description: "Check your email for your Osmind portal invitation to continue your mental wellness journey.",
+          buttonText: null,
+          buttonAction: null,
+          timeEstimate: "Portal invite sent to email",
+          accentColor: "blue",
+        };
+      }
+    }
+
+    // ===== GENERAL CONSULTATION FLOW =====
+    if (status === "account_created") {
       return {
         icon: <Calendar className="w-6 h-6" />,
         title: "Book Your Strategy Session",
-        description: "Schedule your $99 consultation to discuss your health goals and create a personalized plan.",
+        description: "Schedule your consultation to discuss your health goals and create a personalized plan.",
         buttonText: "Book Now",
         buttonAction: onBookConsultation,
         timeEstimate: "15-30 minute session",
@@ -61,19 +144,21 @@ export const NextActionCard = ({
       };
     }
 
+    // ===== HORMONE THERAPY LAB FLOW =====
     if (status === "consultation_complete" || status === "intake_complete") {
-      return {
-        icon: <TestTube className="w-6 h-6" />,
-        title: "Complete Your Lab Payment",
-        description: "Your provider has recommended diagnostic labs. Pay now to receive your at-home testing kit.",
-        buttonText: "Pay for Labs",
-        buttonAction: onPayForLabs,
-        timeEstimate: "Kit ships in 2-3 business days",
-        accentColor: "amber",
-      };
+      if (!isWeightLoss && !isKetamine) {
+        return {
+          icon: <TestTube className="w-6 h-6" />,
+          title: "Complete Your Lab Payment",
+          description: "Your provider has recommended diagnostic labs. Pay now to receive your at-home testing kit.",
+          buttonText: "Pay for Labs",
+          buttonAction: onPayForLabs,
+          timeEstimate: "Kit ships in 2-3 business days",
+          accentColor: "amber",
+        };
+      }
     }
 
-    // Step 2 states
     if (status === "labs_paid") {
       return {
         icon: <Mail className="w-6 h-6" />,
@@ -122,7 +207,7 @@ export const NextActionCard = ({
       };
     }
 
-    // Step 3 states
+    // ===== TREATMENT ACTIVATION =====
     if (status === "protocol_approved" || status === "pending_pharmacy_order") {
       return {
         icon: <CreditCard className="w-6 h-6" />,
@@ -132,6 +217,18 @@ export const NextActionCard = ({
         buttonAction: onActivateMembership,
         timeEstimate: "Start treatment today",
         accentColor: "amber",
+      };
+    }
+
+    if (status === "rx_sent" || status === "pending_pharmacy_order") {
+      return {
+        icon: <Pill className="w-6 h-6" />,
+        title: "Prescription on the Way",
+        description: "Your personalized medication is being prepared by our pharmacy partner.",
+        buttonText: null,
+        buttonAction: null,
+        timeEstimate: "Ships in 3-5 business days",
+        accentColor: "green",
       };
     }
 
@@ -147,11 +244,11 @@ export const NextActionCard = ({
       };
     }
 
-    // Default fallback
+    // Default fallback - encourage booking consultation
     return {
       icon: <Calendar className="w-6 h-6" />,
-      title: "Get Started",
-      description: "Begin your wellness journey by booking a consultation.",
+      title: "Start Your Wellness Journey",
+      description: "Book a consultation to discuss your health goals and discover how we can help.",
       buttonText: "Book Consultation",
       buttonAction: onBookConsultation,
       timeEstimate: null,

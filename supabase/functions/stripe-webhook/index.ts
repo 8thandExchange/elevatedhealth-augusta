@@ -147,7 +147,7 @@ serve(async (req) => {
     { auth: { persistSession: false } }
   );
 
-  // Handle checkout.session.completed for subscription payments
+  // Handle checkout.session.completed for all payment types
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     logStep("Checkout session completed", { 
@@ -156,10 +156,47 @@ serve(async (req) => {
       mode: session.mode 
     });
 
-    // Only process subscription payments (membership activations)
+    const customerEmail = session.customer_email || session.customer_details?.email;
+    const metadata = session.metadata || {};
+
+    // PHASE 4: Handle one-time payments (consultations, lab kits, etc.)
+    if (session.mode === "payment") {
+      const paymentType = metadata.payment_type;
+      
+      if (customerEmail) {
+        logStep("Processing one-time payment", { email: customerEmail, paymentType });
+
+        // Update patient status based on payment type
+        if (paymentType === "consultation") {
+          const { error } = await supabaseClient
+            .from("patients")
+            .update({ onboarding_status: "consultation_paid" })
+            .eq("email", customerEmail);
+          
+          if (error) {
+            logStep("Error updating patient for consultation payment", { error: error.message });
+          } else {
+            logStep("Patient status updated to consultation_paid", { email: customerEmail });
+          }
+        }
+
+        if (paymentType === "hormone_mapping" || paymentType === "lab_kit") {
+          const { error } = await supabaseClient
+            .from("patients")
+            .update({ onboarding_status: "labs_paid" })
+            .eq("email", customerEmail);
+          
+          if (error) {
+            logStep("Error updating patient for lab payment", { error: error.message });
+          } else {
+            logStep("Patient status updated to labs_paid", { email: customerEmail });
+          }
+        }
+      }
+    }
+
+    // Handle subscription payments (membership activations)
     if (session.mode === "subscription") {
-      const customerEmail = session.customer_email || session.customer_details?.email;
-      const metadata = session.metadata || {};
       const baseMembership = metadata.base_membership || "metabolic";
       
       if (customerEmail) {
@@ -185,13 +222,13 @@ serve(async (req) => {
         // Determine the membership type from activation link or metadata
         const membershipType = activationData?.[0]?.base_membership || baseMembership;
         
-        // GAP 1 & 2 FIX: Set patient to 'pending_pharmacy_order' and ensure lab_path is 'zrt' for ALL memberships
-        // Both GLP-1 (metabolic) and hormone-only (vitality) patients need diagnostic labs
+        // PHASE 4: Set patient to treatment_active for subscription activations
         const { data: patientData, error: patientError } = await supabaseClient
           .from("patients")
           .update({ 
-            onboarding_status: "pending_pharmacy_order",  // GAP 2: Lauren sees this and must complete pharmacy order
-            lab_path: "zrt"  // GAP 1: ALL patients get ZRT kit shipped, including GLP-1/metabolic
+            onboarding_status: "treatment_active",
+            membership_tier: membershipType,
+            lab_path: "zrt"
           })
           .eq("email", customerEmail)
           .select();
@@ -199,13 +236,13 @@ serve(async (req) => {
         if (patientError) {
           logStep("Error updating patient status", { error: patientError.message });
         } else {
-          logStep("Patient status updated to pending_pharmacy_order with ZRT lab path", { 
+          logStep("Patient status updated to treatment_active", { 
             count: patientData?.length || 0,
             membershipType 
           });
         }
 
-        // Send welcome email (updated to mention ZRT kit shipping)
+        // Send welcome email
         const patientName = activationData?.[0]?.patient_name || patientData?.[0]?.full_name || "Valued Patient";
         
         try {

@@ -110,10 +110,17 @@ export function SendKitLinkCard({
 
       setGeneratedLink(data.paymentLink);
 
+      // PHASE 2: Update patient status to kit_link_sent
+      await supabase
+        .from("patients")
+        .update({ onboarding_status: "kit_link_sent" })
+        .eq("id", patientId);
+
       // If SMS, also send via SMS
       if (isSMS && data.paymentLink) {
         const { error: smsError } = await supabase.functions.invoke("send-kit-payment-sms", {
           body: {
+            patient_id: patientId,
             patient_name: patientName,
             patient_phone: patientPhone,
             kit_type: selectedKit,
