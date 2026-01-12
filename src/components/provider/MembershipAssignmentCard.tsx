@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Calendar, Loader2, Save, Sparkles, Scale } from "lucide-react";
+import { Crown, Calendar, Loader2, Save, Sparkles, Scale, Star, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -34,8 +34,12 @@ const MembershipAssignmentCard = ({
 
   const getTierBadgeStyle = (tierValue: string) => {
     switch (tierValue) {
+      case "access":
+        return "bg-slate-600 text-white";
       case "vitality":
         return "bg-gradient-to-r from-primary to-primary/80 text-white";
+      case "concierge":
+        return "bg-gradient-to-r from-gold to-gold/80 text-gold-foreground";
       case "semaglutide":
         return "bg-gradient-to-r from-green-500 to-green-600 text-white";
       case "tirzepatide":
@@ -47,8 +51,12 @@ const MembershipAssignmentCard = ({
 
   const getTierIcon = (tierValue: string) => {
     switch (tierValue) {
+      case "access":
+        return <Zap className="w-3 h-3 mr-1" />;
       case "vitality":
-        return <Sparkles className="w-3 h-3 mr-1" />;
+        return <Star className="w-3 h-3 mr-1" />;
+      case "concierge":
+        return <Crown className="w-3 h-3 mr-1" />;
       case "semaglutide":
       case "tirzepatide":
         return <Scale className="w-3 h-3 mr-1" />;
@@ -59,8 +67,12 @@ const MembershipAssignmentCard = ({
 
   const getTierLabel = (tierValue: string) => {
     switch (tierValue) {
+      case "access":
+        return "ACCESS";
       case "vitality":
-        return "Vitality";
+        return "VITALITY";
+      case "concierge":
+        return "CONCIERGE";
       case "semaglutide":
         return "Semaglutide";
       case "tirzepatide":
@@ -73,7 +85,7 @@ const MembershipAssignmentCard = ({
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const updateData: Record<string, any> = {
+      const updateData: Record<string, unknown> = {
         membership_tier: tier === "none" ? null : tier,
         membership_renewal_date: renewalDate || null,
       };
@@ -87,8 +99,9 @@ const MembershipAssignmentCard = ({
 
       toast.success(`Membership updated for ${patientName}`);
       onUpdate?.();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update membership");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update membership";
+      toast.error(errorMessage);
     } finally {
       setIsSaving(false);
     }
@@ -132,12 +145,34 @@ const MembershipAssignmentCard = ({
                   No Membership
                 </span>
               </SelectItem>
-              <SelectItem value="vitality">
+              
+              {/* Hormone Membership Tiers */}
+              <div className="px-2 py-1 text-xs font-semibold text-muted-foreground border-t mt-1 pt-2">
+                Hormone Memberships
+              </div>
+              <SelectItem value="access">
                 <span className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-primary" />
-                  Vitality ($249/mo)
+                  <Zap className="w-3.5 h-3.5 text-slate-500" />
+                  ACCESS ($99/mo) - 20% labs
                 </span>
               </SelectItem>
+              <SelectItem value="vitality">
+                <span className="flex items-center gap-2">
+                  <Star className="w-3.5 h-3.5 text-primary" />
+                  VITALITY ($149/mo) - 30% labs, 10% GLP-1
+                </span>
+              </SelectItem>
+              <SelectItem value="concierge">
+                <span className="flex items-center gap-2">
+                  <Crown className="w-3.5 h-3.5 text-gold" />
+                  CONCIERGE ($249/mo) - 40% labs, 15% GLP-1
+                </span>
+              </SelectItem>
+              
+              {/* GLP-1 Memberships */}
+              <div className="px-2 py-1 text-xs font-semibold text-muted-foreground border-t mt-1 pt-2">
+                GLP-1 Memberships
+              </div>
               <SelectItem value="semaglutide">
                 <span className="flex items-center gap-2">
                   <Scale className="w-3.5 h-3.5 text-green-500" />
@@ -172,14 +207,40 @@ const MembershipAssignmentCard = ({
         )}
 
         {/* Tier Features Summary */}
+        {tier === "access" && (
+          <div className="text-xs text-muted-foreground p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
+            <p className="font-medium text-slate-700 dark:text-slate-300 mb-1">ACCESS Includes:</p>
+            <ul className="space-y-0.5">
+              <li>• Portal access & secure messaging</li>
+              <li>• 2 provider consults/year</li>
+              <li>• 20% off quarterly labs ($279)</li>
+              <li>• 30-day Rx ordering only</li>
+            </ul>
+          </div>
+        )}
+
         {tier === "vitality" && (
           <div className="text-xs text-muted-foreground p-3 bg-primary/5 rounded-lg">
-            <p className="font-medium text-primary mb-1">Vitality Includes:</p>
+            <p className="font-medium text-primary mb-1">VITALITY Includes:</p>
             <ul className="space-y-0.5">
-              <li>• Bio-identical hormone therapy</li>
-              <li>• Quarterly lab testing</li>
-              <li>• Unlimited provider messaging</li>
-              <li>• Medication adjustments</li>
+              <li>• 4 provider consults/year</li>
+              <li>• Priority scheduling</li>
+              <li>• 30% off quarterly labs ($244)</li>
+              <li>• 90-day Rx access (major savings)</li>
+              <li>• 10% off GLP-1 add-ons</li>
+            </ul>
+          </div>
+        )}
+
+        {tier === "concierge" && (
+          <div className="text-xs text-muted-foreground p-3 bg-gold/10 rounded-lg">
+            <p className="font-medium text-gold mb-1">CONCIERGE Includes:</p>
+            <ul className="space-y-0.5">
+              <li>• Unlimited provider consults</li>
+              <li>• Direct provider phone line</li>
+              <li>• 40% off quarterly labs ($209)</li>
+              <li>• 90-day Rx access</li>
+              <li>• 15% off GLP-1 add-ons</li>
             </ul>
           </div>
         )}

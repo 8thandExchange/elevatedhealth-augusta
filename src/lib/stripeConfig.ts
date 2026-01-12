@@ -87,11 +87,12 @@ export const DIAGNOSTIC_KIT_PRICES = {
 // ============================================================================
 
 export const MEMBERSHIP_PRICES = {
+  // Legacy single-tier (deprecated)
   vitality: {
     priceId: "price_1Sga64EOtKRY99pu6NpP45Qq",
     amount: 24900, // $249/mo
     displayPrice: "$249/mo",
-    name: "Vitality Membership",
+    name: "Vitality Membership (Legacy)",
     description: "Monthly hormone optimization with provider support",
     mode: "subscription" as const,
     interval: "month",
@@ -108,6 +109,113 @@ export const MEMBERSHIP_PRICES = {
     edgeFunction: "create-hormone-addon-checkout",
   },
 } as const;
+
+// ============================================================================
+// HORMONE MEMBERSHIP TIERS (3-Tier Pricing Psychology)
+// ============================================================================
+
+export const HORMONE_MEMBERSHIP_TIERS = {
+  access: {
+    priceId: "price_1Sonn4EOtKRY99puEv2aLJ7U",
+    amount: 9900, // $99/mo
+    displayPrice: "$99/mo",
+    name: "ACCESS",
+    tagline: "Entry Point",
+    description: "Portal access, secure messaging, 2 provider consults/year",
+    mode: "subscription" as const,
+    interval: "month",
+    edgeFunction: "create-hormone-membership-checkout",
+    benefits: {
+      consultsPerYear: 2,
+      labDiscountPercent: 20,
+      labDiscountedPrice: 27900, // $349 - 20% = $279
+      glp1DiscountPercent: 0,
+      has90DayRx: false,
+      priorityScheduling: false,
+      directProviderLine: false,
+    },
+  },
+  vitality: {
+    priceId: "price_1Sonn6EOtKRY99puceDBRyq4",
+    amount: 14900, // $149/mo
+    displayPrice: "$149/mo",
+    name: "VITALITY",
+    tagline: "Most Popular",
+    description: "4 consults/year, priority scheduling, 90-day Rx access",
+    mode: "subscription" as const,
+    interval: "month",
+    edgeFunction: "create-hormone-membership-checkout",
+    benefits: {
+      consultsPerYear: 4,
+      labDiscountPercent: 30,
+      labDiscountedPrice: 24400, // $349 - 30% = $244
+      glp1DiscountPercent: 10,
+      has90DayRx: true,
+      priorityScheduling: true,
+      directProviderLine: false,
+    },
+  },
+  concierge: {
+    priceId: "price_1Sonn7EOtKRY99pu1jcQC9Dz",
+    amount: 24900, // $249/mo
+    displayPrice: "$249/mo",
+    name: "CONCIERGE",
+    tagline: "Premium",
+    description: "Unlimited consults, direct provider line, best discounts",
+    mode: "subscription" as const,
+    interval: "month",
+    edgeFunction: "create-hormone-membership-checkout",
+    benefits: {
+      consultsPerYear: -1, // -1 = unlimited
+      labDiscountPercent: 40,
+      labDiscountedPrice: 20900, // $349 - 40% = $209
+      glp1DiscountPercent: 15,
+      has90DayRx: true,
+      priorityScheduling: true,
+      directProviderLine: true,
+    },
+  },
+} as const;
+
+// Tier-discounted GLP-1 prices
+export const TIERED_GLP1_PRICES = {
+  semaglutide: {
+    full: {
+      priceId: "price_1SlZnwEOtKRY99puaBhrh2iB",
+      amount: 39900,
+      displayPrice: "$399/mo",
+    },
+    vitality: {
+      priceId: "price_1SonnAEOtKRY99puUEM8SiLt",
+      amount: 35900, // 10% off
+      displayPrice: "$359/mo",
+    },
+    concierge: {
+      priceId: "price_1SonnBEOtKRY99puAhWobthB",
+      amount: 33900, // 15% off
+      displayPrice: "$339/mo",
+    },
+  },
+  tirzepatide: {
+    full: {
+      priceId: "price_1SlZnyEOtKRY99puE9JNOrTR",
+      amount: 49900,
+      displayPrice: "$499/mo",
+    },
+    vitality: {
+      priceId: "price_1SonnDEOtKRY99pufTejsVjO",
+      amount: 44900, // 10% off
+      displayPrice: "$449/mo",
+    },
+    concierge: {
+      priceId: "price_1SonnEEOtKRY99pubW5G3TxJ",
+      amount: 42400, // 15% off
+      displayPrice: "$424/mo",
+    },
+  },
+} as const;
+
+export type HormoneMembershipTier = keyof typeof HORMONE_MEMBERSHIP_TIERS;
 
 // ============================================================================
 // À LA CARTE MEDICATIONS (One-time payments for non-members)

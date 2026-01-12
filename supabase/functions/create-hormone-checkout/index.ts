@@ -14,7 +14,7 @@ const hormoneCheckoutSchema = z.object({
   creditCode: z.string().max(50, "Credit code too long").optional().nullable(),
 });
 
-const logStep = (step: string, details?: any) => {
+const logStep = (step: string, details?: unknown) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CREATE-HORMONE-CHECKOUT] ${step}${detailsStr}`);
 };
@@ -37,6 +37,13 @@ const MAPPING_TIERS = {
 
 // $99 credit discount
 const CONSULTATION_CREDIT_DISCOUNT = 9900; // $99 in cents
+
+// Membership tier lab discounts (in cents)
+const TIER_LAB_DISCOUNTS = {
+  access: { percent: 20, amount: 6980 }, // 20% off = $69.80 discount
+  vitality: { percent: 30, amount: 10470 }, // 30% off = $104.70 discount
+  concierge: { percent: 40, amount: 13960 }, // 40% off = $139.60 discount
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -76,6 +83,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     let userEmail: string | undefined;
     let userId: string | undefined;
+    let membershipTier: string | null = null;
 
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
@@ -84,6 +92,18 @@ serve(async (req) => {
         userEmail = userData.user.email;
         userId = userData.user.id;
         logStep("Authenticated user found", { email: userEmail });
+
+        // Check patient's membership tier for lab discounts
+        const { data: patient } = await supabaseClient
+          .from("patients")
+          .select("membership_tier")
+          .eq("email", userEmail)
+          .maybeSingle();
+        
+        if (patient?.membership_tier) {
+          membershipTier = patient.membership_tier;
+          logStep("Patient membership tier found", { membershipTier });
+        }
       }
     }
 
@@ -119,18 +139,39 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    // Calculate final amount with discount if credit code is valid
-    const discountAmount = validCreditCode ? CONSULTATION_CREDIT_DISCOUNT : 0;
-    const finalAmount = tier.amount - discountAmount;
+    // Calculate discounts
+    let totalDiscount = 0;
+    const discountDescriptions: string[] = [];
 
-    // Create checkout session - use price_data if discount applied, otherwise use price ID
-    const lineItems = validCreditCode
+    // Apply consultation credit if valid
+    if (validCreditCode) {
+      totalDiscount += CONSULTATION_CREDIT_DISCOUNT;
+      discountDescriptions.push(`$99 consultation credit (code: ${creditCode})`);
+    }
+
+    // Apply membership tier discount
+    if (membershipTier && membershipTier in TIER_LAB_DISCOUNTS) {
+      const tierDiscount = TIER_LAB_DISCOUNTS[membershipTier as keyof typeof TIER_LAB_DISCOUNTS];
+      totalDiscount += tierDiscount.amount;
+      discountDescriptions.push(`${tierDiscount.percent}% ${membershipTier.toUpperCase()} member discount`);
+    }
+
+    const finalAmount = Math.max(tier.amount - totalDiscount, 0);
+    logStep("Discount calculation", { 
+      originalAmount: tier.amount, 
+      totalDiscount, 
+      finalAmount, 
+      discounts: discountDescriptions 
+    });
+
+    // Create checkout session - use price_data if any discount applied, otherwise use price ID
+    const lineItems = totalDiscount > 0
       ? [{
           price_data: {
             currency: "usd",
             product_data: {
-              name: `${tier.name} (with $99 credit applied)`,
-              description: `At-home ${tier.name.toLowerCase()} test kit + lab review consultation. Credit code: ${creditCode}`,
+              name: `${tier.name}${discountDescriptions.length > 0 ? ` (Discounted)` : ""}`,
+              description: `At-home ${tier.name.toLowerCase()} test kit + lab review consultation. ${discountDescriptions.join(", ")}`,
             },
             unit_amount: finalAmount,
           },
@@ -156,7 +197,8 @@ serve(async (req) => {
         product: mappingType === "metabolic" ? "metabolic_mapping_package" : "hormone_mapping_package",
         zrt_panel: tier.zrtPanel,
         credit_code: validCreditCode ? creditCode : "",
-        discount_applied: validCreditCode ? "99" : "0",
+        membership_tier: membershipTier || "",
+        discount_applied: String(totalDiscount / 100),
       },
     });
 
