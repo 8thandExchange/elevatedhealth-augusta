@@ -128,7 +128,7 @@ const IVKetamine = () => {
                       <li>• Treatment-resistant depression</li>
                       <li>• Anxiety disorders</li>
                       <li>• PTSD and trauma</li>
-                      <li>• Chronic pain conditions</li>
+                      <li>• OCD (obsessive-compulsive disorder)</li>
                     </ul>
                   </CardContent>
                 </Card>
