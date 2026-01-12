@@ -86,7 +86,7 @@ const SEOSchema = () => {
         "name": "What conditions does ketamine therapy treat?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ketamine therapy is FDA-approved for treatment-resistant depression and has shown effectiveness for PTSD, anxiety, and chronic pain. It's particularly helpful for patients who haven't responded to traditional antidepressants."
+          "text": "Ketamine therapy is FDA-approved for treatment-resistant depression and has shown effectiveness for PTSD, anxiety, and OCD. It can also help address the emotional and psychological effects that often accompany chronic health conditions. It's particularly helpful for patients who haven't responded to traditional antidepressants."
         }
       }
     ]
