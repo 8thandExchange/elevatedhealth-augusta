@@ -3,8 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MessageCircle, ClipboardCheck, Heart, Video, Shield, Clock, Phone } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const WhatToExpect = () => {
+  const { openBooking } = useBooking();
+
   const steps = [
     {
       icon: MessageCircle,
@@ -191,8 +194,8 @@ const WhatToExpect = () => {
               size="lg"
               className="gap-2 shadow-lg hover:shadow-xl transition-all"
               onClick={() => {
-                trackCTAClick('what_to_expect_book', SITE_CONFIG.bookingUrl);
-                window.open(SITE_CONFIG.bookingUrl, '_blank', 'noopener,noreferrer');
+                trackCTAClick('what_to_expect_book', 'payment_modal');
+                openBooking();
               }}
             >
               <ClipboardCheck className="h-5 w-5" />

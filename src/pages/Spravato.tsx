@@ -6,8 +6,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Link } from "react-router-dom";
+import { useBooking } from "@/contexts/BookingContext";
 
 const Spravato = () => {
+  const { openBooking } = useBooking();
   const benefits = [
     "FDA-approved for treatment-resistant depression (TRD)",
     "Used with an oral antidepressant for comprehensive treatment",
@@ -133,10 +135,8 @@ const Spravato = () => {
                 administered safely in our certified clinic with comprehensive monitoring.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Button asChild size="lg" className="text-base md:text-lg px-8 py-6">
-                  <a href={SITE_CONFIG.bookingUrl} target="_blank" rel="noopener noreferrer">
-                    Check Your Coverage
-                  </a>
+                <Button size="lg" className="text-base md:text-lg px-8 py-6" onClick={openBooking}>
+                  Check Your Coverage
                 </Button>
                 <Button asChild variant="outline" size="lg" className="text-base md:text-lg px-8 py-6">
                   <Link to="/ketamine">
@@ -269,10 +269,8 @@ const Spravato = () => {
                 and verify your insurance coverage.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" className="text-base md:text-lg px-8 py-6">
-                  <a href={SITE_CONFIG.bookingUrl} target="_blank" rel="noopener noreferrer">
-                    Book Your Consultation
-                  </a>
+                <Button size="lg" className="text-base md:text-lg px-8 py-6" onClick={openBooking}>
+                  Book Your Consultation
                 </Button>
                 <Button asChild variant="outline" size="lg" className="text-base md:text-lg px-8 py-6">
                   <a href={`tel:${SITE_CONFIG.phoneRaw}`}>

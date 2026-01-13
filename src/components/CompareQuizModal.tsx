@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar, Phone, ArrowLeft, ArrowRight } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { trackModalOpen, trackQuizComplete, trackCTAClick, trackEvent } from "@/lib/analytics";
+import { useBooking } from "@/contexts/BookingContext";
 
 interface CompareQuizModalProps {
   isOpen: boolean;
@@ -165,8 +166,7 @@ export const CompareQuizModal = ({ isOpen, onClose }: CompareQuizModalProps) => 
     const result = calculateResult();
 
   const handleBooking = () => {
-      const bookingUrl = `${SITE_CONFIG.bookingUrl}&prefill_reason=${encodeURIComponent(result.reason)}&prefill_insurance=${encodeURIComponent(result.insurance)}`;
-      trackCTAClick('quiz_book_now', bookingUrl);
+      trackCTAClick('quiz_book_now', 'payment_modal');
       
       // Send quiz result to backend
       fetch('/functions/v1/send-quiz-result', {
@@ -181,7 +181,9 @@ export const CompareQuizModal = ({ isOpen, onClose }: CompareQuizModalProps) => 
         }),
       }).catch(err => console.error('Failed to send quiz result:', err));
       
-      window.open(bookingUrl, '_blank', 'noopener,noreferrer');
+      onClose();
+      // Dispatch custom event to open booking modal
+      document.dispatchEvent(new CustomEvent('open-booking-modal'));
     };
 
     return (

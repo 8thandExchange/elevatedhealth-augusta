@@ -5,9 +5,11 @@ import { CheckCircle2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NotReadyToBook from "@/components/NotReadyToBook";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const HormoneReplacement = () => {
+  const { openBooking } = useBooking();
+
   const scrollToBooking = () => {
     window.location.href = "/#booking";
   };
@@ -117,16 +119,10 @@ const HormoneReplacement = () => {
                 <Button
                   variant="hero"
                   size="lg"
-                  asChild
                   className="text-base md:text-lg px-8 py-6"
+                  onClick={openBooking}
                 >
-                  <a
-                    href={SITE_CONFIG.bookingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Book Your $99 Consultation
-                  </a>
+                  Book Your $99 Consultation
                 </Button>
               </div>
             </div>

@@ -7,8 +7,10 @@ import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Link } from "react-router-dom";
 import NotReadyToBook from "@/components/NotReadyToBook";
+import { useBooking } from "@/contexts/BookingContext";
 
 const IVKetamine = () => {
+  const { openBooking } = useBooking();
   const safetyItems = [
     "Comprehensive screening including cardiovascular history, current medications, and substance-use assessment",
     "Continuous vitals monitoring throughout your infusion session",
@@ -88,10 +90,8 @@ const IVKetamine = () => {
                 in a monitored clinic—may help reset stuck mood pathways.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-4">
-                <Button asChild size="lg" className="text-base md:text-lg px-8 py-6">
-                  <a href={SITE_CONFIG.bookingUrl} target="_blank" rel="noopener noreferrer">
-                    Book a Consultation
-                  </a>
+                <Button size="lg" className="text-base md:text-lg px-8 py-6" onClick={openBooking}>
+                  Book a Consultation
                 </Button>
                 <Button asChild variant="outline" size="lg" className="text-base md:text-lg px-8 py-6">
                   <Link to="/ketamine">
@@ -237,10 +237,8 @@ const IVKetamine = () => {
                 IV ketamine therapy is right for you.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" className="text-base md:text-lg px-8 py-6">
-                  <a href={SITE_CONFIG.bookingUrl} target="_blank" rel="noopener noreferrer">
-                    Book Your Consultation
-                  </a>
+                <Button size="lg" className="text-base md:text-lg px-8 py-6" onClick={openBooking}>
+                  Book Your Consultation
                 </Button>
                 <Button asChild variant="outline" size="lg" className="text-base md:text-lg px-8 py-6">
                   <a href={`tel:${SITE_CONFIG.phoneRaw}`}>

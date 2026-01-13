@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -346,15 +346,16 @@ const ChatBot = () => {
           {/* $99 Consultation CTA */}
           {messages.length > 2 && (
             <div className="px-4 py-3 border-t border-border bg-primary/10">
-              <a
-                href={SITE_CONFIG.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  document.dispatchEvent(new CustomEvent('open-booking-modal'));
+                }}
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors shadow-sm"
               >
                 <CreditCard className="h-4 w-4" />
                 Book $99 Medical Consultation
-              </a>
+              </button>
             </div>
           )}
 

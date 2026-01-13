@@ -13,9 +13,11 @@ import {
 import { MessageCircle, ClipboardCheck, Heart, Shield, Clock, Phone, DollarSign, CheckCircle } from "lucide-react";
 import { trackCTAClick, trackEvent } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const WhatToExpectPage = () => {
   const [isCompareQuizOpen, setIsCompareQuizOpen] = useState(false);
+  const { openBooking } = useBooking();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -24,8 +26,8 @@ const WhatToExpectPage = () => {
 
   const handleBookConsult = () => {
     trackEvent('consult_book', { source: 'what_to_expect_page' });
-    trackCTAClick('what_to_expect_consult', SITE_CONFIG.bookingUrl);
-    window.open(SITE_CONFIG.bookingUrl, '_blank', 'noopener,noreferrer');
+    trackCTAClick('what_to_expect_consult', 'payment_modal');
+    openBooking();
   };
 
   const handleCallClick = () => {

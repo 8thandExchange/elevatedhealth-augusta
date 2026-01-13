@@ -1,9 +1,11 @@
 import { Shield, Cross, BadgeCheck, CheckCircle, Calendar, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const Veterans = () => {
+  const { openBooking } = useBooking();
+
   const programs = [
     {
       icon: Shield,
@@ -148,15 +150,9 @@ const Veterans = () => {
               Connect with us to learn about our services and how we can support your mental health journey
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="default" size="xl" asChild className="gap-2">
-                <a
-                  href={SITE_CONFIG.bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Calendar className="h-5 w-5" />
-                  Schedule Consultation
-                </a>
+              <Button variant="default" size="xl" className="gap-2" onClick={openBooking}>
+                <Calendar className="h-5 w-5" />
+                Schedule Consultation
               </Button>
               <a href="tel:7067603470">
                 <Button variant="outline" size="xl" className="gap-2 border-2">

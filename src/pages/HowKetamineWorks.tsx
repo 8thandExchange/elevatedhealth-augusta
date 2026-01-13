@@ -5,15 +5,18 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const HowKetamineWorks = () => {
+  const { openBooking } = useBooking();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
   const handleBooking = () => {
-    trackCTAClick('how_ketamine_works_book', SITE_CONFIG.bookingUrl);
-    window.open(SITE_CONFIG.bookingUrl, '_blank', 'noopener,noreferrer');
+    trackCTAClick('how_ketamine_works_book', 'payment_modal');
+    openBooking();
   };
 
   const handleCall = () => {

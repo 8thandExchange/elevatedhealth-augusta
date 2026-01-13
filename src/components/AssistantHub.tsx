@@ -8,6 +8,7 @@ import { useToast } from "./ui/use-toast";
 import { VoiceAgent } from "@/utils/VoiceAgent";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -387,15 +388,17 @@ const AssistantHub = () => {
               <Mic className="h-5 w-5" />
               <span className="font-medium">Voice Agent</span>
             </Button>
-            <a
-              href={SITE_CONFIG.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => {
+                setMode("closed");
+                // Access openBooking through a separate component to avoid hook rules
+                document.dispatchEvent(new CustomEvent('open-booking-modal'));
+              }}
               className={`flex items-center gap-3 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 font-medium ${isMobile ? 'w-full justify-start h-12 px-4 rounded-xl' : 'rounded-full px-4 py-2 text-sm'}`}
             >
               <CreditCard className="h-5 w-5" />
               <span>$99 Consultation</span>
-            </a>
+            </button>
             <a
               href="tel:+17067603470"
               className={`flex items-center gap-3 shadow-lg bg-card border border-border text-foreground hover:bg-muted font-medium ${isMobile ? 'w-full justify-start h-12 px-4 rounded-xl' : 'rounded-full px-4 py-2 text-sm'}`}

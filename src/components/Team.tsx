@@ -4,9 +4,11 @@ import providerImage from "@/assets/provider-portrait.jpg";
 import quoteImage from "@/assets/provider-testimonial.jpg";
 import { Award, Heart, GraduationCap, Phone, Calendar, ArrowRight } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const Team = () => {
+  const { openBooking } = useBooking();
+
   return (
     <section id="team" className="py-24 bg-muted/30 scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
@@ -120,17 +122,11 @@ const Team = () => {
 
             <Button 
               size="lg" 
-              asChild
               className="font-lato text-base px-8 py-6 bg-primary hover:bg-primary/90 text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
+              onClick={openBooking}
             >
-              <a
-                href={SITE_CONFIG.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Calendar className="mr-2 h-5 w-5" />
-                Request Consultation
-              </a>
+              <Calendar className="mr-2 h-5 w-5" />
+              Request Consultation
             </Button>
           </div>
         </div>
