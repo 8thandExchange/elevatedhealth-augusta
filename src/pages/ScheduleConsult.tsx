@@ -109,8 +109,11 @@ const ScheduleConsult = () => {
 
       if (error) throw error;
 
-      toast.success("Booking confirmed! Redirecting to dashboard...");
-      setTimeout(() => navigate("/patient/dashboard"), 1500);
+      toast.success("Booking Confirmed!", {
+        description: "You'll receive a confirmation email shortly. Check your inbox and spam folder.",
+        duration: 6000,
+      });
+      setTimeout(() => navigate("/patient/dashboard"), 2000);
     } catch (err) {
       console.error("Update error:", err);
       toast.error("Failed to update status. Please try again.");
