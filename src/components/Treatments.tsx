@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Droplet, Wind, ClipboardCheck, ChevronDown, CheckCircle2, ArrowRight } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface TreatmentsProps {
   onOpenQuiz?: () => void;
@@ -24,7 +25,7 @@ const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
         "Starting at $400/session (financing available)"
       ],
       ctaText: "Book IV Ketamine",
-      ctaUrl: "https://calendar.app.google/2zDZmMUzdw1RPR5E8" // Ketamine Candidacy Review
+      ctaUrl: SITE_CONFIG.bookingUrl
     },
     {
       icon: Wind,

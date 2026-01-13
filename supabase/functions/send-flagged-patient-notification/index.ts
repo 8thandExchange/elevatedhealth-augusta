@@ -38,7 +38,7 @@ serve(async (req) => {
 
     const resend = new Resend(resendKey);
 
-    const calendarUrl = "https://calendar.app.google/5whDnpmP8vGhhEAx6"; // Clinical Eligibility
+    const calendarUrl = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true";
 
     const flagsList = safety_flags?.length > 0 
       ? safety_flags.map(flag => `<li style="margin-bottom: 4px;">${flag}</li>`).join("")

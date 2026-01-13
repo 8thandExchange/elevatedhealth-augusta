@@ -7,8 +7,8 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-// Clinical Eligibility Review Calendar URL - for ALL flagged patients
-const CLINICAL_ELIGIBILITY_REVIEW_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ26DhPKdGVdKetVQ6WQKaaGYWWrjCKd3c7P7E4dTNfiAbxcYX4Q2OO9lBS25v8X3yYT7KIPsZ9x?gv=true";
+// Use single Clinical Strategy Session calendar for all eligibility reviews
+const CLINICAL_ELIGIBILITY_REVIEW_URL = SITE_CONFIG.bookingUrl;
 
 interface SafetyGateProps {
   patientName: string;

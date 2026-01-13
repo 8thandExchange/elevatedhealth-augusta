@@ -12,39 +12,42 @@ const logStep = (step: string, details?: any) => {
   console.log(`[BOOKING-REMINDER] ${step}${detailsStr}`);
 };
 
-// Service-specific calendar URLs and email config
+// Single calendar URL for all services
+const BOOKING_CALENDAR_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true";
+
+// Service-specific email config (calendar URL is now the same for all)
 const SERVICE_CONFIG: Record<string, { 
   calendarUrl: string; 
   title: string;
   specialistTitle: string;
 }> = {
   ketamine: {
-    calendarUrl: "https://calendar.app.google/VqtfnNwEvNxHnF7M8",
+    calendarUrl: BOOKING_CALENDAR_URL,
     title: "Ketamine Therapy Consultation",
     specialistTitle: "Mental Wellness Specialist"
   },
   weight_loss: {
-    calendarUrl: "https://calendar.app.google/VqtfnNwEvNxHnF7M8",
+    calendarUrl: BOOKING_CALENDAR_URL,
     title: "Medical Weight Loss Consultation", 
     specialistTitle: "Weight Loss Specialist"
   },
   hormone: {
-    calendarUrl: "https://calendar.app.google/VqtfnNwEvNxHnF7M8",
+    calendarUrl: BOOKING_CALENDAR_URL,
     title: "Hormone Replacement Consultation",
     specialistTitle: "Hormone Specialist"
   },
   peptide: {
-    calendarUrl: "https://calendar.app.google/VqtfnNwEvNxHnF7M8",
+    calendarUrl: BOOKING_CALENDAR_URL,
     title: "Peptide Therapy Consultation",
     specialistTitle: "Peptide Specialist"
   },
   hair: {
-    calendarUrl: "https://calendar.app.google/VqtfnNwEvNxHnF7M8",
+    calendarUrl: BOOKING_CALENDAR_URL,
     title: "Hair Restoration Consultation",
     specialistTitle: "Hair Restoration Specialist"
   },
   sexual: {
-    calendarUrl: "https://calendar.app.google/VqtfnNwEvNxHnF7M8",
+    calendarUrl: BOOKING_CALENDAR_URL,
     title: "Sexual Wellness Consultation",
     specialistTitle: "Sexual Wellness Specialist"
   }

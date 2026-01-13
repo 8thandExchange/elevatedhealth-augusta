@@ -4,6 +4,7 @@ import providerImage from "@/assets/provider-portrait.jpg";
 import quoteImage from "@/assets/provider-testimonial.jpg";
 import { Award, Heart, GraduationCap, Phone, Calendar, ArrowRight } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const Team = () => {
   return (
@@ -123,7 +124,7 @@ const Team = () => {
               className="font-lato text-base px-8 py-6 bg-primary hover:bg-primary/90 text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
             >
               <a
-                href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
+                href={SITE_CONFIG.bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >

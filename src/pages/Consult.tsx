@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { trackEvent } from "@/lib/analytics";
 import { toast } from "sonner";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 // Elegant custom SVG icons matching ConsultationModal brand style
 const NeuralIcon = () => (
@@ -82,19 +83,19 @@ const Consult = () => {
       Icon: NeuralIcon,
       title: "Ketamine Therapy",
       description: "IV infusions & SPRAVATO® for depression, PTSD, and anxiety",
-      bookingUrl: "https://calendar.app.google/2zDZmMUzdw1RPR5E8"
+      bookingUrl: SITE_CONFIG.bookingUrl
     },
     {
       Icon: VitalityIcon,
       title: "Medical Weight Loss",
       description: "Physician-supervised semaglutide (GLP-1) therapy",
-      bookingUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1CBfpH07YJj-i6hEBsR8fQQSlo73zA8irBgHx6vj82matcVWu0-K-MFMrC5euDFR-vG5QujSlP?gv=true"
+      bookingUrl: SITE_CONFIG.bookingUrl
     },
     {
       Icon: DNAIcon,
       title: "Hormone Replacement",
       description: "Bioidentical hormone therapy to restore vitality",
-      bookingUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1hhrEVpqc7nipsCg8QbgW72gW8vbl-SnUXT-LL4z4zFT1w8jTUBr5cfiruiNd47uu28seod93b?gv=true"
+      bookingUrl: SITE_CONFIG.bookingUrl
     }
   ];
 
@@ -107,7 +108,7 @@ const Consult = () => {
       if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
         setFailedUrls(prev => new Set(prev).add(url));
         toast.error(
-          "Unable to open booking calendar. Please call us at (706) 760-3470 to schedule.",
+          `Unable to open booking calendar. Please call us at ${SITE_CONFIG.phone} to schedule.`,
           { duration: 8000 }
         );
         trackEvent("consultation_booking_blocked", { service: title, source: "consult_page" });
@@ -116,7 +117,7 @@ const Consult = () => {
       console.error("Error opening booking URL:", error);
       setFailedUrls(prev => new Set(prev).add(url));
       toast.error(
-        "Unable to open booking calendar. Please call us at (706) 760-3470 to schedule.",
+        `Unable to open booking calendar. Please call us at ${SITE_CONFIG.phone} to schedule.`,
         { duration: 8000 }
       );
       trackEvent("consultation_booking_error", { service: title, source: "consult_page", error: String(error) });
@@ -125,7 +126,7 @@ const Consult = () => {
 
   const handleCallNow = () => {
     trackEvent("phone_click", { source: "consult_page_fallback" });
-    window.location.href = "tel:7067603470";
+    window.location.href = `tel:${SITE_CONFIG.phoneRaw}`;
   };
 
   return (
@@ -210,11 +211,11 @@ const Consult = () => {
             <p className="text-muted-foreground mb-4">
               Questions? Call us at{" "}
               <a 
-                href="tel:7067603470" 
+                href={`tel:${SITE_CONFIG.phoneRaw}`}
                 className="text-gold font-semibold hover:underline"
                 onClick={() => trackEvent("phone_click", { source: "consult_page" })}
               >
-                (706) 760-3470
+                {SITE_CONFIG.phone}
               </a>
             </p>
           </div>

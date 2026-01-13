@@ -9,16 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
-// Calendar URLs by service type
-const CALENDAR_URLS: Record<string, string> = {
-  hormone: "https://calendar.app.google/npnih9qTAXu5PKLX6", // Hormone Optimization Strategy Session
-  weight_loss: "https://calendar.app.google/Nr1ruba57eqELJG19", // Medical Weight Loss Strategy Session
-  ketamine: "https://calendar.app.google/2zDZmMUzdw1RPR5E8", // Ketamine Candidacy Review
-  peptide: "https://calendar.app.google/TwKGsbXLpGdTBpp9A", // Peptide Optimization Strategy Session
-  hair: "https://calendar.app.google/qicauwUqfSerdEi16", // Hair Restoration Strategy Session
-  sexual: "https://calendar.app.google/RkzUZ7uJZ3EJwyzy5", // Sexual Wellness Private Consultation
-};
-
 // Service type labels
 const SERVICE_LABELS: Record<string, { title: string; specialist: string; creditInfo: string; steps: string[] }> = {
   hormone: {
@@ -99,7 +89,6 @@ const ConsultationConfirmed = () => {
   const [copied, setCopied] = useState(false);
 
   const serviceInfo = SERVICE_LABELS[serviceType] || SERVICE_LABELS.hormone;
-  const bookingUrl = CALENDAR_URLS[serviceType] || CALENDAR_URLS.hormone;
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -216,7 +205,7 @@ const ConsultationConfirmed = () => {
                   {/* Embedded Calendar */}
                   <div className="rounded-lg overflow-hidden border mb-6">
                     <iframe
-                      src={bookingUrl}
+                      src={SITE_CONFIG.bookingUrl}
                       style={{ border: 0, width: "100%", height: "500px" }}
                       title="Book Discovery Consultation"
                     />

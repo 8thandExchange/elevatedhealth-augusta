@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import KitTracker from "@/components/patient/KitTracker";
 import { Card, CardContent } from "@/components/ui/card";
 
-const GOOGLE_CALENDAR_URL = "https://calendar.app.google/wwZhbZ2hxcg4uic1A"; // Clinical Strategy Session
+const GOOGLE_CALENDAR_URL = SITE_CONFIG.bookingUrl;
 
 const ScheduleConsult = () => {
   const navigate = useNavigate();
