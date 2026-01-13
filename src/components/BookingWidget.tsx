@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Phone, MessageCircle, CreditCard } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const BookingWidget = () => {
   const openAssistant = () => {
@@ -35,7 +36,7 @@ const BookingWidget = () => {
             {/* Primary CTA */}
             <div className="text-center mb-8">
               <a 
-                href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
+                href={SITE_CONFIG.bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackCTAClick('book_consultation', 'booking_widget')}

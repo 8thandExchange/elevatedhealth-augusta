@@ -5,6 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NotReadyToBook from "@/components/NotReadyToBook";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const HormoneReplacement = () => {
   const scrollToBooking = () => {
@@ -120,7 +121,7 @@ const HormoneReplacement = () => {
                   className="text-base md:text-lg px-8 py-6"
                 >
                   <a
-                    href="https://calendar.app.google/npnih9qTAXu5PKLX6"
+                    href={SITE_CONFIG.bookingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

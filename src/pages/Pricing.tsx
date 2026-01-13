@@ -46,16 +46,12 @@ const serviceCategories = [
   // SUNSETTED: peptides, iv, hair, sexual - hidden but code preserved
 ];
 
+// All services now use the single Clinical Strategy Session calendar
 const serviceBookingUrls: Record<string, string> = {
-  mental: "https://calendar.app.google/Cmwuzg5TYMeACQ4i6", // Ketamine Candidacy Review
-  weight: "https://calendar.app.google/Nr1ruba57eqELJG19", // Medical Weight Loss Strategy Session
-  hormones: "https://calendar.app.google/npnih9qTAXu5PKLX6", // Hormone Optimization Strategy Session
-  // SUNSETTED booking URLs preserved for future reactivation:
-  // peptides: "https://calendar.app.google/TwKGsbXLpGdTBpp9A",
-  // iv: "https://calendar.app.google/tho8888rMkQpURzn7",
-  // hair: "https://calendar.app.google/qicauwUqfSerdEi16",
-  // sexual: "https://calendar.app.google/RkzUZ7uJZ3EJwyzy5",
-  default: SITE_CONFIG.bookingUrl, // New Patient Application Call
+  mental: SITE_CONFIG.bookingUrl,
+  weight: SITE_CONFIG.bookingUrl,
+  hormones: SITE_CONFIG.bookingUrl,
+  default: SITE_CONFIG.bookingUrl,
 };
 
 const Pricing = () => {

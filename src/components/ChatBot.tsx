@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface Message {
   role: "user" | "assistant";
@@ -346,7 +347,7 @@ const ChatBot = () => {
           {messages.length > 2 && (
             <div className="px-4 py-3 border-t border-border bg-primary/10">
               <a
-                href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
+                href={SITE_CONFIG.bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors shadow-sm"

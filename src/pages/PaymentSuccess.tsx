@@ -155,7 +155,7 @@ const PaymentSuccess = () => {
                         className="bg-primary hover:bg-primary-dark text-primary-foreground"
                       >
                         <a
-                          href={SITE_CONFIG.bookingLinks.hormoneTherapy}
+                          href={SITE_CONFIG.bookingUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

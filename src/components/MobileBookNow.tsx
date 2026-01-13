@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trackEvent } from "@/lib/analytics";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const MobileBookNow = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +44,7 @@ const MobileBookNow = () => {
           </DialogHeader>
           <div className="h-full overflow-hidden">
             <iframe
-              src="https://calendar.app.google/hf3NNdiqJDueUuSN9"
+              src={SITE_CONFIG.bookingUrl}
               width="100%"
               height="100%"
               frameBorder="0"
@@ -52,7 +53,7 @@ const MobileBookNow = () => {
               onLoad={() => trackEvent('booking_iframe_loaded', { link_id: 'new_patient_application' })}
             />
             <div className="p-4 text-center text-sm text-muted-foreground border-t">
-              Prefer to talk? <a href="tel:+17067603470" className="text-accent hover:underline font-semibold">Call (706) 760-3470</a>
+              Prefer to talk? <a href={`tel:+1${SITE_CONFIG.phoneRaw}`} className="text-accent hover:underline font-semibold">Call {SITE_CONFIG.phone}</a>
             </div>
           </div>
         </DialogContent>

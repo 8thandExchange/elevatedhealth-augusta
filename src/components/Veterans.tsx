@@ -1,6 +1,7 @@
 import { Shield, Cross, BadgeCheck, CheckCircle, Calendar, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const Veterans = () => {
   const programs = [
@@ -149,7 +150,7 @@ const Veterans = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="default" size="xl" asChild className="gap-2">
                 <a
-                  href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
+                  href={SITE_CONFIG.bookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

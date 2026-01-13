@@ -7,20 +7,8 @@ export const SITE_CONFIG = {
   },
   phone: "(706) 760-3470",
   phoneRaw: "7067603470",
-  // Default booking URL - New Patient Application Call (FREE)
-  bookingUrl: "https://calendar.app.google/hf3NNdiqJDueUuSN9",
-  bookingLinks: {
-    // Service-specific calendars
-    hormoneTherapy: "https://calendar.app.google/npnih9qTAXu5PKLX6",
-    mensTRT: "https://calendar.app.google/wtenYwM2L2oPeZkW8",
-    labReview: "https://calendar.app.google/wwZhbZ2hxcg4uic1A", // Clinical Strategy Session
-    weightLoss: "https://calendar.app.google/Nr1ruba57eqELJG19",
-    ketamine: "https://calendar.app.google/2zDZmMUzdw1RPR5E8",
-    peptide: "https://calendar.app.google/TwKGsbXLpGdTBpp9A",
-    iv: "https://calendar.app.google/tho8888rMkQpURzn7",
-    hairRestoration: "https://calendar.app.google/qicauwUqfSerdEi16",
-    sexualWellness: "https://calendar.app.google/RkzUZ7uJZ3EJwyzy5",
-  },
+  // Single booking calendar - Clinical Strategy Session
+  bookingUrl: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Bvq4ZKUeVHmDYS8aU45o_2Z0oi4uHvILuZr2wqv6tKLPC71WABKyOSrbCwIjzKPqReipYFqST?gv=true",
   services: {
     primary: "IV Ketamine (infusion), SPRAVATO® (esketamine) nasal spray"
   },

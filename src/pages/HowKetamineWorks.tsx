@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/analytics";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const HowKetamineWorks = () => {
   useEffect(() => {
@@ -11,8 +12,8 @@ const HowKetamineWorks = () => {
   }, []);
   
   const handleBooking = () => {
-    trackCTAClick('how_ketamine_works_book', 'https://calendar.app.google/Cmwuzg5TYMeACQ4i6');
-    window.open('https://calendar.app.google/Cmwuzg5TYMeACQ4i6', '_blank', 'noopener,noreferrer');
+    trackCTAClick('how_ketamine_works_book', SITE_CONFIG.bookingUrl);
+    window.open(SITE_CONFIG.bookingUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleCall = () => {

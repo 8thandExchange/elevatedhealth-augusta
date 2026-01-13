@@ -134,7 +134,7 @@ const Spravato = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className="text-base md:text-lg px-8 py-6">
-                  <a href={SITE_CONFIG.bookingLinks.ketamine} target="_blank" rel="noopener noreferrer">
+                  <a href={SITE_CONFIG.bookingUrl} target="_blank" rel="noopener noreferrer">
                     Check Your Coverage
                   </a>
                 </Button>
@@ -270,7 +270,7 @@ const Spravato = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" className="text-base md:text-lg px-8 py-6">
-                  <a href={SITE_CONFIG.bookingLinks.ketamine} target="_blank" rel="noopener noreferrer">
+                  <a href={SITE_CONFIG.bookingUrl} target="_blank" rel="noopener noreferrer">
                     Book Your Consultation
                   </a>
                 </Button>
