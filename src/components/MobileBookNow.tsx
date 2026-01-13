@@ -5,13 +5,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { trackEvent } from "@/lib/analytics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { useBookingConfirmation } from "@/hooks/useBookingConfirmation";
+import BookingConfirmationModal from "@/components/BookingConfirmationModal";
 
 const MobileBookNow = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { 
     showConfirmation, 
+    showDetailsModal,
+    isSubmitting,
     handleCalendarInteraction, 
     showBookingSuccessToast,
+    closeDetailsModal,
+    sendBookingConfirmation,
     resetConfirmation 
   } = useBookingConfirmation();
 
@@ -36,7 +41,7 @@ const MobileBookNow = () => {
         <Calendar className="h-7 w-7" />
       </Button>
 
-      {/* Calendly Modal */}
+      {/* Calendar Modal */}
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className="max-w-full h-[90vh] p-0">
           <DialogHeader className="p-6 pb-0">
@@ -89,6 +94,14 @@ const MobileBookNow = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Booking Confirmation Modal */}
+      <BookingConfirmationModal
+        isOpen={showDetailsModal}
+        onClose={closeDetailsModal}
+        onConfirm={sendBookingConfirmation}
+        isSubmitting={isSubmitting}
+      />
     </>
   );
 };
