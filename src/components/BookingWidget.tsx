@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Phone, MessageCircle, CreditCard } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const BookingWidget = () => {
+  const { openBooking } = useBooking();
+  
   const openAssistant = () => {
     const chatButton = document.querySelector('[aria-label="Open assistant"]');
     if (chatButton) (chatButton as HTMLButtonElement).click();
@@ -35,15 +37,15 @@ const BookingWidget = () => {
             
             {/* Primary CTA */}
             <div className="text-center mb-8">
-              <a 
-                href={SITE_CONFIG.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackCTAClick('book_consultation', 'booking_widget')}
-                className="inline-block px-8 py-4 bg-accent text-white rounded-lg text-lg font-semibold hover:bg-accent/90 transition-colors shadow-lg hover:shadow-xl"
+              <Button
+                onClick={() => {
+                  trackCTAClick('book_consultation', 'booking_widget');
+                  openBooking();
+                }}
+                className="px-8 py-4 h-auto bg-accent text-white rounded-lg text-lg font-semibold hover:bg-accent/90 transition-colors shadow-lg hover:shadow-xl"
               >
                 Book Your $99 Consultation →
-              </a>
+              </Button>
             </div>
 
             {/* Divider */}

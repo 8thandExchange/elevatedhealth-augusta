@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { X, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 
 const STORAGE_KEY = "floatingCTA_dismissed";
 
@@ -20,8 +20,11 @@ export const FloatingMobileCTA = () => {
     sessionStorage.setItem(STORAGE_KEY, "true");
   };
 
+  const { openBooking } = useBooking();
+  
   const handleBook = () => {
-    window.open(SITE_CONFIG.bookingUrl, "_blank");
+    handleDismiss();
+    openBooking();
   };
 
   if (!isMobile || isDismissed) return null;
