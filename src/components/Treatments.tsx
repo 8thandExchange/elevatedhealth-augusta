@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Droplet, Wind, ClipboardCheck, ChevronDown, CheckCircle2, ArrowRight } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Droplet, Wind, ClipboardCheck, ChevronDown, CheckCircle2 } from "lucide-react";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { useBooking } from "@/contexts/BookingContext";
 
 interface TreatmentsProps {
   onOpenQuiz?: () => void;
@@ -12,6 +11,7 @@ interface TreatmentsProps {
 
 const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
   const [openCard, setOpenCard] = useState<number | null>(null);
+  const { openBooking } = useBooking();
 
   const treatments = [
     {
@@ -25,7 +25,7 @@ const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
         "Starting at $400/session (financing available)"
       ],
       ctaText: "Book IV Ketamine",
-      ctaUrl: SITE_CONFIG.bookingUrl
+      ctaAction: "booking"
     },
     {
       icon: Wind,
@@ -38,7 +38,8 @@ const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
         "No IV required"
       ],
       ctaText: "Check Insurance Coverage",
-      ctaUrl: "#insurance"
+      ctaAction: "scroll",
+      ctaTarget: "insurance"
     },
     {
       icon: ClipboardCheck,
@@ -47,7 +48,7 @@ const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
       headline: "Not Sure Where to Start?",
       description: "Answer 6 quick questions → get your personalized treatment path in 60 seconds.",
       ctaText: "Take the Quiz",
-      ctaUrl: "#compare"
+      ctaAction: "quiz"
     }
   ];
 
@@ -55,16 +56,16 @@ const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
     setOpenCard(openCard === index ? null : index);
   };
 
-  const handleCtaClick = (url: string, isQuiz: boolean = false) => {
-    if (isQuiz && onOpenQuiz) {
+  const handleCtaClick = (action: string, target?: string) => {
+    if (action === "quiz" && onOpenQuiz) {
       onOpenQuiz();
-    } else if (url.startsWith('#')) {
-      const element = document.getElementById(url.substring(1));
+    } else if (action === "scroll" && target) {
+      const element = document.getElementById(target);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-    } else {
-      window.open(url, '_blank', 'noopener,noreferrer');
+    } else if (action === "booking") {
+      openBooking();
     }
   };
 
@@ -137,7 +138,7 @@ const Treatments = ({ onOpenQuiz }: TreatmentsProps) => {
                         <Button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleCtaClick(treatment.ctaUrl, treatment.title === "Mood & Symptom Quiz");
+                            handleCtaClick(treatment.ctaAction, treatment.ctaTarget);
                           }}
                           className="w-full font-inter font-semibold uppercase bg-accent hover:bg-accent-light text-white"
                           size="lg"
