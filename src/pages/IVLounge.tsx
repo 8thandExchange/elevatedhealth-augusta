@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
-import { SITE_CONFIG } from "@/lib/siteConfig";
 import { 
   Droplets, 
   Sparkles, 
@@ -26,6 +25,7 @@ import BoosterInfoCard from "@/components/BoosterInfoCard";
 import BoosterModal from "@/components/BoosterModal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import NotReadyToBook from "@/components/NotReadyToBook";
+import { useBooking } from "@/contexts/BookingContext";
 
 interface IVTherapy {
   id: string;
@@ -88,6 +88,7 @@ const IVLounge = () => {
   const [mobileModalAddon, setMobileModalAddon] = useState<{ addon: IVAddon; therapyId: string } | null>(null);
   const [mobileModalAddonStandalone, setMobileModalAddonStandalone] = useState<IVAddon | null>(null);
   const isMobile = useIsMobile();
+  const { openBooking } = useBooking();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -496,12 +497,7 @@ const IVLounge = () => {
             <Button
               size="lg"
               className="rounded-full"
-              onClick={() =>
-                window.open(
-                  "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1VfeDDUhPJgGJcLwhKB5Sh8n5uoVH8bZLOb0yPqZx8uClvHC6JvLlKzJg0E5nNE8gXiWL1fj2k",
-                  "_blank"
-                )
-              }
+              onClick={openBooking}
             >
               Book Your Drip
             </Button>

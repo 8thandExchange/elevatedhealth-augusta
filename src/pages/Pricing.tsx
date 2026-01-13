@@ -13,6 +13,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { useBooking } from "@/contexts/BookingContext";
 import {
   Check,
   Star,
@@ -46,19 +47,12 @@ const serviceCategories = [
   // SUNSETTED: peptides, iv, hair, sexual - hidden but code preserved
 ];
 
-// All services now use the single Clinical Strategy Session calendar
-const serviceBookingUrls: Record<string, string> = {
-  mental: SITE_CONFIG.bookingUrl,
-  weight: SITE_CONFIG.bookingUrl,
-  hormones: SITE_CONFIG.bookingUrl,
-  default: SITE_CONFIG.bookingUrl,
-};
-
 const Pricing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
   const [showBackToTop, setShowBackToTop] = useState(false);
   const navigate = useNavigate();
+  const { openBooking } = useBooking();
 
   // Update URL when category changes
   useEffect(() => {
@@ -78,11 +72,6 @@ const Pricing = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleBookCall = (service?: string) => {
-    const url = service ? serviceBookingUrls[service] || serviceBookingUrls.default : serviceBookingUrls.default;
-    window.open(url, "_blank");
-  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -404,7 +393,7 @@ const Pricing = () => {
                         Board-certified provider supervision
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("mental")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Session
                     </Button>
                   </CardContent>
@@ -452,7 +441,7 @@ const Pricing = () => {
                         Maintenance session discount
                       </li>
                     </ul>
-                    <Button className="w-full bg-gold hover:bg-gold-dark text-gold-foreground mt-auto" onClick={() => handleBookCall("mental")}>
+                    <Button className="w-full bg-gold hover:bg-gold-dark text-gold-foreground mt-auto" onClick={openBooking}>
                       Start Treatment
                     </Button>
                   </CardContent>
@@ -488,7 +477,7 @@ const Pricing = () => {
                         REMS-certified administration
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("mental")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Check Coverage
                     </Button>
                   </CardContent>
@@ -566,7 +555,7 @@ const Pricing = () => {
                         </div>
                         <Button 
                           className="mt-6 bg-amber-600 hover:bg-amber-700 text-white rounded-full px-8"
-                          onClick={() => handleBookCall("weight")}
+                          onClick={openBooking}
                         >
                           Book Strategy Session
                           <ArrowRight className="w-4 h-4 ml-2" />
@@ -758,7 +747,7 @@ const Pricing = () => {
                           <Stethoscope className="w-5 h-5 text-amber-600 stroke-[1.5]" />
                           <Button 
                             className="bg-amber-600 hover:bg-amber-700 text-white font-lato rounded-full px-6"
-                            onClick={() => handleBookCall("hormones")}
+                            onClick={openBooking}
                           >
                             Book Strategy Session
                             <ArrowRight className="w-4 h-4 ml-2" />
@@ -1278,7 +1267,7 @@ const Pricing = () => {
                         Easy topical application
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("hair")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Consultation
                     </Button>
                   </CardContent>
@@ -1317,7 +1306,7 @@ const Pricing = () => {
                         Once daily oral medication
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("hair")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Consultation
                     </Button>
                   </CardContent>
@@ -1356,7 +1345,7 @@ const Pricing = () => {
                         Works with other treatments
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("hair")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Consultation
                     </Button>
                   </CardContent>
@@ -1417,7 +1406,7 @@ const Pricing = () => {
                         36-hour effectiveness
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Consultation
                     </Button>
                   </CardContent>
@@ -1449,7 +1438,7 @@ const Pricing = () => {
                         4-6 hour effectiveness
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Consultation
                     </Button>
                   </CardContent>
@@ -1482,7 +1471,7 @@ const Pricing = () => {
                         For men and women
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Consultation
                     </Button>
                   </CardContent>
@@ -1514,7 +1503,7 @@ const Pricing = () => {
                         Easy nasal administration
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => handleBookCall("sexual")}>
+                    <Button variant="outline" className="w-full mt-auto" onClick={openBooking}>
                       Book Consultation
                     </Button>
                   </CardContent>
@@ -1841,7 +1830,7 @@ const Pricing = () => {
               <Button 
                 size="lg" 
                 className="bg-gold hover:bg-gold-dark text-gold-foreground"
-                onClick={() => handleBookCall()}
+                onClick={openBooking}
               >
                 <Calendar className="w-5 h-5 mr-2" />
                 Book $99 Consultation
