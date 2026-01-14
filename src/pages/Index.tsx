@@ -15,9 +15,12 @@ import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import AssistantHub from "@/components/AssistantHub";
 import { FloatingMobileCTA } from "@/components/FloatingMobileCTA";
 import { FloatingMobileChatCTA } from "@/components/FloatingMobileChatCTA";
+import CacheRefreshBanner from "@/components/CacheRefreshBanner";
+
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <CacheRefreshBanner />
       <SEOSchema />
       <Navbar />
       <main>
