@@ -132,6 +132,25 @@ Use null for any values not found. Return ONLY the JSON object.`
         jsonStr = jsonStr.substring(startIdx, endIdx + 1);
       }
       
+      // Check if JSON appears truncated (unbalanced braces)
+      let braceCount = 0;
+      for (const char of jsonStr) {
+        if (char === '{') braceCount++;
+        if (char === '}') braceCount--;
+      }
+      
+      // If truncated, try to repair by closing open braces
+      if (braceCount > 0) {
+        console.log('Detected truncated JSON, attempting repair...');
+        // Remove trailing comma if present
+        jsonStr = jsonStr.replace(/,\s*$/, '');
+        // Close any open objects
+        while (braceCount > 0) {
+          jsonStr += '}';
+          braceCount--;
+        }
+      }
+      
       parsedResult = JSON.parse(jsonStr);
       
       // Validate required structure
