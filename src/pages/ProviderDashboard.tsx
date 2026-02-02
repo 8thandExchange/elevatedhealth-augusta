@@ -20,6 +20,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import { LabInterpretationEngine } from "@/components/provider/LabInterpretationEngine";
@@ -1858,25 +1865,21 @@ const ProviderDashboard = () => {
         </Tabs>
       </main>
 
-      {/* Side Panel */}
-      {isPanelOpen && selectedPatient && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setIsPanelOpen(false)}
-          />
-          <div className="fixed right-0 top-0 h-full w-full max-w-xl bg-card border-l border-border z-50 overflow-y-auto overflow-x-visible" style={{ isolation: 'isolate' }}>
-            <div className="sticky top-0 bg-card border-b border-border p-4 flex items-center justify-between">
+      {/* Patient Profile Modal */}
+      <Dialog open={isPanelOpen && !!selectedPatient} onOpenChange={setIsPanelOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="flex-shrink-0 border-b border-border px-6 py-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Reviewing</p>
-                <h2 className="font-cormorant text-xl text-foreground">{selectedPatient.patient.full_name}</h2>
+                <p className="text-xs text-muted-foreground">Patient Profile</p>
+                <DialogTitle className="font-cormorant text-2xl text-foreground">
+                  {selectedPatient?.patient.full_name}
+                </DialogTitle>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsPanelOpen(false)}>
-                <X className="w-5 h-5" />
-              </Button>
             </div>
+          </DialogHeader>
 
-            <div className="p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {/* Contact Info Card */}
               <Card className="border-border/50">
                 <CardHeader className="pb-3">
@@ -2681,9 +2684,22 @@ const ProviderDashboard = () => {
                 </Card>
               )}
             </div>
-          </div>
-        </>
-      )}
+
+          <DialogFooter className="flex-shrink-0 border-t border-border px-6 py-4">
+            <Button variant="outline" onClick={() => setIsPanelOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={handleSaveContactInfo} disabled={isSavingContact}>
+              {isSavingContact ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Invite Provider Modal */}
       <InviteProviderModal
