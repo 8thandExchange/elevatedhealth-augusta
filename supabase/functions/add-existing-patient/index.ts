@@ -16,6 +16,7 @@ interface AddExistingPatientRequest {
   patient_name: string;
   patient_phone?: string | null;
   service_type: string;
+  service_interests?: string[];
   patient_status: string;
   send_welcome_email?: boolean;
   credit_code?: string | null;
@@ -96,12 +97,16 @@ serve(async (req) => {
       patient_name, 
       patient_phone, 
       service_type, 
+      service_interests = [],
       patient_status,
       send_welcome_email = false,
       credit_code = null
     } = body;
 
-    logStep("Request data", { patient_email, patient_name, service_type, patient_status, send_welcome_email, credit_code: credit_code ? "provided" : "none" });
+    // Determine interests array - use provided array or fallback to single service_type
+    const finalServiceInterests = service_interests.length > 0 ? service_interests : [service_type];
+
+    logStep("Request data", { patient_email, patient_name, service_type, service_interests: finalServiceInterests, patient_status, send_welcome_email, credit_code: credit_code ? "provided" : "none" });
 
     // Validate required fields
     if (!patient_email || !patient_name) {
@@ -195,7 +200,8 @@ serve(async (req) => {
         full_name: patient_name,
         email: patient_email.toLowerCase(),
         phone: patient_phone || null,
-        primary_program: service_type,
+        primary_program: finalServiceInterests[0], // First interest as primary
+        service_interests: finalServiceInterests, // All interests as JSONB array
         onboarding_status: onboardingStatus,
         risk_status: "standard",
         invited_by: user.id,

@@ -3,13 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -40,7 +35,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [serviceType, setServiceType] = useState<string>("hormone");
+  const [serviceInterests, setServiceInterests] = useState<string[]>(["hormone"]);
   const [inviteType, setInviteType] = useState<InviteType>("needs_booking");
   const [scheduledDate, setScheduledDate] = useState("");
   const [isSendingEmail, setIsSendingEmail] = useState(false);
@@ -51,8 +46,19 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
   const [showPreview, setShowPreview] = useState(false);
   const [previewMode, setPreviewMode] = useState<"email" | "sms">("email");
 
+  const toggleServiceInterest = (value: string) => {
+    setServiceInterests(prev => {
+      if (prev.includes(value)) {
+        if (prev.length === 1) return prev;
+        return prev.filter(v => v !== value);
+      }
+      return [...prev, value];
+    });
+  };
+
   const getServiceLabel = () => {
-    return SERVICE_TYPES.find(s => s.value === serviceType)?.label || "Discovery Consultation";
+    // Use first selected interest for label
+    return SERVICE_TYPES.find(s => s.value === serviceInterests[0])?.label || "Discovery Consultation";
   };
 
   const getFirstName = () => name.split(" ")[0] || "there";
@@ -210,7 +216,8 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
         body: {
           patient_email: email.trim() || `${phone.replace(/\D/g, "")}@sms.placeholder.com`,
           patient_name: name.trim(),
-          service_type: serviceType,
+          service_type: serviceInterests[0], // Primary interest
+          service_interests: serviceInterests, // All interests
           invite_type: inviteType,
           scheduled_date: inviteType === "already_booked" ? scheduledDate : null,
         },
@@ -225,7 +232,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
           body: {
             patient_name: name.trim(),
             patient_phone: phone.trim(),
-            service_type: serviceType,
+            service_type: serviceInterests[0],
             payment_url: data.paymentLink,
             invite_type: inviteType,
             scheduled_date: inviteType === "already_booked" ? scheduledDate : null,
@@ -237,7 +244,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
         toast.success(`$99 consultation invite texted to ${phone}`);
       } else {
         setSent("email");
-        const serviceLabel = SERVICE_TYPES.find(s => s.value === serviceType)?.label || "Consultation";
+        const serviceLabel = SERVICE_TYPES.find(s => s.value === serviceInterests[0])?.label || "Consultation";
         const action = inviteType === "already_booked" ? "payment link" : "invite";
         toast.success(`${serviceLabel} ${action} emailed to ${email}!`);
       }
@@ -247,7 +254,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
         setEmail("");
         setName("");
         setPhone("");
-        setServiceType("hormone");
+        setServiceInterests(["hormone"]);
         setInviteType("needs_booking");
         setScheduledDate("");
         setSent(null);
@@ -350,22 +357,50 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
           />
         </div>
 
+        {/* Multi-select Service Interests */}
         <div>
-          <Label htmlFor="invite-service" className="text-xs text-muted-foreground">
-            Service Interest
+          <Label className="text-xs text-muted-foreground">
+            Service Interests (select all that apply)
           </Label>
-          <Select value={serviceType} onValueChange={setServiceType} disabled={isLoading}>
-            <SelectTrigger className="mt-1">
-              <SelectValue placeholder="Select service type" />
-            </SelectTrigger>
-            <SelectContent>
-              {SERVICE_TYPES.map((service) => (
-                <SelectItem key={service.value} value={service.value}>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {SERVICE_TYPES.map((service) => (
+              <div
+                key={service.value}
+                className={`flex items-center space-x-2 p-2 rounded-md border cursor-pointer transition-colors ${
+                  serviceInterests.includes(service.value)
+                    ? "bg-primary/10 border-primary"
+                    : "bg-background border-border hover:bg-muted/50"
+                } ${isLoading ? "opacity-50 pointer-events-none" : ""}`}
+                onClick={() => !isLoading && toggleServiceInterest(service.value)}
+              >
+                <Checkbox
+                  id={`invite-service-${service.value}`}
+                  checked={serviceInterests.includes(service.value)}
+                  onCheckedChange={() => toggleServiceInterest(service.value)}
+                  disabled={isLoading}
+                  className="pointer-events-none"
+                />
+                <Label
+                  htmlFor={`invite-service-${service.value}`}
+                  className="text-xs font-medium cursor-pointer flex-1"
+                >
                   {service.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                </Label>
+              </div>
+            ))}
+          </div>
+          {serviceInterests.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {serviceInterests.map((interest) => {
+                const label = SERVICE_TYPES.find(s => s.value === interest)?.label;
+                return (
+                  <Badge key={interest} variant="secondary" className="text-xs">
+                    {label}
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Show scheduled date picker only for "already booked" */}
