@@ -248,7 +248,7 @@ serve(async (req) => {
         const serviceName = serviceLabels[service_type] || "Wellness";
 
         const { error: emailError } = await resend.emails.send({
-          from: "Elevated Health <booking@elevatedhealthaugusta.com>",
+          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
           to: [patient_email],
           subject: `Welcome to Elevated Health, ${firstName}!`,
           html: `
