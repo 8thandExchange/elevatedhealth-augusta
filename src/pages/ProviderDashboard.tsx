@@ -64,6 +64,7 @@ import NextActionsWidget from "@/components/provider/NextActionsWidget";
 import CommunicationLog from "@/components/provider/CommunicationLog";
 import { PatientJourneyTracker } from "@/components/provider/PatientJourneyTracker";
 import MedicalClearanceCard from "@/components/provider/MedicalClearanceCard";
+import EncounterFormModal from "@/components/provider/EncounterFormModal";
 
 interface Patient {
   id: string;
@@ -2372,7 +2373,7 @@ const ProviderDashboard = () => {
                 onUpdate={() => loadData()}
               />
 
-              {/* Superbill Generator */}
+              {/* Insurance Documentation */}
               <Card className="border-border/50">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
@@ -2380,30 +2381,47 @@ const ProviderDashboard = () => {
                     Insurance Documentation
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Generate a superbill for insurance reimbursement.
-                  </p>
-                  <SuperbillGenerator
-                    patient={{
-                      id: selectedPatient.patient.id,
-                      full_name: selectedPatient.patient.full_name,
-                      dob: selectedPatient.patient.dob,
-                      street_address: selectedPatient.patient.street_address,
-                      city: selectedPatient.patient.city,
-                      state: selectedPatient.patient.state,
-                      zip_code: selectedPatient.patient.zip_code,
-                      treatment_request: selectedPatient.patient.treatment_request,
-                    }}
-                    serviceType={
-                      selectedPatient.patient.treatment_request?.includes("weight") 
-                        ? "weight_management" 
-                        : "saliva_profile_iii"
-                    }
-                    chargeAmount={
-                      selectedPatient.patient.treatment_request?.includes("weight") ? 399 : 299
-                    }
-                  />
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Patient Superbill (for insurance reimbursement)
+                    </p>
+                    <SuperbillGenerator
+                      patient={{
+                        id: selectedPatient.patient.id,
+                        full_name: selectedPatient.patient.full_name,
+                        dob: selectedPatient.patient.dob,
+                        street_address: selectedPatient.patient.street_address,
+                        city: selectedPatient.patient.city,
+                        state: selectedPatient.patient.state,
+                        zip_code: selectedPatient.patient.zip_code,
+                        treatment_request: selectedPatient.patient.treatment_request,
+                      }}
+                      serviceType={
+                        selectedPatient.patient.treatment_request?.includes("weight") 
+                          ? "weight_management" 
+                          : "saliva_profile_iii"
+                      }
+                      chargeAmount={
+                        selectedPatient.patient.treatment_request?.includes("weight") ? 399 : 299
+                      }
+                    />
+                  </div>
+                  <div className="border-t border-border/50 pt-3">
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Encounter Form (internal billing → Kristen)
+                    </p>
+                    <EncounterFormModal
+                      patient={{
+                        id: selectedPatient.patient.id,
+                        full_name: selectedPatient.patient.full_name,
+                        dob: selectedPatient.patient.dob,
+                        phone: selectedPatient.patient.phone,
+                        email: selectedPatient.patient.email,
+                      }}
+                      onSuccess={() => loadData()}
+                    />
+                  </div>
                 </CardContent>
               </Card>
 

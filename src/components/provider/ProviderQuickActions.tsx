@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Package, CreditCard, CheckCircle, MessageSquare, Mail } from "lucide-react";
+import { Package, CreditCard, CheckCircle, MessageSquare, Mail, FileText } from "lucide-react";
 import QuickSendKitModal from "./QuickSendKitModal";
 import QuickPaymentModal from "./QuickPaymentModal";
 import QuickLabsReviewedModal from "./QuickLabsReviewedModal";
 import QuickMessageModal from "./QuickMessageModal";
 import QuickEmailModal from "./QuickEmailModal";
+import EncounterFormModal from "./EncounterFormModal";
 
 interface ProviderQuickActionsProps {
   onRefresh?: () => void;
@@ -75,6 +76,20 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
             <Mail className="w-4 h-4 mr-2" />
             Email
           </Button>
+          
+          <EncounterFormModal
+            trigger={
+              <Button
+                variant="outline"
+                size="sm"
+                className="whitespace-nowrap"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Encounter
+              </Button>
+            }
+            onSuccess={onRefresh}
+          />
         </div>
       </div>
 

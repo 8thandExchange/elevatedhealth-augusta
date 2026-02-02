@@ -418,6 +418,71 @@ export type Database = {
         }
         Relationships: []
       }
+      encounter_forms: {
+        Row: {
+          check_number: string | null
+          cpt_codes: Json
+          created_at: string
+          date_of_service: string
+          follow_up_date: string | null
+          id: string
+          insurance_type: string | null
+          notes: string | null
+          patient_id: string | null
+          payment_amount: number | null
+          payment_method: string | null
+          provider_id: string | null
+          provider_name: string | null
+          sent_to_office_manager_at: string | null
+          service_type: string
+          total_charges: number | null
+        }
+        Insert: {
+          check_number?: string | null
+          cpt_codes?: Json
+          created_at?: string
+          date_of_service?: string
+          follow_up_date?: string | null
+          id?: string
+          insurance_type?: string | null
+          notes?: string | null
+          patient_id?: string | null
+          payment_amount?: number | null
+          payment_method?: string | null
+          provider_id?: string | null
+          provider_name?: string | null
+          sent_to_office_manager_at?: string | null
+          service_type: string
+          total_charges?: number | null
+        }
+        Update: {
+          check_number?: string | null
+          cpt_codes?: Json
+          created_at?: string
+          date_of_service?: string
+          follow_up_date?: string | null
+          id?: string
+          insurance_type?: string | null
+          notes?: string | null
+          patient_id?: string | null
+          payment_amount?: number | null
+          payment_method?: string | null
+          provider_id?: string | null
+          provider_name?: string | null
+          sent_to_office_manager_at?: string | null
+          service_type?: string
+          total_charges?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encounter_forms_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hormone_mapping_payments: {
         Row: {
           amount_paid: number | null
