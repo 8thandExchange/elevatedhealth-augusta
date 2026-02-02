@@ -16,6 +16,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, UserCheck, Check, Users, Mail, CreditCard, ChevronDown } from "lucide-react";
@@ -42,7 +43,7 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [serviceType, setServiceType] = useState<string>("hormone");
+  const [serviceInterests, setServiceInterests] = useState<string[]>(["hormone"]);
   const [patientStatus, setPatientStatus] = useState<string>("existing_patient");
   const [sendWelcomeEmail, setSendWelcomeEmail] = useState(true);
   const [creditCode, setCreditCode] = useState("");
@@ -50,9 +51,25 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const toggleServiceInterest = (value: string) => {
+    setServiceInterests(prev => {
+      if (prev.includes(value)) {
+        // Don't allow removing the last one
+        if (prev.length === 1) return prev;
+        return prev.filter(v => v !== value);
+      }
+      return [...prev, value];
+    });
+  };
+
   const handleAddPatient = async () => {
     if (!email.trim() || !name.trim()) {
       toast.error("Please enter both name and email");
+      return;
+    }
+
+    if (serviceInterests.length === 0) {
+      toast.error("Please select at least one service interest");
       return;
     }
 
@@ -72,7 +89,8 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
           patient_email: email.trim(),
           patient_name: name.trim(),
           patient_phone: phone.trim() || null,
-          service_type: serviceType,
+          service_type: serviceInterests[0], // Primary program (first selection)
+          service_interests: serviceInterests, // All selected interests
           patient_status: patientStatus,
           send_welcome_email: sendWelcomeEmail,
           credit_code: creditCode.trim() || null,
@@ -95,7 +113,7 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
         setEmail("");
         setName("");
         setPhone("");
-        setServiceType("hormone");
+        setServiceInterests(["hormone"]);
         setPatientStatus("existing_patient");
         setSendWelcomeEmail(true);
         setCreditCode("");
@@ -178,22 +196,50 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
           />
         </div>
 
+        {/* Multi-select Service Interests */}
         <div>
-          <Label htmlFor="existing-service" className="text-xs text-muted-foreground">
-            Service Interest
+          <Label className="text-xs text-muted-foreground">
+            Service Interests (select all that apply)
           </Label>
-          <Select value={serviceType} onValueChange={setServiceType} disabled={isAdding}>
-            <SelectTrigger className="mt-1">
-              <SelectValue placeholder="Select service type" />
-            </SelectTrigger>
-            <SelectContent>
-              {SERVICE_TYPES.map((service) => (
-                <SelectItem key={service.value} value={service.value}>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {SERVICE_TYPES.map((service) => (
+              <div
+                key={service.value}
+                className={`flex items-center space-x-2 p-2 rounded-md border cursor-pointer transition-colors ${
+                  serviceInterests.includes(service.value)
+                    ? "bg-primary/10 border-primary"
+                    : "bg-background border-border hover:bg-muted/50"
+                } ${isAdding ? "opacity-50 pointer-events-none" : ""}`}
+                onClick={() => !isAdding && toggleServiceInterest(service.value)}
+              >
+                <Checkbox
+                  id={`service-${service.value}`}
+                  checked={serviceInterests.includes(service.value)}
+                  onCheckedChange={() => toggleServiceInterest(service.value)}
+                  disabled={isAdding}
+                  className="pointer-events-none"
+                />
+                <Label
+                  htmlFor={`service-${service.value}`}
+                  className="text-xs font-medium cursor-pointer flex-1"
+                >
                   {service.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                </Label>
+              </div>
+            ))}
+          </div>
+          {serviceInterests.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {serviceInterests.map((interest) => {
+                const label = SERVICE_TYPES.find(s => s.value === interest)?.label;
+                return (
+                  <Badge key={interest} variant="secondary" className="text-xs">
+                    {label}
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div>
@@ -272,7 +318,7 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
 
       <Button
         onClick={handleAddPatient}
-        disabled={isAdding || !email.trim() || !name.trim()}
+        disabled={isAdding || !email.trim() || !name.trim() || serviceInterests.length === 0}
         variant="outline"
         className="w-full border-primary/50 text-primary hover:bg-primary/10"
       >

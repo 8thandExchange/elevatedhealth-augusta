@@ -1257,6 +1257,7 @@ export type Database = {
           primary_program: string | null
           risk_status: string | null
           safety_flags: Json | null
+          service_interests: Json | null
           state: string | null
           street_address: string | null
           treatment_request: string | null
@@ -1295,6 +1296,7 @@ export type Database = {
           primary_program?: string | null
           risk_status?: string | null
           safety_flags?: Json | null
+          service_interests?: Json | null
           state?: string | null
           street_address?: string | null
           treatment_request?: string | null
@@ -1333,6 +1335,7 @@ export type Database = {
           primary_program?: string | null
           risk_status?: string | null
           safety_flags?: Json | null
+          service_interests?: Json | null
           state?: string | null
           street_address?: string | null
           treatment_request?: string | null
