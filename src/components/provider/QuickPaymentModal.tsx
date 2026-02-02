@@ -44,6 +44,16 @@ const PRODUCTS = [
   { value: "ivKetamine", label: "IV Ketamine Infusion", price: "$400" },
 ];
 
+const getProductDisplayName = (product: string): string => {
+  const found = PRODUCTS.find(p => p.value === product);
+  return found?.label || product;
+};
+
+const getProductDisplayPrice = (product: string): string => {
+  const found = PRODUCTS.find(p => p.value === product);
+  return found?.price || "";
+};
+
 const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -117,21 +127,35 @@ const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalP
 
     setIsSending(true);
     try {
-      const edgeFunction = sendMethod === "email" 
+      // Step 1: Generate the Stripe checkout URL
+      const checkoutFunction = getEdgeFunction(selectedProduct);
+      const checkoutBody = getCheckoutBody(selectedProduct, selectedPatient);
+      
+      const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(checkoutFunction, {
+        body: checkoutBody,
+      });
+
+      if (checkoutError || !checkoutData?.url) {
+        throw new Error(checkoutError?.message || "Failed to generate payment link");
+      }
+
+      // Step 2: Send the URL via email or SMS
+      const sendFunction = sendMethod === "email" 
         ? "send-alacarte-payment-link" 
         : "send-alacarte-payment-sms";
       
-      const { data, error } = await supabase.functions.invoke(edgeFunction, {
+      const { error: sendError } = await supabase.functions.invoke(sendFunction, {
         body: {
-          patient_id: selectedPatient.id,
-          patient_name: selectedPatient.full_name,
           patient_email: selectedPatient.email,
           patient_phone: selectedPatient.phone,
-          product_type: selectedProduct,
+          patient_name: selectedPatient.full_name,
+          payment_url: checkoutData.url,
+          product_name: getProductDisplayName(selectedProduct),
+          amount: getProductDisplayPrice(selectedProduct),
         },
       });
 
-      if (error) throw error;
+      if (sendError) throw sendError;
 
       toast.success(`Payment link sent via ${sendMethod}!`);
       onOpenChange(false);
