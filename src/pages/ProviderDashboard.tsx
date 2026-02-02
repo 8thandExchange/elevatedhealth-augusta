@@ -1867,19 +1867,20 @@ const ProviderDashboard = () => {
 
       {/* Patient Profile Modal */}
       <Dialog open={isPanelOpen && !!selectedPatient} onOpenChange={setIsPanelOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="flex-shrink-0 border-b border-border px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Patient Profile</p>
-                <DialogTitle className="font-cormorant text-2xl text-foreground">
-                  {selectedPatient?.patient.full_name}
-                </DialogTitle>
+        {selectedPatient && (
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+            <DialogHeader className="flex-shrink-0 border-b border-border px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground">Patient Profile</p>
+                  <DialogTitle className="font-cormorant text-2xl text-foreground">
+                    {selectedPatient.patient.full_name}
+                  </DialogTitle>
+                </div>
               </div>
-            </div>
-          </DialogHeader>
+            </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {/* Contact Info Card */}
               <Card className="border-border/50">
                 <CardHeader className="pb-3">
@@ -2698,7 +2699,8 @@ const ProviderDashboard = () => {
               Save Changes
             </Button>
           </DialogFooter>
-        </DialogContent>
+          </DialogContent>
+        )}
       </Dialog>
 
       {/* Invite Provider Modal */}
