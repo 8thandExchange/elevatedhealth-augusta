@@ -1880,7 +1880,7 @@ const ProviderDashboard = () => {
               </div>
             </DialogHeader>
 
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+            <div className="flex-1 overflow-y-auto overflow-x-visible px-6 py-6 space-y-6" style={{ isolation: 'isolate' }}>
               {/* Contact Info Card */}
               <Card className="border-border/50">
                 <CardHeader className="pb-3">

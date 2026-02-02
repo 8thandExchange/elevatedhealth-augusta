@@ -51,6 +51,15 @@ const DialogContent = React.forwardRef<
           e.preventDefault();
         }
       }}
+      onInteractOutside={(e) => {
+        const target = e.target as HTMLElement;
+        if (
+          target.closest('[data-radix-select-content]') ||
+          target.closest('[role="listbox"]')
+        ) {
+          e.preventDefault();
+        }
+      }}
       {...props}
     >
       {children}
