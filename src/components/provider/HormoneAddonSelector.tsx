@@ -169,7 +169,7 @@ const HormoneAddonSelector = ({
             <SelectTrigger className="bg-background">
               <SelectValue placeholder="Select medication" />
             </SelectTrigger>
-            <SelectContent className="bg-background z-50">
+            <SelectContent className="bg-background">
               {BASE_MEMBERSHIPS.map((membership) => (
                 <SelectItem key={membership.value} value={membership.value}>
                   <div className="flex items-center justify-between w-full">
@@ -188,7 +188,7 @@ const HormoneAddonSelector = ({
             <SelectTrigger className="bg-background">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-background z-50">
+            <SelectContent className="bg-background">
               <SelectItem value="no">
                 <div className="flex items-center justify-between w-full">
                   <span>No Hormone Add-On</span>

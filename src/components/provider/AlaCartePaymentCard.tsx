@@ -186,7 +186,7 @@ const AlaCartePaymentCard = ({
             <SelectTrigger className="bg-background">
               <SelectValue placeholder="Choose à la carte item..." />
             </SelectTrigger>
-            <SelectContent className="bg-background z-50">
+            <SelectContent className="bg-background">
               {ALACARTE_OPTIONS.map((item) => (
                 <SelectItem key={item.key} value={item.key}>
                   <div className="flex items-center justify-between w-full">
