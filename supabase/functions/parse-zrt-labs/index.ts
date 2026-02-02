@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 interface ParsedLabResult {
@@ -37,7 +37,7 @@ serve(async (req) => {
       throw new Error('PDF data is required');
     }
 
-    // Use Gemini 2.5 Pro for vision-based PDF extraction
+    // Use Gemini 2.5 Flash for faster, reliable extraction
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -45,53 +45,29 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'user',
             content: [
               {
                 type: 'text',
-                text: `You are a medical lab result parser. Extract hormone values from this ZRT Laboratory Saliva Profile III test report.
+                text: `Extract hormone values from this ZRT Laboratory Saliva Profile III report. Return ONLY valid JSON, no markdown.
 
-IMPORTANT: Extract ONLY the numeric values exactly as shown. Look for these specific tests in the "TEST RESULTS" section:
+Extract these values from the TEST RESULTS table:
+- collectionDate: from "Samples Collected" in YYYY-MM-DD format
+- patientName: full name
+- estradiol: number in pg/mL
+- progesterone: number in pg/mL
+- testosterone: number in pg/mL  
+- dheas: number in ng/mL
+- cortisol: morning value in ng/mL
+- pgE2Ratio: the Pg/E2 ratio number
 
-Required fields to extract:
-1. Collection Date (format: MM/DD/YY from "Samples Collected" line)
-2. Patient Name (from "Patient Name" field)
-3. Estradiol - look for value in pg/mL
-4. Progesterone - look for value in pg/mL (may have "L" or "H" flag)
-5. Testosterone - look for value in pg/mL
-6. DHEAS - look for value in ng/mL (may have "L" or "H" flag)
-7. Cortisol - look for morning value in ng/mL
-8. Pg/E2 Ratio - look for ratio value (may have "L" or "H" flag)
+Return this exact JSON structure:
+{"collectionDate":"2026-01-19","patientName":"Name Here","estradiol":2.1,"progesterone":20,"testosterone":19,"dheas":1.2,"cortisol":8.3,"pgE2Ratio":10,"confidence":{"overall":0.95,"fields":{"estradiol":0.99,"progesterone":0.99,"testosterone":0.99,"dheas":0.99,"cortisol":0.99,"pgE2Ratio":0.99}}}
 
-Return a JSON object with this exact structure:
-{
-  "collectionDate": "YYYY-MM-DD",
-  "patientName": "Full Name",
-  "estradiol": 2.1,
-  "progesterone": 20,
-  "testosterone": 19,
-  "dheas": 1.2,
-  "cortisol": 8.3,
-  "pgE2Ratio": 10,
-  "confidence": {
-    "overall": 0.95,
-    "fields": {
-      "estradiol": 0.99,
-      "progesterone": 0.99,
-      "testosterone": 0.99,
-      "dheas": 0.99,
-      "cortisol": 0.99,
-      "pgE2Ratio": 0.99
-    }
-  }
-}
-
-If a value is not found or unreadable, set it to null.
-Convert dates to YYYY-MM-DD format (e.g., 01/19/26 becomes 2026-01-19).
-ONLY return the JSON object, no other text.`
+Use null for any values not found. Return ONLY the JSON object.`
               },
               {
                 type: 'image_url',
@@ -102,14 +78,29 @@ ONLY return the JSON object, no other text.`
             ]
           }
         ],
-        max_tokens: 1000,
-        temperature: 0.1,
+        max_tokens: 500,
+        temperature: 0,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`AI API call failed [${response.status}]: ${errorText}`);
+      console.error('AI API error:', response.status, errorText);
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Rate limit exceeded. Please try again in a moment.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'AI credits exhausted. Please add funds.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      throw new Error(`AI API call failed [${response.status}]`);
     }
 
     const aiResult = await response.json();
@@ -119,24 +110,54 @@ ONLY return the JSON object, no other text.`
       throw new Error('No response from AI model');
     }
 
+    console.log('AI raw response:', content);
+
     // Parse the JSON from the response
     let parsedResult: ParsedLabResult;
     try {
       // Clean up the response - remove markdown code blocks if present
       let jsonStr = content.trim();
-      if (jsonStr.startsWith('```json')) {
-        jsonStr = jsonStr.slice(7);
+      
+      // Remove markdown code fences
+      jsonStr = jsonStr.replace(/^```json\s*/i, '');
+      jsonStr = jsonStr.replace(/^```\s*/i, '');
+      jsonStr = jsonStr.replace(/\s*```$/i, '');
+      jsonStr = jsonStr.trim();
+      
+      // Try to find JSON object boundaries
+      const startIdx = jsonStr.indexOf('{');
+      const endIdx = jsonStr.lastIndexOf('}');
+      
+      if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+        jsonStr = jsonStr.substring(startIdx, endIdx + 1);
       }
-      if (jsonStr.startsWith('```')) {
-        jsonStr = jsonStr.slice(3);
+      
+      parsedResult = JSON.parse(jsonStr);
+      
+      // Validate required structure
+      if (typeof parsedResult !== 'object' || parsedResult === null) {
+        throw new Error('Invalid response structure');
       }
-      if (jsonStr.endsWith('```')) {
-        jsonStr = jsonStr.slice(0, -3);
+      
+      // Ensure confidence object exists
+      if (!parsedResult.confidence) {
+        parsedResult.confidence = {
+          overall: 0.9,
+          fields: {
+            estradiol: 0.9,
+            progesterone: 0.9,
+            testosterone: 0.9,
+            dheas: 0.9,
+            cortisol: 0.9,
+            pgE2Ratio: 0.9
+          }
+        };
       }
-      parsedResult = JSON.parse(jsonStr.trim());
+      
     } catch (parseError) {
       console.error('Failed to parse AI response:', content);
-      throw new Error('Failed to parse lab results from PDF');
+      console.error('Parse error:', parseError);
+      throw new Error('Failed to parse lab results from PDF. Please try again or enter values manually.');
     }
 
     return new Response(
