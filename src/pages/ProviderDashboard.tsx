@@ -1865,7 +1865,7 @@ const ProviderDashboard = () => {
             className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setIsPanelOpen(false)}
           />
-          <div className="fixed right-0 top-0 h-full w-full max-w-xl bg-card border-l border-border z-50 overflow-y-auto">
+          <div className="fixed right-0 top-0 h-full w-full max-w-xl bg-card border-l border-border z-50 overflow-y-auto overflow-x-visible" style={{ isolation: 'isolate' }}>
             <div className="sticky top-0 bg-card border-b border-border p-4 flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Reviewing</p>

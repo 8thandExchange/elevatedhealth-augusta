@@ -287,38 +287,53 @@ export function LabInterpretationEngine({ patientId, patientName, patientGender 
         </CardContent>
       </Card>
 
-      {/* Cortisol Curve */}
+      {/* Cortisol - Conditional based on kit type */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Cortisol Curve (4-Point)</CardTitle>
+          <CardTitle className="text-base">
+            {kitType === 'hormone_mapping' ? 'Morning Cortisol (Saliva)' : 'Cortisol Curve (4-Point)'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <InputWithHint 
-              label="Morning (AM)" 
-              value={cortisolMorning} 
-              onChange={setCortisolMorning}
-              hint="Optimal: 8-25 ng/dL"
-            />
-            <InputWithHint 
-              label="Noon" 
-              value={cortisolNoon} 
-              onChange={setCortisolNoon}
-              hint="Optimal: 5-12 ng/dL"
-            />
-            <InputWithHint 
-              label="Evening" 
-              value={cortisolEvening} 
-              onChange={setCortisolEvening}
-              hint="Optimal: 3-8 ng/dL"
-            />
-            <InputWithHint 
-              label="Night" 
-              value={cortisolNight} 
-              onChange={setCortisolNight}
-              hint="Optimal: 1-4 ng/dL"
-            />
-          </div>
+          {kitType === 'hormone_mapping' ? (
+            // Single cortisol for ZRT Saliva Profile III
+            <div className="max-w-xs">
+              <InputWithHint 
+                label="Morning Cortisol (AM)" 
+                value={cortisolMorning} 
+                onChange={setCortisolMorning}
+                hint="Optimal: 8-25 ng/dL"
+              />
+            </div>
+          ) : (
+            // Full 4-point curve for other kits
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <InputWithHint 
+                label="Morning (AM)" 
+                value={cortisolMorning} 
+                onChange={setCortisolMorning}
+                hint="Optimal: 8-25 ng/dL"
+              />
+              <InputWithHint 
+                label="Noon" 
+                value={cortisolNoon} 
+                onChange={setCortisolNoon}
+                hint="Optimal: 5-12 ng/dL"
+              />
+              <InputWithHint 
+                label="Evening" 
+                value={cortisolEvening} 
+                onChange={setCortisolEvening}
+                hint="Optimal: 3-8 ng/dL"
+              />
+              <InputWithHint 
+                label="Night" 
+                value={cortisolNight} 
+                onChange={setCortisolNight}
+                hint="Optimal: 1-4 ng/dL"
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
