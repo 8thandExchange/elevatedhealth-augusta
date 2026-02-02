@@ -1865,10 +1865,10 @@ const ProviderDashboard = () => {
         </Tabs>
       </main>
 
-      {/* Patient Profile Modal - modal={false} allows Select dropdowns to work inside */}
-      <Dialog open={isPanelOpen && !!selectedPatient} onOpenChange={setIsPanelOpen} modal={false}>
+      {/* Patient Profile Modal */}
+      <Dialog open={isPanelOpen && !!selectedPatient} onOpenChange={setIsPanelOpen}>
         {selectedPatient && (
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-visible flex flex-col p-0">
             <DialogHeader className="flex-shrink-0 border-b border-border px-6 py-4">
               <div className="flex items-center justify-between">
                 <div>

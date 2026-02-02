@@ -19,7 +19,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-[100] bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
@@ -36,26 +36,18 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-[100] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
         className,
       )}
-      // Prevent Dialog from closing when interacting with Select/Popover portals
       onPointerDownOutside={(e) => {
+        // Prevent closing when clicking on Select/Popover/Menu portals
         const target = e.target as HTMLElement;
-        // Check if the click is inside a Radix Select portal or Popover portal
-        const isInsideSelectContent = target.closest('[data-radix-select-content]');
-        const isInsidePopoverContent = target.closest('[data-radix-popover-content]');
-        const isInsideMenuContent = target.closest('[data-radix-menu-content]');
-        if (isInsideSelectContent || isInsidePopoverContent || isInsideMenuContent) {
-          e.preventDefault();
-        }
-      }}
-      onInteractOutside={(e) => {
-        const target = e.target as HTMLElement;
-        const isInsideSelectContent = target.closest('[data-radix-select-content]');
-        const isInsidePopoverContent = target.closest('[data-radix-popover-content]');
-        const isInsideMenuContent = target.closest('[data-radix-menu-content]');
-        if (isInsideSelectContent || isInsidePopoverContent || isInsideMenuContent) {
+        if (
+          target.closest('[data-radix-select-content]') ||
+          target.closest('[data-radix-popover-content]') ||
+          target.closest('[data-radix-menu-content]') ||
+          target.closest('[role="listbox"]')
+        ) {
           e.preventDefault();
         }
       }}
