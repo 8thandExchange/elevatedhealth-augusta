@@ -1,0 +1,335 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Resend } from "https://esm.sh/resend@2.0.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const logStep = (step: string, details?: any) => {
+  console.log(`[SUBMIT-PUBLIC-INTAKE] ${step}`, details ? JSON.stringify(details) : "");
+};
+
+interface IntakeFormData {
+  token: string;
+  dob: string;
+  gender: string;
+  phone: string;
+  street_address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  allergies: string;
+  current_medications: string;
+  previous_surgeries: string;
+  family_history: {
+    cardiac: boolean;
+    mental_health: boolean;
+    diabetes: boolean;
+    cancer: boolean;
+  };
+  safety_screening: {
+    pregnant_or_nursing: boolean;
+    cardiac_conditions: boolean;
+    liver_kidney_disease: boolean;
+    substance_use_history: boolean;
+  };
+  symptom_scores?: {
+    energy: number;
+    sleep: number;
+    mood: number;
+    libido: number;
+    weight_concern: number;
+  };
+  treatment_goals: string;
+  hipaa_acknowledged: boolean;
+  consent_acknowledged: boolean;
+}
+
+serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    logStep("Function invoked");
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Parse request body
+    const body: IntakeFormData = await req.json();
+    const { token, ...formData } = body;
+
+    logStep("Request received", { token: token?.slice(0, 8) + "..." });
+
+    // Validate required fields
+    if (!token) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Intake token is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!formData.hipaa_acknowledged || !formData.consent_acknowledged) {
+      return new Response(
+        JSON.stringify({ success: false, error: "HIPAA and consent acknowledgment are required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Look up patient by intake token
+    const { data: patient, error: lookupError } = await supabaseAdmin
+      .from("patients")
+      .select("*")
+      .eq("intake_token", token)
+      .maybeSingle();
+
+    if (lookupError) {
+      logStep("Error looking up token", { error: lookupError.message });
+      return new Response(
+        JSON.stringify({ success: false, error: "Invalid intake link" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!patient) {
+      logStep("Token not found");
+      return new Response(
+        JSON.stringify({ success: false, error: "This intake link is invalid or has already been used" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check token expiration
+    if (patient.intake_token_expires_at) {
+      const expiresAt = new Date(patient.intake_token_expires_at);
+      if (expiresAt < new Date()) {
+        logStep("Token expired", { expiresAt: patient.intake_token_expires_at });
+        return new Response(
+          JSON.stringify({ success: false, error: "This intake link has expired. Please contact the clinic for a new link." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    logStep("Patient found", { patientId: patient.id, name: patient.full_name });
+
+    // Build updated medical history (preserve existing data, add new)
+    const existingMedicalHistory = patient.medical_history || {};
+    const updatedMedicalHistory = {
+      ...existingMedicalHistory,
+      intake_completed_at: new Date().toISOString(),
+      current_medications: formData.current_medications,
+      previous_surgeries: formData.previous_surgeries,
+      family_history: formData.family_history,
+      safety_screening: formData.safety_screening,
+      treatment_goals: formData.treatment_goals,
+      consent: {
+        hipaa_acknowledged: formData.hipaa_acknowledged,
+        consent_acknowledged: formData.consent_acknowledged,
+        acknowledged_at: new Date().toISOString(),
+      },
+    };
+
+    // Determine risk status based on safety screening
+    let riskStatus = "standard";
+    const safetyFlags: string[] = [];
+    
+    if (formData.safety_screening.pregnant_or_nursing) {
+      safetyFlags.push("pregnant_or_nursing");
+      riskStatus = "high";
+    }
+    if (formData.safety_screening.cardiac_conditions) {
+      safetyFlags.push("cardiac_conditions");
+      riskStatus = "elevated";
+    }
+    if (formData.safety_screening.liver_kidney_disease) {
+      safetyFlags.push("liver_kidney_disease");
+      riskStatus = "elevated";
+    }
+    if (formData.safety_screening.substance_use_history) {
+      safetyFlags.push("substance_use_history");
+      // Only flag for ketamine patients
+      if (patient.primary_program === "ketamine") {
+        riskStatus = "elevated";
+      }
+    }
+
+    // Update patient record
+    const { error: updateError } = await supabaseAdmin
+      .from("patients")
+      .update({
+        dob: formData.dob,
+        gender: formData.gender,
+        phone: formData.phone || patient.phone,
+        street_address: formData.street_address,
+        city: formData.city,
+        state: formData.state,
+        zip_code: formData.zip_code,
+        allergies: formData.allergies,
+        medical_history: updatedMedicalHistory,
+        safety_flags: safetyFlags.length > 0 ? safetyFlags : null,
+        risk_status: riskStatus,
+        intake_completed: true,
+        onboarding_status: "intake_complete",
+        // Invalidate token (one-time use)
+        intake_token: null,
+        intake_token_expires_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", patient.id);
+
+    if (updateError) {
+      logStep("Error updating patient", { error: updateError.message });
+      return new Response(
+        JSON.stringify({ success: false, error: "Failed to save intake data" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    logStep("Patient record updated", { patientId: patient.id, riskStatus });
+
+    // Create symptom log if scores provided
+    if (formData.symptom_scores) {
+      const { error: symptomError } = await supabaseAdmin
+        .from("symptom_logs")
+        .insert({
+          patient_id: patient.id,
+          date_logged: new Date().toISOString().split("T")[0],
+          raw_answers: {
+            symptoms: formData.symptom_scores,
+            source: "public_intake",
+          },
+        });
+
+      if (symptomError) {
+        logStep("Error saving symptom scores", { error: symptomError.message });
+        // Non-fatal, continue
+      } else {
+        logStep("Symptom scores saved");
+      }
+    }
+
+    // Send provider notification
+    if (resendApiKey) {
+      try {
+        const resend = new Resend(resendApiKey);
+        
+        const riskBadge = riskStatus === "high" 
+          ? '<span style="background: #dc2626; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">HIGH RISK</span>'
+          : riskStatus === "elevated"
+          ? '<span style="background: #f59e0b; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">ELEVATED</span>'
+          : '<span style="background: #22c55e; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">STANDARD</span>';
+
+        const flagsList = safetyFlags.length > 0 
+          ? `<ul style="margin: 10px 0; padding-left: 20px;">${safetyFlags.map(f => `<li style="color: #dc2626;">${f.replace(/_/g, " ")}</li>`).join("")}</ul>`
+          : "<p style='color: #22c55e;'>No safety flags</p>";
+
+        await resend.emails.send({
+          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+          to: ["booking@elevatedhealthaugusta.com"],
+          subject: `📋 Intake Completed: ${patient.full_name} ${riskStatus !== "standard" ? "⚠️" : ""}`,
+          html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            </head>
+            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h2 style="color: #0d9488; margin-bottom: 5px;">Medical Intake Completed</h2>
+              <p style="color: #666; margin-top: 0;">A patient has completed their intake form via the public link.</p>
+              
+              <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="margin-top: 0;">Patient Information</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600;">Name:</td>
+                    <td style="padding: 8px 0;">${patient.full_name}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600;">Email:</td>
+                    <td style="padding: 8px 0;">${patient.email}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600;">Phone:</td>
+                    <td style="padding: 8px 0;">${formData.phone || patient.phone || "Not provided"}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600;">DOB:</td>
+                    <td style="padding: 8px 0;">${formData.dob}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600;">Program:</td>
+                    <td style="padding: 8px 0;">${patient.primary_program}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600;">Risk Status:</td>
+                    <td style="padding: 8px 0;">${riskBadge}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <div style="background: ${riskStatus !== "standard" ? "#fef2f2" : "#f0fdf4"}; padding: 15px 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid ${riskStatus !== "standard" ? "#dc2626" : "#22c55e"};">
+                <h4 style="margin-top: 0;">Safety Flags</h4>
+                ${flagsList}
+              </div>
+
+              ${formData.allergies ? `
+              <div style="margin: 20px 0;">
+                <h4 style="margin-bottom: 5px;">Allergies</h4>
+                <p style="margin: 0; color: #dc2626;">${formData.allergies}</p>
+              </div>
+              ` : ""}
+
+              ${formData.treatment_goals ? `
+              <div style="margin: 20px 0;">
+                <h4 style="margin-bottom: 5px;">Treatment Goals</h4>
+                <p style="margin: 0; color: #4a5568;">${formData.treatment_goals}</p>
+              </div>
+              ` : ""}
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="https://elevatedhealthaugusta.com/provider/dashboard" style="display: inline-block; background: #0d9488; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600;">
+                  View in Provider Dashboard
+                </a>
+              </div>
+              
+              <div style="border-top: 1px solid #e5e5e5; margin-top: 30px; padding-top: 20px; text-align: center; color: #666; font-size: 12px;">
+                <p style="margin: 0;">This is an automated notification from Elevated Health Augusta</p>
+              </div>
+            </body>
+            </html>
+          `,
+        });
+
+        logStep("Provider notification sent");
+      } catch (emailErr: any) {
+        logStep("Error sending provider notification", { error: emailErr.message });
+        // Non-fatal, continue
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        message: "Intake submitted successfully",
+        patient_name: patient.full_name,
+      }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+
+  } catch (error: any) {
+    logStep("Unexpected error", { error: error.message });
+    return new Response(
+      JSON.stringify({ success: false, error: error.message || "Internal server error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});

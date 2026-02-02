@@ -1,0 +1,678 @@
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import { Loader2, CheckCircle2, AlertCircle, Shield, Heart, User, MapPin, Pill, Target } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/siteConfig";
+
+interface PatientInfo {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  primary_program: string | null;
+  service_interests: unknown; // JSONB from Supabase
+}
+
+type FormStep = "personal" | "medical" | "safety" | "goals" | "consent";
+
+const STATES = [
+  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+];
+
+export default function PublicIntake() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const token = searchParams.get("token");
+
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [patient, setPatient] = useState<PatientInfo | null>(null);
+  const [currentStep, setCurrentStep] = useState<FormStep>("personal");
+
+  // Form state
+  const [formData, setFormData] = useState({
+    dob: "",
+    gender: "",
+    phone: "",
+    street_address: "",
+    city: "",
+    state: "GA",
+    zip_code: "",
+    allergies: "",
+    current_medications: "",
+    previous_surgeries: "",
+    family_history: {
+      cardiac: false,
+      mental_health: false,
+      diabetes: false,
+      cancer: false,
+    },
+    safety_screening: {
+      pregnant_or_nursing: false,
+      cardiac_conditions: false,
+      liver_kidney_disease: false,
+      substance_use_history: false,
+    },
+    symptom_scores: {
+      energy: 5,
+      sleep: 5,
+      mood: 5,
+      libido: 5,
+      weight_concern: 5,
+    },
+    treatment_goals: "",
+    hipaa_acknowledged: false,
+    consent_acknowledged: false,
+  });
+
+  // Validate token on mount
+  useEffect(() => {
+    const validateToken = async () => {
+      if (!token) {
+        setError("No intake token provided. Please use the link from your welcome email.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Look up patient by token (public query - relies on RLS being open for this lookup)
+        const { data, error: lookupError } = await supabase
+          .from("patients")
+          .select("id, full_name, email, phone, primary_program, service_interests")
+          .eq("intake_token", token)
+          .maybeSingle();
+
+        if (lookupError) {
+          console.error("Token lookup error:", lookupError);
+          setError("Unable to validate your intake link. Please contact the clinic.");
+          setLoading(false);
+          return;
+        }
+
+        if (!data) {
+          setError("This intake link is invalid or has already been used. Please contact the clinic for a new link.");
+          setLoading(false);
+          return;
+        }
+
+        setPatient(data);
+        if (data.phone) {
+          setFormData(prev => ({ ...prev, phone: data.phone || "" }));
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error("Validation error:", err);
+        setError("An error occurred. Please try again or contact the clinic.");
+        setLoading(false);
+      }
+    };
+
+    validateToken();
+  }, [token]);
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleNestedChange = (parent: "family_history" | "safety_screening" | "symptom_scores", field: string, value: boolean | number) => {
+    setFormData(prev => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent],
+        [field]: value,
+      },
+    }));
+  };
+
+  const validateStep = (step: FormStep): boolean => {
+    switch (step) {
+      case "personal":
+        if (!formData.dob || !formData.gender || !formData.street_address || !formData.city || !formData.zip_code) {
+          toast.error("Please fill in all required fields");
+          return false;
+        }
+        return true;
+      case "medical":
+        return true; // Optional fields
+      case "safety":
+        return true; // Checkboxes default to false
+      case "goals":
+        return true; // Optional
+      case "consent":
+        if (!formData.hipaa_acknowledged || !formData.consent_acknowledged) {
+          toast.error("Please acknowledge both HIPAA and treatment consent");
+          return false;
+        }
+        return true;
+      default:
+        return true;
+    }
+  };
+
+  const steps: FormStep[] = ["personal", "medical", "safety", "goals", "consent"];
+  const currentStepIndex = steps.indexOf(currentStep);
+
+  const nextStep = () => {
+    if (!validateStep(currentStep)) return;
+    const nextIndex = currentStepIndex + 1;
+    if (nextIndex < steps.length) {
+      setCurrentStep(steps[nextIndex]);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const prevStep = () => {
+    const prevIndex = currentStepIndex - 1;
+    if (prevIndex >= 0) {
+      setCurrentStep(steps[prevIndex]);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!validateStep("consent")) return;
+    if (!token) return;
+
+    setSubmitting(true);
+    try {
+      const response = await supabase.functions.invoke("submit-public-intake", {
+        body: {
+          token,
+          ...formData,
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || "Failed to submit intake");
+      }
+
+      if (!response.data?.success) {
+        throw new Error(response.data?.error || "Failed to submit intake");
+      }
+
+      setSuccess(true);
+      toast.success("Intake submitted successfully!");
+    } catch (err: any) {
+      console.error("Submit error:", err);
+      toast.error(err.message || "Failed to submit intake. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-teal-600 mx-auto mb-4" />
+          <p className="text-slate-600">Validating your intake link...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <CardTitle className="text-red-700">Unable to Load Intake Form</CardTitle>
+            <CardDescription>{error}</CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-sm text-slate-600">
+              Please contact us for assistance:
+            </p>
+            <div className="space-y-2">
+              <p className="font-medium">{SITE_CONFIG.phone}</p>
+              <p className="text-sm text-slate-500">booking@elevatedhealthaugusta.com</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Success state
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <CardTitle className="text-green-700">Intake Submitted Successfully!</CardTitle>
+            <CardDescription className="text-base mt-2">
+              Thank you, {patient?.full_name?.split(" ")[0]}!
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-slate-600">
+              Our medical team will review your information and reach out within 24-48 hours to discuss your treatment plan.
+            </p>
+            <div className="bg-teal-50 p-4 rounded-lg">
+              <p className="text-sm text-teal-800">
+                <strong>Questions?</strong> Call us at {SITE_CONFIG.phone} or email booking@elevatedhealthaugusta.com
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-teal-700">Elevated Health Augusta</h1>
+          <p className="text-slate-500 mt-1">Medical Intake Form</p>
+        </div>
+
+        {/* Welcome message */}
+        <Card className="mb-6 bg-teal-50 border-teal-200">
+          <CardContent className="pt-6">
+            <p className="text-teal-800">
+              Welcome, <strong>{patient?.full_name}</strong>! Please complete this intake form to help us prepare for your care. This takes about 5-10 minutes.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Progress indicator */}
+        <div className="flex justify-between mb-8">
+          {steps.map((step, index) => (
+            <div 
+              key={step} 
+              className={`flex-1 ${index > 0 ? "ml-2" : ""}`}
+            >
+              <div 
+                className={`h-2 rounded-full transition-colors ${
+                  index <= currentStepIndex ? "bg-teal-600" : "bg-slate-200"
+                }`}
+              />
+              <p className={`text-xs mt-1 capitalize hidden sm:block ${
+                index === currentStepIndex ? "text-teal-700 font-medium" : "text-slate-400"
+              }`}>
+                {step}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Form Steps */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              {currentStep === "personal" && <User className="h-5 w-5" />}
+              {currentStep === "medical" && <Pill className="h-5 w-5" />}
+              {currentStep === "safety" && <Shield className="h-5 w-5" />}
+              {currentStep === "goals" && <Target className="h-5 w-5" />}
+              {currentStep === "consent" && <Heart className="h-5 w-5" />}
+              {currentStep === "personal" && "Personal Information"}
+              {currentStep === "medical" && "Medical History"}
+              {currentStep === "safety" && "Safety Screening"}
+              {currentStep === "goals" && "Treatment Goals"}
+              {currentStep === "consent" && "Consent & Acknowledgment"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Personal Information */}
+            {currentStep === "personal" && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="dob">Date of Birth *</Label>
+                    <Input
+                      id="dob"
+                      type="date"
+                      value={formData.dob}
+                      onChange={(e) => handleInputChange("dob", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Gender *</Label>
+                    <Select value={formData.gender} onValueChange={(v) => handleInputChange("gender", v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="non-binary">Non-binary</SelectItem>
+                        <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    placeholder="(555) 555-5555"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Shipping Address (for medications)
+                  </Label>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="street_address">Street Address *</Label>
+                  <Input
+                    id="street_address"
+                    value={formData.street_address}
+                    onChange={(e) => handleInputChange("street_address", e.target.value)}
+                    placeholder="123 Main Street"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="col-span-2 space-y-2">
+                    <Label htmlFor="city">City *</Label>
+                    <Input
+                      id="city"
+                      value={formData.city}
+                      onChange={(e) => handleInputChange("city", e.target.value)}
+                      placeholder="Augusta"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State *</Label>
+                    <Select value={formData.state} onValueChange={(v) => handleInputChange("state", v)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STATES.map((st) => (
+                          <SelectItem key={st} value={st}>{st}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="zip_code">ZIP *</Label>
+                    <Input
+                      id="zip_code"
+                      value={formData.zip_code}
+                      onChange={(e) => handleInputChange("zip_code", e.target.value)}
+                      placeholder="30909"
+                      required
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Medical History */}
+            {currentStep === "medical" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="allergies">Allergies (medications, foods, environmental)</Label>
+                  <Textarea
+                    id="allergies"
+                    value={formData.allergies}
+                    onChange={(e) => handleInputChange("allergies", e.target.value)}
+                    placeholder="List any known allergies, or write 'None'"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="current_medications">Current Medications & Supplements</Label>
+                  <Textarea
+                    id="current_medications"
+                    value={formData.current_medications}
+                    onChange={(e) => handleInputChange("current_medications", e.target.value)}
+                    placeholder="List all current medications, dosages, and supplements"
+                    rows={4}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="previous_surgeries">Previous Surgeries / Hospitalizations</Label>
+                  <Textarea
+                    id="previous_surgeries"
+                    value={formData.previous_surgeries}
+                    onChange={(e) => handleInputChange("previous_surgeries", e.target.value)}
+                    placeholder="List any previous surgeries or hospitalizations with approximate dates"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Family Medical History (check all that apply)</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { key: "cardiac", label: "Heart Disease" },
+                      { key: "mental_health", label: "Mental Health Conditions" },
+                      { key: "diabetes", label: "Diabetes" },
+                      { key: "cancer", label: "Cancer" },
+                    ].map((item) => (
+                      <div key={item.key} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`family_${item.key}`}
+                          checked={formData.family_history[item.key as keyof typeof formData.family_history]}
+                          onCheckedChange={(checked) => handleNestedChange("family_history", item.key, !!checked)}
+                        />
+                        <Label htmlFor={`family_${item.key}`} className="font-normal cursor-pointer">
+                          {item.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Safety Screening */}
+            {currentStep === "safety" && (
+              <>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-amber-800">
+                    <strong>Important:</strong> Please answer honestly. This information helps us ensure your safety and customize your treatment plan.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <Label>Please check any that apply to you:</Label>
+                  
+                  {[
+                    { key: "pregnant_or_nursing", label: "I am currently pregnant, trying to become pregnant, or nursing" },
+                    { key: "cardiac_conditions", label: "I have a history of heart conditions (arrhythmia, heart attack, heart failure)" },
+                    { key: "liver_kidney_disease", label: "I have liver or kidney disease" },
+                    { key: "substance_use_history", label: "I have a history of substance use disorder" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg">
+                      <Checkbox
+                        id={`safety_${item.key}`}
+                        checked={formData.safety_screening[item.key as keyof typeof formData.safety_screening]}
+                        onCheckedChange={(checked) => handleNestedChange("safety_screening", item.key, !!checked)}
+                        className="mt-0.5"
+                      />
+                      <Label htmlFor={`safety_${item.key}`} className="font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-4 mt-6">
+                  <Label>How would you rate the following (1 = Poor, 10 = Excellent)?</Label>
+                  
+                  {[
+                    { key: "energy", label: "Energy Levels" },
+                    { key: "sleep", label: "Sleep Quality" },
+                    { key: "mood", label: "Overall Mood" },
+                    { key: "libido", label: "Libido / Sex Drive" },
+                    { key: "weight_concern", label: "Weight Management" },
+                  ].map((item) => (
+                    <div key={item.key} className="space-y-2">
+                      <div className="flex justify-between">
+                        <Label className="font-normal">{item.label}</Label>
+                        <span className="text-sm font-medium text-teal-700">
+                          {formData.symptom_scores[item.key as keyof typeof formData.symptom_scores]}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={formData.symptom_scores[item.key as keyof typeof formData.symptom_scores]}
+                        onChange={(e) => handleNestedChange("symptom_scores", item.key, parseInt(e.target.value))}
+                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
+                      />
+                      <div className="flex justify-between text-xs text-slate-400">
+                        <span>Poor</span>
+                        <span>Excellent</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Treatment Goals */}
+            {currentStep === "goals" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="treatment_goals">
+                    What are your primary health goals? What brought you to Elevated Health?
+                  </Label>
+                  <Textarea
+                    id="treatment_goals"
+                    value={formData.treatment_goals}
+                    onChange={(e) => handleInputChange("treatment_goals", e.target.value)}
+                    placeholder="Tell us about your health goals, concerns, and what you hope to achieve with treatment..."
+                    rows={6}
+                  />
+                </div>
+
+                <div className="bg-primary/10 p-4 rounded-lg">
+                  <p className="text-sm text-primary">
+                    <strong>Your interests:</strong>{" "}
+                    {Array.isArray(patient?.service_interests) 
+                      ? (patient.service_interests as string[]).map(s => 
+                          s === "ketamine" ? "Mental Wellness & Ketamine" :
+                          s === "hormone" ? "Hormone Optimization" :
+                          s === "weight_loss" ? "Weight Loss" : s
+                        ).join(", ") 
+                      : (patient?.primary_program || "General Wellness")}
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Consent */}
+            {currentStep === "consent" && (
+              <>
+                <div className="space-y-6">
+                  <div className="bg-slate-50 p-4 rounded-lg border">
+                    <h4 className="font-semibold mb-2">HIPAA Notice</h4>
+                    <p className="text-sm text-slate-600 mb-4">
+                      We are committed to protecting your health information. Your personal health information (PHI) will be used only for treatment, payment, and healthcare operations as permitted by HIPAA regulations. We maintain strict security measures to protect your information.
+                    </p>
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="hipaa_acknowledged"
+                        checked={formData.hipaa_acknowledged}
+                        onCheckedChange={(checked) => handleInputChange("hipaa_acknowledged", !!checked)}
+                      />
+                      <Label htmlFor="hipaa_acknowledged" className="font-normal cursor-pointer">
+                        I acknowledge that I have read and understand the HIPAA Notice of Privacy Practices *
+                      </Label>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50 p-4 rounded-lg border">
+                    <h4 className="font-semibold mb-2">Treatment Consent</h4>
+                    <p className="text-sm text-slate-600 mb-4">
+                      By submitting this form, I consent to receive treatment from Elevated Health Augusta. I understand that my information will be reviewed by the medical team, and I will be contacted to discuss treatment options. I understand that I can withdraw my consent at any time.
+                    </p>
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="consent_acknowledged"
+                        checked={formData.consent_acknowledged}
+                        onCheckedChange={(checked) => handleInputChange("consent_acknowledged", !!checked)}
+                      />
+                      <Label htmlFor="consent_acknowledged" className="font-normal cursor-pointer">
+                        I consent to treatment and authorize Elevated Health Augusta to contact me regarding my care *
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Navigation buttons */}
+            <div className="flex justify-between pt-6 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStepIndex === 0}
+              >
+                Previous
+              </Button>
+
+              {currentStep !== "consent" ? (
+                <Button type="button" onClick={nextStep} className="bg-teal-600 hover:bg-teal-700">
+                  Continue
+                </Button>
+              ) : (
+                <Button 
+                  type="button" 
+                  onClick={handleSubmit} 
+                  disabled={submitting || !formData.hipaa_acknowledged || !formData.consent_acknowledged}
+                  className="bg-teal-600 hover:bg-teal-700"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit Intake Form"
+                  )}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center mt-8 text-sm text-slate-500">
+          <p>{SITE_CONFIG.clinicName}</p>
+          <p>{SITE_CONFIG.address.full}</p>
+          <p>{SITE_CONFIG.phone}</p>
+        </div>
+      </div>
+    </div>
+  );
+}

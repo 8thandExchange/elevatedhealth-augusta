@@ -11,6 +11,60 @@ const logStep = (step: string, details?: any) => {
   console.log(`[ADD-EXISTING-PATIENT] ${step}`, details ? JSON.stringify(details) : "");
 };
 
+// Service-specific email content
+const serviceDescriptions: Record<string, { name: string; tagline: string; description: string }> = {
+  ketamine: {
+    name: "Mental Wellness & Ketamine Therapy",
+    tagline: "breakthrough mental health support",
+    description: "Our ketamine therapy program offers breakthrough treatment for depression, anxiety, and PTSD. Our medical team will guide you through every step of your healing journey."
+  },
+  hormone: {
+    name: "Hormone Optimization",
+    tagline: "restored energy and vitality",
+    description: "Our hormone optimization program is designed to restore your energy, vitality, and overall well-being through personalized bioidentical hormone therapy."
+  },
+  weight_loss: {
+    name: "Weight Loss & Metabolic Health",
+    tagline: "sustainable, medically-guided weight management",
+    description: "Our medical weight loss program uses the latest GLP-1 therapies to help you achieve sustainable results with ongoing clinical support."
+  },
+  general: {
+    name: "Personalized Wellness",
+    tagline: "your optimal health goals",
+    description: "Our personalized wellness programs are tailored to your unique health needs, combining cutting-edge treatments with compassionate care."
+  }
+};
+
+// Build personalized service content from interests array
+function buildServiceContent(interests: string[]): { journeyName: string; descriptions: string[] } {
+  const validInterests = interests.filter(i => serviceDescriptions[i]);
+  
+  if (validInterests.length === 0) {
+    return {
+      journeyName: serviceDescriptions.general.name,
+      descriptions: [serviceDescriptions.general.description]
+    };
+  }
+  
+  if (validInterests.length === 1) {
+    const service = serviceDescriptions[validInterests[0]];
+    return {
+      journeyName: service.name,
+      descriptions: [service.description]
+    };
+  }
+  
+  // Multiple interests - combine names and show first two descriptions
+  const names = validInterests.map(i => serviceDescriptions[i].name);
+  const journeyName = names.length === 2 
+    ? `${names[0]} and ${names[1]}`
+    : names.slice(0, -1).join(", ") + ", and " + names[names.length - 1];
+  
+  const descriptions = validInterests.slice(0, 2).map(i => serviceDescriptions[i].description);
+  
+  return { journeyName, descriptions };
+}
+
 interface AddExistingPatientRequest {
   patient_email: string;
   patient_name: string;
@@ -200,23 +254,26 @@ serve(async (req) => {
         onboardingStatus = "treatment_active";
     }
 
+    // Generate intake token for the patient (7-day expiry)
+    const intakeToken = crypto.randomUUID();
+    const intakeTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
     // Create the patient record
-    // Note: Patients added via this function are "migrated" existing patients
-    // We store this info in medical_history.is_migrated_patient for display purposes
     const { data: newPatient, error: createError } = await supabaseAdmin
       .from("patients")
       .insert({
         full_name: patient_name,
         email: patient_email.toLowerCase(),
         phone: patient_phone || null,
-        primary_program: finalServiceInterests[0], // First interest as primary
-        service_interests: finalServiceInterests, // All interests as JSONB array
+        primary_program: finalServiceInterests[0],
+        service_interests: finalServiceInterests,
         onboarding_status: onboardingStatus,
         risk_status: "standard",
         invited_by: user.id,
         invited_at: new Date().toISOString(),
         consultation_booking_id: consultationBookingId,
-        // Mark as migrated patient for UI display purposes
+        intake_token: intakeToken,
+        intake_token_expires_at: intakeTokenExpiresAt,
         medical_history: { is_migrated_patient: true, migrated_at: new Date().toISOString() },
       })
       .select()
@@ -230,7 +287,7 @@ serve(async (req) => {
       );
     }
 
-    logStep("Patient created successfully", { patientId: newPatient.id });
+    logStep("Patient created successfully", { patientId: newPatient.id, intakeToken: intakeToken.slice(0, 8) + "..." });
 
     // Send welcome email if requested
     let emailSent = false;
@@ -239,13 +296,16 @@ serve(async (req) => {
         const resend = new Resend(resendApiKey);
         const firstName = patient_name.split(" ")[0];
         
-        const serviceLabels: Record<string, string> = {
-          hormone: "Hormone Therapy",
-          weight_loss: "Weight Loss",
-          ketamine: "Ketamine Therapy",
-          general: "General Wellness",
-        };
-        const serviceName = serviceLabels[service_type] || "Wellness";
+        // Build personalized service content
+        const { journeyName, descriptions } = buildServiceContent(finalServiceInterests);
+        
+        // Build description HTML
+        const descriptionHtml = descriptions.map(d => 
+          `<p style="margin: 0 0 15px 0; color: #4a5568;">${d}</p>`
+        ).join("");
+
+        // Intake form URL with token
+        const intakeUrl = `https://elevatedhealthaugusta.com/intake?token=${intakeToken}`;
 
         const { error: emailError } = await resend.emails.send({
           from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
@@ -266,7 +326,11 @@ serve(async (req) => {
               
               <h2 style="color: #1a1a1a;">Welcome, ${firstName}!</h2>
               
-              <p>We're excited to have you as part of the Elevated Health family. Your account has been created and you're ready to begin your ${serviceName} journey with us.</p>
+              <p>We're excited to have you as part of the Elevated Health family. Your account has been created and you're ready to begin your <strong>${journeyName}</strong> journey with us.</p>
+              
+              <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                ${descriptionHtml}
+              </div>
               
               ${creditApplied ? `
               <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 15px 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
@@ -274,21 +338,30 @@ serve(async (req) => {
                   ✓ Your $99 consultation credit has been applied to your account!
                 </p>
                 <p style="margin: 5px 0 0 0; font-size: 14px; color: #155724;">
-                  This credit will be applied toward your Hormone Mapping Kit ($349).
+                  This credit will be applied toward your treatment program.
                 </p>
               </div>
               ` : ''}
               
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${intakeUrl}" style="display: inline-block; background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                  Complete Your Medical Intake
+                </a>
+                <p style="margin-top: 10px; font-size: 13px; color: #666;">
+                  This link expires in 7 days
+                </p>
+              </div>
+              
               <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
                 <h3 style="margin-top: 0; color: #1a1a1a;">What's Next?</h3>
                 <ul style="padding-left: 20px; margin-bottom: 0;">
-                  <li>Our team will reach out to schedule your next steps</li>
-                  <li>You'll receive payment links for any recommended services</li>
+                  <li>Complete your medical intake form (takes about 5-10 minutes)</li>
+                  <li>Our team will review your information and reach out</li>
                   <li>We're here to answer any questions you may have</li>
                 </ul>
               </div>
               
-              <p>If you have any questions, don't hesitate to reach out to us at <a href="mailto:booking@elevatedhealthaugusta.com" style="color: #0d9488;">booking@elevatedhealthaugusta.com</a> or call us at <a href="tel:7064266862" style="color: #0d9488;">(706) 426-6862</a>.</p>
+              <p>If you have any questions, don't hesitate to reach out to us at <a href="mailto:booking@elevatedhealthaugusta.com" style="color: #0d9488;">booking@elevatedhealthaugusta.com</a> or call us at <a href="tel:7067603470" style="color: #0d9488;">(706) 760-3470</a>.</p>
               
               <p style="margin-top: 30px;">
                 Warm regards,<br>
@@ -297,8 +370,8 @@ serve(async (req) => {
               
               <div style="border-top: 1px solid #e5e5e5; margin-top: 30px; padding-top: 20px; text-align: center; color: #666; font-size: 12px;">
                 <p style="margin: 0;">Elevated Health Augusta</p>
-                <p style="margin: 5px 0;">3523 Walton Way Ext, Suite A | Augusta, GA 30909</p>
-                <p style="margin: 5px 0;">(706) 426-6862 | booking@elevatedhealthaugusta.com</p>
+                <p style="margin: 5px 0;">7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809</p>
+                <p style="margin: 5px 0;">(706) 760-3470 | booking@elevatedhealthaugusta.com</p>
               </div>
             </body>
             </html>
@@ -322,6 +395,7 @@ serve(async (req) => {
         patient_id: newPatient.id,
         email_sent: emailSent,
         credit_applied: creditApplied,
+        intake_token: intakeToken,
         message: `Patient ${patient_name} added successfully with status: ${onboardingStatus}`
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }

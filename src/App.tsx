@@ -66,6 +66,7 @@ import ProviderLayout from "./components/provider/ProviderLayout";
 import StaffPricingCheatsheet from "./pages/StaffPricingCheatsheet";
 import StaffQuickCard from "./pages/StaffQuickCard";
 import EmailTemplates from "./pages/EmailTemplates";
+import PublicIntake from "./pages/PublicIntake";
 
 const queryClient = new QueryClient();
 
@@ -153,6 +154,8 @@ const App = () => {
           <Route path="/ketamine-payment-success" element={<KetaminePaymentSuccess />} />
           <Route path="/patient-resources" element={<PatientResources />} />
           <Route path="/schedule-consult" element={<ScheduleConsult />} />
+          {/* Public intake form (no auth required, token-validated) */}
+          <Route path="/intake" element={<PublicIntake />} />
           <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
           <Route path="/iv-payment-success" element={<IVPaymentSuccess />} />
           <Route path="/alacarte-success" element={<AlaCartePaymentSuccess />} />

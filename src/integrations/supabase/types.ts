@@ -1253,6 +1253,8 @@ export type Database = {
           gender: string | null
           id: string
           intake_completed: boolean | null
+          intake_token: string | null
+          intake_token_expires_at: string | null
           invited_at: string | null
           invited_by: string | null
           is_archived: boolean | null
@@ -1292,6 +1294,8 @@ export type Database = {
           gender?: string | null
           id?: string
           intake_completed?: boolean | null
+          intake_token?: string | null
+          intake_token_expires_at?: string | null
           invited_at?: string | null
           invited_by?: string | null
           is_archived?: boolean | null
@@ -1331,6 +1335,8 @@ export type Database = {
           gender?: string | null
           id?: string
           intake_completed?: boolean | null
+          intake_token?: string | null
+          intake_token_expires_at?: string | null
           invited_at?: string | null
           invited_by?: string | null
           is_archived?: boolean | null
