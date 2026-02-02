@@ -813,7 +813,10 @@ export type Database = {
           mercury: number | null
           norepinephrine: number | null
           notes: string | null
+          parsed_from_pdf: boolean | null
           patient_id: string
+          pdf_url: string | null
+          pg_e2_ratio: number | null
           progesterone_pg: number | null
           psa: number | null
           selenium: number | null
@@ -863,7 +866,10 @@ export type Database = {
           mercury?: number | null
           norepinephrine?: number | null
           notes?: string | null
+          parsed_from_pdf?: boolean | null
           patient_id: string
+          pdf_url?: string | null
+          pg_e2_ratio?: number | null
           progesterone_pg?: number | null
           psa?: number | null
           selenium?: number | null
@@ -913,7 +919,10 @@ export type Database = {
           mercury?: number | null
           norepinephrine?: number | null
           notes?: string | null
+          parsed_from_pdf?: boolean | null
           patient_id?: string
+          pdf_url?: string | null
+          pg_e2_ratio?: number | null
           progesterone_pg?: number | null
           psa?: number | null
           selenium?: number | null
