@@ -1,5 +1,6 @@
-import { Check, Clock, TestTube, Sparkles, Pill, Stethoscope, Activity, UserPlus } from "lucide-react";
+import { Check, Clock, TestTube, Sparkles, Pill, Stethoscope, Activity, UserPlus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface PatientJourneyTrackerProps {
   onboardingStatus: string | null;
@@ -33,7 +34,10 @@ const WEIGHT_LOSS_STEPS: JourneyStep[] = [
   { id: 'active', label: 'Active Treatment', shortLabel: 'Active', icon: <Check className="h-4 w-4" /> },
 ];
 
-// Map onboarding_status to step index
+// Statuses that indicate a patient was migrated/added directly without full onboarding
+const MIGRATED_STATUSES = ['treatment_active', 'existing_patient'];
+
+// Map onboarding_status to step index for Hormone journey
 function getHormoneStepIndex(status: string | null): number {
   const statusMap: Record<string, number> = {
     'pending_invite': 0,
@@ -53,11 +57,12 @@ function getHormoneStepIndex(status: string | null): number {
     'pending_pharmacy_order': 5,
     'rx_sent': 5,
     'treatment_active': 6,
-    'existing_patient': 6, // Existing patients are treated as active
+    'existing_patient': 6,
   };
   return statusMap[status || ''] ?? 0;
 }
 
+// Map onboarding_status to step index for Weight Loss journey
 function getWeightLossStepIndex(status: string | null): number {
   const statusMap: Record<string, number> = {
     'pending_invite': 0,
@@ -74,13 +79,18 @@ function getWeightLossStepIndex(status: string | null): number {
     'glp1_rx_sent': 2,
     'rx_sent': 2,
     'treatment_active': 3,
-    'existing_patient': 3, // Existing patients are treated as active
+    'existing_patient': 3,
   };
   return statusMap[status || ''] ?? 0;
 }
 
 function getNextAction(status: string | null, primaryProgram: string | null): string | null {
   const isWeightLoss = primaryProgram === 'weight_loss' || primaryProgram === 'glp1';
+  
+  // No next action for migrated/existing patients on treatment
+  if (status === 'treatment_active' || status === 'existing_patient') {
+    return null;
+  }
   
   const actionMap: Record<string, string> = isWeightLoss ? {
     'consultation_complete': 'Medical clearance review',
@@ -103,6 +113,11 @@ function getNextAction(status: string | null, primaryProgram: string | null): st
   return actionMap[status || ''] || null;
 }
 
+// Check if this is a migrated patient (added directly without going through full onboarding)
+function isMigratedPatient(status: string | null): boolean {
+  return MIGRATED_STATUSES.includes(status || '');
+}
+
 export function PatientJourneyTracker({ onboardingStatus, primaryProgram, className }: PatientJourneyTrackerProps) {
   const isWeightLoss = primaryProgram === 'weight_loss' || primaryProgram === 'glp1';
   const steps = isWeightLoss ? WEIGHT_LOSS_STEPS : HORMONE_STEPS;
@@ -110,15 +125,32 @@ export function PatientJourneyTracker({ onboardingStatus, primaryProgram, classN
     ? getWeightLossStepIndex(onboardingStatus) 
     : getHormoneStepIndex(onboardingStatus);
   const nextAction = getNextAction(onboardingStatus, primaryProgram);
+  const isMigrated = isMigratedPatient(onboardingStatus);
+  
+  // For migrated patients at final step, show only the Active step as current
+  const isAtFinalStep = currentStepIndex === steps.length - 1;
   
   return (
     <div className={cn("space-y-3", className)}>
+      {/* Migrated Patient Badge */}
+      {isMigrated && isAtFinalStep && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Badge variant="outline" className="gap-1.5 text-xs font-normal border-amber-300 text-amber-700 bg-amber-50">
+            <UserPlus className="w-3 h-3" />
+            Existing patient — added directly to active treatment
+          </Badge>
+        </div>
+      )}
+      
       {/* Journey Stepper */}
       <div className="flex items-center justify-between">
         {steps.map((step, idx) => {
           const isComplete = idx < currentStepIndex;
           const isCurrent = idx === currentStepIndex;
           const isFuture = idx > currentStepIndex;
+          
+          // For migrated patients, prior steps are "skipped" not "completed"
+          const isSkipped = isMigrated && isAtFinalStep && idx < currentStepIndex;
           
           return (
             <div key={step.id} className="flex items-center flex-1">
@@ -127,16 +159,28 @@ export function PatientJourneyTracker({ onboardingStatus, primaryProgram, classN
                 <div
                   className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors",
-                    isComplete && "bg-green-500 border-green-500 text-white",
+                    // Skipped steps for migrated patients - gray/dashed style
+                    isSkipped && "bg-muted/50 border-dashed border-muted-foreground/30 text-muted-foreground/50",
+                    // Completed steps (not skipped)
+                    isComplete && !isSkipped && "bg-green-500 border-green-500 text-white",
+                    // Current step
                     isCurrent && "bg-primary border-primary text-primary-foreground",
+                    // Future steps
                     isFuture && "bg-muted border-border text-muted-foreground"
                   )}
                 >
-                  {isComplete ? <Check className="h-4 w-4" /> : step.icon}
+                  {isSkipped ? (
+                    <Minus className="h-3 w-3" />
+                  ) : isComplete ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    step.icon
+                  )}
                 </div>
                 <span 
                   className={cn(
                     "text-xs mt-1 text-center whitespace-nowrap",
+                    isSkipped && "text-muted-foreground/50",
                     isCurrent && "font-semibold text-foreground",
                     isFuture && "text-muted-foreground"
                   )}
@@ -150,7 +194,11 @@ export function PatientJourneyTracker({ onboardingStatus, primaryProgram, classN
                 <div 
                   className={cn(
                     "flex-1 h-0.5 mx-1 mt-[-16px]",
-                    idx < currentStepIndex ? "bg-green-500" : "bg-border"
+                    isSkipped || (isMigrated && isAtFinalStep && idx < currentStepIndex - 1) 
+                      ? "bg-muted-foreground/20 border-dashed" 
+                      : idx < currentStepIndex 
+                        ? "bg-green-500" 
+                        : "bg-border"
                   )} 
                 />
               )}

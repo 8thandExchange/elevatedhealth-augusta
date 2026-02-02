@@ -201,6 +201,8 @@ serve(async (req) => {
     }
 
     // Create the patient record
+    // Note: Patients added via this function are "migrated" existing patients
+    // We store this info in medical_history.is_migrated_patient for display purposes
     const { data: newPatient, error: createError } = await supabaseAdmin
       .from("patients")
       .insert({
@@ -214,6 +216,8 @@ serve(async (req) => {
         invited_by: user.id,
         invited_at: new Date().toISOString(),
         consultation_booking_id: consultationBookingId,
+        // Mark as migrated patient for UI display purposes
+        medical_history: { is_migrated_patient: true, migrated_at: new Date().toISOString() },
       })
       .select()
       .single();
