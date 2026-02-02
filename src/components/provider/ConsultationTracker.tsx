@@ -12,6 +12,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { 
   Calendar, 
   Phone, 
@@ -25,6 +42,10 @@ import {
   UserPlus,
   Loader2,
   CalendarPlus,
+  Archive,
+  Trash2,
+  RotateCcw,
+  Info,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -56,6 +77,9 @@ const ConsultationTracker = () => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [isConverting, setIsConverting] = useState<string | null>(null);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     loadConsultations();
@@ -100,6 +124,66 @@ const ConsultationTracker = () => {
       toast.error("Failed to update consultation");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const archiveConsultation = async (id: string) => {
+    setIsArchiving(true);
+    try {
+      const { error } = await supabase
+        .from("consultation_bookings")
+        .update({ status: "archived" })
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Consultation archived");
+      loadConsultations();
+      setSelectedConsultation(null);
+    } catch (error) {
+      console.error("Error archiving consultation:", error);
+      toast.error("Failed to archive consultation");
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const restoreConsultation = async (id: string) => {
+    setIsArchiving(true);
+    try {
+      const { error } = await supabase
+        .from("consultation_bookings")
+        .update({ status: "pending" })
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Consultation restored");
+      loadConsultations();
+      setSelectedConsultation(null);
+    } catch (error) {
+      console.error("Error restoring consultation:", error);
+      toast.error("Failed to restore consultation");
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const deleteConsultation = async (id: string) => {
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("consultation_bookings")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Consultation permanently deleted");
+      loadConsultations();
+      setSelectedConsultation(null);
+    } catch (error) {
+      console.error("Error deleting consultation:", error);
+      toast.error("Failed to delete consultation");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -236,10 +320,16 @@ const ConsultationTracker = () => {
         return <Badge variant="outline" className="text-green-600 border-green-400">Completed</Badge>;
       case "converted_to_mapping":
         return <Badge className="bg-green-600">Converted to Mapping</Badge>;
+      case "converted_to_glp1":
+        return <Badge className="bg-green-600">Converted to GLP-1</Badge>;
+      case "converted_to_ketamine":
+        return <Badge className="bg-green-600">Converted to Ketamine</Badge>;
       case "nurture":
         return <Badge variant="outline" className="text-purple-600 border-purple-400">In Nurture</Badge>;
       case "lost":
         return <Badge variant="outline" className="text-red-600 border-red-400">Lost</Badge>;
+      case "archived":
+        return <Badge variant="outline" className="text-gray-500 border-gray-300">Archived</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -252,16 +342,24 @@ const ConsultationTracker = () => {
     return `${days} days ago`;
   };
 
-  const filteredConsultations = filterStatus === "all" 
-    ? consultations 
-    : consultations.filter(c => c.status === filterStatus);
+  // Filter logic: when showArchived, show only archived; otherwise exclude archived
+  const filteredConsultations = showArchived
+    ? consultations.filter(c => c.status === "archived")
+    : filterStatus === "all" 
+      ? consultations.filter(c => c.status !== "archived")
+      : consultations.filter(c => c.status === filterStatus && c.status !== "archived");
 
   const stats = {
-    total: consultations.length,
+    total: consultations.filter(c => c.status !== "archived").length,
     pending: consultations.filter(c => c.status === "pending").length,
     scheduled: consultations.filter(c => c.status === "scheduled").length,
     completed: consultations.filter(c => c.status === "completed").length,
-    converted: consultations.filter(c => c.status === "converted_to_mapping").length,
+    converted: consultations.filter(c => 
+      c.status === "converted_to_mapping" || 
+      c.status === "converted_to_glp1" || 
+      c.status === "converted_to_ketamine"
+    ).length,
+    archived: consultations.filter(c => c.status === "archived").length,
   };
 
   const conversionRate = stats.total > 0 
@@ -283,7 +381,7 @@ const ConsultationTracker = () => {
         <Card className="bg-muted/30">
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold">{stats.total}</p>
-            <p className="text-xs text-muted-foreground">Total</p>
+            <p className="text-xs text-muted-foreground">Total Active</p>
           </CardContent>
         </Card>
         <Card className="bg-yellow-50 border-yellow-200">
@@ -314,21 +412,52 @@ const ConsultationTracker = () => {
 
       {/* Filter and Actions */}
       <div className="flex flex-wrap items-center gap-4">
-        <Label>Filter by status:</Label>
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Info className="h-4 w-4" />
+                <span className="text-xs">Leads vs Patients</span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs">
+              <p className="text-sm">
+                <strong>Pending Consults</strong> are leads who paid for a consultation but haven't been converted yet.
+                <br /><br />
+                <strong>All Patients</strong> are people formally added to the system after clicking "Convert to Patient".
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <Label>Filter:</Label>
+        <Select value={filterStatus} onValueChange={setFilterStatus} disabled={showArchived}>
           <SelectTrigger className="w-48">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Consultations</SelectItem>
+            <SelectItem value="all">All Active</SelectItem>
             <SelectItem value="pending">Pending Booking</SelectItem>
             <SelectItem value="scheduled">Scheduled</SelectItem>
             <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="converted_to_mapping">Converted</SelectItem>
+            <SelectItem value="converted_to_mapping">Converted (Hormone)</SelectItem>
+            <SelectItem value="converted_to_glp1">Converted (GLP-1)</SelectItem>
+            <SelectItem value="converted_to_ketamine">Converted (Ketamine)</SelectItem>
             <SelectItem value="nurture">In Nurture</SelectItem>
             <SelectItem value="lost">Lost</SelectItem>
           </SelectContent>
         </Select>
+
+        <Button 
+          variant={showArchived ? "default" : "outline"} 
+          size="sm"
+          onClick={() => setShowArchived(!showArchived)}
+          className="gap-2"
+        >
+          <Archive className="h-4 w-4" />
+          {showArchived ? `Viewing Archived (${stats.archived})` : "Show Archived"}
+        </Button>
+
         <Button variant="outline" size="sm" onClick={loadConsultations}>
           Refresh
         </Button>
@@ -343,13 +472,24 @@ const ConsultationTracker = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Discovery Consultations
+            {showArchived ? (
+              <>
+                <Archive className="h-5 w-5" />
+                Archived Consultations
+              </>
+            ) : (
+              <>
+                <Calendar className="h-5 w-5" />
+                Discovery Consultations
+              </>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {filteredConsultations.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">No consultations found</p>
+            <p className="text-center text-muted-foreground py-8">
+              {showArchived ? "No archived consultations" : "No consultations found"}
+            </p>
           ) : (
             <div className="space-y-3">
               {filteredConsultations.map((consult) => (
@@ -357,7 +497,7 @@ const ConsultationTracker = () => {
                   key={consult.id}
                   className={`p-4 rounded-lg border cursor-pointer transition-colors hover:bg-muted/50 ${
                     selectedConsultation?.id === consult.id ? "border-gold bg-gold/5" : ""
-                  }`}
+                  } ${consult.status === "archived" ? "opacity-60" : ""}`}
                   onClick={() => {
                     setSelectedConsultation(consult);
                     setEditNotes(consult.notes || "");
@@ -430,8 +570,11 @@ const ConsultationTracker = () => {
                   <SelectItem value="scheduled">Scheduled</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="converted_to_mapping">Converted to Mapping</SelectItem>
+                  <SelectItem value="converted_to_glp1">Converted to GLP-1</SelectItem>
+                  <SelectItem value="converted_to_ketamine">Converted to Ketamine</SelectItem>
                   <SelectItem value="nurture">In Nurture</SelectItem>
                   <SelectItem value="lost">Lost</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -448,7 +591,9 @@ const ConsultationTracker = () => {
               <Button onClick={updateConsultation} disabled={isSaving}>
                 {isSaving ? "Saving..." : "Save Changes"}
               </Button>
-              {selectedConsultation.status !== "converted_to_mapping" && (
+              
+              {/* Convert to Patient button - only show if not already converted or archived */}
+              {!selectedConsultation.status.startsWith("converted") && selectedConsultation.status !== "archived" && (
                 <Button 
                   variant="default"
                   className="bg-green-600 hover:bg-green-700 gap-2"
@@ -468,7 +613,72 @@ const ConsultationTracker = () => {
                   )}
                 </Button>
               )}
-              <Button variant="outline" onClick={() => setSelectedConsultation(null)}>
+
+              {/* Archive/Restore button */}
+              {selectedConsultation.status === "archived" ? (
+                <Button 
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => restoreConsultation(selectedConsultation.id)}
+                  disabled={isArchiving}
+                >
+                  {isArchiving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <RotateCcw className="h-4 w-4" />
+                  )}
+                  Restore
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline"
+                  className="gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
+                  onClick={() => archiveConsultation(selectedConsultation.id)}
+                  disabled={isArchiving}
+                >
+                  {isArchiving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Archive className="h-4 w-4" />
+                  )}
+                  Archive
+                </Button>
+              )}
+
+              {/* Delete button with confirmation */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="outline"
+                    className="gap-2 text-red-600 border-red-300 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Permanently Delete Consultation?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently remove this consultation record for{" "}
+                      <strong>{selectedConsultation.customer_name || selectedConsultation.customer_email}</strong>.
+                      This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => deleteConsultation(selectedConsultation.id)}
+                      className="bg-red-600 hover:bg-red-700"
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? "Deleting..." : "Delete Permanently"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              <Button variant="ghost" onClick={() => setSelectedConsultation(null)}>
                 Cancel
               </Button>
             </div>
@@ -476,8 +686,7 @@ const ConsultationTracker = () => {
         </Card>
       )}
 
-      {/* Log Free Consultation Modal */}
-      <LogFreeConsultationModal
+      <LogFreeConsultationModal 
         isOpen={isLogModalOpen}
         onClose={() => setIsLogModalOpen(false)}
         onSuccess={loadConsultations}
