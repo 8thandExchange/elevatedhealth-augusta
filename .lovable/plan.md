@@ -1,103 +1,111 @@
 
 
-## Fix Payment Link Generation & Delivery System
+## Fix Patient Journey Display for Existing Patients
 
 ### Problem Summary
-The "Send Payment Link" modal in the Provider Dashboard is broken because:
-1. **The "Send Link" button sends the wrong data** - it sends `product_type` but the edge function expects a `payment_url`
-2. **No Stripe checkout session is created** before attempting to send the email/SMS
-3. **The "Copy" button works** because it correctly generates the URL first
+Two issues identified in the "Add Existing Patient" flow:
 
-### Solution Overview
-Refactor `QuickPaymentModal.tsx` to:
-1. First generate the Stripe checkout URL by calling the appropriate checkout edge function
-2. Then send that URL via email or SMS using the `send-alacarte-payment-link` or `send-alacarte-payment-sms` functions
+1. **Journey Tracker shows all steps completed** - When adding Melissa Stokes with status "Active on Treatment", the tracker shows all 7 steps (Consult → Kit → Sample → Labs → Protocol → Rx → Active) as green checkmarks. This is inaccurate because existing patients may not have gone through the diagnostic kit flow.
 
-### Technical Implementation
+2. **Wrong field used for program type** - The ProviderDashboard passes `treatment_request` (which is often `null`) instead of `primary_program` to the PatientJourneyTracker.
 
-**Step 1: Update `handleSend()` in `QuickPaymentModal.tsx`**
+### Solution
 
-The current code:
+#### Part 1: Fix Program Type Reference
+Update `ProviderDashboard.tsx` to use `primary_program` instead of `treatment_request`:
+
 ```typescript
-// BROKEN: Sends product_type instead of generating URL first
-await supabase.functions.invoke(edgeFunction, {
-  body: {
-    product_type: selectedProduct, // ← Edge function expects payment_url, not product_type
-  },
-});
+// Before (broken)
+primaryProgram={selectedPatient.patient.treatment_request || null}
+
+// After (fixed)
+primaryProgram={selectedPatient.patient.primary_program || selectedPatient.patient.treatment_request || null}
 ```
 
-The fix:
-```typescript
-// Step 1: Generate the Stripe checkout URL
-const checkoutFunction = getEdgeFunction(selectedProduct);
-const checkoutBody = getCheckoutBody(selectedProduct, selectedPatient);
-const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(checkoutFunction, {
-  body: checkoutBody,
-});
-if (checkoutError || !checkoutData?.url) throw new Error("Failed to generate payment link");
+#### Part 2: Add "Existing Patient" Visual Treatment
+Modify `PatientJourneyTracker.tsx` to recognize `treatment_active` status for patients added via "Add Existing Patient" and show an appropriate visual:
 
-// Step 2: Send the URL via email or SMS
-const sendFunction = sendMethod === "email" ? "send-alacarte-payment-link" : "send-alacarte-payment-sms";
-await supabase.functions.invoke(sendFunction, {
-  body: {
-    patient_email: selectedPatient.email,
-    patient_phone: selectedPatient.phone,
-    patient_name: selectedPatient.full_name,
-    payment_url: checkoutData.url,  // ← Now we pass the actual URL
-    product_name: getProductDisplayName(selectedProduct),
-    amount: getProductDisplayPrice(selectedProduct),
-  },
-});
-```
+**Option A (Recommended): Skip-to-Active Indicator**
+Instead of showing all prior steps as "completed", show them as "skipped" (gray/dotted) with only the Active step highlighted. This accurately reflects that the patient was migrated without going through the full onboarding flow.
 
-**Step 2: Add helper functions for product info**
+**Option B: Collapsed View**
+Show a simplified single-step view for existing patients with just "Active Treatment" badge and no stepper.
 
-Add these helpers to map product keys to display names and prices:
-```typescript
-const getProductDisplayName = (product: string): string => {
-  const found = PRODUCTS.find(p => p.value === product);
-  return found?.label || product;
-};
+#### Part 3: Better Status Differentiation
+Currently these statuses all map to step 6:
+- `treatment_active` (completed full journey)
+- `existing_patient` (legacy, migrated)
 
-const getProductDisplayPrice = (product: string): string => {
-  const found = PRODUCTS.find(p => p.value === product);
-  return found?.price || "";
-};
-```
-
-**Step 3: Fix edge function body mapping for all product types**
-
-Update `getCheckoutBody()` to include patient email for all product types, ensuring each checkout function receives the data it expects.
+Consider adding a flag to distinguish:
+- `is_migrated_patient: boolean` - Track if patient was added via "Add Existing Patient"
+- Show different visual when this flag is true
 
 ### Files to Modify
 
-| File | Changes |
-|------|---------|
-| `src/components/provider/QuickPaymentModal.tsx` | Refactor `handleSend()` to generate URL first, then send; add helper functions |
+| File | Change |
+|------|--------|
+| `src/pages/ProviderDashboard.tsx` | Use `primary_program` instead of `treatment_request` |
+| `src/components/provider/PatientJourneyTracker.tsx` | Add visual distinction for migrated/existing patients |
+| `supabase/functions/add-existing-patient/index.ts` | (Optional) Add `is_migrated_patient: true` flag when creating patient |
 
-### Edge Functions Involved (no changes needed)
-- `send-alacarte-payment-link` - Already expects `payment_url` ✓
-- `send-alacarte-payment-sms` - Already expects `payment_url` ✓
-- `create-alacarte-checkout` - Returns `url` ✓
-- `create-semaglutide-checkout` - Returns `url` ✓
-- `create-tirzepatide-checkout` - Returns `url` ✓
-- `create-hormone-membership-checkout` - Returns `url` ✓
-- `create-consultation-checkout` - Returns `url` ✓
-- `create-iv-ketamine-checkout` - Returns `url` ✓
+### Implementation Details
+
+**Step 1: Fix the immediate bug**
+Update ProviderDashboard to pass the correct program type field.
+
+**Step 2: Update Journey Tracker visualization**
+Add logic to detect "existing patient" scenario and show appropriate visual:
+
+```typescript
+// In PatientJourneyTracker
+const isMigratedPatient = onboardingStatus === 'treatment_active' && !hasCompletedIntake;
+// Or use a dedicated database flag
+
+// Update step rendering:
+{steps.map((step, idx) => {
+  const isComplete = idx < currentStepIndex;
+  const isSkipped = isMigratedPatient && idx < currentStepIndex; // New
+  const isCurrent = idx === currentStepIndex;
+  
+  return (
+    <div className={cn(
+      isSkipped && "opacity-50", // Gray out skipped steps
+      isComplete && !isSkipped && "bg-green-500", // Only green if truly completed
+    )}>
+      {isSkipped ? <span>—</span> : isComplete ? <Check /> : step.icon}
+    </div>
+  );
+})}
+```
+
+**Step 3: Add "Migrated Patient" indicator**
+Show a small badge above the stepper:
+
+```jsx
+{isMigratedPatient && (
+  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+    <UserPlus className="w-3 h-3" />
+    <span>Existing patient - added directly to active treatment</span>
+  </div>
+)}
+```
+
+### Database Enhancement (Optional)
+Add a column to track migration:
+
+```sql
+ALTER TABLE patients ADD COLUMN IF NOT EXISTS 
+  is_migrated_patient BOOLEAN DEFAULT FALSE;
+```
+
+Then update the edge function to set `is_migrated_patient: true` when adding existing patients.
 
 ### Testing Checklist
 After implementation:
-- Select a patient and a product (e.g., "IV Ketamine Infusion")
-- Click "Send Link" with Email selected → Patient receives email with working Stripe link
-- Click "Send Link" with SMS selected → Patient receives SMS with working Stripe link
-- Click Copy button → URL copied to clipboard, paste and verify it opens Stripe checkout
-- Verify all product types work: memberships, subscriptions, one-time payments
-
-### Additional Enhancement: Better Product Mapping
-Add missing products from `stripeConfig.ts` to the PRODUCTS array for comprehensive coverage:
-- Sexual wellness options
-- Hair restoration options
-- Peptide therapy
-- Lab panels
+- Add new existing patient with "Active on Treatment" status
+- Journey tracker shows Active step highlighted, prior steps grayed/skipped
+- Badge indicates "Existing patient"
+- Add patient with "Labs Uploaded, Pending Review" status
+- Journey tracker shows appropriate step highlighted
+- Dropdown selection persists and saves correctly
 
