@@ -81,14 +81,24 @@ interface PatientDatabaseProps {
 const ITEMS_PER_PAGE = 25;
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  consultation_pending: { label: "Pending Consult", variant: "outline" },
+  consultation_complete: { label: "Consult Complete", variant: "secondary" },
   pending_invite: { label: "Pending Invite", variant: "outline" },
+  invited: { label: "Invited", variant: "outline" },
+  kit_link_sent: { label: "Kit Link Sent", variant: "outline" },
   account_created: { label: "Account Created", variant: "secondary" },
   intake_complete: { label: "Intake Complete", variant: "default" },
   labs_in_progress: { label: "Labs In Progress", variant: "secondary" },
+  kit_shipped: { label: "Kit Shipped", variant: "secondary" },
+  results_ready: { label: "Results Ready", variant: "default" },
   labs_reviewed: { label: "Labs Reviewed", variant: "default" },
   protocol_review: { label: "Protocol Review", variant: "secondary" },
+  protocol_approved: { label: "Protocol Approved", variant: "default" },
+  treatment_active: { label: "Treatment Active", variant: "default" },
   active: { label: "Active", variant: "default" },
   paused: { label: "Paused", variant: "outline" },
+  awaiting_medical_clearance: { label: "Awaiting Clearance", variant: "secondary" },
+  ketamine_screening: { label: "Ketamine Screening", variant: "secondary" },
 };
 
 const membershipLabels: Record<string, { label: string; color: string }> = {
@@ -266,12 +276,19 @@ export default function PatientDatabase({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="consultation_pending">Pending Consult</SelectItem>
+            <SelectItem value="consultation_complete">Consult Complete</SelectItem>
             <SelectItem value="pending_invite">Pending Invite</SelectItem>
+            <SelectItem value="invited">Invited</SelectItem>
+            <SelectItem value="kit_link_sent">Kit Link Sent</SelectItem>
             <SelectItem value="account_created">Account Created</SelectItem>
             <SelectItem value="intake_complete">Intake Complete</SelectItem>
             <SelectItem value="labs_in_progress">Labs In Progress</SelectItem>
+            <SelectItem value="kit_shipped">Kit Shipped</SelectItem>
+            <SelectItem value="results_ready">Results Ready</SelectItem>
             <SelectItem value="labs_reviewed">Labs Reviewed</SelectItem>
             <SelectItem value="protocol_review">Protocol Review</SelectItem>
+            <SelectItem value="treatment_active">Treatment Active</SelectItem>
             <SelectItem value="active">Active</SelectItem>
           </SelectContent>
         </Select>
