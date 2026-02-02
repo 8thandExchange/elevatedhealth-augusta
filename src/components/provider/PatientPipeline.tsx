@@ -2,6 +2,23 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -16,6 +33,9 @@ import {
   Phone,
   Mail,
   Package,
+  Archive,
+  Trash2,
+  RotateCcw,
 } from "lucide-react";
 
 interface PipelineStage {
@@ -35,6 +55,7 @@ interface PipelineItem {
   stage: string;
   created_at: string;
   service_type?: string | null;
+  is_consultation?: boolean;
   amount_paid?: number | null;
 }
 
@@ -46,6 +67,48 @@ const PatientPipeline = () => {
   useEffect(() => {
     loadPipelineData();
   }, []);
+
+  const archiveItem = async (item: PipelineItem) => {
+    try {
+      if (item.is_consultation) {
+        await supabase
+          .from("consultation_bookings")
+          .update({ status: "archived" })
+          .eq("id", item.id);
+      } else {
+        await supabase
+          .from("patients")
+          .update({ is_archived: true })
+          .eq("id", item.id);
+      }
+      toast.success("Archived successfully");
+      loadPipelineData();
+    } catch (error) {
+      console.error("Error archiving:", error);
+      toast.error("Failed to archive");
+    }
+  };
+
+  const deleteItem = async (item: PipelineItem) => {
+    try {
+      if (item.is_consultation) {
+        await supabase
+          .from("consultation_bookings")
+          .delete()
+          .eq("id", item.id);
+      } else {
+        await supabase
+          .from("patients")
+          .delete()
+          .eq("id", item.id);
+      }
+      toast.success("Deleted successfully");
+      loadPipelineData();
+    } catch (error) {
+      console.error("Error deleting:", error);
+      toast.error("Failed to delete");
+    }
+  };
 
   const loadPipelineData = async () => {
     setIsLoading(true);
@@ -127,6 +190,7 @@ const PatientPipeline = () => {
             created_at: c.created_at,
             service_type: c.service_type,
             amount_paid: c.amount_paid,
+            is_consultation: true,
           })),
         },
         {
@@ -305,7 +369,7 @@ const PatientPipeline = () => {
                     className="p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex items-start justify-between">
-                      <div>
+                      <div className="flex-1">
                         <p className="font-medium">{item.name}</p>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
                           <span className="flex items-center gap-1">
@@ -320,13 +384,68 @@ const PatientPipeline = () => {
                           )}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <Badge variant="outline" className="text-xs">
-                          {item.stage.replace(/_/g, " ")}
-                        </Badge>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {getDaysAgo(item.created_at)}
-                        </p>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <Badge variant="outline" className="text-xs">
+                            {item.stage.replace(/_/g, " ")}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {getDaysAgo(item.created_at)}
+                          </p>
+                        </div>
+                        {/* Inline action icons */}
+                        <div className="flex items-center gap-1">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-muted-foreground hover:text-orange-600"
+                                  onClick={() => archiveItem(item)}
+                                >
+                                  <Archive className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Archive</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <AlertDialog>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 w-7 p-0 text-muted-foreground hover:text-red-600"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent>Delete</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Permanently Delete?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Delete <strong>{item.name}</strong>? This cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => deleteItem(item)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </div>
                     </div>
                     {item.service_type && (

@@ -505,7 +505,7 @@ const ConsultationTracker = () => {
                   }}
                 >
                   <div className="flex items-start justify-between">
-                    <div>
+                    <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium">
                           {consult.customer_name || consult.customer_email}
@@ -538,9 +538,82 @@ const ConsultationTracker = () => {
                         )}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">${consult.amount_paid || 99}</p>
-                      <p className="text-xs text-muted-foreground">{consult.service_type}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="font-semibold">${consult.amount_paid || 99}</p>
+                        <p className="text-xs text-muted-foreground">{consult.service_type}</p>
+                      </div>
+                      {/* Inline action icons */}
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        {consult.status === "archived" ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-muted-foreground hover:text-green-600"
+                                  onClick={() => restoreConsultation(consult.id)}
+                                >
+                                  <RotateCcw className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Restore</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-muted-foreground hover:text-orange-600"
+                                  onClick={() => archiveConsultation(consult.id)}
+                                >
+                                  <Archive className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Archive</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                        <AlertDialog>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 w-7 p-0 text-muted-foreground hover:text-red-600"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent>Delete</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Permanently Delete?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Delete consultation for <strong>{consult.customer_name || consult.customer_email}</strong>? This cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteConsultation(consult.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   </div>
                 </div>
