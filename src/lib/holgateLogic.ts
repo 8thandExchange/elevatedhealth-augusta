@@ -67,6 +67,7 @@ const REFERENCE_RANGES = {
   // Cortisol curve ranges (saliva, ng/dL)
   cortisol_morning_low: 8,
   cortisol_morning_optimal: 15,
+  cortisol_morning_high: 25, // Above this indicates elevated stress response
   cortisol_noon_low: 5,
   cortisol_evening_low: 3,
   cortisol_night_low: 2,
@@ -176,11 +177,13 @@ function analyzeHormones(values: LabValues, gender: string): Finding[] {
 function analyzeAdrenals(values: LabValues): Finding[] {
   const findings: Finding[] = [];
   
-  // Adrenal Exhaustion (Flat Curve)
+  // Check if we have full curve or just single morning value
   const hasFullCurve = values.cortisol_morning != null && 
     values.cortisol_noon != null && 
     values.cortisol_evening != null && 
     values.cortisol_night != null;
+  
+  const hasSingleCortisol = values.cortisol_morning != null && !hasFullCurve;
   
   if (hasFullCurve) {
     const morning = values.cortisol_morning!;
@@ -221,6 +224,34 @@ function analyzeAdrenals(values: LabValues): Finding[] {
         priority: 'medium',
         category: 'adrenal',
       });
+    }
+  } else if (hasSingleCortisol) {
+    // Single morning cortisol analysis (ZRT Saliva Profile III)
+    const morning = values.cortisol_morning!;
+    
+    // Low morning cortisol
+    if (morning < REFERENCE_RANGES.cortisol_morning_low) {
+      findings.push({
+        pattern: 'Morning Cortisol Blunting',
+        description: 'Low morning cortisol correlates with fatigue, brain fog, and difficulty waking. Consider adaptogens like AdreneVive.',
+        priority: 'medium',
+        category: 'adrenal',
+      });
+    }
+    
+    // High morning cortisol
+    if (morning > REFERENCE_RANGES.cortisol_morning_high) {
+      findings.push({
+        pattern: 'Elevated Morning Cortisol',
+        description: 'High morning cortisol indicates chronic stress response. Consider stress management, phosphatidylserine, and adaptogen support.',
+        priority: 'medium',
+        category: 'adrenal',
+      });
+    }
+    
+    // Optimal range check for reporting
+    if (morning >= REFERENCE_RANGES.cortisol_morning_low && morning <= REFERENCE_RANGES.cortisol_morning_optimal * 1.3) {
+      // Morning cortisol in optimal range - no finding needed
     }
   }
   
