@@ -1974,9 +1974,13 @@ const ProviderDashboard = () => {
                     await supabase.from("patients").update({ 
                       onboarding_status: "consultation_complete" 
                     }).eq("id", selectedPatient.patient.id);
+                    // Update local state immediately
+                    setSelectedPatient({
+                      ...selectedPatient,
+                      patient: { ...selectedPatient.patient, onboarding_status: "consultation_complete" }
+                    });
                     toast.success("Consultation marked complete. You can now send the lab kit link.");
                     await loadData();
-                    await selectPatient(selectedPatient);
                   } catch (error: any) {
                     toast.error(error.message);
                   }
@@ -1990,9 +1994,13 @@ const ProviderDashboard = () => {
                     await supabase.from("patients").update({ 
                       onboarding_status: "labs_reviewed" 
                     }).eq("id", selectedPatient.patient.id);
-                    toast.success("Labs marked as reviewed.");
+                    // Update local state immediately
+                    setSelectedPatient({
+                      ...selectedPatient,
+                      patient: { ...selectedPatient.patient, onboarding_status: "labs_reviewed" }
+                    });
+                    toast.success("Labs marked as reviewed. Health Report is now unlocked!");
                     await loadData();
-                    await selectPatient(selectedPatient);
                   } catch (error: any) {
                     toast.error(error.message);
                   }
@@ -2002,9 +2010,13 @@ const ProviderDashboard = () => {
                     await supabase.from("patients").update({ 
                       onboarding_status: "protocol_approved" 
                     }).eq("id", selectedPatient.patient.id);
+                    // Update local state immediately
+                    setSelectedPatient({
+                      ...selectedPatient,
+                      patient: { ...selectedPatient.patient, onboarding_status: "protocol_approved" }
+                    });
                     toast.success("Protocol approved! Patient can now activate membership.");
                     await loadData();
-                    await selectPatient(selectedPatient);
                   } catch (error: any) {
                     toast.error(error.message);
                   }
