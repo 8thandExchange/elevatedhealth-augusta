@@ -2187,7 +2187,16 @@ const ProviderDashboard = () => {
                       </ResponsiveContainer>
                     </div>
                   ) : (
-                    <p className="text-center text-muted-foreground py-8">No symptom data available</p>
+                    <div className="text-center py-8 space-y-2">
+                      <p className="text-muted-foreground">No symptom data available</p>
+                      {(selectedPatient.patient.onboarding_status === 'treatment_active' || 
+                        selectedPatient.patient.onboarding_status === 'existing_patient' ||
+                        (selectedPatient.patient.medical_history as any)?.is_migrated_patient) && (
+                        <p className="text-xs text-muted-foreground">
+                          Existing patients can complete a symptom check-in to begin tracking trends.
+                        </p>
+                      )}
+                    </div>
                   )}
                 </CardContent>
               </Card>
