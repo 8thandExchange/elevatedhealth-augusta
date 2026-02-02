@@ -1942,7 +1942,7 @@ const ProviderDashboard = () => {
               {/* Patient Journey Tracker - Visual stepper */}
               <PatientJourneyTracker
                 onboardingStatus={selectedPatient.patient.onboarding_status || null}
-                primaryProgram={selectedPatient.patient.treatment_request || null}
+                primaryProgram={(selectedPatient.patient as any).primary_program || selectedPatient.patient.treatment_request || null}
               />
 
               {/* Communication History Log */}
