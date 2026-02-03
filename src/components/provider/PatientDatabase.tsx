@@ -64,6 +64,7 @@ interface Patient {
   onboarding_status: string | null;
   membership_tier: string | null;
   primary_program: string | null;
+  service_interests: unknown;
   created_at: string | null;
   is_archived: boolean | null;
   avatar_url: string | null;
@@ -144,7 +145,7 @@ export default function PatientDatabase({
     try {
       let query = supabase
         .from("patients")
-        .select("id, full_name, email, phone, onboarding_status, membership_tier, primary_program, created_at, is_archived, avatar_url, risk_status")
+        .select("id, full_name, email, phone, onboarding_status, membership_tier, primary_program, service_interests, created_at, is_archived, avatar_url, risk_status")
         .order("created_at", { ascending: false });
 
       if (!showArchived) {
@@ -407,7 +408,15 @@ export default function PatientDatabase({
                     )}
                   </TableCell>
                   <TableCell>
-                    {patient.primary_program ? (
+                    {patient.service_interests && Array.isArray(patient.service_interests) && patient.service_interests.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {patient.service_interests.map((interest: string) => (
+                          <Badge key={interest} variant="outline" className="text-xs">
+                            {programLabels[interest] || interest}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : patient.primary_program ? (
                       <span className="text-sm">{programLabels[patient.primary_program] || patient.primary_program}</span>
                     ) : (
                       <span className="text-muted-foreground text-sm">—</span>
