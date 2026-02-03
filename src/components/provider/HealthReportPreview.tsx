@@ -14,8 +14,10 @@ import {
   Pill,
   Activity,
   Heart,
-  Zap
+  Zap,
+  Sparkles
 } from "lucide-react";
+import { MedicationRecommendation } from "@/lib/medicationMapping";
 
 interface LabResult {
   id: string;
@@ -33,9 +35,10 @@ interface HealthReportPreviewProps {
   patientId: string;
   patientName: string;
   patientGender?: string;
+  onApplyMedications?: (medications: MedicationRecommendation[]) => void;
 }
 
-const HealthReportPreview = ({ patientId, patientName, patientGender = 'female' }: HealthReportPreviewProps) => {
+const HealthReportPreview = ({ patientId, patientName, patientGender = 'female', onApplyMedications }: HealthReportPreviewProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [labResult, setLabResult] = useState<LabResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -216,7 +219,7 @@ const HealthReportPreview = ({ patientId, patientName, patientGender = 'female' 
 
             {/* Medication Recommendations */}
             {medications.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <h4 className="font-medium text-sm flex items-center gap-2">
                   <Pill className="w-4 h-4" />
                   Medication Recommendations
@@ -230,6 +233,17 @@ const HealthReportPreview = ({ patientId, patientName, patientGender = 'female' 
                     </div>
                   ))}
                 </div>
+                
+                {/* Apply to Pharmacy Order Button */}
+                {onApplyMedications && (
+                  <Button 
+                    onClick={() => onApplyMedications(medications as MedicationRecommendation[])}
+                    className="w-full bg-primary hover:bg-primary/90"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Apply Recommended Medications
+                  </Button>
+                )}
               </div>
             )}
 

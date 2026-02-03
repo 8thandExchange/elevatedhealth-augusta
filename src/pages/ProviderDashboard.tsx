@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -229,6 +229,23 @@ const ProviderDashboard = () => {
   const [isPharmacyModalOpen, setIsPharmacyModalOpen] = useState(false);
   // Recommended medications from lab analysis
   const [recommendedMedications, setRecommendedMedications] = useState<import("@/lib/medicationMapping").MedicationRecommendation[]>([]);
+  
+  // Ref for scrolling to pharmacy card
+  const pharmacyCardRef = useRef<HTMLDivElement>(null);
+
+  // Handler for applying medications from Health Report
+  const handleApplyFromHealthReport = (meds: import("@/lib/medicationMapping").MedicationRecommendation[]) => {
+    setRecommendedMedications(meds);
+    toast.success("Medications applied to Rx card");
+    
+    // Scroll to pharmacy card
+    setTimeout(() => {
+      pharmacyCardRef.current?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+    }, 100);
+  };
 
   // Provider lookup based on email - expand this as you add more providers
   const getProviderInfo = (email: string) => {
@@ -2311,6 +2328,7 @@ const ProviderDashboard = () => {
                   patientId={selectedPatient.patient.id}
                   patientName={selectedPatient.patient.full_name}
                   patientGender={selectedPatient.patient.gender || 'female'}
+                  onApplyMedications={handleApplyFromHealthReport}
                 />
               )}
 
@@ -2394,24 +2412,26 @@ const ProviderDashboard = () => {
               )}
 
               {/* Pharmacy Order Card */}
-              <PharmacyOrderCard
-                patient={{
-                  id: selectedPatient.patient.id,
-                  full_name: selectedPatient.patient.full_name,
-                  dob: selectedPatient.patient.dob,
-                  email: selectedPatient.patient.email,
-                  phone: selectedPatient.patient.phone,
-                  street_address: selectedPatient.patient.street_address,
-                  city: selectedPatient.patient.city,
-                  state: selectedPatient.patient.state,
-                  zip_code: selectedPatient.patient.zip_code,
-                  allergies: selectedPatient.patient.allergies,
-                  medical_history: selectedPatient.patient.medical_history as Record<string, any> | null,
-                  gender: selectedPatient.patient.gender,
-                }}
-                onOrderCreated={() => loadData()}
-                recommendedMedications={recommendedMedications}
-              />
+              <div ref={pharmacyCardRef}>
+                <PharmacyOrderCard
+                  patient={{
+                    id: selectedPatient.patient.id,
+                    full_name: selectedPatient.patient.full_name,
+                    dob: selectedPatient.patient.dob,
+                    email: selectedPatient.patient.email,
+                    phone: selectedPatient.patient.phone,
+                    street_address: selectedPatient.patient.street_address,
+                    city: selectedPatient.patient.city,
+                    state: selectedPatient.patient.state,
+                    zip_code: selectedPatient.patient.zip_code,
+                    allergies: selectedPatient.patient.allergies,
+                    medical_history: selectedPatient.patient.medical_history as Record<string, any> | null,
+                    gender: selectedPatient.patient.gender,
+                  }}
+                  onOrderCreated={() => loadData()}
+                  recommendedMedications={recommendedMedications}
+                />
+              </div>
 
               {/* Supplement Plan Card - Dr. Holgate's Protocols */}
               <SupplementPlanCard
