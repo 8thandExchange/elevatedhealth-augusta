@@ -201,6 +201,14 @@ const FORMULARY = [
     category: "sexual_wellness",
     defaultCadence: "30",
   },
+  {
+    id: "barfield_cream",
+    name: "Barfield Cream (Female Arousal)",
+    strength: "Sildenafil 2% / Nifedipine 1% / Arginine 6%",
+    sig: "Apply 1cc to clitoris 15-30 minutes before intimacy.",
+    category: "sexual_wellness",
+    defaultCadence: "30",
+  },
 ];
 
 const CATEGORIES = [
