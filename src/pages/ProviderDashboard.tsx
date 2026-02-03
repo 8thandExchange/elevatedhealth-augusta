@@ -188,6 +188,7 @@ const ProviderDashboard = () => {
   const [activeTab, setActiveTab] = useState("triage");
   const [renewingPatientId, setRenewingPatientId] = useState<string | null>(null);
   const [resendingActivationId, setResendingActivationId] = useState<string | null>(null);
+  const [deletingActivationId, setDeletingActivationId] = useState<string | null>(null);
   const [selectedPatientIds, setSelectedPatientIds] = useState<Set<string>>(new Set());
   const [providerInfo, setProviderInfo] = useState<{ name: string; credentials: string; role: string }>({
     name: "Provider",
@@ -852,6 +853,27 @@ const ProviderDashboard = () => {
       toast.error(err.message || "Failed to resend activation email");
     } finally {
       setResendingActivationId(null);
+    }
+  };
+
+  const handleDeleteActivation = async (activationId: string) => {
+    setDeletingActivationId(activationId);
+    try {
+      const { error } = await supabase
+        .from("activation_links")
+        .delete()
+        .eq("id", activationId);
+
+      if (error) throw error;
+
+      // Remove from local state
+      setPendingActivations(prev => prev.filter(a => a.id !== activationId));
+      toast.success("Activation deleted");
+    } catch (err: any) {
+      console.error("Delete error:", err);
+      toast.error(err.message || "Failed to delete activation");
+    } finally {
+      setDeletingActivationId(null);
     }
   };
 
@@ -1781,19 +1803,34 @@ const ProviderDashboard = () => {
                                 </span>
                               </td>
                               <td className="py-4 px-4 text-right">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleResendActivation(activation)}
-                                  disabled={resendingActivationId === activation.id}
-                                >
-                                  {resendingActivationId === activation.id ? (
-                                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                                  ) : (
-                                    <RotateCcw className="w-3 h-3 mr-1" />
-                                  )}
-                                  {resendingActivationId === activation.id ? "Sending..." : "Resend"}
-                                </Button>
+                                <div className="flex items-center justify-end gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleResendActivation(activation)}
+                                    disabled={resendingActivationId === activation.id || deletingActivationId === activation.id}
+                                  >
+                                    {resendingActivationId === activation.id ? (
+                                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                    ) : (
+                                      <RotateCcw className="w-3 h-3 mr-1" />
+                                    )}
+                                    {resendingActivationId === activation.id ? "Sending..." : "Resend"}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    onClick={() => handleDeleteActivation(activation.id)}
+                                    disabled={deletingActivationId === activation.id || resendingActivationId === activation.id}
+                                  >
+                                    {deletingActivationId === activation.id ? (
+                                      <Loader2 className="w-3 h-3 animate-spin" />
+                                    ) : (
+                                      <Trash2 className="w-3 h-3" />
+                                    )}
+                                  </Button>
+                                </div>
                               </td>
                             </tr>
                           );
