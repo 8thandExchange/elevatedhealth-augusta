@@ -74,6 +74,7 @@ import EncounterFormModal from "@/components/provider/EncounterFormModal";
 import TodayScheduleWidget from "@/components/provider/TodayScheduleWidget";
 import PatientNotesCard from "@/components/provider/PatientNotesCard";
 import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
+import HealthReportPreview from "@/components/provider/HealthReportPreview";
 
 interface Patient {
   id: string;
@@ -2303,22 +2304,14 @@ const ProviderDashboard = () => {
                 </Card>
               )}
 
-              {/* Labs Reviewed Badge */}
+              {/* Health Report Preview - Shows when labs are reviewed */}
               {selectedPatient.patient.onboarding_status && 
                ["labs_reviewed", "protocol_approved", "treatment_active", "pending_pharmacy_order"].includes(selectedPatient.patient.onboarding_status) && (
-                <Card className="border-green-500/30 bg-green-50/50 dark:bg-green-950/20">
-                  <CardContent className="pt-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                        <Check className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-green-700 dark:text-green-400">Labs Reviewed</p>
-                        <p className="text-sm text-green-600 dark:text-green-300">Patient's Health Report is unlocked</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <HealthReportPreview
+                  patientId={selectedPatient.patient.id}
+                  patientName={selectedPatient.patient.full_name}
+                  patientGender={selectedPatient.patient.gender || 'female'}
+                />
               )}
 
               {/* Hormone Protocol Pricing Add-On Selector */}
