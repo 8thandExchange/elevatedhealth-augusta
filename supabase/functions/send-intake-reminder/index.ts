@@ -103,7 +103,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <div style="text-align: center; margin-top: 24px; padding: 20px; background: white; border-radius: 8px; border: 1px solid #E5E5E5;">
                   <p style="color: #5D6D7E; font-size: 14px; margin: 0;">
                     Need help? Reply to this email or call us at<br>
-                    <strong style="color: #2C3E50;">(762) 821-7640</strong>
+                    <strong style="color: #2C3E50;">(706) 760-3470</strong>
                   </p>
                 </div>
 
@@ -111,7 +111,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <div style="text-align: center; margin-top: 32px; color: #8E9EAB; font-size: 12px;">
                   <p style="margin: 0;">
                     Elevated Health Augusta<br>
-                    3540 Wheeler Road, Suite 505, Augusta, GA 30909
+                    7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
                   </p>
                 </div>
               </div>

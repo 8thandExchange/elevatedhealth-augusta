@@ -128,7 +128,7 @@ serve(async (req) => {
 
       const message = 
         `Hi ${firstName}! 📅 Reminder: Your ${serviceType} at Elevated Health Augusta is tomorrow at ${timeStr}. ` +
-        `Please arrive 10 mins early. Address: 3540 Wheeler Rd, Suite 505, Augusta GA. ` +
+        `Please arrive 10 mins early. Address: 7013 Evans Town Center Blvd, Suite 203, Evans GA. ` +
         `Need to reschedule? Call (706) 760-3470. See you soon!`;
 
       const result = await sendSMS(booking.customer_phone, message);

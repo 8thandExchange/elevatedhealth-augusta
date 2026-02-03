@@ -201,7 +201,7 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
 
         <div class="footer">
-          <p>Elevated Health Augusta | 3654 Wheeler Road, Suite 103 | Augusta, GA 30909</p>
+          <p>Elevated Health Augusta | 7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809</p>
           <p>This encounter form was submitted electronically on ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}</p>
           ${data.providerEmail ? `<p>Submitted by: ${data.providerEmail}</p>` : ""}
         </div>

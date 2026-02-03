@@ -127,7 +127,7 @@ serve(async (req) => {
         </div>
         
         <p style="color: #4a5568; font-size: 15px;">
-          If you need immediate assistance, please call us directly at <strong>(706) 821-7354</strong>.
+          If you need immediate assistance, please call us directly at <strong>(706) 760-3470</strong>.
         </p>
         
         <p style="color: #4a5568; font-size: 15px; margin-top: 30px;">
@@ -139,7 +139,7 @@ serve(async (req) => {
       <div style="background: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
         <p style="color: #718096; font-size: 13px; margin: 0;">
           Elevated Health Augusta<br>
-          3540 Wheeler Rd, Suite 510, Augusta, GA 30909
+          7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
         </p>
       </div>
     </div>

@@ -220,11 +220,11 @@ serve(async (req) => {
                 </div>
               </div>
               <div class="footer">
-                <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 821-7354</strong></p>
+                <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 760-3470</strong></p>
                 <p class="footer-address">
                   Elevated Health Augusta<br/>
-                  3540 Wheeler Road, Suite 601<br/>
-                  Augusta, GA 30909
+                  7013 Evans Town Center Blvd, Suite 203<br/>
+                  Evans, GA 30809
                 </p>
               </div>
             </div>
@@ -311,11 +311,11 @@ serve(async (req) => {
                 </p>
               </div>
               <div class="footer">
-                <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 821-7354</strong></p>
+                <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 760-3470</strong></p>
                 <p class="footer-address">
                   Elevated Health Augusta<br/>
-                  3540 Wheeler Road, Suite 601<br/>
-                  Augusta, GA 30909
+                  7013 Evans Town Center Blvd, Suite 203<br/>
+                  Evans, GA 30809
                 </p>
               </div>
             </div>

@@ -110,7 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
       <body>
         <div class="header">
           <div class="logo">Elevated Health Augusta</div>
-          <div class="subtitle">3654 Wheeler Road, Suite 103 | Augusta, GA 30909 | (706) 250-9855</div>
+          <div class="subtitle">7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809 | (706) 760-3470</div>
         </div>
 
         <div class="alert">
