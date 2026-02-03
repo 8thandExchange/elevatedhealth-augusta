@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Beaker, Plus, TrendingUp } from "lucide-react";
+import { Beaker, Plus, TrendingUp, Pencil } from "lucide-react";
 import LabGauge from "./LabGauge";
 import NewLabResultModal from "./NewLabResultModal";
 import { MedicationRecommendation } from "@/lib/medicationMapping";
@@ -15,6 +15,18 @@ interface LabResult {
   testosterone_t: number | null;
   cortisol_morning: number | null;
   correlation_alert: string | null;
+  dhea_s: number | null;
+  pg_e2_ratio: number | null;
+  a1c: number | null;
+  fasting_insulin: number | null;
+  vitamin_d: number | null;
+  hematocrit: number | null;
+  psa: number | null;
+  alt: number | null;
+  ast: number | null;
+  lab_source: string | null;
+  pdf_url: string | null;
+  parsed_from_pdf: boolean | null;
 }
 
 interface LabAnalysisCardProps {
@@ -34,6 +46,7 @@ const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', lat
   const [latestLab, setLatestLab] = useState<LabResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingLab, setEditingLab] = useState<LabResult | null>(null);
 
   const loadLatestLab = async () => {
     try {
@@ -67,10 +80,28 @@ const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', lat
               <Beaker className="w-5 h-5 text-primary" />
               Lab Analysis
             </CardTitle>
-            <Button size="sm" variant="outline" onClick={() => setIsModalOpen(true)}>
-              <Plus className="w-4 h-4 mr-1" />
-              Add Labs
-            </Button>
+            <div className="flex gap-2">
+              {latestLab && (
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  onClick={() => {
+                    setEditingLab(latestLab);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  <Pencil className="w-4 h-4 mr-1" />
+                  Edit
+                </Button>
+              )}
+              <Button size="sm" variant="outline" onClick={() => {
+                setEditingLab(null);
+                setIsModalOpen(true);
+              }}>
+                <Plus className="w-4 h-4 mr-1" />
+                Add Labs
+              </Button>
+            </div>
           </div>
           {latestLab && (
             <p className="text-xs text-muted-foreground">
@@ -156,13 +187,17 @@ const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', lat
 
       <NewLabResultModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingLab(null);
+        }}
         patientId={patientId}
         patientName={patientName}
         patientGender={patientGender}
         latestSymptomScore={latestSymptomScore}
         onSaved={loadLatestLab}
         onApplyToRx={onApplyToRx}
+        existingLab={editingLab}
       />
     </>
   );

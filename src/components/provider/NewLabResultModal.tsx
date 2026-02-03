@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +18,27 @@ import HolgateAnalysisPanel from "./HolgateAnalysisPanel";
 import { analyzeLabResults, ClinicalImpression, LabValues } from "@/lib/holgateLogic";
 import { generateMedicationRecommendations, MedicationRecommendation } from "@/lib/medicationMapping";
 
+interface ExistingLabResult {
+  id: string;
+  collection_date: string;
+  estradiol_e2: number | null;
+  progesterone_pg: number | null;
+  testosterone_t: number | null;
+  cortisol_morning: number | null;
+  dhea_s: number | null;
+  pg_e2_ratio: number | null;
+  a1c: number | null;
+  fasting_insulin: number | null;
+  vitamin_d: number | null;
+  hematocrit: number | null;
+  psa: number | null;
+  alt: number | null;
+  ast: number | null;
+  lab_source: string | null;
+  pdf_url: string | null;
+  parsed_from_pdf: boolean | null;
+}
+
 interface NewLabResultModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,6 +53,7 @@ interface NewLabResultModalProps {
   };
   onSaved: () => void;
   onApplyToRx?: (medications: MedicationRecommendation[]) => void;
+  existingLab?: ExistingLabResult | null;
 }
 
 interface ProtocolRecommendation {
@@ -65,8 +87,10 @@ const NewLabResultModal = ({
   patientGender = 'female',
   latestSymptomScore,
   onSaved,
-  onApplyToRx
+  onApplyToRx,
+  existingLab
 }: NewLabResultModalProps) => {
+  const isEditMode = !!existingLab;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [collectionDate, setCollectionDate] = useState(new Date().toISOString().split('T')[0]);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -102,6 +126,36 @@ const NewLabResultModal = ({
   // Holgate analysis state
   const [holgateAnalysis, setHolgateAnalysis] = useState<ClinicalImpression | null>(null);
   const [medicationRecs, setMedicationRecs] = useState<MedicationRecommendation[]>([]);
+
+  // Populate fields when editing an existing lab result
+  useEffect(() => {
+    if (existingLab && isOpen) {
+      setCollectionDate(existingLab.collection_date);
+      setLabSource(existingLab.lab_source === "labcorp" ? "labcorp" : "zrt");
+      setPdfUrl(existingLab.pdf_url);
+      setParsedFromPdf(existingLab.parsed_from_pdf || false);
+      
+      // ZRT fields
+      setEstradiol(existingLab.estradiol_e2?.toString() || "");
+      setProgesterone(existingLab.progesterone_pg?.toString() || "");
+      setTestosterone(existingLab.testosterone_t?.toString() || "");
+      setCortisol(existingLab.cortisol_morning?.toString() || "");
+      setDheas(existingLab.dhea_s?.toString() || "");
+      setPgE2Ratio(existingLab.pg_e2_ratio?.toString() || "");
+      
+      // Labcorp fields
+      setHematocrit(existingLab.hematocrit?.toString() || "");
+      setPsa(existingLab.psa?.toString() || "");
+      setAlt(existingLab.alt?.toString() || "");
+      setAst(existingLab.ast?.toString() || "");
+      setLabcorpA1c(existingLab.a1c?.toString() || "");
+      
+      // Advanced fields
+      setHba1c(existingLab.a1c?.toString() || "");
+      setFastingInsulin(existingLab.fasting_insulin?.toString() || "");
+      setVitaminD(existingLab.vitamin_d?.toString() || "");
+    }
+  }, [existingLab, isOpen]);
 
   // Handle parsed PDF data - auto-populate editable fields
   const handleParsedData = (data: ParsedLabData) => {
@@ -264,7 +318,7 @@ const NewLabResultModal = ({
 
         const labcorpNotes = `Labcorp Blood Panel: Hematocrit=${hctValue || 'N/A'}%, PSA=${psaValue || 'N/A'} ng/mL, ALT=${altValue || 'N/A'} U/L, AST=${astValue || 'N/A'} U/L, A1c=${a1cValue || 'N/A'}%`;
 
-        const { error } = await supabase.from("lab_results").insert({
+        const labcorpData = {
           patient_id: patientId,
           collection_date: collectionDate,
           hematocrit: hctValue,
@@ -276,17 +330,26 @@ const NewLabResultModal = ({
           lab_source: "labcorp",
           correlation_alert: alerts.length > 0 ? alerts.map(a => a.title).join("; ") : null,
           created_by: user?.id
-        });
+        };
+
+        let error;
+        if (isEditMode && existingLab) {
+          const result = await supabase.from("lab_results").update(labcorpData).eq("id", existingLab.id);
+          error = result.error;
+        } else {
+          const result = await supabase.from("lab_results").insert(labcorpData);
+          error = result.error;
+        }
 
         if (error) throw error;
 
         if (alerts.length > 0) {
           setLabcorpAlerts(alerts);
-          toast.success("Labcorp labs saved!", {
+          toast.success(isEditMode ? "Labcorp labs updated!" : "Labcorp labs saved!", {
             description: `${alerts.length} safety alert(s) detected.`
           });
         } else {
-          toast.success("Labcorp labs saved. All values within normal range!");
+          toast.success(isEditMode ? "Labcorp labs updated!" : "Labcorp labs saved. All values within normal range!");
           resetAndClose();
         }
       } else {
@@ -323,7 +386,7 @@ const NewLabResultModal = ({
         // Generate medication recommendations
         const medications = generateMedicationRecommendations(analysis, labValues, patientGender);
 
-        const { error } = await supabase.from("lab_results").insert({
+        const zrtData = {
           patient_id: patientId,
           collection_date: collectionDate,
           estradiol_e2: e2Value,
@@ -346,25 +409,36 @@ const NewLabResultModal = ({
             medications: medications,
           })),
           created_by: user?.id
-        });
+        };
+
+        let error;
+        if (isEditMode && existingLab) {
+          const result = await supabase.from("lab_results").update(zrtData).eq("id", existingLab.id);
+          error = result.error;
+        } else {
+          const result = await supabase.from("lab_results").insert(zrtData);
+          error = result.error;
+        }
 
         if (error) throw error;
 
-        // Update patient onboarding status to results_ready
-        await supabase
-          .from("patients")
-          .update({ onboarding_status: "results_ready" })
-          .eq("id", patientId);
+        // Update patient onboarding status to results_ready (only on new entry)
+        if (!isEditMode) {
+          await supabase
+            .from("patients")
+            .update({ onboarding_status: "results_ready" })
+            .eq("id", patientId);
+        }
 
         // Show Holgate analysis panel if we have findings
         if (analysis.findings.length > 0 || medications.length > 0) {
           setHolgateAnalysis(analysis);
           setMedicationRecs(medications);
-          toast.success("Lab results saved!", {
+          toast.success(isEditMode ? "Lab results updated!" : "Lab results saved!", {
             description: `${analysis.findings.length} findings detected. Review recommendations.`
           });
         } else {
-          toast.success("Lab results saved successfully! No abnormalities detected.");
+          toast.success(isEditMode ? "Lab results updated successfully!" : "Lab results saved successfully! No abnormalities detected.");
           resetAndClose();
         }
       }
@@ -440,10 +514,10 @@ const NewLabResultModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-cormorant text-xl">
             <Beaker className="w-5 h-5 text-primary" />
-            New Lab Result
+            {isEditMode ? "Edit Lab Result" : "New Lab Result"}
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Fast-entry for <span className="font-medium text-foreground">{patientName}</span>
+            {isEditMode ? "Update values for" : "Fast-entry for"} <span className="font-medium text-foreground">{patientName}</span>
           </p>
         </DialogHeader>
 
