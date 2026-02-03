@@ -540,7 +540,9 @@ const ConsultationTracker = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <p className="font-semibold">${consult.amount_paid || 99}</p>
+                        <p className="font-semibold">
+                          ${consult.amount_paid ? (consult.amount_paid / 100).toFixed(0) : "99"}
+                        </p>
                         <p className="text-xs text-muted-foreground">{consult.service_type}</p>
                       </div>
                       {/* Inline action icons */}
