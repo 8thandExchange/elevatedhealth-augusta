@@ -74,6 +74,7 @@ import MedicalClearanceCard from "@/components/provider/MedicalClearanceCard";
 import EncounterFormModal from "@/components/provider/EncounterFormModal";
 import TodayScheduleWidget from "@/components/provider/TodayScheduleWidget";
 import PatientNotesCard from "@/components/provider/PatientNotesCard";
+import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
 
 interface Patient {
   id: string;
@@ -93,6 +94,7 @@ interface Patient {
   state?: string | null;
   zip_code?: string | null;
   allergies?: string | null;
+  intake_completed?: boolean | null;
   onboarding_status?: string;
   is_archived?: boolean;
   membership_tier?: string | null;
@@ -1943,6 +1945,9 @@ const ProviderDashboard = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Medical Intake Summary - Show if intake completed */}
+              <IntakeSummaryCard patient={selectedPatient.patient} />
 
               {/* Patient Journey Tracker - Visual stepper */}
               <PatientJourneyTracker

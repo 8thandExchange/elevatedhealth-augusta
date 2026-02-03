@@ -596,7 +596,15 @@ export default function PublicIntake() {
                   <div className="bg-slate-50 p-4 rounded-lg border">
                     <h4 className="font-semibold mb-2">HIPAA Notice</h4>
                     <p className="text-sm text-slate-600 mb-4">
-                      We are committed to protecting your health information. Your personal health information (PHI) will be used only for treatment, payment, and healthcare operations as permitted by HIPAA regulations. We maintain strict security measures to protect your information.
+                      We are committed to protecting your health information. Your personal health information (PHI) will be used only for treatment, payment, and healthcare operations as permitted by HIPAA regulations. We maintain strict security measures to protect your information.{" "}
+                      <a 
+                        href="/hipaa-notice" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-teal-600 hover:text-teal-700 underline"
+                      >
+                        Read full HIPAA Notice
+                      </a>
                     </p>
                     <div className="flex items-start space-x-3">
                       <Checkbox
