@@ -1934,6 +1934,7 @@ const ProviderDashboard = () => {
                   {selectedPatient.patient.email && (
                     <div className="pt-2 border-t border-border/50 mt-3">
                       <ResendWelcomeEmailButton
+                        patientId={selectedPatient.patient.id}
                         patientName={selectedPatient.patient.full_name}
                         patientEmail={selectedPatient.patient.email}
                         primaryProgram={selectedPatient.patient.treatment_request || "hormone"}

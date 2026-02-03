@@ -5,12 +5,14 @@ import { toast } from "sonner";
 import { Loader2, Mail } from "lucide-react";
 
 interface ResendWelcomeEmailButtonProps {
+  patientId: string;
   patientName: string;
   patientEmail: string;
   primaryProgram?: string;
 }
 
 const ResendWelcomeEmailButton = ({
+  patientId,
   patientName,
   patientEmail,
   primaryProgram = "hormone",
@@ -28,6 +30,7 @@ const ResendWelcomeEmailButton = ({
     try {
       const { data, error } = await supabase.functions.invoke("send-welcome-email", {
         body: {
+          patient_id: patientId,
           patient_name: patientName,
           patient_email: patientEmail,
           primary_program: primaryProgram,
