@@ -52,7 +52,10 @@ serve(async (req) => {
     logStep("Authorization verified");
 
     const body = await req.json();
-    const { patient_email, patient_name } = body;
+    // Support both camelCase (from UI) and snake_case naming
+    const patient_email = body.patient_email || body.patientEmail;
+    const patient_name = body.patient_name || body.patientName;
+    const patient_phone = body.patient_phone || body.patientPhone;
 
     if (!patient_email || !patient_name) {
       throw new Error("Missing required fields: patient_email and patient_name");
