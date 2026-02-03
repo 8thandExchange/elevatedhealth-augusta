@@ -40,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
     const firstName = patient_name?.split(" ")[0] || "there";
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
       to: [patient_email],
       subject: `Your ${product_name} Payment Link - Elevated Health Augusta`,
       html: `
@@ -127,10 +127,10 @@ const handler = async (req: Request): Promise<Response> => {
             <tr>
               <td style="background-color: #1a1a2e; padding: 30px; text-align: center;">
                 <p style="color: #ffffff; font-size: 14px; margin: 0 0 10px 0;">
-                  Questions? Call us at <a href="tel:+17067231578" style="color: #c5a572;">(706) 723-1578</a>
+                  Questions? Call us at <a href="tel:+17067603470" style="color: #c5a572;">(706) 760-3470</a>
                 </p>
                 <p style="color: #888; font-size: 12px; margin: 0;">
-                  Elevated Health Augusta | 4005 Washington Rd, Suite B, Evans, GA 30809
+                  Elevated Health Augusta | 7013 Evans Town Center Blvd, Evans, GA 30809
                 </p>
               </td>
             </tr>

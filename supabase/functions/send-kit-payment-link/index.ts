@@ -13,21 +13,14 @@ const logStep = (step: string, details?: any) => {
   console.log(`[SEND-KIT-PAYMENT-LINK] ${step}${detailsStr}`);
 };
 
-// Kit pricing configuration - Updated Dec 2024: Both kits now $349 (comprehensive Saliva + Blood Spot)
+// Kit pricing configuration - ZRT Saliva Profile III (saliva only, no blood spot)
 const KIT_TIERS = {
   hormone: {
     name: "Hormone Mapping Kit",
     fullPrice: 34900, // $349 in cents
     creditPrice: 25000, // $250 after $99 credit
-    description: "Comprehensive at-home Saliva & Blood Spot test kit (Insulin, Thyroid, Cortisol, Hormones) + lab review consultation",
+    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test covering Cortisol, DHEA-S, Estradiol, Progesterone & Testosterone + lab review consultation",
     priceId: "price_1SZiRMEOtKRY99pua6QMu12h",
-  },
-  metabolic: {
-    name: "Metabolic Mapping Kit",
-    fullPrice: 34900, // $349 in cents
-    creditPrice: 25000, // $250 after $99 credit
-    description: "Comprehensive at-home Saliva & Blood Spot test kit (Insulin, Thyroid, Cortisol, Hormones) + lab review consultation",
-    priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
   },
 };
 
@@ -148,14 +141,14 @@ serve(async (req) => {
           Complete Your Payment
         </a>
         <p style="margin-top: 30px; color: #666; font-size: 14px;">
-          After payment, your kit will ship within 3-5 business days. You'll receive instructions for the at-home collection process.
+          Your kit will be ready for pickup at your consultation. The ZRT Saliva Profile III includes simple at-home saliva collection with prepaid return shipping.
         </p>
         <p style="color: #666; font-size: 14px;">
-          Questions? Reply to this email or call us at (706) 854-3128.
+          Questions? Reply to this email or call us at (706) 760-3470.
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
         <p style="color: #999; font-size: 12px;">
-          Elevated Health Augusta | 1257 Augusta West Pkwy, Augusta, GA 30909
+          Elevated Health Augusta | 7013 Evans Town Center Blvd, Evans, GA 30809
         </p>
       </div>
     `;

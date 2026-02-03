@@ -40,10 +40,20 @@ interface ZRTRequisitionGeneratorProps {
   providerCredentials?: string;
 }
 
+// Gender-specific panel descriptions
+const getGenderDescription = (gender?: string) => {
+  if (gender === 'male') return "Comprehensive Male Hormone Panel";
+  return "Comprehensive Female Hormone Panel";
+};
+
+const getGenderICD10 = (gender?: string) => {
+  if (gender === 'male') return "E29.1"; // Male hypogonadism
+  return "E28.9"; // Female hormone dysfunction
+};
+
 const PANEL_DETAILS = {
   saliva_iii: {
     title: "Saliva Profile III",
-    description: "Comprehensive Female Hormone Panel",
     tests: [
       { code: "E2", name: "Estradiol", reason: "Estrogen level assessment" },
       { code: "Pg", name: "Progesterone", reason: "Progesterone balance" },
@@ -51,7 +61,6 @@ const PANEL_DETAILS = {
       { code: "DHEAS", name: "DHEA-S", reason: "Adrenal function" },
       { code: "Cortisol x4", name: "Diurnal Cortisol (4 samples)", reason: "Cortisol awakening response & daily rhythm" },
     ],
-    icd10: "E28.9",
     patientInstructions: [
       "Collect saliva samples upon waking, before noon, before dinner, and at bedtime.",
       "Do not eat, drink (except water), or brush teeth 1 hour before collection.",
@@ -61,7 +70,6 @@ const PANEL_DETAILS = {
   },
   weight_management: {
     title: "Weight Management Profile",
-    description: "Metabolic & Hormone Assessment",
     tests: [
       { code: "E2", name: "Estradiol", reason: "Metabolic hormone influence" },
       { code: "Pg", name: "Progesterone", reason: "Weight regulation" },
@@ -70,7 +78,6 @@ const PANEL_DETAILS = {
       { code: "Cortisol x4", name: "Diurnal Cortisol (4 samples)", reason: "Stress & weight connection" },
       { code: "Insulin", name: "Fasting Insulin", reason: "Insulin resistance screening" },
     ],
-    icd10: "E66.9",
     patientInstructions: [
       "Fast for 8-12 hours before morning saliva collection.",
       "Collect upon waking, before noon, before dinner, and at bedtime.",
@@ -241,7 +248,7 @@ const ZRTRequisitionGenerator = ({
         <div class="section-title">TEST PANEL SELECTION</div>
         <div style="margin-bottom: 10px;">
           <span class="checkbox ${panelType === "saliva_iii" ? "" : "checkbox-empty"}"></span>
-          <strong>Saliva Profile III</strong> - Comprehensive Female Hormone Panel
+          <strong>Saliva Profile III</strong> - ${getGenderDescription(patient.gender)}
         </div>
         <div>
           <span class="checkbox ${panelType === "weight_management" ? "" : "checkbox-empty"}"></span>
@@ -267,7 +274,7 @@ const ZRTRequisitionGenerator = ({
           </tbody>
         </table>
         <div style="margin-top: 8px; font-size: 10px;">
-          <strong>ICD-10:</strong> ${panel.icd10} | <strong>Date:</strong> ${today}
+          <strong>ICD-10:</strong> ${getGenderICD10(patient.gender)} | <strong>Date:</strong> ${today}
         </div>
       </div>
 
@@ -345,7 +352,7 @@ const ZRTRequisitionGenerator = ({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-sm text-blue-800 dark:text-blue-200">
-          <p className="font-medium mb-1">{panel.description}</p>
+          <p className="font-medium mb-1">{getGenderDescription(patient.gender)}</p>
           <p className="text-blue-700 dark:text-blue-300 text-xs">
             Auto-filled from patient intake. Print and include in kit.
           </p>
