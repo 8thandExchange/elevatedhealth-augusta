@@ -19,12 +19,16 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const { patientName, patientEmail, patientPhone, sessionNumber } = await req.json();
+    const { patientName, patientEmail, patientPhone, sessionNumber, bundle, name, email, patientId } = await req.json();
     
-    if (!patientEmail) {
+    // Support both naming conventions from different callers
+    const finalEmail = patientEmail || email;
+    const finalName = patientName || name;
+    
+    if (!finalEmail) {
       throw new Error("Patient email is required");
     }
-    logStep("Request data received", { patientName, patientEmail, patientPhone, sessionNumber });
+    logStep("Request data received", { finalName, finalEmail, patientPhone, sessionNumber, bundle });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY not configured");
@@ -32,7 +36,7 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
     // Check if customer already exists
-    const customers = await stripe.customers.list({ email: patientEmail, limit: 1 });
+    const customers = await stripe.customers.list({ email: finalEmail, limit: 1 });
     let customerId: string | undefined;
     
     if (customers.data.length > 0) {
@@ -41,16 +45,21 @@ serve(async (req) => {
     } else {
       // Create new customer
       const customer = await stripe.customers.create({
-        email: patientEmail,
-        name: patientName || undefined,
+        email: finalEmail,
+        name: finalName || undefined,
         phone: patientPhone || undefined,
         metadata: {
-          service: "iv_ketamine_infusion"
+          service: bundle ? "iv_ketamine_bundle" : "iv_ketamine_infusion"
         }
       });
       customerId = customer.id;
       logStep("New customer created", { customerId });
     }
+
+    // Determine price based on bundle or single session
+    const priceId = bundle 
+      ? "price_1SwlYrEOtKRY99puuA7PwoYc" // 6-Session Bundle - $2,200
+      : "price_1SaYv3EOtKRY99pulkr4H1At"; // Single IV Ketamine Infusion - $400
 
     // Create checkout session
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
@@ -59,19 +68,21 @@ serve(async (req) => {
       customer: customerId,
       line_items: [
         {
-          price: "price_1SaYv3EOtKRY99pulkr4H1At", // IV Ketamine Infusion - $400
+          price: priceId,
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: `${origin}/ketamine-payment-success?session_id={CHECKOUT_SESSION_ID}&type=infusion`,
+      success_url: `${origin}/ketamine-payment-success?session_id={CHECKOUT_SESSION_ID}&type=${bundle ? "bundle" : "infusion"}`,
       cancel_url: `${origin}/ketamine`,
       metadata: {
-        service: "iv_ketamine_infusion",
-        patient_name: patientName || "",
-        patient_email: patientEmail,
+        service: bundle ? "iv_ketamine_bundle" : "iv_ketamine_infusion",
+        patient_name: finalName || "",
+        patient_email: finalEmail,
         patient_phone: patientPhone || "",
-        session_number: sessionNumber?.toString() || "1"
+        patient_id: patientId || "",
+        session_number: bundle ? "1-6" : (sessionNumber?.toString() || "1"),
+        sessions_total: bundle ? "6" : "1"
       }
     });
 

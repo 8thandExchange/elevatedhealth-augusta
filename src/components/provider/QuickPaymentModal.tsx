@@ -34,14 +34,19 @@ interface QuickPaymentModalProps {
 }
 
 const PRODUCTS = [
-  { value: "hormone_access", label: "Hormone ACCESS", price: "$99/mo" },
-  { value: "hormone_vitality", label: "Hormone VITALITY", price: "$149/mo" },
-  { value: "hormone_concierge", label: "Hormone CONCIERGE", price: "$249/mo" },
-  { value: "semaglutide", label: "Semaglutide Membership", price: "$399/mo" },
-  { value: "tirzepatide", label: "Tirzepatide Membership", price: "$499/mo" },
-  { value: "hormoneAddon", label: "Hormone Add-On (GLP-1)", price: "+$149/mo" },
-  { value: "consultation", label: "Discovery Consultation", price: "$99" },
-  { value: "ivKetamine", label: "IV Ketamine Infusion", price: "$400" },
+  // Hormone Memberships
+  { value: "hormone_access", label: "Hormone ACCESS", price: "$99/mo", category: "Hormone" },
+  { value: "hormone_vitality", label: "Hormone VITALITY", price: "$149/mo", category: "Hormone" },
+  { value: "hormone_concierge", label: "Hormone CONCIERGE", price: "$249/mo", category: "Hormone" },
+  // Weight Loss
+  { value: "semaglutide", label: "Semaglutide Membership", price: "$399/mo", category: "Weight Loss" },
+  { value: "tirzepatide", label: "Tirzepatide Membership", price: "$499/mo", category: "Weight Loss" },
+  { value: "hormoneAddon", label: "Hormone Add-On (GLP-1)", price: "+$149/mo", category: "Weight Loss" },
+  // Ketamine
+  { value: "ivKetamine", label: "IV Ketamine Infusion", price: "$400", category: "Ketamine" },
+  { value: "ivKetamineBundle", label: "IV Ketamine 6-Session Bundle", price: "$2,200", category: "Ketamine" },
+  // Consultation
+  { value: "consultation", label: "Discovery Consultation", price: "$99", category: "Consultation" },
 ];
 
 const getProductDisplayName = (product: string): string => {
@@ -95,8 +100,10 @@ const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalP
       case "vitality": return "create-vitality-checkout";
       case "semaglutide": return "create-semaglutide-checkout";
       case "tirzepatide": return "create-tirzepatide-checkout";
+      case "hormoneAddon": return "create-hormone-addon-checkout";
       case "consultation": return "create-consultation-checkout";
       case "ivKetamine": return "create-iv-ketamine-checkout";
+      case "ivKetamineBundle": return "create-iv-ketamine-checkout";
       default: return "create-alacarte-checkout";
     }
   };
@@ -105,6 +112,14 @@ const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalP
     if (product.startsWith("hormone_")) {
       const tier = product.replace("hormone_", "") as "access" | "vitality" | "concierge";
       return { tier, patientId: patient.id };
+    }
+    if (product === "ivKetamineBundle") {
+      return {
+        email: patient.email,
+        name: patient.full_name,
+        patientId: patient.id,
+        bundle: true,
+      };
     }
     return {
       email: patient.email,

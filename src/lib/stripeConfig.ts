@@ -292,6 +292,15 @@ export const KETAMINE_PRICES = {
     mode: "payment" as const,
     edgeFunction: "create-iv-ketamine-checkout",
   },
+  ivBundle6: {
+    priceId: "price_1SwlYrEOtKRY99puuA7PwoYc",
+    amount: 220000, // $2,200
+    displayPrice: "$2,200",
+    name: "IV Ketamine 6-Session Bundle",
+    description: "6 IV Ketamine infusion sessions - Save $200",
+    mode: "payment" as const,
+    edgeFunction: "create-iv-ketamine-checkout",
+  },
 } as const;
 
 // ============================================================================
