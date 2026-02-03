@@ -30,7 +30,7 @@ interface PharmacyOrderCardProps {
   recommendedMedications?: MedicationRecommendation[];
 }
 
-// Clinic Approved Formulary - Updated with specific protocols
+// Clinic Approved Formulary - Compounding Pharmacy Creams Only
 const FORMULARY = [
   // === MALE TESTOSTERONE PROTOCOLS (No 50mg - "doesn't work" per Dr. Holgate) ===
   {
@@ -58,24 +58,6 @@ const FORMULARY = [
     defaultCadence: "30",
   },
   
-  // === MALE TROCHE OPTIONS ===
-  {
-    id: "male_test_troche_50",
-    name: "Testosterone Troche - Male 50mg",
-    strength: "50mg Troche (1/2 troche = 25mg)",
-    sig: "Place under tongue or in cheek daily. Rotate sites.",
-    category: "male_hormone",
-    defaultCadence: "30",
-  },
-  {
-    id: "male_test_troche_100",
-    name: "Testosterone Troche - Male 100mg",
-    strength: "100mg Troche",
-    sig: "Place under tongue or in cheek daily. Rotate sites.",
-    category: "male_hormone",
-    defaultCadence: "30",
-  },
-  
   // === FEMALE TESTOSTERONE ===
   {
     id: "female_testosterone",
@@ -92,7 +74,7 @@ const FORMULARY = [
     name: "Progesterone Cream (Sleep Stack)",
     strength: "40mg/click (Topiclick)",
     sig: "Apply 1 click to neck at bedtime for sleep support.",
-    category: "sleep_support",
+    category: "female_hormone",
     defaultCadence: "30",
   },
   
@@ -105,121 +87,22 @@ const FORMULARY = [
     category: "female_hormone",
     defaultCadence: "30",
   },
-  
-  // === WEIGHT LOSS ===
-  {
-    id: "semaglutide",
-    name: "Semaglutide/Pyridoxine Injection",
-    strength: "0.25mg-1mg/B6 40mg",
-    sig: "Inject subcutaneously once weekly as directed.",
-    category: "weight_loss",
-    defaultCadence: "30",
-  },
-  
-  // === PEPTIDES ===
-  {
-    id: "sermorelin",
-    name: "Sermorelin Acetate (Growth Protocol)",
-    strength: "500mcg Troche",
-    sig: "Dissolve 1 under tongue daily at bedtime.",
-    category: "peptide",
-    defaultCadence: "30",
-  },
-  {
-    id: "nad_injection",
-    name: "NAD+ Injection (Cognitive)",
-    strength: "100mg/mL",
-    sig: "Inject 0.5mL subcutaneously twice weekly.",
-    category: "peptide",
-    defaultCadence: "30",
-  },
-  {
-    id: "pt141",
-    name: "PT-141 (Libido Kit)",
-    strength: "10mg vial",
-    sig: "Inject 1mg subcutaneously 30-60 min before activity as needed.",
-    category: "peptide",
-    defaultCadence: "30",
-  },
-  
-  // === HAIR RESTORATION ===
-  {
-    id: "minoxidil_finasteride",
-    name: "Minoxidil + Finasteride Combo",
-    strength: "5% Minoxidil / 0.1% Finasteride",
-    sig: "Apply to scalp once daily at bedtime.",
-    category: "hair_restoration",
-    defaultCadence: "30",
-  },
-  {
-    id: "dutasteride",
-    name: "Dutasteride",
-    strength: "0.5mg",
-    sig: "Take one capsule by mouth daily.",
-    category: "hair_restoration",
-    defaultCadence: "30",
-  },
-  {
-    id: "ghk_cu_scalp",
-    name: "GHK-Cu Scalp Therapy",
-    strength: "GHK-Cu 200mcg/mL",
-    sig: "Apply to scalp daily. May use with dermaroller weekly.",
-    category: "hair_restoration",
-    defaultCadence: "30",
-  },
 
-  // === SEXUAL WELLNESS ===
-  {
-    id: "tadalafil_daily",
-    name: "Tadalafil (Daily)",
-    strength: "5mg",
-    sig: "Take one tablet by mouth daily.",
-    category: "sexual_wellness",
-    defaultCadence: "30",
-  },
-  {
-    id: "tadalafil_prn",
-    name: "Tadalafil (As Needed)",
-    strength: "20mg",
-    sig: "Take one tablet by mouth 30-60 minutes before activity as needed.",
-    category: "sexual_wellness",
-    defaultCadence: "30",
-  },
-  {
-    id: "sildenafil",
-    name: "Sildenafil (Viagra)",
-    strength: "100mg",
-    sig: "Take one tablet by mouth 30-60 minutes before activity as needed.",
-    category: "sexual_wellness",
-    defaultCadence: "30",
-  },
-  {
-    id: "oxytocin_nasal",
-    name: "Oxytocin Nasal Spray",
-    strength: "24 IU/spray",
-    sig: "1-2 sprays intranasally 30 minutes before intimacy.",
-    category: "sexual_wellness",
-    defaultCadence: "30",
-  },
+  // === SEXUAL WELLNESS CREAM ===
   {
     id: "barfield_cream",
     name: "Barfield Cream (Female Arousal)",
     strength: "Sildenafil 2% / Nifedipine 1% / Arginine 6%",
     sig: "Apply 1cc to clitoris 15-30 minutes before intimacy.",
-    category: "sexual_wellness",
+    category: "female_hormone",
     defaultCadence: "30",
   },
 ];
 
 const CATEGORIES = [
-  { id: "all", label: "All" },
+  { id: "all", label: "All Creams" },
   { id: "male_hormone", label: "Male Hormone" },
   { id: "female_hormone", label: "Female Hormone" },
-  { id: "sleep_support", label: "Sleep Stack" },
-  { id: "weight_loss", label: "Weight Loss" },
-  { id: "peptide", label: "Peptide" },
-  { id: "hair_restoration", label: "Hair Restoration" },
-  { id: "sexual_wellness", label: "Sexual Wellness" },
 ];
 
 const CADENCE_OPTIONS = [
