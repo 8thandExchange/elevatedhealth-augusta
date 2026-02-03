@@ -45,9 +45,23 @@ import {
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+
+  // Show membership activation toast when redirected from checkout
+  useEffect(() => {
+    if (searchParams.get("membership") === "activated") {
+      const tier = searchParams.get("tier");
+      const tierName = tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : "Your";
+      toast.success(`${tierName} Membership Activated!`, {
+        description: "Welcome to Elevated Health. Check your email for next steps.",
+        duration: 6000,
+      });
+      // Clean up URL params
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams]);
   
   // Use React Query hooks for data fetching
   const { data: patient, isLoading: isPatientLoading, error: patientError } = usePatient();

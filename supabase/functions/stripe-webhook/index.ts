@@ -197,10 +197,11 @@ serve(async (req) => {
 
     // Handle subscription payments (membership activations)
     if (session.mode === "subscription") {
-      const baseMembership = metadata.base_membership || "metabolic";
+      // Prefer 'tier' metadata (from hormone membership checkout), fallback to 'base_membership'
+      const tierFromMetadata = metadata.tier || metadata.base_membership || "metabolic";
       
       if (customerEmail) {
-        logStep("Processing subscription activation", { email: customerEmail, baseMembership });
+        logStep("Processing subscription activation", { email: customerEmail, tier: tierFromMetadata });
 
         // Get activation link to find patient name and membership details
         const { data: activationData, error: activationError } = await supabaseClient
@@ -219,15 +220,15 @@ serve(async (req) => {
           logStep("Activation links updated", { count: activationData?.length || 0 });
         }
 
-        // Determine the membership type from activation link or metadata
-        const membershipType = activationData?.[0]?.base_membership || baseMembership;
+        // Priority: metadata.tier > activation_link.base_membership > metadata.base_membership
+        const membershipTier = tierFromMetadata || activationData?.[0]?.base_membership || "metabolic";
         
         // PHASE 4: Set patient to treatment_active for subscription activations
         const { data: patientData, error: patientError } = await supabaseClient
           .from("patients")
           .update({ 
             onboarding_status: "treatment_active",
-            membership_tier: membershipType,
+            membership_tier: membershipTier,
             lab_path: "zrt"
           })
           .eq("email", customerEmail)
@@ -238,7 +239,7 @@ serve(async (req) => {
         } else {
           logStep("Patient status updated to treatment_active", { 
             count: patientData?.length || 0,
-            membershipType 
+            membershipTier 
           });
         }
 
@@ -271,7 +272,7 @@ serve(async (req) => {
                   patient_email: customerEmail,
                   amount: session.amount_total ? session.amount_total / 100 : null,
                   payment_type: "subscription activation",
-                  program: baseMembership,
+                  program: tierFromMetadata,
                 }),
               }
             );

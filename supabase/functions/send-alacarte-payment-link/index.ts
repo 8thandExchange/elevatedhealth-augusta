@@ -109,17 +109,19 @@ const handler = async (req: Request): Promise<Response> => {
                   This link is unique to your order and expires in 24 hours.
                 </p>
                 
-                <!-- Membership Upsell -->
+                <!-- Membership Upsell - Only show for non-membership purchases -->
+                ${!product_name.toLowerCase().includes('membership') && !product_name.toLowerCase().includes('access') && !product_name.toLowerCase().includes('vitality') && !product_name.toLowerCase().includes('concierge') ? `
                 <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #fff8e8 0%, #fef3dc 100%); border-radius: 8px; margin: 30px 0; border: 1px solid #c5a572;">
                   <tr>
                     <td style="padding: 25px;">
-                      <h3 style="color: #b8956a; font-size: 16px; margin: 0 0 10px 0; font-family: Georgia, serif;">💡 Save with a Vitality Membership</h3>
+                      <h3 style="color: #b8956a; font-size: 16px; margin: 0 0 10px 0; font-family: Georgia, serif;">💡 Save with a Membership</h3>
                       <p style="color: #4a4a4a; font-size: 14px; line-height: 1.5; margin: 0;">
-                        Members pay <strong>$249/month</strong> and get medications, quarterly labs, and unlimited provider messaging included. Ask your provider about upgrading!
+                        Membership plans start at <strong>$99/month</strong> and include exclusive member pricing on treatments, labs, and more. Ask your provider about options!
                       </p>
                     </td>
                   </tr>
                 </table>
+                ` : ''}
               </td>
             </tr>
             
