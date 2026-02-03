@@ -25,7 +25,8 @@ import {
   Printer,
   ArrowLeft,
   Search,
-  X
+  X,
+  FileSpreadsheet
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -75,6 +76,11 @@ const serviceCategories = [
     id: "iv",
     title: "IV Lounge",
     keywords: ["iv", "drip", "149", "249", "booster", "hydration", "vitamin"]
+  },
+  {
+    id: "insurance",
+    title: "Insurance Fee Schedule",
+    keywords: ["tricare", "vaccn", "va", "esketamine", "spravato", "G2082", "G2083", "99204", "99205", "99214", "99215", "G2212", "80305", "fee", "reimbursement", "billing", "cpt"]
   }
 ];
 
@@ -560,6 +566,230 @@ const StaffPricingCheatsheet = () => {
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">
                       <p className="text-muted-foreground">
                         Refer to the IV Lounge page or provider dashboard for current drip menu and pricing.
+                      </p>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+
+            {/* Insurance Fee Schedule */}
+            {showCategory("insurance") && (
+              <AccordionItem value="insurance" className="border rounded-lg px-4 border-amber-500/30 bg-amber-500/5">
+                <AccordionTrigger className="hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <FileSpreadsheet className="w-5 h-5 text-amber-600" />
+                    <span className="font-semibold">Insurance Fee Schedule (Billing Reference)</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-6 pb-4">
+                    {/* TRICARE Section */}
+                    <div>
+                      <h4 className="font-semibold text-sm uppercase tracking-wide mb-3 text-blue-600 dark:text-blue-400">
+                        TRICARE
+                      </h4>
+                      
+                      {/* Esketamine */}
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Esketamine (SPRAVATO®)</p>
+                      <div className="overflow-x-auto mb-4">
+                        <table className="w-full text-sm border">
+                          <thead className="bg-muted/50">
+                            <tr>
+                              <th className="text-left py-2 px-3 font-medium border-b">Code</th>
+                              <th className="text-left py-2 px-3 font-medium border-b">Description</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Billed</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Fee Schedule</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Drug Cost</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">G2082</td>
+                              <td className="py-2 px-3">Esketamine 56 mg</td>
+                              <td className="py-2 px-3 text-right font-mono">$1,200.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$662.53</td>
+                              <td className="py-2 px-3 text-right font-mono text-muted-foreground">$583.94</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">G2083</td>
+                              <td className="py-2 px-3">Esketamine 84 mg</td>
+                              <td className="py-2 px-3 text-right font-mono">$1,800.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$881.81</td>
+                              <td className="py-2 px-3 text-right font-mono text-muted-foreground">$875.92</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* E&M Codes */}
+                      <p className="text-xs font-medium text-muted-foreground mb-2">E&M Codes</p>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border">
+                          <thead className="bg-muted/50">
+                            <tr>
+                              <th className="text-left py-2 px-3 font-medium border-b">Code</th>
+                              <th className="text-left py-2 px-3 font-medium border-b">Description</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Billed</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Fee Schedule</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99204</td>
+                              <td className="py-2 px-3">New Patient Level 2</td>
+                              <td className="py-2 px-3 text-right font-mono">—</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">—</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99205</td>
+                              <td className="py-2 px-3">New Patient Level 3</td>
+                              <td className="py-2 px-3 text-right font-mono">$250.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$175.45</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99214</td>
+                              <td className="py-2 px-3">Est Patient 30-39 Min</td>
+                              <td className="py-2 px-3 text-right font-mono">$185.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$101.13</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99215</td>
+                              <td className="py-2 px-3">Est Patient 40-54 Min</td>
+                              <td className="py-2 px-3 text-right font-mono">$215.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$142.23</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">G2212</td>
+                              <td className="py-2 px-3">Prolonged +15 min</td>
+                              <td className="py-2 px-3 text-right font-mono">$200.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$102.12</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* VACCN Section */}
+                    <div>
+                      <h4 className="font-semibold text-sm uppercase tracking-wide mb-3 text-purple-600 dark:text-purple-400">
+                        VACCN (VA Community Care)
+                      </h4>
+                      
+                      {/* Esketamine */}
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Esketamine (SPRAVATO®)</p>
+                      <div className="overflow-x-auto mb-4">
+                        <table className="w-full text-sm border">
+                          <thead className="bg-muted/50">
+                            <tr>
+                              <th className="text-left py-2 px-3 font-medium border-b">Code</th>
+                              <th className="text-left py-2 px-3 font-medium border-b">Description</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Billed</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Fee Schedule</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Drug Cost</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">G2082</td>
+                              <td className="py-2 px-3">Esketamine 56 mg</td>
+                              <td className="py-2 px-3 text-right font-mono">$1,200.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$622.52</td>
+                              <td className="py-2 px-3 text-right font-mono text-muted-foreground">$583.94</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">G2083</td>
+                              <td className="py-2 px-3">Esketamine 84 mg</td>
+                              <td className="py-2 px-3 text-right font-mono">$1,800.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$918.58</td>
+                              <td className="py-2 px-3 text-right font-mono text-muted-foreground">$875.92</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* E&M Codes */}
+                      <p className="text-xs font-medium text-muted-foreground mb-2">E&M Codes</p>
+                      <div className="overflow-x-auto mb-4">
+                        <table className="w-full text-sm border">
+                          <thead className="bg-muted/50">
+                            <tr>
+                              <th className="text-left py-2 px-3 font-medium border-b">Code</th>
+                              <th className="text-left py-2 px-3 font-medium border-b">Description</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Billed</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Fee Schedule</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99204</td>
+                              <td className="py-2 px-3">New Patient 25-59 min</td>
+                              <td className="py-2 px-3 text-right font-mono">—</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">—</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99205</td>
+                              <td className="py-2 px-3">New Patient 60-74 min</td>
+                              <td className="py-2 px-3 text-right font-mono">$250.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$132.57</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99214</td>
+                              <td className="py-2 px-3">Est Patient 30-39 Min</td>
+                              <td className="py-2 px-3 text-right font-mono">$350.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$147.72</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">99215</td>
+                              <td className="py-2 px-3">Est Patient 40-54 Min</td>
+                              <td className="py-2 px-3 text-right font-mono">$185.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$156.25</td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="py-2 px-3 font-mono">G2212</td>
+                              <td className="py-2 px-3">Prolonged +15 min</td>
+                              <td className="py-2 px-3 text-right font-mono">$215.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$112.51</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Drug Screen */}
+                    <div>
+                      <h4 className="font-semibold text-sm uppercase tracking-wide mb-3">
+                        Drug Screen (All Payers)
+                      </h4>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border">
+                          <thead className="bg-muted/50">
+                            <tr>
+                              <th className="text-left py-2 px-3 font-medium border-b">Code</th>
+                              <th className="text-left py-2 px-3 font-medium border-b">Description</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Billed</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Fee Schedule</th>
+                              <th className="text-right py-2 px-3 font-medium border-b">Drug Cost</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="py-2 px-3 font-mono">80305</td>
+                              <td className="py-2 px-3">Urine Drug Screen</td>
+                              <td className="py-2 px-3 text-right font-mono">$65.00</td>
+                              <td className="py-2 px-3 text-right font-mono text-green-600">$11.12</td>
+                              <td className="py-2 px-3 text-right font-mono text-muted-foreground">$2.65</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div className="bg-amber-500/10 rounded-lg p-3 text-sm">
+                      <p className="font-medium text-amber-700 dark:text-amber-400 mb-1">📋 Billing Notes</p>
+                      <p className="text-muted-foreground">
+                        Fee Schedule = Expected reimbursement. Drug Cost = Acquisition cost (for margin calculation). 
+                        Created by Kristen C. — Last updated Feb 2025.
                       </p>
                     </div>
                   </div>
