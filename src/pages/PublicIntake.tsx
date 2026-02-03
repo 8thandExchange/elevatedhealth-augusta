@@ -77,6 +77,7 @@ export default function PublicIntake() {
     treatment_goals: "",
     hipaa_acknowledged: false,
     consent_acknowledged: false,
+    consent_signature: "",
   });
 
   // Validate token on mount
@@ -155,6 +156,16 @@ export default function PublicIntake() {
       case "consent":
         if (!formData.hipaa_acknowledged || !formData.consent_acknowledged) {
           toast.error("Please acknowledge both HIPAA and treatment consent");
+          return false;
+        }
+        if (!formData.consent_signature.trim()) {
+          toast.error("Please sign by typing your full legal name");
+          return false;
+        }
+        const signatureName = formData.consent_signature.trim().toLowerCase();
+        const patientName = patient?.full_name?.trim().toLowerCase() || "";
+        if (signatureName !== patientName) {
+          toast.error("Signature must match your legal name exactly: " + patient?.full_name);
           return false;
         }
         return true;
@@ -593,6 +604,21 @@ export default function PublicIntake() {
             {currentStep === "consent" && (
               <>
                 <div className="space-y-6">
+                  {/* Scrollable Consent Agreement */}
+                  <div className="bg-slate-50 p-4 rounded-lg border">
+                    <h4 className="font-semibold mb-2">Informed Consent for Treatment</h4>
+                    <div className="max-h-48 overflow-y-auto bg-white border rounded p-3 text-sm text-slate-600 space-y-3 mb-4">
+                      <p><strong>1. CONSENT TO TREATMENT:</strong> I voluntarily consent to medical treatment and services provided by Elevated Health Augusta ("Clinic"). I understand that treatment may include hormone replacement therapy, weight management medications, ketamine therapy, IV therapy, or other wellness services as recommended by my provider.</p>
+                      <p><strong>2. BENEFITS AND RISKS:</strong> I understand that while treatment may provide benefits such as improved energy, mood, metabolism, or mental clarity, there are inherent risks including but not limited to: allergic reactions, medication side effects, injection site reactions, changes in blood pressure, mood changes, and other complications. I have been given the opportunity to ask questions about these risks.</p>
+                      <p><strong>3. ALTERNATIVES:</strong> I understand that I may choose not to proceed with treatment or may seek alternative treatments. I have been informed of my options.</p>
+                      <p><strong>4. MEDICATION COMPLIANCE:</strong> I agree to follow all medication instructions, attend follow-up appointments, complete required lab work, and report any concerning symptoms immediately to the Clinic.</p>
+                      <p><strong>5. TELEHEALTH:</strong> I consent to receive care via telehealth when appropriate. I understand the limitations of virtual care and agree to seek emergency care when necessary.</p>
+                      <p><strong>6. FINANCIAL RESPONSIBILITY:</strong> I understand that I am responsible for payment of services as outlined in my treatment agreement. Insurance coverage varies; I understand that some services may not be covered.</p>
+                      <p><strong>7. WITHDRAWAL OF CONSENT:</strong> I understand that I may withdraw my consent at any time by notifying the Clinic in writing.</p>
+                      <p><strong>8. ACKNOWLEDGMENT:</strong> By signing below, I confirm that I have read this consent, understand its contents, and agree to proceed with treatment.</p>
+                    </div>
+                  </div>
+
                   <div className="bg-slate-50 p-4 rounded-lg border">
                     <h4 className="font-semibold mb-2">HIPAA Notice</h4>
                     <p className="text-sm text-slate-600 mb-4">
@@ -634,6 +660,32 @@ export default function PublicIntake() {
                       </Label>
                     </div>
                   </div>
+
+                  {/* Signature Field */}
+                  <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                    <h4 className="font-semibold mb-2 text-amber-900">Electronic Signature *</h4>
+                    <p className="text-sm text-amber-800 mb-3">
+                      By typing your full legal name below, you are electronically signing this consent form. Your signature must match: <strong>{patient?.full_name}</strong>
+                    </p>
+                    <Input
+                      id="consent_signature"
+                      value={formData.consent_signature}
+                      onChange={(e) => handleInputChange("consent_signature", e.target.value)}
+                      placeholder="Type your full legal name"
+                      className="bg-white border-amber-300 focus:border-amber-500"
+                    />
+                    {formData.consent_signature && formData.consent_signature.trim().toLowerCase() === patient?.full_name?.trim().toLowerCase() && (
+                      <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Signature verified
+                      </p>
+                    )}
+                    {formData.consent_signature && formData.consent_signature.trim().toLowerCase() !== patient?.full_name?.trim().toLowerCase() && (
+                      <p className="text-sm text-red-600 mt-2">
+                        Name must match exactly: {patient?.full_name}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </>
             )}
@@ -657,7 +709,13 @@ export default function PublicIntake() {
                 <Button 
                   type="button" 
                   onClick={handleSubmit} 
-                  disabled={submitting || !formData.hipaa_acknowledged || !formData.consent_acknowledged}
+                  disabled={
+                    submitting || 
+                    !formData.hipaa_acknowledged || 
+                    !formData.consent_acknowledged ||
+                    !formData.consent_signature.trim() ||
+                    formData.consent_signature.trim().toLowerCase() !== patient?.full_name?.trim().toLowerCase()
+                  }
                   className="bg-teal-600 hover:bg-teal-700"
                 >
                   {submitting ? (

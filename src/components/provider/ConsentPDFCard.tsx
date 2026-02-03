@@ -146,7 +146,9 @@ const ConsentPDFCard = ({
           </div>
           {consentMethod && (
             <div className="text-xs text-green-600 bg-green-100 rounded px-2 py-1 inline-block">
-              Method: {consentMethod === 'internal' ? 'Patient Portal' : consentMethod.toUpperCase()}
+              Method: {consentMethod === 'internal' ? 'Patient Portal' : 
+                       consentMethod === 'public_intake' ? 'Intake Form' : 
+                       consentMethod.toUpperCase()}
             </div>
           )}
         </div>

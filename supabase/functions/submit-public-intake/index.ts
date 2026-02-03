@@ -45,6 +45,7 @@ interface IntakeFormData {
   treatment_goals: string;
   hipaa_acknowledged: boolean;
   consent_acknowledged: boolean;
+  consent_signature?: string;
 }
 
 serve(async (req) => {
@@ -161,6 +162,15 @@ serve(async (req) => {
       }
     }
 
+    // Build consent fields if signature provided
+    const consentFields: Record<string, any> = {};
+    if (formData.consent_signature?.trim()) {
+      consentFields.consent_signature = formData.consent_signature.trim();
+      consentFields.consent_signature_date = new Date().toISOString();
+      consentFields.consent_completed_at = new Date().toISOString();
+      consentFields.consent_method = "public_intake";
+    }
+
     // Update patient record
     const { error: updateError } = await supabaseAdmin
       .from("patients")
@@ -182,6 +192,8 @@ serve(async (req) => {
         intake_token: null,
         intake_token_expires_at: null,
         updated_at: new Date().toISOString(),
+        // Consent signature data
+        ...consentFields,
       })
       .eq("id", patient.id);
 
