@@ -110,7 +110,7 @@ const Contact = () => {
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+            <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
               Begin Your Restoration
             </p>
             <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
@@ -134,8 +134,8 @@ const Contact = () => {
                       <CheckCircle2 className="w-10 h-10 text-primary" />
                     </div>
                     {/* Sparkle accents */}
-                    <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-gold animate-pulse" />
-                    <Sparkles className="absolute -bottom-1 -left-3 w-5 h-5 text-gold/70 animate-pulse" style={{ animationDelay: '0.3s' }} />
+                    <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-accent animate-pulse" />
+                    <Sparkles className="absolute -bottom-1 -left-3 w-5 h-5 text-accent/70 animate-pulse" style={{ animationDelay: '0.3s' }} />
                   </div>
                   
                   <h3 className="font-cormorant text-3xl text-foreground mb-3">

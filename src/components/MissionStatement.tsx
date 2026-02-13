@@ -10,7 +10,7 @@ const MissionStatement = () => {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+            <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
               Our Philosophy
             </p>
             <h2 className="font-cormorant text-foreground mb-8">
@@ -35,7 +35,7 @@ const MissionStatement = () => {
           {/* Differentiator Badge */}
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary/5 border border-primary/20 rounded-lg">
-              <div className="h-2 w-2 rounded-full bg-gold" />
+              <div className="h-2 w-2 rounded-full bg-accent" />
               <span className="text-sm text-foreground font-lato">
                 Powered by ZRT Diagnostics & Pharmacy-Grade Bio-Identicals
               </span>

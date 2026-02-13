@@ -18,11 +18,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 215 32% 15%;
 
-    /* Primary - Deep Navy Blue */
-    --primary: 215 32% 15%;
+    /* Primary - Soft Slate Blue */
+    --primary: 210 18% 35%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 215 28% 22%;
-    --primary-dark: 215 35% 10%;
+    --primary-light: 210 15% 45%;
+    --primary-dark: 210 20% 28%;
 
     /* Secondary - Warm Cream */
     --secondary: 40 20% 96%;
@@ -30,16 +30,16 @@
     --secondary-light: 40 20% 98%;
     --secondary-dark: 40 15% 92%;
 
-    /* Accent - Muted Teal */
-    --accent: 184 8% 42%;
+    /* Accent - Soft Eucalyptus */
+    --accent: 165 20% 45%;
     --accent-foreground: 0 0% 100%;
-    --accent-light: 184 6% 53%;
+    --accent-light: 165 18% 55%;
 
-    /* Gold accent for luxury highlights */
-    --gold: 43 74% 49%;
-    --gold-foreground: 215 32% 15%;
-    --gold-light: 43 74% 59%;
-    --gold-dark: 43 74% 39%;
+    /* Sage accent for calming highlights */
+    --gold: 165 25% 48%;
+    --gold-foreground: 0 0% 100%;
+    --gold-light: 165 22% 58%;
+    --gold-dark: 165 28% 40%;
 
     /* Hope - Soft blue-grey */
     --hope: 200 18% 40%;
@@ -63,7 +63,7 @@
     /* Borders and inputs - warm subtle */
     --border: 40 15% 90%;
     --input: 40 15% 96%;
-    --ring: 43 74% 49%;
+    --ring: 165 25% 48%;
 
     /* Border radius */
     --radius: 0.75rem;
@@ -77,7 +77,7 @@
     --shadow-sm: 0 2px 8px hsla(215 32% 15% / 0.04);
     --shadow-md: 0 4px 20px hsla(215 32% 15% / 0.08);
     --shadow-lg: 0 12px 40px hsla(215 32% 15% / 0.12);
-    --shadow-glow: 0 0 60px hsla(43 74% 49% / 0.15);
+    --shadow-glow: 0 0 60px hsla(165 25% 48% / 0.12);
 
     /* Transitions */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);

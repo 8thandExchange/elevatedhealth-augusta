@@ -39,7 +39,7 @@ const OurTreatments = () => {
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+          <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
             Our Pathways
           </p>
           <h2 className="font-cormorant text-foreground mb-6">
@@ -78,7 +78,7 @@ const OurTreatments = () => {
                   <p className="text-muted-foreground font-lato font-light text-sm leading-relaxed mb-4">
                     {treatment.tagline}
                   </p>
-                  <div className="flex items-center gap-2 text-gold font-lato text-sm font-medium group-hover:gap-3 transition-all duration-300">
+                  <div className="flex items-center gap-2 text-accent font-lato text-sm font-medium group-hover:gap-3 transition-all duration-300">
                     <span>Learn More</span>
                     <ArrowRight className="h-4 w-4" />
                   </div>

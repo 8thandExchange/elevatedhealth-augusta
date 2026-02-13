@@ -25,7 +25,7 @@ const WhyUsCompare = () => {
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+          <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
             The Difference
           </p>
           <h2 className="font-cormorant text-foreground mb-6">
@@ -48,7 +48,7 @@ const WhyUsCompare = () => {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm font-lato text-gold uppercase tracking-wide font-semibold">
+              <p className="text-sm font-lato text-accent uppercase tracking-wide font-semibold">
                 Elevated Health
               </p>
             </div>
@@ -70,7 +70,7 @@ const WhyUsCompare = () => {
                   <p className="text-sm text-muted-foreground font-lato">{point.standard}</p>
                 </div>
                 <div className="text-center flex flex-col items-center gap-2">
-                  <Check className="h-5 w-5 text-gold" />
+                  <Check className="h-5 w-5 text-accent" />
                   <p className="text-sm text-foreground font-lato font-medium">{point.elevated}</p>
                 </div>
               </div>
@@ -93,7 +93,7 @@ const WhyUsCompare = () => {
                   <p className="text-sm text-muted-foreground font-lato">{point.standard}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+                  <Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />
                   <p className="text-sm text-foreground font-lato font-medium">{point.elevated}</p>
                 </div>
               </div>

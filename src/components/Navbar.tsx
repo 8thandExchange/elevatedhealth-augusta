@@ -47,15 +47,15 @@ const Navbar = () => {
   // Dynamic navbar: transparent on hero, solid when scrolled
   const navBg = isScrolled || !isHomePage
     ? "bg-white/95 backdrop-blur-md border-b border-border/50 shadow-sm"
-    : "bg-transparent border-b border-transparent";
+    : "bg-white/70 backdrop-blur-sm border-b border-transparent";
 
-  const textColor = isScrolled || !isHomePage ? "text-foreground" : "text-white";
-  const logoColor = isScrolled || !isHomePage ? "text-foreground" : "text-white";
+  const textColor = "text-foreground";
+  const logoColor = "text-foreground";
 
   return (
     <>
       {/* Announcement Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[hsl(215_32%_22%)] text-white/90 text-xs py-2 text-center">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[hsl(210_18%_92%)] text-foreground/70 text-xs py-2 text-center">
         <span className="font-lato">Serving Augusta & Evans, GA</span>
         <span className="mx-2 opacity-50">|</span>
         <a href="tel:7067603470" className="font-lato hover:underline">(706) 760-3470</a>
@@ -131,7 +131,7 @@ const Navbar = () => {
                 </DropdownMenu>
               ) : null}
               <Button 
-                className="font-lato font-medium text-sm tracking-wide px-6 py-2 bg-gold hover:bg-gold-dark text-primary rounded-full"
+                className="font-lato font-medium text-sm tracking-wide px-6 py-2 bg-primary hover:bg-primary-dark text-primary-foreground rounded-full"
                 onClick={openBooking}
               >
                 Book Consultation
@@ -172,7 +172,7 @@ const Navbar = () => {
 
               <div className="mt-auto pt-8 space-y-3 border-t border-border">
                 <Button 
-                  className="w-full font-lato text-sm tracking-wide py-6 bg-gold hover:bg-gold-dark text-primary"
+                  className="w-full font-lato text-sm tracking-wide py-6 bg-primary hover:bg-primary-dark text-primary-foreground"
                   onClick={() => { openBooking(); setIsMobileMenuOpen(false); }}
                 >
                   Book Consultation
