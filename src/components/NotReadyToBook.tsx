@@ -171,7 +171,7 @@ const NotReadyToBook = ({
 
   // Variant A (default): Original "Let's chat first" copy
   return (
-    <section className={`bg-secondary/30 rounded-2xl p-8 text-center border border-border/20 ${className}`}>
+    <section className={`bg-[hsl(40_20%_97%)] rounded-2xl p-8 text-center border border-gold/10 ${className}`}>
       <h3 className="text-2xl font-cormorant font-medium text-foreground mb-3">
         {title || "Have Questions? Chat with Us First."}
       </h3>

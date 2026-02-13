@@ -8,7 +8,7 @@ const insuranceItems = [
 
 const InsuranceLogos = () => {
   return (
-    <section id="insurance" className="py-20 lg:py-28 bg-secondary">
+    <section id="insurance" className="py-20 lg:py-28 bg-[hsl(40_20%_97%)]">
       <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
         <div className="text-center mb-14">
           <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4 font-lato font-light">

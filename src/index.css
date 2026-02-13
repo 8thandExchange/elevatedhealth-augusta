@@ -6,9 +6,9 @@
 
 @layer base {
   :root {
-    /* Base colors - Clean White background */
-    --background: 0 0% 99%;
-    --foreground: 215 32% 15%;
+    /* Base colors - Warm White background */
+    --background: 40 20% 99%;
+    --foreground: 215 25% 20%;
 
     /* Card surfaces - pure white */
     --card: 0 0% 100%;
@@ -24,11 +24,11 @@
     --primary-light: 215 28% 22%;
     --primary-dark: 215 35% 10%;
 
-    /* Secondary - Light Grey */
-    --secondary: 210 10% 96%;
-    --secondary-foreground: 215 32% 15%;
-    --secondary-light: 210 10% 98%;
-    --secondary-dark: 210 10% 90%;
+    /* Secondary - Warm Cream */
+    --secondary: 40 20% 96%;
+    --secondary-foreground: 215 25% 20%;
+    --secondary-light: 40 20% 98%;
+    --secondary-dark: 40 15% 92%;
 
     /* Accent - Muted Teal */
     --accent: 184 8% 42%;
@@ -53,16 +53,16 @@
     --feminine-dark: 350 25% 45%;
 
     /* Muted tones */
-    --muted: 210 10% 96%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 40 15% 96%;
+    --muted-foreground: 215 12% 50%;
 
     /* Destructive */
     --destructive: 0 55% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders and inputs - subtle grey */
-    --border: 210 10% 90%;
-    --input: 210 10% 96%;
+    /* Borders and inputs - warm subtle */
+    --border: 40 15% 90%;
+    --input: 40 15% 96%;
     --ring: 43 74% 49%;
 
     /* Border radius */

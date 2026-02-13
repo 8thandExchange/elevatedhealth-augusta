@@ -21,7 +21,7 @@ const WhyUsCompare = () => {
   ];
 
   return (
-    <section className="section-spacing bg-secondary/30">
+    <section className="section-spacing bg-white">
       <div className="container mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">

@@ -55,7 +55,7 @@ const Navbar = () => {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-primary text-primary-foreground text-xs py-2 text-center">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[hsl(215_32%_22%)] text-white/90 text-xs py-2 text-center">
         <span className="font-lato">Serving Augusta & Evans, GA</span>
         <span className="mx-2 opacity-50">|</span>
         <a href="tel:7067603470" className="font-lato hover:underline">(706) 760-3470</a>
