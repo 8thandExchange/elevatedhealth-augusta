@@ -74,6 +74,9 @@ import EncounterFormModal from "@/components/provider/EncounterFormModal";
 import TodayScheduleWidget from "@/components/provider/TodayScheduleWidget";
 import PatientNotesCard from "@/components/provider/PatientNotesCard";
 import SOAPNotesPanel from "@/components/provider/SOAPNotesPanel";
+import TreatmentPlanPanel from "@/components/provider/TreatmentPlanPanel";
+import MedicationPanel from "@/components/provider/MedicationPanel";
+import AppointmentPanel from "@/components/provider/AppointmentPanel";
 import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
 import HealthReportPreview from "@/components/provider/HealthReportPreview";
 
@@ -2023,6 +2026,29 @@ const ProviderDashboard = () => {
                   "hormone"
                 }
                 providerName={providerInfo.name}
+              />
+
+              {/* Treatment Plans */}
+              <TreatmentPlanPanel
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                serviceLine={
+                  selectedPatient.patient.treatment_request?.includes("ketamine") ? "ketamine" :
+                  selectedPatient.patient.treatment_request?.includes("weight") || selectedPatient.patient.treatment_request === "glp1" ? "weight_loss" :
+                  "hormone"
+                }
+              />
+
+              {/* Medication Management */}
+              <MedicationPanel
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+              />
+
+              {/* Appointments & Scheduling */}
+              <AppointmentPanel
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
               />
 
               {/* Medical Clearance Card - For Weight Loss patients */}

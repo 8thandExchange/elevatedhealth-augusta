@@ -73,6 +73,74 @@ export type Database = {
           },
         ]
       }
+      appointments: {
+        Row: {
+          appointment_type: string
+          check_in_at: string | null
+          check_out_at: string | null
+          created_at: string
+          duration_minutes: number
+          id: string
+          is_telehealth: boolean | null
+          notes: string | null
+          patient_id: string
+          provider_id: string | null
+          reason: string | null
+          reminder_sent_at: string | null
+          room: string | null
+          scheduled_at: string
+          service_line: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_type?: string
+          check_in_at?: string | null
+          check_out_at?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          is_telehealth?: boolean | null
+          notes?: string | null
+          patient_id: string
+          provider_id?: string | null
+          reason?: string | null
+          reminder_sent_at?: string | null
+          room?: string | null
+          scheduled_at: string
+          service_line?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_type?: string
+          check_in_at?: string | null
+          check_out_at?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          is_telehealth?: boolean | null
+          notes?: string | null
+          patient_id?: string
+          provider_id?: string | null
+          reason?: string | null
+          reminder_sent_at?: string | null
+          room?: string | null
+          scheduled_at?: string
+          service_line?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_leads: {
         Row: {
           chat_summary: string | null
@@ -945,6 +1013,86 @@ export type Database = {
           },
         ]
       }
+      medications: {
+        Row: {
+          created_at: string
+          dosage: string
+          end_date: string | null
+          frequency: string
+          generic_name: string | null
+          id: string
+          is_prn: boolean | null
+          last_refill_date: string | null
+          medication_name: string
+          next_refill_date: string | null
+          notes: string | null
+          patient_id: string
+          pharmacy: string | null
+          prescribed_by: string | null
+          refills_remaining: number | null
+          route: string
+          service_line: string | null
+          side_effects: string | null
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dosage: string
+          end_date?: string | null
+          frequency?: string
+          generic_name?: string | null
+          id?: string
+          is_prn?: boolean | null
+          last_refill_date?: string | null
+          medication_name: string
+          next_refill_date?: string | null
+          notes?: string | null
+          patient_id: string
+          pharmacy?: string | null
+          prescribed_by?: string | null
+          refills_remaining?: number | null
+          route?: string
+          service_line?: string | null
+          side_effects?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dosage?: string
+          end_date?: string | null
+          frequency?: string
+          generic_name?: string | null
+          id?: string
+          is_prn?: boolean | null
+          last_refill_date?: string | null
+          medication_name?: string
+          next_refill_date?: string | null
+          notes?: string | null
+          patient_id?: string
+          pharmacy?: string | null
+          prescribed_by?: string | null
+          refills_remaining?: number | null
+          route?: string
+          service_line?: string | null
+          side_effects?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medications_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -1652,6 +1800,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "toxicity_payments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      treatment_plans: {
+        Row: {
+          created_at: string
+          goals: Json
+          id: string
+          interventions: Json
+          last_reviewed_at: string | null
+          patient_id: string
+          progress_notes: Json
+          provider_id: string
+          review_frequency: string | null
+          service_line: string
+          start_date: string
+          status: string
+          target_end_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          goals?: Json
+          id?: string
+          interventions?: Json
+          last_reviewed_at?: string | null
+          patient_id: string
+          progress_notes?: Json
+          provider_id: string
+          review_frequency?: string | null
+          service_line?: string
+          start_date?: string
+          status?: string
+          target_end_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          goals?: Json
+          id?: string
+          interventions?: Json
+          last_reviewed_at?: string | null
+          patient_id?: string
+          progress_notes?: Json
+          provider_id?: string
+          review_frequency?: string | null
+          service_line?: string
+          start_date?: string
+          status?: string
+          target_end_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "treatment_plans_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
