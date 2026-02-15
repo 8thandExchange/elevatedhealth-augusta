@@ -105,15 +105,15 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-24 lg:py-32 bg-white scroll-mt-20">
+    <section id="contact" className="py-24 lg:py-32 bg-card scroll-mt-20 relative overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
-              Begin Your Restoration
+            <p className="text-sm tracking-[0.3em] uppercase text-primary mb-4 font-inter font-semibold">
+              05 — Begin Your Restoration
             </p>
-            <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
+            <h2 className="font-inter font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-6">
               Contact Us
             </h2>
             <p className="font-lato text-lg text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
