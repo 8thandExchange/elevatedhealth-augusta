@@ -23,7 +23,7 @@ const WhyUsCompare = () => {
   return (
     <section className="py-20 md:py-28 bg-card relative overflow-hidden">
       {/* Decorative blob */}
-      <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-gold opacity-25 blur-3xl" />
+      <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-peach opacity-25 blur-3xl" />
       
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
         {/* Section Header */}

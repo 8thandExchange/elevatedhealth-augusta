@@ -56,6 +56,11 @@ export default {
           light: "hsl(var(--gold-light))",
           dark: "hsl(var(--gold-dark))",
         },
+        peach: {
+          DEFAULT: "hsl(var(--peach))",
+          light: "hsl(var(--peach-light))",
+          dark: "hsl(var(--peach-dark))",
+        },
         hope: {
           DEFAULT: "hsl(var(--hope))",
           foreground: "hsl(var(--hope-foreground))",

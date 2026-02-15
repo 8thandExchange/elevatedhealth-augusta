@@ -20,9 +20,9 @@ const Hero = () => {
       </div>
 
       {/* Decorative Peach Blobs */}
-      <div className="absolute top-20 -right-20 w-80 h-80 rounded-full bg-gold opacity-40 blur-3xl" />
-      <div className="absolute -bottom-10 -left-20 w-96 h-96 rounded-full bg-gold opacity-30 blur-3xl" />
-      <div className="absolute top-1/3 left-1/4 w-40 h-40 rounded-full bg-gold-light opacity-25 blur-2xl" />
+      <div className="absolute top-20 -right-20 w-80 h-80 rounded-full bg-peach opacity-40 blur-3xl" />
+      <div className="absolute -bottom-10 -left-20 w-96 h-96 rounded-full bg-peach opacity-30 blur-3xl" />
+      <div className="absolute top-1/3 left-1/4 w-40 h-40 rounded-full bg-peach-light opacity-25 blur-2xl" />
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-32 pb-20">

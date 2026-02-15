@@ -7,8 +7,8 @@ const MissionStatement = () => {
   return (
     <section className="py-20 md:py-28 bg-card relative overflow-hidden">
       {/* Decorative peach blob */}
-      <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-gold opacity-30 blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-gold-light opacity-25 blur-3xl" />
+      <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-peach opacity-30 blur-3xl" />
+      <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-peach-light opacity-25 blur-3xl" />
       
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
         <div className="max-w-3xl mx-auto text-center">

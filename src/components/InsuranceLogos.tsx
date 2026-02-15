@@ -10,7 +10,7 @@ const InsuranceLogos = () => {
   return (
     <section id="insurance" className="py-20 lg:py-28 bg-background relative overflow-hidden">
       {/* Decorative blob */}
-      <div className="absolute top-10 -left-20 w-64 h-64 rounded-full bg-gold opacity-25 blur-3xl" />
+      <div className="absolute top-10 -left-20 w-64 h-64 rounded-full bg-peach opacity-25 blur-3xl" />
       
       <div className="container mx-auto px-6 lg:px-8 max-w-5xl relative z-10">
         <div className="text-center mb-14">

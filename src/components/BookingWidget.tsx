@@ -29,7 +29,7 @@ const BookingWidget = () => {
                 Your $99 Medical Consultation is where it all begins. Meet with a provider, discuss your goals, and get a personalized plan.
               </p>
 
-              <p className="text-sm text-green-600 font-medium">
+              <p className="text-sm text-primary font-medium">
                 <CreditCard className="inline h-4 w-4 mr-1" />
                 $99 applies as a credit toward your first treatment
               </p>
@@ -42,7 +42,7 @@ const BookingWidget = () => {
                   trackCTAClick('book_consultation', 'booking_widget');
                   openBooking();
                 }}
-                className="px-8 py-4 h-auto bg-accent text-white rounded-lg text-lg font-semibold hover:bg-accent/90 transition-colors shadow-lg hover:shadow-xl"
+                className="px-8 py-4 h-auto bg-primary text-primary-foreground rounded-full text-lg font-semibold hover:bg-primary-dark transition-colors shadow-lg hover:shadow-xl"
               >
                 Book Your $99 Consultation →
               </Button>

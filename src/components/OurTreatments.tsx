@@ -40,7 +40,7 @@ const OurTreatments = () => {
   return (
     <section id="treatments" className="py-20 md:py-28 bg-background scroll-mt-20 relative overflow-hidden">
       {/* Decorative blob */}
-      <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-gold opacity-20 blur-3xl" />
+      <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-peach opacity-20 blur-3xl" />
       
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
         {/* Section Header */}

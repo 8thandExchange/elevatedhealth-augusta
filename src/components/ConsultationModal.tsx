@@ -167,7 +167,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-white border border-gold/50 rounded-2xl shadow-2xl">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border border-border rounded-2xl shadow-2xl">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-3xl font-cormorant font-medium text-center text-foreground tracking-wide">
             What brings you in today?
@@ -185,12 +185,12 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
             return (
               <div 
                 key={index}
-                className="group flex items-center gap-4 p-4 rounded-xl border border-border/50 hover:border-gold/40 transition-all duration-300 bg-white hover:shadow-md cursor-pointer"
+                className="group flex items-center gap-4 p-4 rounded-xl border border-border/50 hover:border-primary/40 transition-all duration-300 bg-card hover:shadow-md cursor-pointer"
                 onClick={() => !isLoading && handlePaidConsultation(option.serviceType)}
               >
                 {/* Icon */}
-                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-                  <Icon className="h-6 w-6 text-gold group-hover:scale-110 transition-transform duration-300" />
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
                 </div>
                 
                 {/* Content */}
@@ -206,7 +206,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
                 {/* Price & CTA */}
                 <div className="text-right shrink-0">
                   <span className="text-xl font-cormorant font-semibold text-foreground">$99</span>
-                  <p className="text-[10px] text-green-600 font-medium">
+                  <p className="text-[10px] text-primary font-medium">
                     Applied as credit if you proceed
                   </p>
                 </div>
@@ -214,10 +214,10 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
                 {/* Arrow/Loading */}
                 <div className="shrink-0">
                   {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-gold" />
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center group-hover:bg-gold transition-colors">
-                      <CreditCard className="h-4 w-4 text-gold group-hover:text-white transition-colors" />
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-colors">
+                      <CreditCard className="h-4 w-4 text-primary group-hover:text-primary-foreground transition-colors" />
                     </div>
                   )}
                 </div>
@@ -272,7 +272,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
         {/* Payment flexibility messaging */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-3.5 h-3.5 text-gold" />
+            <CreditCard className="w-3.5 h-3.5 text-primary" />
             <span>Pay over time with</span>
           </div>
           <div className="flex items-center gap-2">
@@ -286,7 +286,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-3">
-          Questions? Call us at <a href={`tel:${SITE_CONFIG.phone}`} className="text-gold hover:underline">{SITE_CONFIG.phone}</a>
+          Questions? Call us at <a href={`tel:${SITE_CONFIG.phone}`} className="text-primary hover:underline">{SITE_CONFIG.phone}</a>
         </p>
       </DialogContent>
     </Dialog>
