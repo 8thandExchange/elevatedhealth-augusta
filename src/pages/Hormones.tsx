@@ -10,15 +10,13 @@ import ConsultationModal from "@/components/ConsultationModal";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import { CreditCodeInput } from "@/components/CreditCodeInput";
 import NotReadyToBook from "@/components/NotReadyToBook";
 
 const Hormones = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isConsultationLoading, setIsConsultationLoading] = useState(false);
   const [isMappingLoading, setIsMappingLoading] = useState(false);
-  const [creditCode, setCreditCode] = useState("");
-  const [creditApplied, setCreditApplied] = useState(false);
+  
 
   const handleConsultationCheckout = async () => {
     setIsConsultationLoading(true);
@@ -47,8 +45,7 @@ const Hormones = () => {
     try {
       const { data, error } = await supabase.functions.invoke("create-hormone-checkout", {
         body: { 
-          mappingType: "hormone",
-          creditCode: creditApplied ? creditCode : undefined
+          mappingType: "hormone"
         }
       });
       
@@ -65,42 +62,6 @@ const Hormones = () => {
     } finally {
       setIsMappingLoading(false);
     }
-  };
-
-  const handleApplyCreditCode = async () => {
-    if (!creditCode.trim()) {
-      toast.error("Please enter a credit code");
-      return;
-    }
-    
-    try {
-      const { data, error } = await supabase
-        .from('consultation_bookings')
-        .select('id, credit_used_at')
-        .eq('credit_code', creditCode.trim().toUpperCase())
-        .eq('status', 'paid')
-        .single();
-      
-      if (error || !data) {
-        toast.error("Invalid credit code. Please check and try again.");
-        return;
-      }
-      
-      if (data.credit_used_at) {
-        toast.error("This credit code has already been used.");
-        return;
-      }
-      
-      setCreditApplied(true);
-      toast.success("$99 credit applied! Your total is now $200.");
-    } catch (err) {
-      toast.error("Failed to validate code. Please try again.");
-    }
-  };
-
-  const handleClearCreditCode = () => {
-    setCreditCode("");
-    setCreditApplied(false);
   };
 
   const protocols = [
@@ -385,32 +346,10 @@ const Hormones = () => {
                       <h3 className="font-cormorant text-xl text-foreground mb-2">
                         Hormone Mapping
                       </h3>
-                      <p className="text-3xl font-cormorant text-foreground mb-2">
-                        {creditApplied ? (
-                          <>
-                            <span className="line-through text-muted-foreground text-xl mr-2">$349</span>
-                            $250
-                          </>
-                        ) : (
-                          "$349"
-                        )}
-                      </p>
-                      {creditApplied && (
-                        <p className="text-xs text-green-600 font-medium mb-2">
-                          $99 consultation credit applied!
-                        </p>
-                      )}
+                      <p className="text-3xl font-cormorant text-foreground mb-2">$250</p>
                       <p className="text-sm text-muted-foreground mb-4 font-light">
-                        Complete ZRT saliva panel + clinical lab review with your hormone specialist.
+                        Complete ZRT saliva panel + follow-up consultation with your hormone specialist after results return.
                       </p>
-                      <CreditCodeInput
-                        value={creditCode}
-                        onChange={setCreditCode}
-                        isApplied={creditApplied}
-                        onApply={handleApplyCreditCode}
-                        onClear={handleClearCreditCode}
-                        className="mb-4"
-                      />
                       <Button 
                         onClick={handleMappingCheckout}
                         disabled={isMappingLoading}
@@ -419,7 +358,7 @@ const Hormones = () => {
                         {isMappingLoading ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : null}
-                        {isMappingLoading ? "Processing..." : creditApplied ? "Pay $250" : "Map Your Hormones"}
+                        {isMappingLoading ? "Processing..." : "Map Your Hormones — $250"}
                       </Button>
                     </CardContent>
                   </Card>

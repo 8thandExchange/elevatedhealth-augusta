@@ -564,9 +564,9 @@ const HormonesMen = () => {
                     <CardContent className="p-8">
                       <div className="text-5xl font-bold text-primary/20 mb-4">02</div>
                       <h3 className="text-xl font-bold mb-2">The Hormone Mapping Experience</h3>
-                      <div className="text-3xl font-bold text-primary mb-4">$349</div>
+                      <div className="text-3xl font-bold text-primary mb-4">$250</div>
                       <p className="text-xs text-green-600 font-medium mb-4">
-                        → $250 after $99 consultation credit
+                        Includes follow-up consultation after results return
                       </p>
                       <p className="text-sm text-muted-foreground mb-4">
                         This comprehensive diagnostic phase includes:

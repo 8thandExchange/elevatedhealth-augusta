@@ -32,11 +32,11 @@ export const CONSULTATION_PRICES = {
 
 export const DIAGNOSTIC_KIT_PRICES = {
   hormone: {
-    priceId: "price_1SZiRMEOtKRY99pua6QMu12h",
-    amount: 34900, // $349
-    displayPrice: "$349",
-    name: "Hormone Mapping Kit",
-    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test kit covering Cortisol, DHEA-S, Estradiol, Progesterone & Testosterone + lab review consultation",
+    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
+    amount: 25000, // $250
+    displayPrice: "$250",
+    name: "Hormone Mapping Panel",
+    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test kit covering Cortisol, DHEA-S, Estradiol, Progesterone & Testosterone. Includes follow-up consultation after results return.",
     zrtPanel: "saliva_iii",
     mode: "payment" as const,
     edgeFunction: "create-hormone-checkout",
@@ -128,7 +128,7 @@ export const HORMONE_MEMBERSHIP_TIERS = {
     benefits: {
       consultsPerYear: 2,
       labDiscountPercent: 20,
-      labDiscountedPrice: 27900, // $349 - 20% = $279
+      labDiscountedPrice: 20000, // $250 - 20% = $200
       glp1DiscountPercent: 0,
       has90DayRx: false,
       priorityScheduling: false,
@@ -148,7 +148,7 @@ export const HORMONE_MEMBERSHIP_TIERS = {
     benefits: {
       consultsPerYear: 4,
       labDiscountPercent: 30,
-      labDiscountedPrice: 24400, // $349 - 30% = $244
+      labDiscountedPrice: 17500, // $250 - 30% = $175
       glp1DiscountPercent: 10,
       has90DayRx: true,
       priorityScheduling: true,
@@ -168,7 +168,7 @@ export const HORMONE_MEMBERSHIP_TIERS = {
     benefits: {
       consultsPerYear: -1, // -1 = unlimited
       labDiscountPercent: 40,
-      labDiscountedPrice: 20900, // $349 - 40% = $209
+      labDiscountedPrice: 15000, // $250 - 40% = $150
       glp1DiscountPercent: 15,
       has90DayRx: true,
       priorityScheduling: true,
@@ -259,9 +259,9 @@ export const ALACARTE_PRICES = {
     edgeFunction: "create-alacarte-checkout",
   },
   labPanel: {
-    priceId: "price_1Sga6CEOtKRY99puOXGAaRwh",
-    amount: 34900, // $349
-    displayPrice: "$349",
+    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
+    amount: 25000, // $250
+    displayPrice: "$250",
     name: "Lab Panel",
     description: "Comprehensive hormone lab panel (non-member pricing)",
     mode: "payment" as const,
@@ -312,7 +312,7 @@ export const WEIGHT_LOSS_PRICES = {
     priceId: "price_1SlZnwEOtKRY99puaBhrh2iB",
     amount: 39900, // $399/mo
     displayPrice: "$399/mo",
-    firstMonthWithCredit: "$300", // $399 - $99 consultation credit
+    firstMonthWithCredit: "$399",
     name: "Semaglutide Membership",
     description: "Monthly Semaglutide GLP-1 medication with provider support",
     mode: "subscription" as const,
@@ -323,7 +323,7 @@ export const WEIGHT_LOSS_PRICES = {
     priceId: "price_1SlZnyEOtKRY99puE9JNOrTR",
     amount: 49900, // $499/mo
     displayPrice: "$499/mo",
-    firstMonthWithCredit: "$400", // $499 - $99 consultation credit
+    firstMonthWithCredit: "$499",
     name: "Tirzepatide Membership",
     description: "Monthly Tirzepatide GLP-1/GIP medication with provider support",
     mode: "subscription" as const,
@@ -444,24 +444,13 @@ export const ADMIN_PRICES = {
 
 export const PROVIDER_KIT_PRICES = {
   hormone: {
-    priceId: "price_1SZiRMEOtKRY99pua6QMu12h",
-    fullPrice: 34900, // $349
-    creditPrice: 25000, // $250 after $99 credit
-    displayPrice: "$349 (or $250 with credit)",
-    name: "Hormone Mapping Kit",
-    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test kit + lab review consultation",
+    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
+    amount: 25000, // $250
+    displayPrice: "$250",
+    name: "Hormone Mapping Panel",
+    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test kit. Includes follow-up consultation after results return.",
     edgeFunction: "send-kit-payment-link",
   },
-  // TEMPORARILY HIDDEN - Only offering Hormone Mapping Kit for now
-  // metabolic: {
-  //   priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
-  //   fullPrice: 34900, // $349
-  //   creditPrice: 25000, // $250 after $99 credit
-  //   displayPrice: "$349 (or $250 with credit)",
-  //   name: "Metabolic Mapping Kit",
-  //   description: "ZRT Weight Management Profile - Comprehensive metabolic panel + lab review consultation",
-  //   edgeFunction: "send-kit-payment-link",
-  // },
 } as const;
 
 // ============================================================================

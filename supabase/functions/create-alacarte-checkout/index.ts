@@ -35,9 +35,9 @@ const ALACARTE_PRICES: Record<string, { priceId: string; name: string; amount: n
     amount: 9900,
   },
   labPanel: {
-    priceId: "price_1Sga6CEOtKRY99puOXGAaRwh",
+    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
     name: "Lab Panel",
-    amount: 34900,
+    amount: 25000,
   },
 };
 

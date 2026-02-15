@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CheckCircle2, Calendar, Gift, Copy, Check, Phone, MapPin, ExternalLink, Mail } from "lucide-react";
+import { CheckCircle2, Calendar, Phone, MapPin, ExternalLink, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
@@ -10,55 +10,50 @@ import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
 // Service type labels
-const SERVICE_LABELS: Record<string, { title: string; specialist: string; creditInfo: string; steps: string[] }> = {
+const SERVICE_LABELS: Record<string, { title: string; specialist: string; steps: string[] }> = {
   hormone: {
     title: "Hormone Consultation",
     specialist: "hormone specialist",
-    creditInfo: "Use this code when purchasing Hormone Mapping to receive $99 off (pay only $250 instead of $349).",
     steps: [
       "Book your consultation using the calendar above",
       "Speak with our hormone specialist to discuss your goals and symptoms",
-      "If you're a good fit, use your credit code for $99 off Hormone Mapping",
+      "If you're a good fit, proceed with the $250 Hormone Mapping Panel",
       "Receive your at-home test kit and begin your hormone optimization journey"
     ]
   },
   weight_loss: {
     title: "Weight Loss Consultation",
     specialist: "weight management specialist",
-    creditInfo: "Use this code when purchasing Metabolic Mapping to receive $99 off (pay only $250 instead of $349).",
     steps: [
       "Book your consultation using the calendar above",
       "Speak with our weight management specialist to discuss your goals",
-      "If you're a good fit, use your credit code for $99 off Metabolic Mapping",
+      "If you're a good fit, proceed with the $250 Metabolic Mapping Panel",
       "Begin your medically-supervised weight loss journey"
     ]
   },
   ketamine: {
     title: "Ketamine Therapy Consultation",
     specialist: "clinical team",
-    creditInfo: "Your $99 will be credited toward your first ketamine infusion session when you move forward with treatment.",
     steps: [
       "Book your 45-minute consultation using the calendar above",
       "We'll confirm your medical history and discuss your mental health goals",
       "If cleared, we'll book your comprehensive intake and first session immediately",
-      "Your $99 credit applies to your first infusion—you'll only pay the balance"
+      "Your $99 consultation fee applies toward your first infusion"
     ]
   },
   peptide: {
     title: "Peptide Consultation",
     specialist: "peptide therapy specialist",
-    creditInfo: "Your $99 consultation fee will be credited toward your peptide protocol.",
     steps: [
       "Book your consultation using the calendar above",
       "Speak with our peptide specialist to discuss your optimization goals",
-      "If you're a good fit, your $99 credit applies to your peptide protocol",
+      "If you're a good fit, begin your peptide protocol",
       "Begin your cellular optimization journey"
     ]
   },
   hair: {
     title: "Hair Restoration Consultation",
     specialist: "hair restoration specialist",
-    creditInfo: "Your $99 consultation fee will be credited toward your hair restoration protocol.",
     steps: [
       "Book your consultation using the calendar above",
       "Speak with our specialist about your hair loss concerns and goals",
@@ -69,7 +64,6 @@ const SERVICE_LABELS: Record<string, { title: string; specialist: string; credit
   sexual: {
     title: "Sexual Wellness Consultation",
     specialist: "sexual wellness specialist",
-    creditInfo: "Your $99 consultation fee will be credited toward your treatment protocol.",
     steps: [
       "Book your private consultation using the calendar above",
       "Discuss your concerns confidentially with our specialist",
@@ -85,8 +79,6 @@ const ConsultationConfirmed = () => {
   const serviceType = searchParams.get("service") || "hormone";
   const [isVerifying, setIsVerifying] = useState(true);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
-  const [creditCode, setCreditCode] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
   const serviceInfo = SERVICE_LABELS[serviceType] || SERVICE_LABELS.hormone;
 
@@ -106,10 +98,6 @@ const ConsultationConfirmed = () => {
 
         if (data?.success) {
           setVerificationSuccess(true);
-          // Credit code is generated and returned from the verification function
-          if (data.credit_code) {
-            setCreditCode(data.credit_code);
-          }
         }
       } catch (err) {
         console.error("Verification error:", err);
@@ -121,15 +109,6 @@ const ConsultationConfirmed = () => {
 
     verifyPayment();
   }, [sessionId]);
-
-  const handleCopyCode = () => {
-    if (creditCode) {
-      navigator.clipboard.writeText(creditCode);
-      setCopied(true);
-      toast.success("Credit code copied!");
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,39 +135,6 @@ const ConsultationConfirmed = () => {
                   Thank you for booking your {serviceInfo.title}. Your next step is to schedule your call.
                 </p>
               </div>
-
-              {/* Credit Code Card */}
-              {creditCode && (
-                <Card className="border-gold/30 bg-gold/5">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-full bg-gold/10">
-                        <Gift className="h-6 w-6 text-gold" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-lg mb-1">Your $99 Credit Code</h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {serviceInfo.creditInfo}
-                        </p>
-                        <div className="flex items-center gap-3">
-                          <code className="bg-background px-4 py-2 rounded-lg font-mono text-lg font-bold tracking-wider border">
-                            {creditCode}
-                          </code>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleCopyCode}
-                            className="gap-2"
-                          >
-                            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                            {copied ? "Copied" : "Copy"}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
 
               {/* Booking Section */}
               <Card>
@@ -272,10 +218,6 @@ const ConsultationConfirmed = () => {
                         <li className="flex items-start gap-2">
                           <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                           <span>Your payment receipt</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                          <span>Your $99 credit code (save this!)</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />

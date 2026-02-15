@@ -8,10 +8,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Input validation schema
 const hormoneCheckoutSchema = z.object({
   mappingType: z.enum(["hormone", "metabolic"]).optional(),
-  creditCode: z.string().max(50, "Credit code too long").optional().nullable(),
 });
 
 const logStep = (step: string, details?: unknown) => {
@@ -19,30 +17,27 @@ const logStep = (step: string, details?: unknown) => {
   console.log(`[CREATE-HORMONE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// Two diagnostic tiers - both now $349 (comprehensive Saliva + Blood Spot)
+// Flat $250 pricing — no credit codes
 const MAPPING_TIERS = {
   hormone: {
-    priceId: "price_1SZiRMEOtKRY99pua6QMu12h", // Hormone Mapping $349
-    name: "Hormone Mapping",
+    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
+    name: "Hormone Mapping Panel",
     zrtPanel: "saliva_iii",
-    amount: 34900, // cents - $349
+    amount: 25000, // $250
   },
   metabolic: {
-    priceId: "price_1Sa4bNEOtKRY99pulS73hT1V", // Metabolic Mapping $349
+    priceId: "price_1Sa4bNEOtKRY99pulS73hT1V",
     name: "Metabolic Mapping",
     zrtPanel: "weight_management",
-    amount: 34900, // cents - $349
+    amount: 25000, // $250
   },
 };
 
-// $99 credit discount
-const CONSULTATION_CREDIT_DISCOUNT = 9900; // $99 in cents
-
-// Membership tier lab discounts (in cents)
+// Membership tier lab discounts (in cents, based on $250)
 const TIER_LAB_DISCOUNTS = {
-  access: { percent: 20, amount: 6980 }, // 20% off = $69.80 discount
-  vitality: { percent: 30, amount: 10470 }, // 30% off = $104.70 discount
-  concierge: { percent: 40, amount: 13960 }, // 40% off = $139.60 discount
+  access: { percent: 20, amount: 5000 },   // 20% off = $50 discount
+  vitality: { percent: 30, amount: 7500 },  // 30% off = $75 discount
+  concierge: { percent: 40, amount: 10000 }, // 40% off = $100 discount
 };
 
 serve(async (req) => {
@@ -62,7 +57,6 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    // Parse and validate request body
     const rawBody = await req.json().catch(() => ({}));
     
     const validationResult = hormoneCheckoutSchema.safeParse(rawBody);
@@ -74,10 +68,10 @@ serve(async (req) => {
       );
     }
     
-    const { mappingType = "hormone", creditCode = null } = validationResult.data;
+    const { mappingType = "hormone" } = validationResult.data;
     
     const tier = MAPPING_TIERS[mappingType as keyof typeof MAPPING_TIERS] || MAPPING_TIERS.hormone;
-    logStep("Validated mapping tier selected", { mappingType, tier: tier.name, priceId: tier.priceId, creditCode });
+    logStep("Mapping tier selected", { mappingType, tier: tier.name, priceId: tier.priceId });
 
     // Check for authenticated user (optional - supports guest checkout)
     const authHeader = req.headers.get("Authorization");
@@ -93,7 +87,6 @@ serve(async (req) => {
         userId = userData.user.id;
         logStep("Authenticated user found", { email: userEmail });
 
-        // Check patient's membership tier for lab discounts
         const { data: patient } = await supabaseClient
           .from("patients")
           .select("membership_tier")
@@ -109,24 +102,6 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    // Check if credit code is valid
-    let validCreditCode = false;
-    if (creditCode) {
-      const { data: creditRecord } = await supabaseClient
-        .from("consultation_bookings")
-        .select("id, credit_used_at")
-        .eq("credit_code", creditCode)
-        .is("credit_used_at", null)
-        .maybeSingle();
-      
-      if (creditRecord) {
-        validCreditCode = true;
-        logStep("Valid credit code found", { creditCode, recordId: creditRecord.id });
-      } else {
-        logStep("Invalid or already used credit code", { creditCode });
-      }
-    }
-
     // Check if customer already exists
     let customerId: string | undefined;
     if (userEmail) {
@@ -139,17 +114,10 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    // Calculate discounts
+    // Calculate membership discount only
     let totalDiscount = 0;
     const discountDescriptions: string[] = [];
 
-    // Apply consultation credit if valid
-    if (validCreditCode) {
-      totalDiscount += CONSULTATION_CREDIT_DISCOUNT;
-      discountDescriptions.push(`$99 consultation credit (code: ${creditCode})`);
-    }
-
-    // Apply membership tier discount
     if (membershipTier && membershipTier in TIER_LAB_DISCOUNTS) {
       const tierDiscount = TIER_LAB_DISCOUNTS[membershipTier as keyof typeof TIER_LAB_DISCOUNTS];
       totalDiscount += tierDiscount.amount;
@@ -164,14 +132,14 @@ serve(async (req) => {
       discounts: discountDescriptions 
     });
 
-    // Create checkout session - use price_data if any discount applied, otherwise use price ID
+    // Use price ID directly if no discount, otherwise use price_data
     const lineItems = totalDiscount > 0
       ? [{
           price_data: {
             currency: "usd",
             product_data: {
-              name: `${tier.name}${discountDescriptions.length > 0 ? ` (Discounted)` : ""}`,
-              description: `At-home ${tier.name.toLowerCase()} test kit + lab review consultation. ${discountDescriptions.join(", ")}`,
+              name: `${tier.name} (Discounted)`,
+              description: `At-home ${tier.name.toLowerCase()} test kit + follow-up consultation. ${discountDescriptions.join(", ")}`,
             },
             unit_amount: finalAmount,
           },
@@ -196,7 +164,6 @@ serve(async (req) => {
         user_id: userId || "",
         product: mappingType === "metabolic" ? "metabolic_mapping_package" : "hormone_mapping_package",
         zrt_panel: tier.zrtPanel,
-        credit_code: validCreditCode ? creditCode : "",
         membership_tier: membershipTier || "",
         discount_applied: String(totalDiscount / 100),
       },

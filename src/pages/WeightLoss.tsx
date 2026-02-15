@@ -520,7 +520,7 @@ const WeightLoss = () => {
                         <td className="p-4 font-lato text-primary font-medium">Real Cost (Semaglutide)</td>
                         <td className="p-4 text-center">
                           <span className="text-lg font-bold text-muted-foreground line-through">$494/mo</span>
-                          <p className="text-xs text-muted-foreground">$145 membership + $349 medication</p>
+                          <p className="text-xs text-muted-foreground">$145 membership + $250 lab + medication</p>
                         </td>
                         <td className="p-4 text-center bg-gold/5">
                           <span className="text-xl font-bold text-gold">$399/mo</span>

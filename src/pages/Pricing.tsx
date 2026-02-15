@@ -753,7 +753,7 @@ const Pricing = () => {
                               Provider Strategy Session
                             </h3>
                             <p className="text-sm text-slate-600 font-lato leading-relaxed">
-                              Meet with your provider to review your symptoms, medical history, and treatment goals. The $99 fee is fully credited toward your Hormone Mapping.
+                              Meet with your provider to review your symptoms, medical history, and treatment goals.
                             </p>
                           </div>
                           <div className="text-right shrink-0">
@@ -808,7 +808,7 @@ const Pricing = () => {
                         </div>
                         <div className="mt-4 flex items-center gap-2 text-slate-500">
                           <Activity className="w-5 h-5 stroke-[1.5]" />
-                          <span className="text-xs font-lato">Unlocked after Step 1 — $99 credit applied</span>
+                          <span className="text-xs font-lato">Includes follow-up consultation after results return</span>
                         </div>
                       </div>
                     </div>
@@ -1581,7 +1581,7 @@ const Pricing = () => {
                     Comprehensive hormone or metabolic panel
                   </p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-cormorant text-foreground">$349</span>
+                    <span className="text-3xl font-cormorant text-foreground">$250</span>
                     <span className="text-sm text-muted-foreground">one-time</span>
                   </div>
                   <p className="text-xs text-gold font-lato">

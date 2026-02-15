@@ -13,14 +13,13 @@ const logStep = (step: string, details?: any) => {
   console.log(`[SEND-KIT-PAYMENT-LINK] ${step}${detailsStr}`);
 };
 
-// Kit pricing configuration - ZRT Saliva Profile III (saliva only, no blood spot)
+// Flat $250 pricing
 const KIT_TIERS = {
   hormone: {
-    name: "Hormone Mapping Kit",
-    fullPrice: 34900, // $349 in cents
-    creditPrice: 25000, // $250 after $99 credit
-    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test covering Cortisol, DHEA-S, Estradiol, Progesterone & Testosterone + lab review consultation",
-    priceId: "price_1SZiRMEOtKRY99pua6QMu12h",
+    name: "Hormone Mapping Panel",
+    price: 25000, // $250 in cents
+    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test covering Cortisol, DHEA-S, Estradiol, Progesterone & Testosterone. Includes follow-up consultation after results return.",
+    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
   },
 };
 
@@ -43,8 +42,8 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { patientId, patientName, patientEmail, kitType, creditCode } = await req.json();
-    logStep("Request received", { patientId, patientName, patientEmail, kitType, creditCode });
+    const { patientId, patientName, patientEmail, kitType } = await req.json();
+    logStep("Request received", { patientId, patientName, patientEmail, kitType });
 
     if (!patientEmail) throw new Error("Patient email is required");
     if (!kitType || !KIT_TIERS[kitType as keyof typeof KIT_TIERS]) {
@@ -55,22 +54,6 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const resend = new Resend(resendKey);
 
-    // Check if credit code is valid
-    let validCreditCode = false;
-    if (creditCode) {
-      const { data: creditRecord } = await supabaseClient
-        .from("consultation_bookings")
-        .select("id, credit_used_at")
-        .eq("credit_code", creditCode)
-        .is("credit_used_at", null)
-        .maybeSingle();
-      
-      if (creditRecord) {
-        validCreditCode = true;
-        logStep("Valid credit code found", { creditCode });
-      }
-    }
-
     // Check for existing Stripe customer
     const customers = await stripe.customers.list({ email: patientEmail, limit: 1 });
     let customerId: string | undefined;
@@ -79,23 +62,12 @@ serve(async (req) => {
       logStep("Existing customer found", { customerId });
     }
 
-    // Calculate price
-    const finalAmount = validCreditCode ? kit.creditPrice : kit.fullPrice;
-    const discountText = validCreditCode ? " ($99 consultation credit applied)" : "";
-
-    // Create checkout session with price_data to support discounts
+    // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : patientEmail,
       line_items: [{
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: `${kit.name}${discountText}`,
-            description: kit.description,
-          },
-          unit_amount: finalAmount,
-        },
+        price: kit.priceId,
         quantity: 1,
       }],
       mode: "payment",
@@ -108,7 +80,6 @@ serve(async (req) => {
         patient_id: patientId || "",
         patient_email: patientEmail,
         kit_type: kitType,
-        credit_code: validCreditCode ? creditCode : "",
         sent_by_provider: "true",
       },
     });
@@ -116,8 +87,7 @@ serve(async (req) => {
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
     // Send email to patient
-    const formattedPrice = (finalAmount / 100).toFixed(0);
-    const originalPrice = (kit.fullPrice / 100).toFixed(0);
+    const formattedPrice = (kit.price / 100).toFixed(0);
 
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -127,15 +97,7 @@ serve(async (req) => {
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin: 0 0 10px 0; color: #1a3a4a;">${kit.name}</h3>
           <p style="margin: 0 0 15px 0; color: #666;">${kit.description}</p>
-          ${validCreditCode ? `
-            <p style="margin: 0; color: #666;">
-              <span style="text-decoration: line-through;">$${originalPrice}</span>
-              <strong style="color: #28a745; font-size: 18px; margin-left: 10px;">$${formattedPrice}</strong>
-              <span style="color: #28a745; font-size: 12px;"> (credit applied)</span>
-            </p>
-          ` : `
-            <p style="margin: 0;"><strong style="font-size: 18px; color: #1a3a4a;">$${formattedPrice}</strong></p>
-          `}
+          <p style="margin: 0;"><strong style="font-size: 18px; color: #1a3a4a;">$${formattedPrice}</strong></p>
         </div>
         <a href="${session.url}" style="display: inline-block; background-color: #C5A059; color: white; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold;">
           Complete Your Payment

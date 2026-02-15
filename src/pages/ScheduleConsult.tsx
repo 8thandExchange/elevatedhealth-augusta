@@ -251,7 +251,7 @@ const ScheduleConsult = () => {
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   Your Hormone Mapping payment is confirmed. Select a time below for your 
-                  45-minute Clinical Strategy Session with your provider.
+                  follow-up consultation to review your results with your provider.
                 </p>
               </div>
 
@@ -331,18 +331,18 @@ const ScheduleConsult = () => {
                   Payment Required
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                  To schedule your Strategy Call, please complete your $349 Hormone Mapping 
-                  payment first. This includes your at-home ZRT test kit and 45-minute clinical review.
+                  To schedule your Strategy Call, please complete your $250 Hormone Mapping 
+                  payment first. This includes your at-home ZRT test kit and follow-up consultation after results return.
                 </p>
               </div>
 
               <div className="bg-card rounded-2xl border border-border p-8 max-w-md mx-auto">
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <CreditCard className="w-6 h-6 text-primary" />
-                  <span className="text-2xl font-semibold text-foreground">$349</span>
+                  <span className="text-2xl font-semibold text-foreground">$250</span>
                 </div>
                 <p className="text-muted-foreground text-sm mb-6">
-                  Hormone Mapping Experience includes ZRT Saliva Test Kit + Strategy Session
+                  Hormone Mapping Panel includes ZRT Saliva Test Kit + Follow-Up Consultation
                 </p>
                 <Button
                   size="lg"

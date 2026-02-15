@@ -69,9 +69,9 @@ Labs are the Gold Standard, but NOT a barrier to entry. We strongly recommend di
 - Men: Low testosterone, fatigue, reduced muscle mass, brain fog
 **Our Approach:** Bioidentical hormones via transdermal creams (NOT pellets) for safe, adjustable dosing
 **Pricing:**
-- Hormone Mapping Kit: $349 (handed to you during your in-clinic consultation so your provider can walk you through exactly how to complete it)
+- Hormone Mapping Panel: $250 (includes at-home saliva test kit + follow-up consultation after results return)
 - Vitality Membership: $249/month (includes hormones, monitoring, provider access, plus $50/mo credit toward prescriptions)
-**Process:** $99 In-Person Strategy Session → Receive Kit at Clinic → Lab Review → Treatment
+**Process:** $99 In-Person Strategy Session → $250 Hormone Mapping Panel → Lab Review Consultation → Treatment
 
 ### 3. MEDICAL WEIGHT LOSS (GLP-1s)
 **Medications:** Semaglutide and Tirzepatide (same active ingredients as Ozempic/Wegovy and Mounjaro/Zepbound)
