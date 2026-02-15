@@ -1400,6 +1400,10 @@ export type Database = {
           full_name: string
           gender: string | null
           id: string
+          insurance_group_number: string | null
+          insurance_member_id: string | null
+          insurance_plan_name: string | null
+          insurance_type: string | null
           intake_completed: boolean | null
           intake_token: string | null
           intake_token_expires_at: string | null
@@ -1441,6 +1445,10 @@ export type Database = {
           full_name: string
           gender?: string | null
           id?: string
+          insurance_group_number?: string | null
+          insurance_member_id?: string | null
+          insurance_plan_name?: string | null
+          insurance_type?: string | null
           intake_completed?: boolean | null
           intake_token?: string | null
           intake_token_expires_at?: string | null
@@ -1482,6 +1490,10 @@ export type Database = {
           full_name?: string
           gender?: string | null
           id?: string
+          insurance_group_number?: string | null
+          insurance_member_id?: string | null
+          insurance_plan_name?: string | null
+          insurance_type?: string | null
           intake_completed?: boolean | null
           intake_token?: string | null
           intake_token_expires_at?: string | null

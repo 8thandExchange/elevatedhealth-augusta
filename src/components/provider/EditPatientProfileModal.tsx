@@ -31,6 +31,10 @@ interface PatientData {
   state?: string | null;
   zip_code?: string | null;
   allergies?: string | null;
+  insurance_type?: string | null;
+  insurance_plan_name?: string | null;
+  insurance_member_id?: string | null;
+  insurance_group_number?: string | null;
 }
 
 interface EditPatientProfileModalProps {
@@ -56,6 +60,10 @@ const EditPatientProfileModal = ({
   const [state, setState] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [allergies, setAllergies] = useState("");
+  const [insuranceType, setInsuranceType] = useState("");
+  const [insurancePlanName, setInsurancePlanName] = useState("");
+  const [insuranceMemberId, setInsuranceMemberId] = useState("");
+  const [insuranceGroupNumber, setInsuranceGroupNumber] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   // Populate form when patient changes
@@ -71,6 +79,10 @@ const EditPatientProfileModal = ({
       setState(patient.state || "");
       setZipCode(patient.zip_code || "");
       setAllergies(patient.allergies || "");
+      setInsuranceType(patient.insurance_type || "self_pay");
+      setInsurancePlanName(patient.insurance_plan_name || "");
+      setInsuranceMemberId(patient.insurance_member_id || "");
+      setInsuranceGroupNumber(patient.insurance_group_number || "");
     }
   }, [patient]);
 
@@ -107,6 +119,10 @@ const EditPatientProfileModal = ({
           state: state.trim() || null,
           zip_code: zipCode.trim() || null,
           allergies: allergies.trim() || "NKDA",
+          insurance_type: insuranceType || "self_pay",
+          insurance_plan_name: insurancePlanName.trim() || null,
+          insurance_member_id: insuranceMemberId.trim() || null,
+          insurance_group_number: insuranceGroupNumber.trim() || null,
         })
         .eq("id", patient.id);
 
@@ -254,6 +270,60 @@ const EditPatientProfileModal = ({
               <p className="text-xs text-muted-foreground">
                 Leave blank if no known drug allergies (NKDA)
               </p>
+            </div>
+          </div>
+
+          {/* Insurance Information */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Insurance Information
+            </Label>
+            
+            <div className="space-y-2">
+              <Label htmlFor="insuranceType" className="text-sm">Insurance Type</Label>
+              <Select value={insuranceType} onValueChange={setInsuranceType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bcbs">Blue Cross Blue Shield</SelectItem>
+                  <SelectItem value="tricare">TRICARE</SelectItem>
+                  <SelectItem value="va">VA (Veterans Affairs)</SelectItem>
+                  <SelectItem value="self_pay">Self-Pay</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="insurancePlanName" className="text-sm">Plan Name</Label>
+              <Input
+                id="insurancePlanName"
+                value={insurancePlanName}
+                onChange={(e) => setInsurancePlanName(e.target.value)}
+                placeholder="e.g. BCBS Federal Employee"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="insuranceMemberId" className="text-sm">Member ID</Label>
+                <Input
+                  id="insuranceMemberId"
+                  value={insuranceMemberId}
+                  onChange={(e) => setInsuranceMemberId(e.target.value)}
+                  placeholder="Member ID"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="insuranceGroupNumber" className="text-sm">Group #</Label>
+                <Input
+                  id="insuranceGroupNumber"
+                  value={insuranceGroupNumber}
+                  onChange={(e) => setInsuranceGroupNumber(e.target.value)}
+                  placeholder="Group number"
+                />
+              </div>
             </div>
           </div>
         </div>

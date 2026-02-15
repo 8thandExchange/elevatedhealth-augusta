@@ -56,6 +56,7 @@ const Footer = () => {
                   { label: "Medical Weight Loss", action: () => navigate(SITE_CONFIG.routes.weightloss) },
                   { label: "Hormone Optimization", action: () => navigate(SITE_CONFIG.routes.hormones) },
                   { label: "Pricing", action: () => navigate("/pricing") },
+                  { label: "Insurance & Reimbursement", action: () => navigate("/insurance-reimbursement") },
                   { label: "Veterans Program", action: () => navigate(SITE_CONFIG.routes.militaryVeteran) },
                 ].map(item => (
                   <li key={item.label}>

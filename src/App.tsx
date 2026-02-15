@@ -67,6 +67,7 @@ import StaffPricingCheatsheet from "./pages/StaffPricingCheatsheet";
 import StaffQuickCard from "./pages/StaffQuickCard";
 import EmailTemplates from "./pages/EmailTemplates";
 import PublicIntake from "./pages/PublicIntake";
+import InsuranceReimbursement from "./pages/InsuranceReimbursement";
 
 const queryClient = new QueryClient();
 
@@ -157,6 +158,7 @@ const App = () => {
           {/* Public intake form (no auth required, token-validated) */}
           <Route path="/intake" element={<PublicIntake />} />
           <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
+          <Route path="/insurance-reimbursement" element={<InsuranceReimbursement />} />
           <Route path="/iv-payment-success" element={<IVPaymentSuccess />} />
           <Route path="/alacarte-success" element={<AlaCartePaymentSuccess />} />
           <Route path="/staff-pricing-cheatsheet" element={

@@ -79,6 +79,7 @@ import MedicationPanel from "@/components/provider/MedicationPanel";
 import AppointmentPanel from "@/components/provider/AppointmentPanel";
 import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
 import HealthReportPreview from "@/components/provider/HealthReportPreview";
+import InsuranceReimbursementHub from "@/components/provider/InsuranceReimbursementHub";
 
 interface Patient {
   id: string;
@@ -107,6 +108,10 @@ interface Patient {
   consent_completed_at?: string | null;
   consent_method?: string | null;
   consent_signature?: string | null;
+  insurance_type?: string | null;
+  insurance_plan_name?: string | null;
+  insurance_member_id?: string | null;
+  insurance_group_number?: string | null;
 }
 
 interface SymptomLog {
@@ -2492,12 +2497,22 @@ const ProviderDashboard = () => {
                 onUpdate={() => loadData()}
               />
 
+              {/* Insurance & Reimbursement Hub */}
+              <InsuranceReimbursementHub
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientEmail={selectedPatient.patient.email}
+                patientInsuranceType={(selectedPatient.patient as any).insurance_type || "self_pay"}
+                treatmentRequest={selectedPatient.patient.treatment_request}
+                onInsuranceUpdate={() => loadData()}
+              />
+
               {/* Insurance Documentation */}
               <Card className="border-border/50">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <FileText className="w-4 h-4" />
-                    Insurance Documentation
+                    Billing Documentation
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -2698,11 +2713,19 @@ const ProviderDashboard = () => {
                 patient={{
                   id: selectedPatient.patient.id,
                   full_name: selectedPatient.patient.full_name,
+                  email: selectedPatient.patient.email,
+                  phone: selectedPatient.patient.phone,
+                  dob: selectedPatient.patient.dob,
+                  gender: selectedPatient.patient.gender,
                   street_address: selectedPatient.patient.street_address,
                   city: selectedPatient.patient.city,
                   state: selectedPatient.patient.state,
                   zip_code: selectedPatient.patient.zip_code,
                   allergies: selectedPatient.patient.allergies,
+                  insurance_type: (selectedPatient.patient as any).insurance_type,
+                  insurance_plan_name: (selectedPatient.patient as any).insurance_plan_name,
+                  insurance_member_id: (selectedPatient.patient as any).insurance_member_id,
+                  insurance_group_number: (selectedPatient.patient as any).insurance_group_number,
                 }}
                 onUpdated={() => loadData()}
               />
