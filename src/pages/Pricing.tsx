@@ -798,11 +798,11 @@ const Pricing = () => {
                               Hormone Mapping Panel
                             </h3>
                             <p className="text-sm text-slate-600 font-lato leading-relaxed">
-                              ZRT Saliva Profile III — Comprehensive at-home saliva test covering Estradiol, Testosterone, Progesterone, DHEA-S & Cortisol to engineer your custom protocol.
+                              ZRT Saliva Profile III — Comprehensive at-home saliva test covering Estradiol, Testosterone, Progesterone, DHEA-S & Cortisol. Includes follow-up consultation after results return to review findings and design your custom protocol.
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">$349</span>
+                            <span className="text-3xl font-cormorant text-slate-900">$250</span>
                             <p className="text-xs text-slate-500 font-lato">one-time</p>
                           </div>
                         </div>
