@@ -21,17 +21,20 @@ const WhyUsCompare = () => {
   ];
 
   return (
-    <section className="section-spacing bg-white">
-      <div className="container mx-auto px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-card relative overflow-hidden">
+      {/* Decorative blob */}
+      <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-gold opacity-25 blur-3xl" />
+      
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
-            The Difference
+          <p className="text-sm tracking-[0.3em] uppercase text-primary mb-4 font-inter font-semibold">
+            03 — The Difference
           </p>
-          <h2 className="font-cormorant text-foreground mb-6">
-            We Test. We Don't Guess.
+          <h2 className="font-inter font-bold text-foreground text-3xl md:text-4xl lg:text-5xl mb-6 leading-tight">
+            We Test. <span className="text-primary">We Don't Guess.</span>
           </h2>
-          <p className="text-lg text-muted-foreground font-lato font-light leading-relaxed">
+          <p className="text-lg text-muted-foreground font-inter leading-relaxed">
             Most clinics prescribe blindly. We architect your protocol around your unique biology 
             using advanced saliva diagnostics.
           </p>
@@ -39,39 +42,33 @@ const WhyUsCompare = () => {
 
         {/* Desktop: Comparison Table */}
         <div className="max-w-4xl mx-auto hidden md:block">
-          {/* Table Header */}
-          <div className="grid grid-cols-3 gap-4 mb-8 pb-4 border-b border-border">
+          <div className="grid grid-cols-3 gap-4 mb-8 pb-4 border-b border-border/50">
             <div className="col-span-1" />
             <div className="text-center">
-              <p className="text-sm font-lato text-muted-foreground uppercase tracking-wide">
-                Standard Clinic
-              </p>
+              <p className="text-sm font-inter text-muted-foreground uppercase tracking-wide">Standard Clinic</p>
             </div>
             <div className="text-center">
-              <p className="text-sm font-lato text-accent uppercase tracking-wide font-semibold">
-                Elevated Health
-              </p>
+              <p className="text-sm font-inter text-primary uppercase tracking-wide font-bold">Elevated Health</p>
             </div>
           </div>
 
-          {/* Comparison Rows */}
-          <div className="space-y-6">
+          <div className="space-y-0">
             {comparisonPoints.map((point, index) => (
               <div 
                 key={index} 
-                className="grid grid-cols-3 gap-4 items-center py-4 border-b border-border/50 animate-fade-in-up"
+                className="grid grid-cols-3 gap-4 items-center py-5 border-b border-border/30 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="col-span-1">
-                  <p className="font-cormorant text-lg text-foreground">{point.feature}</p>
+                  <p className="font-inter font-semibold text-foreground">{point.feature}</p>
                 </div>
                 <div className="text-center flex flex-col items-center gap-2">
-                  <X className="h-5 w-5 text-muted-foreground/50" />
-                  <p className="text-sm text-muted-foreground font-lato">{point.standard}</p>
+                  <X className="h-5 w-5 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground font-inter">{point.standard}</p>
                 </div>
                 <div className="text-center flex flex-col items-center gap-2">
-                  <Check className="h-5 w-5 text-accent" />
-                  <p className="text-sm text-foreground font-lato font-medium">{point.elevated}</p>
+                  <Check className="h-5 w-5 text-primary" />
+                  <p className="text-sm text-foreground font-inter font-medium">{point.elevated}</p>
                 </div>
               </div>
             ))}
@@ -83,18 +80,18 @@ const WhyUsCompare = () => {
           {comparisonPoints.map((point, index) => (
             <div 
               key={index} 
-              className="bg-card rounded-xl p-5 border border-border/50 shadow-sm animate-fade-in-up"
+              className="bg-background rounded-xl p-5 border border-border/30 shadow-sm animate-fade-in-up"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <p className="font-cormorant text-lg text-foreground mb-3">{point.feature}</p>
+              <p className="font-inter font-semibold text-foreground mb-3">{point.feature}</p>
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
-                  <X className="h-4 w-4 text-muted-foreground/50 mt-0.5 shrink-0" />
-                  <p className="text-sm text-muted-foreground font-lato">{point.standard}</p>
+                  <X className="h-4 w-4 text-muted-foreground/40 mt-0.5 shrink-0" />
+                  <p className="text-sm text-muted-foreground font-inter">{point.standard}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />
-                  <p className="text-sm text-foreground font-lato font-medium">{point.elevated}</p>
+                  <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <p className="text-sm text-foreground font-inter font-medium">{point.elevated}</p>
                 </div>
               </div>
             </div>
@@ -102,15 +99,15 @@ const WhyUsCompare = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground font-lato mb-6">
+        <div className="mt-16 text-center">
+          <p className="text-muted-foreground font-inter mb-6">
             Ready to discover your biological blockers?
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button onClick={openBooking} size="lg" className="font-lato">
+            <Button onClick={openBooking} size="lg" className="font-inter rounded-full px-8">
               Schedule Discovery Call
             </Button>
-            <Button onClick={handleLearnMore} variant="outline" size="lg" className="font-lato group">
+            <Button onClick={handleLearnMore} variant="outline" size="lg" className="font-inter rounded-full px-8 group border-border/50">
               Learn About Hormonal Weight Reset
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
