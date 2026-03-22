@@ -126,12 +126,12 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
                 <h3 style="color: #92400e; margin: 0 0 8px 0; font-size: 14px;">💡 Suggested Outreach Script:</h3>
                 <p style="color: #78350f; font-size: 13px; margin: 0; line-height: 1.6;">
-                  "Hi [Name], this is [Your Name] from Elevated Health Augusta. I noticed you started setting up your patient account but haven't had a chance to complete your health questionnaire yet. It only takes about 5-10 minutes, and once it's done, our provider can review your profile and get your personalized plan started. Is there anything I can help you with?"
+                  "Hi [Name], this is [Your Name] from Réveil. I noticed you started setting up your patient account but haven't had a chance to complete your health questionnaire yet. It only takes about 5-10 minutes, and once it's done, our provider can review your profile and get your personalized plan started. Is there anything I can help you with?"
                 </p>
               </div>
 
               <div style="text-align: center;">
-                <a href="https://elevatedhealthaugusta.com/provider/dashboard" 
+                <a href="https://reveil.health/provider/dashboard" 
                    style="display: inline-block; background-color: #2C3E50; color: #ffffff; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                   Open Provider Dashboard →
                 </a>
@@ -140,7 +140,7 @@ const handler = async (req: Request): Promise<Response> => {
 
             <div style="background-color: #f3f4f6; padding: 16px 32px; text-align: center;">
               <p style="color: #6b7280; font-size: 12px; margin: 0;">
-                This is an automated daily alert from Elevated Health Augusta
+                This is an automated daily alert from Réveil
               </p>
             </div>
           </div>
@@ -149,8 +149,8 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      from: "Réveil <noreply@stripe.reveil.health>",
+      to: ["booking@reveil.health"],
       subject: `⏰ ${patientCount} Patient${patientCount > 1 ? 's' : ''} Need Outreach - Stale Intake Alert`,
       html: emailHtml,
     });

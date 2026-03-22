@@ -79,7 +79,7 @@ serve(async (req) => {
       logStep("Existing Stripe customer found", { customerId });
     }
 
-    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const origin = req.headers.get("origin") || "https://reveil.health";
 
     // Create one-time payment checkout session
     const session = await stripe.checkout.sessions.create({

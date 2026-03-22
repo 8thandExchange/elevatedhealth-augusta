@@ -56,7 +56,7 @@ serve(async (req) => {
           
           <!-- Header -->
           <div style="background: linear-gradient(135deg, #1a3a4a 0%, #2C3E50 100%); padding: 32px; text-align: center;">
-            <h1 style="color: #D4A017; font-size: 24px; margin: 0; font-weight: normal;">Elevated Health Augusta</h1>
+            <h1 style="color: #D4A017; font-size: 24px; margin: 0; font-weight: normal;">Réveil</h1>
             <p style="color: #ffffff; font-size: 14px; margin-top: 8px; opacity: 0.9;">Your Safety is Our Priority</p>
           </div>
           
@@ -103,7 +103,7 @@ serve(async (req) => {
           <!-- Footer -->
           <div style="background-color: #F9F9F7; padding: 24px; text-align: center; border-top: 1px solid #E2E8F0;">
             <p style="color: #64748B; font-size: 12px; margin: 0 0 8px 0;">
-              Elevated Health Augusta
+              Réveil
             </p>
             <p style="color: #64748B; font-size: 12px; margin: 0;">
               3330 McClure Road, Augusta, GA 30909 | (762) 222-0098
@@ -117,7 +117,7 @@ serve(async (req) => {
     logStep("Sending email to patient");
     
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patient_email],
       subject: "Action Required: Schedule Your Clinical Eligibility Review",
       html: emailHtml,

@@ -305,12 +305,12 @@ serve(async (req) => {
         ).join("");
 
         // Intake form URL with token
-        const intakeUrl = `https://elevatedhealthaugusta.com/intake?token=${intakeToken}`;
+        const intakeUrl = `https://reveil.health/intake?token=${intakeToken}`;
 
         const { error: emailError } = await resend.emails.send({
-          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Réveil <noreply@stripe.reveil.health>",
           to: [patient_email],
-          subject: `Welcome to Elevated Health, ${firstName}!`,
+          subject: `Welcome to Réveil, ${firstName}!`,
           html: `
             <!DOCTYPE html>
             <html>
@@ -320,13 +320,13 @@ serve(async (req) => {
             </head>
             <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
               <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #0d9488; margin: 0;">Elevated Health Augusta</h1>
+                <h1 style="color: #0d9488; margin: 0;">Réveil</h1>
                 <p style="color: #666; margin-top: 5px;">Your Partner in Optimal Wellness</p>
               </div>
               
               <h2 style="color: #1a1a1a;">Welcome, ${firstName}!</h2>
               
-              <p>We're excited to have you as part of the Elevated Health family. Your account has been created and you're ready to begin your <strong>${journeyName}</strong> journey with us.</p>
+              <p>We're excited to have you as part of the Réveil family. Your account has been created and you're ready to begin your <strong>${journeyName}</strong> journey with us.</p>
               
               <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
                 ${descriptionHtml}
@@ -361,17 +361,17 @@ serve(async (req) => {
                 </ul>
               </div>
               
-              <p>If you have any questions, don't hesitate to reach out to us at <a href="mailto:booking@elevatedhealthaugusta.com" style="color: #0d9488;">booking@elevatedhealthaugusta.com</a> or call us at <a href="tel:7067603470" style="color: #0d9488;">(706) 760-3470</a>.</p>
+              <p>If you have any questions, don't hesitate to reach out to us at <a href="mailto:booking@reveil.health" style="color: #0d9488;">booking@reveil.health</a> or call us at <a href="tel:7064267383" style="color: #0d9488;">(706) 426-7383</a>.</p>
               
               <p style="margin-top: 30px;">
                 Warm regards,<br>
-                <strong>The Elevated Health Team</strong>
+                <strong>The Réveil Team</strong>
               </p>
               
               <div style="border-top: 1px solid #e5e5e5; margin-top: 30px; padding-top: 20px; text-align: center; color: #666; font-size: 12px;">
-                <p style="margin: 0;">Elevated Health Augusta</p>
+                <p style="margin: 0;">Réveil</p>
                 <p style="margin: 5px 0;">7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809</p>
-                <p style="margin: 5px 0;">(706) 760-3470 | booking@elevatedhealthaugusta.com</p>
+                <p style="margin: 5px 0;">(706) 426-7383 | booking@reveil.health</p>
               </div>
             </body>
             </html>

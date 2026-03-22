@@ -58,7 +58,7 @@ const handler = async (req: Request): Promise<Response> => {
     const kitName = kit_type === "hormone" ? "Hormone Mapping Kit" : "Metabolic Mapping Kit";
     const creditNote = has_credit ? " (with your $99 credit applied)" : "";
     
-    const message = `Hi ${patient_name || "there"}! Your ${kitName}${creditNote} from Elevated Health is ready ($${amount}). Complete payment here: ${payment_url}`;
+    const message = `Hi ${patient_name || "there"}! Your ${kitName}${creditNote} from Réveil is ready ($${amount}). Complete payment here: ${payment_url}`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

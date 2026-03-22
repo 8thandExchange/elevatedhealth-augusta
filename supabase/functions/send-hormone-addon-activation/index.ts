@@ -108,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
               </table>
               
               <p style="color: #718096; font-size: 14px; line-height: 1.6; margin: 0; text-align: center;">
-                Questions? Call us at <a href="tel:+17067603470" style="color: #c9a84c;">(706) 760-3470</a>
+                Questions? Call us at <a href="tel:+17064267383" style="color: #c9a84c;">(706) 426-7383</a>
               </p>
             </td>
           </tr>
@@ -117,7 +117,7 @@ const handler = async (req: Request): Promise<Response> => {
           <tr>
             <td style="background-color: #2d3436; padding: 25px; text-align: center;">
               <p style="color: #a0a0a0; font-size: 12px; margin: 0 0 8px;">
-                Elevated Health Augusta
+                Réveil
               </p>
               <p style="color: #a0a0a0; font-size: 12px; margin: 0;">
                 7013 Evans Town Center Blvd, Suite 203 · Evans, GA 30809
@@ -133,7 +133,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patient_email],
       subject: "Add Hormone Optimization to Your Weight Loss Journey",
       html: emailHtml,

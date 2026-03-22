@@ -31,12 +31,12 @@ const chatRequestSchema = z.object({
 // ============================================================================
 
 const PUBLIC_KNOWLEDGE = `
-## ELEVATED HEALTH AUGUSTA — PUBLIC KNOWLEDGE BASE
+## RÉVEIL — PUBLIC KNOWLEDGE BASE
 
 ### CLINIC IDENTITY
-- Name: Elevated Health Augusta
+- Name: Réveil
 - Location: 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
-- Phone: (706) 760-3470
+- Phone: (706) 426-7383
 - Hours: Monday-Friday 9AM-5PM
 - Provider: Our board-certified clinical team
 
@@ -168,7 +168,7 @@ A: Meeting face-to-face allows your provider to deliver better care. They can an
 A: If they're from the last 3 months and include the specific markers we need (varies by treatment), we may be able to use them. Otherwise, we require our comprehensive panels.
 
 **Q: How quickly can I get an appointment?**
-A: Usually same-week for in-person visits. Call (706) 760-3470 or book online.
+A: Usually same-week for in-person visits. Call (706) 426-7383 or book online.
 
 **Q: Is this safe?**
 A: All treatments are prescribed and monitored by licensed medical providers. We use evidence-based protocols and require proper lab work before prescribing.
@@ -194,7 +194,7 @@ We are not an emergency service. For urgent but non-emergency concerns, call our
 
 ## BOOKING
 
-When someone wants to book, tell them: "You can book using the button below the chat, or call us at (706) 760-3470."
+When someone wants to book, tell them: "You can book using the button below the chat, or call us at (706) 426-7383."
 
 **IMPORTANT:** Do NOT paste raw URLs in your responses. Instead, direct users to the booking button that appears in the chat interface, or tell them to call the office.
 `;
@@ -279,7 +279,7 @@ serve(async (req) => {
       }
     }
 
-    const systemPrompt = `You are a warm, knowledgeable Care Coordination specialist for Elevated Health Augusta. You handle ADMINISTRATIVE questions only—you cannot provide medical advice.
+    const systemPrompt = `You are a warm, knowledgeable Care Coordination specialist for Réveil. You handle ADMINISTRATIVE questions only—you cannot provide medical advice.
 
 ## YOUR ROLE — CRITICAL RULES
 
@@ -412,7 +412,7 @@ Do NOT continue the normal conversation after this. End with crisis resources.`;
     }
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't generate a response. Please try again or call us at (706) 760-3470.";
+    const reply = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't generate a response. Please try again or call us at (706) 426-7383.";
 
     console.log("AI response generated successfully");
 
@@ -423,7 +423,7 @@ Do NOT continue the normal conversation after this. End with crisis resources.`;
     console.error("Chat function error:", error);
     return new Response(
       JSON.stringify({ 
-        error: "I'm having trouble connecting right now. Please call us at (706) 760-3470 for immediate assistance." 
+        error: "I'm having trouble connecting right now. Please call us at (706) 426-7383 for immediate assistance." 
       }),
       {
         status: 500,

@@ -226,9 +226,9 @@ serve(async (req) => {
     if (resend) {
       try {
         await resend.emails.send({
-          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Réveil <noreply@stripe.reveil.health>",
           to: [customerEmail],
-          subject: `Your $99 Credit Code is Here! - Elevated Health`,
+          subject: `Your $99 Credit Code is Here! - Réveil`,
           html: `
             <!DOCTYPE html>
             <html>
@@ -266,7 +266,7 @@ serve(async (req) => {
               <div class="wrapper">
                 <div class="container">
                   <div class="header">
-                    <h1 class="logo">Elevated Health</h1>
+                    <h1 class="logo">Réveil</h1>
                   </div>
                   <div class="content">
                     <h2 class="greeting">Thank You, ${firstName}!</h2>
@@ -305,8 +305,8 @@ serve(async (req) => {
                     <p style="color: #4a5568; font-size: 16px; margin-top: 32px;">
                       We're excited to meet you in person!<br/><br/>
                       Warmly,<br/>
-                      <strong>The Elevated Health Team</strong><br/>
-                      <span style="color: #718096;">(706) 760-3470 | 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</span>
+                      <strong>The Réveil Team</strong><br/>
+                      <span style="color: #718096;">(706) 426-7383 | 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</span>
                     </p>
                   </div>
                   <div class="footer">
@@ -326,8 +326,8 @@ serve(async (req) => {
       // Send admin notification
       try {
         await resend.emails.send({
-          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-          to: ["booking@elevatedhealthaugusta.com"],
+          from: "Réveil <noreply@stripe.reveil.health>",
+          to: ["booking@reveil.health"],
           subject: `New ${emailConfig.title} Booked - ${customerName || customerEmail}`,
           html: `
             <h2>New ${emailConfig.title} Payment</h2>

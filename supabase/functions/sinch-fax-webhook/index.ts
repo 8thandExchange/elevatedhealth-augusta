@@ -26,7 +26,7 @@ async function sendFailureAlert(
   const html = `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="text-align: center; border-bottom: 3px solid #C5A059; padding-bottom: 15px; margin-bottom: 20px;">
-        <h1 style="margin: 0; font-size: 20px; color: #1a3a4a; letter-spacing: 2px;">ELEVATED HEALTH AUGUSTA</h1>
+        <h1 style="margin: 0; font-size: 20px; color: #1a3a4a; letter-spacing: 2px;">RÉVEIL</h1>
       </div>
       
       <div style="background: #fee2e2; border: 2px solid #dc2626; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
@@ -53,15 +53,15 @@ async function sendFailureAlert(
       </div>
       
       <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">
-        This is an automated alert from Elevated Health Augusta
+        This is an automated alert from Réveil
       </p>
     </div>
   `;
 
   try {
     await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      from: "Réveil <noreply@stripe.reveil.health>",
+      to: ["booking@reveil.health"],
       subject: `⚠️ Fax Failed: ${patientName} - ${medication}`,
       html,
     });

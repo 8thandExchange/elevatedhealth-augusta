@@ -51,10 +51,10 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const firstName = first_name || patient_name?.split(" ")[0] || "there";
-    const origin = "https://elevatedhealthaugusta.com";
+    const origin = "https://reveil.health";
     
     // Link to weight loss page where they can choose Semaglutide or Tirzepatide
-    const message = `Hi ${firstName}! Your GLP-1 weight loss membership from Elevated Health is ready. Semaglutide $399/mo or Tirzepatide $499/mo. Start here: ${origin}/weight-loss Questions? (706) 760-3470`;
+    const message = `Hi ${firstName}! Your GLP-1 weight loss membership from Réveil is ready. Semaglutide $399/mo or Tirzepatide $499/mo. Start here: ${origin}/weight-loss Questions? (706) 426-7383`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

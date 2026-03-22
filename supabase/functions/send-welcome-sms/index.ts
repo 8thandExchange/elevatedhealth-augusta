@@ -59,7 +59,7 @@ const handler = async (req: Request): Promise<Response> => {
       ? 'weight loss'
       : 'personalized wellness';
     
-    const message = `Hi ${firstName}! 🌟 Your Elevated Health patient portal is ready. Log in anytime at elevatedhealthaugusta.com/patient/login. Your next step: complete your health intake. Questions? (706) 760-3470`;
+    const message = `Hi ${firstName}! 🌟 Your Réveil patient portal is ready. Log in anytime at reveil.health/patient/login. Your next step: complete your health intake. Questions? (706) 426-7383`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

@@ -114,7 +114,7 @@ serve(async (req) => {
       try {
         // Send reminder email
         await resend.emails.send({
-          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Réveil <noreply@stripe.reveil.health>",
           to: [booking.customer_email],
           subject: `Reminder: Schedule Your ${config.title}`,
           html: `
@@ -164,7 +164,7 @@ serve(async (req) => {
               
               <p style="color: #4a5568; font-size: 16px; line-height: 1.6;">
                 We look forward to meeting you!<br/>
-                <strong>The Elevated Health Team</strong><br/>
+                <strong>The Réveil Team</strong><br/>
                 <span style="color: #718096;">Augusta, GA</span>
               </p>
             </div>

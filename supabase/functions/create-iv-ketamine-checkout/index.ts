@@ -62,7 +62,7 @@ serve(async (req) => {
       : "price_1SaYv3EOtKRY99pulkr4H1At"; // Single IV Ketamine Infusion - $400
 
     // Create checkout session
-    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const origin = req.headers.get("origin") || "https://reveil.health";
     
     const session = await stripe.checkout.sessions.create({
       customer: customerId,

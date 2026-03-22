@@ -97,12 +97,12 @@ serve(async (req) => {
               </table>
               
               <p style="color: #4a5568; font-size: 16px; margin: 20px 0; line-height: 1.8;">
-                If you have any questions, reply to this email or call us at <strong>(706) 760-3470</strong>.
+                If you have any questions, reply to this email or call us at <strong>(706) 426-7383</strong>.
               </p>
               
               <p style="color: #4a5568; font-size: 16px; margin: 20px 0 0; line-height: 1.8;">
                 Warmly,<br>
-                <strong style="color: #2C3E50;">The Elevated Health Team</strong>
+                <strong style="color: #2C3E50;">The Réveil Team</strong>
               </p>
             </td>
           </tr>
@@ -111,11 +111,11 @@ serve(async (req) => {
           <tr>
             <td style="background-color: #f8f9fa; padding: 25px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
               <p style="color: #718096; font-size: 13px; margin: 0 0 8px;">
-                Elevated Health Augusta<br>
+                Réveil<br>
                 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
               </p>
               <p style="color: #a0aec0; font-size: 12px; margin: 0;">
-                © ${new Date().getFullYear()} Elevated Health Augusta. All rights reserved.
+                © ${new Date().getFullYear()} Réveil. All rights reserved.
               </p>
             </td>
           </tr>
@@ -128,7 +128,7 @@ serve(async (req) => {
 `;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patient_email],
       subject: "Your Treatment Has Been Authorized – Next Steps Inside",
       html: emailHtml,

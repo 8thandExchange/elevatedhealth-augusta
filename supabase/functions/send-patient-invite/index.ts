@@ -64,7 +64,7 @@ serve(async (req) => {
     logStep("Request body", { patient_email, patient_name });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const origin = "https://elevatedhealthaugusta.com";
+    const origin = "https://reveil.health";
 
     // Create Stripe Checkout session for $299 Hormone Mapping
     // After payment, redirect to account creation page
@@ -152,12 +152,12 @@ serve(async (req) => {
         <div class="wrapper">
           <div class="container">
             <div class="header">
-              <h1 class="logo">Elevated Health</h1>
+              <h1 class="logo">Réveil</h1>
               <p class="tagline">Restore · Renew · Rebalance</p>
             </div>
             <div class="content">
               <h2 class="greeting">Welcome, ${firstName}!</h2>
-              <p class="intro">You've been personally invited to begin your hormone optimization journey with Elevated Health Augusta. We're excited to help you feel your best.</p>
+              <p class="intro">You've been personally invited to begin your hormone optimization journey with Réveil. We're excited to help you feel your best.</p>
               
               <div class="price-box">
                 <p class="price">$299</p>
@@ -206,14 +206,14 @@ serve(async (req) => {
                   <span style="font-size: 16px;">✨</span> Easy Sign-In Tip
                 </p>
                 <p class="magic-link-text">
-                  Already have an account? Visit <strong>elevatedhealthaugusta.com</strong> and scroll to the footer. Click "Returning Patient?" and use our <strong>Magic Link</strong> option — just enter your email and we'll send you a secure sign-in link. No password needed!
+                  Already have an account? Visit <strong>reveil.health</strong> and scroll to the footer. Click "Returning Patient?" and use our <strong>Magic Link</strong> option — just enter your email and we'll send you a secure sign-in link. No password needed!
                 </p>
               </div>
             </div>
             <div class="footer">
-              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 760-3470</strong></p>
+              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 426-7383</strong></p>
               <p class="footer-address">
-                Elevated Health Augusta<br/>
+                Réveil<br/>
                 7013 Evans Town Center Blvd, Suite 203<br/>
                 Evans, GA 30809
               </p>
@@ -225,7 +225,7 @@ serve(async (req) => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patient_email],
       subject: `${firstName}, Your Personalized Hormone Journey Awaits`,
       html: emailHtml,

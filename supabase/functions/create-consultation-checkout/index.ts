@@ -108,7 +108,7 @@ serve(async (req) => {
       }
     }
 
-    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const origin = req.headers.get("origin") || "https://reveil.health";
 
     // Generate credit code for future mapping discount
     const creditCode = generateCreditCode();

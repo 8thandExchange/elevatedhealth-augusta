@@ -43,7 +43,7 @@ const handler = async (req: Request): Promise<Response> => {
     const resend = new Resend(resendApiKey);
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patient_email],
       subject: `Your IV Ketamine Infusion Payment - Session #${session_number}`,
       html: `
@@ -59,7 +59,7 @@ const handler = async (req: Request): Promise<Response> => {
               
               <!-- Header -->
               <div style="padding: 40px 40px 20px; text-align: center;">
-                <h1 style="color: #d4af37; margin: 0; font-size: 28px; font-weight: 600;">Elevated Health Augusta</h1>
+                <h1 style="color: #d4af37; margin: 0; font-size: 28px; font-weight: 600;">Réveil</h1>
                 <p style="color: #a0a0a0; margin: 10px 0 0; font-size: 14px;">IV Ketamine Therapy</p>
               </div>
               
@@ -83,14 +83,14 @@ const handler = async (req: Request): Promise<Response> => {
                 </div>
                 
                 <p style="color: #a0a0a0; font-size: 14px; line-height: 1.6; margin: 24px 0 0;">
-                  After payment, you'll be able to select your preferred appointment time. If you have any questions, please call us at <strong style="color: #ffffff;">(706) 760-3470</strong>.
+                  After payment, you'll be able to select your preferred appointment time. If you have any questions, please call us at <strong style="color: #ffffff;">(706) 426-7383</strong>.
                 </p>
               </div>
               
               <!-- Footer -->
               <div style="background: rgba(0, 0, 0, 0.2); padding: 24px 40px; text-align: center;">
                 <p style="color: #a0a0a0; font-size: 12px; margin: 0;">
-                  Elevated Health Augusta<br>
+                  Réveil<br>
                   4182 Washington Rd, Evans, GA 30809
                 </p>
               </div>

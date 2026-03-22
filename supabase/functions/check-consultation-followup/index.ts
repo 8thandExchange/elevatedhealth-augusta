@@ -93,8 +93,8 @@ serve(async (req) => {
         .join('\n');
 
       await resend.emails.send({
-        from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-        to: ["booking@elevatedhealthaugusta.com"],
+        from: "Réveil <noreply@stripe.reveil.health>",
+        to: ["booking@reveil.health"],
         subject: `⚠️ ${followups.length} Consultation(s) Need Kit Follow-up`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -110,7 +110,7 @@ serve(async (req) => {
               <li>Remind them their $99 credit is waiting to be applied</li>
             </ul>
             <p style="color: #666; font-size: 14px; margin-top: 30px;">
-              This is an automated message from your Elevated Health patient management system.
+              This is an automated message from your Réveil patient management system.
             </p>
           </div>
         `,
