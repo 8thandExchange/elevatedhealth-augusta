@@ -116,7 +116,8 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
       setParseStatus("success");
       onParsed(parsedData);
       
-      toast.success("Lab values extracted!", {
+      const sourceLabel = parsedData.labSource === 'labcorp' ? 'LabCorp' : parsedData.labSource === 'zrt' ? 'ZRT' : 'Lab';
+      toast.success(`${sourceLabel} values extracted!`, {
         description: `Confidence: ${Math.round((parsedData.confidence?.overall || 0.9) * 100)}%`
       });
 
