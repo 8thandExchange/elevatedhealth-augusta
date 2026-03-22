@@ -221,8 +221,8 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
           <label className="flex flex-col items-center gap-2 py-2 cursor-pointer">
             <Upload className="w-6 h-6 text-muted-foreground" />
             <div>
-              <span className="text-sm font-medium text-primary">Upload ZRT PDF</span>
-              <span className="text-sm text-muted-foreground"> or drag & drop</span>
+              <span className="text-sm font-medium text-primary">Upload Lab PDF</span>
+              <span className="text-sm text-muted-foreground"> (ZRT or LabCorp)</span>
             </div>
             <p className="text-xs text-muted-foreground">
               AI will extract lab values automatically
