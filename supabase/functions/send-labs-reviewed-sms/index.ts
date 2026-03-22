@@ -51,7 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const firstName = first_name || patient_name?.split(" ")[0] || "there";
     
-    const message = `Hi ${firstName}! Great news—your lab results from Réveil are ready for review. Log in to your patient portal to see your results, or call us at (706) 426-7383 to schedule a follow-up.`;
+    const message = `Hi ${firstName}! Great news—your lab results from Réveil are ready for review. Log in to your patient portal to see your results, or call us at (706) 760-3470 to schedule a follow-up.`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

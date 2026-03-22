@@ -129,7 +129,7 @@ const handler = async (req: Request): Promise<Response> => {
             <tr>
               <td style="background-color: #1a1a2e; padding: 30px; text-align: center;">
                 <p style="color: #ffffff; font-size: 14px; margin: 0 0 10px 0;">
-                  Questions? Call us at <a href="tel:+17064267383" style="color: #c5a572;">(706) 426-7383</a>
+                  Questions? Call us at <a href="tel:+17067603470" style="color: #c5a572;">(706) 760-3470</a>
                 </p>
                 <p style="color: #888; font-size: 12px; margin: 0;">
                   Réveil | 7013 Evans Town Center Blvd, Evans, GA 30809

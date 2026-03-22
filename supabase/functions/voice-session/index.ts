@@ -16,7 +16,7 @@ const PUBLIC_KNOWLEDGE = `
 ### CLINIC IDENTITY
 - Name: Réveil
 - Location: 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
-- Phone: (706) 426-7383
+- Phone: (706) 760-3470
 - Hours: Monday-Friday 9AM-5PM
 - Provider: Our board-certified clinical team
 

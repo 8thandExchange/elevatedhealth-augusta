@@ -50,7 +50,7 @@ const IVKetamine = () => {
         <title>IV Ketamine Therapy Augusta GA | Treatment-Resistant Depression | Réveil</title>
         <meta 
           name="description" 
-          content="IV ketamine infusion therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team or call (706) 426-7383. BCBS, TRICARE accepted." 
+          content="IV ketamine infusion therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." 
         />
         <meta 
           name="keywords" 
@@ -161,7 +161,7 @@ const IVKetamine = () => {
                 variant="compact" 
                 title="Have questions about IV ketamine?"
                 description="This is a significant treatment decision. Ask about eligibility, what a session feels like, or how we ensure your safety."
-                ctaText="Speak With Our Team: (706) 426-7383"
+                ctaText="Speak With Our Team: (706) 760-3470"
               />
             </div>
           </div>

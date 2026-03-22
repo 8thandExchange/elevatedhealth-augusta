@@ -208,7 +208,7 @@ const SexualWellness = () => {
                   variant="compact" 
                   title="Questions? 100% confidential."
                   description="We understand this is personal. Ask about treatment options, dosing, or delivery—completely private, no judgment."
-                  ctaText="Call Discreetly: (706) 426-7383"
+                  ctaText="Call Discreetly: (706) 760-3470"
                 />
               </div>
             </div>

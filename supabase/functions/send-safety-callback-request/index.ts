@@ -127,7 +127,7 @@ serve(async (req) => {
         </div>
         
         <p style="color: #4a5568; font-size: 15px;">
-          If you need immediate assistance, please call us directly at <strong>(706) 426-7383</strong>.
+          If you need immediate assistance, please call us directly at <strong>(706) 760-3470</strong>.
         </p>
         
         <p style="color: #4a5568; font-size: 15px; margin-top: 30px;">

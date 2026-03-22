@@ -58,7 +58,7 @@ const handler = async (req: Request): Promise<Response> => {
       ? `${supabaseUrl}/functions/v1/create-hormone-addon-checkout?patient_id=${patient_id}`
       : "https://reveil.health";
     
-    const message = `Hi ${firstName}! As a GLP-1 member, you qualify for our $149/mo Hormone Add-On. Optimize your results with hormone therapy. Add it here: ${checkoutUrl} Questions? (706) 426-7383`;
+    const message = `Hi ${firstName}! As a GLP-1 member, you qualify for our $149/mo Hormone Add-On. Optimize your results with hormone therapy. Add it here: ${checkoutUrl} Questions? (706) 760-3470`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

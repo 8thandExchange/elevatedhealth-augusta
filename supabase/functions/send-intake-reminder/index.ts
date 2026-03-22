@@ -103,7 +103,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <div style="text-align: center; margin-top: 24px; padding: 20px; background: white; border-radius: 8px; border: 1px solid #E5E5E5;">
                   <p style="color: #5D6D7E; font-size: 14px; margin: 0;">
                     Need help? Reply to this email or call us at<br>
-                    <strong style="color: #2C3E50;">(706) 426-7383</strong>
+                    <strong style="color: #2C3E50;">(706) 760-3470</strong>
                   </p>
                 </div>
 

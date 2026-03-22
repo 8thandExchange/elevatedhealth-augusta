@@ -261,7 +261,7 @@ serve(async (req) => {
                 <p style="font-size: 14px; color: #7F8C8D;">If the button doesn't work, copy and paste this link into your browser:<br/>${paymentLink}</p>
               </div>
               <div class="footer">
-                <p>Questions? Call us at (706) 426-7383</p>
+                <p>Questions? Call us at (706) 760-3470</p>
                 <p>Réveil<br/>7013 Evans Town Center Blvd, Suite 203<br/>Evans, GA 30809</p>
               </div>
             </div>

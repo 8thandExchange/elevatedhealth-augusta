@@ -145,7 +145,7 @@ const EmailTemplates = () => {
       .replace(/\{\{first_name\}\}/g, "John")
       .replace(/\{\{email\}\}/g, "john@example.com")
       .replace(/\{\{phone\}\}/g, "(555) 123-4567")
-      .replace(/\{\{clinic_phone\}\}/g, "(706) 426-7383")
+      .replace(/\{\{clinic_phone\}\}/g, "(706) 760-3470")
       .replace(/\{\{payment_link\}\}/g, "https://pay.example.com/abc123")
       .replace(/\{\{portal_link\}\}/g, "https://portal.example.com")
       .replace(/\{\{appointment_time\}\}/g, "10:00 AM")

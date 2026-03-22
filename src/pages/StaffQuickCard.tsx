@@ -138,7 +138,7 @@ const StaffQuickCard = () => {
 
             {/* Footer */}
             <div className="text-center border-t-2 border-foreground pt-2 print:border-black">
-              <p className="font-bold text-sm">(706) 426-7383</p>
+              <p className="font-bold text-sm">(706) 760-3470</p>
               <p className="text-xs">7013 Evans Town Center Blvd, Suite 203 • Evans, GA 30809</p>
             </div>
           </div>

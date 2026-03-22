@@ -135,7 +135,7 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="border-top: 1px solid #E5E5E5; padding-top: 24px;">
                 <p style="color: #5D6D7E; font-size: 14px; line-height: 1.6; margin: 0;">
                   <strong>Questions about your results?</strong><br>
-                  You can message your care team directly through your patient portal, or call us at (706) 426-7383.
+                  You can message your care team directly through your patient portal, or call us at (706) 760-3470.
                 </p>
               </div>
             </div>
@@ -148,7 +148,7 @@ const handler = async (req: Request): Promise<Response> => {
                 Evans, GA 30809
               </p>
               <p style="margin: 0;">
-                <a href="tel:7064267383" style="color: #D4A017; text-decoration: none;">(706) 426-7383</a>
+                <a href="tel:7067603470" style="color: #D4A017; text-decoration: none;">(706) 760-3470</a>
               </p>
             </div>
           </div>

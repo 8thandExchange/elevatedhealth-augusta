@@ -91,7 +91,7 @@ function generatePrescriptionHtml(
   <div class="header">
     <h1>RÉVEIL</h1>
     <p>7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</p>
-    <p>Phone: (706) 426-7383 | Fax: (706) 993-3772</p>
+    <p>Phone: (706) 760-3470 | Fax: (706) 993-3772</p>
   </div>
 
   <div class="provider-info">
@@ -144,7 +144,7 @@ function generatePrescriptionHtml(
 
   <div class="footer">
     <p>This prescription was transmitted electronically via secure fax.</p>
-    <p>For questions, contact Réveil at (706) 426-7383</p>
+    <p>For questions, contact Réveil at (706) 760-3470</p>
   </div>
 </body>
 </html>

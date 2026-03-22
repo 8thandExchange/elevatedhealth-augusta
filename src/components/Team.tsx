@@ -101,11 +101,11 @@ const Team = () => {
               size="lg"
               asChild
               className="font-lato text-base px-8 py-6 bg-gold hover:bg-gold/90 text-white shadow-xl hover:translate-y-[-2px] transition-all w-full sm:w-auto"
-              onClick={() => trackCTAClick('ai_voice_call_team', 'tel:+17064267383')}
+              onClick={() => trackCTAClick('ai_voice_call_team', 'tel:+17067603470')}
             >
-              <a href="tel:+17064267383">
+              <a href="tel:+17067603470">
                 <Phone className="mr-2 h-5 w-5" />
-                Call (706) 426-7383
+                Call (706) 760-3470
               </a>
             </Button>
 

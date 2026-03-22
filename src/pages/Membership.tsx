@@ -44,7 +44,7 @@ const Membership = () => {
       }
     } catch (err) {
       console.error("Membership checkout error:", err);
-      toast.error("Failed to start checkout. Please try again or call us at (706) 426-7383.");
+      toast.error("Failed to start checkout. Please try again or call us at (706) 760-3470.");
     } finally {
       setLoadingTier(null);
     }

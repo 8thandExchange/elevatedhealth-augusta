@@ -122,7 +122,7 @@ serve(async (req) => {
       
       const message = custom_message || 
         `Hi ${name}! This is a reminder from Réveil about your ${type} on ${date}${time ? ` at ${time}` : ''}. ` +
-        `If you need to reschedule, please call us at (706) 426-7383. We look forward to seeing you!`;
+        `If you need to reschedule, please call us at (706) 760-3470. We look forward to seeing you!`;
 
       const result = await sendSMS(patient_phone, message);
       results.push({ 
@@ -161,7 +161,7 @@ serve(async (req) => {
 
         const message = 
           `Hi ${patient.full_name?.split(" ")[0] || "there"}! This is a reminder from Réveil about your upcoming ${programName}. ` +
-          `Please arrive 10 minutes early. If you need to reschedule, call (706) 426-7383. See you soon!`;
+          `Please arrive 10 minutes early. If you need to reschedule, call (706) 760-3470. See you soon!`;
 
         const result = await sendSMS(patient.phone, message);
         results.push({

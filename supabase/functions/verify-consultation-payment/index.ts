@@ -306,7 +306,7 @@ serve(async (req) => {
                       We're excited to meet you in person!<br/><br/>
                       Warmly,<br/>
                       <strong>The Réveil Team</strong><br/>
-                      <span style="color: #718096;">(706) 426-7383 | 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</span>
+                      <span style="color: #718096;">(706) 760-3470 | 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</span>
                     </p>
                   </div>
                   <div class="footer">

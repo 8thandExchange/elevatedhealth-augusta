@@ -146,10 +146,10 @@ const Insurance = () => {
               <Button size="lg" onClick={scrollToContact} className="gap-2 bg-accent hover:bg-accent-light">
                 Schedule $149 Consultation
               </Button>
-              <a href="tel:7064267383">
+              <a href="tel:7067603470">
                 <Button variant="outline" size="lg" className="gap-2 border-2">
                   <Phone className="h-5 w-5" />
-                  Call (706) 426-7383
+                  Call (706) 760-3470
                 </Button>
               </a>
             </div>

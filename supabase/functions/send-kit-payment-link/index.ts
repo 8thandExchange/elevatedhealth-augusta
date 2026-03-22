@@ -106,7 +106,7 @@ serve(async (req) => {
           Your kit will be ready for pickup at your consultation. The ZRT Saliva Profile III includes simple at-home saliva collection with prepaid return shipping.
         </p>
         <p style="color: #666; font-size: 14px;">
-          Questions? Reply to this email or call us at (706) 426-7383.
+          Questions? Reply to this email or call us at (706) 760-3470.
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
         <p style="color: #999; font-size: 12px;">

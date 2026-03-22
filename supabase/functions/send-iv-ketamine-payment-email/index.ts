@@ -83,7 +83,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </div>
                 
                 <p style="color: #a0a0a0; font-size: 14px; line-height: 1.6; margin: 24px 0 0;">
-                  After payment, you'll be able to select your preferred appointment time. If you have any questions, please call us at <strong style="color: #ffffff;">(706) 426-7383</strong>.
+                  After payment, you'll be able to select your preferred appointment time. If you have any questions, please call us at <strong style="color: #ffffff;">(706) 760-3470</strong>.
                 </p>
               </div>
               

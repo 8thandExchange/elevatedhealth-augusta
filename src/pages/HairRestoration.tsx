@@ -269,7 +269,7 @@ const HairRestoration = () => {
                   variant="compact" 
                   title="Wondering which protocol is right for you?"
                   description="Hair loss treatment depends on your stage and pattern. We can help you understand options before your consultation."
-                  ctaText="Discuss Hair Restoration: (706) 426-7383"
+                  ctaText="Discuss Hair Restoration: (706) 760-3470"
                 />
               </div>
             </div>

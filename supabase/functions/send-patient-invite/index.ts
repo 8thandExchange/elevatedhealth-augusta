@@ -211,7 +211,7 @@ serve(async (req) => {
               </div>
             </div>
             <div class="footer">
-              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 426-7383</strong></p>
+              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 760-3470</strong></p>
               <p class="footer-address">
                 Réveil<br/>
                 7013 Evans Town Center Blvd, Suite 203<br/>

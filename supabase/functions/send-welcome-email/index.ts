@@ -149,7 +149,7 @@ const handler = async (req: Request): Promise<Response> => {
                 7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809
               </p>
               <p style="margin: 0;">
-                Questions? Call us at (706) 426-7383<br>
+                Questions? Call us at (706) 760-3470<br>
                 booking@reveil.health
               </p>
             </div>

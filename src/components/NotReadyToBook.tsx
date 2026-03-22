@@ -73,11 +73,11 @@ const NotReadyToBook = ({
             )}
             
             <a 
-              href="tel:+17064267383" 
+              href="tel:+17067603470" 
               className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-full font-medium hover:border-accent hover:text-accent transition-colors"
             >
               <Phone className="h-5 w-5" />
-              Or Call: (706) 426-7383
+              Or Call: (706) 760-3470
             </a>
           </div>
           
@@ -115,11 +115,11 @@ const NotReadyToBook = ({
           )}
           
           <a 
-            href="tel:+17064267383" 
+            href="tel:+17067603470" 
             className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-full font-medium hover:border-accent hover:text-accent transition-colors"
           >
             <Phone className="h-5 w-5" />
-            Or Call: (706) 426-7383
+            Or Call: (706) 760-3470
           </a>
         </div>
         
@@ -155,11 +155,11 @@ const NotReadyToBook = ({
             </button>
           )}
           <a 
-            href="tel:+17064267383" 
+            href="tel:+17067603470" 
             className="inline-flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"
           >
             <Phone className="h-4 w-4" />
-            <span>Or call: (706) 426-7383</span>
+            <span>Or call: (706) 760-3470</span>
           </a>
         </div>
         <p className="text-[10px] text-muted-foreground mt-3 italic text-center">
@@ -191,11 +191,11 @@ const NotReadyToBook = ({
         )}
         
         <a 
-          href="tel:+17064267383" 
+          href="tel:+17067603470" 
           className="inline-flex items-center gap-2 text-lg font-medium text-muted-foreground hover:text-accent transition-colors"
         >
           <Phone className="h-5 w-5" />
-          Or Call: (706) 426-7383
+          Or Call: (706) 760-3470
         </a>
       </div>
       

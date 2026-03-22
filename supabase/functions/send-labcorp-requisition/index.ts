@@ -110,7 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
       <body>
         <div class="header">
           <div class="logo">Réveil</div>
-          <div class="subtitle">7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809 | (706) 426-7383</div>
+          <div class="subtitle">7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809 | (706) 760-3470</div>
         </div>
 
         <div class="alert">

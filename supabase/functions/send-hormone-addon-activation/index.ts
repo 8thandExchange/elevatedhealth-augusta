@@ -108,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
               </table>
               
               <p style="color: #718096; font-size: 14px; line-height: 1.6; margin: 0; text-align: center;">
-                Questions? Call us at <a href="tel:+17064267383" style="color: #c9a84c;">(706) 426-7383</a>
+                Questions? Call us at <a href="tel:+17067603470" style="color: #c9a84c;">(706) 760-3470</a>
               </p>
             </td>
           </tr>

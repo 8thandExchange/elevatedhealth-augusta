@@ -54,7 +54,7 @@ const Ketamine = () => {
       <CacheRefreshBanner />
       <Helmet>
         <title>Neural Restoration Therapy Augusta | Ketamine Treatment - Réveil</title>
-        <meta name="description" content="Advanced ketamine therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team or call (706) 426-7383. BCBS, TRICARE accepted." />
+        <meta name="description" content="Advanced ketamine therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." />
         <meta name="keywords" content="ketamine therapy Augusta, neural restoration Augusta GA, SPRAVATO Augusta, treatment-resistant depression Augusta, ketamine infusion Georgia" />
         <meta property="og:title" content="Neural Restoration Therapy Augusta | Ketamine Treatment - Réveil" />
         <meta property="og:description" content="Advanced ketamine therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />

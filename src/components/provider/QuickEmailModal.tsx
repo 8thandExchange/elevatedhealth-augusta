@@ -202,11 +202,11 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
   };
 
   const getDefaultBody = (type: string): string => {
-    return `<p>Dear {{patient_name}},</p><p>Thank you for choosing Réveil.</p><p>Questions? Call (706) 426-7383</p>`;
+    return `<p>Dear {{patient_name}},</p><p>Thank you for choosing Réveil.</p><p>Questions? Call (706) 760-3470</p>`;
   };
 
   const getDefaultSms = (type: string): string => {
-    return `Hi {{first_name}}, thank you for choosing Réveil! Questions? Call (706) 426-7383`;
+    return `Hi {{first_name}}, thank you for choosing Réveil! Questions? Call (706) 760-3470`;
   };
 
   const mergePlaceholders = (text: string) => {
@@ -216,7 +216,7 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
       .replace(/\{\{first_name\}\}/g, selectedPatient.full_name.split(" ")[0])
       .replace(/\{\{email\}\}/g, selectedPatient.email || "")
       .replace(/\{\{phone\}\}/g, selectedPatient.phone || "")
-      .replace(/\{\{clinic_phone\}\}/g, "(706) 426-7383")
+      .replace(/\{\{clinic_phone\}\}/g, "(706) 760-3470")
       .replace(/\{\{payment_link\}\}/g, "[Payment Link]")
       .replace(/\{\{portal_link\}\}/g, "[Portal Link]");
   };

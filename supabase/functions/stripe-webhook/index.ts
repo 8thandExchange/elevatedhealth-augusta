@@ -73,7 +73,7 @@ const generateWelcomeEmail = (patientName: string) => `
               </table>
               
               <p style="color: #4a5568; font-size: 16px; margin: 20px 0; line-height: 1.8;">
-                If you have any questions, simply reply to this email or call us at <strong>(706) 426-7383</strong>.
+                If you have any questions, simply reply to this email or call us at <strong>(706) 760-3470</strong>.
               </p>
               
               <!-- CTA Button -->

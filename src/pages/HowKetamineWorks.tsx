@@ -20,8 +20,8 @@ const HowKetamineWorks = () => {
   };
 
   const handleCall = () => {
-    trackCTAClick('how_ketamine_works_call', 'tel:+17064267383');
-    window.location.href = 'tel:+17064267383';
+    trackCTAClick('how_ketamine_works_call', 'tel:+17067603470');
+    window.location.href = 'tel:+17067603470';
   };
 
 
@@ -128,7 +128,7 @@ const HowKetamineWorks = () => {
                   onClick={handleCall}
                   className="w-full sm:w-auto text-lg px-8 py-6"
                 >
-                  Call Us (706) 426-7383
+                  Call Us (706) 760-3470
                 </Button>
               </div>
             </div>

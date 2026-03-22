@@ -154,9 +154,9 @@ const Veterans = () => {
                 <Calendar className="h-5 w-5" />
                 Schedule Consultation
               </Button>
-              <a href="tel:7064267383">
+              <a href="tel:7067603470">
                 <Button variant="outline" size="xl" className="gap-2 border-2">
-                  Call (706) 426-7383
+                  Call (706) 760-3470
                 </Button>
               </a>
             </div>

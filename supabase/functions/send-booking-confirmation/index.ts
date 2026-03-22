@@ -146,7 +146,7 @@ async function sendEmail(to: string, name: string): Promise<{ success: boolean; 
                         </table>
 
                         <p style="margin: 20px 0 0; font-size: 14px; color: #888888; line-height: 1.6;">
-                          Need to reschedule? Call us at <a href="tel:+17064267383" style="color: #c9a961; text-decoration: none;">(706) 426-7383</a>
+                          Need to reschedule? Call us at <a href="tel:+17067603470" style="color: #c9a961; text-decoration: none;">(706) 760-3470</a>
                         </p>
                       </td>
                     </tr>
@@ -159,7 +159,7 @@ async function sendEmail(to: string, name: string): Promise<{ success: boolean; 
                         </p>
                         <p style="margin: 0; font-size: 12px; color: #999999;">
                           7013 Evans Town Center Blvd, Suite 203 • Evans, GA 30809<br>
-                          <a href="tel:+17064267383" style="color: #c9a961; text-decoration: none;">(706) 426-7383</a>
+                          <a href="tel:+17067603470" style="color: #c9a961; text-decoration: none;">(706) 760-3470</a>
                         </p>
                       </td>
                     </tr>
@@ -223,7 +223,7 @@ serve(async (req) => {
     if (phone) {
       const smsMessage = 
         `Hi ${name || 'there'}! Your Clinical Strategy Session with Réveil is confirmed. ` +
-        `Please arrive 10 min early. Need to reschedule? Call (706) 426-7383. See you soon!`;
+        `Please arrive 10 min early. Need to reschedule? Call (706) 760-3470. See you soon!`;
       
       const smsResult = await sendSMS(phone, smsMessage);
       results.sms = { success: smsResult.success, error: smsResult.error || null };

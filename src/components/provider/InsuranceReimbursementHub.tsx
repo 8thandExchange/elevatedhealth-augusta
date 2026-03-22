@@ -237,7 +237,7 @@ const InsuranceReimbursementHub = ({
 
       <div class="footer">
         <p><strong>Réveil</strong><br/>
-        1258 Broad St, Augusta, GA 30901 · (706) 426-7383<br/>
+        1258 Broad St, Augusta, GA 30901 · (706) 760-3470<br/>
         NPI: 1578971552 · Tax ID: 99-0830253<br/>
         www.reveil.health</p>
       </div>

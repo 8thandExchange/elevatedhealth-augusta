@@ -77,11 +77,11 @@ const BookingWidget = () => {
                 </Button>
                 
                 <a 
-                  href="tel:+17064267383" 
+                  href="tel:+17067603470" 
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-accent hover:text-accent transition-colors"
                 >
                   <Phone className="h-4 w-4" />
-                  <span>Or Call: (706) 426-7383</span>
+                  <span>Or Call: (706) 760-3470</span>
                 </a>
               </div>
               

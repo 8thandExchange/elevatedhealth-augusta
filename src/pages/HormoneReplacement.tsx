@@ -82,7 +82,7 @@ const HormoneReplacement = () => {
                 variant="compact" 
                 title="Curious about hormone replacement?"
                 description="Learn how we test, prescribe, and monitor your treatment. No pressure—just honest answers about the process."
-                ctaText="Ask Our Team: (706) 426-7383"
+                ctaText="Ask Our Team: (706) 760-3470"
               />
             </div>
           </div>

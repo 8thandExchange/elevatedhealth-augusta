@@ -69,7 +69,7 @@ serve(async (req) => {
 
     const clinicName = "Réveil";
     const clinicAddress = "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809";
-    const clinicPhone = "(706) 426-7383";
+    const clinicPhone = "(706) 760-3470";
     const signatureDate = new Date(patient.consent_signature_date || patient.consent_completed_at).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

@@ -81,7 +81,7 @@ const handler = async (req: Request): Promise<Response> => {
       message = `Hi ${firstName}! Please complete your $149 payment to confirm your ${serviceLabel} consultation${scheduled_date ? ` on ${dateDisplay}` : ''}. Pay here: ${payment_url} - Réveil`;
     } else {
       // Standard invite message - needs to book
-      message = `Hi ${firstName}! Thanks for your interest in ${serviceLabel} at Réveil. Book your $149 Strategy Session here: ${payment_url} - This $99 becomes a credit toward treatment. Questions? Call (706) 426-7383`;
+      message = `Hi ${firstName}! Thanks for your interest in ${serviceLabel} at Réveil. Book your $149 Strategy Session here: ${payment_url} - This $99 becomes a credit toward treatment. Questions? Call (706) 760-3470`;
     }
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;

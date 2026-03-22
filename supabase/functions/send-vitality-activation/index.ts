@@ -108,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
                 Evans, GA 30809
               </p>
               <p style="margin: 0;">
-                Questions? Call us at <a href="tel:7064267383" style="color: #D4A017; text-decoration: none;">(706) 426-7383</a>
+                Questions? Call us at <a href="tel:7067603470" style="color: #D4A017; text-decoration: none;">(706) 760-3470</a>
               </p>
             </div>
           </div>

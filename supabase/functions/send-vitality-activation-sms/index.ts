@@ -75,7 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const firstName = first_name || patient_name?.split(" ")[0] || "there";
     
-    const message = `Hi ${firstName}! Your Vitality Membership ($249/mo) from Réveil is ready to activate. Start here: ${session.url} Questions? (706) 426-7383`;
+    const message = `Hi ${firstName}! Your Vitality Membership ($249/mo) from Réveil is ready to activate. Start here: ${session.url} Questions? (706) 760-3470`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     
