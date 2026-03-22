@@ -80,6 +80,7 @@ import AppointmentPanel from "@/components/provider/AppointmentPanel";
 import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
 import HealthReportPreview from "@/components/provider/HealthReportPreview";
 import InsuranceReimbursementHub from "@/components/provider/InsuranceReimbursementHub";
+import LabResultsQueue from "@/components/provider/LabResultsQueue";
 
 interface Patient {
   id: string;
@@ -1099,6 +1100,13 @@ const ProviderDashboard = () => {
                   )}
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="labsqueue" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
+                  <TestTube className="w-4 h-4 flex-shrink-0" />
+                  <span>Labs Queue</span>
+                </TabsTrigger>
+                <TabsTrigger 
                   value="activations" 
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
                 >
@@ -1641,6 +1649,19 @@ const ProviderDashboard = () => {
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          {/* Labs Queue Tab */}
+          <TabsContent value="labsqueue">
+            <LabResultsQueue
+              onSelectPatient={(patientId) => {
+                const found = pendingPatients.find(p => p.patient.id === patientId);
+                if (found) {
+                  selectPatient(found);
+                  setIsPanelOpen(true);
+                }
+              }}
+            />
           </TabsContent>
 
           {/* Patient Monitoring Tab */}

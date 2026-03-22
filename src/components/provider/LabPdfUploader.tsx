@@ -7,12 +7,27 @@ import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from "lucide-rea
 interface ParsedLabData {
   collectionDate: string | null;
   patientName: string | null;
+  labSource?: 'zrt' | 'labcorp' | 'unknown';
   estradiol: number | null;
   progesterone: number | null;
   testosterone: number | null;
   dheas: number | null;
   cortisol: number | null;
   pgE2Ratio: number | null;
+  // LabCorp fields
+  hematocrit?: number | null;
+  psa?: number | null;
+  alt?: number | null;
+  ast?: number | null;
+  a1c?: number | null;
+  tsh?: number | null;
+  freeT3?: number | null;
+  freeT4?: number | null;
+  vitaminD?: number | null;
+  fastingInsulin?: number | null;
+  triglycerides?: number | null;
+  hdl?: number | null;
+  ldl?: number | null;
   confidence: {
     overall: number;
     fields: Record<string, number>;
@@ -32,8 +47,9 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
   const [parseStatus, setParseStatus] = useState<"idle" | "success" | "error">("idle");
 
   const handleFile = useCallback(async (file: File) => {
-    if (file.type !== 'application/pdf') {
-      toast.error("Please upload a PDF file");
+    const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please upload a PDF or image file");
       return;
     }
 
@@ -100,7 +116,8 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
       setParseStatus("success");
       onParsed(parsedData);
       
-      toast.success("Lab values extracted!", {
+      const sourceLabel = parsedData.labSource === 'labcorp' ? 'LabCorp' : parsedData.labSource === 'zrt' ? 'ZRT' : 'Lab';
+      toast.success(`${sourceLabel} values extracted!`, {
         description: `Confidence: ${Math.round((parsedData.confidence?.overall || 0.9) * 100)}%`
       });
 
@@ -204,15 +221,15 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
           <label className="flex flex-col items-center gap-2 py-2 cursor-pointer">
             <Upload className="w-6 h-6 text-muted-foreground" />
             <div>
-              <span className="text-sm font-medium text-primary">Upload ZRT PDF</span>
-              <span className="text-sm text-muted-foreground"> or drag & drop</span>
+              <span className="text-sm font-medium text-primary">Upload Lab PDF</span>
+              <span className="text-sm text-muted-foreground"> (ZRT or LabCorp)</span>
             </div>
             <p className="text-xs text-muted-foreground">
               AI will extract lab values automatically
             </p>
             <input
               type="file"
-              accept="application/pdf"
+              accept="application/pdf,image/png,image/jpeg"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
