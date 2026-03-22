@@ -1,153 +1,116 @@
 
-# Pricing Page Fixes & Consistency Plan
 
-## Issues Identified
+## Analysis: Booking, Communication, and Stripe Consolidation
 
-### 1. Broken "Elevated for Her" and "Elevated for Him" Links (404 Errors)
-**Problem**: On the pricing page, the navigation uses `/hormones/women` and `/hormones/men`, but the actual routes defined in `App.tsx` are `/hormones-women` and `/hormones-men` (with hyphens, not slashes).
+### Current State (Problems Found)
 
-**Evidence**: Console logs show:
-- `404 Error: User attempted to access non-existent route: /hormones/women`
-- `404 Error: User attempted to access non-existent route: /hormones/men`
+**1. Booking Flow Issues**
+- The Google Calendar link in `siteConfig.ts` still says "Elevated Health Augusta" when patients see it
+- The `ConsultationModal` still lists "Peptide Protocols" with a description mentioning "SPRAVATO® for depression, PTSD, and anxiety" — completely wrong for the rebrand
+- The `Consult.tsx` page has a service card labeled "Ketamine Therapy" with the old description
+- The consultation checkout edge function (`create-consultation-checkout`) still has service configs for "ketamine", "hair", and "sexual" with old descriptions referencing Elevated Health
 
-**Files Affected**:
-- `src/pages/Pricing.tsx` (lines 927 and 942)
+**2. Stripe Pricing Mismatches**
+- `CONSULTATION_PRICES.discovery` still shows `$99` / `$9900` — should be `$149` / `$14900`
+- `CONSULTATION_CREDIT` still references `$99` — should be `$149`
+- The summary table at the bottom of `stripeConfig.ts` is completely stale (references $99 consultations, $349 kits, "Elevated Architecture Protocol", etc.)
+- The `create-consultation-checkout` edge function uses `price_data` with `unit_amount: 14900` (correct) but the config file says 9900
+- `KETAMINE_PRICES` section is still fully defined — should be deprecated/hidden
+- Old hormone membership tiers (Access $99/Vitality $149/Concierge $249) don't match the new founding member tiers (Wellness Pass $149→$199, Longevity $299→$399, Executive Concierge $549→$699)
 
----
+**3. Membership Model Conflict**
+- Two completely different membership models coexist:
+  - **Old model** (in `HORMONE_MEMBERSHIP_TIERS`): Access/Vitality/Concierge at $99/$149/$249 — hormone-specific
+  - **New model** (on Membership page): Wellness Pass/Longevity Protocol/Executive Concierge at $149/$299/$549 founding → $199/$399/$699 standard — comprehensive longevity bundles
+- The Membership page has no Stripe checkout integration — the "Claim your founding rate" button calls `openBooking()` which opens the old consultation modal
+- No Stripe products exist for the new membership tiers
 
-### 2. Metabolic Reset Membership Pricing Inconsistency
-**Problem**: The pricing page shows "$399/month" generically for the Metabolic Reset Membership, but Semaglutide and Tirzepatide have different prices:
-- Semaglutide: $399/mo
-- Tirzepatide: $499/mo
+### Recommendation
 
-**Current Display**: Line 644 shows a single "$399" price without differentiating medications.
-
-**Files Affected**:
-- `src/pages/Pricing.tsx` (Weight Loss section around lines 630-670)
-
----
-
-### 3. Hormone Mapping Panel Inaccuracies
-**Problem**: The description on line 783 says:
-> "A comprehensive at-home Saliva & Blood Spot kit. We test Estrogen, Testosterone, Progesterone, Cortisol, and **Thyroid**..."
-
-**Issues**:
-- Incorrectly mentions "Blood Spot kit" — it's actually a **saliva-only** ZRT Saliva Profile III kit
-- Includes **Thyroid** which is NOT tested in this panel
-
-**Correct Description**: "ZRT Saliva Profile III — Comprehensive saliva test covering Estradiol, Testosterone, Progesterone, DHEA-S & Cortisol"
-
-**Files Affected**:
-- `src/pages/Pricing.tsx` (line 783)
-
----
-
-### 4. Concierge Membership Option Should Be Removed
-**Problem**: The Concierge Membership section (lines 844-921) should be removed from the pricing page.
-
-**Note**: The `MembershipTierSelector` component also includes Concierge as a tier — this may need to remain for internal use but should be hidden from public pricing.
-
-**Files Affected**:
-- `src/pages/Pricing.tsx` (lines 844-922 — "Concierge Upgrade" section)
-
----
-
-### 5. Lab Panel À La Carte Price Wrong ($149 → $349)
-**Problem**: The Lab Panel shows $149 in the À La Carte section (line 1645), but it should be **$349**.
-
-**Files Affected**:
-- `src/pages/Pricing.tsx` (lines 1631-1651)
-- `src/lib/stripeConfig.ts` (line 262-269 — `ALACARTE_PRICES.labPanel`)
-- Potentially other files referencing this price
-
----
-
-### 6. Stripe Test Payment Rejection
-**Problem**: Test payments are being rejected.
-
-**Possible Causes**:
-1. Using wrong test card number (should use `4242 4242 4242 4242`)
-2. Missing or expired test card details
-3. Stripe account in test mode but using live API keys (or vice versa)
-
-**Verification Needed**: Check STRIPE_SECRET_KEY is a test key (starts with `sk_test_`), not a live key.
-
----
-
-## Implementation Plan
-
-### Phase 1: Fix Broken Links
-| File | Change |
-|------|--------|
-| `src/pages/Pricing.tsx` line 927 | Change `navigate("/hormones/women")` → `navigate("/hormones-women")` |
-| `src/pages/Pricing.tsx` line 942 | Change `navigate("/hormones/men")` → `navigate("/hormones-men")` |
-
-### Phase 2: Fix Metabolic Reset Medication Pricing Display
-Update the Weight Loss section to clearly show both medication options:
+Rather than patching the Google Calendar (which still shows old branding), I recommend a **Stripe-gated booking flow** that you already partially have:
 
 ```text
-Semaglutide: $399/mo
-Tirzepatide: $499/mo
+Patient Journey:
+┌─────────────────────────────────────────┐
+│  1. Patient clicks "Book Now"           │
+│  2. Consultation Modal opens            │
+│     → 4 service cards (Hormones,        │
+│       Weight Loss, IV Therapy, Peptides)│
+│  3. Stripe checkout → $149 payment      │
+│  4. Payment success page embeds         │
+│     Google Calendar for scheduling      │
+│  5. Patient picks a time slot           │
+└─────────────────────────────────────────┘
 ```
 
-Show these as two distinct price points in the Treatment step, matching `stripeConfig.ts` which already has correct prices:
-- `WEIGHT_LOSS_PRICES.semaglutide.amount = 39900`
-- `WEIGHT_LOSS_PRICES.tirzepatide.amount = 49900`
+This is already mostly built — we just need to fix the content and pricing.
 
-### Phase 3: Correct Hormone Mapping Description
-Update the Hormone Mapping Panel description:
+### Implementation Plan
 
-**Before**:
-> "A comprehensive at-home Saliva & Blood Spot kit. We test Estrogen, Testosterone, Progesterone, Cortisol, and Thyroid..."
+**Step 1: Fix `stripeConfig.ts` — Single Source of Truth**
+- Update `CONSULTATION_PRICES.discovery` to $149
+- Update `CONSULTATION_CREDIT` to $149
+- Create new `FOUNDING_MEMBERSHIP_PRICES` section with 3 tiers matching the Membership page
+- Comment out or deprecate `KETAMINE_PRICES`
+- Update the summary table
+- Clean up stale references to "Elevated"
 
-**After**:
-> "ZRT Saliva Profile III — Comprehensive at-home saliva test covering Estradiol, Testosterone, Progesterone, DHEA-S & Cortisol to engineer your custom protocol."
+**Step 2: Fix `ConsultationModal.tsx` — Service Selection**
+- Replace the 3 current options with 4 aligned to active services:
+  - Hormone Optimization (replaces "Hormone Replacement")
+  - Medical Weight Loss (keep, fix description)
+  - IV Therapy (new)
+  - Peptide Protocols (fix description — remove SPRAVATO reference)
+- All point to `create-consultation-checkout` with correct service types
 
-### Phase 4: Remove Concierge Membership Section
-Remove the entire "Concierge Upgrade" section (approximately lines 844-922) from the Hormone Optimization area on the pricing page.
+**Step 3: Fix `create-consultation-checkout` Edge Function**
+- Remove ketamine/hair/sexual service configs
+- Add IV therapy service config
+- Update all descriptions to Réveil branding
+- Ensure `unit_amount: 14900` ($149) is used
+- Change credit code prefix from `EH-` to `RV-`
 
-### Phase 5: Update Lab Panel Pricing
-| File | Location | Change |
-|------|----------|--------|
-| `src/lib/stripeConfig.ts` | `ALACARTE_PRICES.labPanel` | Update `amount: 14900` → `amount: 34900`, `displayPrice: "$149"` → `displayPrice: "$349"` |
-| `src/pages/Pricing.tsx` | À La Carte section | Update displayed price from $149 to $349 |
-| `src/pages/PricingComparison.tsx` | Calculator logic | Verify it references updated `stripeConfig` values (it does use imports) |
+**Step 4: Create Stripe Products for New Membership Tiers**
+- Create 3 new Stripe products + prices:
+  - Wellness Pass: $149/mo (founding) 
+  - Longevity Protocol: $299/mo (founding)
+  - Executive Concierge: $549/mo (founding)
 
-### Phase 6: Investigate Stripe Payment Issues
-1. Check if `STRIPE_SECRET_KEY` secret is configured correctly (test mode key)
-2. Verify the test card being used is correct:
-   - Card: `4242 4242 4242 4242`
-   - Expiry: Any future date (e.g., `12/34`)
-   - CVC: Any 3 digits (e.g., `123`)
-3. Review network responses for specific error messages
+**Step 5: Create `create-founding-membership-checkout` Edge Function**
+- New edge function that accepts tier selection and creates Stripe subscription checkout
+- No auth required (guest checkout supported for new patients)
 
----
+**Step 6: Wire Membership Page to Stripe**
+- Replace `openBooking()` on "Claim your founding rate" buttons with actual Stripe checkout calls per tier
 
-## Technical Details
+**Step 7: Fix Remaining Booking Links**
+- `Consult.tsx` — remove ketamine card, add IV and Peptide cards
+- `BookingWidget.tsx` — verify $149 pricing text
+- `FoundingMemberBanner.tsx` — wire "Claim your founding rate" to Membership page or checkout
+- Update `PaymentSuccess.tsx`, `ConsultationConfirmed.tsx` to use Réveil branding in post-payment flow
 
-### Files to Modify
+**Step 8: Clean Up Edge Functions**
+- Update product descriptions in `create-semaglutide-checkout` and `create-tirzepatide-checkout` to remove "Elevated Health" refs (already done in prior pass, verify)
+- Ensure all success/cancel URLs point to correct Réveil routes
 
-| File | Changes |
-|------|---------|
-| `src/pages/Pricing.tsx` | Fix navigation routes, update Metabolic Reset pricing display, correct Hormone Mapping description, remove Concierge section, update Lab Panel price |
-| `src/lib/stripeConfig.ts` | Update `ALACARTE_PRICES.labPanel` to $349 |
+### Technical Details
 
-### Stripe Price ID Note
-The Lab Panel currently uses price ID `price_1Sga6CEOtKRY99puOXGAaRwh` with amount 14900 ($149). This needs to be either:
-- Updated in Stripe to $349 (recommended), OR
-- A new price created at $349 and the config updated with the new price ID
+**New Stripe products needed:**
+| Tier | Founding Price | Standard Price | Mode |
+|------|---------------|----------------|------|
+| Wellness Pass | $149/mo | $199/mo | subscription |
+| Longevity Protocol | $299/mo | $399/mo | subscription |
+| Executive Concierge | $549/mo | $699/mo | subscription |
 
----
+We'll create founding prices first (launch pricing). Standard prices can be created later when founding slots fill.
 
-## Verification Checklist
+**Files to modify:**
+- `src/lib/stripeConfig.ts` — pricing constants
+- `src/components/ConsultationModal.tsx` — service cards
+- `src/pages/Consult.tsx` — standalone consult page
+- `src/pages/Membership.tsx` — wire to Stripe
+- `src/components/FoundingMemberBanner.tsx` — CTA link
+- `supabase/functions/create-consultation-checkout/index.ts` — service configs
+- New: `supabase/functions/create-founding-membership-checkout/index.ts`
+- `src/pages/PaymentSuccess.tsx` — post-payment branding
 
-After implementation:
-- [x] "Elevated for Her" card navigates to `/hormones-women` 
-- [x] "Elevated for Him" card navigates to `/hormones-men`
-- [x] Weight Loss section shows Semaglutide $399/mo and Tirzepatide $499/mo separately
-- [x] Hormone Mapping says "ZRT Saliva Profile III" with no mention of blood spot or thyroid
-- [x] Concierge Membership section is removed from pricing page
-- [x] Lab Panel shows $349 in À La Carte section
-- [x] `stripeConfig.ts` shows Lab Panel at $349
-- [x] Edge function `create-alacarte-checkout` updated with $349 lab panel price
-- [ ] Stripe test payment works with test card `4242 4242 4242 4242`
