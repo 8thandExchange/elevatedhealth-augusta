@@ -174,12 +174,28 @@ const NewLabResultModal = ({
   // Handle parsed PDF data - auto-populate editable fields
   const handleParsedData = (data: ParsedLabData) => {
     if (data.collectionDate) setCollectionDate(data.collectionDate);
-    if (data.estradiol !== null) setEstradiol(data.estradiol.toString());
-    if (data.progesterone !== null) setProgesterone(data.progesterone.toString());
-    if (data.testosterone !== null) setTestosterone(data.testosterone.toString());
-    if (data.dheas !== null) setDheas(data.dheas.toString());
-    if (data.cortisol !== null) setCortisol(data.cortisol.toString());
-    if (data.pgE2Ratio !== null) setPgE2Ratio(data.pgE2Ratio.toString());
+    
+    // Auto-detect lab source from parsed data
+    if (data.labSource === 'labcorp') {
+      setLabSource('labcorp');
+      if (data.hematocrit !== null && data.hematocrit !== undefined) setHematocrit(data.hematocrit.toString());
+      if (data.psa !== null && data.psa !== undefined) setPsa(data.psa.toString());
+      if (data.alt !== null && data.alt !== undefined) setAlt(data.alt.toString());
+      if (data.ast !== null && data.ast !== undefined) setAst(data.ast.toString());
+      if (data.a1c !== null && data.a1c !== undefined) setLabcorpA1c(data.a1c.toString());
+      // Also populate advanced fields
+      if (data.vitaminD !== null && data.vitaminD !== undefined) setVitaminD(data.vitaminD.toString());
+      if (data.fastingInsulin !== null && data.fastingInsulin !== undefined) setFastingInsulin(data.fastingInsulin.toString());
+      if (data.a1c !== null && data.a1c !== undefined) setHba1c(data.a1c.toString());
+    } else {
+      setLabSource('zrt');
+      if (data.estradiol !== null) setEstradiol(data.estradiol.toString());
+      if (data.progesterone !== null) setProgesterone(data.progesterone.toString());
+      if (data.testosterone !== null) setTestosterone(data.testosterone.toString());
+      if (data.dheas !== null) setDheas(data.dheas.toString());
+      if (data.cortisol !== null) setCortisol(data.cortisol.toString());
+      if (data.pgE2Ratio !== null) setPgE2Ratio(data.pgE2Ratio.toString());
+    }
     setParsedFromPdf(true);
   };
 
