@@ -127,9 +127,9 @@ serve(async (req) => {
       const serviceType = booking.service_type || "consultation";
 
       const message = 
-        `Hi ${firstName}! 📅 Reminder: Your ${serviceType} at Elevated Health Augusta is tomorrow at ${timeStr}. ` +
+        `Hi ${firstName}! 📅 Reminder: Your ${serviceType} at Réveil is tomorrow at ${timeStr}. ` +
         `Please arrive 10 mins early. Address: 7013 Evans Town Center Blvd, Suite 203, Evans GA. ` +
-        `Need to reschedule? Call (706) 760-3470. See you soon!`;
+        `Need to reschedule? Call (706) 426-7383. See you soon!`;
 
       const result = await sendSMS(booking.customer_phone, message);
       
@@ -165,8 +165,8 @@ serve(async (req) => {
         const programType = patient.primary_program === "ketamine" ? "mental wellness" : "hormone optimization";
 
         const message = 
-          `Hi ${firstName}! 📅 Reminder: You have an upcoming ${programType} consultation at Elevated Health Augusta. ` +
-          `Please arrive 10 mins early. Questions? (706) 760-3470`;
+          `Hi ${firstName}! 📅 Reminder: You have an upcoming ${programType} consultation at Réveil. ` +
+          `Please arrive 10 mins early. Questions? (706) 426-7383`;
 
         const result = await sendSMS(patient.phone, message);
         

@@ -63,19 +63,19 @@ const PricingComparison = () => {
     };
   };
 
-  // Membership: $99 consultation credit applied toward kit, then monthly membership
+  // Membership: $149 consultation credit applied toward kit, then monthly membership
   // Membership INCLUDES: all medications, quarterly labs, unlimited messaging, follow-ups
   const calculateMembershipCost = () => {
     const consultation = CONSULTATION_PRICES.discovery.amount / 100; // $99
     const labKit = DIAGNOSTIC_KIT_PRICES.hormone.amount / 100; // $349
-    const consultationCredit = consultation; // $99 credit applied to kit
+    const consultationCredit = consultation; // $149 credit applied to kit
     const netKitCost = labKit - consultationCredit; // $250 net
     
     const monthlyRate = MEMBERSHIP_PRICES.vitality.amount / 100;
     const membershipTotal = monthlyRate * monthsPlanned;
 
     // Initial cost: consultation + kit, but credit makes net initial $250 + $99 = $349 total
-    // However, the $99 is credited, so effectively you pay $99 then $250 = $349 total initial
+    // However, the $149 is credited, so effectively you pay $99 then $250 = $349 total initial
     const initial = consultation + netKitCost; // $99 + $250 = $349
 
     return {
@@ -101,12 +101,12 @@ const PricingComparison = () => {
   return (
     <>
       <Helmet>
-        <title>Membership vs À La Carte Pricing | Elevated Health Augusta</title>
+        <title>Membership vs À La Carte Pricing | Réveil</title>
         <meta
           name="description"
-          content="Compare membership vs pay-per-visit pricing for hormone therapy. See how much you can save with a Vitality Membership at Elevated Health Augusta."
+          content="Compare membership vs pay-per-visit pricing for hormone therapy. See how much you can save with a Vitality Membership at Réveil."
         />
-        <link rel="canonical" href="https://elevatedhealthaugusta.com/pricing-comparison" />
+        <link rel="canonical" href="https://reveil.health/pricing-comparison" />
       </Helmet>
 
       <Navbar />
@@ -642,7 +642,7 @@ const PricingComparison = () => {
                     <h3 className="font-medium mb-2">Can I switch from à la carte to membership?</h3>
                     <p className="text-sm text-muted-foreground">
                       Absolutely! Many patients start with à la carte to try our services, then upgrade 
-                      to membership for better value. Your $99 consultation credit still applies to your 
+                      to membership for better value. Your $149 consultation credit still applies to your 
                       initial lab kit, regardless of which path you choose.
                     </p>
                   </CardContent>

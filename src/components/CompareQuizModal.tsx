@@ -222,7 +222,7 @@ export const CompareQuizModal = ({ isOpen, onClose }: CompareQuizModalProps) => 
               size="lg"
             >
               <Calendar className="h-5 w-5" />
-              Book $99 Medical Consultation
+              Book $149 Medical Consultation
             </Button>
             
             <Button
@@ -240,9 +240,9 @@ export const CompareQuizModal = ({ isOpen, onClose }: CompareQuizModalProps) => 
             </Button>
             
             <p className="text-center text-sm text-muted-foreground">
-              Prefer to talk? <a href="tel:+17067603470" className="text-accent hover:underline font-semibold inline-flex items-center gap-1">
+              Prefer to talk? <a href="tel:+17064267383" className="text-accent hover:underline font-semibold inline-flex items-center gap-1">
                 <Phone className="h-4 w-4" />
-                Call (706) 760-3470
+                Call (706) 426-7383
               </a>
             </p>
 

@@ -59,7 +59,7 @@ const AlaCartePaymentSuccess = () => {
   return (
     <>
       <Helmet>
-        <title>Payment Complete | Elevated Health Augusta</title>
+        <title>Payment Complete | Réveil</title>
         <meta name="description" content="Your payment was successful. Thank you for your order!" />
         <meta name="robots" content="noindex" />
       </Helmet>

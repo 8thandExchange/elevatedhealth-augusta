@@ -105,7 +105,7 @@ const LabCorpRequisition = ({
       </head>
       <body>
         <div class="header">
-          <div class="logo">Elevated Health Augusta</div>
+          <div class="logo">Réveil</div>
           <div class="subtitle">3654 Wheeler Road, Suite 103 | Augusta, GA 30909 | (706) 250-9855</div>
         </div>
 

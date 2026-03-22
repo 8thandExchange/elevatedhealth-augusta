@@ -25,7 +25,7 @@ const IVKetamine = () => {
     "@type": "MedicalProcedure",
     "name": "IV Ketamine Therapy",
     "procedureType": "Therapeutic",
-    "description": "IV ketamine infusion therapy for treatment-resistant depression, anxiety, and PTSD. Administered under medical supervision at Elevated Health Augusta.",
+    "description": "IV ketamine infusion therapy for treatment-resistant depression, anxiety, and PTSD. Administered under medical supervision at Réveil.",
     "howPerformed": "Intravenous infusion administered over 40-60 minutes in a monitored clinical setting",
     "preparation": "Medical screening, medication review, and baseline vitals assessment",
     "followup": "Integration sessions and ongoing provider coordination",
@@ -47,29 +47,29 @@ const IVKetamine = () => {
     <div className="min-h-screen">
       <CacheRefreshBanner />
       <Helmet>
-        <title>IV Ketamine Therapy Augusta GA | Treatment-Resistant Depression | Elevated Health</title>
+        <title>IV Ketamine Therapy Augusta GA | Treatment-Resistant Depression | Réveil</title>
         <meta 
           name="description" 
-          content="IV ketamine infusion therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." 
+          content="IV ketamine infusion therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team or call (706) 426-7383. BCBS, TRICARE accepted." 
         />
         <meta 
           name="keywords" 
           content="IV ketamine Augusta, ketamine infusion therapy Georgia, treatment-resistant depression Augusta, ketamine for anxiety, ketamine for PTSD" 
         />
-        <link rel="canonical" href="https://elevatedhealthaugusta.com/iv-ketamine" />
+        <link rel="canonical" href="https://reveil.health/iv-ketamine" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="IV Ketamine Therapy | $99 Consultation Credited | Elevated Health Augusta" />
-        <meta property="og:description" content="IV ketamine infusion therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:title" content="IV Ketamine Therapy | $149 Consultation Credited | Réveil" />
+        <meta property="og:description" content="IV ketamine infusion therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://elevatedhealthaugusta.com/iv-ketamine" />
-        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta property="og:url" content="https://reveil.health/iv-ketamine" />
+        <meta property="og:image" content="https://reveil.health/og-image.jpg" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="IV Ketamine Therapy Augusta | $99 Consultation" />
-        <meta name="twitter:description" content="$99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
-        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:title" content="IV Ketamine Therapy Augusta | $149 Consultation" />
+        <meta name="twitter:description" content="$149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta name="twitter:image" content="https://reveil.health/og-image.jpg" />
         
         {/* Schema */}
         <script type="application/ld+json">
@@ -161,7 +161,7 @@ const IVKetamine = () => {
                 variant="compact" 
                 title="Have questions about IV ketamine?"
                 description="This is a significant treatment decision. Ask about eligibility, what a session feels like, or how we ensure your safety."
-                ctaText="Speak With Our Team: (706) 760-3470"
+                ctaText="Speak With Our Team: (706) 426-7383"
               />
             </div>
           </div>

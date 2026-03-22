@@ -490,8 +490,8 @@ const PatientResources = () => {
   return (
     <>
       <Helmet>
-        <title>Patient Resources | Elevated Health Augusta</title>
-        <meta name="description" content="Educational resources for Elevated Health patients including injection tutorials, nutrition guides, and stress management techniques." />
+        <title>Patient Resources | Réveil</title>
+        <meta name="description" content="Educational resources for Réveil patients including injection tutorials, nutrition guides, and stress management techniques." />
       </Helmet>
 
       <div className="min-h-screen bg-background">

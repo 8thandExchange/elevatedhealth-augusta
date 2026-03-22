@@ -73,7 +73,7 @@ const PaymentSuccess = () => {
   return (
     <>
       <Helmet>
-        <title>Payment Successful | Elevated Health Augusta</title>
+        <title>Payment Successful | Réveil</title>
         <meta name="robots" content="noindex" />
       </Helmet>
 

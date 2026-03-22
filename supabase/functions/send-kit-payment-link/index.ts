@@ -74,8 +74,8 @@ serve(async (req) => {
       shipping_address_collection: {
         allowed_countries: ["US"],
       },
-      success_url: `https://elevatedhealthaugusta.com/schedule-consult?kit_payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://elevatedhealthaugusta.com/patient/dashboard?kit_payment=cancelled`,
+      success_url: `https://reveil.health/schedule-consult?kit_payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://reveil.health/patient/dashboard?kit_payment=cancelled`,
       metadata: {
         patient_id: patientId || "",
         patient_email: patientEmail,
@@ -93,7 +93,7 @@ serve(async (req) => {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #1a3a4a;">Your Diagnostic Kit is Ready</h2>
         <p>Hi ${patientName || 'there'},</p>
-        <p>Your provider at Elevated Health Augusta has selected a diagnostic kit for you:</p>
+        <p>Your provider at Réveil has selected a diagnostic kit for you:</p>
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin: 0 0 10px 0; color: #1a3a4a;">${kit.name}</h3>
           <p style="margin: 0 0 15px 0; color: #666;">${kit.description}</p>
@@ -106,17 +106,17 @@ serve(async (req) => {
           Your kit will be ready for pickup at your consultation. The ZRT Saliva Profile III includes simple at-home saliva collection with prepaid return shipping.
         </p>
         <p style="color: #666; font-size: 14px;">
-          Questions? Reply to this email or call us at (706) 760-3470.
+          Questions? Reply to this email or call us at (706) 426-7383.
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
         <p style="color: #999; font-size: 12px;">
-          Elevated Health Augusta | 7013 Evans Town Center Blvd, Evans, GA 30809
+          Réveil | 7013 Evans Town Center Blvd, Evans, GA 30809
         </p>
       </div>
     `;
 
     await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patientEmail],
       subject: `Your ${kit.name} is Ready - Complete Payment`,
       html: emailHtml,

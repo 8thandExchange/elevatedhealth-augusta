@@ -141,7 +141,7 @@ const questions = [
     id: 12,
     type: "contact",
     question: "Contact Information",
-    subtext: "We'll reach out to schedule your $99 Medical Consultation"
+    subtext: "We'll reach out to schedule your $149 Medical Consultation"
   }
 ];
 
@@ -259,7 +259,7 @@ export const HRTQuizModal = ({ isOpen, onClose }: HRTQuizModalProps) => {
         past_hrt: quizData.past_hrt
       });
 
-      toast.success("Thank you! We'll contact you soon to schedule your $99 consultation.");
+      toast.success("Thank you! We'll contact you soon to schedule your $149 consultation.");
       
       // Reset and close
       setTimeout(() => {

@@ -33,7 +33,7 @@ export const NextActionCard = ({
       return {
         icon: <Mail className="w-6 h-6" />,
         title: "Complete Your Payment",
-        description: "Check your email for a payment link to begin your journey with Elevated Health.",
+        description: "Check your email for a payment link to begin your journey with Réveil.",
         buttonText: null,
         buttonAction: null,
         timeEstimate: "Check your inbox",

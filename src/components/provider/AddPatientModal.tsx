@@ -62,7 +62,7 @@ const AddPatientModal = ({ onPatientAdded, trigger }: AddPatientModalProps) => {
                   <CreditCard className="w-6 h-6 text-primary" />
                 </div>
                 <CardTitle className="text-lg">New Consultation</CardTitle>
-                <CardDescription>Patient pays $99 consultation fee</CardDescription>
+                <CardDescription>Patient pays $149 consultation fee</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="text-sm text-muted-foreground space-y-1">

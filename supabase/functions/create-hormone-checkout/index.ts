@@ -112,7 +112,7 @@ serve(async (req) => {
       }
     }
 
-    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const origin = req.headers.get("origin") || "https://reveil.health";
 
     // Calculate membership discount only
     let totalDiscount = 0;

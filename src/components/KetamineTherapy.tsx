@@ -105,7 +105,7 @@ const KetamineTherapy = () => {
               Schedule a consultation to learn if ketamine therapy is right for you
             </p>
             <Button onClick={scrollToContact} size="lg" className="bg-accent hover:bg-accent-light text-white font-semibold shadow-xl">
-              Book Your $99 Consultation
+              Book Your $149 Consultation
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>

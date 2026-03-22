@@ -51,7 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Generate Stripe checkout link
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const origin = "https://elevatedhealthaugusta.com";
+    const origin = "https://reveil.health";
 
     const session = await stripe.checkout.sessions.create({
       customer_email: patient_email || undefined,
@@ -75,7 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const firstName = first_name || patient_name?.split(" ")[0] || "there";
     
-    const message = `Hi ${firstName}! Your Vitality Membership ($249/mo) from Elevated Health is ready to activate. Start here: ${session.url} Questions? (706) 760-3470`;
+    const message = `Hi ${firstName}! Your Vitality Membership ($249/mo) from Réveil is ready to activate. Start here: ${session.url} Questions? (706) 426-7383`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

@@ -113,7 +113,7 @@ const TermsOfService = () => {
                       Medical Disclaimer
                     </h2>
                     <p className="text-red-700 dark:text-red-300 mb-4">
-                      Elevated Health Augusta provides <strong>functional medicine consulting, hormone optimization, 
+                      Réveil provides <strong>functional medicine consulting, hormone optimization, 
                       ketamine therapy, and weight management services</strong>. We do <strong>NOT</strong> provide 
                       primary care or emergency medical services.
                     </p>
@@ -154,8 +154,8 @@ const TermsOfService = () => {
                         <span>
                           <strong>Cancellation:</strong> You may cancel your membership with <strong>30 days written 
                           notice</strong> via the Patient Portal or by emailing{" "}
-                          <a href="mailto:care@elevatedhealthaugusta.com" className="text-accent hover:underline">
-                            care@elevatedhealthaugusta.com
+                          <a href="mailto:care@reveil.health" className="text-accent hover:underline">
+                            care@reveil.health
                           </a>.
                         </span>
                       </li>
@@ -266,7 +266,7 @@ const TermsOfService = () => {
                     Limitation of Liability
                   </h2>
                   <p className="text-foreground/80">
-                    Elevated Health Augusta is not liable for any damages resulting from use or inability to use 
+                    Réveil is not liable for any damages resulting from use or inability to use 
                     this site or linked materials. Our liability is limited to the amount paid for services in 
                     the preceding 12 months.
                   </p>
@@ -293,10 +293,10 @@ const TermsOfService = () => {
                       {SITE_CONFIG.address.cityStateZip}<br />
                       {SITE_CONFIG.phone}<br />
                       <a 
-                        href="mailto:care@elevatedhealthaugusta.com" 
+                        href="mailto:care@reveil.health" 
                         className="text-accent hover:underline"
                       >
-                        care@elevatedhealthaugusta.com
+                        care@reveil.health
                       </a>
                     </p>
                   </div>

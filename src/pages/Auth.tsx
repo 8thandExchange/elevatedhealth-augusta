@@ -136,7 +136,7 @@ const Auth = () => {
           <p className="text-xs uppercase tracking-widest text-gold mb-2">
             {mode === "patient" ? "Patient Portal" : "Provider Portal"}
           </p>
-          <h1 className="font-cormorant text-3xl text-foreground">Elevated Health</h1>
+          <h1 className="font-cormorant text-3xl text-foreground">Réveil</h1>
         </div>
 
         <Card className="bg-card border-border/50">

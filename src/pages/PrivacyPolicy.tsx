@@ -104,7 +104,7 @@ const PrivacyPolicy = () => {
                     Overview
                   </h2>
                   <p className="text-foreground/80">
-                    Elevated Health Augusta (&quot;we,&quot; &quot;our,&quot; or &quot;the Clinic&quot;) is committed to protecting your 
+                    Réveil (&quot;we,&quot; &quot;our,&quot; or &quot;the Clinic&quot;) is committed to protecting your 
                     privacy and the confidentiality of your health information. This Privacy Policy describes 
                     how we collect, use, and safeguard information obtained through our website and services.
                   </p>
@@ -120,7 +120,7 @@ const PrivacyPolicy = () => {
                       </h2>
                     </div>
                     <p className="text-foreground/80 mb-4">
-                      As a healthcare provider, Elevated Health Augusta is required to comply with the 
+                      As a healthcare provider, Réveil is required to comply with the 
                       <strong> Health Insurance Portability and Accountability Act (HIPAA)</strong> and protect 
                       your Protected Health Information (PHI).
                     </p>
@@ -236,7 +236,7 @@ const PrivacyPolicy = () => {
                       <li className="flex items-start gap-3">
                         <span className="font-bold mt-1">•</span>
                         <span>
-                          We use <strong>bank-level encryption</strong> for all payment processing. Elevated Health 
+                          We use <strong>bank-level encryption</strong> for all payment processing. Réveil 
                           does not store your full credit card number on our servers.
                         </span>
                       </li>
@@ -352,10 +352,10 @@ const PrivacyPolicy = () => {
                   <p className="text-foreground/80">
                     To exercise these rights, contact our Privacy Officer at{" "}
                     <a 
-                      href="mailto:care@elevatedhealthaugusta.com" 
+                      href="mailto:care@reveil.health" 
                       className="text-accent hover:underline"
                     >
-                      care@elevatedhealthaugusta.com
+                      care@reveil.health
                     </a>.
                   </p>
                 </section>
@@ -372,10 +372,10 @@ const PrivacyPolicy = () => {
                       {SITE_CONFIG.address.cityStateZip}<br />
                       {SITE_CONFIG.phone}<br />
                       <a 
-                        href="mailto:care@elevatedhealthaugusta.com" 
+                        href="mailto:care@reveil.health" 
                         className="text-accent hover:underline"
                       >
-                        care@elevatedhealthaugusta.com
+                        care@reveil.health
                       </a>
                     </p>
                   </div>

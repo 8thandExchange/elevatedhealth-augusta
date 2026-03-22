@@ -208,7 +208,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">
                   ⏱️ <strong>Estimated review time:</strong> Most reviews completed within 24-48 hours
                 </p>
-                <a href="https://elevatedhealthaugusta.com/provider/dashboard" 
+                <a href="https://reveil.health/provider/dashboard" 
                    style="display: inline-block; background-color: #C5A059; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">
                   Review in Provider Dashboard →
                 </a>
@@ -217,7 +217,7 @@ const handler = async (req: Request): Promise<Response> => {
 
             <div style="background-color: #f3f4f6; padding: 16px 32px; text-align: center;">
               <p style="color: #6b7280; font-size: 12px; margin: 0;">
-                This is an automated notification from Elevated Health Augusta Patient Portal
+                This is an automated notification from Réveil Patient Portal
               </p>
             </div>
 
@@ -231,8 +231,8 @@ const handler = async (req: Request): Promise<Response> => {
     const subject = `📋 Intake Complete: ${data.patientName}${data.isHighRisk ? " ⚠️ HIGH RISK" : ""} - ${programLabel}`;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      from: "Réveil <noreply@stripe.reveil.health>",
+      to: ["booking@reveil.health"],
       subject,
       html: emailHtml,
     });

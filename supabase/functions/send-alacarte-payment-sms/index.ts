@@ -56,7 +56,7 @@ const handler = async (req: Request): Promise<Response> => {
     const greeting = firstName ? `Hi ${firstName}! ` : "";
 
     // Create short, clear SMS message
-    const smsMessage = `${greeting}Your ${product_name} (${amount}) from Elevated Health is ready for payment. Complete here: ${payment_url}`;
+    const smsMessage = `${greeting}Your ${product_name} (${amount}) from Réveil is ready for payment. Complete here: ${payment_url}`;
 
     logStep("SMS message created", { length: smsMessage.length });
 

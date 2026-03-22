@@ -6,9 +6,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Elevated Health Clinic Knowledge Base - Enhanced Clinical Protocol Edition
+// Réveil Clinic Knowledge Base - Enhanced Clinical Protocol Edition
 const CLINIC_KNOWLEDGE = `
-# ELEVATED HEALTH AUGUSTA - INTERNAL CLINICAL OPERATIONS GUIDE
+# RÉVEIL - INTERNAL CLINICAL OPERATIONS GUIDE
 ## Version 2.0 - Provider & Staff Reference
 
 ---
@@ -16,11 +16,11 @@ const CLINIC_KNOWLEDGE = `
 # SECTION 1: CLINIC IDENTITY & CORE PHILOSOPHY
 
 ## About the Clinic
-Elevated Health Augusta is a hormone optimization and wellness clinic in Augusta, GA. We specialize in bio-identical hormone replacement therapy (BHRT), GLP-1 weight loss, ketamine therapy, peptide therapy, and IV hydration.
+Réveil is a hormone optimization and wellness clinic in Augusta, GA. We specialize in bio-identical hormone replacement therapy (BHRT), GLP-1 weight loss, ketamine therapy, peptide therapy, and IV hydration.
 
 **Provider:** Our board-certified clinical team
 **Location:** 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
-**Phone:** (706) 760-3470
+**Phone:** (706) 426-7383
 
 ## Core Philosophy: "Test, Don't Guess" — But Flexible Labs
 - Labs are the GOLD STANDARD for safety and faster results
@@ -29,8 +29,8 @@ Elevated Health Augusta is a hormone optimization and wellness clinic in Augusta
 - BUT we CAN start patients on medication (including GLP-1s) without our specific kit if:
   * They have recent labs from their PCP (within 3 months), OR
   * The provider deems it appropriate during the consult
-- The $99 consultation fee is credited toward the lab kit purchase
-- GOAL: Never block the booking. If patient hesitates on labs, book the $99 Consult anyway
+- The $149 consultation fee is credited toward the lab kit purchase
+- GOAL: Never block the booking. If patient hesitates on labs, book the $149 Consult anyway
 
 ## The Medical vs. Administrative Boundary
 | ADMIN CAN ANSWER (Free) | REQUIRES PROVIDER (Paid) |
@@ -58,7 +58,7 @@ Elevated Health Augusta is a hormone optimization and wellness clinic in Augusta
 **All new patients start here:**
 - First visit is IN-PERSON at our Evans, GA clinic (7013 Evans Town Center Blvd, Suite 203)
 - 30-minute consultation with your provider
-- $99 fee is CREDITED toward first lab kit or treatment
+- $149 fee is CREDITED toward first lab kit or treatment
 - Hormone patients receive their Hormone Mapping Kit directly from the provider during the visit
 - Follow-up appointments may be conducted via telehealth
 
@@ -84,8 +84,8 @@ Everything in Vitality PLUS:
 
 **FLEXIBLE LABS SCRIPTING (The 'Soft Sell'):**
 - When discussing weight loss: "Our gold standard is to start with the Metabolic Mapping Kit ($349) to see exactly how your thyroid and insulin are functioning. This helps us engineer your results."
-- If patient hesitates on labs or price: "That is completely okay! You don't strictly need to buy the kit today. The best first step is the $99 Medical Consultation. Your provider can review any past labs you have or discuss starting treatment immediately based on your history."
-- GOAL: Do not block the booking. If they don't want labs, book the $99 Consult anyway.
+- If patient hesitates on labs or price: "That is completely okay! You don't strictly need to buy the kit today. The best first step is the $149 Medical Consultation. Your provider can review any past labs you have or discuss starting treatment immediately based on your history."
+- GOAL: Do not block the booking. If they don't want labs, book the $149 Consult anyway.
 
 ---
 
@@ -518,10 +518,10 @@ Before administration, screen for:
 
 ## Step-by-Step Flow
 1. **Lead Capture** → Website, phone, chat, referral
-2. **$99 Consultation** → Book via website/phone
+2. **$149 Consultation** → Book via website/phone
 3. **Intake Forms** → Complete symptom questionnaire
 4. **Consultation** → Telehealth or in-person with provider
-5. **Lab Kit Purchase** → $99 credited toward kit
+5. **Lab Kit Purchase** → $149 credited toward kit
 6. **Kit Shipped** → ZRT ships within 24-48 hours
 7. **Sample Collection** → Patient completes at home
 8. **Sample Returned** → Patient mails back to ZRT
@@ -746,9 +746,9 @@ Every superbill must include:
 
 ## Clinic Information
 - **Address:** 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809
-- **Phone:** (706) 760-3470
-- **Email:** admin@elevatedhealthaugusta.com
-- **Website:** elevatedhealthaugusta.com
+- **Phone:** (706) 426-7383
+- **Email:** admin@reveil.health
+- **Website:** reveil.health
 
 ## Pharmacy Contacts
 - **FCC Compounding Pharmacy:** 404-555-0199
@@ -844,7 +844,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are the Elevated Health Clinical Assistant, an internal AI helper for clinic staff and providers at Elevated Health Augusta. You have access to the clinic's complete clinical operations guide including protocols, lab interpretation guidelines, and internal workflows.
+    const systemPrompt = `You are the Réveil Clinical Assistant, an internal AI helper for clinic staff and providers at Réveil. You have access to the clinic's complete clinical operations guide including protocols, lab interpretation guidelines, and internal workflows.
 
 IMPORTANT RULES:
 1. You are ONLY accessible to authenticated staff and admin users

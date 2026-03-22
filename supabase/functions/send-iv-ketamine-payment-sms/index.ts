@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     logStep("Formatted phone", { formattedPhone });
 
-    const message = `Hi ${patient_name || "there"}! Your IV Ketamine Infusion Session #${session_number} ($${amount}) from Elevated Health is ready. Complete payment here: ${payment_url}`;
+    const message = `Hi ${patient_name || "there"}! Your IV Ketamine Infusion Session #${session_number} ($${amount}) from Réveil is ready. Complete payment here: ${payment_url}`;
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
     

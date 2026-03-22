@@ -93,11 +93,11 @@ const faqs = [
     answer: "Yes—and in many ways superior. While injections deliver a large dose all at once (creating peaks and valleys), transdermal cream provides steady, consistent hormone levels that more closely mimic your body's natural production. Studies show comparable effectiveness with better tolerability.",
   },
   {
-    question: "Why doesn't Elevated Health offer pellets?",
+    question: "Why doesn't Réveil offer pellets?",
     answer: "Pellets are surgically implanted and release a fixed dose for 4-6 months. If you experience side effects—like elevated estrogen, hair loss, or mood changes—you're stuck until they dissolve. With cream, we can adjust your dose the very next day based on your labs and symptoms.",
   },
   {
-    question: "Why doesn't Elevated Health offer injections?",
+    question: "Why doesn't Réveil offer injections?",
     answer: "Weekly injections create a 'roller coaster' effect: testosterone spikes after injection, then drops throughout the week. This leads to energy crashes, mood swings, and inconsistent results. Daily cream application maintains stable levels, eliminating these fluctuations.",
   },
   {
@@ -226,7 +226,7 @@ export const WhyTransdermalCream = ({ onBookConsultation }: WhyTransdermalCreamP
             onClick={onBookConsultation}
             className="bg-accent hover:bg-accent-light text-accent-foreground"
           >
-            Book Your $99 Consultation
+            Book Your $149 Consultation
           </Button>
         </div>
       </div>

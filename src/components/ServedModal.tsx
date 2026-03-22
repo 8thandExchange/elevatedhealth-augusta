@@ -70,7 +70,7 @@ export const ServedModal = () => {
           </DialogTitle>
           <DialogDescription id="served-modal-description" className="text-base pt-2">
             You may be eligible for TRICARE or VA Community Care coverage for
-            advanced ketamine-assisted therapy. Let us guide your referral.
+            advanced longevity medicine. Let us guide your referral.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col sm:flex-col gap-2 pt-4">

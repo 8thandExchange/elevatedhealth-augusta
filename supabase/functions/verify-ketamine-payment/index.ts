@@ -59,8 +59,8 @@ serve(async (req) => {
       
       try {
         await resend.emails.send({
-          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-          to: ["booking@elevatedhealthaugusta.com"],
+          from: "Réveil <noreply@stripe.reveil.health>",
+          to: ["booking@reveil.health"],
           subject: `🧠 New Ketamine Patient: ${customerName} Has Paid`,
           html: `
             <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
@@ -104,7 +104,7 @@ serve(async (req) => {
               </div>
               
               <p style="color: #999; font-size: 12px; text-align: center; margin-top: 30px;">
-                This is an automated notification from Elevated Health Augusta.
+                This is an automated notification from Réveil.
               </p>
             </div>
           `,

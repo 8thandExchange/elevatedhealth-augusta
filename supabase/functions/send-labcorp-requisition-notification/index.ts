@@ -36,7 +36,7 @@ const handler = async (req: Request): Promise<Response> => {
       </head>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #2C3E50; font-size: 24px; margin-bottom: 10px;">Elevated Health Augusta</h1>
+          <h1 style="color: #2C3E50; font-size: 24px; margin-bottom: 10px;">Réveil</h1>
         </div>
         
         <div style="background-color: #f8f9fa; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
@@ -73,7 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
         
         <div style="text-align: center; color: #95a5a6; font-size: 12px; margin-top: 30px;">
           <p>
-            This is a secure, HIPAA-compliant message from Elevated Health Augusta.<br>
+            This is a secure, HIPAA-compliant message from Réveil.<br>
             If you have questions, please contact us at (706) 750-7060.
           </p>
           <p style="margin-top: 10px;">
@@ -92,9 +92,9 @@ const handler = async (req: Request): Promise<Response> => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+        from: "Réveil <noreply@stripe.reveil.health>",
         to: [patientEmail],
-        subject: "Your Labcorp Requisition is Ready - Elevated Health",
+        subject: "Your Labcorp Requisition is Ready - Réveil",
         html: emailHtml,
       }),
     });

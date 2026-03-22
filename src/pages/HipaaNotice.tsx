@@ -316,10 +316,10 @@ const HipaaNotice = () => {
                       <p className="text-foreground/80">{SITE_CONFIG.address.cityStateZip}</p>
                       <p className="text-foreground/80 mt-2">{SITE_CONFIG.phone}</p>
                       <a 
-                        href="mailto:care@elevatedhealthaugusta.com" 
+                        href="mailto:care@reveil.health" 
                         className="text-accent hover:underline"
                       >
-                        care@elevatedhealthaugusta.com
+                        care@reveil.health
                       </a>
                     </div>
                     <p className="text-foreground/80 mt-4">

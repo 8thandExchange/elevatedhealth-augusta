@@ -17,7 +17,7 @@ const ProviderAssistant = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hi! I'm the Elevated Health Assistant. I can help you with clinic protocols, patient workflows, pricing, and operational questions. What do you need help with?"
+      content: "Hi! I'm the Réveil Assistant. I can help you with clinic protocols, patient workflows, pricing, and operational questions. What do you need help with?"
     }
   ]);
   const [input, setInput] = useState("");

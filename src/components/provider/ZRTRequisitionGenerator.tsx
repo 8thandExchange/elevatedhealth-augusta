@@ -175,7 +175,7 @@ const ZRTRequisitionGenerator = ({
     <body>
       <div class="header">
         <div>
-          <div class="logo">Elevated Health Augusta</div>
+          <div class="logo">Réveil</div>
           <div class="logo-sub">3654 Wheeler Road, Suite 103 | Augusta, GA 30909 | (706) 250-9855</div>
         </div>
         <div class="zrt-logo">
@@ -320,7 +320,7 @@ const ZRTRequisitionGenerator = ({
           <div class="signature-label">Provider Signature</div>
           <div style="margin-top: 8px; font-size: 10px;">
             <strong>${providerName}, ${providerCredentials}</strong><br/>
-            Elevated Health Augusta
+            Réveil
           </div>
         </div>
         <div>
@@ -330,7 +330,7 @@ const ZRTRequisitionGenerator = ({
       </div>
 
       <div class="footer">
-        <strong>ELEVATED HEALTH AUGUSTA</strong> | HIPAA Compliant | Patient Copy Included in Kit<br/>
+        <strong>RÉVEIL</strong> | HIPAA Compliant | Patient Copy Included in Kit<br/>
         Results will be sent to ordering provider within 5-7 business days of sample receipt.
       </div>
     </body>

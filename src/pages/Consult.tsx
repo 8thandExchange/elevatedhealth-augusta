@@ -132,7 +132,7 @@ const Consult = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Rebook Your Appointment | Elevated Health Augusta</title>
+        <title>Rebook Your Appointment | Réveil</title>
         <meta name="description" content="Returning patients can easily rebook appointments for ketamine therapy, medical weight loss, or hormone replacement. Access your care calendar." />
       </Helmet>
       <Navbar />

@@ -11,7 +11,7 @@ const Accessibility = () => {
   return (
     <>
       <Helmet>
-        <title>Accessibility Statement | Elevated Health Augusta</title>
+        <title>Accessibility Statement | Réveil</title>
         <meta name="description" content="Our commitment to digital accessibility and providing an inclusive experience for all users." />
       </Helmet>
       
@@ -37,7 +37,7 @@ const Accessibility = () => {
                 Our Commitment
               </h2>
               <p className="text-foreground/80 font-lato leading-relaxed mb-4">
-                Elevated Health Augusta is committed to ensuring digital accessibility for people with 
+                Réveil is committed to ensuring digital accessibility for people with 
                 disabilities. We are continually improving the user experience for everyone and applying 
                 the relevant accessibility standards to ensure we provide equal access to all users.
               </p>
@@ -119,10 +119,10 @@ const Accessibility = () => {
                 <p className="text-foreground font-lato mb-2">
                   <strong>Email:</strong>{" "}
                   <a 
-                    href="mailto:accessibility@elevatedhealthaugusta.com" 
+                    href="mailto:accessibility@reveil.health" 
                     className="text-primary hover:underline"
                   >
-                    accessibility@elevatedhealthaugusta.com
+                    accessibility@reveil.health
                   </a>
                 </p>
                 <p className="text-foreground font-lato mb-2">

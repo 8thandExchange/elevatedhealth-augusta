@@ -38,7 +38,7 @@ serve(async (req) => {
     logStep("Request parsed", { customerEmail, customerName });
 
     // Get origin for success/cancel URLs
-    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const origin = req.headers.get("origin") || "https://reveil.health";
 
     // Check if customer exists in Stripe
     let customerId: string | undefined;

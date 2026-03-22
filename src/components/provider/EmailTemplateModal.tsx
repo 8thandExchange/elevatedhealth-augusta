@@ -95,7 +95,7 @@ const EmailTemplateModal = ({
       .replace(/\{\{first_name\}\}/g, patient.full_name.split(" ")[0])
       .replace(/\{\{email\}\}/g, patient.email || "")
       .replace(/\{\{phone\}\}/g, patient.phone || "")
-      .replace(/\{\{clinic_phone\}\}/g, "(706) 922-7454")
+      .replace(/\{\{clinic_phone\}\}/g, "(706) 426-7383")
       .replace(/\{\{payment_link\}\}/g, "[Payment Link]")
       .replace(/\{\{portal_link\}\}/g, "[Portal Link]");
   };

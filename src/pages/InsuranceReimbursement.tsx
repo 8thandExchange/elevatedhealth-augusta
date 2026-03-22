@@ -45,7 +45,7 @@ const faqs = [
   },
   {
     q: "Can I use my HSA or FSA?",
-    a: "Yes! All medical services at Elevated Health qualify for HSA and FSA reimbursement. Simply use your HSA/FSA card at checkout, or submit your superbill to your account administrator.",
+    a: "Yes! All medical services at Réveil qualify for HSA and FSA reimbursement. Simply use your HSA/FSA card at checkout, or submit your superbill to your account administrator.",
   },
   {
     q: "Are hormone treatments covered?",
@@ -73,10 +73,10 @@ const InsuranceReimbursement = () => {
   return (
     <>
       <Helmet>
-        <title>Insurance & Reimbursement Guide | Elevated Health Augusta</title>
+        <title>Insurance & Reimbursement Guide | Réveil</title>
         <meta
           name="description"
-          content="Learn how to get reimbursed for mental health and hormone therapy services at Elevated Health Augusta. We accept BCBS, TRICARE, and VA insurance."
+          content="Learn how to get reimbursed for mental health and hormone therapy services at Réveil. We accept BCBS, TRICARE, and VA insurance."
         />
       </Helmet>
 
@@ -172,7 +172,7 @@ const InsuranceReimbursement = () => {
                   HSA & FSA Accepted
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
-                  All medical services at Elevated Health are eligible for Health Savings Account (HSA) and 
+                  All medical services at Réveil are eligible for Health Savings Account (HSA) and 
                   Flexible Spending Account (FSA) reimbursement — including consultations, lab panels, 
                   hormone therapy, ketamine treatments, and weight loss programs.
                 </p>
@@ -221,10 +221,10 @@ const InsuranceReimbursement = () => {
               <Button size="lg" onClick={scrollToContact} className="gap-2">
                 Contact Us
               </Button>
-              <a href="tel:7067603470">
+              <a href="tel:7064267383">
                 <Button variant="outline" size="lg" className="gap-2 w-full sm:w-auto">
                   <Phone className="w-5 h-5" />
-                  (706) 760-3470
+                  (706) 426-7383
                 </Button>
               </a>
             </div>

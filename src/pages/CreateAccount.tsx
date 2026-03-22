@@ -229,7 +229,7 @@ const CreateAccount = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Create Your Account | Elevated Health Augusta</title>
+        <title>Create Your Account | Réveil</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <Navbar />

@@ -195,7 +195,7 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
       if (highRisk) {
         setShowSafetyGate(true);
       } else {
-        toast.success("Welcome to Elevated Health!");
+        toast.success("Welcome to Réveil!");
         onComplete();
       }
     } catch (error: any) {

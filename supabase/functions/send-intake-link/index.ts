@@ -81,7 +81,7 @@ serve(async (req) => {
 
     logStep("Patient updated with intake token");
 
-    const origin = "https://elevatedhealthaugusta.com";
+    const origin = "https://reveil.health";
     const intakeLink = `${origin}/intake?token=${intakeToken}`;
     const firstName = patientName?.split(" ")[0] || "there";
 
@@ -122,12 +122,12 @@ serve(async (req) => {
         <div class="wrapper">
           <div class="container">
             <div class="header">
-              <h1 class="logo">Elevated Health</h1>
+              <h1 class="logo">Réveil</h1>
               <p class="tagline">Restore · Renew · Rebalance</p>
             </div>
             <div class="content">
               <h2 class="greeting">Hi ${firstName}!</h2>
-              <p class="intro">Please complete your medical intake form and consent documents to continue with your care at Elevated Health Augusta. This helps our provider team prepare for your personalized treatment plan.</p>
+              <p class="intro">Please complete your medical intake form and consent documents to continue with your care at Réveil. This helps our provider team prepare for your personalized treatment plan.</p>
               
               <div class="cta-container">
                 <a href="${intakeLink}" class="cta-button">Complete Your Intake Form →</a>
@@ -148,9 +148,9 @@ serve(async (req) => {
               </div>
             </div>
             <div class="footer">
-              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 760-3470</strong></p>
+              <p class="footer-text">Questions? Reply to this email or call us at <strong>(706) 426-7383</strong></p>
               <p class="footer-address">
-                Elevated Health Augusta<br/>
+                Réveil<br/>
                 7013 Evans Town Center Blvd<br/>
                 Evans, GA 30809
               </p>
@@ -167,7 +167,7 @@ serve(async (req) => {
     // Send email if available
     if (patientEmail) {
       const emailResponse = await resend.emails.send({
-        from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+        from: "Réveil <noreply@stripe.reveil.health>",
         to: [patientEmail],
         subject: `${firstName}, Complete Your Medical Intake Form`,
         html: emailHtml,
@@ -184,7 +184,7 @@ serve(async (req) => {
         const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
         
         if (sinchAccessKey && sinchSecretKey) {
-          const smsMessage = `Hi ${firstName}! Please complete your medical intake form for Elevated Health: ${intakeLink} - This link expires in 7 days.`;
+          const smsMessage = `Hi ${firstName}! Please complete your medical intake form for Réveil: ${intakeLink} - This link expires in 7 days.`;
           
           // Format phone number
           let formattedPhone = patientPhone.replace(/\D/g, '');

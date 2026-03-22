@@ -27,7 +27,7 @@ type AssistantMode = "closed" | "menu" | "text" | "voice";
 const QUICK_PROMPTS = [
   { label: "Hormone Therapy", value: "I'm interested in hormone replacement therapy. What symptoms can it help with?" },
   { label: "Weight Loss", value: "Tell me about your medical weight loss program." },
-  { label: "Ketamine Therapy", value: "I'd like to learn about ketamine therapy for mental health." },
+  { label: "Peptide Therapy", value: "Tell me about your peptide protocols and what they can help with." },
   { label: "How to Start", value: "How do I get started as a new patient?" },
 ];
 
@@ -47,7 +47,7 @@ const AssistantHub = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Welcome to Elevated Health Augusta! I can help with questions about our process, pricing, and insurance. What would you like to know?",
+      content: "Welcome to Réveil! I can help with questions about our process, pricing, and insurance. What would you like to know?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -153,7 +153,7 @@ const AssistantHub = () => {
     } else if (conversationText.includes("weight") || conversationText.includes("semaglutide") || conversationText.includes("tirzepatide")) {
       detectedInterest = "weight_loss";
     } else if (conversationText.includes("ketamine") || conversationText.includes("depression") || conversationText.includes("anxiety") || conversationText.includes("mental")) {
-      detectedInterest = "ketamine";
+      detectedInterest = "general";
     }
 
     try {
@@ -177,7 +177,7 @@ const AssistantHub = () => {
 
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $99 consultation, and someone will follow up within one business day. Feel free to ask me any other questions!`
+        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $149 consultation, and someone will follow up within one business day. Feel free to ask me any other questions!`
       }]);
     } catch (error) {
       console.error("Lead capture error:", error);
@@ -279,7 +279,7 @@ const AssistantHub = () => {
           console.log("Voice lead captured:", lead);
           toast({
             title: "Contact Info Saved",
-            description: `${lead.name ? `Thanks ${lead.name}! ` : ''}We'll send you booking info for your $99 consultation.`,
+            description: `${lead.name ? `Thanks ${lead.name}! ` : ''}We'll send you booking info for your $149 consultation.`,
           });
         }
       );
@@ -397,10 +397,10 @@ const AssistantHub = () => {
               className={`flex items-center gap-3 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 font-medium ${isMobile ? 'w-full justify-start h-12 px-4 rounded-xl' : 'rounded-full px-4 py-2 text-sm'}`}
             >
               <CreditCard className="h-5 w-5" />
-              <span>$99 Consultation</span>
+              <span>$149 Consultation</span>
             </button>
             <a
-              href="tel:+17067603470"
+              href="tel:+17064267383"
               className={`flex items-center gap-3 shadow-lg bg-card border border-border text-foreground hover:bg-muted font-medium ${isMobile ? 'w-full justify-start h-12 px-4 rounded-xl' : 'rounded-full px-4 py-2 text-sm'}`}
             >
               <Phone className="h-5 w-5" />
@@ -558,7 +558,7 @@ const AssistantHub = () => {
             </div>
           </ScrollArea>
 
-          {/* $99 Consultation CTA */}
+          {/* $149 Consultation CTA */}
           {messages.length > 2 && (
             <div className="px-4 py-2 border-t border-border bg-accent/30 shrink-0">
               <a
@@ -569,7 +569,7 @@ const AssistantHub = () => {
                 style={{ minHeight: '44px' }}
               >
                 <CreditCard className="h-4 w-4" />
-                Book $99 Medical Consultation
+                Book $149 Medical Consultation
               </a>
             </div>
           )}
@@ -785,7 +785,7 @@ const AssistantHub = () => {
               </>
             )}
 
-            {/* $99 Consultation CTA */}
+            {/* $149 Consultation CTA */}
             <a
               href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
               target="_blank"
@@ -794,7 +794,7 @@ const AssistantHub = () => {
               style={{ minHeight: '44px' }}
             >
               <CreditCard className="h-4 w-4" />
-              Book $99 Medical Consultation
+              Book $149 Medical Consultation
             </a>
             
             {/* Disclaimer */}

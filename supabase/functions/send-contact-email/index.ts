@@ -145,17 +145,17 @@ const handler = async (req: Request): Promise<Response> => {
         port: 465,
         tls: true,
         auth: {
-          username: "care@elevatedhealthaugusta.com",
+          username: "care@reveil.health",
           password: PAUBOX_SMTP_PASSWORD!,
         },
       },
     });
 
     await client.send({
-      from: "care@elevatedhealthaugusta.com",
-      to: "care@elevatedhealthaugusta.com",
+      from: "care@reveil.health",
+      to: "care@reveil.health",
       replyTo: validatedData.email,
-      subject: "New Elevated Health Augusta Inquiry",
+      subject: "New Réveil Inquiry",
       content: "auto",
       html: `
         <!DOCTYPE html>
@@ -211,7 +211,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </div>
               </div>
               <div class="footer">
-                <p>This email was sent from the Elevated Health Augusta website contact form.</p>
+                <p>This email was sent from the Réveil website contact form.</p>
               </div>
             </div>
           </body>

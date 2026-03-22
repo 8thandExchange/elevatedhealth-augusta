@@ -55,7 +55,7 @@ const PatientDashboard = () => {
       const tier = searchParams.get("tier");
       const tierName = tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : "Your";
       toast.success(`${tierName} Membership Activated!`, {
-        description: "Welcome to Elevated Health. Check your email for next steps.",
+        description: "Welcome to Réveil. Check your email for next steps.",
         duration: 6000,
       });
       // Clean up URL params

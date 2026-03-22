@@ -351,7 +351,7 @@ const Contact = () => {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Elevated Health Augusta Location"
+                  title="Réveil Location"
                   className="grayscale hover:grayscale-0 transition-all duration-500"
                 />
               </div>

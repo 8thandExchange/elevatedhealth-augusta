@@ -94,7 +94,7 @@ const PWAInstallPrompt = () => {
               Add to Home Screen
             </h3>
             <p className="text-xs text-muted-foreground mb-3">
-              Install Elevated Health for quick access to your health dashboard
+              Install Réveil for quick access to your health dashboard
             </p>
 
             {isIOS ? (

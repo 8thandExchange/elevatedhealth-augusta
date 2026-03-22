@@ -253,7 +253,7 @@ export default function PublicIntake() {
             </p>
             <div className="space-y-2">
               <p className="font-medium">{SITE_CONFIG.phone}</p>
-              <p className="text-sm text-slate-500">booking@elevatedhealthaugusta.com</p>
+              <p className="text-sm text-slate-500">booking@reveil.health</p>
             </div>
           </CardContent>
         </Card>
@@ -279,7 +279,7 @@ export default function PublicIntake() {
             </p>
             <div className="bg-teal-50 p-4 rounded-lg">
               <p className="text-sm text-teal-800">
-                <strong>Questions?</strong> Call us at {SITE_CONFIG.phone} or email booking@elevatedhealthaugusta.com
+                <strong>Questions?</strong> Call us at {SITE_CONFIG.phone} or email booking@reveil.health
               </p>
             </div>
           </CardContent>
@@ -293,7 +293,7 @@ export default function PublicIntake() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-teal-700">Elevated Health Augusta</h1>
+          <h1 className="text-2xl font-bold text-teal-700">Réveil</h1>
           <p className="text-slate-500 mt-1">Medical Intake Form</p>
         </div>
 
@@ -574,7 +574,7 @@ export default function PublicIntake() {
               <>
                 <div className="space-y-2">
                   <Label htmlFor="treatment_goals">
-                    What are your primary health goals? What brought you to Elevated Health?
+                    What are your primary health goals? What brought you to Réveil?
                   </Label>
                   <Textarea
                     id="treatment_goals"
@@ -608,7 +608,7 @@ export default function PublicIntake() {
                   <div className="bg-slate-50 p-4 rounded-lg border">
                     <h4 className="font-semibold mb-2">Informed Consent for Treatment</h4>
                     <div className="max-h-48 overflow-y-auto bg-white border rounded p-3 text-sm text-slate-600 space-y-3 mb-4">
-                      <p><strong>1. CONSENT TO TREATMENT:</strong> I voluntarily consent to medical treatment and services provided by Elevated Health Augusta ("Clinic"). I understand that treatment may include hormone replacement therapy, weight management medications, ketamine therapy, IV therapy, or other wellness services as recommended by my provider.</p>
+                      <p><strong>1. CONSENT TO TREATMENT:</strong> I voluntarily consent to medical treatment and services provided by Réveil ("Clinic"). I understand that treatment may include hormone replacement therapy, weight management medications, ketamine therapy, IV therapy, or other wellness services as recommended by my provider.</p>
                       <p><strong>2. BENEFITS AND RISKS:</strong> I understand that while treatment may provide benefits such as improved energy, mood, metabolism, or mental clarity, there are inherent risks including but not limited to: allergic reactions, medication side effects, injection site reactions, changes in blood pressure, mood changes, and other complications. I have been given the opportunity to ask questions about these risks.</p>
                       <p><strong>3. ALTERNATIVES:</strong> I understand that I may choose not to proceed with treatment or may seek alternative treatments. I have been informed of my options.</p>
                       <p><strong>4. MEDICATION COMPLIANCE:</strong> I agree to follow all medication instructions, attend follow-up appointments, complete required lab work, and report any concerning symptoms immediately to the Clinic.</p>
@@ -647,7 +647,7 @@ export default function PublicIntake() {
                   <div className="bg-slate-50 p-4 rounded-lg border">
                     <h4 className="font-semibold mb-2">Treatment Consent</h4>
                     <p className="text-sm text-slate-600 mb-4">
-                      By submitting this form, I consent to receive treatment from Elevated Health Augusta. I understand that my information will be reviewed by the medical team, and I will be contacted to discuss treatment options. I understand that I can withdraw my consent at any time.
+                      By submitting this form, I consent to receive treatment from Réveil. I understand that my information will be reviewed by the medical team, and I will be contacted to discuss treatment options. I understand that I can withdraw my consent at any time.
                     </p>
                     <div className="flex items-start space-x-3">
                       <Checkbox
@@ -656,7 +656,7 @@ export default function PublicIntake() {
                         onCheckedChange={(checked) => handleInputChange("consent_acknowledged", !!checked)}
                       />
                       <Label htmlFor="consent_acknowledged" className="font-normal cursor-pointer">
-                        I consent to treatment and authorize Elevated Health Augusta to contact me regarding my care *
+                        I consent to treatment and authorize Réveil to contact me regarding my care *
                       </Label>
                     </div>
                   </div>

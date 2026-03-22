@@ -75,7 +75,7 @@ serve(async (req) => {
       }
     }
 
-    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const origin = req.headers.get("origin") || "https://reveil.health";
 
     // Create checkout session for Elevated Concierge Membership ($399/mo)
     const session = await stripe.checkout.sessions.create({

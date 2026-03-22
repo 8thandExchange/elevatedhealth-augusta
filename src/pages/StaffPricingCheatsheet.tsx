@@ -118,7 +118,7 @@ const StaffPricingCheatsheet = () => {
   return (
     <>
       <Helmet>
-        <title>Staff Quick Reference | Elevated Health Augusta</title>
+        <title>Staff Quick Reference | Réveil</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -221,7 +221,7 @@ const StaffPricingCheatsheet = () => {
                         <p className="font-medium">Discovery Consultation</p>
                         <p className="text-sm text-muted-foreground">30-minute, IN-PERSON at Evans clinic • Credited toward treatment</p>
                       </div>
-                      <Badge variant="secondary" className="font-mono">$99</Badge>
+                      <Badge variant="secondary" className="font-mono">$149</Badge>
                     </div>
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">
                       <p className="font-medium mb-1">💡 Pro Tip:</p>
@@ -252,7 +252,7 @@ const StaffPricingCheatsheet = () => {
                       </div>
                       <div className="text-right">
                         <Badge variant="secondary" className="font-mono">$349</Badge>
-                        <p className="text-xs text-muted-foreground mt-1">or $250 with $99 credit</p>
+                        <p className="text-xs text-muted-foreground mt-1">or $250 with $149 credit</p>
                       </div>
                     </div>
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">
@@ -322,7 +322,7 @@ const StaffPricingCheatsheet = () => {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Follow-up Consultation</span>
-                          <span className="font-mono">$99</span>
+                          <span className="font-mono">$149</span>
                         </div>
                       </div>
                     </div>
@@ -364,7 +364,7 @@ const StaffPricingCheatsheet = () => {
                     <div className="bg-green-500/10 rounded-lg p-3 text-sm">
                       <p className="font-medium text-green-700 dark:text-green-400 mb-1">✓ Labs NOT Required to Start</p>
                       <p className="text-muted-foreground">
-                        Most weight loss patients start GLP-1 medication after their $99 consultation—no mandatory lab kit. Lauren reviews eligibility in-person.
+                        Most weight loss patients start GLP-1 medication after their $149 consultation—no mandatory lab kit. Our physician reviews eligibility in-person.
                       </p>
                     </div>
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">
@@ -821,7 +821,7 @@ const StaffPricingCheatsheet = () => {
                 <div className="border-l-2 border-primary pl-4">
                   <p className="font-medium text-sm">"What's the cheapest way to start?"</p>
                   <p className="text-sm text-muted-foreground">
-                    $99 Discovery Consultation — it's credited toward any treatment plan.
+                    $149 Discovery Consultation — it's credited toward any treatment plan.
                   </p>
                 </div>
 

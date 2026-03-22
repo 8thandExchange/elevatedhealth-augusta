@@ -244,8 +244,8 @@ serve(async (req) => {
           : "<p style='color: #22c55e;'>No safety flags</p>";
 
         await resend.emails.send({
-          from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-          to: ["booking@elevatedhealthaugusta.com"],
+          from: "Réveil <noreply@stripe.reveil.health>",
+          to: ["booking@reveil.health"],
           subject: `📋 Intake Completed: ${patient.full_name} ${riskStatus !== "standard" ? "⚠️" : ""}`,
           html: `
             <!DOCTYPE html>
@@ -308,13 +308,13 @@ serve(async (req) => {
               ` : ""}
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="https://elevatedhealthaugusta.com/provider/dashboard" style="display: inline-block; background: #0d9488; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600;">
+                <a href="https://reveil.health/provider/dashboard" style="display: inline-block; background: #0d9488; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600;">
                   View in Provider Dashboard
                 </a>
               </div>
               
               <div style="border-top: 1px solid #e5e5e5; margin-top: 30px; padding-top: 20px; text-align: center; color: #666; font-size: 12px;">
-                <p style="margin: 0;">This is an automated notification from Elevated Health Augusta</p>
+                <p style="margin: 0;">This is an automated notification from Réveil</p>
               </div>
             </body>
             </html>

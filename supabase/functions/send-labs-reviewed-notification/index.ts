@@ -43,7 +43,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     let nextStepContent = '';
     let ctaText = '';
-    let ctaLink = next_step_link || "https://elevatedhealthaugusta.com/patient";
+    let ctaLink = next_step_link || "https://reveil.health/patient";
     
     switch (next_step) {
       case "schedule_review":
@@ -74,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patient_email],
       subject: "Your Lab Results Have Been Reviewed",
       html: `
@@ -89,7 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Header -->
             <div style="text-align: center; margin-bottom: 32px;">
               <h1 style="font-family: Georgia, serif; font-size: 28px; color: #2C3E50; margin: 0;">
-                Elevated Health Augusta
+                Réveil
               </h1>
               <p style="color: #D4A017; font-size: 14px; margin-top: 8px; letter-spacing: 2px;">
                 LAB RESULTS UPDATE
@@ -135,7 +135,7 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="border-top: 1px solid #E5E5E5; padding-top: 24px;">
                 <p style="color: #5D6D7E; font-size: 14px; line-height: 1.6; margin: 0;">
                   <strong>Questions about your results?</strong><br>
-                  You can message your care team directly through your patient portal, or call us at (706) 760-3470.
+                  You can message your care team directly through your patient portal, or call us at (706) 426-7383.
                 </p>
               </div>
             </div>
@@ -143,12 +143,12 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Footer -->
             <div style="text-align: center; margin-top: 32px; color: #8E9EAB; font-size: 12px;">
               <p style="margin: 0 0 8px 0;">
-                <strong>Elevated Health Augusta</strong><br>
+                <strong>Réveil</strong><br>
                 7013 Evans Town Center Blvd, Suite 203<br>
                 Evans, GA 30809
               </p>
               <p style="margin: 0;">
-                <a href="tel:7067603470" style="color: #D4A017; text-decoration: none;">(706) 760-3470</a>
+                <a href="tel:7064267383" style="color: #D4A017; text-decoration: none;">(706) 426-7383</a>
               </p>
             </div>
           </div>

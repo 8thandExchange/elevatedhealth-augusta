@@ -18,9 +18,9 @@ const WhatToExpect = () => {
     },
     {
       icon: ClipboardCheck,
-      title: "2. $99 Medical Consultation",
+      title: "2. $149 Initial Consultation",
       description: "Your first conversation with a provider. Discuss your goals, review your health history, and get a personalized plan.",
-      duration: "$99 • Credited toward treatment",
+      duration: "$149 • Credited toward treatment",
       color: "text-primary"
     },
     {
@@ -52,7 +52,7 @@ const WhatToExpect = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-6">
-            What to Expect at Elevated Health
+            What to Expect at Réveil
           </h2>
           <p className="font-inter text-lg text-muted-foreground">
             From your first consultation to ongoing care, we guide you every step of the way 
@@ -185,7 +185,7 @@ const WhatToExpect = () => {
             Ready to Begin Your Journey?
           </h3>
           <p className="font-inter text-lg text-muted-foreground mb-8">
-            Your first conversation with a provider is just $99—and it's credited toward your treatment.
+            Your first conversation with a provider is just $149—and it's credited toward your treatment.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -199,7 +199,7 @@ const WhatToExpect = () => {
               }}
             >
               <ClipboardCheck className="h-5 w-5" />
-              Book $99 Medical Consultation
+              Book $149 Medical Consultation
             </Button>
             
             <Button

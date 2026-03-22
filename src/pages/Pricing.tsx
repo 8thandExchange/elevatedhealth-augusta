@@ -91,29 +91,29 @@ const Pricing = () => {
   return (
     <>
       <Helmet>
-        <title>Pricing - Transparent Healthcare Pricing | Elevated Health Augusta</title>
+        <title>Pricing - Transparent Healthcare Pricing | Réveil</title>
         <meta
           name="description"
-          content="Transparent pricing for all services. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Memberships and à la carte options available."
+          content="Transparent pricing for all services. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Memberships and à la carte options available."
         />
         <meta
           name="keywords"
           content="ketamine therapy pricing Augusta, weight loss program cost, hormone therapy pricing, IV therapy prices, medical spa pricing Georgia"
         />
-        <link rel="canonical" href="https://elevatedhealthaugusta.com/pricing" />
+        <link rel="canonical" href="https://reveil.health/pricing" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="Transparent Healthcare Pricing | $99 Consultation Credited | Elevated Health Augusta" />
-        <meta property="og:description" content="Transparent pricing for all services. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:title" content="Transparent Healthcare Pricing | $149 Consultation Credited | Réveil" />
+        <meta property="og:description" content="Transparent pricing for all services. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://elevatedhealthaugusta.com/pricing" />
-        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta property="og:url" content="https://reveil.health/pricing" />
+        <meta property="og:image" content="https://reveil.health/og-image.jpg" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Healthcare Pricing | $99 Consultation Credited" />
-        <meta name="twitter:description" content="Transparent pricing. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
-        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:title" content="Healthcare Pricing | $149 Consultation Credited" />
+        <meta name="twitter:description" content="Transparent pricing. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta name="twitter:image" content="https://reveil.health/og-image.jpg" />
         
         {/* FAQ Schema for Rich Snippets */}
         <script type="application/ld+json">
@@ -166,15 +166,15 @@ const Pricing = () => {
                 "name": "How much does ketamine therapy cost in Augusta, GA?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "At Elevated Health Augusta, IV ketamine therapy is $400 per session, or $2,200 for a 6-session series (saving $200). SPRAVATO® (esketamine) is often covered by insurance with $0-50 copays. We also offer an optional Neurotransmitter Analysis for $399 to optimize your treatment."
+                  "text": "At Réveil, IV ketamine therapy is $400 per session, or $2,200 for a 6-session series (saving $200). SPRAVATO® (esketamine) is often covered by insurance with $0-50 copays. We also offer an optional Neurotransmitter Analysis for $399 to optimize your treatment."
                 }
               },
               {
                 "@type": "Question",
-                "name": "What is the cheapest way to get started at Elevated Health?",
+                "name": "What is the cheapest way to get started at Réveil?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The most affordable entry point is chatting with our Virtual Care Team—available 24/7 to answer questions about pricing, insurance, and logistics. When you're ready for personalized medical guidance, our $99 Medical Consultation provides a comprehensive clinical assessment and the fee is credited toward your first treatment."
+                  "text": "The most affordable entry point is chatting with our Virtual Care Team—available 24/7 to answer questions about pricing, insurance, and logistics. When you're ready for personalized medical guidance, our $149 Medical Consultation provides a comprehensive clinical assessment and the fee is credited toward your first treatment."
                 }
               },
               {
@@ -545,11 +545,11 @@ const Pricing = () => {
                               Provider Strategy Session
                             </h3>
                             <p className="text-slate-600 font-lato text-sm leading-relaxed">
-                              Skip the waiting room. Meet directly with your provider to review your medical history and determine eligibility. The $99 fee is credited toward your first treatment.
+                              Skip the waiting room. Meet directly with your provider to review your medical history and determine eligibility. The $149 fee is credited toward your first treatment.
                             </p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">$99</span>
+                            <span className="text-3xl font-cormorant text-slate-900">$149</span>
                             <span className="block text-xs text-slate-500 font-lato">one-time</span>
                           </div>
                         </div>
@@ -757,7 +757,7 @@ const Pricing = () => {
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">$99</span>
+                            <span className="text-3xl font-cormorant text-slate-900">$149</span>
                             <p className="text-xs text-slate-500 font-lato">one-time</p>
                           </div>
                         </div>
@@ -981,7 +981,7 @@ const Pricing = () => {
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-4">
                       <span className="text-xl font-cormorant text-foreground">Troches</span>
-                      <span className="text-3xl font-cormorant text-foreground ml-2">$99</span>
+                      <span className="text-3xl font-cormorant text-foreground ml-2">$149</span>
                       <span className="text-muted-foreground font-lato">/mo</span>
                     </div>
                     <div className="mb-4 text-sm text-muted-foreground">
@@ -1061,7 +1061,7 @@ const Pricing = () => {
                     <Badge className="mb-2 bg-green-500/10 text-green-600 border-green-500/30" variant="outline">New</Badge>
                     <h4 className="font-cormorant text-lg text-foreground">GHK-Cu</h4>
                     <p className="text-xs text-muted-foreground mb-2">Regeneration & Repair</p>
-                    <span className="text-xl font-cormorant text-foreground">From $99</span>
+                    <span className="text-xl font-cormorant text-foreground">From $149</span>
                   </CardContent>
                 </Card>
 
@@ -1264,7 +1264,7 @@ const Pricing = () => {
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$99</span>
+                      <span className="text-3xl font-cormorant text-foreground">$149</span>
                       <span className="text-muted-foreground font-lato"> one-time</span>
                     </div>
                     <p className="text-xs text-gold font-lato mb-4">
@@ -1332,7 +1332,7 @@ const Pricing = () => {
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$99</span>
+                      <span className="text-3xl font-cormorant text-foreground">$149</span>
                       <span className="text-muted-foreground font-lato">/month</span>
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">
@@ -1558,7 +1558,7 @@ const Pricing = () => {
                     Video or in-person follow-up visit
                   </p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-cormorant text-foreground">$99</span>
+                    <span className="text-3xl font-cormorant text-foreground">$149</span>
                     <span className="text-sm text-muted-foreground">one-time</span>
                   </div>
                   <p className="text-xs text-gold font-lato">
@@ -1749,7 +1749,7 @@ const Pricing = () => {
               Chat with our <span className="font-semibold text-foreground">Virtual Care Team</span> for instant answers about pricing, insurance, and logistics—24/7.
             </p>
             <p className="text-sm text-muted-foreground font-lato max-w-xl mx-auto mb-8 italic">
-              When you're ready for personalized medical guidance, book a $99 Medical Consultation.
+              When you're ready for personalized medical guidance, book a $149 Medical Consultation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
@@ -1772,7 +1772,7 @@ const Pricing = () => {
                 onClick={openBooking}
               >
                 <Calendar className="w-5 h-5 mr-2" />
-                Book $99 Consultation
+                Book $149 Consultation
               </Button>
             </div>
           </div>
@@ -1836,7 +1836,7 @@ const Pricing = () => {
                   What's included in the à la carte consultations?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground font-lato pb-4">
-                  Our $99 consultations include a thorough review of your symptoms and 
+                  Our $149 consultations include a thorough review of your symptoms and 
                   health history, discussion of treatment options, and a personalized 
                   recommendation. If you decide to proceed with treatment, the consultation 
                   fee is applied toward your first month or diagnostic package.

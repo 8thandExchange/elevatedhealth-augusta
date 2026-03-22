@@ -271,7 +271,7 @@ const PatientLogin = () => {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <p className="text-xs uppercase tracking-widest text-gold mb-2">Patient Portal</p>
-            <h1 className="font-cormorant text-3xl text-foreground">Elevated Health</h1>
+            <h1 className="font-cormorant text-3xl text-foreground">Réveil</h1>
           </div>
 
           <Card className="bg-card border-border/50">
@@ -316,7 +316,7 @@ const PatientLogin = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <p className="text-xs uppercase tracking-widest text-gold mb-2">Patient Portal</p>
-          <h1 className="font-cormorant text-3xl text-foreground">Elevated Health</h1>
+          <h1 className="font-cormorant text-3xl text-foreground">Réveil</h1>
         </div>
 
         <Card className="bg-card border-border/50">
@@ -482,7 +482,7 @@ const PatientLogin = () => {
         {/* New Patient CTA */}
         <div className="mt-6 p-4 bg-muted/50 rounded-lg border border-border/50 text-center">
           <p className="text-sm text-muted-foreground mb-3">
-            New to Elevated Health?
+            New to Réveil?
           </p>
           <Button 
             variant="outline" 

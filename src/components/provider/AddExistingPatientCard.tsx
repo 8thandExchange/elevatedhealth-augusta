@@ -137,7 +137,7 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
   const formContent = (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Add a current clinic patient without requiring the $99 consultation. 
+        Add a current clinic patient without requiring the $149 consultation. 
         Perfect for established patients who need to be added to the system.
       </p>
       
@@ -309,8 +309,8 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
                 disabled={isAdding}
               />
               <p className="text-xs text-muted-foreground mt-1.5">
-                Enter a credit code if this patient previously paid for a $99 consultation.
-                The $99 will be applied toward their Hormone Mapping Kit.
+                Enter a credit code if this patient previously paid for a $149 consultation.
+                The $149 will be applied toward their Hormone Mapping Kit.
               </p>
             </div>
           </CollapsibleContent>

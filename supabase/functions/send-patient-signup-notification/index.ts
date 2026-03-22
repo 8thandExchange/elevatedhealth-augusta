@@ -69,7 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="background: linear-gradient(135deg, #2C3E50 0%, #34495e 100%); padding: 24px 32px;">
               <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🆕 New Patient Registration</h1>
-              <p style="color: #C5A059; margin: 8px 0 0 0; font-size: 14px;">Elevated Health Augusta</p>
+              <p style="color: #C5A059; margin: 8px 0 0 0; font-size: 14px;">Réveil</p>
             </div>
 
             <div style="padding: 32px;">
@@ -99,7 +99,7 @@ const handler = async (req: Request): Promise<Response> => {
               ${safetyFlagsHtml}
 
               <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
-                <a href="https://elevatedhealthaugusta.com/provider/dashboard" 
+                <a href="https://reveil.health/provider/dashboard" 
                    style="display: inline-block; background-color: #C5A059; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">
                   View in Provider Dashboard →
                 </a>
@@ -108,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
 
             <div style="background-color: #f3f4f6; padding: 16px 32px; text-align: center;">
               <p style="color: #6b7280; font-size: 12px; margin: 0;">
-                This is an automated notification from Elevated Health Augusta Patient Portal
+                This is an automated notification from Réveil Patient Portal
               </p>
             </div>
 
@@ -119,8 +119,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send to clinic booking email
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      from: "Réveil <noreply@stripe.reveil.health>",
+      to: ["booking@reveil.health"],
       subject: `🆕 New ${primaryProgram === "ketamine" ? "Ketamine" : "Hormone"} Patient: ${patientName}${isHighRisk ? " ⚠️ HIGH RISK" : ""}`,
       html: emailHtml,
     });

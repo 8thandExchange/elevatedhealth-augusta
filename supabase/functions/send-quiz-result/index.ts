@@ -55,7 +55,7 @@ const handler = async (req: Request): Promise<Response> => {
         port: 465,
         tls: true,
         auth: {
-          username: "care@elevatedhealthaugusta.com",
+          username: "care@reveil.health",
           password: PAUBOX_SMTP_PASSWORD!,
         },
       },
@@ -128,8 +128,8 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     await client.send({
-      from: "care@elevatedhealthaugusta.com",
-      to: "booking@elevatedhealthaugusta.com",
+      from: "care@reveil.health",
+      to: "booking@reveil.health",
       subject: emailSubject,
       content: "auto",
       html: emailContent,

@@ -38,7 +38,7 @@ const SERVICE_LABELS: Record<string, { title: string; specialist: string; steps:
       "Book your 45-minute consultation using the calendar above",
       "We'll confirm your medical history and discuss your mental health goals",
       "If cleared, we'll book your comprehensive intake and first session immediately",
-      "Your $99 consultation fee applies toward your first infusion"
+      "Your $149 consultation fee applies toward your first infusion"
     ]
   },
   peptide: {

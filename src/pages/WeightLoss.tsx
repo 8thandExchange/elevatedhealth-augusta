@@ -96,7 +96,7 @@ const WeightLoss = () => {
   const processSteps = [
     {
       step: "01",
-      headline: "Book Your $99 Consultation.",
+      headline: "Book Your $149 Consultation.",
       body: "Schedule your 30-minute in-person visit at our Evans clinic. Your provider will review your medical history, medications, and determine your GLP-1 eligibility."
     },
     {
@@ -107,7 +107,7 @@ const WeightLoss = () => {
     {
       step: "03",
       headline: "Start Medication with First Month Discount.",
-      body: "Your $99 consultation fee is credited toward your first month — pay just $300 for Semaglutide or $400 for Tirzepatide to start."
+      body: "Your $149 consultation fee is credited toward your first month — pay just $300 for Semaglutide or $400 for Tirzepatide to start."
     }
   ];
 
@@ -156,7 +156,7 @@ const WeightLoss = () => {
     },
     {
       q: "Do I need labs to start?",
-      a: "Most patients can start GLP-1 medication after their $99 consultation. If your provider determines additional lab work would benefit your safety or results, they may request recent labs from your PCP or recommend optional hormone testing."
+      a: "Most patients can start GLP-1 medication after their $149 consultation. If your provider determines additional lab work would benefit your safety or results, they may request recent labs from your PCP or recommend optional hormone testing."
     },
     {
       q: "What if I want hormone testing too?",
@@ -171,18 +171,18 @@ const WeightLoss = () => {
   return (
     <>
       <Helmet>
-        <title>Metabolic Optimization Program - Weight Loss Augusta | Elevated Health</title>
-        <meta name="description" content="Medical weight loss in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + ZRT hormone testing + metabolic analysis." />
+        <title>Metabolic Optimization Program - Weight Loss Augusta | Réveil</title>
+        <meta name="description" content="Medical weight loss in Augusta, GA. $149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + ZRT hormone testing + metabolic analysis." />
         <meta name="keywords" content="metabolic optimization Augusta, semaglutide Augusta GA, tirzepatide Augusta, GLP-1 Augusta, weight loss clinic Georgia, ZRT testing Augusta, metabolic labs" />
-        <meta property="og:title" content="Metabolic Optimization Program - Weight Loss Augusta | Elevated Health" />
-        <meta property="og:description" content="Medical weight loss in Augusta, GA. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + hormone testing." />
+        <meta property="og:title" content="Metabolic Optimization Program - Weight Loss Augusta | Réveil" />
+        <meta property="og:description" content="Medical weight loss in Augusta, GA. $149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + hormone testing." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://elevatedhealthaugusta.com/weight-loss" />
-        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta property="og:url" content="https://reveil.health/weight-loss" />
+        <meta property="og:image" content="https://reveil.health/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Medical Weight Loss Augusta | Metabolic Optimization" />
-        <meta name="twitter:description" content="$99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 + hormone testing." />
-        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:description" content="$149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 + hormone testing." />
+        <meta name="twitter:image" content="https://reveil.health/og-image.jpg" />
       </Helmet>
 
       <div className="min-h-screen">
@@ -298,7 +298,7 @@ const WeightLoss = () => {
                   </Button>
                 </div>
                 <p className="text-center text-xs text-green-600 font-medium mt-2 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
-                  $99 consultation fee credited toward your treatment
+                  $149 consultation fee credited toward your treatment
                 </p>
 
                 <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-primary/60 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
@@ -432,12 +432,12 @@ const WeightLoss = () => {
           {/* How GLP-1 Works - Educational Section */}
           <HowGLP1Works />
 
-          {/* Why Elevated Health is Different */}
+          {/* Why Réveil is Different */}
           <section className="py-16 md:py-24">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-4xl mx-auto text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Why Elevated Health is Different
+                  Why Réveil is Different
                 </h2>
                 <p className="text-lg text-muted-foreground">
                   Augusta has NO program offering this level of comprehensive care
@@ -510,7 +510,7 @@ const WeightLoss = () => {
                           <span className="text-sm font-lato font-normal">(Ro, Hims, etc.)</span>
                         </th>
                         <th className="p-4 text-center font-cormorant text-lg text-gold bg-gold/10">
-                          <span className="block">Elevated Health</span>
+                          <span className="block">Réveil</span>
                           <span className="text-sm font-lato font-normal">Augusta, GA</span>
                         </th>
                       </tr>
@@ -619,7 +619,7 @@ const WeightLoss = () => {
                     ) : (
                       <Calendar className="mr-2 h-4 w-4" />
                     )}
-                    {isConsultationLoading ? "Processing..." : "Book $99 Consultation — Get $99 Credit"}
+                    {isConsultationLoading ? "Processing..." : "Book $149 Consultation — Get $99 Credit"}
                   </Button>
                   <p className="text-xs text-muted-foreground mt-2">First month: $300 (Semaglutide) or $400 (Tirzepatide)</p>
                 </div>
@@ -763,7 +763,7 @@ const WeightLoss = () => {
                   Start Your Journey
                 </h2>
                 <p className="text-lg text-muted-foreground font-lato">
-                  $99 consultation credited toward your first month of treatment
+                  $149 consultation credited toward your first month of treatment
                 </p>
               </div>
 
@@ -779,7 +779,7 @@ const WeightLoss = () => {
                     <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
                       Discovery Consultation
                     </h3>
-                    <p className="text-3xl font-cormorant text-primary mb-2">$99</p>
+                    <p className="text-3xl font-cormorant text-primary mb-2">$149</p>
                     <p className="text-xs text-green-600 font-medium mb-2">
                       Credited toward your first month
                     </p>
@@ -968,7 +968,7 @@ const WeightLoss = () => {
                   Ready to Start Your Transformation?
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  Book your $99 consultation today and discover why Elevated Health is Augusta's 
+                  Book your $149 consultation today and discover why Réveil is Augusta's 
                   most comprehensive weight loss program. No generic dosing. No rushed appointments. 
                   Just expert support and real results.
                 </p>
@@ -985,7 +985,7 @@ const WeightLoss = () => {
                     ) : (
                       <CreditCard className="mr-2 h-5 w-5" />
                     )}
-                    {isConsultationLoading ? "Processing..." : "Book $99 Consultation"}
+                    {isConsultationLoading ? "Processing..." : "Book $149 Consultation"}
                   </Button>
                   <Button 
                     onClick={() => {

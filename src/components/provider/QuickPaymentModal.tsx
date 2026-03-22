@@ -46,7 +46,7 @@ const PRODUCTS = [
   { value: "ivKetamine", label: "IV Ketamine Infusion", price: "$400", category: "Ketamine" },
   { value: "ivKetamineBundle", label: "IV Ketamine 6-Session Bundle", price: "$2,200", category: "Ketamine" },
   // Consultation
-  { value: "consultation", label: "Discovery Consultation", price: "$99", category: "Consultation" },
+  { value: "consultation", label: "Discovery Consultation", price: "$149", category: "Consultation" },
 ];
 
 const getProductDisplayName = (product: string): string => {

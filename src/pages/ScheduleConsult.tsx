@@ -146,7 +146,7 @@ const ScheduleConsult = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Schedule Your Strategy Call | Elevated Health Augusta</title>
+        <title>Schedule Your Strategy Call | Réveil</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <Navbar />
@@ -205,7 +205,7 @@ const ScheduleConsult = () => {
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-3 mb-4">
                       <CreditCard className="w-6 h-6 text-primary" />
-                      <span className="text-3xl font-semibold text-foreground">$99</span>
+                      <span className="text-3xl font-semibold text-foreground">$149</span>
                     </div>
                     <p className="text-muted-foreground text-sm mb-6">
                       Late Cancellation / No-Show Rebooking Fee
@@ -222,7 +222,7 @@ const ScheduleConsult = () => {
                           Processing...
                         </>
                       ) : (
-                        "Pay $99 Rebooking Fee"
+                        "Pay $149 Rebooking Fee"
                       )}
                     </Button>
                   </div>

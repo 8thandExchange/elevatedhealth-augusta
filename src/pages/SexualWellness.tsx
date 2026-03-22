@@ -81,8 +81,8 @@ const SexualWellness = () => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "MedicalBusiness",
-    "name": "Elevated Health Augusta - Sexual Wellness",
-    "image": "https://elevatedhealthaugusta.com/og-image.jpg",
+    "name": "Réveil - Sexual Wellness",
+    "image": "https://reveil.health/og-image.jpg",
     "description": "Discreet sexual wellness treatments for men in Augusta, GA. Prescription Tadalafil and Sildenafil with telehealth consultations and discreet delivery.",
     "address": {
       "@type": "PostalAddress",
@@ -103,18 +103,18 @@ const SexualWellness = () => {
   return (
     <>
       <Helmet>
-        <title>Sexual Wellness for Men Augusta | Tadalafil, Sildenafil - Elevated Health</title>
+        <title>Sexual Wellness for Men Augusta | Tadalafil, Sildenafil - Réveil</title>
         <meta name="description" content="Discreet sexual wellness for men in Augusta, GA. $99 private consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Tadalafil and Sildenafil prescriptions." />
         <meta name="keywords" content="sexual wellness Augusta, ED treatment Augusta GA, Tadalafil Augusta, Sildenafil Augusta, mens health clinic Georgia, erectile dysfunction treatment" />
-        <meta property="og:title" content="Sexual Wellness for Men | $99 Private Consultation | Elevated Health Augusta" />
+        <meta property="og:title" content="Sexual Wellness for Men | $99 Private Consultation | Réveil" />
         <meta property="og:description" content="Discreet sexual wellness in Augusta, GA. $99 private consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://elevatedhealthaugusta.com/sexual-wellness" />
-        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta property="og:url" content="https://reveil.health/sexual-wellness" />
+        <meta property="og:image" content="https://reveil.health/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Men's Sexual Wellness Augusta | $99 Private Consultation" />
         <meta name="twitter:description" content="$99 private consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Discreet delivery." />
-        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:image" content="https://reveil.health/og-image.jpg" />
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
       </Helmet>
 
@@ -208,7 +208,7 @@ const SexualWellness = () => {
                   variant="compact" 
                   title="Questions? 100% confidential."
                   description="We understand this is personal. Ask about treatment options, dosing, or delivery—completely private, no judgment."
-                  ctaText="Call Discreetly: (706) 760-3470"
+                  ctaText="Call Discreetly: (706) 426-7383"
                 />
               </div>
             </div>
@@ -241,12 +241,12 @@ const SexualWellness = () => {
                           Private Health Assessment
                         </h3>
                         <p className="text-sm text-muted-foreground font-lato">
-                          A confidential conversation with our provider to review your health, discuss options, and create your personalized treatment plan. The $99 fee is credited toward your first month.
+                          A confidential conversation with our provider to review your health, discuss options, and create your personalized treatment plan. The $149 fee is credited toward your first month.
                         </p>
                       </div>
                     </div>
                     <div className="text-center md:text-right shrink-0">
-                      <span className="text-3xl font-cormorant text-foreground">$99</span>
+                      <span className="text-3xl font-cormorant text-foreground">$149</span>
                       <p className="text-xs text-muted-foreground">credited toward treatment</p>
                       <Button
                         onClick={() => setIsConsultOpen(true)}
@@ -475,7 +475,7 @@ const SexualWellness = () => {
                   Ready to Restore Your Confidence?
                 </h2>
                 <p className="text-lg font-cormorant text-muted-foreground mb-8">
-                  Start with a private consultation. The $99 fee is credited toward your first month of treatment.
+                  Start with a private consultation. The $149 fee is credited toward your first month of treatment.
                 </p>
                 <Button
                   onClick={() => setIsConsultOpen(true)}

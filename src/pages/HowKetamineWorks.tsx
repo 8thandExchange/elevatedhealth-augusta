@@ -20,22 +20,22 @@ const HowKetamineWorks = () => {
   };
 
   const handleCall = () => {
-    trackCTAClick('how_ketamine_works_call', 'tel:+17067603470');
-    window.location.href = 'tel:+17067603470';
+    trackCTAClick('how_ketamine_works_call', 'tel:+17064267383');
+    window.location.href = 'tel:+17064267383';
   };
 
 
   return (
     <>
       <Helmet>
-        <title>How Ketamine Works | Elevated Health Augusta</title>
+        <title>How Ketamine Works | Réveil</title>
         <meta 
           name="description" 
-          content="How ketamine works for depression, PTSD, and anxiety. $99 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Evidence-based explainers backed by Yale research." 
+          content="How ketamine works for depression, PTSD, and anxiety. $149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Evidence-based explainers backed by Yale research." 
         />
-        <meta property="og:title" content="How Ketamine Works | Elevated Health Augusta" />
+        <meta property="og:title" content="How Ketamine Works | Réveil" />
         <meta property="og:description" content="Evidence-based ketamine therapy explained with medical illustrations and research-backed data." />
-        <link rel="canonical" href="https://www.elevatedhealthaugusta.com/how-ketamine-works" />
+        <link rel="canonical" href="https://www.reveil.health/how-ketamine-works" />
         
         {/* Schema.org structured data for medical content */}
         <script type="application/ld+json">
@@ -84,7 +84,7 @@ const HowKetamineWorks = () => {
               <div className="aspect-video w-full rounded-xl overflow-hidden shadow-2xl">
                 <iframe
                   src="https://www.youtube.com/embed/nW21-AYY_fs"
-                  title="How Ketamine Works - Elevated Health Augusta"
+                  title="How Ketamine Works - Réveil"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="w-full h-full"
@@ -112,7 +112,7 @@ const HowKetamineWorks = () => {
                 Ready to Start Your Healing Journey?
               </h2>
               <p className="font-inter text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Book a $99 consultation to discuss your treatment options with our board-certified providers. The fee is credited toward your treatment.
+                Book a $149 consultation to discuss your treatment options with our board-certified providers. The fee is credited toward your treatment.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
@@ -128,7 +128,7 @@ const HowKetamineWorks = () => {
                   onClick={handleCall}
                   className="w-full sm:w-auto text-lg px-8 py-6"
                 >
-                  Call Us (706) 760-3470
+                  Call Us (706) 426-7383
                 </Button>
               </div>
             </div>

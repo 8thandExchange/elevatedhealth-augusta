@@ -105,9 +105,9 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
   const consultationOptions = [
     {
       icon: NeuralIcon,
-      title: "Ketamine Therapy",
+      title: "Peptide Protocols",
       description: "IV infusions & SPRAVATO® for depression, PTSD, and anxiety",
-      serviceType: "ketamine"
+      serviceType: "peptide"
     },
     {
       icon: DNAIcon,
@@ -205,7 +205,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
 
                 {/* Price & CTA */}
                 <div className="text-right shrink-0">
-                  <span className="text-xl font-cormorant font-semibold text-foreground">$99</span>
+                  <span className="text-xl font-cormorant font-semibold text-foreground">$149</span>
                   <p className="text-[10px] text-primary font-medium">
                     Applied as credit if you proceed
                   </p>
@@ -251,11 +251,11 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
             </button>
             <span className="hidden sm:inline text-muted-foreground">•</span>
             <a
-              href="tel:+17067603470"
+              href="tel:+17064267383"
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"
             >
               <Phone className="h-4 w-4" />
-              <span>Or Call: (706) 760-3470</span>
+              <span>Or Call: (706) 426-7383</span>
             </a>
           </div>
           <p className="text-[10px] text-muted-foreground text-center mt-3 italic">
@@ -265,7 +265,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
 
         {/* Consultation fee terms */}
         <p className="text-[10px] text-muted-foreground text-center mt-4 max-w-md mx-auto">
-          The $99 consultation fee is non-refundable. If you move forward with treatment, 
+          The $149 consultation fee is non-refundable. If you move forward with treatment, 
           this fee is applied as a credit toward your first service.
         </p>
 

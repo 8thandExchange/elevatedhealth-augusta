@@ -90,7 +90,7 @@ const DashboardWelcomeState = ({
               }
             />
             <p className="text-xs text-center text-muted-foreground">
-              Choose between consultation invite ($99) or direct add (no fee)
+              Choose between consultation invite ($149) or direct add (no fee)
             </p>
           </CardContent>
         </Card>

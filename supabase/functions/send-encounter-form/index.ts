@@ -201,7 +201,7 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
 
         <div class="footer">
-          <p>Elevated Health Augusta | 7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809</p>
+          <p>Réveil | 7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809</p>
           <p>This encounter form was submitted electronically on ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}</p>
           ${data.providerEmail ? `<p>Submitted by: ${data.providerEmail}</p>` : ""}
         </div>
@@ -210,7 +210,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <billing@elevatedhealthaugusta.com>",
+      from: "Réveil <billing@reveil.health>",
       to: [officeManagerEmail],
       cc: ccEmails,
       subject: `Encounter Form: ${data.patientName} - ${data.serviceType} (${data.dateOfService})`,

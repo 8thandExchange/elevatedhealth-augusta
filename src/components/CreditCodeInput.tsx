@@ -27,7 +27,7 @@ export const CreditCodeInput = ({
       <div className={`flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-lg ${className}`}>
         <CheckCircle2 className="h-4 w-4 text-green-600" />
         <span className="text-sm text-green-700 font-medium flex-1">
-          $99 credit applied: {value}
+          $149 credit applied: {value}
         </span>
         <button
           onClick={onClear}

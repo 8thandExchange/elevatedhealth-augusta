@@ -19,8 +19,8 @@ const sendAdminNotification = async (resend: Resend, customerEmail: string, mapp
     const mappingLabel = mappingType === 'metabolic' ? 'Metabolic Mapping' : 'Hormone Mapping';
     
     await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      from: "Réveil <noreply@stripe.reveil.health>",
+      to: ["booking@reveil.health"],
       subject: `💰 New ${mappingLabel} Payment Received - $${formattedAmount}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -36,7 +36,7 @@ const sendAdminNotification = async (resend: Resend, customerEmail: string, mapp
             <p style="margin: 0; color: #856404;"><strong>⚡ Action Required:</strong> Ship the ZRT kit to this patient.</p>
           </div>
           
-          <p style="color: #6c757d; font-size: 14px;">This is an automated notification from the Elevated Health payment system.</p>
+          <p style="color: #6c757d; font-size: 14px;">This is an automated notification from the Réveil payment system.</p>
         </div>
       `,
     });

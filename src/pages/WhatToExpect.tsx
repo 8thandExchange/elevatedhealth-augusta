@@ -45,7 +45,7 @@ const WhatToExpectPage = () => {
     },
     {
       icon: ClipboardCheck,
-      title: "2. $99 Medical Consultation",
+      title: "2. $149 Medical Consultation",
       description: "Your first conversation with a provider. Discuss your goals, review your health history, and get a personalized plan.",
       duration: "$99 • Credited toward treatment",
       color: "text-primary"
@@ -78,18 +78,18 @@ const WhatToExpectPage = () => {
   return (
     <>
       <Helmet>
-        <title>What to Expect from Ketamine Therapy Augusta | Elevated Health</title>
+        <title>What to Expect from Ketamine Therapy Augusta | Réveil</title>
         <meta 
           name="description" 
-          content="Learn about ketamine infusion cost Augusta, treatment protocol, and what to expect during your visit. 6-8 infusions at $400 each. $99 consultation available." 
+          content="Learn about ketamine infusion cost Augusta, treatment protocol, and what to expect during your visit. 6-8 infusions at $400 each. $149 consultation available." 
         />
         <meta name="keywords" content="ketamine infusion cost Augusta, ketamine therapy protocol, ketamine treatment Augusta GA, IV ketamine price, SPRAVATO cost" />
-        <link rel="canonical" href="https://www.elevatedhealthaugusta.com/what-to-expect" />
+        <link rel="canonical" href="https://www.reveil.health/what-to-expect" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="What to Expect from Ketamine Therapy Augusta | Elevated Health" />
-        <meta property="og:description" content="Complete guide to ketamine therapy at Elevated Health Augusta. Pricing, protocol, and patient journey explained." />
-        <meta property="og:url" content="https://www.elevatedhealthaugusta.com/what-to-expect" />
+        <meta property="og:title" content="What to Expect from Ketamine Therapy Augusta | Réveil" />
+        <meta property="og:description" content="Complete guide to ketamine therapy at Réveil. Pricing, protocol, and patient journey explained." />
+        <meta property="og:url" content="https://www.reveil.health/what-to-expect" />
         <meta property="og:type" content="website" />
 
         {/* FAQ Schema */}
@@ -139,7 +139,7 @@ const WhatToExpectPage = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "MedicalBusiness",
-            "name": "Elevated Health Augusta",
+            "name": "Réveil",
             "description": "Ketamine therapy for treatment-resistant depression, PTSD, and anxiety in Augusta, GA",
             "address": {
               "@type": "PostalAddress",
@@ -166,7 +166,7 @@ const WhatToExpectPage = () => {
                 What to Expect from Ketamine Therapy Augusta
               </h1>
               <p className="font-inter text-xl md:text-2xl text-primary-foreground/90 mb-8">
-                Your complete guide to treatment protocol, pricing, and the patient journey at Elevated Health
+                Your complete guide to treatment protocol, pricing, and the patient journey at Réveil
               </p>
               <Button
                 variant="secondary"
@@ -175,7 +175,7 @@ const WhatToExpectPage = () => {
                 onClick={handleBookConsult}
               >
                 <ClipboardCheck className="h-5 w-5" />
-                Book $99 Medical Consultation
+                Book $149 Medical Consultation
               </Button>
             </div>
           </div>
@@ -394,7 +394,7 @@ const WhatToExpectPage = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="font-playfair text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
-                Why Choose Elevated Health Augusta?
+                Why Choose Réveil?
               </h2>
               
               <div className="grid md:grid-cols-2 gap-6">
@@ -432,7 +432,7 @@ const WhatToExpectPage = () => {
                   onClick={handleBookConsult}
                 >
                   <ClipboardCheck className="h-5 w-5" />
-                  Book $99 Medical Consultation
+                  Book $149 Medical Consultation
                 </Button>
                 
                 <Button

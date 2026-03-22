@@ -48,7 +48,7 @@ const WhyUsCompare = () => {
               <p className="text-sm font-inter text-muted-foreground uppercase tracking-wide">Standard Clinic</p>
             </div>
             <div className="text-center">
-              <p className="text-sm font-inter text-primary uppercase tracking-wide font-bold">Elevated Health</p>
+              <p className="text-sm font-inter text-primary uppercase tracking-wide font-bold">Réveil</p>
             </div>
           </div>
 

@@ -120,7 +120,7 @@ serve(async (req) => {
     }
 
     // Create checkout session for hormone add-on subscription
-    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const origin = req.headers.get("origin") || "https://reveil.health";
     
     const session = await stripe.checkout.sessions.create({
       customer: customerId,

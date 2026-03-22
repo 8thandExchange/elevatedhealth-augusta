@@ -26,12 +26,12 @@ const BookingWidget = () => {
               </h2>
               
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Your $99 Medical Consultation is where it all begins. Meet with a provider, discuss your goals, and get a personalized plan.
+                Your $149 Medical Consultation is where it all begins. Meet with a provider, discuss your goals, and get a personalized plan.
               </p>
 
               <p className="text-sm text-primary font-medium">
                 <CreditCard className="inline h-4 w-4 mr-1" />
-                $99 applies as a credit toward your first treatment
+                $149 applies as a credit toward your first treatment
               </p>
             </div>
             
@@ -44,7 +44,7 @@ const BookingWidget = () => {
                 }}
                 className="px-8 py-4 h-auto bg-primary text-primary-foreground rounded-full text-lg font-semibold hover:bg-primary-dark transition-colors shadow-lg hover:shadow-xl"
               >
-                Book Your $99 Consultation →
+                Book Your $149 Consultation →
               </Button>
             </div>
 
@@ -77,11 +77,11 @@ const BookingWidget = () => {
                 </Button>
                 
                 <a 
-                  href="tel:+17067603470" 
+                  href="tel:+17064267383" 
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-accent hover:text-accent transition-colors"
                 >
                   <Phone className="h-4 w-4" />
-                  <span>Or Call: (706) 760-3470</span>
+                  <span>Or Call: (706) 426-7383</span>
                 </a>
               </div>
               

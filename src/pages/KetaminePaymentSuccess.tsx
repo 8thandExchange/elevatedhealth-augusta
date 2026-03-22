@@ -55,7 +55,7 @@ const KetaminePaymentSuccess = () => {
   return (
     <>
       <Helmet>
-        <title>Registration Confirmed | Elevated Health Augusta</title>
+        <title>Registration Confirmed | Réveil</title>
         <meta name="robots" content="noindex" />
       </Helmet>
 

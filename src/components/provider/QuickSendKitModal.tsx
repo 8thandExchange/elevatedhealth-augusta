@@ -205,7 +205,7 @@ const QuickSendKitModal = ({ open, onOpenChange, onSuccess }: QuickSendKitModalP
             <RadioGroup value={applyCredit ? "credit" : "full"} onValueChange={(v) => setApplyCredit(v === "credit")}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="credit" id="credit" />
-                <Label htmlFor="credit" className="font-normal">$250 (with $99 credit)</Label>
+                <Label htmlFor="credit" className="font-normal">$250 (with $149 credit)</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="full" id="full" />

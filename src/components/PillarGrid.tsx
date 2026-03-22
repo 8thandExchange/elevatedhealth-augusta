@@ -39,10 +39,10 @@ const PillarGrid = ({ onOpenBooking }: PillarGridProps) => {
   const pillars = [
     {
       icon: LotusIcon,
-      title: "Ketamine Therapy",
-      description: "IV infusions & SPRAVATO® for treatment-resistant depression, PTSD, and anxiety",
-      route: SITE_CONFIG.routes.ketamine,
-      features: ["70% response rate", "Results within 24hrs", "FDA-approved options"]
+      title: "Peptide Protocols",
+      description: "Physician-prescribed peptide protocols for recovery, cognition, and longevity",
+      route: SITE_CONFIG.routes.peptides,
+      features: ["Growth hormone support", "Tissue repair", "Physician-supervised"]
     },
     {
       icon: DNAIcon,

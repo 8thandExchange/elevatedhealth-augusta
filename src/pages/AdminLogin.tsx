@@ -102,7 +102,7 @@ const AdminLogin = () => {
         
         if (!hasAccess) {
           await supabase.auth.signOut();
-          setLoginError("Access denied. This portal is for authorized providers only. Contact admin@elevatedhealthaugusta.com to request access.");
+          setLoginError("Access denied. This portal is for authorized providers only. Contact admin@reveil.health to request access.");
           return;
         }
 

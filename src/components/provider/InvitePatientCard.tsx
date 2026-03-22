@@ -81,20 +81,20 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
         body: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
-              <h1 style="color: white; font-weight: 300; margin: 0;">Elevated Health</h1>
+              <h1 style="color: white; font-weight: 300; margin: 0;">Réveil</h1>
               <p style="color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 2px; margin-top: 8px;">RESTORE · RENEW · REBALANCE</p>
             </div>
             <div style="padding: 30px; background: white; border: 1px solid #e2e8f0; border-top: 0; border-radius: 0 0 12px 12px;">
               <h2 style="color: #2C3E50;">Hi ${firstName}!</h2>
               <p style="color: #4a5568;">You have a ${serviceLabel} consultation scheduled for <strong>${dateDisplay}</strong>.</p>
-              <p style="color: #4a5568;">Please complete your $99 payment to confirm your appointment.</p>
+              <p style="color: #4a5568;">Please complete your $149 payment to confirm your appointment.</p>
               
               <div style="background: #f7f9fb; border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
-                <p style="font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0;">$99</p>
+                <p style="font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0;">$149</p>
                 <p style="font-size: 14px; color: #7F8C8D; margin-top: 4px;">Consultation Fee • 30 Minutes</p>
               </div>
               
-              <p style="color: #4a5568; font-size: 14px;">This $99 becomes a credit toward your Hormone Mapping Kit if you decide to proceed with treatment.</p>
+              <p style="color: #4a5568; font-size: 14px;">This $149 becomes a credit toward your Hormone Mapping Kit if you decide to proceed with treatment.</p>
               
               <div style="text-align: center; margin: 32px 0;">
                 <a href="#" style="display: inline-block; background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); color: white; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 600;">Complete Payment →</a>
@@ -107,19 +107,19 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
     
     // Default: needs_booking
     return {
-      subject: `${firstName}, Your Consultation Invitation from Elevated Health`,
+      subject: `${firstName}, Your Consultation Invitation from Réveil`,
       body: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; font-weight: 300; margin: 0;">Elevated Health</h1>
+            <h1 style="color: white; font-weight: 300; margin: 0;">Réveil</h1>
             <p style="color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 2px; margin-top: 8px;">RESTORE · RENEW · REBALANCE</p>
           </div>
           <div style="padding: 30px; background: white; border: 1px solid #e2e8f0; border-top: 0; border-radius: 0 0 12px 12px;">
             <h2 style="color: #2C3E50;">Welcome, ${firstName}!</h2>
-            <p style="color: #4a5568;">You've been personally invited to begin your hormone optimization journey with Elevated Health Augusta.</p>
+            <p style="color: #4a5568;">You've been personally invited to begin your hormone optimization journey with Réveil.</p>
             
             <div style="background: #f7f9fb; border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
-              <p style="font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0;">$99</p>
+              <p style="font-size: 36px; font-weight: 700; color: #2C3E50; margin: 0;">$149</p>
               <p style="font-size: 14px; color: #7F8C8D; margin-top: 4px;">Discovery Consultation • 30 Minutes</p>
             </div>
             
@@ -129,7 +129,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
                 <li style="margin: 8px 0;">✓ 30-minute one-on-one with your provider</li>
                 <li style="margin: 8px 0;">✓ Complete symptom assessment</li>
                 <li style="margin: 8px 0;">✓ Personalized treatment path discussion</li>
-                <li style="margin: 8px 0;">✓ <strong>$99 credit toward your Hormone Mapping Kit</strong></li>
+                <li style="margin: 8px 0;">✓ <strong>$149 credit toward your Hormone Mapping Kit</strong></li>
               </ul>
             </div>
             
@@ -154,10 +154,10 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
       const dateDisplay = scheduledDate 
         ? new Date(scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         : "your appointment";
-      return `Hi ${firstName}! 🏥 Please complete your $99 payment to confirm your ${serviceLabel} consultation on ${dateDisplay}. Pay here: [payment link] - Elevated Health Augusta`;
+      return `Hi ${firstName}! 🏥 Please complete your $149 payment to confirm your ${serviceLabel} consultation on ${dateDisplay}. Pay here: [payment link] - Réveil`;
     }
     
-    return `Hi ${firstName}! 🌟 The clinical team at Elevated Health Augusta has invited you to book a $99 Discovery Consultation. Book here: [payment link] Questions? Call (706) 821-7354`;
+    return `Hi ${firstName}! 🌟 The clinical team at Réveil has invited you to book a $149 Discovery Consultation. Book here: [payment link] Questions? Call (706) 821-7354`;
   };
 
   const handlePreview = (mode: "email" | "sms") => {
@@ -241,7 +241,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
 
         if (smsError) throw smsError;
         setSent("sms");
-        toast.success(`$99 consultation invite texted to ${phone}`);
+        toast.success(`$149 consultation invite texted to ${phone}`);
       } else {
         setSent("email");
         const serviceLabel = SERVICE_TYPES.find(s => s.value === serviceInterests[0])?.label || "Consultation";
@@ -277,8 +277,8 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
   const formContent = (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Send a $99 Discovery Consultation invite. After payment, they'll schedule their consultation. 
-        The $99 becomes a credit toward their $349 Hormone Mapping Kit.
+        Send a $149 Discovery Consultation invite. After payment, they'll schedule their consultation. 
+        The $149 becomes a credit toward their $349 Hormone Mapping Kit.
       </p>
       
       {/* Invite Type Selection */}
@@ -296,7 +296,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
               <Label htmlFor="needs_booking" className="text-sm font-medium cursor-pointer">
                 Needs to Book
               </Label>
-              <p className="text-xs text-muted-foreground">Patient pays $99 → then schedules consultation</p>
+              <p className="text-xs text-muted-foreground">Patient pays $149 → then schedules consultation</p>
             </div>
           </div>
           <div className="flex items-start space-x-2">
@@ -305,7 +305,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
               <Label htmlFor="already_booked" className="text-sm font-medium cursor-pointer">
                 Already Booked
               </Label>
-              <p className="text-xs text-muted-foreground">Patient already scheduled, just needs to pay $99</p>
+              <p className="text-xs text-muted-foreground">Patient already scheduled, just needs to pay $149</p>
             </div>
           </div>
         </RadioGroup>

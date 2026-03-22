@@ -12,7 +12,7 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CHECK-CONSULTATION-FOLLOWUP] ${step}${detailsStr}`);
 };
 
-// This function checks for $99 consultations that haven't converted to kit purchases within 48 hours
+// This function checks for $149 consultations that haven't converted to kit purchases within 48 hours
 // Run via pg_cron daily
 
 serve(async (req) => {
@@ -93,13 +93,13 @@ serve(async (req) => {
         .join('\n');
 
       await resend.emails.send({
-        from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
-        to: ["booking@elevatedhealthaugusta.com"],
+        from: "Réveil <noreply@stripe.reveil.health>",
+        to: ["booking@reveil.health"],
         subject: `⚠️ ${followups.length} Consultation(s) Need Kit Follow-up`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #c53030;">Consultation Follow-up Needed</h2>
-            <p>The following patients paid for a $99 consultation more than 48 hours ago but haven't purchased their diagnostic kit:</p>
+            <p>The following patients paid for a $149 consultation more than 48 hours ago but haven't purchased their diagnostic kit:</p>
             <div style="background-color: #fff5f5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #c53030;">
               <pre style="margin: 0; white-space: pre-wrap;">${patientList}</pre>
             </div>
@@ -107,10 +107,10 @@ serve(async (req) => {
             <ul>
               <li>Call or text these patients to check on their decision</li>
               <li>Send them the kit payment link from the Provider Dashboard</li>
-              <li>Remind them their $99 credit is waiting to be applied</li>
+              <li>Remind them their $149 credit is waiting to be applied</li>
             </ul>
             <p style="color: #666; font-size: 14px; margin-top: 30px;">
-              This is an automated message from your Elevated Health patient management system.
+              This is an automated message from your Réveil patient management system.
             </p>
           </div>
         `,

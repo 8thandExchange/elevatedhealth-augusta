@@ -34,10 +34,10 @@ const handler = async (req: Request): Promise<Response> => {
     logStep("Request received", { patient_name, patient_email, patient_id });
 
     const firstName = patient_name.split(' ')[0];
-    const activationLink = payment_link || "https://elevatedhealthaugusta.com/consult";
+    const activationLink = payment_link || "https://reveil.health/consult";
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Réveil <noreply@stripe.reveil.health>",
       to: [patient_email],
       subject: "Your Personalized Hormone Protocol is Ready",
       html: `
@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Header -->
             <div style="text-align: center; margin-bottom: 32px;">
               <h1 style="font-family: Georgia, serif; font-size: 28px; color: #2C3E50; margin: 0;">
-                Elevated Health Augusta
+                Réveil
               </h1>
               <p style="color: #D4A017; font-size: 14px; margin-top: 8px; letter-spacing: 2px;">
                 HORMONE OPTIMIZATION
@@ -103,12 +103,12 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Footer -->
             <div style="text-align: center; margin-top: 32px; color: #8E9EAB; font-size: 12px;">
               <p style="margin: 0 0 8px 0;">
-                <strong>Elevated Health Augusta</strong><br>
+                <strong>Réveil</strong><br>
                 7013 Evans Town Center Blvd, Suite 203<br>
                 Evans, GA 30809
               </p>
               <p style="margin: 0;">
-                Questions? Call us at <a href="tel:7067603470" style="color: #D4A017; text-decoration: none;">(706) 760-3470</a>
+                Questions? Call us at <a href="tel:7064267383" style="color: #D4A017; text-decoration: none;">(706) 426-7383</a>
               </p>
             </div>
           </div>
