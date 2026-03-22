@@ -261,9 +261,9 @@ const ProviderDashboard = () => {
     const providers: Record<string, { name: string; credentials: string; role: string }> = {
       // Providers
       "admin@reveil.health": { name: "Clinical Team", credentials: "NP-C", role: "provider" },
-      "lauren@reveil.health": { name: "Clinical Team", credentials: "NP-C", role: "provider" },
+      "admin@reveil.health": { name: "Clinical Team", credentials: "NP-C", role: "provider" },
       "troy.w.akers@gmail.com": { name: "Troy Akers", credentials: "DO", role: "provider" },
-      "mmbursey@gmail.com": { name: "Michael Bursey", credentials: "DO", role: "provider" },
+      "clinical@reveil.health": { name: "Clinical Team", credentials: "DO", role: "provider" },
       "drdwmd@pmrehab.net": { name: "Dennis Williams", credentials: "MD", role: "provider" },
       // Office Staff
       "kcovington@pmrehab.net": { name: "Kristen Covington", credentials: "", role: "office_manager" },

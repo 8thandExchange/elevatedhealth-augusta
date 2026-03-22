@@ -364,7 +364,7 @@ const StaffPricingCheatsheet = () => {
                     <div className="bg-green-500/10 rounded-lg p-3 text-sm">
                       <p className="font-medium text-green-700 dark:text-green-400 mb-1">✓ Labs NOT Required to Start</p>
                       <p className="text-muted-foreground">
-                        Most weight loss patients start GLP-1 medication after their $99 consultation—no mandatory lab kit. Lauren reviews eligibility in-person.
+                        Most weight loss patients start GLP-1 medication after their $99 consultation—no mandatory lab kit. Our physician reviews eligibility in-person.
                       </p>
                     </div>
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">

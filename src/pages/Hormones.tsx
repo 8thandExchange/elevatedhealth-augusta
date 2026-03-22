@@ -312,7 +312,7 @@ const Hormones = () => {
                         Includes $99 credit toward Hormone Mapping
                       </p>
                       <p className="text-sm text-muted-foreground mb-4 font-light">
-                        30-minute in-person visit with Lauren to discuss symptoms and treatment options.
+                        30-minute in-person visit with our physician to discuss symptoms and treatment options.
                       </p>
                       <Button 
                         onClick={handleConsultationCheckout}
