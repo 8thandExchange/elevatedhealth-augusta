@@ -47,8 +47,9 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
   const [parseStatus, setParseStatus] = useState<"idle" | "success" | "error">("idle");
 
   const handleFile = useCallback(async (file: File) => {
-    if (file.type !== 'application/pdf') {
-      toast.error("Please upload a PDF file");
+    const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please upload a PDF or image file");
       return;
     }
 
