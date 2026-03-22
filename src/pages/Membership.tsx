@@ -2,58 +2,53 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { useBooking } from "@/contexts/BookingContext";
-import { useEffect } from "react";
+import { ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { FOUNDING_MEMBERSHIP_TIERS, type FoundingMembershipTier } from "@/lib/stripeConfig";
 
-const tiers = [
-  {
-    name: "Wellness Pass",
-    standard: "$199/mo",
-    founding: "$149/mo",
-    popular: false,
-    features: [
-      "2 IV infusions per month",
-      "1 Glutathione push included",
-      "Priority same-day booking",
-      "10% off additional IVs and add-ons",
-      "Member health portal access",
-    ],
-  },
-  {
-    name: "Longevity Protocol",
-    standard: "$399/mo",
-    founding: "$299/mo",
-    popular: true,
-    features: [
-      "Everything in Wellness Pass",
-      "1 peptide protocol (Sermorelin or CJC/Ipamorelin)",
-      "Monthly physician check-in",
-      "Quarterly biomarker panel",
-      "NAD+ IV once per quarter",
-      "15% off all additional services",
-    ],
-  },
-  {
-    name: "Executive Concierge",
-    standard: "$699/mo",
-    founding: "$549/mo",
-    popular: false,
-    features: [
-      "Everything in Longevity Protocol",
-      "Full HRT/BHRT management included",
-      "Unlimited IVs (up to 4/month)",
-      "2 peptide protocols simultaneously",
-      "Direct physician access during business hours",
-      "Annual comprehensive longevity panel",
-      "2 guest IV visits per quarter",
-    ],
-  },
-];
+const tierKeys: FoundingMembershipTier[] = ["wellnessPass", "longevityProtocol", "executiveConcierge"];
 
 const Membership = () => {
-  const { openBooking } = useBooking();
+  const [searchParams] = useSearchParams();
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const successTier = searchParams.get("tier");
+  const isSuccess = searchParams.get("success") === "true";
+
   useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  useEffect(() => {
+    if (isSuccess && successTier) {
+      const tierConfig = FOUNDING_MEMBERSHIP_TIERS[successTier as FoundingMembershipTier];
+      if (tierConfig) {
+        toast.success(`Welcome to ${tierConfig.name}! Your founding rate is locked in forever.`);
+      }
+    }
+  }, [isSuccess, successTier]);
+
+  const handleMembershipCheckout = async (tier: FoundingMembershipTier) => {
+    setLoadingTier(tier);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-founding-membership-checkout", {
+        body: { tier }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Membership checkout error:", err);
+      toast.error("Failed to start checkout. Please try again or call us at (706) 426-7383.");
+    } finally {
+      setLoadingTier(null);
+    }
+  };
 
   return (
     <>
@@ -64,6 +59,18 @@ const Membership = () => {
       </Helmet>
       <div className="min-h-screen">
         <Navbar />
+        
+        {/* Success Banner */}
+        {isSuccess && (
+          <div className="bg-green-50 border-b border-green-200 py-4">
+            <div className="container mx-auto px-6 flex items-center justify-center gap-3">
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <p className="font-jost text-green-800 font-medium">
+                Your founding membership is confirmed! Check your email for details.
+              </p>
+            </div>
+          </div>
+        )}
         
         <section className="pt-32 pb-20 md:pt-40 md:pb-28 bg-background">
           <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
@@ -81,35 +88,46 @@ const Membership = () => {
         <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {tiers.map((tier) => (
-                <div
-                  key={tier.name}
-                  className={`p-8 border ${tier.popular ? 'border-accent' : 'border-border/50'} relative`}
-                >
-                  {tier.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 font-jost text-xs font-medium uppercase tracking-[2.5px] text-accent bg-background px-3">
-                      Most Popular
-                    </span>
-                  )}
-                  <h3 className="font-playfair text-xl text-foreground mb-2">{tier.name}</h3>
-                  <p className="font-jost text-2xl font-medium text-accent mb-1">{tier.founding}</p>
-                  <p className="font-jost text-sm text-muted-foreground line-through mb-6">{tier.standard}</p>
-                  <ul className="space-y-3 mb-8">
-                    {tier.features.map((f) => (
-                      <li key={f} className="font-jost font-light text-sm text-foreground flex items-start gap-2">
-                        <span className="text-accent mt-0.5">—</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    onClick={openBooking}
-                    className="w-full bg-primary text-accent font-jost font-medium text-sm rounded-sm hover:bg-primary-light"
+              {tierKeys.map((key) => {
+                const tier = FOUNDING_MEMBERSHIP_TIERS[key];
+                const isPopular = key === "longevityProtocol";
+                const isLoading = loadingTier === key;
+                
+                return (
+                  <div
+                    key={key}
+                    className={`p-8 border ${isPopular ? 'border-accent' : 'border-border/50'} relative`}
                   >
-                    Claim your founding rate
-                  </Button>
-                </div>
-              ))}
+                    {isPopular && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 font-jost text-xs font-medium uppercase tracking-[2.5px] text-accent bg-background px-3">
+                        Most Popular
+                      </span>
+                    )}
+                    <h3 className="font-playfair text-xl text-foreground mb-2">{tier.name}</h3>
+                    <p className="font-jost text-2xl font-medium text-accent mb-1">{tier.displayPrice}</p>
+                    <p className="font-jost text-sm text-muted-foreground line-through mb-6">{tier.standardDisplayPrice}</p>
+                    <ul className="space-y-3 mb-8">
+                      {tier.features.map((f) => (
+                        <li key={f} className="font-jost font-light text-sm text-foreground flex items-start gap-2">
+                          <span className="text-accent mt-0.5">—</span>
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button 
+                      onClick={() => handleMembershipCheckout(key)}
+                      disabled={isLoading}
+                      className="w-full bg-primary text-accent font-jost font-medium text-sm rounded-sm hover:bg-primary-light"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Claim your founding rate"
+                      )}
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
             <p className="font-jost font-light text-sm text-muted-foreground text-center mt-12 max-w-2xl mx-auto">
               Founding member pricing locks in forever for the first 25 members per tier. 
@@ -123,12 +141,19 @@ const Membership = () => {
         <section className="py-16 md:py-24 bg-background text-center">
           <div className="container mx-auto px-6">
             <Button 
-              onClick={openBooking}
+              onClick={() => handleMembershipCheckout("longevityProtocol")}
+              disabled={loadingTier === "longevityProtocol"}
               size="lg"
               className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm hover:bg-primary-light"
             >
-              Claim your founding rate
-              <ArrowRight className="ml-2 h-4 w-4" />
+              {loadingTier === "longevityProtocol" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  Claim your founding rate
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           </div>
         </section>

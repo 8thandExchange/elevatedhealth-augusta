@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useBooking } from "@/contexts/BookingContext";
+import { useNavigate } from "react-router-dom";
 
 const FoundingMemberBanner = () => {
-  const { openBooking } = useBooking();
+  const navigate = useNavigate();
 
   return (
     <section className="py-12 md:py-16 bg-background">
@@ -20,7 +20,7 @@ const FoundingMemberBanner = () => {
             Lock in your rate forever.
           </p>
           <Button 
-            onClick={openBooking}
+            onClick={() => navigate("/membership")}
             className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-8 py-5 rounded-sm hover:bg-primary-light"
           >
             Claim your founding rate

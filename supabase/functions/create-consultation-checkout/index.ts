@@ -12,38 +12,28 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-CONSULTATION-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// Service-specific configuration for Stripe checkout
 const SERVICE_CONFIG: Record<string, { name: string; description: string }> = {
-  ketamine: {
-    name: "Ketamine Therapy Consultation",
-    description: "30-minute in-person consultation at our Evans clinic to discuss IV ketamine infusions & SPRAVATO® for depression, PTSD, and anxiety. Includes $149 credit toward treatment."
+  hormone: {
+    name: "Hormone Optimization — Clinical Strategy Session",
+    description: "30-minute in-person consultation at Réveil (Evans, GA) to discuss physician-prescribed HRT/TRT. Includes $149 credit toward treatment."
   },
   weight_loss: {
-    name: "Medical Weight Loss Consultation",
-    description: "30-minute in-person consultation at our Evans clinic to discuss physician-supervised semaglutide (GLP-1) therapy. Includes $149 credit toward treatment."
+    name: "Medical Weight Loss — Clinical Strategy Session",
+    description: "30-minute in-person consultation at Réveil (Evans, GA) to discuss physician-supervised semaglutide/tirzepatide therapy. Includes $149 credit toward treatment."
   },
-  hormone: {
-    name: "Hormone Replacement Consultation",
-    description: "30-minute in-person consultation at our Evans clinic to discuss bioidentical hormone therapy. Receive your diagnostic kit directly from our physician. Includes $149 credit toward Hormone Mapping."
+  iv_therapy: {
+    name: "IV Therapy — Clinical Strategy Session",
+    description: "30-minute in-person consultation at Réveil (Evans, GA) to discuss physician-formulated IV infusions for recovery, immunity, and performance. Includes $149 credit toward treatment."
   },
   peptide: {
-    name: "Peptide Therapy Consultation",
-    description: "30-minute in-person consultation at our Evans clinic to discuss Sermorelin, NAD+, PT-141 & GHK-Cu for cellular optimization. Includes $149 credit toward treatment."
+    name: "Peptide Protocols — Clinical Strategy Session",
+    description: "30-minute in-person consultation at Réveil (Evans, GA) to discuss Sermorelin, NAD+, GHK-Cu & more for cellular optimization. Includes $149 credit toward treatment."
   },
-  hair: {
-    name: "Hair Restoration Consultation",
-    description: "30-minute in-person consultation at our Evans clinic to discuss finasteride, minoxidil & PRP therapy for hair regrowth. Includes $149 credit toward treatment."
-  },
-  sexual: {
-    name: "Sexual Wellness Consultation",
-    description: "30-minute discreet in-person consultation at our Evans clinic for ED, low libido & intimate health solutions. Includes $149 credit toward treatment."
-  }
 };
 
-// Generate a unique credit code
 const generateCreditCode = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = 'EH-';
+  let code = 'RV-';
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -60,28 +50,23 @@ serve(async (req) => {
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    logStep("Stripe key verified");
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    // Parse request body
     const body = await req.json().catch(() => ({}));
-    const serviceType = body.serviceType || "hormone"; // hormone, weight_loss, ketamine, peptide
+    const serviceType = body.serviceType || "hormone";
     logStep("Service type", { serviceType });
 
-    // Validate service type
-    const validServiceTypes = ["hormone", "weight_loss", "ketamine", "peptide", "hair", "sexual"];
+    const validServiceTypes = ["hormone", "weight_loss", "iv_therapy", "peptide"];
     if (!validServiceTypes.includes(serviceType)) {
       throw new Error(`Invalid service type: ${serviceType}`);
     }
 
-    // Get service-specific config
     const config = SERVICE_CONFIG[serviceType];
 
-    // Check for authenticated user (optional - supports guest checkout)
     const authHeader = req.headers.get("Authorization");
     let userEmail: string | undefined;
     let userId: string | undefined;
@@ -98,7 +83,6 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    // Check if customer already exists
     let customerId: string | undefined;
     if (userEmail) {
       const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
@@ -109,12 +93,9 @@ serve(async (req) => {
     }
 
     const origin = req.headers.get("origin") || "https://reveil.health";
-
-    // Generate credit code for future mapping discount
     const creditCode = generateCreditCode();
     logStep("Generated credit code", { creditCode });
 
-    // $149 Discovery Consultation - use service-specific config
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : userEmail,
@@ -126,18 +107,17 @@ serve(async (req) => {
               name: config.name,
               description: config.description,
             },
-            unit_amount: 9900, // $99
+            unit_amount: 14900, // $149
           },
           quantity: 1,
         },
       ],
       mode: "payment",
-      shipping_address_collection: undefined, // No shipping needed for consultation
       success_url: `${origin}/consultation-confirmed?session_id={CHECKOUT_SESSION_ID}&credit=${creditCode}&service=${serviceType}`,
-      cancel_url: `${origin}/hormones-women`,
+      cancel_url: `${origin}/pricing`,
       metadata: {
         user_id: userId || "",
-        product: "discovery_consultation",
+        product: "clinical_strategy_session",
         service_type: serviceType,
         credit_code: creditCode,
       },
