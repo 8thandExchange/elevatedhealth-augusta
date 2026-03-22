@@ -115,24 +115,24 @@ const App = () => {
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/ketamine" element={<Ketamine />} />
           <Route path="/weightloss" element={<WeightLoss />} />
+          <Route path="/weight-loss" element={<WeightLoss />} />
           <Route path="/hormones" element={<Hormones />} />
           <Route path="/hormones-women" element={<HormonesWomen />} />
           <Route path="/hormones-men" element={<HormonesMen />} />
-          {/* Legacy Routes */}
-          <Route path="/iv-ketamine" element={<IVKetamine />} />
-          <Route path="/spravato" element={<Spravato />} />
-          <Route path="/hormone-replacement" element={<HormoneReplacement />} />
-          <Route path="/weight-loss" element={<WeightLoss />} />
-          {/* Informational Routes */}
-          <Route path="/military-veteran" element={<MilitaryVeteran />} />
-          <Route path="/how-ketamine-works" element={<HowKetamineWorks />} />
-          {/* SUNSETTED SERVICE ROUTES - Redirect to homepage */}
-          <Route path="/peptides" element={<NotFound />} />
+          <Route path="/iv-lounge" element={<IVLounge />} />
+          <Route path="/peptides" element={<PeptideTherapy />} />
+          <Route path="/membership" element={<Membership />} />
+          <Route path="/about" element={<About />} />
+          {/* Legacy routes redirect to home */}
+          <Route path="/ketamine" element={<Index />} />
+          <Route path="/iv-ketamine" element={<Index />} />
+          <Route path="/spravato" element={<Index />} />
+          <Route path="/hormone-replacement" element={<Hormones />} />
+          <Route path="/how-ketamine-works" element={<Index />} />
           <Route path="/hair-restoration" element={<NotFound />} />
           <Route path="/sexual-wellness" element={<NotFound />} />
-          <Route path="/iv-lounge" element={<NotFound />} />
+          <Route path="/military-veteran" element={<MilitaryVeteran />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/pricing-comparison" element={<PricingComparison />} />
           <Route path="/affordability" element={<Affordability />} />
