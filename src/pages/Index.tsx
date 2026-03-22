@@ -1,15 +1,10 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FinancingBanner from "@/components/FinancingBanner";
-import OurTreatments from "@/components/OurTreatments";
-import MissionStatement from "@/components/MissionStatement";
-import NotReadyToBook from "@/components/NotReadyToBook";
-import WhyUsCompare from "@/components/WhyUsCompare";
-import InsuranceLogos from "@/components/InsuranceLogos";
+import FoundingMemberBanner from "@/components/FoundingMemberBanner";
+import ServicesGrid from "@/components/ServicesGrid";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SEOSchema from "@/components/SEOSchema";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import AssistantHub from "@/components/AssistantHub";
 import { FloatingMobileCTA } from "@/components/FloatingMobileCTA";
 import { FloatingMobileChatCTA } from "@/components/FloatingMobileChatCTA";
@@ -23,21 +18,33 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
-        <FinancingBanner />
-        <MissionStatement />
-        <OurTreatments />
-        <div className="container mx-auto px-4 py-12">
-          <NotReadyToBook />
-        </div>
-        <WhyUsCompare />
-        <InsuranceLogos />
+        <FoundingMemberBanner />
+        <div className="section-divider max-w-5xl mx-auto" />
+        <ServicesGrid />
+        <div className="section-divider max-w-5xl mx-auto" />
+        {/* Credibility bar */}
+        <section className="py-12 bg-background">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-xs font-jost font-medium tracking-[2.5px] uppercase text-center">
+              <span>Board-Certified Physician Direction</span>
+              <span className="text-accent/40">·</span>
+              <span>Evans Town Center</span>
+              <span className="text-accent/40">·</span>
+              <span>BCBS</span>
+              <span className="text-accent/40">·</span>
+              <span>TRICARE</span>
+              <span className="text-accent/40">·</span>
+              <span>VA Accepted</span>
+            </div>
+          </div>
+        </section>
+        <div className="section-divider max-w-5xl mx-auto" />
         <Contact />
       </main>
       <Footer />
       <AssistantHub />
       <FloatingMobileCTA />
       <FloatingMobileChatCTA />
-      <PWAInstallPrompt />
     </div>
   );
 };

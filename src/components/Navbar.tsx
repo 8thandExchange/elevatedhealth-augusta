@@ -45,43 +45,42 @@ const Navbar = () => {
   const handleLogout = async () => { await logout(); };
 
   const navBg = isScrolled || !isHomePage
-    ? "bg-white/95 backdrop-blur-md border-b border-border/30 shadow-sm"
+    ? "bg-background/95 backdrop-blur-md border-b border-border/30"
     : "bg-transparent border-b border-transparent";
+
+  const navLinks = [
+    { label: "Home", action: () => { navigate("/"); scrollToSection("hero"); } },
+    { label: "Women's Hormones", action: () => navigate("/hormones-women") },
+    { label: "Men's Health", action: () => navigate("/hormones-men") },
+    { label: "IV Therapy", action: () => navigate("/iv-lounge") },
+    { label: "Peptides", action: () => navigate("/peptides") },
+    { label: "Membership", action: () => navigate("/membership") },
+    { label: "About", action: () => navigate("/about") },
+  ];
 
   return (
     <>
-      {/* Announcement Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background text-muted-foreground text-xs py-2 text-center border-b border-border/20">
-        <span className="font-inter">Serving Augusta & Evans, GA</span>
-        <span className="mx-2 opacity-30">|</span>
-        <a href="tel:7067603470" className="font-inter hover:text-primary transition-colors">(706) 760-3470</a>
-      </div>
-      
-      {/* Main Navigation */}
-      <nav className={`fixed top-[32px] left-0 right-0 z-50 transition-all duration-500 ${navBg}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${navBg}`}>
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            {/* Logo */}
+            {/* Wordmark */}
             <button 
-              onClick={() => scrollToSection("hero")}
-              className="font-inter text-xl font-bold tracking-tight text-foreground transition-colors hover:text-primary"
+              onClick={() => { navigate("/"); scrollToSection("hero"); }}
+              className="flex flex-col items-start"
             >
-              Elevated Health
+              <span className="font-playfair text-2xl text-foreground tracking-tight">Réveil</span>
+              <span className="font-jost text-[9px] font-medium uppercase tracking-[2.5px] text-accent hidden sm:block">
+                Restore · Repair · Réveil
+              </span>
             </button>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-8 flex-shrink-0">
-              {[
-                { label: "Ketamine", action: () => navigate(SITE_CONFIG.routes.ketamine) },
-                { label: "Weight Loss", action: () => navigate(SITE_CONFIG.routes.weightloss) },
-                { label: "Hormones", action: () => navigate(SITE_CONFIG.routes.hormones) },
-                { label: "Pricing", action: () => navigate("/pricing") },
-                { label: "Contact", action: () => scrollToSection("contact") },
-              ].map((item) => (
+            <div className="hidden lg:flex items-center gap-6 flex-shrink-0">
+              {navLinks.map((item) => (
                 <button
                   key={item.label}
                   onClick={item.action}
-                  className="text-sm font-inter font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm font-jost font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {item.label}
                 </button>
@@ -93,10 +92,10 @@ const Navbar = () => {
               {isCheckingAuth ? null : isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="font-inter text-sm px-3 py-2 gap-2 border-border/50 text-foreground">
+                    <Button variant="outline" className="font-jost text-sm px-3 py-2 gap-2 border-border/50 text-foreground">
                       <Avatar className="w-6 h-6">
                         <AvatarImage src={userAvatar || undefined} alt={userName || "User"} />
-                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                        <AvatarFallback className="text-xs bg-accent/10 text-accent">
                           {userName ? getInitials(userName) : <User className="w-3 h-3" />}
                         </AvatarFallback>
                       </Avatar>
@@ -104,7 +103,7 @@ const Navbar = () => {
                       <ChevronDown className="w-3 h-3" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 bg-card border border-border shadow-lg z-[100]">
+                  <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-[100]">
                     {isProvider ? (
                       <DropdownMenuItem onClick={() => navigate("/provider/dashboard")} className="cursor-pointer gap-2">
                         <LayoutDashboard className="w-4 h-4" /> Provider Dashboard
@@ -127,10 +126,10 @@ const Navbar = () => {
                 </DropdownMenu>
               ) : null}
               <Button 
-                className="font-inter font-semibold text-sm tracking-wide px-6 py-2 bg-primary hover:bg-primary-dark text-primary-foreground rounded-full"
+                className="font-jost font-medium text-sm tracking-wide px-6 py-2 bg-primary text-accent rounded-sm hover:bg-primary-light"
                 onClick={openBooking}
               >
-                Book Consultation
+                Book Now
               </Button>
             </div>
 
@@ -149,36 +148,29 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="mobile-menu-overlay">
             <div className="flex flex-col px-8 pb-8">
-              <button onClick={() => setIsMobileMenuOpen(false)} className="mobile-menu-close absolute top-4 right-6 p-2 rounded-full">
+              <button onClick={() => setIsMobileMenuOpen(false)} className="mobile-menu-close absolute top-4 right-6 p-2">
                 <X className="h-6 w-6" />
               </button>
 
               <nav className="flex flex-col gap-4 mt-4">
-                {[
-                  { label: "Home", action: () => scrollToSection("hero") },
-                  { label: "Ketamine Therapy", action: () => { navigate(SITE_CONFIG.routes.ketamine); setIsMobileMenuOpen(false); } },
-                  { label: "Weight Loss", action: () => { navigate(SITE_CONFIG.routes.weightloss); setIsMobileMenuOpen(false); } },
-                  { label: "Hormones", action: () => { navigate(SITE_CONFIG.routes.hormones); setIsMobileMenuOpen(false); } },
-                  { label: "Pricing", action: () => { navigate("/pricing"); setIsMobileMenuOpen(false); } },
-                  { label: "Contact", action: () => { scrollToSection("contact"); setIsMobileMenuOpen(false); } },
-                ].map((item) => (
-                  <button key={item.label} onClick={item.action} className="mobile-menu-link">{item.label}</button>
+                {navLinks.map((item) => (
+                  <button key={item.label} onClick={() => { item.action(); setIsMobileMenuOpen(false); }} className="mobile-menu-link">{item.label}</button>
                 ))}
               </nav>
 
               <div className="mt-auto pt-8 space-y-3 border-t border-border">
                 <Button 
-                  className="w-full font-inter text-sm tracking-wide py-6 bg-primary hover:bg-primary-dark text-primary-foreground rounded-full"
+                  className="w-full font-jost font-medium text-sm tracking-wide py-6 bg-primary text-accent rounded-sm hover:bg-primary-light"
                   onClick={() => { openBooking(); setIsMobileMenuOpen(false); }}
                 >
-                  Book Consultation
+                  Book Now
                 </Button>
                 
                 {!isCheckingAuth && isLoggedIn && (
                   <>
                     <Button 
                       variant="outline"
-                      className="w-full font-inter text-sm tracking-wide py-6 gap-2"
+                      className="w-full font-jost text-sm tracking-wide py-6 gap-2"
                       onClick={() => { navigate(isProvider ? "/provider/dashboard" : "/patient/dashboard"); setIsMobileMenuOpen(false); }}
                     >
                       <LayoutDashboard className="w-4 h-4" />
@@ -186,7 +178,7 @@ const Navbar = () => {
                     </Button>
                     <Button 
                       variant="ghost"
-                      className="w-full font-inter text-sm tracking-wide py-6 gap-2 text-destructive"
+                      className="w-full font-jost text-sm tracking-wide py-6 gap-2 text-destructive"
                       onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
                     >
                       <LogOut className="w-4 h-4" /> Logout
@@ -194,7 +186,7 @@ const Navbar = () => {
                   </>
                 )}
                 
-                <p className="mt-6 text-sm font-inter text-center text-muted-foreground">
+                <p className="mt-6 text-sm font-jost text-center text-muted-foreground">
                   {SITE_CONFIG.phone}
                 </p>
               </div>
