@@ -8,11 +8,11 @@ import vitalityRestoration from "@/assets/treatment-vitality-restoration.jpg";
 
 const treatments = [
   {
-    id: "ketamine",
+    id: "hormones",
     number: "01",
-    title: "Neural Restoration",
-    tagline: "Reset neural pathways altered by chronic stress, anxiety, and depression",
-    route: SITE_CONFIG.routes.ketamine,
+    title: "Hormone Optimization",
+    tagline: "Physician-prescribed HRT and TRT for men and women",
+    route: SITE_CONFIG.routes.hormones,
     image: mentalWellness,
   },
   {

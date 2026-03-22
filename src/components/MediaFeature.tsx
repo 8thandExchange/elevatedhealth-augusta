@@ -32,12 +32,12 @@ const MediaFeature = () => {
               WJBF News Channel 6
             </p>
             <h3 className="text-2xl lg:text-3xl font-cormorant text-foreground mb-4">
-              Area's First Ketamine Clinic Opens in Evans
+              Area's First Longevity Clinic Opens in Evans
             </h3>
             <p className="text-muted-foreground font-lato font-light leading-relaxed mb-8">
               Réveil was featured on WJBF's "Jennie" show 
-              to discuss how the clinic is providing cutting-edge ketamine infusions 
-              for patients with treatment-resistant mental health conditions.
+              to discuss how the clinic is providing cutting-edge longevity medicine 
+              for patients with patients seeking optimal health.
             </p>
 
             <button

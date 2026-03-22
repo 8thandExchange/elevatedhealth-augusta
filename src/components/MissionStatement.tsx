@@ -26,7 +26,7 @@ const MissionStatement = () => {
           <p className="text-lg text-muted-foreground font-inter font-normal leading-relaxed mb-6">
             True wellness is not about losing weight or feeling happier—it is about 
             <strong className="text-foreground"> biological alignment</strong>. 
-            We combine advanced Ketamine therapy for neural restoration 
+            We combine advanced peptide medicine for cellular restoration 
             with precision Hormone Optimization for metabolic balance.
           </p>
           <p className="text-lg text-muted-foreground font-inter font-normal leading-relaxed mb-10">

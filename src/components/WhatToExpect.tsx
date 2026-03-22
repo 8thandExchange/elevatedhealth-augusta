@@ -18,7 +18,7 @@ const WhatToExpect = () => {
     },
     {
       icon: ClipboardCheck,
-      title: "2. $149 Medical Consultation",
+      title: "2. $149 Initial Consultation",
       description: "Your first conversation with a provider. Discuss your goals, review your health history, and get a personalized plan.",
       duration: "$149 • Credited toward treatment",
       color: "text-primary"

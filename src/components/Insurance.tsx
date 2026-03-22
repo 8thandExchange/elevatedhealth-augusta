@@ -24,7 +24,7 @@ const Insurance = () => {
               In-Network with Leading Plans
             </h2>
             <p className="font-inter text-xl text-muted-foreground max-w-3xl mx-auto mb-4">
-              We're proud to partner with these providers for accessible ketamine therapy
+              We're proud to partner with these providers for accessible longevity medicine
             </p>
             <p className="font-inter text-lg text-hope italic">
               More insurance options coming soon – stay tuned for updates!
@@ -73,19 +73,19 @@ const Insurance = () => {
           {/* Treatment Coverage Info */}
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <Card className="p-8 bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
-              <h4 className="text-2xl font-semibold mb-4 text-foreground">SPRAVATO® Therapy</h4>
+              <h4 className="text-2xl font-semibold mb-4 text-foreground">Hormone Therapy Coverage</h4>
               <p className="text-muted-foreground mb-6">
-                SPRAVATO® (intranasal esketamine) is FDA-approved and covered by Blue Cross Blue Shield, 
-                TRICARE, and VA for eligible patients with treatment-resistant depression.
+                Hormone optimization and medical weight loss services may be covered by Blue Cross Blue Shield, 
+                TRICARE, and VA for eligible patients. We provide superbills for reimbursement.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <Shield className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">FDA-approved treatment</span>
+                  <span className="text-sm text-foreground">Physician-supervised protocols</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Shield className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">In-clinic administration with monitoring</span>
+                  <span className="text-sm text-foreground">In-clinic treatment with monitoring</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Shield className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
@@ -95,9 +95,9 @@ const Insurance = () => {
             </Card>
 
             <Card className="p-8 bg-gradient-to-br from-primary/5 to-gold/5 border-primary/20">
-              <h4 className="text-2xl font-semibold mb-4 text-foreground">IV Ketamine Therapy</h4>
+              <h4 className="text-2xl font-semibold mb-4 text-foreground">Self-Pay Services</h4>
               <p className="text-muted-foreground mb-6">
-                IV Ketamine therapy is not FDA-approved for depression treatment and is typically 
+                Many of our services including IV therapy, peptides, and advanced diagnostics are 
                 offered on a self-pay basis. We provide transparent pricing and flexible payment options.
               </p>
               <ul className="space-y-3">

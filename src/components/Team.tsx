@@ -33,7 +33,7 @@ const Team = () => {
               </div>
               <h3 className="font-cormorant text-xl text-primary mb-3">Mental Wellness</h3>
               <p className="text-muted-foreground font-light text-sm leading-relaxed">
-                Ketamine therapy and neurotransmitter analysis for treatment-resistant depression, anxiety, and PTSD.
+                Peptide protocols and IV therapy for cellular restoration, cognitive clarity, and resilience.
               </p>
             </Card>
 
