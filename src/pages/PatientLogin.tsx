@@ -40,7 +40,7 @@ const PatientLogin = () => {
   // Check for existing session on mount with timeout protection
   useEffect(() => {
     let isMounted = true;
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     
     // Timeout - show login form after 8 seconds (increased for slow networks)
     timeoutId = setTimeout(() => {

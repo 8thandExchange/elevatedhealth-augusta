@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
   const [isSessionValidated, setIsSessionValidated] = useState(false);
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
   const location = useLocation();
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Timeout fallback - if loading takes too long, assume no valid session
   useEffect(() => {

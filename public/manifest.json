@@ -1,11 +1,11 @@
 {
-  "name": "Elevated Health Augusta",
-  "short_name": "Elevated Health",
-  "description": "Ketamine therapy, medical weight loss, and hormone replacement in Augusta, GA",
+  "name": "Réveil",
+  "short_name": "Réveil",
+  "description": "Physician-owned longevity clinic: hormone optimization, IV therapy, peptide medicine & medical weight loss in Evans, GA",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2C3E50",
+  "background_color": "#f7f4ef",
+  "theme_color": "#0f1f3d",
   "orientation": "portrait-primary",
   "icons": [
     {
