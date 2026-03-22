@@ -229,7 +229,7 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
             </p>
             <input
               type="file"
-              accept="application/pdf"
+              accept="application/pdf,image/png,image/jpeg"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
