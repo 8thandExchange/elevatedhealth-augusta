@@ -6,8 +6,7 @@ const SEOSchema = () => {
     "@context": "https://schema.org",
     "@type": "MedicalClinic",
     "name": SITE_CONFIG.clinicName,
-    "image": "https://elevatedhealthaugusta.com/og-image.jpg",
-    "description": "Ketamine therapy, medical weight loss, and hormone replacement therapy in Augusta, GA. $99 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE, VA accepted.",
+    "description": "Réveil is Evans' first physician-owned longevity clinic. Hormone optimization, IV therapy, peptide medicine & medical weight loss under direct physician supervision.",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": SITE_CONFIG.address.line1,
@@ -21,9 +20,9 @@ const SEOSchema = () => {
       "latitude": 33.5343,
       "longitude": -82.1285
     },
-    "url": "https://elevatedhealthaugusta.com",
+    "url": "https://reveil.health",
     "telephone": `+1${SITE_CONFIG.phoneRaw}`,
-    "priceRange": "$199-$400",
+    "priceRange": "$149-$699",
     "openingHoursSpecification": [
       {
         "@type": "OpeningHoursSpecification",
@@ -33,10 +32,9 @@ const SEOSchema = () => {
       }
     ],
     "medicalSpecialty": [
-      "Psychiatry",
-      "Mental Health",
+      "Hormone Therapy",
       "Weight Management",
-      "Hormone Therapy"
+      "Regenerative Medicine"
     ],
     "areaServed": {
       "@type": "GeoCircle",
@@ -48,8 +46,7 @@ const SEOSchema = () => {
       "geoRadius": "50"
     },
     "sameAs": [
-      "https://www.facebook.com/elevatedhealthaugusta",
-      "https://www.instagram.com/elevatedhealthaugusta"
+      "https://www.instagram.com/reveil"
     ]
   };
 
@@ -59,34 +56,26 @@ const SEOSchema = () => {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "How much does ketamine therapy cost in Augusta?",
+        "name": "What services does Réveil offer?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ketamine therapy at Elevated Health Augusta costs $400 per infusion. We accept Blue Cross Blue Shield, TRICARE, and VA insurance. A typical treatment protocol involves 6 infusions over 28 days."
+          "text": "Réveil offers physician-supervised hormone optimization (BHRT, TRT), IV therapy, peptide protocols, and medical weight loss (GLP-1 medications) in Evans, GA."
         }
       },
       {
         "@type": "Question",
-        "name": "What insurance do you accept for ketamine therapy?",
+        "name": "What insurance do you accept?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "We accept Blue Cross Blue Shield, TRICARE, and VA benefits for ketamine therapy. More insurance providers are being added. Contact us to verify your specific coverage."
+          "text": "We accept Blue Cross Blue Shield, TRICARE, and VA benefits. Contact us to verify your specific coverage."
         }
       },
       {
         "@type": "Question",
-        "name": "Is ketamine therapy effective for depression?",
+        "name": "How much is a consultation at Réveil?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Research from Yale and other leading institutions shows that 70% of patients with treatment-resistant depression experience significant relief with ketamine therapy. It works by promoting rapid formation of new neural connections in the brain."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What conditions does ketamine therapy treat?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Ketamine therapy is FDA-approved for treatment-resistant depression and has shown effectiveness for PTSD, anxiety, and OCD. Does having chronic pain cause you to feel depressed? We can help with that—we treat the mental health burden, not the pain itself. It's particularly helpful for patients who haven't responded to traditional antidepressants."
+          "text": "Initial consultations are $149 and are credited toward your first treatment."
         }
       }
     ]
@@ -94,12 +83,8 @@ const SEOSchema = () => {
 
   return (
     <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(medicalClinicSchema)}
-      </script>
-      <script type="application/ld+json">
-        {JSON.stringify(faqSchema)}
-      </script>
+      <script type="application/ld+json">{JSON.stringify(medicalClinicSchema)}</script>
+      <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
     </Helmet>
   );
 };
