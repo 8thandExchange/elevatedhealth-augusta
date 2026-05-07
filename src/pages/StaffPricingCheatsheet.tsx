@@ -219,7 +219,7 @@ const StaffPricingCheatsheet = () => {
                     <div className="flex justify-between items-center py-2 border-b border-border/50">
                       <div>
                         <p className="font-medium">Wellness Assessment <span className="text-xs text-accent">(NEW — primary entry point)</span></p>
-                        <p className="text-sm text-muted-foreground">30 min with Caroline (RN) • Vitals, history, goal-setting • Credits 100% toward any treatment within 30 days</p>
+                        <p className="text-sm text-muted-foreground">30 min with Caroline Miller, RN • Vitals, history, goal-setting • Credits 100% toward any treatment within 30 days</p>
                       </div>
                       <Badge variant="secondary" className="font-mono">$79</Badge>
                     </div>
@@ -254,7 +254,7 @@ const StaffPricingCheatsheet = () => {
                     <div className="bg-amber-500/10 rounded-lg p-3 text-sm">
                       <p className="font-medium text-amber-700 dark:text-amber-400 mb-1">⚠️ RN Scope of Practice (GA)</p>
                       <p className="text-muted-foreground">
-                        Caroline (RN) <strong>cannot</strong> diagnose, prescribe, or modify medications. Use words like <em>"wellness assessment,"</em> <em>"goal-setting,"</em> and <em>"protocol education"</em> — never <em>"medical evaluation"</em> or <em>"diagnosis."</em> If patient requests a Rx or has a complex medical question, escalate to MD evaluation ($149).
+                        Caroline Miller, RN <strong>cannot</strong> diagnose, prescribe, or modify medications. Use words like <em>"wellness assessment,"</em> <em>"goal-setting,"</em> and <em>"protocol education"</em> — never <em>"medical evaluation"</em> or <em>"diagnosis."</em> If patient requests a Rx or has a complex medical question, escalate to MD evaluation ($149).
                       </p>
                     </div>
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">
