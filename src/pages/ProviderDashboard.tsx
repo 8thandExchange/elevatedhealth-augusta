@@ -1039,6 +1039,13 @@ const ProviderDashboard = () => {
                   </Badge>
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="team" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
+                  <Users className="w-4 h-4 flex-shrink-0" />
+                  <span>Team</span>
+                </TabsTrigger>
+                <TabsTrigger 
                   value="allpatients" 
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
                 >
@@ -1148,13 +1155,6 @@ const ProviderDashboard = () => {
                 >
                   <Clock className="w-4 h-4 flex-shrink-0" />
                   <span>My Schedule</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="team" 
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
-                >
-                  <Users className="w-4 h-4 flex-shrink-0" />
-                  <span>Team</span>
                 </TabsTrigger>
               </TabsList>
             </div>

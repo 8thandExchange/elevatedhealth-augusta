@@ -10,14 +10,14 @@
  */
 
 export const ACTIVE_SERVICES = {
-  // ACTIVE SERVICES - Core revenue drivers
-  ketamine: true,      // Neural Restoration / Mental Wellness
-  weightLoss: true,    // Metabolic Reset / GLP-1 Therapy  
-  hormones: true,      // Biological Reset / HRT
-  
-  // SUNSETTED SERVICES - Set to false to hide across app
-  ivLounge: false,        // IV Hydration Therapy
-  peptides: false,        // Peptide Therapy
+  // ACTIVE SERVICES - 4 core pillars
+  hormones: true,      // Hormone Optimization
+  weightLoss: true,    // Medical Weight Loss / GLP-1
+  ivLounge: true,      // IV Therapy
+  peptides: true,      // Peptide Therapy
+
+  // SUNSETTED SERVICES - hidden across app
+  ketamine: false,        // Ketamine / Spravato — not offered
   hairRestoration: false, // Hair Restoration
   sexualWellness: false,  // Sexual Wellness
 } as const;
