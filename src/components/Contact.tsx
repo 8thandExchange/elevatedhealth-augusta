@@ -29,6 +29,12 @@ const formatPhoneNumber = (value: string): string => {
 
 const Contact = () => {
   const { openBooking } = useBooking();
+  const navigate = useNavigate();
+
+  const goToIV = () => {
+    trackCTAClick('cta_iv_lounge', 'contact_section');
+    navigate('/iv-lounge');
+  };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
