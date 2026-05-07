@@ -132,7 +132,7 @@ export const InviteProviderModal = ({ open, onOpenChange, onInviteSent }: Invite
             Invite Team Member
           </DialogTitle>
           <DialogDescription>
-            Send an email invitation to set up a new provider or staff account.
+            Create a provider/staff account directly with a password, or send an email invite.
           </DialogDescription>
         </DialogHeader>
 
