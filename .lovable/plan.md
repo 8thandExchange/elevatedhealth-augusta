@@ -1,87 +1,47 @@
-# Hormone & Peptide Care Membership
+## Provider Roster Update
 
-## The model (yes, this matches industry norm)
+### Current state (verified)
+- **Loren Bursey**: not present anywhere in code or database — nothing to remove.
+- **Dennis Williams, MD** (`drdwmd@pmrehab.net`): already configured as a Provider.
+- **Kristen Covington, Office Manager** (`kcovington@pmrehab.net`): already configured. (Spelling will stay "Kristen Covington, Office Manager" per your confirmation.)
+- **Caroline**: only referenced in marketing copy (`StaffPricingCheatsheet.tsx`) as the RN doing $79 Wellness Assessments. No backend account.
 
-Most reputable hormone/peptide clinics use exactly this structure: a flat monthly **care fee** that bundles the *clinical service* (visits, injections, supplies, draw fees), with **medication and lab panels billed at cost** as pass-throughs. It keeps the membership margin predictable, avoids prescribing pressure, and stays clean for compliance (you're not "selling drugs by subscription").
+### Changes to make
 
-### What's included in the base monthly fee
-- **Unlimited in-clinic injection visits** (RN administered — testosterone, peptides, B12, lipo, etc.)
-- All in-visit **supplies** (syringes, needles, alcohol, sharps disposal, bandages)
-- **Lab draw / specimen collection fee** (phlebotomy in-house)
-- Provider messaging + dose adjustments
-- Home delivery coordination for take-home items (creams, oral peptides)
+1. **Add Caroline Miller, RN to the provider roster lookup** in `src/pages/ProviderDashboard.tsx`:
+   ```ts
+   "caroline@elevatedhealthaugusta.com": {
+     name: "Caroline Miller",
+     credentials: "RN",
+     role: "provider"
+   }
+   ```
+   This gives her full Provider Dashboard / EMR access alongside the MDs.
 
-### What's billed separately (pass-through, transparent)
-- **Medication cost** — itemized per refill (compound cream, GLP-1 pen, peptide vial)
-- **Lab panel cost** — LabCorp/ZRT invoice forwarded at cost or +small handling
-- MD escalation visits (if needed beyond RN scope) — $149
+2. **Update `AdminLogin.tsx`** so `caroline@elevatedhealthaugusta.com` is recognized as a provider login (currently only Office Manager emails are explicitly listed; providers fall through to default).
 
-### Administration rules
-- **In-clinic primary** for injectables (T cypionate, peptides, B12). Bulk vial sourcing → better unit cost, weekly touchpoint = upsell opportunity (IV add-on, supplement, etc.)
-- **Home delivery** for transdermal creams and oral protocols only — shipped from compounding pharmacy
-- No take-home injectables in standard membership (keeps liability/sharps clean). Travel exception handled case-by-case.
+3. **Send invitation / create auth account** for `caroline@elevatedhealthaugusta.com`:
+   - Use the existing master-admin invite flow (per the Provider Gating memory — no self-registration).
+   - Assign the `staff` role in `user_roles` so RLS policies grant her staff/admin chart access.
 
-## Proposed tiers
+4. **Update name references in marketing/staff copy** in `src/pages/StaffPricingCheatsheet.tsx`:
+   - "30 min with Caroline (RN)" → "30 min with Caroline Miller, RN"
+   - "Caroline (RN) cannot diagnose…" → "Caroline Miller, RN cannot diagnose…"
 
-| Tier | Monthly | Best for | Includes |
-|---|---|---|---|
-| **Hormone Care** | $149/mo | T cream or estradiol/progesterone patients | Unlimited visits, draws, supplies, cream delivery |
-| **Hormone + Injection** | $249/mo | Men on testosterone cypionate, women on injectable estradiol | Above + weekly injection visits |
-| **Peptide Performance** | $299/mo | BPC-157, CJC/Ipa, GHK-Cu, Tesamorelin patients | Above + peptide-specific titration & weekly admin |
-| **Full Optimization** | $449/mo | Hormone + Peptide stacked | Both programs combined, priority scheduling |
+5. **Search-and-confirm sweep** for any other "Loren" / "Bursey" references across `supabase/functions/`, email templates table, and clinic settings (already searched src; will re-confirm in edge functions and DB rows during build).
 
-Founding-rate slots (25 per tier) consistent with existing Réveil founding model.
+### Out of scope
+- No schema changes — `user_roles` and the in-code provider lookup already support multiple providers.
+- No change to Dr. Williams or Kristen's records.
+- No change to public-facing branding (still "Clinical Team" / "Virtual Care Team" per Core memory).
 
-## Patient experience
+### Files to edit
+- `src/pages/ProviderDashboard.tsx` — add Caroline to the provider lookup.
+- `src/pages/AdminLogin.tsx` — ensure her email routes to `/provider/dashboard`.
+- `src/pages/StaffPricingCheatsheet.tsx` — update display name to "Caroline Miller, RN".
 
-```text
-Enroll  →  Hormone Mapping Kit ($250 one-time) or LabCorp panel
-       →  MD protocol set ($149 if not already established)
-       →  Membership starts → schedule weekly injection slot
-       →  Cream/oral refills auto-ship monthly
-       →  Lab + Rx invoices itemized in patient portal
-```
+### Database action
+- Insert `user_roles` row granting `staff` role to Caroline once her auth account is created (will need her account UUID after invite is sent — handled in build step).
 
-## What to build
-
-### 1. Public marketing
-- New `/care-membership` page (or section on `/membership`) explaining the 4 tiers, what's included vs separate, FAQ on med/lab pass-through
-- Update `Hormones.tsx`, `PeptideTherapy.tsx`, `WeightLoss.tsx` with "Join Care Membership" CTA replacing one-off pricing emphasis
-- Update homepage `MembershipTierSelector` / `FoundingMemberBanner` to surface the new tiers
-
-### 2. Stripe products
-Create 4 new recurring prices:
-- `care_hormone` $149/mo
-- `care_hormone_injection` $249/mo
-- `care_peptide` $299/mo
-- `care_full` $449/mo
-
-Reuse existing `create-founding-membership-checkout` pattern; extend `stripeConfig.ts` tier map.
-
-### 3. Database
-Migration to add membership tracking to `patients`:
-- `care_membership_tier` text (null | hormone | hormone_injection | peptide | full)
-- `care_membership_started_at` timestamptz
-- `care_membership_status` text (active | paused | cancelled)
-- `stripe_subscription_id` text
-
-New table `membership_visit_log` to track unlimited-visit usage for ops reporting:
-- patient_id, visit_date, service (injection type), administered_by, supplies_used jsonb
-
-### 4. Provider/admin UI
-- Patient chart badge showing active care tier + "weekly visit due" indicator
-- "Quick log injection" button on appointment check-in → writes to `membership_visit_log`, no charge
-- Office manager dashboard: weekly visit count per patient, med refill due list
-
-### 5. Patient portal
-- "My Membership" card showing tier, next billing, this-month visit count, upcoming refill ship dates
-- Itemized invoice section separating membership fee / med charges / lab charges
-
-### 6. Booking flow
-- Members see free in-clinic injection slots (no checkout) vs non-members see paid slot
-- `book-consult-appointment` edge function checks `care_membership_status='active'` and skips Stripe charge for injection appointments
-
-## Open considerations (flag, don't block)
-- **Bulk vial sourcing** — pharmacy contract for testosterone cypionate 10mL vials needs to be in place before "Hormone + Injection" tier launches
-- **Sharps & supply cost** at unlimited cadence — model assumes ~4 visits/mo avg; review after 60 days
-- **GLP-1** — currently routed through compounding pharmacy direct-pay; recommend keeping out of bundled tier (margin too volatile) and offering as add-on med pass-through
+### Note on invite delivery
+After implementation, master admin (`admin@reveil.health` / `admin@elevatedhealthaugusta.com`) will need to trigger the invite email so Caroline can set her password. I can either wire this through the existing invite-staff flow or you can send it manually from the admin panel — confirm during build.
