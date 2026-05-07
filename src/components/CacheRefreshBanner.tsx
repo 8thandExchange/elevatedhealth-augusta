@@ -49,27 +49,27 @@ const CacheRefreshBanner = () => {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-gold text-white py-2 px-4 shadow-lg animate-fade-in">
-      <div className="container mx-auto flex items-center justify-between gap-4">
-        <p className="text-sm font-medium flex-1 text-center">
-          🎉 We've updated our site! Click refresh to see the latest version.
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 max-w-md w-[calc(100%-2rem)] bg-foreground/95 text-background py-2.5 px-4 rounded-sm shadow-lg backdrop-blur-md animate-fade-in">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs font-jost flex-1">
+          Site updated — refresh for the latest version.
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Button
             onClick={handleRefresh}
             size="sm"
-            variant="secondary"
-            className="bg-white text-gold hover:bg-white/90 text-xs h-7 px-3"
+            variant="ghost"
+            className="text-background hover:bg-background/10 hover:text-background text-xs h-7 px-2 rounded-sm"
           >
             <RefreshCw className="h-3 w-3 mr-1" />
-            Refresh Now
+            Refresh
           </Button>
           <button
             onClick={handleDismiss}
-            className="p-1 hover:bg-white/20 rounded transition-colors"
+            className="p-1 hover:bg-background/10 rounded-sm transition-colors"
             aria-label="Dismiss"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
