@@ -333,16 +333,16 @@ const AdminLogin = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-muted/40 p-4">
+      <Card className="w-full max-w-md border-border/80 shadow-md">
         <CardHeader>
           <div className="flex items-center gap-2 mb-2">
-            <ShieldCheck className="w-5 h-5 text-primary" />
-            <span className="text-xs uppercase tracking-widest text-primary">Provider Portal</span>
+            <ShieldCheck className="w-6 h-6 text-primary" />
+            <span className="text-xs uppercase tracking-[3px] text-muted-foreground font-jost">Clinical Team Access</span>
           </div>
-          <CardTitle>Provider Login</CardTitle>
+          <CardTitle className="font-jost">Staff Sign-In</CardTitle>
           <CardDescription>
-            Sign in to access the provider dashboard. New providers must be invited by an administrator.
+            Authorized providers and staff only. New accounts must be invited by an administrator.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -428,9 +428,14 @@ const AdminLogin = () => {
         </CardContent>
       </Card>
 
-      <Link to="/" className="mt-6 text-sm text-muted-foreground hover:text-primary transition-colors">
-        ← Back to website
-      </Link>
+      <div className="mt-6 flex flex-col items-center gap-2">
+        <Link to="/patient/login" className="text-sm text-primary hover:underline font-jost">
+          Looking for the patient portal? → Sign in here
+        </Link>
+        <Link to="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+          ← Back to website
+        </Link>
+      </div>
     </div>
   );
 };
