@@ -88,7 +88,7 @@ serve(async (req) => {
       scheduled_at: slotStart.toISOString(),
       duration_minutes: 30,
       status: "scheduled",
-      reason: "RN Wellness Assessment",
+      reason: "Wellness Assessment",
       consultation_booking_id: booking.id,
       booking_source: "patient_self_serve",
     }).select("*").single();
@@ -103,7 +103,7 @@ serve(async (req) => {
       await supabase.functions.invoke("send-booking-confirmation", {
         body: {
           email, phone: booking.customer_phone, name: booking.customer_name,
-          appointment_type: "RN Wellness Assessment",
+          appointment_type: "Wellness Assessment",
           scheduled_at: slotStart.toISOString(), duration_minutes: 30,
         },
       });

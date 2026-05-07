@@ -60,7 +60,7 @@ const HormonesMen = () => {
         <section className="py-16 md:py-24 bg-background text-center">
           <div className="container mx-auto px-6">
             <Button onClick={openBooking} size="lg" className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm hover:bg-primary-light">
-              Check your levels — $79 RN Wellness Assessment<ArrowRight className="ml-2 h-4 w-4" />
+              Check your levels — $79 Wellness Assessment<ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </section>

@@ -54,16 +54,16 @@ const Ketamine = () => {
       <CacheRefreshBanner />
       <Helmet>
         <title>Neural Restoration Therapy Augusta | Ketamine Treatment - Elevated Health Augusta</title>
-        <meta name="description" content="Advanced ketamine therapy in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." />
+        <meta name="description" content="Advanced ketamine therapy in Augusta, GA. $79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." />
         <meta name="keywords" content="ketamine therapy Augusta, neural restoration Augusta GA, SPRAVATO Augusta, treatment-resistant depression Augusta, ketamine infusion Georgia" />
         <meta property="og:title" content="Neural Restoration Therapy Augusta | Ketamine Treatment - Elevated Health Augusta" />
-        <meta property="og:description" content="Advanced ketamine therapy in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta property="og:description" content="Advanced ketamine therapy in Augusta, GA. $79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/ketamine" />
         <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Neural Restoration Therapy Augusta | Ketamine Treatment" />
-        <meta name="twitter:description" content="$79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta name="twitter:description" content="$79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
         <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
@@ -100,7 +100,7 @@ const Ketamine = () => {
               className="animate-fade-in bg-gold border-gold text-white hover:bg-gold-dark"
               style={{ animationDelay: "0.3s" }}
             >
-              Book $79 RN Wellness Assessment
+              Book $79 Wellness Assessment
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

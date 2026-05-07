@@ -143,10 +143,11 @@ const Navbar = () => {
             </button>
           </div>
         </div>
+      </nav>
 
-        {/* Fullscreen Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="mobile-menu-overlay">
+      {/* Fullscreen Mobile Menu (rendered outside nav to escape backdrop-filter containing block) */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu-overlay">
             <div className="flex flex-col px-8 pb-8">
               <button onClick={() => setIsMobileMenuOpen(false)} className="mobile-menu-close absolute top-4 right-6 p-2">
                 <X className="h-6 w-6" />
@@ -191,9 +192,8 @@ const Navbar = () => {
                 </p>
               </div>
             </div>
-          </div>
-        )}
-      </nav>
+        </div>
+      )}
     </>
   );
 };

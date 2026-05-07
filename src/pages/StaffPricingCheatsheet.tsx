@@ -218,7 +218,7 @@ const StaffPricingCheatsheet = () => {
                   <div className="space-y-3 pb-4">
                     <div className="flex justify-between items-center py-2 border-b border-border/50">
                       <div>
-                        <p className="font-medium">RN Wellness Assessment <span className="text-xs text-accent">(NEW — primary entry point)</span></p>
+                        <p className="font-medium">Wellness Assessment <span className="text-xs text-accent">(NEW — primary entry point)</span></p>
                         <p className="text-sm text-muted-foreground">30 min with Caroline (RN) • Vitals, history, goal-setting • Credits 100% toward any treatment within 30 days</p>
                       </div>
                       <Badge variant="secondary" className="font-mono">$79</Badge>
@@ -398,7 +398,7 @@ const StaffPricingCheatsheet = () => {
                     <div className="bg-green-500/10 rounded-lg p-3 text-sm">
                       <p className="font-medium text-green-700 dark:text-green-400 mb-1">✓ Labs NOT Required to Start</p>
                       <p className="text-muted-foreground">
-                        Most weight loss patients start GLP-1 medication after their $79 RN Wellness Assessment—no mandatory lab kit. Our physician reviews eligibility in-person.
+                        Most weight loss patients start GLP-1 medication after their $79 Wellness Assessment—no mandatory lab kit. Our physician reviews eligibility in-person.
                       </p>
                     </div>
                     <div className="bg-muted/50 rounded-lg p-3 text-sm">
@@ -855,7 +855,7 @@ const StaffPricingCheatsheet = () => {
                 <div className="border-l-2 border-primary pl-4">
                   <p className="font-medium text-sm">"What's the cheapest way to start?"</p>
                   <p className="text-sm text-muted-foreground">
-                    $79 RN Wellness Assessment — it's credited toward any treatment plan.
+                    $79 Wellness Assessment — it's credited toward any treatment plan.
                   </p>
                 </div>
 

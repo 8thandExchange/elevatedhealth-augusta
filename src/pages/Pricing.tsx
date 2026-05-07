@@ -94,7 +94,7 @@ const Pricing = () => {
         <title>Pricing - Transparent Healthcare Pricing | Elevated Health Augusta</title>
         <meta
           name="description"
-          content="Transparent pricing for all services. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. Memberships and à la carte options available."
+          content="Transparent pricing for all services. $79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. Memberships and à la carte options available."
         />
         <meta
           name="keywords"
@@ -104,7 +104,7 @@ const Pricing = () => {
         
         {/* Open Graph */}
         <meta property="og:title" content="Transparent Healthcare Pricing | $79 Assessment Credited | Elevated Health Augusta" />
-        <meta property="og:description" content="Transparent pricing for all services. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:description" content="Transparent pricing for all services. $79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/pricing" />
         <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
@@ -112,7 +112,7 @@ const Pricing = () => {
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Healthcare Pricing | $79 Assessment Credited" />
-        <meta name="twitter:description" content="Transparent pricing. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta name="twitter:description" content="Transparent pricing. $79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         
         {/* FAQ Schema for Rich Snippets */}
@@ -174,7 +174,7 @@ const Pricing = () => {
                 "name": "What is the cheapest way to get started at Elevated Health Augusta?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The most affordable entry point is chatting with our Virtual Care Team—available 24/7 to answer questions about pricing, insurance, and logistics. When you're ready for personalized medical guidance, our $79 RN Wellness Assessment provides a comprehensive clinical assessment and the fee is credited toward your first treatment."
+                  "text": "The most affordable entry point is chatting with our Virtual Care Team—available 24/7 to answer questions about pricing, insurance, and logistics. When you're ready for personalized medical guidance, our $79 Wellness Assessment provides a comprehensive clinical assessment and the fee is credited toward your first treatment."
                 }
               },
               {
@@ -1749,7 +1749,7 @@ const Pricing = () => {
               Chat with our <span className="font-semibold text-foreground">Virtual Care Team</span> for instant answers about pricing, insurance, and logistics—24/7.
             </p>
             <p className="text-sm text-muted-foreground font-lato max-w-xl mx-auto mb-8 italic">
-              When you're ready for personalized medical guidance, book a $79 RN Wellness Assessment ($149 MD evaluation also available for Rx-eligible patients).
+              When you're ready for personalized medical guidance, book a $79 Wellness Assessment ($149 MD evaluation also available for Rx-eligible patients).
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
@@ -1772,7 +1772,7 @@ const Pricing = () => {
                 onClick={openBooking}
               >
                 <Calendar className="w-5 h-5 mr-2" />
-                Book $79 RN Wellness Assessment
+                Book $79 Wellness Assessment
               </Button>
             </div>
           </div>
@@ -1836,7 +1836,7 @@ const Pricing = () => {
                   What's included in the à la carte consultations?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground font-lato pb-4">
-                  Our $79 RN Wellness Assessments include a thorough review of your symptoms and 
+                  Our $79 Wellness Assessments include a thorough review of your symptoms and 
                   health history, discussion of treatment options, and a personalized 
                   recommendation. If you decide to proceed with treatment, the consultation 
                   fee is applied toward your first month or diagnostic package.

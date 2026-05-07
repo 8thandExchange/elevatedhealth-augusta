@@ -49,7 +49,7 @@ const StaffQuickCard = () => {
               <h2 className="font-bold text-sm uppercase tracking-wide mb-1">Entry Point</h2>
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="font-bold text-lg">$79 RN Wellness Assessment</p>
+                  <p className="font-bold text-lg">$79 Wellness Assessment</p>
                   <p className="text-sm">30 min • IN-PERSON at Evans clinic</p>
                   <p className="text-sm italic">Fee credited toward first treatment</p>
                 </div>

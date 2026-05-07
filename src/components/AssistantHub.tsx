@@ -187,7 +187,7 @@ const AssistantHub = () => {
 
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $79 RN Wellness Assessment, and someone will follow up within one business day. Feel free to ask me any other questions!`
+        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $79 Wellness Assessment, and someone will follow up within one business day. Feel free to ask me any other questions!`
       }]);
     } catch (error) {
       console.error("Lead capture error:", error);
@@ -289,7 +289,7 @@ const AssistantHub = () => {
           console.log("Voice lead captured:", lead);
           toast({
             title: "Contact Info Saved",
-            description: `${lead.name ? `Thanks ${lead.name}! ` : ''}We'll send you booking info for your $79 RN Wellness Assessment.`,
+            description: `${lead.name ? `Thanks ${lead.name}! ` : ''}We'll send you booking info for your $79 Wellness Assessment.`,
           });
         }
       );
@@ -407,7 +407,7 @@ const AssistantHub = () => {
               className={`flex items-center gap-3 shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 font-medium ${isMobile ? 'w-full justify-start h-12 px-4 rounded-xl' : 'rounded-full px-4 py-2 text-sm'}`}
             >
               <CreditCard className="h-5 w-5" />
-              <span>$79 RN Wellness Assessment</span>
+              <span>$79 Wellness Assessment</span>
             </button>
             <a
               href="tel:+17067603470"
@@ -589,7 +589,7 @@ const AssistantHub = () => {
             </div>
           </ScrollArea>
 
-          {/* $79 RN Wellness Assessment CTA */}
+          {/* $79 Wellness Assessment CTA */}
           {messages.length > 2 && (
             <div className="px-4 py-2 border-t border-border bg-accent/30 shrink-0">
               <a
@@ -600,7 +600,7 @@ const AssistantHub = () => {
                 style={{ minHeight: '44px' }}
               >
                 <CreditCard className="h-4 w-4" />
-                Book $79 RN Wellness Assessment
+                Book $79 Wellness Assessment
               </a>
             </div>
           )}
@@ -816,7 +816,7 @@ const AssistantHub = () => {
               </>
             )}
 
-            {/* $79 RN Wellness Assessment CTA */}
+            {/* $79 Wellness Assessment CTA */}
             <a
               href="https://calendar.app.google/hf3NNdiqJDueUuSN9"
               target="_blank"
@@ -825,7 +825,7 @@ const AssistantHub = () => {
               style={{ minHeight: '44px' }}
             >
               <CreditCard className="h-4 w-4" />
-              Book $79 RN Wellness Assessment
+              Book $79 Wellness Assessment
             </a>
             
             {/* Disclaimer */}

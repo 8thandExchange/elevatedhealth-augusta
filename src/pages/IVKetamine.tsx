@@ -50,7 +50,7 @@ const IVKetamine = () => {
         <title>IV Ketamine Therapy Augusta GA | Treatment-Resistant Depression | Elevated Health Augusta</title>
         <meta 
           name="description" 
-          content="IV ketamine infusion therapy in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." 
+          content="IV ketamine infusion therapy in Augusta, GA. $79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team or call (706) 760-3470. BCBS, TRICARE accepted." 
         />
         <meta 
           name="keywords" 
@@ -60,15 +60,15 @@ const IVKetamine = () => {
         
         {/* Open Graph */}
         <meta property="og:title" content="IV Ketamine Therapy | $79 Assessment Credited | Elevated Health Augusta" />
-        <meta property="og:description" content="IV ketamine infusion therapy in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:description" content="IV ketamine infusion therapy in Augusta, GA. $79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/iv-ketamine" />
         <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="IV Ketamine Therapy Augusta | $79 RN Wellness Assessment" />
-        <meta name="twitter:description" content="$79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta name="twitter:title" content="IV Ketamine Therapy Augusta | $79 Wellness Assessment" />
+        <meta name="twitter:description" content="$79 Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
         <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         
         {/* Schema */}

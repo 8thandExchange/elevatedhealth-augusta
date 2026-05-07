@@ -163,7 +163,7 @@ const ChatBot = () => {
       // Add confirmation message to chat
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $79 RN Wellness Assessment, and someone will follow up within one business day. Feel free to ask me any other questions!`
+        content: `Thank you${leadInfo.name ? `, ${leadInfo.name}` : ""}! I've shared your information with our team. You'll receive a text with booking info for your $79 Wellness Assessment, and someone will follow up within one business day. Feel free to ask me any other questions!`
       }]);
     } catch (error) {
       console.error("Lead capture error:", error);
@@ -343,7 +343,7 @@ const ChatBot = () => {
             </div>
           </ScrollArea>
 
-          {/* $79 RN Wellness Assessment CTA */}
+          {/* $79 Wellness Assessment CTA */}
           {messages.length > 2 && (
             <div className="px-4 py-3 border-t border-border bg-primary/10">
               <button
@@ -354,7 +354,7 @@ const ChatBot = () => {
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors shadow-sm"
               >
                 <CreditCard className="h-4 w-4" />
-                Book $79 RN Wellness Assessment
+                Book $79 Wellness Assessment
               </button>
             </div>
           )}

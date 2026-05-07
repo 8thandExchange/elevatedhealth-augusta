@@ -55,7 +55,7 @@ const PeptideTherapy = () => {
               ))}
             </div>
             <p className="font-jost font-light text-sm text-muted-foreground mt-8 italic">
-              All peptide protocols require physician consultation and prescription. Compounded via PCAB-accredited pharmacy. Starting at $79 RN Wellness Assessment.
+              All peptide protocols require physician consultation and prescription. Compounded via PCAB-accredited pharmacy. Starting at $79 Wellness Assessment.
             </p>
           </div>
         </section>

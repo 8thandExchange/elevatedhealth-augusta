@@ -208,7 +208,7 @@ const TreatmentsPricing = ({ onOpenBooking }: TreatmentsPricingProps) => {
             Start Your Journey Today
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
-            $79 RN Wellness Assessment credited toward treatment • Compassionate care
+            $79 Wellness Assessment credited toward treatment • Compassionate care
           </p>
         </div>
       </div>

@@ -6,7 +6,7 @@ const services = [
     title: "Hormone Optimization",
     description: "Physician-prescribed HRT and TRT for men and women.",
     route: "/hormones",
-    note: "Starts with $79 RN Wellness Assessment",
+    note: "Starts with $79 Wellness Assessment",
   },
   {
     title: "IV Therapy",
@@ -19,13 +19,13 @@ const services = [
     title: "Peptide Protocols",
     description: "The first physician-supervised peptide program in the Augusta area.",
     route: "/peptides",
-    note: "Starts with $79 RN Wellness Assessment",
+    note: "Starts with $79 Wellness Assessment",
   },
   {
     title: "Medical Weight Loss",
     description: "GLP-1 protocols. Semaglutide. Tirzepatide. Real results.",
     route: "/weightloss",
-    note: "Starts with $79 RN Wellness Assessment",
+    note: "Starts with $79 Wellness Assessment",
   },
 ];
 

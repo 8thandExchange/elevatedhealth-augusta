@@ -42,7 +42,7 @@ export const FloatingMobileCTA = () => {
         
         <div className="flex-1">
           <p className="text-sm font-medium">Ready to feel your best?</p>
-          <p className="text-xs opacity-90">Start with a $79 RN Wellness Assessment</p>
+          <p className="text-xs opacity-90">Start with a $79 Wellness Assessment</p>
         </div>
         
         <Button

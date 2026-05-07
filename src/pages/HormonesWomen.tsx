@@ -22,7 +22,7 @@ const HormonesWomen = () => {
   ];
 
   const steps = [
-    "Initial RN Wellness Assessment ($79, credited toward treatment)",
+    "Initial Wellness Assessment ($79, credited toward treatment)",
     "Comprehensive hormone panel ordered",
     "Physician reviews labs and creates your protocol",
     "Treatment begins — in-clinic or compounded pharmacy",
@@ -82,7 +82,7 @@ const HormonesWomen = () => {
         <section className="py-16 md:py-24 bg-background text-center">
           <div className="container mx-auto px-6">
             <Button onClick={openBooking} size="lg" className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm hover:bg-primary-light">
-              Book your RN Wellness Assessment — $79<ArrowRight className="ml-2 h-4 w-4" />
+              Book your Wellness Assessment — $79<ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </section>

@@ -18,7 +18,7 @@ const WhatToExpect = () => {
     },
     {
       icon: ClipboardCheck,
-      title: "2. $79 RN Wellness Assessment",
+      title: "2. $79 Wellness Assessment",
       description: "Your first conversation with a provider. Discuss your goals, review your health history, and get a personalized plan.",
       duration: "$79 • Credited toward treatment",
       color: "text-primary"
@@ -199,7 +199,7 @@ const WhatToExpect = () => {
               }}
             >
               <ClipboardCheck className="h-5 w-5" />
-              Book $79 RN Wellness Assessment
+              Book $79 Wellness Assessment
             </Button>
             
             <Button

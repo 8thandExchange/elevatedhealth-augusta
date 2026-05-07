@@ -13,7 +13,7 @@ import { format } from "date-fns";
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const SERVICE_LINES = [
   { id: "iv", label: "IV Therapy" },
-  { id: "consult", label: "RN Wellness Assessment" },
+  { id: "consult", label: "Wellness Assessment" },
   { id: "hormone", label: "Hormone Follow-up" },
   { id: "follow_up", label: "General Follow-up" },
 ];

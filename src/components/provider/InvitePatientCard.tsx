@@ -157,7 +157,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
       return `Hi ${firstName}! 🏥 Please complete your $149 payment to confirm your ${serviceLabel} consultation on ${dateDisplay}. Pay here: [payment link] - Elevated Health Augusta`;
     }
     
-    return `Hi ${firstName}! 🌟 The clinical team at Elevated Health Augusta has invited you to book a $79 RN Wellness Assessment. Book here: [payment link] Questions? Call (706) 821-7354`;
+    return `Hi ${firstName}! 🌟 The clinical team at Elevated Health Augusta has invited you to book a $79 Wellness Assessment. Book here: [payment link] Questions? Call (706) 821-7354`;
   };
 
   const handlePreview = (mode: "email" | "sms") => {
@@ -241,7 +241,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
 
         if (smsError) throw smsError;
         setSent("sms");
-        toast.success(`$79 RN Wellness Assessment invite texted to ${phone}`);
+        toast.success(`$79 Wellness Assessment invite texted to ${phone}`);
       } else {
         setSent("email");
         const serviceLabel = SERVICE_TYPES.find(s => s.value === serviceInterests[0])?.label || "Consultation";
@@ -277,7 +277,7 @@ const InvitePatientCard = ({ onInviteSent, embedded = false }: InvitePatientCard
   const formContent = (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Send a $79 RN Wellness Assessment invite. After payment, they'll schedule their consultation. 
+        Send a $79 Wellness Assessment invite. After payment, they'll schedule their consultation. 
         The $149 becomes a credit toward their $349 Hormone Mapping Kit.
       </p>
       

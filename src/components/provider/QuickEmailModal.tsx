@@ -57,7 +57,7 @@ const MESSAGE_TYPES = [
   { 
     value: "consultation_invite", 
     label: "$79 RN Assessment Invite", 
-    description: "Send $79 RN Wellness Assessment payment link",
+    description: "Send $79 Wellness Assessment payment link",
     emailFunction: "send-consultation-invite",
     smsFunction: "send-consultation-invite-sms",
   },
@@ -189,7 +189,7 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
   const getDefaultSubject = (type: string): string => {
     const subjects: Record<string, string> = {
       welcome: "Welcome to Elevated Health Augusta, {{patient_name}}!",
-      consultation_invite: "Your $79 RN Wellness Assessment Awaits",
+      consultation_invite: "Your $79 Wellness Assessment Awaits",
       kit_payment: "Complete Your Lab Kit Payment",
       labs_reviewed: "Your Lab Results Are Ready",
       vitality_activation: "Your Vitality Membership Awaits",

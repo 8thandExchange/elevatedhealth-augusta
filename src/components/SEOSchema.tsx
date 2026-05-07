@@ -75,7 +75,7 @@ const SEOSchema = () => {
         "name": "How much is a consultation at Elevated Health Augusta?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Initial RN Wellness Assessment is $79 and is credited toward your first treatment."
+          "text": "Initial Wellness Assessment is $79 and is credited toward your first treatment."
         }
       }
     ]
