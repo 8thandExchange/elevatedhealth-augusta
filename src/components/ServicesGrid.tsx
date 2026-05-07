@@ -40,20 +40,29 @@ const ServicesGrid = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {services.map((service) => (
+          {services.map((service: any) => (
             <button
               key={service.title}
               onClick={() => navigate(service.route)}
-              className="group text-left bg-primary p-8 lg:p-10 border border-primary transition-all duration-300 hover:bg-primary-light"
+              className={`group text-left p-8 lg:p-10 border transition-all duration-300 relative ${
+                service.badge
+                  ? "bg-accent/10 border-accent hover:bg-accent/20 ring-1 ring-accent/30"
+                  : "bg-primary border-primary hover:bg-primary-light"
+              }`}
             >
-              <h3 className="font-playfair text-xl lg:text-2xl text-accent mb-3">
+              {service.badge && (
+                <span className="absolute -top-3 left-6 inline-flex items-center gap-1.5 bg-accent text-accent-foreground text-[10px] font-jost font-semibold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                  <Droplet className="h-3 w-3" /> {service.badge}
+                </span>
+              )}
+              <h3 className={`font-playfair text-xl lg:text-2xl mb-3 ${service.badge ? "text-foreground" : "text-accent"}`}>
                 {service.title}
               </h3>
-              <p className="font-jost font-light text-primary-foreground/80 text-sm leading-relaxed mb-6">
+              <p className={`font-jost font-light text-sm leading-relaxed mb-6 ${service.badge ? "text-foreground/80" : "text-primary-foreground/80"}`}>
                 {service.description}
               </p>
-              <div className="flex items-center gap-2 text-accent font-jost text-sm font-medium group-hover:gap-3 transition-all duration-300">
-                <span>Learn More</span>
+              <div className={`flex items-center gap-2 font-jost text-sm font-medium group-hover:gap-3 transition-all duration-300 ${service.badge ? "text-accent" : "text-accent"}`}>
+                <span>{service.cta || "Learn More"}</span>
                 <ArrowRight className="h-4 w-4" />
               </div>
             </button>
