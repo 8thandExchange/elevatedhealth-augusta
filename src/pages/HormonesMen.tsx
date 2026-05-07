@@ -1,69 +1,265 @@
 import { Helmet } from "react-helmet";
+import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
-import { useEffect } from "react";
+import { SITE_CONFIG } from "@/lib/siteConfig";
+
+// Display values — actual charges flow through Stripe via
+// create-consultation-checkout ($79) and the membership product.
+const PRICE_CONSULT = "$79";
+const PRICE_PANEL = "$395";
+const PRICE_PANEL_MEMBER = "$345";
+const PRICE_MEMBERSHIP = "$199";
+
+const services = [
+  "Testosterone cypionate (injectable, weekly)",
+  "Testosterone enanthate (alternative)",
+  "Testosterone cream (transdermal, for non-injection patients)",
+  "Brand-name options when preferred (AndroGel, Testim)",
+  "Anastrozole when indicated (estradiol management)",
+  "Gonadorelin for fertility preservation",
+  "HCG (when indicated)",
+  "Comprehensive labs and quarterly monitoring",
+];
+
+const symptoms = [
+  "Low energy", "Decreased libido", "Slow recovery", "Loss of muscle mass",
+  "Mood / motivation changes", "Sleep issues", "Abdominal weight gain",
+  "Brain fog", "Decreased morning erections",
+];
+
+const steps = [
+  { n: "01", t: "Wellness Assessment ($79)", d: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
+  { n: "02", t: "Comprehensive Male Panel", d: `Total T, Free T, Estradiol Sensitive, SHBG, DHEA-S, PSA (if ≥40), full thyroid, foundation labs. ${PRICE_PANEL} / ${PRICE_PANEL_MEMBER} members.` },
+  { n: "03", t: "Custom Protocol", d: "Physician designs your protocol — typically Test cyp weekly with ancillaries (anastrozole if needed, gonadorelin for fertility preservation if desired)." },
+  { n: "04", t: "Ongoing Care", d: "In-clinic injections or self-administration at home with training. Quarterly labs. Membership covers unlimited weekly visits." },
+];
+
+const faqs = [
+  { q: "Is testosterone safe long-term?", a: "When properly monitored — including PSA, hematocrit, and lipids — yes. The risk profile of physician-supervised TRT is well established. The risk of unmonitored or under-dosed clinics is what gives TRT a bad name." },
+  { q: "Will I need TRT for the rest of my life?", a: "If you start TRT, your body reduces its own testosterone production. That's a known trade-off. Your physician will discuss whether starting is the right call before you commit." },
+  { q: "Can I still have kids on TRT?", a: "Yes, with a gonadorelin or HCG protocol that maintains fertility. Discuss this with your physician before starting if fertility matters." },
+  { q: "Self-injection vs in-clinic?", a: "Both are options. Many patients prefer self-injection at home after a brief training visit. Some prefer the routine of weekly clinic visits — your membership covers either." },
+  { q: "What about pellets?", a: "Available, but we don't lead with them — dose adjustment is harder once a pellet is placed. Discuss with the physician if you're interested." },
+  { q: "Is this just steroids?", a: "No. Therapeutic TRT keeps your levels in optimal physiologic range. Performance-enhancement doses are a different category — and not what we do." },
+  { q: "Can I use HSA/FSA?", a: "Yes for the consult and labs. Medication coverage varies by plan." },
+];
 
 const HormonesMen = () => {
   const { openBooking } = useBooking();
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const services = [
-    "Testosterone replacement therapy (TRT) — in-clinic injections",
-    "Testosterone cypionate and enanthate protocols",
-    "Pellet therapy (coming soon)",
-    "Peptide protocols (Sermorelin, CJC/Ipamorelin)",
-    "GLP-1 weight loss (semaglutide, tirzepatide)",
-    "Comprehensive men's hormone panel",
-    "Quarterly labs and monitoring",
-  ];
-
   return (
     <>
       <Helmet>
-        <title>Men's Health & TRT | Elevated Health Augusta</title>
-        <meta name="description" content="Testosterone replacement therapy, peptide protocols & GLP-1 weight loss for men. Physician-supervised in Evans, GA." />
+        <title>TRT Augusta GA | Men's Hormone Therapy — Elevated Health</title>
+        <meta name="description" content="Physician-supervised testosterone replacement therapy in Augusta, GA. Lab-driven, custom-dosed TRT. Compounded testosterone, in-clinic or at-home." />
+        <meta name="keywords" content="TRT Augusta GA, testosterone replacement Augusta, men's hormone therapy, low T treatment Augusta" />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/hormones-men" />
       </Helmet>
-      <div className="min-h-screen">
+
+      <div className="min-h-screen bg-background">
         <Navbar />
-        <section className="pt-32 pb-20 md:pt-40 md:pb-28 bg-background">
-          <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
-            <p className="section-label mb-6">Men's Health</p>
-            <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-foreground mb-8 leading-tight">
-              Your drive didn't disappear.<br /><span className="italic">Your testosterone did.</span>
-            </h1>
-            <p className="font-jost font-light text-lg text-muted-foreground leading-relaxed mb-8">
-              Low energy. Stubborn weight. A libido that's gone quiet. These aren't signs of getting older — they're signs your testosterone has declined.
-            </p>
-            <p className="font-jost font-light text-lg text-muted-foreground leading-relaxed">
-              At Elevated Health Augusta, we test your levels, confirm the diagnosis, and prescribe a physician-supervised protocol that actually works. In-clinic injections. Monitored quarterly. Not shipped to your door and forgotten.
-            </p>
-          </div>
-        </section>
-        <div className="section-divider max-w-3xl mx-auto" />
-        <section className="py-16 md:py-24 bg-background">
-          <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
-            <p className="section-label mb-6">What We Offer</p>
-            <ul className="space-y-4">
-              {services.map((s) => (
-                <li key={s} className="font-jost font-light text-foreground text-lg flex items-start gap-3">
-                  <span className="text-accent mt-1.5 text-sm">—</span>{s}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-        <div className="section-divider max-w-3xl mx-auto" />
-        <section className="py-16 md:py-24 bg-background text-center">
-          <div className="container mx-auto px-6">
-            <Button onClick={openBooking} size="lg" className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm hover:bg-primary-light">
-              Check your levels — $79 Wellness Assessment<ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </section>
+
+        <main>
+          {/* 1. Hero (Pattern A) */}
+          <section className="min-h-[70vh] flex items-center bg-muted/30">
+            <div className="container mx-auto px-6 lg:px-8 max-w-4xl py-24">
+              <p className="section-label mb-6">Men's Hormones</p>
+              <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl text-foreground mb-8 leading-tight">
+                You used to recover faster.<br /><span className="italic">You can again.</span>
+              </h1>
+              <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl">
+                Testosterone replacement therapy under physician supervision. Lab-driven, custom-dosed, no shortcuts.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
+                  Book your {PRICE_CONSULT} consultation <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button asChild variant="link" size="lg" className="font-jost tracking-wide text-foreground">
+                  <a href="#how-it-works">Learn how it works ↓</a>
+                </Button>
+              </div>
+            </div>
+          </section>
+
+          {/* 2. Pricing Strip */}
+          <section className="py-16 md:py-20 bg-background border-y border-border">
+            <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+              <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+                {[
+                  { l: "Initial Consultation", p: PRICE_CONSULT, sub: "credited toward your protocol" },
+                  { l: "Hormone Panel — Male", p: `${PRICE_PANEL} / Member ${PRICE_PANEL_MEMBER}`, sub: "drawn on-site, processed by LabCorp" },
+                  { l: "Elevated Membership", p: `${PRICE_MEMBERSHIP}/mo`, sub: "ongoing care, supplies, member labs" },
+                ].map((c) => (
+                  <div key={c.l} className="px-6 py-8 md:py-4 text-center">
+                    <p className="section-label mb-3">{c.l}</p>
+                    <p className="font-playfair text-3xl md:text-4xl text-foreground mb-2">{c.p}</p>
+                    <p className="font-jost text-xs text-muted-foreground">{c.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* 3. What it is (Pattern C) */}
+          <section className="py-20 md:py-28 bg-background">
+            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+              <div className="grid md:grid-cols-12 gap-12 items-center">
+                <div className="md:col-span-5">
+                  <div className="aspect-[4/5] bg-muted/40 flex items-center justify-center text-muted-foreground/40 font-jost text-xs tracking-widest uppercase">
+                    {/* TODO: editorial photograph — TRT clinical setting */}
+                    Editorial Image
+                  </div>
+                </div>
+                <div className="md:col-span-7">
+                  <p className="section-label mb-4">What it is</p>
+                  <h2 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-8">
+                    TRT done right.
+                  </h2>
+                  <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
+                    <p>Most men's TRT clinics push you to the maximum dose, fastest, with minimal labs. We don't.</p>
+                    <p>Your protocol is built from your testosterone, free testosterone, estradiol-sensitive, SHBG, DHEA, and PSA (if ≥40). We monitor quarterly and adjust to keep you in optimal range — not just "above the floor."</p>
+                    <p>Most patients use compounded testosterone cypionate (injectable, weekly). We also offer testosterone cream (transdermal) for patients who prefer it. Brand-name options like AndroGel, Testim, and Androderm are available via standard e-Rx when preferred.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 4. How it works (Pattern D) */}
+          <section id="how-it-works" className="py-20 md:py-28 bg-muted/30">
+            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+              <div className="text-center mb-16">
+                <p className="section-label mb-4">How It Works</p>
+                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">Four steps. <span className="italic">No shortcuts.</span></h2>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+                {steps.map((s) => (
+                  <div key={s.n}>
+                    <p className="font-playfair italic text-4xl text-accent mb-4">{s.n}</p>
+                    <h3 className="font-playfair text-xl text-foreground mb-3">{s.t}</h3>
+                    <p className="font-jost font-light text-muted-foreground leading-relaxed text-sm">{s.d}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* 5. Who it's for */}
+          <section className="py-20 md:py-28 bg-background">
+            <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+              <p className="section-label mb-4">Who It's For</p>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">
+                If you're noticing<span className="italic">…</span>
+              </h2>
+              <ul className="grid sm:grid-cols-2 gap-4">
+                {symptoms.map((s) => (
+                  <li key={s} className="font-jost font-light text-foreground text-lg flex items-start gap-3">
+                    <span className="text-accent mt-1.5 text-sm">—</span>{s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
+          {/* 6. What's offered */}
+          <section className="py-20 md:py-28 bg-background border-t border-border">
+            <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+              <p className="section-label mb-4">What's Offered</p>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">A full men's <span className="italic">formulary</span>.</h2>
+              <ul className="space-y-4 mb-10">
+                {services.map((s) => (
+                  <li key={s} className="font-jost font-light text-foreground text-lg flex items-start gap-3">
+                    <span className="text-accent mt-1.5 text-sm">—</span>{s}
+                  </li>
+                ))}
+              </ul>
+              <p className="font-jost font-light text-sm text-muted-foreground italic border-l-2 border-accent pl-4">
+                Schedule III prescribing requires DEA registration; the physician's DEA is on file. Compounded TRT prescriptions are faxed directly to FCC pharmacy, which ships to clinic or to the patient's home.
+              </p>
+            </div>
+          </section>
+
+          {/* 7. Pricing transparency (Pattern E) */}
+          <section className="py-20 md:py-28 bg-muted/30">
+            <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+              <p className="section-label mb-4">Pricing</p>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">Transparent <span className="italic">all the way through</span>.</h2>
+
+              <div className="space-y-10">
+                <div>
+                  <p className="section-label mb-4">One-time costs</p>
+                  <div className="space-y-3 font-jost text-foreground">
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Initial Wellness Assessment</span><span className="font-medium">{PRICE_CONSULT}</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Hormone Optimization Panel — Male</span><span className="font-medium">{PRICE_PANEL} / Member {PRICE_PANEL_MEMBER}</span></div>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="section-label mb-4">Ongoing</p>
+                  <div className="space-y-3 font-jost text-foreground">
+                    <div className="flex justify-between border-b border-border/60 pb-3">
+                      <span>Elevated Membership<br /><span className="font-light text-sm text-muted-foreground">unlimited weekly visits, in-office supplies, member-rate labs</span></span>
+                      <span className="font-medium whitespace-nowrap">{PRICE_MEMBERSHIP}/mo</span>
+                    </div>
+                    <div className="flex justify-between border-b border-border/60 pb-3">
+                      <span>Testosterone cypionate (compounded by FCC)<br /><span className="font-light text-sm text-muted-foreground">billed separately by FCC</span></span>
+                      <span className="font-medium whitespace-nowrap">$65–$95/mo</span>
+                    </div>
+                    <div className="flex justify-between border-b border-border/60 pb-3">
+                      <span>Anastrozole or other ancillaries<br /><span className="font-light text-sm text-muted-foreground">if prescribed</span></span>
+                      <span className="font-medium whitespace-nowrap">$20–$60/mo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-background border border-border p-6 space-y-2 font-jost text-sm">
+                  <div className="flex justify-between"><span className="text-muted-foreground">Typical first month</span><span className="font-medium text-foreground">~$673 / $573 members</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Typical ongoing month</span><span className="font-medium text-foreground">~$285–360/mo</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 8. FAQ */}
+          <section className="py-20 md:py-28 bg-background">
+            <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+              <p className="section-label mb-4">FAQ</p>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">Questions, <span className="italic">answered</span>.</h2>
+              <Accordion type="single" collapsible className="w-full">
+                {faqs.map((f, i) => (
+                  <AccordionItem key={i} value={`item-${i}`}>
+                    <AccordionTrigger className="text-left font-playfair text-lg text-foreground">{f.q}</AccordionTrigger>
+                    <AccordionContent className="font-jost font-light text-muted-foreground text-base leading-relaxed">{f.a}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </section>
+
+          {/* 9. Closing CTA */}
+          <section className="py-24 md:py-32 bg-muted/30 text-center">
+            <div className="container mx-auto px-6 max-w-2xl">
+              <h2 className="font-playfair text-4xl md:text-5xl text-foreground mb-8">
+                Get back to operating at <span className="italic">your level</span>.
+              </h2>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
+                  Book your {PRICE_CONSULT} consultation
+                </Button>
+                <Button asChild variant="outline" size="lg" className="font-jost tracking-wide">
+                  <a href={`tel:${SITE_CONFIG.phoneRaw}`}>Or call {SITE_CONFIG.phone}</a>
+                </Button>
+              </div>
+            </div>
+          </section>
+        </main>
+
         <Footer />
       </div>
     </>
