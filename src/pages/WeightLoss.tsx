@@ -326,6 +326,25 @@ const WeightLoss = () => {
             </div>
           </section>
 
+          {/* Pricing Strip (Pattern B) */}
+          <section className="py-16 md:py-20 bg-background border-y border-border">
+            <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+              <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+                {[
+                  { l: "Initial Consultation", p: PRICE_CONSULT, sub: "credited toward your first month" },
+                  { l: "Weight Optimization Panel", p: `${PRICE_PANEL_WEIGHT} / Member ${PRICE_PANEL_WEIGHT_MEMBER}`, sub: "metabolic + hormone markers, drawn on-site" },
+                  { l: "Elevated Membership", p: `${PRICE_MEMBERSHIP}/mo`, sub: "ongoing care, supplies, member labs" },
+                ].map((c) => (
+                  <div key={c.l} className="px-6 py-8 md:py-4 text-center">
+                    <p className="section-label mb-3">{c.l}</p>
+                    <p className="font-playfair text-3xl md:text-4xl text-foreground mb-2">{c.p}</p>
+                    <p className="font-jost text-xs text-muted-foreground">{c.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* Have Questions? Section */}
           <section className="section-spacing-sm bg-secondary/30">
             <div className="container mx-auto px-6 lg:px-8">
