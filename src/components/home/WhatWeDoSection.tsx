@@ -58,21 +58,17 @@ const WhatWeDoSection = () => {
         <div className={`max-w-2xl mx-auto text-center mb-16 ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label mb-4">What We Do</p>
           <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl text-foreground">
-            Six disciplines. <span className="italic">One standard.</span>
+            Focused disciplines. <span className="italic">One standard.</span>
           </h2>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border max-w-6xl mx-auto border border-border">
-          {services.map((s, i) => {
-            const comingSoon = !s.enabled;
+          {services.filter(s => s.enabled).map((s, i) => {
             return (
               <button
                 key={s.title}
-                onClick={() => !comingSoon && navigate(s.route)}
-                disabled={comingSoon}
-                className={`group text-left bg-background p-10 transition-colors duration-300 ${
-                  comingSoon ? "cursor-default opacity-70" : "hover:bg-muted/40"
-                } ${revealClasses.fadeUp(isVisible)}`}
+                onClick={() => navigate(s.route)}
+                className={`group text-left bg-background p-10 transition-colors duration-300 hover:bg-muted/40 ${revealClasses.fadeUp(isVisible)}`}
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
                 <p className="section-label mb-4 text-[11px]">{s.tagline}</p>
