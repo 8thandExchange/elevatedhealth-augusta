@@ -203,6 +203,20 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           </p>
         </div>
 
+        {/* IV direct-book pointer */}
+        <div className="mt-4 py-3 border-t border-b border-border/30 text-center">
+          <p className="text-sm font-jost text-muted-foreground">
+            Looking for IV therapy? Book directly without a consultation.
+          </p>
+          <a
+            href="/iv-lounge"
+            className="inline-block mt-1 text-sm font-jost text-accent hover:opacity-80 transition-opacity"
+            onClick={onClose}
+          >
+            Book IV →
+          </a>
+        </div>
+
         <p className="text-[10px] text-muted-foreground text-center mt-4 max-w-md mx-auto font-jost">
           The $79 Wellness Assessment fee is non-refundable. If you move forward with treatment, 
           this fee is applied as a credit toward your first service.
