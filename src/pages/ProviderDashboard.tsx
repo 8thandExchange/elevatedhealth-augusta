@@ -55,6 +55,7 @@ import ConsultationTracker from "@/components/provider/ConsultationTracker";
 import PatientPipeline from "@/components/provider/PatientPipeline";
 import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
 import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
+import MyScheduleManager from "@/components/provider/MyScheduleManager";
 import PatientStatusCard from "@/components/provider/PatientStatusCard";
 import { SendKitLinkCard } from "@/components/provider/SendKitLinkCard";
 import MembershipAssignmentCard from "@/components/provider/MembershipAssignmentCard";
@@ -1140,6 +1141,13 @@ const ProviderDashboard = () => {
                   <span>Fax</span>
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="schedule" 
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
+                  <Clock className="w-4 h-4 flex-shrink-0" />
+                  <span>My Schedule</span>
+                </TabsTrigger>
+                <TabsTrigger 
                   value="team" 
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
                 >
@@ -1897,6 +1905,11 @@ const ProviderDashboard = () => {
           {/* Resources Tab */}
           <TabsContent value="resources">
             <ResourceManager />
+          </TabsContent>
+
+          {/* My Schedule Tab */}
+          <TabsContent value="schedule">
+            <MyScheduleManager />
           </TabsContent>
 
           {/* Fax History Tab */}

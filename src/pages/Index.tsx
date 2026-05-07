@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FoundingMemberBanner from "@/components/FoundingMemberBanner";
 import ServicesGrid from "@/components/ServicesGrid";
+import IVDirectBookBanner from "@/components/IVDirectBookBanner";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SEOSchema from "@/components/SEOSchema";
@@ -18,6 +19,7 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
+        <IVDirectBookBanner />
         <FoundingMemberBanner />
         <div className="section-divider max-w-5xl mx-auto" />
         <ServicesGrid />

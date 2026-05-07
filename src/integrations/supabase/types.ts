@@ -76,14 +76,18 @@ export type Database = {
       appointments: {
         Row: {
           appointment_type: string
+          booking_source: string | null
           check_in_at: string | null
           check_out_at: string | null
+          consultation_booking_id: string | null
           created_at: string
           duration_minutes: number
           id: string
           is_telehealth: boolean | null
+          iv_drip_booking_id: string | null
           notes: string | null
           patient_id: string
+          pre_visit_summary: string | null
           provider_id: string | null
           reason: string | null
           reminder_sent_at: string | null
@@ -91,18 +95,23 @@ export type Database = {
           scheduled_at: string
           service_line: string
           status: string
+          stripe_session_id: string | null
           updated_at: string
         }
         Insert: {
           appointment_type?: string
+          booking_source?: string | null
           check_in_at?: string | null
           check_out_at?: string | null
+          consultation_booking_id?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
           is_telehealth?: boolean | null
+          iv_drip_booking_id?: string | null
           notes?: string | null
           patient_id: string
+          pre_visit_summary?: string | null
           provider_id?: string | null
           reason?: string | null
           reminder_sent_at?: string | null
@@ -110,18 +119,23 @@ export type Database = {
           scheduled_at: string
           service_line?: string
           status?: string
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Update: {
           appointment_type?: string
+          booking_source?: string | null
           check_in_at?: string | null
           check_out_at?: string | null
+          consultation_booking_id?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
           is_telehealth?: boolean | null
+          iv_drip_booking_id?: string | null
           notes?: string | null
           patient_id?: string
+          pre_visit_summary?: string | null
           provider_id?: string | null
           reason?: string | null
           reminder_sent_at?: string | null
@@ -129,6 +143,7 @@ export type Database = {
           scheduled_at?: string
           service_line?: string
           status?: string
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -798,6 +813,57 @@ export type Database = {
         }
         Relationships: []
       }
+      iv_drip_bookings: {
+        Row: {
+          addon_ids: string[] | null
+          amount_paid: number | null
+          appointment_id: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string | null
+          customer_phone: string | null
+          id: string
+          payment_status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          therapy_id: string | null
+          therapy_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          addon_ids?: string[] | null
+          amount_paid?: number | null
+          appointment_id?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          therapy_id?: string | null
+          therapy_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          addon_ids?: string[] | null
+          amount_paid?: number | null
+          appointment_id?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          therapy_id?: string | null
+          therapy_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       iv_therapies: {
         Row: {
           category: string
@@ -1400,6 +1466,8 @@ export type Database = {
           full_name: string
           gender: string | null
           id: string
+          insurance_card_back_url: string | null
+          insurance_card_front_url: string | null
           insurance_group_number: string | null
           insurance_member_id: string | null
           insurance_plan_name: string | null
@@ -1410,6 +1478,7 @@ export type Database = {
           invited_at: string | null
           invited_by: string | null
           is_archived: boolean | null
+          lab_panel_recommendation: Json | null
           lab_path: string | null
           mapping_completed: boolean | null
           medical_history: Json | null
@@ -1445,6 +1514,8 @@ export type Database = {
           full_name: string
           gender?: string | null
           id?: string
+          insurance_card_back_url?: string | null
+          insurance_card_front_url?: string | null
           insurance_group_number?: string | null
           insurance_member_id?: string | null
           insurance_plan_name?: string | null
@@ -1455,6 +1526,7 @@ export type Database = {
           invited_at?: string | null
           invited_by?: string | null
           is_archived?: boolean | null
+          lab_panel_recommendation?: Json | null
           lab_path?: string | null
           mapping_completed?: boolean | null
           medical_history?: Json | null
@@ -1490,6 +1562,8 @@ export type Database = {
           full_name?: string
           gender?: string | null
           id?: string
+          insurance_card_back_url?: string | null
+          insurance_card_front_url?: string | null
           insurance_group_number?: string | null
           insurance_member_id?: string | null
           insurance_plan_name?: string | null
@@ -1500,6 +1574,7 @@ export type Database = {
           invited_at?: string | null
           invited_by?: string | null
           is_archived?: boolean | null
+          lab_panel_recommendation?: Json | null
           lab_path?: string | null
           mapping_completed?: boolean | null
           medical_history?: Json | null
@@ -1552,6 +1627,75 @@ export type Database = {
           instructions?: string | null
           name?: string
           primary_compound?: string | null
+        }
+        Relationships: []
+      }
+      provider_schedules: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_active: boolean
+          location: string | null
+          provider_id: string
+          service_lines: string[]
+          slot_minutes: number
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          provider_id: string
+          service_lines?: string[]
+          slot_minutes?: number
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          provider_id?: string
+          service_lines?: string[]
+          slot_minutes?: number
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      schedule_blocks: {
+        Row: {
+          created_at: string
+          end_at: string
+          id: string
+          provider_id: string
+          reason: string | null
+          start_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_at: string
+          id?: string
+          provider_id: string
+          reason?: string | null
+          start_at: string
+        }
+        Update: {
+          created_at?: string
+          end_at?: string
+          id?: string
+          provider_id?: string
+          reason?: string | null
+          start_at?: string
         }
         Relationships: []
       }

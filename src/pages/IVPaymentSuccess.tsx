@@ -1,15 +1,36 @@
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle2, Calendar, Clock, Phone, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-
-const IV_BOOKING_URL = SITE_CONFIG.bookingUrl;
+import SlotPicker from "@/components/booking/SlotPicker";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const IVPaymentSuccess = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const therapyName = searchParams.get("therapy") || "IV Therapy";
+  const sessionId = searchParams.get("session_id") || "";
+
+  const handleConfirm = async ({ slot }: { slot: { provider_id: string; start: string } }) => {
+    if (!sessionId) {
+      toast.error("Missing payment session id. Please call us.");
+      return;
+    }
+    const { data, error } = await supabase.functions.invoke("book-iv-appointment", {
+      body: { session_id: sessionId, slot_start: slot.start, provider_id: slot.provider_id },
+    });
+    if (error || data?.error) {
+      toast.error(data?.error || "Could not book that slot. Please pick another.");
+      return;
+    }
+    toast.success("Appointment confirmed! Confirmation sent.");
+    navigate(`/iv-payment-success?confirmed=1&therapy=${encodeURIComponent(therapyName)}`);
+  };
+
+  const confirmed = searchParams.get("confirmed") === "1";
 
   return (
     <div className="min-h-screen bg-background">
@@ -40,17 +61,21 @@ const IVPaymentSuccess = () => {
                 </div>
                 
                 <p className="text-muted-foreground mb-6">
-                  Select a time that works best for you. Sessions typically last 45-60 minutes in our relaxing IV Lounge.
+                  {confirmed
+                    ? "You're booked. Check your email and texts for confirmation."
+                    : "Pick a time that works for you. Sessions are 60 minutes in our IV Lounge."}
                 </p>
 
-                {/* Embedded Calendar */}
-                <div className="rounded-lg overflow-hidden border mb-6">
-                  <iframe
-                    src={IV_BOOKING_URL}
-                    style={{ border: 0, width: "100%", height: "500px" }}
-                    title="Book IV Therapy Session"
-                  />
-                </div>
+                {!confirmed && (
+                  <div className="mb-6">
+                    <SlotPicker
+                      serviceLine="iv"
+                      durationMinutes={60}
+                      onConfirm={handleConfirm}
+                      confirmLabel="Confirm IV Session"
+                    />
+                  </div>
+                )}
 
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <Phone className="h-4 w-4" />

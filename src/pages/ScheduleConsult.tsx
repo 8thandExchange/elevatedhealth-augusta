@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import KitTracker from "@/components/patient/KitTracker";
 import { Card, CardContent } from "@/components/ui/card";
+import SlotPicker from "@/components/booking/SlotPicker";
 
 const GOOGLE_CALENDAR_URL = SITE_CONFIG.bookingUrl;
 
@@ -266,7 +267,7 @@ const ScheduleConsult = () => {
                 />
               )}
 
-              {/* Google Calendar Embed */}
+              {/* Native Slot Picker */}
               <div className="bg-card rounded-2xl border border-border overflow-hidden">
                 <div className="p-6 border-b border-border">
                   <h2 className="text-xl font-cormorant font-semibold text-foreground">
@@ -276,38 +277,28 @@ const ScheduleConsult = () => {
                     We recommend booking 3 weeks out to allow time for your lab results.
                   </p>
                 </div>
-                <div className="p-0">
-                  <iframe
-                    src={GOOGLE_CALENDAR_URL}
-                    style={{ border: 0 }}
-                    width="100%"
-                    height="800"
-                    title="Schedule Strategy Call"
-                    className="bg-background"
+                <div className="p-6">
+                  <SlotPicker
+                    serviceLine="consult"
+                    durationMinutes={30}
+                    onConfirm={async ({ slot }) => {
+                      if (!patientId) return;
+                      const { data, error } = await supabase.functions.invoke("book-consult-appointment", {
+                        body: {
+                          booking_id: kitData?.id,
+                          slot_start: slot.start,
+                          provider_id: slot.provider_id,
+                        },
+                      });
+                      if (error || data?.error) {
+                        toast.error(data?.error || "Could not book that slot.");
+                        return;
+                      }
+                      await handleConfirmBooking();
+                    }}
+                    confirmLabel="Book Strategy Call"
                   />
                 </div>
-              </div>
-
-              {/* Confirm Booking Button */}
-              <div className="text-center space-y-4">
-                <Button
-                  size="xl"
-                  onClick={handleConfirmBooking}
-                  disabled={confirming}
-                  className="min-w-[300px]"
-                >
-                  {confirming ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                      Confirming...
-                    </>
-                  ) : (
-                    "Confirm Booking & Return to Dashboard"
-                  )}
-                </Button>
-                <p className="text-sm text-muted-foreground">
-                  Click after you've selected your appointment time above
-                </p>
               </div>
 
               {/* Support Note */}
