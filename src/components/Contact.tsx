@@ -299,15 +299,36 @@ const Contact = () => {
                   </form>
 
                   <div className="mt-6 pt-6 border-t border-border/30">
-                    <p className="text-sm text-muted-foreground font-lato text-center">
-                      Prefer to schedule directly?{" "}
-                      <button 
-                        onClick={handleBooking}
-                        className="text-primary hover:underline font-medium"
-                      >
-                        Book a consultation
-                      </button>
+                    <p className="text-xs font-jost tracking-[0.2em] uppercase text-muted-foreground text-center mb-4">
+                      Or book directly
                     </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Button
+                          onClick={handleBooking}
+                          size="lg"
+                          className="w-full rounded-sm font-lato tracking-wide"
+                        >
+                          Book a $79 consultation
+                        </Button>
+                        <p className="text-xs font-jost text-muted-foreground leading-snug">
+                          For hormone therapy, peptides, weight loss, or sexual wellness.
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <Button
+                          onClick={goToIV}
+                          size="lg"
+                          variant="outline"
+                          className="w-full rounded-sm font-lato tracking-wide"
+                        >
+                          <Droplet className="mr-2 h-4 w-4" /> Book IV therapy
+                        </Button>
+                        <p className="text-xs font-jost text-muted-foreground leading-snug">
+                          Walk-in friendly. No consult required. Pick your drip and schedule online.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
