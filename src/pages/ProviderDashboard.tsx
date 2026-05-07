@@ -2570,6 +2570,10 @@ const ProviderDashboard = () => {
                         state: selectedPatient.patient.state,
                         zip_code: selectedPatient.patient.zip_code,
                         treatment_request: selectedPatient.patient.treatment_request,
+                        insurance_type: (selectedPatient.patient as any).insurance_type,
+                        insurance_plan_name: (selectedPatient.patient as any).insurance_plan_name,
+                        insurance_member_id: (selectedPatient.patient as any).insurance_member_id,
+                        insurance_group_number: (selectedPatient.patient as any).insurance_group_number,
                       }}
                       serviceType={
                         selectedPatient.patient.treatment_request?.includes("weight") 
