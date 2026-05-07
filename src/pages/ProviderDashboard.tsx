@@ -55,6 +55,7 @@ import ConsultationTracker from "@/components/provider/ConsultationTracker";
 import PatientPipeline from "@/components/provider/PatientPipeline";
 import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
 import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
+import MyScheduleManager from "@/components/provider/MyScheduleManager";
 import PatientStatusCard from "@/components/provider/PatientStatusCard";
 import { SendKitLinkCard } from "@/components/provider/SendKitLinkCard";
 import MembershipAssignmentCard from "@/components/provider/MembershipAssignmentCard";
