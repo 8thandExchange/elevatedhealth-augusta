@@ -55,7 +55,9 @@ serve(async (req: Request) => {
 
     const body: InviteRequest = await req.json();
     const { email, full_name } = body;
-    
+    const mode = body.mode === "create" ? "create" : "invite";
+    const password = body.password;
+
     // Support both new 'roles' array and legacy 'role' string
     let roles: string[] = body.roles || [];
     if (roles.length === 0 && body.role) {
@@ -66,6 +68,12 @@ serve(async (req: Request) => {
       throw new Error("Missing required fields: email, full_name, roles");
     }
 
+    if (mode === "create") {
+      if (!password || password.length < 8) {
+        throw new Error("Password must be at least 8 characters when creating an account directly");
+      }
+    }
+
     // Validate roles
     const validRoles = ["admin", "staff", "business_admin"];
     for (const role of roles) {
@@ -74,7 +82,7 @@ serve(async (req: Request) => {
       }
     }
 
-    // Create admin client for invite
+    // Create admin client
     const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
@@ -87,44 +95,69 @@ serve(async (req: Request) => {
       throw new Error("A user with this email already exists");
     }
 
-    // Send invite email - this creates the user and sends a password setup email
-    const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
-      data: {
-        full_name,
-        invited_roles: roles,
-      },
-      redirectTo: `${req.headers.get("origin")}/provider/dashboard`,
-    });
+    let createdUserId: string | undefined;
 
-    if (inviteError) {
-      console.error("Invite error:", inviteError);
-      throw new Error(inviteError.message);
+    if (mode === "create") {
+      // Provision account directly — no email sent, password set by admin, email auto-confirmed
+      const { data: createdData, error: createError } = await adminClient.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: {
+          full_name,
+          invited_roles: roles,
+          provisioned_by_admin: true,
+        },
+      });
+
+      if (createError) {
+        console.error("Create user error:", createError);
+        throw new Error(createError.message);
+      }
+      createdUserId = createdData?.user?.id;
+    } else {
+      // Send invite email
+      const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
+        data: {
+          full_name,
+          invited_roles: roles,
+        },
+        redirectTo: `${req.headers.get("origin")}/provider/dashboard`,
+      });
+
+      if (inviteError) {
+        console.error("Invite error:", inviteError);
+        throw new Error(inviteError.message);
+      }
+      createdUserId = inviteData?.user?.id;
     }
 
     // Add all selected roles to user_roles table
-    if (inviteData?.user) {
+    if (createdUserId) {
       for (const role of roles) {
         const { error: roleError } = await adminClient
           .from("user_roles")
           .insert({
-            user_id: inviteData.user.id,
+            user_id: createdUserId,
             role: role,
           });
 
         if (roleError) {
           console.error(`Role assignment error for ${role}:`, roleError);
-          // Don't fail the whole operation, the user can still set up their account
         }
       }
     }
 
-    console.log(`Successfully invited ${email} with roles: ${roles.join(", ")}`);
+    console.log(`Successfully ${mode === "create" ? "created" : "invited"} ${email} with roles: ${roles.join(", ")}`);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: `Invitation sent to ${email}`,
-        user_id: inviteData?.user?.id,
+      JSON.stringify({
+        success: true,
+        mode,
+        message: mode === "create"
+          ? `Account created for ${email}. They can sign in immediately.`
+          : `Invitation sent to ${email}`,
+        user_id: createdUserId,
         roles: roles,
       }),
       {
