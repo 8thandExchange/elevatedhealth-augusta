@@ -667,6 +667,53 @@ const PatientIntake = () => {
                     </div>
                   </div>
 
+                  {/* Insurance (Optional, for Superbill / Reimbursement) */}
+                  <div className="mb-8">
+                    <Label className="text-sm font-medium mb-3 block">
+                      Insurance <span className="text-muted-foreground font-normal">(optional — for superbill reimbursement)</span>
+                    </Label>
+                    <div className="space-y-3">
+                      <select
+                        value={insuranceType}
+                        onChange={(e) => setInsuranceType(e.target.value)}
+                        className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                      >
+                        <option value="self_pay">Self-Pay (no insurance)</option>
+                        <option value="bcbs">Blue Cross Blue Shield</option>
+                        <option value="tricare">TRICARE</option>
+                        <option value="va">VA</option>
+                        <option value="aetna">Aetna</option>
+                        <option value="united">UnitedHealthcare</option>
+                        <option value="cigna">Cigna</option>
+                        <option value="medicare">Medicare</option>
+                        <option value="other">Other</option>
+                      </select>
+                      {insuranceType !== "self_pay" && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <Input
+                            value={insurancePlanName}
+                            onChange={(e) => setInsurancePlanName(e.target.value)}
+                            placeholder="Plan name (e.g. PPO Gold)"
+                          />
+                          <Input
+                            value={insuranceMemberId}
+                            onChange={(e) => setInsuranceMemberId(e.target.value)}
+                            placeholder="Member ID"
+                          />
+                          <Input
+                            value={insuranceGroupNumber}
+                            onChange={(e) => setInsuranceGroupNumber(e.target.value)}
+                            placeholder="Group # (optional)"
+                            className="sm:col-span-2"
+                          />
+                        </div>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        We don't bill insurance directly. We provide a superbill with ICD-10 + CPT codes you can submit for reimbursement.
+                      </p>
+                    </div>
+                  </div>
+
                   {/* Allergies */}
                   <div className="mb-8">
                     <Label htmlFor="allergies" className="text-sm font-medium mb-3 block">
