@@ -15,19 +15,15 @@ const logStep = (step: string, details?: any) => {
 const SERVICE_CONFIG: Record<string, { name: string; description: string }> = {
   hormone: {
     name: "Hormone Optimization — Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss physician-prescribed HRT/TRT. Includes $149 credit toward treatment."
+    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss physician-prescribed HRT and TRT. Includes $79 credit toward treatment."
   },
   weight_loss: {
     name: "Medical Weight Loss — Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss physician-supervised semaglutide/tirzepatide therapy. Includes $149 credit toward treatment."
-  },
-  iv_therapy: {
-    name: "IV Therapy — Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss physician-formulated IV infusions for recovery, immunity, and performance. Includes $149 credit toward treatment."
+    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss physician-supervised semaglutide/tirzepatide therapy. Includes $79 credit toward treatment."
   },
   peptide: {
     name: "Peptide Protocols — Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss Sermorelin, NAD+, GHK-Cu & more for cellular optimization. Includes $149 credit toward treatment."
+    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss Sermorelin, NAD+, GHK-Cu & more for cellular optimization. Includes $79 credit toward treatment."
   },
 };
 
