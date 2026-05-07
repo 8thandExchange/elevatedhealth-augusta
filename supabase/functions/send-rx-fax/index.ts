@@ -89,7 +89,7 @@ function generatePrescriptionHtml(
 </head>
 <body>
   <div class="header">
-    <h1>RÉVEIL</h1>
+    <h1>ELEVATED HEALTH AUGUSTA</h1>
     <p>7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</p>
     <p>Phone: (706) 760-3470 | Fax: (706) 993-3772</p>
   </div>

@@ -31,7 +31,7 @@ const chatRequestSchema = z.object({
 // ============================================================================
 
 const PUBLIC_KNOWLEDGE = `
-## RÉVEIL — PUBLIC KNOWLEDGE BASE
+## ELEVATED HEALTH AUGUSTA — PUBLIC KNOWLEDGE BASE
 
 ### CLINIC IDENTITY
 - Name: Elevated Health Augusta

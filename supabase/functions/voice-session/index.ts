@@ -11,7 +11,7 @@ const corsHeaders = {
 // ============================================================================
 
 const PUBLIC_KNOWLEDGE = `
-## RÉVEIL — PUBLIC KNOWLEDGE BASE
+## ELEVATED HEALTH AUGUSTA — PUBLIC KNOWLEDGE BASE
 
 ### CLINIC IDENTITY
 - Name: Elevated Health Augusta

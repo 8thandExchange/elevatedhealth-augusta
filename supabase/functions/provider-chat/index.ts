@@ -8,7 +8,7 @@ const corsHeaders = {
 
 // Elevated Health Augusta Clinic Knowledge Base - Enhanced Clinical Protocol Edition
 const CLINIC_KNOWLEDGE = `
-# RÉVEIL - INTERNAL CLINICAL OPERATIONS GUIDE
+# ELEVATED HEALTH AUGUSTA - INTERNAL CLINICAL OPERATIONS GUIDE
 ## Version 2.0 - Provider & Staff Reference
 
 ---
