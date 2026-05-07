@@ -96,7 +96,7 @@ const WeightLoss = () => {
   const processSteps = [
     {
       step: "01",
-      headline: "Book Your $149 Consultation.",
+      headline: "Book Your $79 RN Wellness Assessment.",
       body: "Schedule your 30-minute in-person visit at our Evans clinic. Your provider will review your medical history, medications, and determine your GLP-1 eligibility."
     },
     {
@@ -107,7 +107,7 @@ const WeightLoss = () => {
     {
       step: "03",
       headline: "Start Medication with First Month Discount.",
-      body: "Your $149 consultation fee is credited toward your first month — pay just $300 for Semaglutide or $400 for Tirzepatide to start."
+      body: "Your $79 RN Wellness Assessment fee is credited toward your first month — pay just $300 for Semaglutide or $400 for Tirzepatide to start."
     }
   ];
 
@@ -156,7 +156,7 @@ const WeightLoss = () => {
     },
     {
       q: "Do I need labs to start?",
-      a: "Most patients can start GLP-1 medication after their $149 consultation. If your provider determines additional lab work would benefit your safety or results, they may request recent labs from your PCP or recommend optional hormone testing."
+      a: "Most patients can start GLP-1 medication after their $79 RN Wellness Assessment. If your provider determines additional lab work would benefit your safety or results, they may request recent labs from your PCP or recommend optional hormone testing."
     },
     {
       q: "What if I want hormone testing too?",
@@ -172,16 +172,16 @@ const WeightLoss = () => {
     <>
       <Helmet>
         <title>Metabolic Optimization Program - Weight Loss Augusta | Elevated Health Augusta</title>
-        <meta name="description" content="Medical weight loss in Augusta, GA. $149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + ZRT hormone testing + metabolic analysis." />
+        <meta name="description" content="Medical weight loss in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + ZRT hormone testing + metabolic analysis." />
         <meta name="keywords" content="metabolic optimization Augusta, semaglutide Augusta GA, tirzepatide Augusta, GLP-1 Augusta, weight loss clinic Georgia, ZRT testing Augusta, metabolic labs" />
         <meta property="og:title" content="Metabolic Optimization Program - Weight Loss Augusta | Elevated Health Augusta" />
-        <meta property="og:description" content="Medical weight loss in Augusta, GA. $149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + hormone testing." />
+        <meta property="og:description" content="Medical weight loss in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 therapy + hormone testing." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/weight-loss" />
         <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Medical Weight Loss Augusta | Metabolic Optimization" />
-        <meta name="twitter:description" content="$149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 + hormone testing." />
+        <meta name="twitter:description" content="$79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. GLP-1 + hormone testing." />
         <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
@@ -298,7 +298,7 @@ const WeightLoss = () => {
                   </Button>
                 </div>
                 <p className="text-center text-xs text-green-600 font-medium mt-2 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
-                  $149 consultation fee credited toward your treatment
+                  $79 RN Wellness Assessment fee credited toward your treatment
                 </p>
 
                 <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-primary/60 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
@@ -619,7 +619,7 @@ const WeightLoss = () => {
                     ) : (
                       <Calendar className="mr-2 h-4 w-4" />
                     )}
-                    {isConsultationLoading ? "Processing..." : "Book $149 Consultation — Get $99 Credit"}
+                    {isConsultationLoading ? "Processing..." : "Book $79 RN Wellness Assessment — Get $99 Credit"}
                   </Button>
                   <p className="text-xs text-muted-foreground mt-2">First month: $300 (Semaglutide) or $400 (Tirzepatide)</p>
                 </div>
@@ -763,7 +763,7 @@ const WeightLoss = () => {
                   Start Your Journey
                 </h2>
                 <p className="text-lg text-muted-foreground font-lato">
-                  $149 consultation credited toward your first month of treatment
+                  $79 RN Wellness Assessment credited toward your first month of treatment
                 </p>
               </div>
 
@@ -968,7 +968,7 @@ const WeightLoss = () => {
                   Ready to Start Your Transformation?
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  Book your $149 consultation today and discover why Elevated Health Augusta is Augusta's 
+                  Book your $79 RN Wellness Assessment today and discover why Elevated Health Augusta is Augusta's 
                   most comprehensive weight loss program. No generic dosing. No rushed appointments. 
                   Just expert support and real results.
                 </p>
@@ -985,7 +985,7 @@ const WeightLoss = () => {
                     ) : (
                       <CreditCard className="mr-2 h-5 w-5" />
                     )}
-                    {isConsultationLoading ? "Processing..." : "Book $149 Consultation"}
+                    {isConsultationLoading ? "Processing..." : "Book $79 RN Wellness Assessment"}
                   </Button>
                   <Button 
                     onClick={() => {
