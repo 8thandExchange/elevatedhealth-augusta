@@ -89,16 +89,16 @@ const Hormones = () => {
     <>
       <Helmet>
         <title>Precision Bio-Identical Therapy Augusta | Hormone Optimization - Elevated Health Augusta</title>
-        <meta name="description" content="Bioidentical hormone replacement therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. ZRT diagnostics for men and women." />
+        <meta name="description" content="Bioidentical hormone replacement therapy in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. ZRT diagnostics for men and women." />
         <meta name="keywords" content="bioidentical hormones Augusta, BHRT Augusta GA, testosterone therapy, menopause treatment, hormone optimization Augusta, ZRT testing" />
         <meta property="og:title" content="Precision Bio-Identical Therapy Augusta | Hormone Optimization - Elevated Health Augusta" />
-        <meta property="og:description" content="Bioidentical hormone replacement therapy in Augusta, GA. $149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:description" content="Bioidentical hormone replacement therapy in Augusta, GA. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/hormones" />
         <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Hormone Optimization Augusta | Bio-Identical Therapy" />
-        <meta name="twitter:description" content="$149 medical consultation credited toward treatment. Chat with our Virtual Care Team 24/7. ZRT diagnostics." />
+        <meta name="twitter:description" content="$79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. ZRT diagnostics." />
         <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
       </Helmet>
 
@@ -135,7 +135,7 @@ const Hormones = () => {
                 className="animate-fade-in bg-gold border-gold text-white hover:bg-gold-dark"
                 style={{ animationDelay: "0.3s" }}
               >
-                Book $149 Consultation
+                Book $79 RN Wellness Assessment
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
@@ -309,7 +309,7 @@ const Hormones = () => {
                       </h3>
                       <p className="text-3xl font-cormorant text-foreground mb-2">$149</p>
                       <p className="text-xs text-green-600 font-medium mb-2">
-                        Includes $149 credit toward Hormone Mapping
+                        Includes $79 credit toward Hormone Mapping
                       </p>
                       <p className="text-sm text-muted-foreground mb-4 font-light">
                         30-minute in-person visit with our physician to discuss symptoms and treatment options.

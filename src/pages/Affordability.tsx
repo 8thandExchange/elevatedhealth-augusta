@@ -17,7 +17,7 @@ const Affordability = () => {
         <title>Affordable Payment Options | Klarna, Affirm, Insurance | Elevated Health Augusta</title>
         <meta
           name="description"
-          content="Flexible payment plans with Klarna and Affirm. We accept Blue Cross Blue Shield, TRICARE, and VA insurance. HSA/FSA eligible. $149 consultation credits available."
+          content="Flexible payment plans with Klarna and Affirm. We accept Blue Cross Blue Shield, TRICARE, and VA insurance. HSA/FSA eligible. $79 RN Wellness Assessment credits available."
         />
         <meta name="keywords" content="payment plans Augusta GA, Klarna healthcare, Affirm medical financing, BCBS mental health coverage, TRICARE ketamine therapy, HSA FSA eligible" />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/affordability" />
@@ -171,7 +171,7 @@ const Affordability = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <DollarSign className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-cormorant text-2xl text-foreground">$149 Consultation Credit</CardTitle>
+                  <CardTitle className="font-cormorant text-2xl text-foreground">$79 Assessment Credit</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground font-lato">
@@ -180,7 +180,7 @@ const Affordability = () => {
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>$149 consultation fee applies to next step</span>
+                      <span>$79 RN Wellness Assessment fee applies to next step</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
@@ -260,7 +260,7 @@ const Affordability = () => {
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>$149 medical consultations (credited forward)</span>
+                      <span>$79 RN Wellness Assessments (credited forward)</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />

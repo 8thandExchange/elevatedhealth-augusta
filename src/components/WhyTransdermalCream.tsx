@@ -226,7 +226,7 @@ export const WhyTransdermalCream = ({ onBookConsultation }: WhyTransdermalCreamP
             onClick={onBookConsultation}
             className="bg-accent hover:bg-accent-light text-accent-foreground"
           >
-            Book Your $149 Consultation
+            Book Your $79 RN Wellness Assessment
           </Button>
         </div>
       </div>

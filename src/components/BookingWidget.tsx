@@ -26,12 +26,12 @@ const BookingWidget = () => {
               </h2>
               
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Your $149 Medical Consultation is where it all begins. Meet with a provider, discuss your goals, and get a personalized plan.
+                Your $79 RN Wellness Assessment is where it all begins. Meet with a provider, discuss your goals, and get a personalized plan.
               </p>
 
               <p className="text-sm text-primary font-medium">
                 <CreditCard className="inline h-4 w-4 mr-1" />
-                $149 applies as a credit toward your first treatment
+                $79 applies as a credit toward your first treatment
               </p>
             </div>
             
@@ -44,7 +44,7 @@ const BookingWidget = () => {
                 }}
                 className="px-8 py-4 h-auto bg-primary text-primary-foreground rounded-full text-lg font-semibold hover:bg-primary-dark transition-colors shadow-lg hover:shadow-xl"
               >
-                Book Your $149 Consultation →
+                Book Your $79 RN Wellness Assessment →
               </Button>
             </div>
 

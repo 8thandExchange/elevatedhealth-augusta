@@ -64,7 +64,7 @@ const Consult = () => {
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Book Your Consultation | Elevated Health Augusta</title>
-        <meta name="description" content="Book your $149 Clinical Strategy Session at Elevated Health Augusta. Hormone optimization, medical weight loss, IV therapy, and peptide protocols." />
+        <meta name="description" content="Book your $79 RN Wellness Assessment at Elevated Health Augusta. Hormone optimization, medical weight loss, IV therapy, and peptide protocols." />
       </Helmet>
       <Navbar />
       
@@ -76,7 +76,7 @@ const Consult = () => {
               Your awakening starts with a conversation.
             </h1>
             <p className="font-jost font-light text-lg text-muted-foreground max-w-2xl mx-auto mb-2">
-              Select a service below to book your $149 consultation — credited toward your first treatment.
+              Select a service below to book your $79 RN Wellness Assessment — credited toward your first treatment.
             </p>
           </div>
 

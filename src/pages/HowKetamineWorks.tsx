@@ -31,7 +31,7 @@ const HowKetamineWorks = () => {
         <title>How Ketamine Works | Elevated Health Augusta</title>
         <meta 
           name="description" 
-          content="How ketamine works for depression, PTSD, and anxiety. $149 consultation credited toward treatment. Chat with our Virtual Care Team 24/7. Evidence-based explainers backed by Yale research." 
+          content="How ketamine works for depression, PTSD, and anxiety. $79 RN Wellness Assessment credited toward treatment. Chat with our Virtual Care Team 24/7. Evidence-based explainers backed by Yale research." 
         />
         <meta property="og:title" content="How Ketamine Works | Elevated Health Augusta" />
         <meta property="og:description" content="Evidence-based ketamine therapy explained with medical illustrations and research-backed data." />
@@ -112,7 +112,7 @@ const HowKetamineWorks = () => {
                 Ready to Start Your Healing Journey?
               </h2>
               <p className="font-inter text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Book a $149 consultation to discuss your treatment options with our board-certified providers. The fee is credited toward your treatment.
+                Book a $79 RN Wellness Assessment to discuss your treatment options with our board-certified providers. The fee is credited toward your treatment.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 

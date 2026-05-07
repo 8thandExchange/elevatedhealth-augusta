@@ -210,7 +210,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
         </div>
 
         <p className="text-[10px] text-muted-foreground text-center mt-4 max-w-md mx-auto font-jost">
-          The $149 consultation fee is non-refundable. If you move forward with treatment, 
+          The $79 RN Wellness Assessment fee is non-refundable. If you move forward with treatment, 
           this fee is applied as a credit toward your first service.
         </p>
 

@@ -63,12 +63,12 @@ const PricingComparison = () => {
     };
   };
 
-  // Membership: $149 consultation credit applied toward kit, then monthly membership
+  // Membership: $79 RN Wellness Assessment credit applied toward kit, then monthly membership
   // Membership INCLUDES: all medications, quarterly labs, unlimited messaging, follow-ups
   const calculateMembershipCost = () => {
     const consultation = CONSULTATION_PRICES.discovery.amount / 100; // $99
     const labKit = DIAGNOSTIC_KIT_PRICES.hormone.amount / 100; // $349
-    const consultationCredit = consultation; // $149 credit applied to kit
+    const consultationCredit = consultation; // $79 credit applied to kit
     const netKitCost = labKit - consultationCredit; // $250 net
     
     const monthlyRate = MEMBERSHIP_PRICES.vitality.amount / 100;
@@ -642,7 +642,7 @@ const PricingComparison = () => {
                     <h3 className="font-medium mb-2">Can I switch from à la carte to membership?</h3>
                     <p className="text-sm text-muted-foreground">
                       Absolutely! Many patients start with à la carte to try our services, then upgrade 
-                      to membership for better value. Your $149 consultation credit still applies to your 
+                      to membership for better value. Your $79 RN Wellness Assessment credit still applies to your 
                       initial lab kit, regardless of which path you choose.
                     </p>
                   </CardContent>

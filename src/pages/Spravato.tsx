@@ -86,7 +86,7 @@ const Spravato = () => {
         <title>SPRAVATO® (Esketamine) Augusta GA | Insurance-Covered Ketamine | Elevated Health Augusta</title>
         <meta 
           name="description" 
-          content="SPRAVATO® esketamine nasal spray in Augusta, GA. $149 consultation to verify insurance coverage. Chat with our Virtual Care Team 24/7. Often $0-50 copays with BCBS, TRICARE." 
+          content="SPRAVATO® esketamine nasal spray in Augusta, GA. $79 RN Wellness Assessment to verify insurance coverage. Chat with our Virtual Care Team 24/7. Often $0-50 copays with BCBS, TRICARE." 
         />
         <meta 
           name="keywords" 
@@ -95,8 +95,8 @@ const Spravato = () => {
         <link rel="canonical" href="https://elevatedhealthaugusta.com/spravato" />
         
         {/* Open Graph */}
-        <meta property="og:title" content="SPRAVATO® Augusta | $149 Consultation to Verify Insurance | Elevated Health Augusta" />
-        <meta property="og:description" content="SPRAVATO® esketamine nasal spray in Augusta, GA. $149 consultation to verify insurance coverage. Chat with our Virtual Care Team 24/7." />
+        <meta property="og:title" content="SPRAVATO® Augusta | $79 RN Wellness Assessment to Verify Insurance | Elevated Health Augusta" />
+        <meta property="og:description" content="SPRAVATO® esketamine nasal spray in Augusta, GA. $79 RN Wellness Assessment to verify insurance coverage. Chat with our Virtual Care Team 24/7." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/spravato" />
         <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
@@ -104,7 +104,7 @@ const Spravato = () => {
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="SPRAVATO® Augusta | Often $0-50 Copays" />
-        <meta name="twitter:description" content="$149 consultation to verify insurance coverage. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
+        <meta name="twitter:description" content="$79 RN Wellness Assessment to verify insurance coverage. Chat with our Virtual Care Team 24/7. BCBS, TRICARE accepted." />
         <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         
         {/* Schema */}

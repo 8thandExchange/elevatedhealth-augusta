@@ -241,7 +241,7 @@ const SexualWellness = () => {
                           Private Health Assessment
                         </h3>
                         <p className="text-sm text-muted-foreground font-lato">
-                          A confidential conversation with our provider to review your health, discuss options, and create your personalized treatment plan. The $149 fee is credited toward your first month.
+                          A confidential conversation with our provider to review your health, discuss options, and create your personalized treatment plan. The $79 fee is credited toward your first month.
                         </p>
                       </div>
                     </div>
@@ -475,7 +475,7 @@ const SexualWellness = () => {
                   Ready to Restore Your Confidence?
                 </h2>
                 <p className="text-lg font-cormorant text-muted-foreground mb-8">
-                  Start with a private consultation. The $149 fee is credited toward your first month of treatment.
+                  Start with a private consultation. The $79 fee is credited toward your first month of treatment.
                 </p>
                 <Button
                   onClick={() => setIsConsultOpen(true)}

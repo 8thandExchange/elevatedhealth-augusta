@@ -256,7 +256,7 @@ const HowGLP1Works = () => {
                 Clinical Guidance
               </h4>
               <p className="text-sm text-muted-foreground font-lato">
-                During your $149 consultation, your provider will review your medical history, current medications, 
+                During your $79 RN Wellness Assessment, your provider will review your medical history, current medications, 
                 and weight loss goals to recommend the most appropriate medication. Factors like insulin resistance, 
                 prior GLP-1 experience, and cardiovascular history influence which option is safest and most effective for you.
               </p>
