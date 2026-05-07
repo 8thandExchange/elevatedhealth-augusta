@@ -359,7 +359,8 @@ const FCCPortalModal = ({
   };
 
   const handleLaunchPortal = () => {
-    window.open("https://fccrxportal.com/login", "_blank");
+    // FCC migrated to FormuConnect on 2026-03-20. Legacy portal sunset 2026-04-12.
+    window.open("https://app.formuconnect.com/login", "_blank");
   };
 
   const handleMarkAsOrdered = async () => {
@@ -589,9 +590,10 @@ const FCCPortalModal = ({
               variant="outline"
               onClick={handleLaunchPortal}
               className="flex-1 border-foreground/20 hover:bg-secondary"
+              title="Opens FormuConnect (FCC's new portal, replaced fccrxportal.com on Apr 12, 2026)"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
-              FCC Portal
+              FormuConnect
             </Button>
             <Button
               variant="outline"
