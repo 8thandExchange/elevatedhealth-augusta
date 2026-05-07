@@ -466,6 +466,7 @@ const IVLounge = () => {
 
         <Footer />
       </div>
+      <AssistantHub />
     </>
   );
 };
