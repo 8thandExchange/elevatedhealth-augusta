@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import KitTracker from "@/components/patient/KitTracker";
 import { Card, CardContent } from "@/components/ui/card";
+import SlotPicker from "@/components/booking/SlotPicker";
 
 const GOOGLE_CALENDAR_URL = SITE_CONFIG.bookingUrl;
 
