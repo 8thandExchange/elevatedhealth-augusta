@@ -78,17 +78,10 @@ const WhatWeDoSection = () => {
                 <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed mb-6 min-h-[60px]">
                   {s.body}
                 </p>
-                {!comingSoon && (
-                  <div className="flex items-center gap-2 font-jost text-xs uppercase tracking-[2px] text-accent group-hover:gap-3 transition-all">
-                    <span>Explore</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </div>
-                )}
-                {comingSoon && (
-                  <div className="font-jost text-xs uppercase tracking-[2px] text-muted-foreground/60">
-                    Available soon
-                  </div>
-                )}
+                <div className="flex items-center gap-2 font-jost text-xs uppercase tracking-[2px] text-accent group-hover:gap-3 transition-all">
+                  <span>Explore</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </div>
               </button>
             );
           })}
