@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FoundingMemberBanner from "@/components/FoundingMemberBanner";
+import CareMembershipBanner from "@/components/CareMembershipBanner";
 import ServicesGrid from "@/components/ServicesGrid";
 import IVDirectBookBanner from "@/components/IVDirectBookBanner";
 import Contact from "@/components/Contact";
@@ -23,6 +24,7 @@ const Index = () => {
         <FoundingMemberBanner />
         <div className="section-divider max-w-5xl mx-auto" />
         <ServicesGrid />
+        <CareMembershipBanner />
         <div className="section-divider max-w-5xl mx-auto" />
         {/* Credibility bar */}
         <section className="py-12 bg-background">
