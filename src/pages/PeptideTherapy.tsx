@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CareMembershipBanner from "@/components/CareMembershipBanner";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
@@ -66,6 +67,7 @@ const PeptideTherapy = () => {
             </Button>
           </div>
         </section>
+        <CareMembershipBanner />
         <Footer />
       </div>
     </>

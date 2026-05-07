@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Shield, TestTube, CheckCircle2, ArrowRight, CreditCard, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CareMembershipBanner from "@/components/CareMembershipBanner";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -458,6 +459,7 @@ const Hormones = () => {
           </section>
         </main>
 
+        <CareMembershipBanner />
         <Footer />
         <ConsultationModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
       </div>
