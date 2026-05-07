@@ -30,6 +30,7 @@ import {
 import { Label } from "@/components/ui/label";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
+import AILabPanelCard from "@/components/provider/AILabPanelCard";
 import ZRTRequisitionGenerator from "@/components/provider/ZRTRequisitionGenerator";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
@@ -2264,6 +2265,12 @@ const ProviderDashboard = () => {
                 </Card>
               )}
 
+              {/* AI-Suggested Lab Panel */}
+              <AILabPanelCard
+                patientId={selectedPatient.patient.id}
+                existingRecommendation={(selectedPatient.patient as any).lab_panel_recommendation}
+              />
+
               {/* LabCorp Requisition Card */}
               {selectedPatient.labPath?.path === "labcorp" && selectedPatient.labPath.panel && (
                 <LabCorpRequisition
@@ -2563,6 +2570,10 @@ const ProviderDashboard = () => {
                         state: selectedPatient.patient.state,
                         zip_code: selectedPatient.patient.zip_code,
                         treatment_request: selectedPatient.patient.treatment_request,
+                        insurance_type: (selectedPatient.patient as any).insurance_type,
+                        insurance_plan_name: (selectedPatient.patient as any).insurance_plan_name,
+                        insurance_member_id: (selectedPatient.patient as any).insurance_member_id,
+                        insurance_group_number: (selectedPatient.patient as any).insurance_group_number,
                       }}
                       serviceType={
                         selectedPatient.patient.treatment_request?.includes("weight") 

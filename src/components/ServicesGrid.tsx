@@ -6,6 +6,7 @@ const services = [
     title: "Hormone Optimization",
     description: "Physician-prescribed HRT and TRT for men and women.",
     route: "/hormones",
+    note: "Starts with $79 RN Wellness Assessment",
   },
   {
     title: "IV Therapy",
@@ -18,11 +19,13 @@ const services = [
     title: "Peptide Protocols",
     description: "The first physician-supervised peptide program in the Augusta area.",
     route: "/peptides",
+    note: "Starts with $79 RN Wellness Assessment",
   },
   {
     title: "Medical Weight Loss",
     description: "GLP-1 protocols. Semaglutide. Tirzepatide. Real results.",
     route: "/weightloss",
+    note: "Starts with $79 RN Wellness Assessment",
   },
 ];
 
@@ -58,9 +61,15 @@ const ServicesGrid = () => {
               <h3 className={`font-playfair text-xl lg:text-2xl mb-3 ${service.badge ? "text-foreground" : "text-accent"}`}>
                 {service.title}
               </h3>
-              <p className={`font-jost font-light text-sm leading-relaxed mb-6 ${service.badge ? "text-foreground/80" : "text-primary-foreground/80"}`}>
+              <p className={`font-jost font-light text-sm leading-relaxed mb-3 ${service.badge ? "text-foreground/80" : "text-primary-foreground/80"}`}>
                 {service.description}
               </p>
+              {service.note && (
+                <p className="font-jost text-[11px] uppercase tracking-wider text-primary-foreground/60 mb-6">
+                  {service.note}
+                </p>
+              )}
+              {service.badge && <div className="mb-3" />}
               <div className={`flex items-center gap-2 font-jost text-sm font-medium group-hover:gap-3 transition-all duration-300 ${service.badge ? "text-accent" : "text-accent"}`}>
                 <span>{service.cta || "Learn More"}</span>
                 <ArrowRight className="h-4 w-4" />

@@ -40,6 +40,10 @@ interface PatientData {
   state?: string | null;
   zip_code?: string | null;
   treatment_request?: string;
+  insurance_type?: string | null;
+  insurance_plan_name?: string | null;
+  insurance_member_id?: string | null;
+  insurance_group_number?: string | null;
 }
 
 interface CPTCode {
@@ -404,6 +408,32 @@ const SuperbillGenerator = ({
             <div class="field">
               <div class="field-label">Date of Service</div>
               <div class="field-value">${new Date(dateOfService).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">INSURANCE INFORMATION (for patient reimbursement)</div>
+        <div class="grid-2">
+          <div>
+            <div class="field">
+              <div class="field-label">Carrier</div>
+              <div class="field-value">${(patient.insurance_type || "self_pay").replace(/_/g, " ").toUpperCase()}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Plan Name</div>
+              <div class="field-value">${patient.insurance_plan_name || "—"}</div>
+            </div>
+          </div>
+          <div>
+            <div class="field">
+              <div class="field-label">Member ID</div>
+              <div class="field-value">${patient.insurance_member_id || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Group #</div>
+              <div class="field-value">${patient.insurance_group_number || "—"}</div>
             </div>
           </div>
         </div>
