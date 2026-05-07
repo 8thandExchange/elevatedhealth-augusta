@@ -8,9 +8,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Copy, Check, ExternalLink, CheckCircle, Loader2, Send, AlertCircle } from "lucide-react";
+import { Copy, Check, ExternalLink, CheckCircle, Loader2, Send, AlertCircle, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import FCCFormularyLookup from "./FCCFormularyLookup";
 
 // Diagnosis suggestions by medication category
 const DIAGNOSIS_MAP: Record<string, { code: string; description: string }[]> = {
@@ -160,6 +161,7 @@ const FCCPortalModal = ({
   onOrderCreated,
 }: FCCPortalModalProps) => {
   const [isMarking, setIsMarking] = useState(false);
+  const [showFormulary, setShowFormulary] = useState(false);
   const [faxStatus, setFaxStatus] = useState<FaxStatus>('idle');
   const [faxTimestamp, setFaxTimestamp] = useState<string | null>(null);
   const [faxError, setFaxError] = useState<string | null>(null);
@@ -585,21 +587,33 @@ const FCCPortalModal = ({
           )}
 
           {/* Secondary Actions */}
-          <div className="flex gap-3">
+          <div className="flex gap-2 flex-wrap">
             <Button
               variant="outline"
+              size="sm"
+              onClick={() => setShowFormulary(true)}
+              className="flex-1 border-foreground/20 hover:bg-secondary min-w-[140px]"
+              title="Search FCC FormuConnect 2026 SKUs"
+            >
+              <Search className="w-4 h-4 mr-2" />
+              SKU Lookup
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleLaunchPortal}
-              className="flex-1 border-foreground/20 hover:bg-secondary"
-              title="Opens FormuConnect (FCC's new portal, replaced fccrxportal.com on Apr 12, 2026)"
+              className="flex-1 border-foreground/20 hover:bg-secondary min-w-[140px]"
+              title="Opens FormuConnect (replaced fccrxportal.com Apr 12, 2026)"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               FormuConnect
             </Button>
             <Button
               variant="outline"
+              size="sm"
               onClick={handleMarkAsOrdered}
               disabled={isMarking}
-              className="flex-1 border-foreground/20 hover:bg-secondary"
+              className="flex-1 border-foreground/20 hover:bg-secondary min-w-[140px]"
             >
               {isMarking ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -610,6 +624,12 @@ const FCCPortalModal = ({
             </Button>
           </div>
         </div>
+
+        <FCCFormularyLookup
+          isOpen={showFormulary}
+          onClose={() => setShowFormulary(false)}
+          initialQuery={medication?.name || ""}
+        />
       </DialogContent>
     </Dialog>
   );
