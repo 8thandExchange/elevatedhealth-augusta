@@ -2146,6 +2146,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_providers_directory: {
+        Args: never
+        Returns: {
+          color: string
+          display_name: string
+          email: string
+          user_id: string
+        }[]
+      }
       has_business_admin_role: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -2156,7 +2165,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "staff" | "user" | "business_admin"
+      app_role: "admin" | "staff" | "user" | "business_admin" | "provider"
       order_status:
         | "pending_review"
         | "authorized"
@@ -2290,7 +2299,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "staff", "user", "business_admin"],
+      app_role: ["admin", "staff", "user", "business_admin", "provider"],
       order_status: [
         "pending_review",
         "authorized",

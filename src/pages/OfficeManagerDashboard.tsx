@@ -233,6 +233,17 @@ const OfficeManagerDashboard = () => {
       />
 
       <main className="container mx-auto px-4 py-8">
+        {/* Primary tool: schedule */}
+        <div className="mb-6 flex items-center justify-between p-4 rounded-lg bg-primary/5 border border-primary/20">
+          <div>
+            <h2 className="text-base font-semibold">Today's Schedule</h2>
+            <p className="text-xs text-muted-foreground">Multi-provider day & week view, walk-ins, reschedules.</p>
+          </div>
+          <Button onClick={() => window.location.assign("/office/schedule")} className="gap-2">
+            <Calendar className="w-4 h-4" /> Open Schedule
+          </Button>
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <Card className="bg-card border-border/50">

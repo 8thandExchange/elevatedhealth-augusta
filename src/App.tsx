@@ -64,6 +64,7 @@ import StaffQuickCard from "./pages/StaffQuickCard";
 import EmailTemplates from "./pages/EmailTemplates";
 import PublicIntake from "./pages/PublicIntake";
 import InsuranceReimbursement from "./pages/InsuranceReimbursement";
+import OfficeSchedule from "./pages/OfficeSchedule";
 
 const queryClient = new QueryClient();
 
@@ -227,6 +228,11 @@ const App = () => {
           <Route path="/office/dashboard" element={
             <ProviderLayout title="Office Manager" subtitle="Patient Overview" showNavbar={false}>
               <OfficeManagerDashboard />
+            </ProviderLayout>
+          } />
+          <Route path="/office/schedule" element={
+            <ProviderLayout title="Schedule" subtitle="Office-wide schedule" showNavbar={false}>
+              <OfficeSchedule />
             </ProviderLayout>
           } />
           <Route path="/admin/business" element={
