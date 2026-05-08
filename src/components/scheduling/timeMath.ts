@@ -45,31 +45,39 @@ export function coverageForDate(
   const exForDate = exceptions.filter(
     (e) => e.provider_id === providerId && e.exception_date === dateStr
   );
-  const removeAll = exForDate.find((e) => !e.is_available && !e.start_time && !e.end_time);
-  if (removeAll) return [];
 
-  const dow = date.getDay(); // 0=Sun..6=Sat
+  const dow = date.getDay();
   const recurring = schedules.filter(
     (s) => s.provider_id === providerId && s.day_of_week === dow && s.is_active
   );
 
-  const result: CoverageSlot[] = recurring.map((s) => ({
+  let result: CoverageSlot[] = recurring.map((s) => ({
     start: minutesFromMidnight(s.start_time),
     end: minutesFromMidnight(s.end_time),
     service_lines: s.service_lines || [],
     source: "schedule",
   }));
 
-  // additive exceptions
-  for (const e of exForDate) {
-    if (e.is_available && e.start_time && e.end_time) {
-      result.push({
-        start: minutesFromMidnight(e.start_time),
-        end: minutesFromMidnight(e.end_time),
-        service_lines: e.service_lines || [],
-        source: "exception",
-      });
+  // additions
+  for (const e of exForDate.filter((e) => e.type === "addition")) {
+    result.push({
+      start: minutesFromMidnight(e.start_time),
+      end: minutesFromMidnight(e.end_time),
+      service_lines: e.service_lines || [],
+      source: "exception",
+    });
+  }
+  // removals — clip
+  for (const e of exForDate.filter((e) => e.type === "removal")) {
+    const rs = minutesFromMidnight(e.start_time);
+    const re = minutesFromMidnight(e.end_time);
+    const next: CoverageSlot[] = [];
+    for (const c of result) {
+      if (re <= c.start || rs >= c.end) { next.push(c); continue; }
+      if (rs > c.start) next.push({ ...c, end: rs });
+      if (re < c.end)   next.push({ ...c, start: re });
     }
+    result = next;
   }
   return result;
 }
