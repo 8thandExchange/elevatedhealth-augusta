@@ -53,7 +53,7 @@ const AlaCartePaymentSuccess = () => {
 
   // Calculate annual comparison
   const alaCarteAnnual = productPrice ? productPrice.amount / 100 * 12 : 0;
-  const membershipAnnual = MEMBERSHIP_PRICES.vitality.amount / 100 * 12;
+  const membershipAnnual = ELEVATED_MEMBERSHIP.amount / 100 * 12;
   const potentialSavings = Math.max(0, alaCarteAnnual - membershipAnnual);
 
   return (
