@@ -577,7 +577,7 @@ const WeightLoss = () => {
                       <tr className="border-b border-border/50">
                         <td className="p-4 font-jost text-primary font-medium">Hidden Membership Fees</td>
                         <td className="p-4 text-center">
-                          <span className="text-red-500 font-medium">Yes — $145/month ongoing</span>
+                          <span className="text-red-500 font-medium">Yes — surprise fees & rebills</span>
                         </td>
                         <td className="p-4 text-center bg-accent/5">
                           <CheckCircle2 className="h-5 w-5 text-green-500 mx-auto" />
@@ -657,7 +657,7 @@ const WeightLoss = () => {
                     )}
                     {isConsultationLoading ? "Processing..." : "Book $79 Wellness Assessment — Get $99 Credit"}
                   </Button>
-                  <p className="text-xs text-muted-foreground mt-2">First month: $300 (Semaglutide) or $400 (Tirzepatide)</p>
+                  <p className="text-xs text-muted-foreground mt-2">Then $249/mo Semaglutide or $499/mo Tirzepatide ($199 / $399 for Elevated Members)</p>
                 </div>
               </div>
             </div>
@@ -859,11 +859,11 @@ const WeightLoss = () => {
                       Semaglutide Membership
                     </h3>
                     <div className="flex items-baseline justify-center gap-1 mb-1">
-                      <span className="font-playfair text-3xl text-primary font-light">$399</span>
+                      <span className="font-playfair text-3xl text-primary font-light">$249</span>
                       <span className="text-primary/60 font-jost text-sm">/ month</span>
                     </div>
                     <p className="text-xs text-green-600 font-medium mb-3">
-                      First month $300 with consultation credit
+                      $199/mo for Elevated Members
                     </p>
                     <p className="text-sm text-muted-foreground mb-4 font-jost">
                       FDA-approved GLP-1 for steady, sustainable weight loss with full provider support.
@@ -921,7 +921,7 @@ const WeightLoss = () => {
                       <span className="text-primary/60 font-jost text-sm">/ month</span>
                     </div>
                     <p className="text-xs text-green-600 font-medium mb-3">
-                      First month $400 with consultation credit
+                      $399/mo for Elevated Members
                     </p>
                     <p className="text-sm text-muted-foreground mb-4 font-jost">
                       Dual-action GLP-1/GIP for accelerated results — up to 22.5% weight loss.
