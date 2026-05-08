@@ -64,6 +64,7 @@ import StaffQuickCard from "./pages/StaffQuickCard";
 import EmailTemplates from "./pages/EmailTemplates";
 import PublicIntake from "./pages/PublicIntake";
 import InsuranceReimbursement from "./pages/InsuranceReimbursement";
+import OfficeSchedule from "./pages/OfficeSchedule";
 
 const queryClient = new QueryClient();
 
