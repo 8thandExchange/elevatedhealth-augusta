@@ -20,6 +20,9 @@ export const ACTIVE_SERVICES = {
   ketamine: false,        // Ketamine / Spravato — not offered
   hairRestoration: false, // Hair Restoration — post-launch
   sexualWellness: false,  // Sexual Wellness — post-launch
+
+  // PEPTIDE-LEVEL COMPLIANCE FLAGS (toggle when FCC supply/legal status shifts)
+  peptideTB500: true,     // TB-500 (Thymosin Beta-4) — set false if FCC pulls supply
 } as const;
 
 // Type for service keys

@@ -11,67 +11,110 @@ import { isServiceActive } from "@/lib/serviceConfig";
 
 // Display values — actual charges flow through Stripe via
 // create-consultation-checkout ($79) and the membership product.
+// Stack subscription Stripe Price IDs to be wired in a future prompt.
 const PRICE_CONSULT = "$79";
 const PRICE_PANEL_PEPTIDE = "$245";
 const PRICE_PANEL_PEPTIDE_MEMBER = "$195";
 const PRICE_MEMBERSHIP = "$199";
 
-type Peptide = {
+const TB500_AVAILABLE = isServiceActive("peptideTB500");
+
+type Stack = {
   name: string;
-  desc: string;
-  bestFor: string;
-  price: string;
-  group: "Recovery" | "Performance" | "Longevity" | "Cognitive" | "Sexual Wellness";
-  note?: string;
+  tagline: string;
+  includes: string[];
+  bestFor: string[];
+  priceMember: string;
+  priceNonMember: string;
+  priceVariant?: { label: string; member: string; nonMember: string };
+  note: string;
 };
 
-const allPeptides: Peptide[] = [
-  // Recovery
-  { name: "BPC-157", desc: "Gut healing and soft-tissue repair signaling.", bestFor: "GI repair · post-injury", price: "$179–229/mo", group: "Recovery" },
-  { name: "TB-500 (Thymosin Beta-4)", desc: "Connective tissue and muscle recovery.", bestFor: "Tendon, ligament, muscle", price: "$249–299/mo", group: "Recovery" },
-  { name: "GHK-Cu", desc: "Skin, hair, and collagen synthesis support.", bestFor: "Skin · hair · collagen", price: "$149–179/mo", group: "Recovery" },
-  // Performance
-  { name: "CJC-1295 / Ipamorelin", desc: "Amplifies natural GH peaks for performance and recovery.", bestFor: "Fat loss · recovery", price: "$249–299/mo", group: "Performance" },
-  { name: "Sermorelin", desc: "GH precursor — sleep, energy, body composition.", bestFor: "Sleep · energy · body comp", price: "$199–249/mo", group: "Performance" },
-  // Longevity
-  { name: "NAD+ (IV)", desc: "Cellular energy and cognition. Administered at the IV Lounge.", bestFor: "Longevity · clarity", price: "$299–399/infusion", group: "Longevity", note: "Routes to /iv-lounge" },
-  { name: "NAD+ (Subcutaneous)", desc: "Take-home daily microdose for sustained NAD+ support.", bestFor: "Longevity · home protocol", price: "$249–299/mo", group: "Longevity" },
-  { name: "Thymosin Alpha-1", desc: "Immune modulation and resilience.", bestFor: "Immune · post-illness", price: "$199–249/mo", group: "Longevity" },
-  // Cognitive
-  { name: "Selank", desc: "Focus, cognition, and gentle anxiolytic effect. Sublingual.", bestFor: "Focus · stress", price: "$179–229/mo", group: "Cognitive" },
+const stacks: Stack[] = [
+  {
+    name: "The Restore Protocol",
+    tagline: "Sexual wellness, redefined. Works on the brain — not just the body.",
+    includes: [
+      "PT-141 (Bremelanotide) injectable, weekly",
+      "Optional: PT-141 / Oxytocin nasal spray for couples",
+    ],
+    bestFor: ["Low libido", "Arousal challenges", "Intimacy disconnect"],
+    priceMember: "$129/mo",
+    priceNonMember: "$179/mo",
+    note: "PT-141 is FDA-approved as Vyleesi. Compounded alternative dosing available.",
+  },
+  {
+    name: "The Healing Protocol",
+    tagline: "Soft tissue, joints, gut, inflammation — accelerated recovery.",
+    includes: TB500_AVAILABLE
+      ? [
+          "Pentadeca Arginate (PDA) oral capsules, daily",
+          "TB-500 (Thymosin Beta-4) subcutaneous injection, weekly",
+        ]
+      : [
+          "Pentadeca Arginate (PDA) oral capsules, daily",
+        ],
+    bestFor: ["Post-injury recovery", "Tendon & ligament healing", "Chronic inflammation", "Gut barrier integrity"],
+    priceMember: TB500_AVAILABLE ? "$249/mo" : "$149/mo",
+    priceNonMember: TB500_AVAILABLE ? "$329/mo" : "$199/mo",
+    note: TB500_AVAILABLE
+      ? "PDA is the successor to BPC-157, available through legal compounding channels."
+      : "PDA is the successor to BPC-157. TB-500 temporarily unavailable pending pharmacy compliance review.",
+  },
+  {
+    name: "The Vitality Protocol",
+    tagline: "Energy, cognition, sleep, body composition — the longevity foundation.",
+    includes: [
+      "Sermorelin subcutaneous injection, nightly",
+      "NAD+ subcutaneous take-home OR IV at the IV Lounge",
+    ],
+    bestFor: ["Low energy", "Cognitive dulling", "Poor sleep quality", "Age-related decline"],
+    priceMember: "$299/mo",
+    priceNonMember: "$399/mo",
+    priceVariant: {
+      label: "With monthly NAD+ IV at the lounge",
+      member: "$449/mo",
+      nonMember: "$599/mo",
+    },
+    note: "Sermorelin and NAD+ are well-established peptides with clear regulatory standing.",
+  },
 ];
 
-const sexualWellnessPeptides: Peptide[] = [
-  { name: "PT-141 (Bremelanotide)", desc: "Sexual response support — for men and women.", bestFor: "Libido · desire", price: "$149–199/mo", group: "Sexual Wellness" },
-];
+type AlaCarte = { name: string; desc: string; bestFor: string; priceMember: string; priceNonMember: string; note?: string };
 
-const peptides: Peptide[] = [
-  ...allPeptides,
-  ...(isServiceActive("sexualWellness") ? sexualWellnessPeptides : []),
+const alacarte: AlaCarte[] = [
+  { name: "Pentadeca Arginate (PDA)", desc: "Healing, anti-inflammatory.", bestFor: "Recovery · gut · inflammation", priceMember: "$99/mo", priceNonMember: "$129/mo" },
+  { name: "PT-141 (Bremelanotide)", desc: "Sexual wellness — for men and women.", bestFor: "Libido · desire", priceMember: "$99/mo", priceNonMember: "$129/mo" },
+  ...(TB500_AVAILABLE
+    ? [{ name: "TB-500 (Thymosin Beta-4)", desc: "Tissue repair and recovery.", bestFor: "Tendon · ligament · muscle", priceMember: "$129/mo", priceNonMember: "$169/mo", note: "Subject to FCC compliance verification." } as AlaCarte]
+    : []),
+  { name: "Sermorelin", desc: "GH support, sleep, recovery.", bestFor: "Sleep · energy · body comp", priceMember: "$179/mo", priceNonMember: "$229/mo" },
+  { name: "NAD+ subcutaneous (take-home)", desc: "Cellular energy, longevity.", bestFor: "Longevity · home protocol", priceMember: "$199/mo", priceNonMember: "$249/mo" },
+  { name: "NAD+ IV (at the IV Lounge)", desc: "Cellular energy infusion.", bestFor: "Longevity · clarity", priceMember: "$399/infusion", priceNonMember: "$450/infusion", note: "Booked at /iv-lounge" },
+  { name: "GHK-Cu topical cream", desc: "Skin, hair, collagen support.", bestFor: "Skin · hair · collagen", priceMember: "$79/mo", priceNonMember: "$99/mo" },
 ];
-
-const groupOrder: Peptide["group"][] = ["Recovery", "Performance", "Longevity", "Cognitive", "Sexual Wellness"];
 
 const symptoms = [
   "Slow recovery from training", "Age-related decline", "Sleep disruption",
-  "Stubborn body composition", "Libido changes", "Immune dysregulation",
-  "Post-injury rehab", "Cognitive dulling", "Skin, hair, connective tissue concerns",
+  "Stubborn body composition", "Libido changes", "Post-injury rehab",
+  "Chronic inflammation", "Cognitive dulling", "Skin, hair & connective tissue concerns",
 ];
 
 const steps = [
-  { n: "01", t: `Wellness Assessment (${PRICE_CONSULT})`, d: "Meet your physician. Walk through goals, history, training load. About 45 minutes." },
-  { n: "02", t: "Targeted Lab Panel", d: `Hormone or weight panel depending on your goal — typically ${PRICE_PANEL_PEPTIDE}–$345 / ${PRICE_PANEL_PEPTIDE_MEMBER}–$295 members.` },
-  { n: "03", t: "Custom Protocol", d: "Physician selects your peptide(s), dose, and frequency. Compounded by FCC and shipped to your door." },
-  { n: "04", t: "Self-Administer or In-Clinic", d: "Most peptides are subcutaneous self-injection — we train you in 15 minutes. Or come in weekly with membership." },
+  { n: "01", t: `Wellness Assessment (${PRICE_CONSULT})`, d: "Meet your physician. Walk through goals, current protocol/medications, history. About 45 minutes." },
+  { n: "02", t: "Targeted Lab Panel", d: `Foundation labs plus IGF-1 (for GH peptides) and hormone markers if relevant. ${PRICE_PANEL_PEPTIDE}–$345 / ${PRICE_PANEL_PEPTIDE_MEMBER}–$295 members.` },
+  { n: "03", t: "Custom Protocol", d: "Physician selects your stack or à la carte peptides, designs dosing, sends Rx to FCC. Compounded for you and shipped refrigerated (5-day fulfillment)." },
+  { n: "04", t: "Self-Administer or In-Clinic", d: "Most peptides are subcutaneous self-injection at home — Caroline trains you in 15 minutes. Or come in weekly with membership for in-clinic administration." },
 ];
 
 const faqs = [
-  { q: "Are peptides FDA-approved?", a: "Some are; many are compounded under 503A authority for specific patients. Compounded does not mean unregulated — it means custom-made under pharmaceutical compounding standards." },
-  { q: "Can I get peptides cheaper online?", a: "Yes — but those are generally research-grade with no physician oversight, no labs, and unknown source. We're not competing on price. We're offering medical safety." },
-  { q: "How are they administered?", a: "Most are subcutaneous self-injection at home, weekly or daily depending on the peptide. Some are IV (NAD+ at our IV Lounge), some sublingual (Selank), some topical (GHK-Cu in creams)." },
-  { q: "How long until I notice results?", a: "Sleep and recovery peptides: 1–2 weeks. Body-composition peptides: 4–12 weeks. Longevity peptides are hard to subjectively measure — we monitor labs." },
-  { q: "Do peptides have side effects?", a: "Generally well-tolerated. Specific peptides have specific considerations your physician will review with you before prescribing." },
-  { q: "Can I stack peptides?", a: "Yes — common stacks include CJC/Ipamorelin + BPC-157 for recovery, or Sermorelin + GHK-Cu for general optimization. Your physician designs your stack." },
+  { q: "Why don't you offer BPC-157?", a: "BPC-157 is currently on the FDA's Category 2 list, meaning licensed compounding pharmacies cannot legally produce it. We use Pentadeca Arginate (PDA) instead — it's the regulatory-cleared successor with similar mechanism. Some online vendors still sell BPC-157 as 'research grade' — that's outside the legal pharmacy framework, and we don't participate in that market." },
+  { q: "Are peptides FDA-approved?", a: "Some are — PT-141 is FDA-approved as Vyleesi. Most peptides we prescribe are compounded under 503A authority for specific patients, which is a different legal framework than FDA approval but still regulated. It's not the same as 'research grade' or 'physician use only' branded products." },
+  { q: "Can I get peptides cheaper online?", a: "Yes, you can find research-grade peptide kits cheaper. Those are sold for 'research use only' and aren't intended for human medical use — selling them for human use is outside the legal framework. We're not competing on price; we're offering pharmacy-grade compounding with physician oversight and lab monitoring." },
+  { q: "How are peptides administered?", a: "Most are subcutaneous self-injection at home — Caroline trains you. Some are sublingual or topical. NAD+ can be IV at our IV Lounge or subcutaneous take-home depending on preference." },
+  { q: "How long until I notice results?", a: "Recovery peptides: 1–3 weeks for inflammation reduction, 4–8 weeks for tissue healing. Sexual wellness peptides: same-day to 2 weeks. Longevity peptides: subjective changes in 4–6 weeks; objective changes (labs, body composition) in 3–6 months." },
+  { q: "Do peptides have side effects?", a: "Generally well-tolerated. Specific peptides have specific considerations — PT-141 can cause facial flushing, NAD+ can cause flushing during IV. Your physician will review the profile before starting." },
+  { q: "Will more peptides become available later?", a: "Likely yes. The FDA announced in early 2026 the intent to reclassify several peptides currently restricted — including CJC/Ipamorelin and Thymosin Alpha-1 — back to available status. We monitor this and will add new options as they become legally compoundable." },
 ];
 
 const PeptideTherapy = () => {
@@ -81,8 +124,8 @@ const PeptideTherapy = () => {
   return (
     <>
       <Helmet>
-        <title>Peptide Therapy Augusta GA | Physician-Supervised Protocols — Elevated Health</title>
-        <meta name="description" content="Physician-prescribed, custom-compounded peptide protocols in Augusta, GA. BPC-157, CJC/Ipamorelin, NAD+, GHK-Cu and more. Lab-monitored, shipped to your door." />
+        <title>Peptide Therapy Augusta GA | Pharmacy-Sourced Protocols — Elevated Health</title>
+        <meta name="description" content="Physician-prescribed, pharmacy-compounded peptide protocols in Augusta, GA. PDA, PT-141, Sermorelin, NAD+, GHK-Cu. Lab-monitored, shipped to your door. No gray-market." />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/peptides" />
       </Helmet>
 
@@ -95,17 +138,17 @@ const PeptideTherapy = () => {
             <div className="container mx-auto px-6 lg:px-8 max-w-4xl py-24">
               <p className="section-label mb-6">Peptide Protocols</p>
               <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl text-foreground mb-8 leading-tight">
-                Targeted regeneration.<br /><span className="italic">The science of optimization.</span>
+                Targeted regeneration.<br /><span className="italic">Pharmacy-sourced. Physician-led.</span>
               </h1>
               <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl">
-                Custom peptide protocols compounded for you. Recovery, cognition, longevity, body composition — physician-supervised, lab-monitored, shipped to your door.
+                Custom peptide protocols compounded by a licensed 503A pharmacy and shipped to your door. Recovery, sexual wellness, longevity — physician-supervised, lab-monitored, no gray-market shortcuts.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
                   Book your {PRICE_CONSULT} consultation <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button asChild variant="link" size="lg" className="font-jost tracking-wide text-foreground">
-                  <a href="#menu">Explore the menu ↓</a>
+                  <a href="#stacks">Explore the protocols ↓</a>
                 </Button>
               </div>
             </div>
@@ -130,13 +173,31 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          {/* 3. What it is (Pattern C) */}
+          {/* 3. Responsibly Sourced — Regulatory transparency */}
           <section className="py-20 md:py-28 bg-background">
+            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+              <div className="grid md:grid-cols-12 gap-12">
+                <div className="md:col-span-5">
+                  <p className="section-label mb-4">Responsibly Sourced</p>
+                  <h2 className="font-playfair italic text-4xl md:text-5xl text-foreground leading-tight">
+                    Pharmacy-grade.<br />By design.
+                  </h2>
+                </div>
+                <div className="md:col-span-7 space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
+                  <p>Most online peptide vendors operate outside the FDA's compounding framework. Their peptides are sold under labels like "research use only" or "physician-use only" — language that gives an appearance of legitimacy without the legal protection of pharmacy compounding. We don't work with those vendors.</p>
+                  <p>Every peptide we prescribe is compounded by a licensed 503A compounding pharmacy — primarily Formulation Compounding Center (FCC) in Lewisville, Texas. Each prescription is written for a specific patient, dispensed under pharmacy oversight, and shipped refrigerated directly to your door.</p>
+                  <p>Some peptides commonly discussed online — including BPC-157 — are not currently legal to compound under FDA guidance. We use the regulatory-cleared alternatives where they exist (Pentadeca Arginate is the modern BPC-157 successor) and are transparent when a popular peptide isn't available through legal channels. You'll never get an unapproved gray-market substance from us.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 4. What it is (Pattern C) */}
+          <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="grid md:grid-cols-12 gap-12 items-center">
                 <div className="md:col-span-5">
-                  <div className="aspect-[4/5] bg-muted/40 flex items-center justify-center text-muted-foreground/40 font-jost text-xs tracking-widest uppercase">
-                    {/* TODO: editorial photograph — vials / compounding pharmacy */}
+                  <div className="aspect-[4/5] bg-background flex items-center justify-center text-muted-foreground/40 font-jost text-xs tracking-widest uppercase border border-border">
                     Editorial Image
                   </div>
                 </div>
@@ -146,17 +207,99 @@ const PeptideTherapy = () => {
                     Compounded peptides, custom-dosed.
                   </h2>
                   <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
-                    <p>Most peptides aren't FDA-approved manufactured pharmaceuticals — they're compounded by 503A pharmacies specifically for the prescribing physician's patient.</p>
-                    <p>Our partner is FCC, a 503A pharmacy in Texas. They compound and ship your protocol directly to your door — refrigerated and labeled for you. Patient-specific 503A compliance, no generic batches.</p>
-                    <p>Why this matters: peptide quality varies wildly in the gray-market space — research-grade kits, telehealth subscription brands of unknown origin. FCC's compounds are prescribed by a physician, monitored with labs, and held to pharmaceutical compounding standards.</p>
+                    <p>Peptides aren't generic pharmaceuticals — they're compounded for the individual patient by a 503A pharmacy based on a physician's prescription.</p>
+                    <p>Your protocol is built from your labs and your goals. Custom doses, custom delivery — subcutaneous injection, sublingual, topical, or IV depending on the peptide.</p>
+                    <p>This is meaningfully different from the off-the-shelf "stack kits" sold by online vendors. Every dose is tied to your physician's clinical judgment, your bloodwork, and your monitoring schedule.</p>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* 4. How it works (Pattern D) */}
+          {/* 5. The Three Protocols — Stacks */}
+          <section id="stacks" className="py-20 md:py-28 bg-background scroll-mt-24">
+            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+              <div className="mb-16 max-w-2xl">
+                <p className="section-label mb-4">The Three Protocols</p>
+                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">
+                  Built around <span className="italic">outcomes</span>, not compounds.
+                </h2>
+              </div>
+              <div className="grid md:grid-cols-3 gap-8">
+                {stacks.map((s) => (
+                  <div key={s.name} className="border border-border p-8 flex flex-col bg-background">
+                    <h3 className="font-playfair italic text-2xl md:text-3xl text-foreground mb-3">{s.name}</h3>
+                    <p className="font-jost font-light text-muted-foreground mb-6 leading-relaxed">{s.tagline}</p>
+
+                    <p className="section-label mb-3">What's included</p>
+                    <ul className="space-y-2 mb-6">
+                      {s.includes.map((i) => (
+                        <li key={i} className="font-jost font-light text-sm text-foreground flex items-start gap-2">
+                          <span className="text-accent mt-1.5 text-xs">—</span>{i}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <p className="section-label mb-3">Best for</p>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {s.bestFor.map((b) => (
+                        <span key={b} className="font-jost text-xs uppercase tracking-widest text-muted-foreground border border-border px-2 py-1">{b}</span>
+                      ))}
+                    </div>
+
+                    <div className="mt-auto pt-6 border-t border-border">
+                      <div className="flex justify-between font-jost text-sm mb-1">
+                        <span className="text-muted-foreground">Member</span>
+                        <span className="font-medium text-foreground">{s.priceMember}</span>
+                      </div>
+                      <div className="flex justify-between font-jost text-sm">
+                        <span className="text-muted-foreground">Non-member</span>
+                        <span className="font-medium text-foreground">{s.priceNonMember}</span>
+                      </div>
+                      {s.priceVariant && (
+                        <div className="mt-3 pt-3 border-t border-border/60">
+                          <p className="font-jost text-xs text-muted-foreground mb-1">{s.priceVariant.label}</p>
+                          <div className="flex justify-between font-jost text-sm">
+                            <span className="text-muted-foreground">Member / Non-member</span>
+                            <span className="font-medium text-foreground">{s.priceVariant.member} / {s.priceVariant.nonMember}</span>
+                          </div>
+                        </div>
+                      )}
+                      <p className="font-jost text-xs italic text-muted-foreground mt-4 leading-relaxed">{s.note}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* 6. À la carte */}
           <section className="py-20 md:py-28 bg-muted/30">
+            <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+              <p className="section-label mb-4">Or build your own</p>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-12">
+                Individual peptides, <span className="italic">à la carte</span>.
+              </h2>
+              <div className="grid md:grid-cols-2 gap-x-12">
+                {alacarte.map((p) => (
+                  <div key={p.name} className="py-6 border-b border-border/60">
+                    <div className="flex justify-between items-start mb-2 gap-4">
+                      <h3 className="font-playfair italic text-xl text-foreground">{p.name}</h3>
+                      <span className="font-jost font-medium text-accent text-sm shrink-0 text-right">
+                        {p.priceMember}<br /><span className="font-light text-muted-foreground text-xs">non-mbr {p.priceNonMember}</span>
+                      </span>
+                    </div>
+                    <p className="font-jost font-light text-muted-foreground text-sm leading-relaxed mb-2">{p.desc}</p>
+                    <p className="font-jost text-xs uppercase tracking-widest text-muted-foreground/70">{p.bestFor}</p>
+                    {p.note && <p className="font-jost text-xs italic text-muted-foreground/80 mt-1">{p.note}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* 7. How it works (Pattern D) */}
+          <section className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="text-center mb-16">
                 <p className="section-label mb-4">How It Works</p>
@@ -174,40 +317,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          {/* 5. Peptide Menu */}
-          <section id="menu" className="py-20 md:py-28 bg-background scroll-mt-24">
-            <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
-              <p className="section-label mb-4">The Menu</p>
-              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-12">
-                A formulary <span className="italic">tuned to you</span>.
-              </h2>
-
-              {groupOrder.map((group) => {
-                const items = peptides.filter((p) => p.group === group);
-                if (items.length === 0) return null;
-                return (
-                  <div key={group} className="mb-14 last:mb-0">
-                    <p className="section-label mb-6">{group}</p>
-                    <div className="grid md:grid-cols-2 gap-x-12">
-                      {items.map((p) => (
-                        <div key={p.name} className="py-6 border-b border-border/60">
-                          <div className="flex justify-between items-start mb-2 gap-4">
-                            <h3 className="font-playfair italic text-xl text-foreground">{p.name}</h3>
-                            <span className="font-jost font-medium text-accent text-sm shrink-0">{p.price}</span>
-                          </div>
-                          <p className="font-jost font-light text-muted-foreground text-sm leading-relaxed mb-2">{p.desc}</p>
-                          <p className="font-jost text-xs uppercase tracking-widest text-muted-foreground/70">{p.bestFor}</p>
-                          {p.note && <p className="font-jost text-xs italic text-accent mt-1">{p.note}</p>}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* 6. Who it's for */}
+          {/* 8. Who it's for */}
           <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">Who It's For</p>
@@ -224,7 +334,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          {/* 7. Pricing transparency (Pattern E) */}
+          {/* 9. Pricing transparency (Pattern E) */}
           <section className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">Pricing</p>
@@ -235,33 +345,29 @@ const PeptideTherapy = () => {
                   <p className="section-label mb-4">One-time</p>
                   <div className="space-y-3 font-jost text-foreground">
                     <div className="flex justify-between border-b border-border/60 pb-3"><span>Initial Wellness Assessment</span><span className="font-medium">{PRICE_CONSULT}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Peptide Lab Panel<br /><span className="font-light text-sm text-muted-foreground">depends on which markers your physician orders</span></span><span className="font-medium whitespace-nowrap">{PRICE_PANEL_PEPTIDE}–$345 / Member {PRICE_PANEL_PEPTIDE_MEMBER}–$295</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Peptide Lab Panel<br /><span className="font-light text-sm text-muted-foreground">depends on which markers your physician orders</span></span><span className="font-medium whitespace-nowrap text-right">{PRICE_PANEL_PEPTIDE}–$345<br /><span className="font-light text-xs">Member {PRICE_PANEL_PEPTIDE_MEMBER}–$295</span></span></div>
                   </div>
                 </div>
 
                 <div>
-                  <p className="section-label mb-4">Ongoing (if you proceed)</p>
+                  <p className="section-label mb-4">Ongoing (depends on protocol)</p>
                   <div className="space-y-3 font-jost text-foreground">
-                    <div className="flex justify-between border-b border-border/60 pb-3">
-                      <span>Elevated Membership<br /><span className="font-light text-sm text-muted-foreground">weekly visits, supplies, member-rate labs</span></span>
-                      <span className="font-medium whitespace-nowrap">{PRICE_MEMBERSHIP}/mo</span>
-                    </div>
-                    <div className="flex justify-between border-b border-border/60 pb-3">
-                      <span>Compounded peptide(s)<br /><span className="font-light text-sm text-muted-foreground">billed separately by FCC, per peptide</span></span>
-                      <span className="font-medium whitespace-nowrap">$150–300/mo each</span>
-                    </div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Elevated Membership<br /><span className="font-light text-sm text-muted-foreground">visits, supplies, member-rate labs</span></span><span className="font-medium whitespace-nowrap">{PRICE_MEMBERSHIP}/mo</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Restore Protocol</span><span className="font-medium whitespace-nowrap">$129–179/mo</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Healing Protocol</span><span className="font-medium whitespace-nowrap">{TB500_AVAILABLE ? "$249–329/mo" : "$149–199/mo"}</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Vitality Protocol<br /><span className="font-light text-sm text-muted-foreground">depending on NAD+ delivery</span></span><span className="font-medium whitespace-nowrap">$299–599/mo</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Individual peptides</span><span className="font-medium whitespace-nowrap">$79–249/mo each</span></div>
                   </div>
                 </div>
 
                 <div className="bg-muted/30 border border-border p-6 space-y-2 font-jost text-sm">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Typical first month (consult + labs + first month membership)</span><span className="font-medium text-foreground">~$523–723 / $473–623 members</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Typical ongoing month (membership + 1–2 peptides)</span><span className="font-medium text-foreground">~$350–500/mo</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Typical first month (consult + labs + first month protocol + membership)</span><span className="font-medium text-foreground whitespace-nowrap">~$523–823 / $473–723 mbrs</span></div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* 8. FAQ (Pattern F) */}
+          {/* 10. FAQ (Pattern F) */}
           <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">FAQ</p>
@@ -277,7 +383,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          {/* 9. Closing CTA (Pattern G) */}
+          {/* 11. Closing CTA (Pattern G) */}
           <section className="py-24 md:py-32 bg-background text-center">
             <div className="container mx-auto px-6 max-w-2xl">
               <h2 className="font-playfair text-4xl md:text-5xl text-foreground mb-8">
