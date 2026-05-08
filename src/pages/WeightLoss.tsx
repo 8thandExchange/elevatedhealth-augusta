@@ -113,8 +113,8 @@ const WeightLoss = () => {
     },
     {
       step: "03",
-      headline: "Start Medication with First Month Discount.",
-      body: "Your $79 Wellness Assessment fee is credited toward your first month — pay just $300 for Semaglutide or $400 for Tirzepatide to start."
+      headline: "Start Medication at Member Pricing.",
+      body: "Elevated Members ($199/mo) get GLP-1 medications at member rates: $199/mo Semaglutide or $399/mo Tirzepatide. Non-members pay $249 or $499."
     }
   ];
 
@@ -167,7 +167,7 @@ const WeightLoss = () => {
     },
     {
       q: "What if I want hormone testing too?",
-      a: "If you suspect hormonal barriers (high cortisol, thyroid issues), you can add our Hormone Optimization Bundle ($149/month) to your membership for comprehensive testing and bio-identical support."
+      a: "If you suspect hormonal barriers (high cortisol, thyroid issues), you can add our Hormone Mapping Kit ($250) for comprehensive saliva testing. Elevated Members ($199/mo) get hormone optimization included."
     },
     {
       q: "How quickly can I start medication?",
@@ -298,7 +298,7 @@ const WeightLoss = () => {
                     ) : (
                       <CreditCard className="mr-2 h-5 w-5" />
                     )}
-                    {isConsultationLoading ? "Processing..." : "Discovery Consultation - $99"}
+                    {isConsultationLoading ? "Processing..." : "Wellness Assessment - $79"}
                   </Button>
                   <Button onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")} size="lg" variant="outline" className="text-lg px-8 py-6 border-primary/30 text-primary bg-transparent hover:bg-primary/5">
                     Call {SITE_CONFIG.phone}
@@ -448,7 +448,7 @@ const WeightLoss = () => {
                     ) : (
                       <CreditCard className="mr-2 h-5 w-5" />
                     )}
-                    {isConsultationLoading ? "Processing..." : "Book Discovery Consultation - $99"}
+                    {isConsultationLoading ? "Processing..." : "Book Wellness Assessment - $79"}
                   </Button>
                 </div>
               </div>
@@ -543,21 +543,31 @@ const WeightLoss = () => {
                     </thead>
                     <tbody>
                       <tr className="border-b border-border/50">
-                        <td className="p-4 font-jost text-primary font-medium">Real Cost (Semaglutide)</td>
+                        <td className="p-4 font-jost text-primary font-medium">Semaglutide (non-member)</td>
                         <td className="p-4 text-center">
-                          <span className="text-lg font-bold text-muted-foreground line-through">$494/mo</span>
-                          <p className="text-xs text-muted-foreground">$145 membership + $250 lab + medication</p>
+                          <span className="text-lg font-bold text-muted-foreground line-through">$300+/mo</span>
+                          <p className="text-xs text-muted-foreground">Hidden fees & rebill traps</p>
                         </td>
                         <td className="p-4 text-center bg-accent/5">
-                          <span className="text-xl font-bold text-accent">$399/mo</span>
-                          <p className="text-xs text-green-600 font-medium">All-inclusive</p>
+                          <span className="text-xl font-bold text-accent">$249/mo</span>
+                          <p className="text-xs text-green-600 font-medium">Transparent flat rate</p>
                         </td>
                       </tr>
                       <tr className="border-b border-border/50">
-                        <td className="p-4 font-jost text-primary font-medium">Real Cost (Tirzepatide)</td>
+                        <td className="p-4 font-jost text-primary font-medium">Semaglutide (Elevated Member)</td>
                         <td className="p-4 text-center">
-                          <span className="text-lg font-bold text-muted-foreground line-through">$594/mo</span>
-                          <p className="text-xs text-muted-foreground">$145 membership + $449 medication</p>
+                          <span className="text-sm text-muted-foreground">Not offered</span>
+                        </td>
+                        <td className="p-4 text-center bg-accent/5">
+                          <span className="text-xl font-bold text-accent">$199/mo</span>
+                          <p className="text-xs text-green-600 font-medium">+ $199 membership</p>
+                        </td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="p-4 font-jost text-primary font-medium">Tirzepatide (non-member)</td>
+                        <td className="p-4 text-center">
+                          <span className="text-lg font-bold text-muted-foreground line-through">$600+/mo</span>
+                          <p className="text-xs text-muted-foreground">Compounded, often unstable supply</p>
                         </td>
                         <td className="p-4 text-center bg-accent/5">
                           <span className="text-xl font-bold text-accent">$499/mo</span>
@@ -567,7 +577,7 @@ const WeightLoss = () => {
                       <tr className="border-b border-border/50">
                         <td className="p-4 font-jost text-primary font-medium">Hidden Membership Fees</td>
                         <td className="p-4 text-center">
-                          <span className="text-red-500 font-medium">Yes — $145/month ongoing</span>
+                          <span className="text-red-500 font-medium">Yes — surprise fees & rebills</span>
                         </td>
                         <td className="p-4 text-center bg-accent/5">
                           <CheckCircle2 className="h-5 w-5 text-green-500 mx-auto" />
@@ -647,7 +657,7 @@ const WeightLoss = () => {
                     )}
                     {isConsultationLoading ? "Processing..." : "Book $79 Wellness Assessment — Get $99 Credit"}
                   </Button>
-                  <p className="text-xs text-muted-foreground mt-2">First month: $300 (Semaglutide) or $400 (Tirzepatide)</p>
+                  <p className="text-xs text-muted-foreground mt-2">Then $249/mo Semaglutide or $499/mo Tirzepatide ($199 / $399 for Elevated Members)</p>
                 </div>
               </div>
             </div>
@@ -796,14 +806,14 @@ const WeightLoss = () => {
               {/* Three Cards: Consultation + Two Memberships */}
               <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
                 
-                {/* Discovery Consultation */}
+                {/* Wellness Assessment */}
                 <Card className="border border-accent/30 hover:border-accent/50 transition-all">
                   <CardContent className="p-6 text-center">
                     <div className="inline-flex p-3 bg-accent/10 rounded-full mb-4">
                       <MessageCircle className="h-6 w-6 text-accent" />
                     </div>
                     <h3 className="font-playfair text-xl text-primary font-bold mb-2">
-                      Discovery Consultation
+                      Wellness Assessment
                     </h3>
                     <p className="text-3xl font-playfair text-primary mb-2">$79</p>
                     <p className="text-xs text-green-600 font-medium mb-2">
@@ -849,11 +859,11 @@ const WeightLoss = () => {
                       Semaglutide Membership
                     </h3>
                     <div className="flex items-baseline justify-center gap-1 mb-1">
-                      <span className="font-playfair text-3xl text-primary font-light">$399</span>
+                      <span className="font-playfair text-3xl text-primary font-light">$249</span>
                       <span className="text-primary/60 font-jost text-sm">/ month</span>
                     </div>
                     <p className="text-xs text-green-600 font-medium mb-3">
-                      First month $300 with consultation credit
+                      $199/mo for Elevated Members
                     </p>
                     <p className="text-sm text-muted-foreground mb-4 font-jost">
                       FDA-approved GLP-1 for steady, sustainable weight loss with full provider support.
@@ -911,7 +921,7 @@ const WeightLoss = () => {
                       <span className="text-primary/60 font-jost text-sm">/ month</span>
                     </div>
                     <p className="text-xs text-green-600 font-medium mb-3">
-                      First month $400 with consultation credit
+                      $399/mo for Elevated Members
                     </p>
                     <p className="text-sm text-muted-foreground mb-4 font-jost">
                       Dual-action GLP-1/GIP for accelerated results — up to 22.5% weight loss.

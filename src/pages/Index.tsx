@@ -1,7 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FoundingMemberBanner from "@/components/FoundingMemberBanner";
-import CareMembershipBanner from "@/components/CareMembershipBanner";
 import IVDirectBookBanner from "@/components/IVDirectBookBanner";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -40,12 +38,8 @@ const Index = () => {
         <div className="section-divider max-w-5xl mx-auto" />
 
         <IVDirectBookBanner />
-        <FoundingMemberBanner />
 
         <DifferenceSection />
-        <div className="section-divider max-w-5xl mx-auto" />
-
-        <CareMembershipBanner />
         <div className="section-divider max-w-5xl mx-auto" />
 
         <ClinicalTeamSection />
