@@ -21,7 +21,7 @@ import {
   MessageSquare,
   Send,
 } from "lucide-react";
-import { ALACARTE_PRICES, MEMBERSHIP_PRICES, type AlacartePriceKey } from "@/lib/stripeConfig";
+import { ALACARTE_PRICES, ELEVATED_MEMBERSHIP, type AlacartePriceKey } from "@/lib/stripeConfig";
 
 interface AlaCartePaymentCardProps {
   patientId: string;
@@ -204,7 +204,7 @@ const AlaCartePaymentCard = ({
               <div>
                 <p className="font-medium text-primary">Non-member pricing</p>
                 <p className="text-muted-foreground mt-1">
-                  Consider the Vitality Membership at {MEMBERSHIP_PRICES.vitality.displayPrice} for 
+                  Consider the Elevated Membership at {ELEVATED_MEMBERSHIP.displayPrice} for 
                   included medications and better value.
                 </p>
               </div>
@@ -351,7 +351,7 @@ const AlaCartePaymentCard = ({
         <div className="border-t border-border pt-4 mt-4">
           <p className="text-xs text-muted-foreground text-center">
             <span className="font-medium">Membership comparison:</span> À la carte patients pay per item. 
-            Vitality members ({MEMBERSHIP_PRICES.vitality.displayPrice}) get medications included.
+            Elevated members ({ELEVATED_MEMBERSHIP.displayPrice}) get medications included.
           </p>
         </div>
       </CardContent>
