@@ -28,11 +28,11 @@ export interface ScheduleException {
   id: string;
   provider_id: string;
   exception_date: string;
-  start_time: string | null;
-  end_time: string | null;
-  is_available: boolean;
-  service_lines: string[] | null;
-  notes: string | null;
+  start_time: string;
+  end_time: string;
+  type: "addition" | "removal";
+  service_lines: string[];
+  reason: string | null;
 }
 
 export interface Appointment {
