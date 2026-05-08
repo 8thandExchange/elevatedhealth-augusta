@@ -77,22 +77,23 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    // Create checkout session for Elevated Concierge Membership ($399/mo)
+    // Create checkout session for Elevated Membership ($199/mo)
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : userEmail,
       line_items: [
         {
-          price: "price_1SZiXTEOtKRY99puR7PQUExU", // Elevated Concierge Membership $399/mo
+          price: "price_1TUs3LEOtKRY99puWfQy8pHj", // Elevated Membership $199/mo
           quantity: 1,
         },
       ],
       mode: "subscription",
       success_url: `${origin}/patient/dashboard?subscription=success`,
-      cancel_url: `${origin}/hormones-women`,
+      cancel_url: `${origin}/membership`,
       metadata: {
         user_id: userId || "",
-        product: "elevated_concierge_membership",
+        product: "elevated_membership",
+        tier: "elevated",
       },
     });
 
