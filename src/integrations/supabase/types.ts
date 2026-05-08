@@ -1752,6 +1752,48 @@ export type Database = {
         }
         Relationships: []
       }
+      schedule_exceptions: {
+        Row: {
+          created_at: string
+          end_time: string
+          exception_date: string
+          id: string
+          provider_id: string
+          reason: string | null
+          service_lines: string[]
+          slot_minutes: number
+          start_time: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_time: string
+          exception_date: string
+          id?: string
+          provider_id: string
+          reason?: string | null
+          service_lines?: string[]
+          slot_minutes?: number
+          start_time: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_time?: string
+          exception_date?: string
+          id?: string
+          provider_id?: string
+          reason?: string | null
+          service_lines?: string[]
+          slot_minutes?: number
+          start_time?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       soap_notes: {
         Row: {
           assessment: Json
