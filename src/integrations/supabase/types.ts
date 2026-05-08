@@ -1506,6 +1506,9 @@ export type Database = {
           created_at: string | null
           current_protocol: string | null
           dob: string | null
+          elevated_membership_paused_until: string | null
+          elevated_membership_started_at: string | null
+          elevated_membership_status: string | null
           email: string | null
           full_name: string
           gender: string | null
@@ -1558,6 +1561,9 @@ export type Database = {
           created_at?: string | null
           current_protocol?: string | null
           dob?: string | null
+          elevated_membership_paused_until?: string | null
+          elevated_membership_started_at?: string | null
+          elevated_membership_status?: string | null
           email?: string | null
           full_name: string
           gender?: string | null
@@ -1610,6 +1616,9 @@ export type Database = {
           created_at?: string | null
           current_protocol?: string | null
           dob?: string | null
+          elevated_membership_paused_until?: string | null
+          elevated_membership_started_at?: string | null
+          elevated_membership_status?: string | null
           email?: string | null
           full_name?: string
           gender?: string | null

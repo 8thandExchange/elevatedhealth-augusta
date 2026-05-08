@@ -1,8 +1,8 @@
 /**
  * Central Stripe Price & Product Configuration — Elevated Health Augusta
- * 
+ *
  * Single source of truth for all Stripe price IDs.
- * Last audited: 2026-03-22
+ * Last audited: 2026-05-08 (Membership architecture cleanup)
  */
 
 // ============================================================================
@@ -12,10 +12,10 @@
 export const CONSULTATION_PRICES = {
   discovery: {
     priceId: null, // Uses price_data for dynamic product naming per service type
-    amount: 14900, // $149
-    displayPrice: "$149",
-    name: "Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta. Non-refundable. Applied as credit toward treatment if you proceed.",
+    amount: 7900, // $79
+    displayPrice: "$79",
+    name: "Wellness Assessment",
+    description: "45-minute initial consultation. Credited toward your protocol if you proceed.",
     mode: "payment" as const,
     edgeFunction: "create-consultation-checkout",
   },
@@ -31,7 +31,7 @@ export const DIAGNOSTIC_KIT_PRICES = {
     amount: 25000, // $250
     displayPrice: "$250",
     name: "Hormone Mapping Panel",
-    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test kit covering Cortisol, DHEA-S, Estradiol, Progesterone & Testosterone. Includes follow-up consultation after results return.",
+    description: "ZRT Saliva Profile III — at-home saliva test. Includes follow-up consultation.",
     zrtPanel: "saliva_iii",
     mode: "payment" as const,
     edgeFunction: "create-hormone-checkout",
@@ -39,185 +39,30 @@ export const DIAGNOSTIC_KIT_PRICES = {
 } as const;
 
 // ============================================================================
-// FOUNDING MEMBERSHIP TIERS (Subscription)
+// ELEVATED MEMBERSHIP — single tier ($199/mo)
 // ============================================================================
 
-export const FOUNDING_MEMBERSHIP_TIERS = {
-  wellnessPass: {
-    priceId: "price_1TDovoEOtKRY99pus14I47X3",
-    productId: "prod_UCDMrjQWioTNNT",
-    amount: 14900, // $149/mo founding
-    standardAmount: 19900, // $199/mo standard
-    displayPrice: "$149/mo",
-    standardDisplayPrice: "$199/mo",
-    name: "Wellness Pass",
-    tagline: "Essential IV Access",
-    description: "2 IV infusions/month, Glutathione push, priority booking, 10% off add-ons",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-founding-membership-checkout",
-    features: [
-      "2 IV infusions per month",
-      "1 Glutathione push included",
-      "Priority same-day booking",
-      "10% off additional IVs and add-ons",
-      "Member health portal access",
-    ],
-  },
-  longevityProtocol: {
-    priceId: "price_1TDovpEOtKRY99pu8sW2tl9N",
-    productId: "prod_UCDMcSRfYNyRCo",
-    amount: 29900, // $299/mo founding
-    standardAmount: 39900, // $399/mo standard
-    displayPrice: "$299/mo",
-    standardDisplayPrice: "$399/mo",
-    name: "Longevity Protocol",
-    tagline: "Most Popular",
-    description: "Everything in Wellness Pass + peptide protocol, physician check-ins, quarterly labs, NAD+",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-founding-membership-checkout",
-    features: [
-      "Everything in Wellness Pass",
-      "1 peptide protocol (Sermorelin or CJC/Ipamorelin)",
-      "Monthly physician check-in",
-      "Quarterly biomarker panel",
-      "NAD+ IV once per quarter",
-      "15% off all additional services",
-    ],
-  },
-  executiveConcierge: {
-    priceId: "price_1TDovsEOtKRY99puPtteAgOu",
-    productId: "prod_UCDM8dfK4drhF1",
-    amount: 54900, // $549/mo founding
-    standardAmount: 69900, // $699/mo standard
-    displayPrice: "$549/mo",
-    standardDisplayPrice: "$699/mo",
-    name: "Executive Concierge",
-    tagline: "Premium",
-    description: "Full HRT/BHRT, unlimited IVs, 2 peptide protocols, direct physician access",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-founding-membership-checkout",
-    features: [
-      "Everything in Longevity Protocol",
-      "Full HRT/BHRT management included",
-      "Unlimited IVs (up to 4/month)",
-      "2 peptide protocols simultaneously",
-      "Direct physician access during business hours",
-      "Annual comprehensive longevity panel",
-      "2 guest IV visits per quarter",
-    ],
-  },
+/**
+ * The one and only membership product.
+ *
+ * priceId is a placeholder. Create the recurring monthly $199 price in
+ * Stripe (test + live) and replace the placeholder string in test/live
+ * deploys via `VITE_STRIPE_ELEVATED_MEMBERSHIP_PRICE_ID` before launch.
+ */
+export const ELEVATED_MEMBERSHIP = {
+  priceId:
+    (typeof import.meta !== "undefined" &&
+      (import.meta as any).env?.VITE_STRIPE_ELEVATED_MEMBERSHIP_PRICE_ID) ||
+    "price_TODO_ELEVATED_MEMBERSHIP_199",
+  amount: 19900, // $199/mo
+  displayPrice: "$199/mo",
+  name: "Elevated Membership",
+  description:
+    "Unlimited weekly visits, all in-office supplies, member-rate labs, quarterly physician check-in, 15% off IV add-ons. Medications billed separately at FCC cost-plus.",
+  mode: "subscription" as const,
+  interval: "month",
+  edgeFunction: "create-elevated-membership-checkout",
 } as const;
-
-export type FoundingMembershipTier = keyof typeof FOUNDING_MEMBERSHIP_TIERS;
-
-// ============================================================================
-// LEGACY MEMBERSHIPS (Deprecated — kept for existing subscribers)
-// ============================================================================
-
-export const MEMBERSHIP_PRICES = {
-  vitality: {
-    priceId: "price_1Sga64EOtKRY99pu6NpP45Qq",
-    amount: 24900,
-    displayPrice: "$249/mo",
-    name: "Vitality Membership (Legacy)",
-    description: "Monthly hormone optimization with provider support",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-vitality-checkout",
-  },
-  hormoneAddon: {
-    priceId: "price_1SmMlOEOtKRY99puBAxTpw99",
-    amount: 14900,
-    displayPrice: "$149/mo",
-    name: "Hormone Add-On for GLP-1 Members",
-    description: "Discounted hormone therapy add-on for Semaglutide or Tirzepatide members.",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-hormone-addon-checkout",
-  },
-} as const;
-
-// Legacy hormone tiers — preserved for existing subscribers only
-export const HORMONE_MEMBERSHIP_TIERS = {
-  access: {
-    priceId: "price_1Soo21EOtKRY99pursQ4Vnh3",
-    amount: 9900,
-    displayPrice: "$99/mo",
-    name: "ACCESS",
-    tagline: "Entry Point",
-    description: "Portal access, secure messaging, 2 provider consults/year",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-hormone-membership-checkout",
-    benefits: {
-      consultsPerYear: 2,
-      labDiscountPercent: 20,
-      labDiscountedPrice: 20000,
-      glp1DiscountPercent: 0,
-      has90DayRx: false,
-      priorityScheduling: false,
-      directProviderLine: false,
-    },
-  },
-  vitality: {
-    priceId: "price_1Soo23EOtKRY99puIku6s4DU",
-    amount: 14900,
-    displayPrice: "$149/mo",
-    name: "VITALITY",
-    tagline: "Most Popular",
-    description: "4 consults/year, priority scheduling, 90-day Rx access",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-hormone-membership-checkout",
-    benefits: {
-      consultsPerYear: 4,
-      labDiscountPercent: 30,
-      labDiscountedPrice: 17500,
-      glp1DiscountPercent: 10,
-      has90DayRx: true,
-      priorityScheduling: true,
-      directProviderLine: false,
-    },
-  },
-  concierge: {
-    priceId: "price_1Soo25EOtKRY99puMndJjRr4",
-    amount: 24900,
-    displayPrice: "$249/mo",
-    name: "CONCIERGE",
-    tagline: "Premium",
-    description: "Unlimited consults, direct provider line, best discounts",
-    mode: "subscription" as const,
-    interval: "month",
-    edgeFunction: "create-hormone-membership-checkout",
-    benefits: {
-      consultsPerYear: -1,
-      labDiscountPercent: 40,
-      labDiscountedPrice: 15000,
-      glp1DiscountPercent: 15,
-      has90DayRx: true,
-      priorityScheduling: true,
-      directProviderLine: true,
-    },
-  },
-} as const;
-
-export const TIERED_GLP1_PRICES = {
-  semaglutide: {
-    full: { priceId: "price_1SlZnwEOtKRY99puaBhrh2iB", amount: 39900, displayPrice: "$399/mo" },
-    vitality: { priceId: "price_1Soo27EOtKRY99punKCdKBDe", amount: 35900, displayPrice: "$359/mo" },
-    concierge: { priceId: "price_1Soo29EOtKRY99pulu8UKUJt", amount: 33900, displayPrice: "$339/mo" },
-  },
-  tirzepatide: {
-    full: { priceId: "price_1SlZnyEOtKRY99puE9JNOrTR", amount: 49900, displayPrice: "$499/mo" },
-    vitality: { priceId: "price_1Soo2AEOtKRY99puMopN9V2Q", amount: 44900, displayPrice: "$449/mo" },
-    concierge: { priceId: "price_1Soo2CEOtKRY99puKfwGnQOw", amount: 42400, displayPrice: "$424/mo" },
-  },
-} as const;
-
-export type HormoneMembershipTier = keyof typeof HORMONE_MEMBERSHIP_TIERS;
 
 // ============================================================================
 // À LA CARTE MEDICATIONS
@@ -271,18 +116,63 @@ export const ALACARTE_PRICES = {
   },
 } as const;
 
-// Ketamine therapy sunsetted — pricing config removed.
+// ============================================================================
+// GLP-1 MEDICATION PRICES
+// ============================================================================
+
+/**
+ * Per-medication, member vs non-member pricing.
+ *
+ * Replaces the legacy TIERED_GLP1_PRICES (vitality / concierge variants).
+ * Edge functions look up the patient's elevated_membership_status and
+ * route to .member or .nonmember accordingly.
+ *
+ * NOTE — Three of these four price IDs do NOT yet exist in Stripe and are
+ * marked with `price_TODO_...`. The user must create the corresponding
+ * recurring monthly Stripe Products/Prices in test + live mode and
+ * replace the placeholder strings, OR provide them via env vars listed
+ * in LAUNCH_CHECKLIST.md before publishing.
+ *
+ * The only Price ID confirmed against Stripe is tirzepatide.nonmember
+ * ($499/mo) which reuses the existing `Tirzepatide Membership` product.
+ */
+export const GLP1_MEDICATION_PRICES = {
+  semaglutide: {
+    member: {
+      priceId: "price_TODO_SEMA_MEMBER_199",
+      amount: 19900,
+      displayPrice: "$199/mo",
+    },
+    nonmember: {
+      priceId: "price_TODO_SEMA_NONMEMBER_249",
+      amount: 24900,
+      displayPrice: "$249/mo",
+    },
+  },
+  tirzepatide: {
+    member: {
+      priceId: "price_TODO_TIRZ_MEMBER_399",
+      amount: 39900,
+      displayPrice: "$399/mo",
+    },
+    nonmember: {
+      priceId: "price_1SlZnyEOtKRY99puE9JNOrTR", // existing $499/mo "Tirzepatide Membership"
+      amount: 49900,
+      displayPrice: "$499/mo",
+    },
+  },
+} as const;
 
 // ============================================================================
-// WEIGHT LOSS / GLP-1 MEMBERSHIPS
+// WEIGHT LOSS / GLP-1 MEMBERSHIPS (legacy — kept as display-only metadata)
 // ============================================================================
 
 export const WEIGHT_LOSS_PRICES = {
   semaglutide: {
-    priceId: "price_1SlZnwEOtKRY99puaBhrh2iB",
-    amount: 39900,
-    displayPrice: "$399/mo",
-    firstMonthWithCredit: "$399",
+    priceId: GLP1_MEDICATION_PRICES.semaglutide.nonmember.priceId,
+    amount: GLP1_MEDICATION_PRICES.semaglutide.nonmember.amount,
+    displayPrice: GLP1_MEDICATION_PRICES.semaglutide.nonmember.displayPrice,
+    memberDisplayPrice: GLP1_MEDICATION_PRICES.semaglutide.member.displayPrice,
     name: "Semaglutide Membership",
     description: "Monthly Semaglutide GLP-1 medication with provider support",
     mode: "subscription" as const,
@@ -290,10 +180,10 @@ export const WEIGHT_LOSS_PRICES = {
     edgeFunction: "create-semaglutide-checkout",
   },
   tirzepatide: {
-    priceId: "price_1SlZnyEOtKRY99puE9JNOrTR",
-    amount: 49900,
-    displayPrice: "$499/mo",
-    firstMonthWithCredit: "$499",
+    priceId: GLP1_MEDICATION_PRICES.tirzepatide.nonmember.priceId,
+    amount: GLP1_MEDICATION_PRICES.tirzepatide.nonmember.amount,
+    displayPrice: GLP1_MEDICATION_PRICES.tirzepatide.nonmember.displayPrice,
+    memberDisplayPrice: GLP1_MEDICATION_PRICES.tirzepatide.member.displayPrice,
     name: "Tirzepatide Membership",
     description: "Monthly Tirzepatide GLP-1/GIP medication with provider support",
     mode: "subscription" as const,
@@ -349,9 +239,19 @@ export const PROVIDER_KIT_PRICES = {
     amount: 25000,
     displayPrice: "$250",
     name: "Hormone Mapping Panel",
-    description: "ZRT Saliva Profile III - Comprehensive at-home saliva test kit. Includes follow-up consultation after results return.",
+    description: "ZRT Saliva Profile III - at-home saliva test kit. Includes follow-up consultation.",
     edgeFunction: "send-kit-payment-link",
   },
+} as const;
+
+// ============================================================================
+// CONSULTATION CREDIT
+// ============================================================================
+
+export const CONSULTATION_CREDIT = {
+  amount: 7900, // $79 in cents
+  displayAmount: "$79",
+  description: "Credit toward treatment when consultation is paid first",
 } as const;
 
 // ============================================================================
@@ -360,9 +260,7 @@ export const PROVIDER_KIT_PRICES = {
 
 export type ConsultationPriceKey = keyof typeof CONSULTATION_PRICES;
 export type DiagnosticKitPriceKey = keyof typeof DIAGNOSTIC_KIT_PRICES;
-export type MembershipPriceKey = keyof typeof MEMBERSHIP_PRICES;
 export type AlacartePriceKey = keyof typeof ALACARTE_PRICES;
-
 export type WeightLossPriceKey = keyof typeof WEIGHT_LOSS_PRICES;
 export type HairRestorationPriceKey = keyof typeof HAIR_RESTORATION_PRICES;
 export type SexualWellnessPriceKey = keyof typeof SEXUAL_WELLNESS_PRICES;
@@ -370,50 +268,17 @@ export type AdminPriceKey = keyof typeof ADMIN_PRICES;
 export type ProviderKitPriceKey = keyof typeof PROVIDER_KIT_PRICES;
 
 // ============================================================================
-// CONSULTATION CREDIT
-// ============================================================================
-
-export const CONSULTATION_CREDIT = {
-  amount: 14900, // $149 in cents
-  displayAmount: "$149",
-  description: "Credit toward treatment when consultation is paid first",
-} as const;
-
-// ============================================================================
 // AUDIT HELPER
 // ============================================================================
 
 export const getAllPriceIds = (): string[] => {
   const allPrices = [
+    ELEVATED_MEMBERSHIP,
     ...Object.values(DIAGNOSTIC_KIT_PRICES),
-    ...Object.values(MEMBERSHIP_PRICES),
     ...Object.values(WEIGHT_LOSS_PRICES),
     ...Object.values(ADMIN_PRICES),
   ];
-  
   return allPrices
     .map((p) => p.priceId as string | null)
-    .filter((id): id is string => id !== null);
+    .filter((id): id is string => !!id && !id.startsWith("price_TODO_"));
 };
-
-// ============================================================================
-// SUMMARY TABLE (for documentation)
-// ============================================================================
-/*
-| Category              | Product                                 | Price      | Price ID                               | Mode         |
-|-----------------------|-----------------------------------------|------------|----------------------------------------|--------------|
-| Consultations         | Clinical Strategy Session               | $149       | (dynamic)                              | payment      |
-| Diagnostic Kits       | Hormone Mapping Panel                   | $250       | price_1T1AbVEOtKRY99pumPdgj1k3         | payment      |
-| Founding Membership   | Wellness Pass (founding)                | $149/mo    | price_1TDovoEOtKRY99pus14I47X3         | subscription |
-| Founding Membership   | Longevity Protocol (founding)           | $299/mo    | price_1TDovpEOtKRY99pu8sW2tl9N         | subscription |
-| Founding Membership   | Executive Concierge (founding)          | $549/mo    | price_1TDovsEOtKRY99puPtteAgOu         | subscription |
-| À La Carte            | Testosterone Cream                      | $149       | price_1Sga66EOtKRY99puQgPWACIy         | payment      |
-| À La Carte            | Bi-Est Cream                            | $89        | price_1Sga67EOtKRY99puoS8b5U6h         | payment      |
-| À La Carte            | Progesterone                            | $79        | price_1Sga69EOtKRY99puO8NJ5bpx         | payment      |
-| À La Carte            | Follow-up Consultation                  | $99        | price_1Sga6AEOtKRY99puEx0mC3jx         | payment      |
-| À La Carte            | Lab Panel                               | $250       | price_1T1AbVEOtKRY99pumPdgj1k3         | payment      |
-| Weight Loss           | Semaglutide                             | $399/mo    | price_1SlZnwEOtKRY99puaBhrh2iB         | subscription |
-| Weight Loss           | Tirzepatide                             | $499/mo    | price_1SlZnyEOtKRY99puE9JNOrTR         | subscription |
-| Credit                | Consultation Credit                     | $149       | n/a                                    | credit       |
-| Admin                 | Rebooking Fee                           | varies     | price_1Sa5UFEOtKRY99pupEQlaFvN         | payment      |
-*/
