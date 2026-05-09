@@ -66,6 +66,7 @@ import ConsentPDFCard from "@/components/provider/ConsentPDFCard";
 import CreditCodeLookup from "@/components/provider/CreditCodeLookup";
 import ResendWelcomeEmailButton from "@/components/provider/ResendWelcomeEmailButton";
 import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
+import InventoryAlerts from "@/components/provider/InventoryAlerts";
 import PatientDatabase from "@/components/provider/PatientDatabase";
 import DashboardActivityWidget from "@/components/provider/DashboardActivityWidget";
 import NextActionsWidget from "@/components/provider/NextActionsWidget";
@@ -1265,6 +1266,10 @@ const ProviderDashboard = () => {
           </TabsContent>
 
           <TabsContent value="triage">
+            {/* Inventory alerts — always visible at the top of the action lane */}
+            <div className="mb-6">
+              <InventoryAlerts />
+            </div>
             {/* Activity & Actions Widgets - Side by Side */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               <DashboardActivityWidget />

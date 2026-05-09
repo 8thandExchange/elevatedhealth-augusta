@@ -7,6 +7,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// TODO(inventory): When inventory tracking goes live for the IV lounge, this
+// edge function should reserve (not yet decrement) the SKUs implied by the
+// chosen IV therapy + addons against inventory_skus / inventory_lots. Actual
+// dispensation still happens at the chair via DispenseFromInventoryModal so the
+// audit trail records who administered, when, from which lot. See
+// supabase/migrations/20260509220000_inventory_tracking_fefo.sql for the
+// dispense_from_lot() helper.
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {

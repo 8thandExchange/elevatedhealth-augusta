@@ -6,6 +6,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// TODO(inventory): For consult-gated lanes that include in-clinic medication
+// administration (e.g. peptide initiation, NAD+, B12), wire any clinic-stocked
+// items into inventory_dispensations at the time of administration via
+// dispense_from_lot(). Booking itself does not yet reserve stock.
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {

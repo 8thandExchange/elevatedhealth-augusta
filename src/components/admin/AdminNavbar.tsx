@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +27,7 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [inventoryAlertCount, setInventoryAlertCount] = useState(0);
 
   const isOnProviderDashboard = location.pathname === "/provider/dashboard";
   const isOnSettings = location.pathname === "/admin/settings";
@@ -47,6 +48,44 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
       console.error("Error fetching unread count:", err);
     }
   };
+
+  // Inventory alert badge: total of (reorder_now SKUs) + (lots expiring within 30d)
+  const fetchInventoryAlertCount = async () => {
+    try {
+      const [{ data: skuRows }, { data: lotRows }] = await Promise.all([
+        supabase.from("inventory_skus").select("id, reorder_threshold").eq("is_active", true),
+        supabase.from("inventory_lots").select("sku_id, status, quantity_remaining, expiration_date").eq("status", "active"),
+      ]);
+      if (!skuRows || !lotRows) return;
+      const totals = new Map<string, number>();
+      for (const lot of lotRows) {
+        const remaining = Number(lot.quantity_remaining ?? 0);
+        if (remaining <= 0) continue;
+        totals.set(lot.sku_id, (totals.get(lot.sku_id) ?? 0) + remaining);
+      }
+      let reorderCount = 0;
+      for (const sku of skuRows) {
+        const total = totals.get(sku.id) ?? 0;
+        if (total <= sku.reorder_threshold) reorderCount += 1;
+      }
+      const today = Date.now();
+      const cutoff = today + 30 * 24 * 60 * 60 * 1000;
+      const expiringCount = lotRows.filter((l) => {
+        if (Number(l.quantity_remaining ?? 0) <= 0) return false;
+        const exp = new Date(l.expiration_date).getTime();
+        return exp <= cutoff;
+      }).length;
+      setInventoryAlertCount(reorderCount + expiringCount);
+    } catch (err) {
+      console.error("Error fetching inventory alert count:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchInventoryAlertCount();
+    const interval = window.setInterval(fetchInventoryAlertCount, 5 * 60 * 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     fetchUnreadCount();
@@ -134,6 +173,21 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
             </Button>
           )}
 
+          {/* Inventory Button with Badge */}
+          <Button variant="ghost" size="icon" className="relative" asChild title="Inventory">
+            <Link to="/inventory">
+              <Boxes className="w-5 h-5" />
+              {inventoryAlertCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-5 min-w-[20px] p-0 flex items-center justify-center text-xs"
+                >
+                  {inventoryAlertCount > 99 ? "99+" : inventoryAlertCount}
+                </Badge>
+              )}
+            </Link>
+          </Button>
+
           {/* Messages Button with Badge */}
           <Button 
             variant="ghost" 
@@ -163,6 +217,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 <Link to="/clinical-protocols" className="cursor-pointer gap-2">
                   <BookOpen className="w-4 h-4" />
                   Clinical Protocols
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/inventory" className="cursor-pointer gap-2">
+                  <Boxes className="w-4 h-4" />
+                  Inventory
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -260,6 +320,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 <Link to="/clinical-protocols" className="cursor-pointer gap-2">
                   <BookOpen className="w-4 h-4" />
                   Clinical Protocols
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/inventory" className="cursor-pointer gap-2">
+                  <Boxes className="w-4 h-4" />
+                  Inventory
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

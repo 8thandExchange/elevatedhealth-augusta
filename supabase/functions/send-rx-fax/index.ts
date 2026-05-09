@@ -7,6 +7,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// TODO(inventory): Once Caroline confirms the FCC fax → received flow, log
+// each successfully sent fax as an "expected lot" record so receiving in the
+// Inventory Dashboard can be one-click matched against an outstanding
+// expectation (lot_number + expiration_date confirmed at receipt). For now
+// faxes do not touch inventory_*; receiving is fully manual via
+// /inventory → "Receive Shipment".
+
 // Input validation schema for prescription fax requests
 const faxRequestSchema = z.object({
   patient_id: z.string().uuid("Invalid patient ID format"),

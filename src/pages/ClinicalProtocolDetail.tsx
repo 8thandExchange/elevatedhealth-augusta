@@ -247,6 +247,12 @@ export default function ClinicalProtocolDetail() {
     setPatientHits((data ?? []) as Array<Pick<Tables<"patients">, "id" | "full_name">>);
   };
 
+  // TODO(inventory): When this protocol has medication components, add a
+  // step here that opens DispenseFromInventoryModal pre-populated with the
+  // SKU and links the resulting inventory_dispensations row to the new
+  // clinical_protocol_executions.id via protocol_execution_id. For now the
+  // execution row is created standalone; inventory and protocol audit trails
+  // are not yet joined.
   const logExecution = async () => {
     if (!version || !selectedPatientId) {
       toast.error("Select a patient");

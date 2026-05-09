@@ -68,6 +68,7 @@ import OfficeSchedule from "./pages/OfficeSchedule";
 import ClinicalProtocolLibrary from "./pages/ClinicalProtocolLibrary";
 import ClinicalProtocolDetail from "./pages/ClinicalProtocolDetail";
 import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor";
+import InventoryDashboard from "./pages/InventoryDashboard";
 
 const queryClient = new QueryClient();
 
@@ -266,6 +267,11 @@ const App = () => {
           <Route path="/clinical-protocols/:slug" element={
             <ProviderLayout title="Clinical protocol" subtitle="Standing order" showNavbar={true}>
               <ClinicalProtocolDetail />
+            </ProviderLayout>
+          } />
+          <Route path="/inventory" element={
+            <ProviderLayout title="Inventory" subtitle="Lot tracking · FEFO" showNavbar={true}>
+              <InventoryDashboard />
             </ProviderLayout>
           } />
           
