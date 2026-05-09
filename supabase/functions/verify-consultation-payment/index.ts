@@ -13,7 +13,15 @@ const logStep = (step: string, details?: any) => {
   console.log(`[VERIFY-CONSULTATION-PAYMENT] ${step}${detailsStr}`);
 };
 
-// Generate a unique credit code for the $149 consultation credit
+// Brand tokens — kept in sync with .cursorrules.
+const BRAND_CHARCOAL = "#2A2826";
+const BRAND_CAMEL = "#B8956A";
+const BRAND_BONE = "#F2EBDC";
+
+const CONSULT_FEE_USD = 79;
+
+// Generate a unique credit code for the $79 consultation credit applied
+// against treatment if the patient enrolls in a program.
 const generateCreditCode = (): string => {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "EH-";
@@ -144,7 +152,9 @@ serve(async (req) => {
         .update({
           credit_code: creditCode,
           stripe_payment_intent_id: session.payment_intent as string,
-          amount_paid: session.amount_total ? session.amount_total / 100 : 99,
+          amount_paid: session.amount_total
+            ? session.amount_total / 100
+            : CONSULT_FEE_USD,
           status: "paid",
           customer_name: customerName || existing.customer_name,
         })
@@ -164,10 +174,13 @@ serve(async (req) => {
           customer_name: customerName || null,
           stripe_session_id: session_id,
           stripe_payment_intent_id: session.payment_intent as string,
-          amount_paid: session.amount_total ? session.amount_total / 100 : 99,
+          amount_paid: session.amount_total
+            ? session.amount_total / 100
+            : CONSULT_FEE_USD,
           status: "paid",
           credit_code: creditCode,
           service_type: serviceType,
+          booking_source: "self_service",
         })
         .select()
         .single();
@@ -191,129 +204,84 @@ serve(async (req) => {
       logStep("Patient status updated to consultation_paid");
     }
 
-    // Service-specific email configuration
+    // Service-specific email configuration. Ketamine and any "Hormone
+    // Mapping ($349→$250)" / ZRT-era branches removed — those products
+    // are no longer offered (see .cursorrules). The credit applies toward
+    // whichever treatment program the patient enrolls in.
     const SERVICE_EMAIL_CONFIG: Record<string, { title: string; creditUse: string }> = {
-      ketamine: {
-        title: "Ketamine Therapy Consultation",
-        creditUse: "your first IV ketamine infusion session"
+      hormone: {
+        title: "Hormone Optimization Consultation",
+        creditUse: "your hormone optimization protocol",
       },
       weight_loss: {
         title: "Medical Weight Loss Consultation",
-        creditUse: "your weight loss treatment protocol"
-      },
-      hormone: {
-        title: "Hormone Replacement Consultation",
-        creditUse: "Hormone Mapping ($349 → $250)"
+        creditUse: "your medical weight loss protocol",
       },
       peptide: {
-        title: "Peptide Therapy Consultation",
-        creditUse: "your peptide therapy protocol"
+        title: "Peptide Protocols Consultation",
+        creditUse: "your peptide therapy protocol",
       },
-      hair: {
-        title: "Hair Restoration Consultation",
-        creditUse: "your hair restoration protocol"
-      },
-      sexual: {
-        title: "Sexual Wellness Consultation",
-        creditUse: "your treatment protocol"
-      }
     };
 
-    const emailConfig = SERVICE_EMAIL_CONFIG[serviceType] || SERVICE_EMAIL_CONFIG.hormone;
+    const emailConfig =
+      SERVICE_EMAIL_CONFIG[serviceType] || SERVICE_EMAIL_CONFIG.hormone;
     const firstName = customerName ? customerName.split(" ")[0] : "there";
 
-    // Send credit code email to patient (only sent AFTER payment)
+    // Send receipt + credit code email to patient (only sent AFTER payment).
+    // Brand-aligned with the Charcoal/Camel/Bone palette and Playfair display
+    // type so this matches what patients see on the storefront.
     if (resend) {
       try {
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
           to: [customerEmail],
-          subject: `Your $99 Credit Code is Here! - Elevated Health Augusta`,
+          subject: `Your $${CONSULT_FEE_USD} consult is paid · pick a time inside`,
           html: `
             <!DOCTYPE html>
             <html>
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #2C3E50; margin: 0; padding: 0; background: #f8f9fa; }
-                .wrapper { background: #f8f9fa; padding: 40px 20px; }
-                .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-                .header { background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%); padding: 40px 30px; text-align: center; }
-                .logo { font-size: 28px; font-weight: 300; color: white; letter-spacing: 0.5px; margin: 0; }
-                .content { padding: 40px 30px; }
-                .greeting { font-size: 24px; font-weight: 600; color: #2C3E50; margin-bottom: 16px; }
-                
-                .credit-box { background: linear-gradient(135deg, #F9F9F7 0%, #f0ebe3 100%); border: 2px solid #D4A017; border-radius: 12px; padding: 32px; margin: 24px 0; text-align: center; }
-                .credit-label { font-size: 14px; color: #7F8C8D; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-                .credit-code { font-size: 36px; font-weight: 700; color: #D4A017; letter-spacing: 3px; margin: 0; font-family: monospace; }
-                .credit-value { font-size: 14px; color: #155724; margin-top: 12px; background: #d4edda; padding: 8px 16px; border-radius: 20px; display: inline-block; }
-                
-                .steps { background: #f0f9ff; border-radius: 12px; padding: 24px; margin: 24px 0; }
-                .steps-title { font-weight: 600; color: #0369a1; margin-bottom: 16px; font-size: 16px; }
-                .step { display: flex; gap: 12px; margin: 16px 0; }
-                .step-num { width: 28px; height: 28px; background: #0ea5e9; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
-                .step-content { flex: 1; color: #0369a1; font-size: 14px; }
-                
-                .tip { background: #f7fafc; border-left: 4px solid #D4A017; padding: 16px; margin: 24px 0; }
-                .tip-text { color: #2C3E50; font-size: 14px; margin: 0; }
-                
-                .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
-                .footer-text { color: #7F8C8D; font-size: 14px; margin: 8px 0; }
-              </style>
             </head>
-            <body>
-              <div class="wrapper">
-                <div class="container">
-                  <div class="header">
-                    <h1 class="logo">Elevated Health Augusta</h1>
-                  </div>
-                  <div class="content">
-                    <h2 class="greeting">Thank You, ${firstName}!</h2>
-                    <p style="color: #4a5568; font-size: 16px;">Your ${emailConfig.title} payment has been confirmed. Here's your exclusive credit code:</p>
-                    
-                    <div class="credit-box">
-                      <p class="credit-label">Your Credit Code</p>
-                      <p class="credit-code">${creditCode}</p>
-                      <span class="credit-value">Worth $99 toward ${emailConfig.creditUse}</span>
-                    </div>
-                    
-                    <div class="steps">
-                      <p class="steps-title">📋 Next Steps</p>
-                      <div class="step">
-                        <span class="step-num">1</span>
-                        <div class="step-content"><strong>Schedule your consultation</strong> - Use the calendar on the confirmation page</div>
-                      </div>
-                      <div class="step">
-                        <span class="step-num">2</span>
-                        <div class="step-content"><strong>Visit our Evans clinic</strong> for your 30-minute in-person consultation with your provider</div>
-                      </div>
-                      <div class="step">
-                        <span class="step-num">3</span>
-                        <div class="step-content"><strong>Receive your diagnostic kit</strong> - Your provider will hand it to you and explain how to use it</div>
-                      </div>
-                      <div class="step">
-                        <span class="step-num">4</span>
-                        <div class="step-content"><strong>When ready to proceed</strong>, use your credit code for $99 off</div>
-                      </div>
-                    </div>
-                    
-                    <div class="tip">
-                      <p class="tip-text"><strong>💡 Save this email!</strong> Your credit code <strong>${creditCode}</strong> never expires and can be applied when you're ready to move forward with treatment.</p>
-                    </div>
-                    
-                    <p style="color: #4a5568; font-size: 16px; margin-top: 32px;">
-                      We're excited to meet you in person!<br/><br/>
-                      Warmly,<br/>
-                      <strong>The Elevated Health Augusta Team</strong><br/>
-                      <span style="color: #718096;">(706) 760-3470 | 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809</span>
-                    </p>
-                  </div>
-                  <div class="footer">
-                    <p class="footer-text">Questions? Reply to this email or call us.</p>
-                  </div>
-                </div>
-              </div>
+            <body style="margin:0;padding:0;background-color:${BRAND_BONE};font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:${BRAND_CHARCOAL};">
+              <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background-color:${BRAND_BONE};">
+                <tr><td align="center" style="padding:32px 16px;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 6px 24px rgba(42,40,38,0.08);">
+                    <tr>
+                      <td style="background-color:${BRAND_CHARCOAL};padding:40px 32px;text-align:center;">
+                        <p style="margin:0;color:${BRAND_CAMEL};font-size:12px;letter-spacing:0.2em;text-transform:uppercase;">Elevated Health Augusta</p>
+                        <h1 style="margin:12px 0 0;color:#ffffff;font-size:28px;font-weight:400;font-style:italic;font-family:Georgia,'Times New Roman',serif;">Thank you, ${firstName}.</h1>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:36px 32px 8px;">
+                        <h2 style="margin:0 0 12px;color:${BRAND_CHARCOAL};font-size:20px;font-weight:400;font-family:Georgia,'Times New Roman',serif;">${emailConfig.title}</h2>
+                        <p style="margin:0 0 24px;color:${BRAND_CHARCOAL};font-size:15px;line-height:1.6;">Your $${CONSULT_FEE_USD} consultation is paid. The next step is choosing a time — head back to the confirmation page (or check the link we just sent) and pick the slot that works for you.</p>
+                        <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="margin:0 0 24px;background-color:${BRAND_BONE};border-left:3px solid ${BRAND_CAMEL};border-radius:6px;">
+                          <tr><td style="padding:18px 20px;">
+                            <p style="margin:0 0 4px;color:${BRAND_CHARCOAL}99;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;">Your credit code</p>
+                            <p style="margin:0 0 6px;color:${BRAND_CHARCOAL};font-size:22px;font-weight:600;letter-spacing:0.18em;font-family:'SF Mono',Menlo,monospace;">${creditCode}</p>
+                            <p style="margin:0;color:${BRAND_CHARCOAL}99;font-size:13px;">Worth $${CONSULT_FEE_USD} toward ${emailConfig.creditUse}, applied automatically when you enroll.</p>
+                          </td></tr>
+                        </table>
+                        <p style="margin:0 0 8px;color:${BRAND_CHARCOAL}99;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;">What happens next</p>
+                        <ol style="margin:0 0 24px;padding-left:20px;color:${BRAND_CHARCOAL};font-size:14px;line-height:1.7;">
+                          <li>Pick your visit time on the confirmation page</li>
+                          <li>Get a confirmation with calendar invite + pre-visit instructions</li>
+                          <li>Show up — we'll meet you in person at the Evans clinic, draw any needed labs at the visit, and walk through the plan</li>
+                          <li>If you enroll in a program, your $${CONSULT_FEE_USD} credit comes off the first invoice</li>
+                        </ol>
+                        <p style="margin:0 0 24px;color:${BRAND_CHARCOAL};font-size:14px;">Questions before then? Call us at <a href="tel:+17067603470" style="color:${BRAND_CAMEL};text-decoration:none;">(706) 760-3470</a>.</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color:${BRAND_BONE};padding:20px 32px;text-align:center;border-top:1px solid #e7dfd0;">
+                        <p style="margin:0;color:${BRAND_CHARCOAL}99;font-size:12px;">Elevated Health Augusta · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · (706) 760-3470</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td></tr>
+              </table>
             </body>
             </html>
           `,
@@ -328,17 +296,17 @@ serve(async (req) => {
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
           to: ["booking@elevatedhealthaugusta.com"],
-          subject: `New ${emailConfig.title} Booked - ${customerName || customerEmail}`,
+          subject: `New ${emailConfig.title} paid — ${customerName || customerEmail}`,
           html: `
-            <h2>New ${emailConfig.title} Payment</h2>
+            <h2>New ${emailConfig.title} payment</h2>
             <p><strong>Customer:</strong> ${customerEmail}</p>
             <p><strong>Name:</strong> ${customerName || "Not provided"}</p>
-            <p><strong>Service Type:</strong> ${serviceType}</p>
-            <p><strong>Credit Code:</strong> ${creditCode}</p>
+            <p><strong>Service type:</strong> ${serviceType}</p>
+            <p><strong>Credit code:</strong> ${creditCode}</p>
             <p><strong>Amount:</strong> $${(session.amount_total || 0) / 100}</p>
             <hr/>
-            <p>The patient has been instructed to book their 30-minute in-person consultation via Google Calendar.</p>
-            <p>Their credit code <strong>${creditCode}</strong> can be used for $99 off ${emailConfig.creditUse}.</p>
+            <p>The patient is currently on the in-app confirmation page picking a time slot via the native scheduler.</p>
+            <p>Their $${CONSULT_FEE_USD} credit code <strong>${creditCode}</strong> applies toward ${emailConfig.creditUse}.</p>
           `,
         });
         logStep("Admin notification sent");
@@ -350,10 +318,10 @@ serve(async (req) => {
     // Send SMS alerts to staff
     const staffPhoneNumbers = Deno.env.get("STAFF_NOTIFICATION_PHONE");
     if (staffPhoneNumbers) {
-      const smsMessage = `🎉 NEW CONSULT PAID!\n\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCredit: ${creditCode}\n\nPatient instructed to book in-person visit via calendar.`;
-      
+      const smsMessage = `NEW CONSULT PAID\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCredit: ${creditCode}\nPatient is on the confirmation page picking a time.`;
+
       const phoneNumbers = staffPhoneNumbers.split(",").map(p => p.trim());
-      
+
       for (const phone of phoneNumbers) {
         if (phone) {
           sendSMS(phone, smsMessage).catch(err => {

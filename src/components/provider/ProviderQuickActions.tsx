@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Package, CreditCard, CheckCircle, MessageSquare, Mail, FileText, UserPlus, BookOpen, Boxes } from "lucide-react";
+import { Package, CreditCard, CheckCircle, MessageSquare, Mail, FileText, UserPlus, BookOpen, Boxes, CalendarPlus } from "lucide-react";
 import QuickSendKitModal from "./QuickSendKitModal";
 import QuickPaymentModal from "./QuickPaymentModal";
 import QuickLabsReviewedModal from "./QuickLabsReviewedModal";
@@ -9,6 +9,8 @@ import QuickMessageModal from "./QuickMessageModal";
 import QuickEmailModal from "./QuickEmailModal";
 import EncounterFormModal from "./EncounterFormModal";
 import AddPatientModal from "./AddPatientModal";
+import StaffBookingModal from "@/components/booking/StaffBookingModal";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProviderQuickActionsProps {
   onRefresh?: () => void;
@@ -20,6 +22,27 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
   const [isLabsModalOpen, setIsLabsModalOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+      if (cancelled) return;
+      setIsAdmin((roles || []).some((r) => r.role === "admin"));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <>
@@ -28,11 +51,21 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
           <span className="text-xs font-medium text-muted-foreground whitespace-nowrap mr-2">
             QUICK ACTIONS:
           </span>
-          
+
+          <Button
+            variant="default"
+            size="sm"
+            className="whitespace-nowrap"
+            onClick={() => setIsBookingModalOpen(true)}
+          >
+            <CalendarPlus className="w-4 h-4 mr-2" />
+            Book Appointment
+          </Button>
+
           <AddPatientModal
             onPatientAdded={onRefresh}
             trigger={
-              <Button variant="default" size="sm" className="whitespace-nowrap">
+              <Button variant="outline" size="sm" className="whitespace-nowrap">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Add Patient
               </Button>
@@ -142,6 +175,15 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
         open={isEmailModalOpen} 
         onOpenChange={setIsEmailModalOpen}
         onSuccess={onRefresh}
+      />
+
+      <StaffBookingModal
+        open={isBookingModalOpen}
+        onOpenChange={(open) => {
+          setIsBookingModalOpen(open);
+          if (!open) onRefresh?.();
+        }}
+        isAdmin={isAdmin}
       />
     </>
   );

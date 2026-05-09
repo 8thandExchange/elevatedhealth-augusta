@@ -29,9 +29,26 @@ interface Appt {
   duration_minutes: number;
 }
 
+interface Exception {
+  provider_id: string;
+  exception_date: string; // YYYY-MM-DD
+  start_time: string;     // HH:MM:SS
+  end_time: string;
+  type: "addition" | "removal" | string;
+  service_lines: string[];
+  slot_minutes: number;
+}
+
 function timeToMinutes(t: string) {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
+}
+
+function dateKey(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 serve(async (req) => {
@@ -81,49 +98,127 @@ serve(async (req) => {
           .lte("scheduled_at", endWindow.toISOString())
       : { data: [] as Appt[] };
 
+    // schedule_exceptions overrides the base provider_schedules pattern on
+    // specific dates. Two flavours:
+    //   - 'removal'  → suppress all base/addition slots inside that window
+    //   - 'addition' → expose extra slots outside the base pattern (e.g. a
+    //                  one-off Saturday clinic). Treated as if it were a
+    //                  matching provider_schedules row for that date only.
+    const exceptionStartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const exceptionEndDate = new Date(exceptionStartDate.getTime() + days * 24 * 60 * 60 * 1000);
+    const { data: exceptions } = providerIds.length
+      ? await supabase
+          .from("schedule_exceptions")
+          .select(
+            "provider_id,exception_date,start_time,end_time,type,service_lines,slot_minutes",
+          )
+          .in("provider_id", providerIds)
+          .contains("service_lines", [service_line])
+          .gte("exception_date", dateKey(exceptionStartDate))
+          .lte("exception_date", dateKey(exceptionEndDate))
+      : { data: [] as Exception[] };
+
     const slots: { provider_id: string; start: string; end: string }[] = [];
+    // Track unique (provider_id, slotStartIso) to avoid duplicates when an
+    // addition window overlaps the base schedule.
+    const seen = new Set<string>();
 
     for (let d = 0; d < days; d++) {
       const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d);
       const dow = day.getDay();
-      const dayMatches = (schedules || []).filter((s: Schedule) => s.day_of_week === dow);
+      const dayKeyStr = dateKey(day);
 
-      for (const s of dayMatches) {
-        const startMin = timeToMinutes(s.start_time);
-        const endMin = timeToMinutes(s.end_time);
-        const step = s.slot_minutes || 30;
-        for (let m = startMin; m + duration_minutes <= endMin; m += step) {
-          const slotStart = new Date(day);
-          slotStart.setHours(0, 0, 0, 0);
-          slotStart.setMinutes(m);
-          const slotEnd = new Date(slotStart.getTime() + duration_minutes * 60_000);
+      // Build the per-provider, per-day window list to iterate. Start with
+      // base schedule rows that match this day-of-week, then append addition
+      // exception rows for this exact date.
+      const windowsByProvider = new Map<
+        string,
+        { startMin: number; endMin: number; step: number }[]
+      >();
 
-          // Skip past slots (with 2hr buffer)
-          if (slotStart.getTime() < now.getTime() + 2 * 60 * 60 * 1000) continue;
+      for (const s of (schedules || []) as Schedule[]) {
+        if (s.day_of_week !== dow) continue;
+        const list = windowsByProvider.get(s.provider_id) || [];
+        list.push({
+          startMin: timeToMinutes(s.start_time),
+          endMin: timeToMinutes(s.end_time),
+          step: s.slot_minutes || 30,
+        });
+        windowsByProvider.set(s.provider_id, list);
+      }
 
-          // Conflict with appointments
-          const conflictAppt = (appts || []).some((a: any) => {
-            if (a.provider_id !== s.provider_id) return false;
-            const aStart = new Date(a.scheduled_at).getTime();
-            const aEnd = aStart + (a.duration_minutes || 30) * 60_000;
-            return slotStart.getTime() < aEnd && slotEnd.getTime() > aStart;
-          });
-          if (conflictAppt) continue;
+      for (const ex of (exceptions || []) as Exception[]) {
+        if (ex.exception_date !== dayKeyStr) continue;
+        if (ex.type !== "addition") continue;
+        const list = windowsByProvider.get(ex.provider_id) || [];
+        list.push({
+          startMin: timeToMinutes(ex.start_time),
+          endMin: timeToMinutes(ex.end_time),
+          step: ex.slot_minutes || 30,
+        });
+        windowsByProvider.set(ex.provider_id, list);
+      }
 
-          // Conflict with blocks
-          const conflictBlock = (blocks || []).some((b: Block) => {
-            if (b.provider_id !== s.provider_id) return false;
-            const bStart = new Date(b.start_at).getTime();
-            const bEnd = new Date(b.end_at).getTime();
-            return slotStart.getTime() < bEnd && slotEnd.getTime() > bStart;
-          });
-          if (conflictBlock) continue;
+      // Removal exceptions for this date apply per-provider as extra blocks.
+      const removalsByProvider = new Map<
+        string,
+        { startMin: number; endMin: number }[]
+      >();
+      for (const ex of (exceptions || []) as Exception[]) {
+        if (ex.exception_date !== dayKeyStr) continue;
+        if (ex.type !== "removal") continue;
+        const list = removalsByProvider.get(ex.provider_id) || [];
+        list.push({
+          startMin: timeToMinutes(ex.start_time),
+          endMin: timeToMinutes(ex.end_time),
+        });
+        removalsByProvider.set(ex.provider_id, list);
+      }
 
-          slots.push({
-            provider_id: s.provider_id,
-            start: slotStart.toISOString(),
-            end: slotEnd.toISOString(),
-          });
+      for (const [providerIdForDay, windows] of windowsByProvider.entries()) {
+        const removals = removalsByProvider.get(providerIdForDay) || [];
+        for (const w of windows) {
+          for (let m = w.startMin; m + duration_minutes <= w.endMin; m += w.step) {
+            const slotStart = new Date(day);
+            slotStart.setHours(0, 0, 0, 0);
+            slotStart.setMinutes(m);
+            const slotEnd = new Date(slotStart.getTime() + duration_minutes * 60_000);
+
+            // Skip past slots (with 2hr buffer)
+            if (slotStart.getTime() < now.getTime() + 2 * 60 * 60 * 1000) continue;
+
+            // Removal exception covers this slot → skip
+            const removed = removals.some((r) => m < r.endMin && m + duration_minutes > r.startMin);
+            if (removed) continue;
+
+            // Conflict with appointments
+            const conflictAppt = (appts || []).some((a: Appt) => {
+              if (a.provider_id !== providerIdForDay) return false;
+              const aStart = new Date(a.scheduled_at).getTime();
+              const aEnd = aStart + (a.duration_minutes || 30) * 60_000;
+              return slotStart.getTime() < aEnd && slotEnd.getTime() > aStart;
+            });
+            if (conflictAppt) continue;
+
+            // Conflict with blocks
+            const conflictBlock = (blocks || []).some((b: Block) => {
+              if (b.provider_id !== providerIdForDay) return false;
+              const bStart = new Date(b.start_at).getTime();
+              const bEnd = new Date(b.end_at).getTime();
+              return slotStart.getTime() < bEnd && slotEnd.getTime() > bStart;
+            });
+            if (conflictBlock) continue;
+
+            const key = `${providerIdForDay}|${slotStart.toISOString()}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+
+            slots.push({
+              provider_id: providerIdForDay,
+              start: slotStart.toISOString(),
+              end: slotEnd.toISOString(),
+            });
+          }
         }
       }
     }

@@ -7,9 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { 
   Loader2, User, Users, Clock, Package, Phone, Mail, 
-  Calendar, CheckCircle, AlertCircle, RefreshCw, Search,
+  Calendar, CalendarPlus, CheckCircle, AlertCircle, RefreshCw, Search,
   FileText, CreditCard, MessageSquare, Mic, Filter
 } from "lucide-react";
+import StaffBookingModal from "@/components/booking/StaffBookingModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AdminNavbar from "@/components/admin/AdminNavbar";
@@ -70,9 +71,22 @@ const OfficeManagerDashboard = () => {
   const [leadStatusFilter, setLeadStatusFilter] = useState<string>("all");
   const [leadSourceFilter, setLeadSourceFilter] = useState<string>("all");
   const [leadSearchTerm, setLeadSearchTerm] = useState("");
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadData();
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+      setIsAdmin((roles || []).some((r) => r.role === "admin"));
+    })();
   }, []);
 
   const loadData = async () => {
@@ -233,16 +247,38 @@ const OfficeManagerDashboard = () => {
       />
 
       <main className="container mx-auto px-4 py-8">
-        {/* Primary tool: schedule */}
+        {/* Primary tools: book appointment + open schedule */}
         <div className="mb-6 flex items-center justify-between p-4 rounded-lg bg-primary/5 border border-primary/20">
           <div>
             <h2 className="text-base font-semibold">Today's Schedule</h2>
             <p className="text-xs text-muted-foreground">Multi-provider day & week view, walk-ins, reschedules.</p>
           </div>
-          <Button onClick={() => window.location.assign("/office/schedule")} className="gap-2">
-            <Calendar className="w-4 h-4" /> Open Schedule
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="default"
+              onClick={() => setBookingModalOpen(true)}
+              className="gap-2"
+            >
+              <CalendarPlus className="w-4 h-4" /> Book Appointment
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => window.location.assign("/office/schedule")}
+              className="gap-2"
+            >
+              <Calendar className="w-4 h-4" /> Open Schedule
+            </Button>
+          </div>
         </div>
+
+        <StaffBookingModal
+          open={bookingModalOpen}
+          onOpenChange={(open) => {
+            setBookingModalOpen(open);
+            if (!open) loadData();
+          }}
+          isAdmin={isAdmin}
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">

@@ -20,6 +20,12 @@ interface SlotPickerProps {
   confirmLabel?: string;
 }
 
+// Token migration note: this widget previously used legacy `bg-gold` /
+// `text-gold` / `border-gold` tokens. Tailwind aliases those to the modern
+// camel/accent palette, but new pages render with `bg-accent`, so we updated
+// this widget to match — keeps the booking flow visually coherent with
+// BookingConfirmedCard / ProviderChooser.
+
 export default function SlotPicker({
   serviceLine,
   durationMinutes = 60,
@@ -84,7 +90,7 @@ export default function SlotPicker({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-gold" />
+        <Loader2 className="h-8 w-8 animate-spin text-accent" />
       </div>
     );
   }
@@ -93,8 +99,8 @@ export default function SlotPicker({
     return (
       <Card>
         <CardContent className="p-8 text-center space-y-3">
-          <p className="text-muted-foreground">No openings in the next 3 weeks.</p>
-          <p className="text-sm">Please call <a className="text-gold underline" href="tel:7067603470">(706) 760-3470</a> and we'll get you scheduled.</p>
+          <p className="text-muted-foreground font-jost">No openings in the next 3 weeks.</p>
+          <p className="text-sm font-jost">Please call <a className="text-accent underline" href="tel:7067603470">(706) 760-3470</a> and we'll get you scheduled.</p>
         </CardContent>
       </Card>
     );
@@ -126,8 +132,8 @@ export default function SlotPicker({
               onClick={() => has && setSelectedDate(d)}
               disabled={!has}
               className={`p-3 rounded-lg border text-center transition-all ${
-                sel ? "bg-gold text-white border-gold" :
-                has ? "bg-card hover:border-gold cursor-pointer" :
+                sel ? "bg-accent text-accent-foreground border-accent" :
+                has ? "bg-card hover:border-accent cursor-pointer" :
                 "bg-muted/30 text-muted-foreground cursor-not-allowed opacity-50"
               }`}
             >
@@ -142,8 +148,8 @@ export default function SlotPicker({
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Clock className="h-4 w-4 text-gold" />
-            <h3 className="font-medium">{format(selectedDate, "EEEE, MMMM d")}</h3>
+            <Clock className="h-4 w-4 text-accent" />
+            <h3 className="font-medium font-jost">{format(selectedDate, "EEEE, MMMM d")}</h3>
           </div>
           {slotsForDay.length === 0 ? (
             <p className="text-sm text-muted-foreground">No openings this day.</p>
@@ -155,8 +161,8 @@ export default function SlotPicker({
                   <button
                     key={s.start + s.provider_id}
                     onClick={() => setSelectedSlot(s)}
-                    className={`px-3 py-2 rounded-lg border text-sm transition-all ${
-                      sel ? "bg-gold text-white border-gold" : "hover:border-gold"
+                    className={`px-3 py-2 rounded-lg border text-sm font-jost transition-all ${
+                      sel ? "bg-accent text-accent-foreground border-accent" : "hover:border-accent"
                     }`}
                   >
                     {format(new Date(s.start), "h:mm a")}
@@ -171,10 +177,10 @@ export default function SlotPicker({
       {selectedSlot && (
         <div className="flex items-center justify-between bg-muted/30 rounded-lg p-4">
           <div>
-            <p className="text-sm text-muted-foreground">Selected</p>
-            <p className="font-semibold">{format(new Date(selectedSlot.start), "EEE, MMM d • h:mm a")}</p>
+            <p className="text-sm text-muted-foreground font-jost">Selected</p>
+            <p className="font-semibold font-jost">{format(new Date(selectedSlot.start), "EEE, MMM d · h:mm a")}</p>
           </div>
-          <Button onClick={handleConfirm} disabled={submitting} className="bg-gold hover:bg-gold/90">
+          <Button onClick={handleConfirm} disabled={submitting}>
             {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {confirmLabel}
           </Button>

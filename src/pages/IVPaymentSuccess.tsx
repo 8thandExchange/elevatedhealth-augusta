@@ -1,116 +1,128 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { CheckCircle2, Calendar, Clock, Phone, MapPin } from "lucide-react";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { CheckCircle2, Calendar, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import SlotPicker from "@/components/booking/SlotPicker";
+import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+interface ConfirmedAppointment {
+  id: string;
+  scheduled_at: string;
+  duration_minutes: number;
+}
+
+const IV_PRE_VISIT = [
+  "Arrive hydrated and have eaten a light meal beforehand",
+  "Wear comfortable clothing with easy arm access",
+  "Bring photo ID; allow 45–60 minutes",
+];
+
 const IVPaymentSuccess = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const therapyName = searchParams.get("therapy") || "IV Therapy";
   const sessionId = searchParams.get("session_id") || "";
+  const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
 
-  const handleConfirm = async ({ slot }: { slot: { provider_id: string; start: string } }) => {
+  const handleConfirm = async ({
+    slot,
+  }: {
+    slot: { provider_id: string; start: string };
+  }) => {
     if (!sessionId) {
-      toast.error("Missing payment session id. Please call us.");
+      toast.error("Missing payment session id. Please call us at " + SITE_CONFIG.phone);
       return;
     }
-    const { data, error } = await supabase.functions.invoke("book-iv-appointment", {
-      body: { session_id: sessionId, slot_start: slot.start, provider_id: slot.provider_id },
-    });
+    const { data, error } = await supabase.functions.invoke(
+      "book-iv-appointment",
+      {
+        body: {
+          session_id: sessionId,
+          slot_start: slot.start,
+          provider_id: slot.provider_id,
+        },
+      },
+    );
     if (error || data?.error) {
       toast.error(data?.error || "Could not book that slot. Please pick another.");
       return;
     }
-    toast.success("Appointment confirmed! Confirmation sent.");
-    navigate(`/iv-payment-success?confirmed=1&therapy=${encodeURIComponent(therapyName)}`);
+    if (data?.appointment) {
+      setConfirmed({
+        id: data.appointment.id,
+        scheduled_at: data.appointment.scheduled_at,
+        duration_minutes: data.appointment.duration_minutes || 60,
+      });
+    }
   };
-
-  const confirmed = searchParams.get("confirmed") === "1";
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="space-y-8">
-            {/* Success Header */}
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-6">
-                <CheckCircle2 className="h-10 w-10 text-green-600" />
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/15 mb-6">
+                <CheckCircle2 className="h-10 w-10 text-accent" />
               </div>
-              <h1 className="text-3xl md:text-4xl font-cormorant font-semibold text-foreground mb-4">
-                Payment Confirmed!
+              <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-3">
+                Payment confirmed.
               </h1>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                Your <strong>{therapyName}</strong> has been paid. Now schedule your appointment below.
-              </p>
+              {!confirmed && (
+                <p className="font-jost text-lg text-muted-foreground max-w-xl mx-auto">
+                  Your <strong>{therapyName}</strong> is paid. Pick a time below
+                  and we'll have you in the chair.
+                </p>
+              )}
             </div>
 
-            {/* Booking Section */}
-            <Card>
-              <CardContent className="p-6 md:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <Calendar className="h-6 w-6 text-gold" />
-                  <h2 className="text-xl font-semibold">Schedule Your IV Session</h2>
-                </div>
-                
-                <p className="text-muted-foreground mb-6">
-                  {confirmed
-                    ? "You're booked. Check your email and texts for confirmation."
-                    : "Pick a time that works for you. Sessions are 60 minutes in our IV Lounge."}
-                </p>
-
-                {!confirmed && (
-                  <div className="mb-6">
-                    <SlotPicker
-                      serviceLine="iv"
-                      durationMinutes={60}
-                      onConfirm={handleConfirm}
-                      confirmLabel="Confirm IV Session"
-                    />
+            {confirmed ? (
+              <BookingConfirmedCard
+                appointmentId={confirmed.id}
+                serviceLabel={therapyName}
+                scheduledAt={confirmed.scheduled_at}
+                durationMinutes={confirmed.duration_minutes}
+                preVisitInstructions={IV_PRE_VISIT}
+              />
+            ) : (
+              <Card>
+                <CardContent className="p-6 md:p-8 space-y-6">
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-6 w-6 text-accent" />
+                    <h2 className="font-playfair text-xl text-foreground">
+                      Schedule your IV session
+                    </h2>
                   </div>
-                )}
-
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <Phone className="h-4 w-4" />
-                  <span>Need help? Call us at {SITE_CONFIG.phone}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* What to Expect */}
-            <Card className="bg-muted/30">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">What to Expect</h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="flex gap-3">
-                    <Clock className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">Session Duration</p>
-                      <p className="text-sm text-muted-foreground">45-60 minutes in our comfortable lounge</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <MapPin className="h-5 w-5 text-gold flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">Location</p>
-                      <p className="text-sm text-muted-foreground">{SITE_CONFIG.address.full}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Tips:</strong> Arrive hydrated and have eaten a light meal. Wear comfortable clothing with easy arm access. Bring entertainment (phone, book) for your relaxation time.
+                  <p className="text-muted-foreground font-jost">
+                    Sessions run 45–60 minutes in our private IV lounge.
                   </p>
-                </div>
-              </CardContent>
-            </Card>
+                  <SlotPicker
+                    serviceLine="iv"
+                    durationMinutes={60}
+                    onConfirm={handleConfirm}
+                    confirmLabel="Confirm IV session"
+                  />
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-jost pt-2 border-t border-border">
+                    <Phone className="h-4 w-4" />
+                    <span>
+                      Need help? Call us at{" "}
+                      <a
+                        href={`tel:${SITE_CONFIG.phoneRaw}`}
+                        className="text-accent hover:underline"
+                      >
+                        {SITE_CONFIG.phone}
+                      </a>
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </main>

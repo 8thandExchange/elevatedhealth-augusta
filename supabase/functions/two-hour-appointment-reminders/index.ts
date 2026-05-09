@@ -8,13 +8,10 @@ const corsHeaders = {
 
 const logStep = (step: string, details?: unknown) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
-  console.log(`[DAILY-REMINDER-CRON] ${step}${detailsStr}`);
+  console.log(`[2H-REMINDER-CRON] ${step}${detailsStr}`);
 };
 
 const CLINIC_PHONE = "(706) 760-3470";
-// Sender ID is unified across all booking SMS (booking confirmation, daily
-// reminder, 2h reminder). Sinch alphanumeric senders aren't billable as
-// separate phone numbers and they're consistent for receivers.
 const SMS_SENDER = "ElevatedHealth";
 
 function formatPhoneNumber(phone: string): string {
@@ -63,14 +60,11 @@ async function sendSMS(to: string, message: string): Promise<{ success: boolean;
 interface AppointmentRow {
   id: string;
   scheduled_at: string;
-  duration_minutes: number;
   service_line: string | null;
   reason: string | null;
-  patient_id: string;
   patients?: {
     full_name: string | null;
     phone: string | null;
-    email: string | null;
   } | null;
 }
 
@@ -83,13 +77,18 @@ const SERVICE_DESCRIPTIONS: Record<string, string> = {
   follow_up: "follow-up visit",
 };
 
+// Two-hour reminder. Designed to be invoked every 15 minutes by an external
+// scheduler (Lovable Cloud / Supabase scheduled functions). For each pending
+// appointment whose scheduled_at falls into the next [105, 135] minute window
+// and whose reminder_2h_sent_at is NULL, send a single SMS and stamp the
+// column to prevent re-sends.
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    logStep("Daily reminder cron started");
+    logStep("2h reminder pass started");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -100,54 +99,42 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Compute the [tomorrow 00:00, tomorrow 23:59] window in clinic local time
-    // (America/New_York). We approximate by anchoring on UTC and letting the
-    // database TZ-naive timestamp comparison filter; final formatting uses
-    // toLocaleString with timeZone for SMS body.
     const now = new Date();
-    const tomorrowStart = new Date(now);
-    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-    tomorrowStart.setHours(0, 0, 0, 0);
-    const tomorrowEnd = new Date(tomorrowStart);
-    tomorrowEnd.setHours(23, 59, 59, 999);
+    // Window centred at +2h, ±15 min, so a cron running every 15 min covers
+    // every appointment exactly once between 1h45 and 2h15 out.
+    const windowStart = new Date(now.getTime() + 105 * 60_000);
+    const windowEnd = new Date(now.getTime() + 135 * 60_000);
 
-    logStep("Looking for appointments", {
-      tomorrowStart: tomorrowStart.toISOString(),
-      tomorrowEnd: tomorrowEnd.toISOString(),
+    logStep("Window", {
+      start: windowStart.toISOString(),
+      end: windowEnd.toISOString(),
     });
 
-    // Read from appointments (the source of truth) instead of
-    // consultation_bookings.booked_for, which is no longer the authoritative
-    // place for visit time. This single query covers IV bookings, consults,
-    // and any other appointment_type without a special-cased ketamine branch.
     const { data: appointments, error: apptErr } = await supabase
       .from("appointments")
       .select(
         `
           id,
           scheduled_at,
-          duration_minutes,
           service_line,
           reason,
-          patient_id,
-          patients:patients ( full_name, phone, email )
+          patients:patients ( full_name, phone )
         `,
       )
-      .gte("scheduled_at", tomorrowStart.toISOString())
-      .lte("scheduled_at", tomorrowEnd.toISOString())
+      .gte("scheduled_at", windowStart.toISOString())
+      .lte("scheduled_at", windowEnd.toISOString())
       .neq("status", "cancelled")
-      .is("reminder_sent_at", null);
+      .neq("status", "completed")
+      .neq("status", "no_show")
+      .is("reminder_2h_sent_at", null);
 
     if (apptErr) {
-      logStep("Error fetching appointments", { error: apptErr.message });
       throw new Error(`Failed to fetch appointments: ${apptErr.message}`);
     }
 
-    logStep("Found appointments for tomorrow", {
-      count: appointments?.length || 0,
-    });
+    logStep("Eligible appointments", { count: appointments?.length || 0 });
 
-    const results: Array<{ appointmentId: string; phone: string; success: boolean; error?: string }> = [];
+    const results: Array<{ appointmentId: string; success: boolean; error?: string }> = [];
 
     for (const appt of (appointments || []) as AppointmentRow[]) {
       const phone = appt.patients?.phone;
@@ -161,27 +148,18 @@ serve(async (req) => {
         hour12: true,
         timeZone: "America/New_York",
       });
-      const dateStr = apptDate.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        timeZone: "America/New_York",
-      });
-
       const serviceDescription =
         appt.reason ||
         SERVICE_DESCRIPTIONS[appt.service_line || ""] ||
         "appointment";
 
       const message =
-        `${firstName}: reminder — your ${serviceDescription} at Elevated Health Augusta ` +
-        `is ${dateStr} at ${timeStr}. Arrive 10 min early. ` +
-        `Reschedule: ${CLINIC_PHONE}.`;
+        `${firstName}: see you in 2 hours. ${serviceDescription} at ${timeStr}, ` +
+        `7013 Evans Town Center Blvd Ste 203, Evans GA. Reschedule: ${CLINIC_PHONE}.`;
 
       const result = await sendSMS(phone, message);
       results.push({
         appointmentId: appt.id,
-        phone,
         success: result.success,
         error: result.error,
       });
@@ -189,17 +167,17 @@ serve(async (req) => {
       if (result.success) {
         await supabase
           .from("appointments")
-          .update({ reminder_sent_at: new Date().toISOString() })
+          .update({ reminder_2h_sent_at: new Date().toISOString() })
           .eq("id", appt.id);
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 250));
     }
 
     const successCount = results.filter((r) => r.success).length;
     const failCount = results.filter((r) => !r.success).length;
 
-    logStep("Daily reminders complete", {
+    logStep("2h reminders complete", {
       total: results.length,
       success: successCount,
       failed: failCount,
@@ -208,11 +186,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        summary: {
-          total: results.length,
-          sent: successCount,
-          failed: failCount,
-        },
+        summary: { total: results.length, sent: successCount, failed: failCount },
         results,
       }),
       {

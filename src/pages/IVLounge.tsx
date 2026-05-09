@@ -497,13 +497,13 @@ const IVLounge = () => {
           <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
             <p className="section-label mb-4">Membership</p>
             <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-3">
-              Wellness Pass — $199/mo <span className="text-accent">(Founding: $149)</span>
+              Elevated Membership — <span className="italic text-accent">$199/mo</span>
             </h2>
             <p className="font-jost font-light text-muted-foreground leading-relaxed mb-2">
-              2 IVs per month · Priority booking · 10% off additional services
+              15% off all IV add-ons · priority booking · concierge access across hormones, peptides, and weight loss
             </p>
             <p className="text-sm text-muted-foreground italic mt-4">
-              Ask about Longevity Protocol & Executive Concierge bundles for hormone + IV + peptide care.
+              One single membership tier. Cancel anytime.
             </p>
           </div>
         </section>

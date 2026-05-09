@@ -1,64 +1,70 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CheckCircle2, Calendar, Phone, MapPin, ExternalLink, Mail } from "lucide-react";
+import { CheckCircle2, Loader2, Mail, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import SlotPicker from "@/components/booking/SlotPicker";
+import ProviderChooser from "@/components/booking/ProviderChooser";
+import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 
-const SERVICE_LABELS: Record<string, { title: string; specialist: string; steps: string[] }> = {
+const SERVICE_LABELS: Record<
+  string,
+  {
+    title: string;
+    serviceLine: string;
+    preVisitInstructions: string[];
+  }
+> = {
   hormone: {
     title: "Hormone Optimization Consultation",
-    specialist: "hormone specialist",
-    steps: [
-      "Book your consultation using the calendar above",
-      "Speak with our physician about your goals and symptoms",
-      "If you're a good fit, proceed with the $250 Hormone Mapping Panel",
-      "Receive your at-home test kit and begin your hormone optimization journey"
-    ]
+    serviceLine: "consult",
+    preVisitInstructions: [
+      "Bring photo ID and a list of any current medications",
+      "Plan to be on-site about 45 minutes (consult + lab draw)",
+      "Eat normally beforehand — no fasting required",
+    ],
   },
   weight_loss: {
-    title: "Weight Loss Consultation",
-    specialist: "weight management specialist",
-    steps: [
-      "Book your consultation using the calendar above",
-      "Speak with our physician about your weight loss goals",
-      "Begin your physician-supervised GLP-1 protocol",
-      "Monthly check-ins and dose adjustments as needed"
-    ]
-  },
-  iv_therapy: {
-    title: "IV Therapy Consultation",
-    specialist: "IV therapy specialist",
-    steps: [
-      "Book your consultation using the calendar above",
-      "Discuss your health goals with our physician",
-      "Select your physician-formulated infusion protocol",
-      "Schedule your first IV session"
-    ]
+    title: "Medical Weight Loss Consultation",
+    serviceLine: "consult",
+    preVisitInstructions: [
+      "Bring photo ID and a list of any current medications",
+      "Plan to be on-site about 45 minutes (consult + lab draw)",
+      "Bring recent labs if you have them",
+    ],
   },
   peptide: {
     title: "Peptide Protocols Consultation",
-    specialist: "peptide therapy specialist",
-    steps: [
-      "Book your consultation using the calendar above",
-      "Speak with our physician about your optimization goals",
-      "Begin your physician-prescribed peptide protocol",
-      "Regular monitoring and dose adjustments"
-    ]
+    serviceLine: "consult",
+    preVisitInstructions: [
+      "Bring photo ID and a list of any current medications",
+      "Plan to be on-site about 45 minutes",
+      "Bring any recent bloodwork or sleep-study results",
+    ],
   },
 };
+
+interface ConfirmedAppointment {
+  id: string;
+  scheduled_at: string;
+  duration_minutes: number;
+}
 
 const ConsultationConfirmed = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const serviceType = searchParams.get("service") || "hormone";
+  const serviceInfo = SERVICE_LABELS[serviceType] || SERVICE_LABELS.hormone;
+
   const [isVerifying, setIsVerifying] = useState(true);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
-
-  const serviceInfo = SERVICE_LABELS[serviceType] || SERVICE_LABELS.hormone;
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(null);
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -68,14 +74,39 @@ const ConsultationConfirmed = () => {
       }
 
       try {
-        const { data, error } = await supabase.functions.invoke("verify-consultation-payment", {
-          body: { session_id: sessionId }
-        });
+        const { data, error } = await supabase.functions.invoke(
+          "verify-consultation-payment",
+          {
+            body: { session_id: sessionId },
+          },
+        );
 
         if (error) throw error;
 
         if (data?.success) {
           setVerificationSuccess(true);
+          // Find the consultation_bookings row that verify-consultation-payment
+          // just created/updated, so we can pass its id to book-consult-appointment.
+          const { data: row } = await supabase
+            .from("consultation_bookings")
+            .select("id, booked_for")
+            .eq("stripe_session_id", sessionId)
+            .maybeSingle();
+          if (row) {
+            setBookingId(row.id);
+            // If verify-consultation-payment runs after the patient previously
+            // refreshed and already booked, keep them on the confirmed view.
+            if (row.booked_for) {
+              const { data: appt } = await supabase
+                .from("appointments")
+                .select("id, scheduled_at, duration_minutes")
+                .eq("consultation_booking_id", row.id)
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+              if (appt) setConfirmed(appt as ConfirmedAppointment);
+            }
+          }
         }
       } catch (err) {
         console.error("Verification error:", err);
@@ -88,125 +119,149 @@ const ConsultationConfirmed = () => {
     verifyPayment();
   }, [sessionId]);
 
+  const handleConfirm = async ({
+    slot,
+  }: {
+    slot: { provider_id: string; start: string };
+  }) => {
+    if (!bookingId) {
+      toast.error("Booking record missing. Please call us at " + SITE_CONFIG.phone);
+      return;
+    }
+    const { data, error } = await supabase.functions.invoke(
+      "book-consult-appointment",
+      {
+        body: {
+          booking_id: bookingId,
+          slot_start: slot.start,
+          provider_id: slot.provider_id,
+        },
+      },
+    );
+    if (error || data?.error) {
+      toast.error(data?.error || "Could not book that slot. Please pick another.");
+      return;
+    }
+    if (data?.appointment) {
+      setConfirmed({
+        id: data.appointment.id,
+        scheduled_at: data.appointment.scheduled_at,
+        duration_minutes: data.appointment.duration_minutes || 30,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-3xl">
           {isVerifying ? (
             <div className="text-center py-16">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4" />
-              <p className="text-muted-foreground font-jost">Confirming your payment...</p>
+              <Loader2 className="w-12 h-12 animate-spin text-accent mx-auto mb-4" />
+              <p className="text-muted-foreground font-jost">
+                Confirming your payment...
+              </p>
+            </div>
+          ) : !verificationSuccess ? (
+            <Card>
+              <CardContent className="p-8 text-center space-y-4">
+                <p className="font-playfair text-2xl text-foreground">
+                  We couldn't verify that payment
+                </p>
+                <p className="text-muted-foreground font-jost">
+                  If your card was charged, please call us at{" "}
+                  <a
+                    href={`tel:${SITE_CONFIG.phoneRaw}`}
+                    className="text-accent hover:underline"
+                  >
+                    {SITE_CONFIG.phone}
+                  </a>{" "}
+                  and we'll get you scheduled.
+                </p>
+              </CardContent>
+            </Card>
+          ) : confirmed ? (
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/15 mb-6">
+                  <CheckCircle2 className="h-10 w-10 text-accent" />
+                </div>
+                <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-2">
+                  Payment confirmed.
+                </h1>
+                <p className="font-jost text-muted-foreground">
+                  Your {serviceInfo.title} is on the calendar.
+                </p>
+              </div>
+              <BookingConfirmedCard
+                appointmentId={confirmed.id}
+                serviceLabel={serviceInfo.title}
+                scheduledAt={confirmed.scheduled_at}
+                durationMinutes={confirmed.duration_minutes}
+                preVisitInstructions={serviceInfo.preVisitInstructions}
+              />
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Success Header */}
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-6">
-                  <CheckCircle2 className="h-10 w-10 text-green-600" />
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/15 mb-6">
+                  <CheckCircle2 className="h-10 w-10 text-accent" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-4">
-                  Payment Confirmed!
+                <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-3">
+                  Payment confirmed.
                 </h1>
-                <p className="text-lg text-muted-foreground font-jost max-w-xl mx-auto">
-                  Thank you for booking your {serviceInfo.title}. Your next step is to schedule your visit.
+                <p className="font-jost text-lg text-muted-foreground max-w-xl mx-auto">
+                  Pick a time below for your {serviceInfo.title}. You'll meet
+                  your provider in person at our Evans clinic.
                 </p>
               </div>
 
-              {/* Booking Section */}
               <Card>
-                <CardContent className="p-6 md:p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Calendar className="h-6 w-6 text-accent" />
-                    <h2 className="text-xl font-semibold font-jost">Schedule Your Consultation</h2>
-                  </div>
-                  
-                  <p className="text-muted-foreground font-jost mb-6">
-                    Select a time that works best for you. Your visit will be with our {serviceInfo.specialist}.
-                  </p>
-
-                  <div className="rounded-lg overflow-hidden border mb-6">
-                    <iframe
-                      src={SITE_CONFIG.bookingUrl}
-                      style={{ border: 0, width: "100%", height: "500px" }}
-                      title="Schedule Your Consultation"
-                    />
-                  </div>
-
-                  {/* Clinic Location */}
-                  <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 mb-6">
-                    <div className="flex items-start gap-3">
-                      <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-sm mb-1 font-jost">In-Person Visit Location</h4>
-                        <p className="text-sm text-muted-foreground font-jost mb-2">
-                          {SITE_CONFIG.address.line1}<br />
-                          {SITE_CONFIG.address.cityStateZip}
-                        </p>
-                        <a 
-                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(SITE_CONFIG.address.full)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-jost"
-                        >
-                          Get Directions
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-jost">
+                <CardContent className="p-6 md:p-8 space-y-6">
+                  <ProviderChooser
+                    serviceLine={serviceInfo.serviceLine}
+                    selectedProviderId={providerId}
+                    onChange={setProviderId}
+                  />
+                  <SlotPicker
+                    serviceLine="consult"
+                    durationMinutes={30}
+                    providerId={providerId || undefined}
+                    onConfirm={handleConfirm}
+                    confirmLabel="Book this time"
+                  />
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-jost pt-2 border-t border-border">
                     <Phone className="h-4 w-4" />
-                    <span>Need help? Call us at {SITE_CONFIG.phone}</span>
+                    <span>
+                      Need help? Call us at{" "}
+                      <a
+                        href={`tel:${SITE_CONFIG.phoneRaw}`}
+                        className="text-accent hover:underline"
+                      >
+                        {SITE_CONFIG.phone}
+                      </a>
+                    </span>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* What's Next */}
               <Card className="bg-muted/30">
                 <CardContent className="p-6">
-                  <h3 className="font-semibold mb-4 font-jost">What Happens Next?</h3>
-                  <ol className="space-y-3 text-sm font-jost">
-                    {serviceInfo.steps.map((step, index) => (
-                      <li key={index} className="flex gap-3">
-                        <span className="font-bold text-accent">{index + 1}.</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </CardContent>
-              </Card>
-
-              {/* Email Confirmation */}
-              <Card className="border-blue-200/50 bg-blue-50/30">
-                <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-full bg-blue-100">
-                      <Mail className="h-5 w-5 text-blue-600" />
+                    <div className="p-2 rounded-full bg-accent/15">
+                      <Mail className="h-5 w-5 text-accent" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold mb-2 font-jost">Check Your Inbox</h3>
-                      <p className="text-sm text-muted-foreground font-jost mb-3">
-                        We've sent a confirmation email with:
-                      </p>
-                      <ul className="text-sm text-muted-foreground space-y-2 font-jost">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                          <span>Your payment receipt</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                          <span>Clinic address and directions</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                          <span>What to bring to your appointment</span>
-                        </li>
-                      </ul>
-                      <p className="text-xs text-muted-foreground mt-4 font-jost">
-                        Don't see it? Check your spam folder or contact us at {SITE_CONFIG.phone}
+                      <h3 className="font-playfair text-lg text-foreground mb-1">
+                        Receipt is in your inbox
+                      </h3>
+                      <p className="font-jost text-sm text-muted-foreground">
+                        We've emailed your payment receipt and your $79
+                        consultation credit code. The full booking confirmation
+                        — with calendar invite and pre-visit instructions —
+                        will land as soon as you pick a time above.
                       </p>
                     </div>
                   </div>

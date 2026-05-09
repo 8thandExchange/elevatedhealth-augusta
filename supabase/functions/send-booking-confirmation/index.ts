@@ -5,25 +5,108 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+const logStep = (step: string, details?: unknown) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[BOOKING-CONFIRM] ${step}${detailsStr}`);
+};
+
+// Brand tokens — kept in sync with src/index.css and .cursorrules.
+// Charcoal #2A2826, Camel #B8956A, Bone #F2EBDC.
+const BRAND_CHARCOAL = "#2A2826";
+const BRAND_CAMEL = "#B8956A";
+const BRAND_BONE = "#F2EBDC";
+
+const CLINIC_NAME = "Elevated Health Augusta";
+const CLINIC_ADDRESS = "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809";
+const CLINIC_PHONE = "(706) 760-3470";
+const CLINIC_PHONE_RAW = "+17067603470";
+const FROM_ADDRESS = "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>";
+
+// Service line → patient-facing pre-visit instructions. Mirrors the lists
+// rendered on the in-app confirmation page so email and on-site copy agree.
+const PRE_VISIT_INSTRUCTIONS: Record<string, string[]> = {
+  iv: [
+    "Arrive hydrated and have eaten a light meal beforehand",
+    "Wear comfortable clothing with easy arm access",
+    "Bring photo ID; allow 45–60 minutes",
+  ],
+  consult: [
+    "Bring photo ID and a list of any current medications",
+    "Plan to be on-site about 45 minutes (consult + lab draw)",
+    "Bring recent labs if you have them",
+  ],
+  hormone: [
+    "Bring photo ID and a list of any current medications",
+    "Plan to be on-site about 45 minutes (consult + lab draw)",
+    "Eat normally beforehand — no fasting required",
+  ],
+  weight_loss: [
+    "Bring photo ID and a list of any current medications",
+    "Plan to be on-site about 45 minutes (consult + lab draw)",
+    "Bring recent labs if you have them",
+  ],
+  peptide: [
+    "Bring photo ID and a list of any current medications",
+    "Plan to be on-site about 45 minutes",
+    "Bring any recent bloodwork or sleep-study results",
+  ],
 };
 
 // Format phone number for Sinch (E.164 format)
 function formatPhoneNumber(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
+  const digits = phone.replace(/\D/g, "");
   if (digits.length === 10) return `+1${digits}`;
-  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
   if (digits.length > 10) return `+${digits}`;
   throw new Error(`Invalid phone number format: ${phone}`);
 }
 
-// Send SMS via Sinch
-async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
+function formatScheduledDate(scheduledAt: string): {
+  fullDate: string;
+  time: string;
+  short: string;
+} {
+  const d = new Date(scheduledAt);
+  const fullDate = d.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "America/New_York",
+  });
+  const time = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "America/New_York",
+  });
+  const short = d.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "America/New_York",
+  });
+  return { fullDate, time, short };
+}
+
+interface SendBookingArgs {
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  service_label: string;
+  service_line?: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  confirmation_number?: string | null;
+}
+
+async function sendSMS(
+  to: string,
+  message: string,
+): Promise<{ success: boolean; messageId?: string; error?: string }> {
   const accessKey = Deno.env.get("SINCH_ACCESS_KEY");
   const secretKey = Deno.env.get("SINCH_SECRET_KEY");
-  
+
   if (!accessKey || !secretKey) {
     logStep("Sinch credentials not configured - skipping SMS");
     return { success: false, error: "Sinch credentials not configured" };
@@ -32,13 +115,13 @@ async function sendSMS(to: string, message: string): Promise<{ success: boolean;
   const formattedPhone = formatPhoneNumber(to);
   logStep("Sending SMS", { to: formattedPhone });
 
-  const url = "https://us.sms.api.sinch.com/xms/v1/" + accessKey + "/batches";
-  
+  const url = `https://us.sms.api.sinch.com/xms/v1/${accessKey}/batches`;
+
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${secretKey}`,
+        Authorization: `Bearer ${secretKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -49,7 +132,7 @@ async function sendSMS(to: string, message: string): Promise<{ success: boolean;
     });
 
     const result = await response.json();
-    
+
     if (!response.ok) {
       logStep("Sinch API error", { status: response.status, result });
       return { success: false, error: result.text || "Failed to send SMS" };
@@ -63,118 +146,112 @@ async function sendSMS(to: string, message: string): Promise<{ success: boolean;
   }
 }
 
-// Send email via Resend
-async function sendEmail(to: string, name: string): Promise<{ success: boolean; error?: string }> {
+function buildEmailHtml(args: SendBookingArgs): string {
+  const { service_label, service_line, scheduled_at, confirmation_number } = args;
+  const { fullDate, time } = formatScheduledDate(scheduled_at);
+  const instructions =
+    PRE_VISIT_INSTRUCTIONS[service_line || ""] ||
+    PRE_VISIT_INSTRUCTIONS.consult;
+  const firstName = (args.name || "there").trim().split(/\s+/)[0] || "there";
+  const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(CLINIC_ADDRESS)}`;
+  const confLine = confirmation_number
+    ? `<p style="margin: 0 0 8px; color: ${BRAND_CHARCOAL}99; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;">Confirmation #${confirmation_number}</p>`
+    : "";
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
+      <body style="margin: 0; padding: 0; background-color: ${BRAND_BONE}; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: ${BRAND_CHARCOAL};">
+        <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background-color: ${BRAND_BONE};">
+          <tr>
+            <td align="center" style="padding: 32px 16px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 24px rgba(42,40,38,0.08);">
+                <tr>
+                  <td style="background-color: ${BRAND_CHARCOAL}; padding: 40px 32px; text-align: center;">
+                    <p style="margin: 0; color: ${BRAND_CAMEL}; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;">${CLINIC_NAME}</p>
+                    <h1 style="margin: 12px 0 0; color: #ffffff; font-size: 28px; font-weight: 400; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">You're booked.</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 36px 32px 8px;">
+                    ${confLine}
+                    <h2 style="margin: 0 0 16px; color: ${BRAND_CHARCOAL}; font-size: 22px; font-weight: 400; font-family: Georgia, 'Times New Roman', serif;">${service_label}</h2>
+                    <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="margin: 16px 0 24px; background-color: ${BRAND_BONE}; border-left: 3px solid ${BRAND_CAMEL}; border-radius: 6px;">
+                      <tr>
+                        <td style="padding: 18px 20px;">
+                          <p style="margin: 0 0 4px; color: ${BRAND_CHARCOAL}99; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">When</p>
+                          <p style="margin: 0 0 14px; color: ${BRAND_CHARCOAL}; font-size: 16px; font-weight: 600;">${fullDate}<br/>${time}</p>
+                          <p style="margin: 0 0 4px; color: ${BRAND_CHARCOAL}99; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">Where</p>
+                          <p style="margin: 0; color: ${BRAND_CHARCOAL}; font-size: 15px;">${CLINIC_ADDRESS}<br/><a href="${mapUrl}" style="color: ${BRAND_CAMEL}; text-decoration: none;">Get directions →</a></p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin: 0 0 8px; color: ${BRAND_CHARCOAL}99; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">Before your visit</p>
+                    <ul style="margin: 0 0 24px; padding-left: 20px; color: ${BRAND_CHARCOAL}; font-size: 14px; line-height: 1.6;">
+                      ${instructions.map((i) => `<li>${i}</li>`).join("")}
+                    </ul>
+
+                    <p style="margin: 0 0 8px; color: ${BRAND_CHARCOAL}; font-size: 15px;">Hi ${firstName},</p>
+                    <p style="margin: 0 0 24px; color: ${BRAND_CHARCOAL}; font-size: 15px; line-height: 1.6;">We've got you on the calendar. If you need to change anything, just call us at <a href="tel:${CLINIC_PHONE_RAW}" style="color: ${BRAND_CAMEL}; text-decoration: none;">${CLINIC_PHONE}</a>.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 32px 36px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" width="100%">
+                      <tr>
+                        <td align="center">
+                          <a href="tel:${CLINIC_PHONE_RAW}" style="display: inline-block; padding: 12px 28px; background-color: ${BRAND_CHARCOAL}; color: ${BRAND_CAMEL}; text-decoration: none; font-size: 14px; letter-spacing: 0.08em; border-radius: 4px;">Reschedule by phone</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="background-color: ${BRAND_BONE}; padding: 20px 32px; text-align: center; border-top: 1px solid #e7dfd0;">
+                    <p style="margin: 0; color: ${BRAND_CHARCOAL}99; font-size: 12px;">${CLINIC_NAME} · ${CLINIC_ADDRESS} · ${CLINIC_PHONE}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>`;
+}
+
+async function sendEmail(args: SendBookingArgs): Promise<{ success: boolean; error?: string }> {
   const resendApiKey = Deno.env.get("RESEND_API_KEY");
-  
+
   if (!resendApiKey) {
     logStep("Resend API key not configured - skipping email");
     return { success: false, error: "Resend API key not configured" };
   }
 
+  const { fullDate, time } = formatScheduledDate(args.scheduled_at);
+  const subject = `Confirmed: ${args.service_label} · ${fullDate} at ${time}`;
+
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${resendApiKey}`,
+        Authorization: `Bearer ${resendApiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
-        to: [to],
-        subject: "Your Clinical Strategy Session is Confirmed!",
-        html: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          </head>
-          <body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f5f5f5;">
-            <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background-color: #f5f5f5;">
-              <tr>
-                <td style="padding: 40px 20px;">
-                  <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                    
-                    <!-- Header -->
-                    <tr>
-                      <td style="background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%); padding: 40px 30px; text-align: center;">
-                        <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Booking Confirmed! ✓</h1>
-                      </td>
-                    </tr>
-
-                    <!-- Content -->
-                    <tr>
-                      <td style="padding: 40px 30px;">
-                        <p style="margin: 0 0 20px; font-size: 18px; color: #333333; line-height: 1.6;">
-                          Hi ${name || 'there'},
-                        </p>
-                        <p style="margin: 0 0 20px; font-size: 16px; color: #555555; line-height: 1.8;">
-                          Great news! Your <strong>Clinical Strategy Session</strong> has been scheduled with Elevated Health Augusta.
-                        </p>
-                        
-                        <!-- Info Box -->
-                        <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="margin: 30px 0; background-color: #f0f7ff; border-radius: 8px; border-left: 4px solid #c9a961;">
-                          <tr>
-                            <td style="padding: 20px;">
-                              <p style="margin: 0 0 10px; font-size: 14px; color: #666666;">
-                                <strong style="color: #1a365d;">What to Expect:</strong>
-                              </p>
-                              <ul style="margin: 0; padding-left: 20px; color: #555555; font-size: 14px; line-height: 1.8;">
-                                <li>45-minute personalized consultation</li>
-                                <li>Comprehensive health assessment</li>
-                                <li>Custom treatment recommendations</li>
-                                <li>Q&A with our clinical team</li>
-                              </ul>
-                            </td>
-                          </tr>
-                        </table>
-
-                        <p style="margin: 20px 0; font-size: 16px; color: #555555; line-height: 1.8;">
-                          Please arrive <strong>10 minutes early</strong> to complete any necessary paperwork. You'll receive a calendar reminder before your appointment.
-                        </p>
-
-                        <!-- CTA Button -->
-                        <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="margin: 30px 0;">
-                          <tr>
-                            <td style="text-align: center;">
-                              <a href="https://www.elevatedhealthaugusta.com" style="display: inline-block; padding: 14px 40px; background: linear-gradient(135deg, #c9a961 0%, #d4b87a 100%); color: #1a365d; text-decoration: none; font-weight: 600; font-size: 16px; border-radius: 8px;">
-                                Visit Our Website
-                              </a>
-                            </td>
-                          </tr>
-                        </table>
-
-                        <p style="margin: 20px 0 0; font-size: 14px; color: #888888; line-height: 1.6;">
-                          Need to reschedule? Call us at <a href="tel:+17067603470" style="color: #c9a961; text-decoration: none;">(706) 760-3470</a>
-                        </p>
-                      </td>
-                    </tr>
-
-                    <!-- Footer -->
-                    <tr>
-                      <td style="background-color: #f9f9f9; padding: 25px 30px; text-align: center; border-top: 1px solid #eeeeee;">
-                        <p style="margin: 0 0 10px; font-size: 14px; color: #666666;">
-                          <strong>Elevated Health Augusta</strong>
-                        </p>
-                        <p style="margin: 0; font-size: 12px; color: #999999;">
-                          7013 Evans Town Center Blvd, Suite 203 • Evans, GA 30809<br>
-                          <a href="tel:+17067603470" style="color: #c9a961; text-decoration: none;">(706) 760-3470</a>
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </body>
-          </html>
-        `,
+        from: FROM_ADDRESS,
+        to: [args.email],
+        subject,
+        html: buildEmailHtml(args),
       }),
     });
 
     const result = await response.json();
-    
+
     if (!response.ok) {
       logStep("Resend API error", { status: response.status, result });
       return { success: false, error: result.message || "Failed to send email" };
@@ -188,6 +265,17 @@ async function sendEmail(to: string, name: string): Promise<{ success: boolean; 
   }
 }
 
+function buildSmsBody(args: SendBookingArgs): string {
+  const { short, time } = formatScheduledDate(args.scheduled_at);
+  const firstName = (args.name || "").trim().split(/\s+/)[0] || "Hi";
+  // Single-segment GSM-7 budget is 160 chars; we aim under 160.
+  return (
+    `${firstName}: ${args.service_label} confirmed for ${short} ${time} at ` +
+    `Elevated Health Augusta, 7013 Evans Town Center Blvd, Suite 203. ` +
+    `Reschedule: ${CLINIC_PHONE}.`
+  );
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -196,52 +284,71 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const body = await req.json();
-    const { 
-      name,
-      email,
-      phone,
-      source = "portal"
-    } = body;
+    const body = (await req.json()) as Partial<SendBookingArgs>;
+    const args: SendBookingArgs = {
+      name: body.name ?? null,
+      email: body.email ?? null,
+      phone: body.phone ?? null,
+      service_label: body.service_label || "Your appointment",
+      service_line: body.service_line || "consult",
+      scheduled_at: body.scheduled_at || new Date().toISOString(),
+      duration_minutes: body.duration_minutes || 30,
+      confirmation_number: body.confirmation_number ?? null,
+    };
 
-    logStep("Request received", { name, email, phone: phone ? "provided" : "none", source });
+    if (!body.scheduled_at) {
+      logStep("Missing scheduled_at — caller did not supply visit time");
+    }
+
+    logStep("Request received", {
+      hasEmail: Boolean(args.email),
+      hasPhone: Boolean(args.phone),
+      service_label: args.service_label,
+      scheduled_at: args.scheduled_at,
+    });
 
     const results = {
       email: { success: false, error: null as string | null },
       sms: { success: false, error: null as string | null },
     };
 
-    // Send confirmation email if email provided
-    if (email) {
-      const emailResult = await sendEmail(email, name);
-      results.email = { success: emailResult.success, error: emailResult.error || null };
+    if (args.email) {
+      const emailResult = await sendEmail(args);
+      results.email = {
+        success: emailResult.success,
+        error: emailResult.error || null,
+      };
     } else {
       results.email = { success: false, error: "No email provided" };
     }
 
-    // Send confirmation SMS if phone provided
-    if (phone) {
-      const smsMessage = 
-        `Hi ${name || 'there'}! Your Clinical Strategy Session with Elevated Health Augusta is confirmed. ` +
-        `Please arrive 10 min early. Need to reschedule? Call (706) 760-3470. See you soon!`;
-      
-      const smsResult = await sendSMS(phone, smsMessage);
-      results.sms = { success: smsResult.success, error: smsResult.error || null };
+    if (args.phone) {
+      try {
+        const smsResult = await sendSMS(args.phone, buildSmsBody(args));
+        results.sms = {
+          success: smsResult.success,
+          error: smsResult.error || null,
+        };
+      } catch (e) {
+        results.sms = { success: false, error: String(e) };
+      }
     } else {
       results.sms = { success: false, error: "No phone provided" };
     }
 
     const overallSuccess = results.email.success || results.sms.success;
-    logStep("Complete", { emailSent: results.email.success, smsSent: results.sms.success });
-
-    return new Response(JSON.stringify({
-      success: overallSuccess,
-      results,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
+    logStep("Complete", {
+      emailSent: results.email.success,
+      smsSent: results.sms.success,
     });
 
+    return new Response(
+      JSON.stringify({ success: overallSuccess, results }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      },
+    );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
