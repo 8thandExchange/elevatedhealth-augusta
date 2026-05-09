@@ -90,12 +90,15 @@ export default function PublicIntake() {
       }
 
       try {
-        // Look up patient by token (public query - relies on RLS being open for this lookup)
-        const { data, error: lookupError } = await supabase
-          .from("patients")
-          .select("id, full_name, email, phone, primary_program, service_interests")
-          .eq("intake_token", token)
-          .maybeSingle();
+        // Look up patient by token via the SECURITY DEFINER RPC. The prior
+        // direct table query relied on a permissive RLS policy that allowed
+        // dumping every patient row with an active token (security audit
+        // 2026-05-08, finding F-2). The RPC enforces an exact token-value
+        // match server-side and returns at most one row.
+        const { data: rows, error: lookupError } = await supabase.rpc(
+          "get_patient_by_intake_token",
+          { _token: token },
+        );
 
         if (lookupError) {
           console.error("Token lookup error:", lookupError);
@@ -104,13 +107,16 @@ export default function PublicIntake() {
           return;
         }
 
+        // The RPC returns a setof; in practice 0 or 1 row.
+        const data = Array.isArray(rows) ? rows[0] : rows;
+
         if (!data) {
           setError("This intake link is invalid or has already been used. Please contact the clinic for a new link.");
           setLoading(false);
           return;
         }
 
-        setPatient(data);
+        setPatient(data as PatientInfo);
         if (data.phone) {
           setFormData(prev => ({ ...prev, phone: data.phone || "" }));
         }
