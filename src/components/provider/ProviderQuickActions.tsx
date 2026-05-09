@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Package, CreditCard, CheckCircle, MessageSquare, Mail, FileText, UserPlus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Package, CreditCard, CheckCircle, MessageSquare, Mail, FileText, UserPlus, BookOpen } from "lucide-react";
 import QuickSendKitModal from "./QuickSendKitModal";
 import QuickPaymentModal from "./QuickPaymentModal";
 import QuickLabsReviewedModal from "./QuickLabsReviewedModal";
@@ -37,6 +38,13 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
               </Button>
             }
           />
+
+          <Button variant="outline" size="sm" className="whitespace-nowrap" asChild>
+            <Link to="/clinical-protocols">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Clinical Protocols
+            </Link>
+          </Button>
           
           <Button
             variant="outline"

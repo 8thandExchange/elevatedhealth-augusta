@@ -263,6 +263,160 @@ export type Database = {
           },
         ]
       }
+      clinical_protocol_executions: {
+        Row: {
+          adverse_event_flagged: boolean
+          appointment_id: string | null
+          created_at: string
+          executed_at: string
+          executed_by: string
+          id: string
+          notes: string | null
+          patient_id: string
+          protocol_version_id: string
+        }
+        Insert: {
+          adverse_event_flagged?: boolean
+          appointment_id?: string | null
+          created_at?: string
+          executed_at?: string
+          executed_by: string
+          id?: string
+          notes?: string | null
+          patient_id: string
+          protocol_version_id: string
+        }
+        Update: {
+          adverse_event_flagged?: boolean
+          appointment_id?: string | null
+          created_at?: string
+          executed_at?: string
+          executed_by?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          protocol_version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_protocol_executions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_protocol_executions_protocol_version_id_fkey"
+            columns: ["protocol_version_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_protocol_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_protocol_versions: {
+        Row: {
+          authored_by: string | null
+          body_markdown: string
+          body_structured: Json
+          created_at: string
+          id: string
+          notes_for_reviewer: Json
+          protocol_id: string
+          retired_at: string | null
+          signature_hash: string | null
+          signed_at: string | null
+          signed_by: string | null
+          status: string
+          updated_at: string
+          version_number: number
+        }
+        Insert: {
+          authored_by?: string | null
+          body_markdown: string
+          body_structured?: Json
+          created_at?: string
+          id?: string
+          notes_for_reviewer?: Json
+          protocol_id: string
+          retired_at?: string | null
+          signature_hash?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          status?: string
+          updated_at?: string
+          version_number: number
+        }
+        Update: {
+          authored_by?: string | null
+          body_markdown?: string
+          body_structured?: Json
+          created_at?: string
+          id?: string
+          notes_for_reviewer?: Json
+          protocol_id?: string
+          retired_at?: string | null
+          signature_hash?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          status?: string
+          updated_at?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_protocol_versions_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_protocols"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_protocols: {
+        Row: {
+          category: string
+          created_at: string
+          current_version_id: string | null
+          id: string
+          is_active: boolean
+          service_type: string[]
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          current_version_id?: string | null
+          id?: string
+          is_active?: boolean
+          service_type?: string[]
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_version_id?: string | null
+          id?: string
+          is_active?: boolean
+          service_type?: string[]
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_protocols_current_version_fkey"
+            columns: ["current_version_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_protocol_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       communication_logs: {
         Row: {
           body_preview: string | null
@@ -2294,6 +2448,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      sign_clinical_protocol_version: {
+        Args: { version_id: string }
+        Returns: Database["public"]["Tables"]["clinical_protocol_versions"]["Row"]
       }
     }
     Enums: {

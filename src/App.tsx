@@ -65,6 +65,9 @@ import EmailTemplates from "./pages/EmailTemplates";
 import PublicIntake from "./pages/PublicIntake";
 import InsuranceReimbursement from "./pages/InsuranceReimbursement";
 import OfficeSchedule from "./pages/OfficeSchedule";
+import ClinicalProtocolLibrary from "./pages/ClinicalProtocolLibrary";
+import ClinicalProtocolDetail from "./pages/ClinicalProtocolDetail";
+import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor";
 
 const queryClient = new QueryClient();
 
@@ -248,6 +251,21 @@ const App = () => {
           <Route path="/admin/email-templates" element={
             <ProviderLayout title="Email Templates" subtitle="Template Management" showNavbar={false}>
               <EmailTemplates />
+            </ProviderLayout>
+          } />
+          <Route path="/clinical-protocols" element={
+            <ProviderLayout title="Clinical Protocols" subtitle="Standing orders & SOPs" showNavbar={true}>
+              <ClinicalProtocolLibrary />
+            </ProviderLayout>
+          } />
+          <Route path="/clinical-protocols/:slug/edit" element={
+            <ProviderLayout title="Edit clinical protocol" subtitle="Admin only" showNavbar={true}>
+              <ClinicalProtocolEditor />
+            </ProviderLayout>
+          } />
+          <Route path="/clinical-protocols/:slug" element={
+            <ProviderLayout title="Clinical protocol" subtitle="Standing order" showNavbar={true}>
+              <ClinicalProtocolDetail />
             </ProviderLayout>
           } />
           

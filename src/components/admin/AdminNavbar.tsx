@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -160,6 +160,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg z-[100]">
               <DropdownMenuItem asChild>
+                <Link to="/clinical-protocols" className="cursor-pointer gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Clinical Protocols
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to="/admin/email-templates" className="cursor-pointer gap-2">
                   <Mail className="w-4 h-4" />
                   Email Templates
@@ -250,6 +256,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 </DropdownMenuItem>
               )}
               
+              <DropdownMenuItem asChild>
+                <Link to="/clinical-protocols" className="cursor-pointer gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Clinical Protocols
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/admin/email-templates" className="cursor-pointer gap-2">
                   <Mail className="w-4 h-4" />
