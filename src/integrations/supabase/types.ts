@@ -2623,29 +2623,20 @@ export type Database = {
     Functions: {
       dispense_from_lot: {
         Args: {
+          p_appointment_id?: string
           p_lot_id: string
+          p_notes?: string
+          p_patient_id?: string
+          p_protocol_execution_id?: string
           p_quantity: number
+          p_reason?: string
           p_transaction_type: string
-          p_patient_id?: string | null
-          p_appointment_id?: string | null
-          p_protocol_execution_id?: string | null
-          p_notes?: string | null
-          p_reason?: string | null
         }
         Returns: string
       }
-      expire_inventory_lots: {
-        Args: never
-        Returns: number
-      }
-      get_active_lot_for_sku: {
-        Args: { p_sku_id: string }
-        Returns: string
-      }
-      get_inventory_status: {
-        Args: { p_sku_id: string }
-        Returns: Json
-      }
+      expire_inventory_lots: { Args: never; Returns: number }
+      get_active_lot_for_sku: { Args: { p_sku_id: string }; Returns: string }
+      get_inventory_status: { Args: { p_sku_id: string }; Returns: Json }
       get_providers_directory: {
         Args: never
         Returns: {
