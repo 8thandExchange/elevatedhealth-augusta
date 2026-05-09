@@ -1,3 +1,23 @@
+/**
+ * create-glp1-starter-checkout
+ *
+ * Creates a one-time Stripe Checkout Session for the GLP-1 Starter Month
+ * product and pre-stamps a `consultation_bookings` row.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = false (intentionally — public weight-loss storefront)
+ *   - The pre-stamped consultation_bookings row contains ONLY:
+ *       customer_email, customer_name, service_type='glp1_starter',
+ *       status='pending_payment', stripe_session_id, amount_paid
+ *     No clinical data. The row is reconciled downstream when
+ *     stripe-webhook fires.
+ *   - We no longer pre-stamp a row when the caller did not supply an
+ *     email (the prior `customer_email || "guest@pending.com"` fallback
+ *     allowed table-spam from anyone hitting the URL with no body).
+ *
+ * Audit decision: keep verify_jwt=false. Public storefront flow with no
+ * clinical secret in the pre-stamped row.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
@@ -71,22 +91,28 @@ serve(async (req) => {
     });
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
-    // Record the pending booking in consultation_bookings
-    const { error: insertError } = await supabase
-      .from("consultation_bookings")
-      .insert({
-        customer_email: customerEmail || "guest@pending.com",
-        customer_name: customerName || null,
-        status: "pending_payment",
-        service_type: "glp1_starter",
-        stripe_session_id: session.id,
-        amount_paid: 349,
-      });
+    // Only pre-stamp a booking row if we actually have a customer email.
+    // Anonymous "guest@pending.com" rows are spam vectors and cannot be
+    // reconciled by stripe-webhook anyway.
+    if (customerEmail) {
+      const { error: insertError } = await supabase
+        .from("consultation_bookings")
+        .insert({
+          customer_email: customerEmail,
+          customer_name: customerName || null,
+          status: "pending_payment",
+          service_type: "glp1_starter",
+          stripe_session_id: session.id,
+          amount_paid: 349,
+        });
 
-    if (insertError) {
-      logStep("Warning: Failed to insert booking record", { error: insertError.message });
+      if (insertError) {
+        logStep("Warning: Failed to insert booking record", { error: insertError.message });
+      } else {
+        logStep("Booking record created");
+      }
     } else {
-      logStep("Booking record created");
+      logStep("Skipping consultation_bookings insert (no customerEmail)");
     }
 
     return new Response(JSON.stringify({ url: session.url }), {

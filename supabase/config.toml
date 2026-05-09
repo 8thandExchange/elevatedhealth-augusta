@@ -3,12 +3,6 @@ project_id = "szcbfgnucdhwtccsolru"
 [functions.chat]
 verify_jwt = false
 
-[functions.send-hormone-addon-activation]
-verify_jwt = false
-
-[functions.create-hormone-addon-checkout]
-verify_jwt = false
-
 [functions.send-labs-reviewed-sms]
 verify_jwt = false
 
@@ -16,9 +10,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-glp1-activation-sms]
-verify_jwt = false
-
-[functions.send-hormone-addon-sms]
 verify_jwt = false
 
 [functions.voice-session]
@@ -40,9 +31,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-labcorp-requisition]
-verify_jwt = false
-
-[functions.create-hormone-checkout]
 verify_jwt = false
 
 [functions.verify-hormone-payment]
@@ -108,12 +96,18 @@ verify_jwt = false
 [functions.get-business-metrics]
 verify_jwt = false
 
+# send-welcome-email locked down 2026-05-08 (audit R-5). Caller must
+# present a valid JWT AND have role staff or admin. See function comment.
 [functions.send-welcome-email]
-verify_jwt = false
+verify_jwt = true
 
+# send-intake-reminder is invoked by Supabase Scheduled Functions only.
+# Auth is enforced via the X-Cron-Secret header inside the function so
+# the scheduled trigger keeps working without a JWT. Audit R-5.
 [functions.send-intake-reminder]
 verify_jwt = false
 
+# send-stale-intake-alert — same cron-secret pattern as send-intake-reminder.
 [functions.send-stale-intake-alert]
 verify_jwt = false
 
@@ -129,8 +123,10 @@ verify_jwt = false
 [functions.send-flagged-patient-notification]
 verify_jwt = false
 
+# send-rx-fax locked down 2026-05-08 (audit R-5). Caller must present a
+# valid JWT AND have role staff or admin. See function header comment.
 [functions.send-rx-fax]
-verify_jwt = false
+verify_jwt = true
 
 [functions.sinch-fax-webhook]
 verify_jwt = false
@@ -156,12 +152,6 @@ verify_jwt = false
 [functions.verify-total-body-payment]
 verify_jwt = false
 
-[functions.send-kit-payment-link]
-verify_jwt = false
-
-[functions.check-consultation-followup]
-verify_jwt = false
-
 [functions.create-hair-restoration-checkout]
 verify_jwt = false
 
@@ -171,8 +161,10 @@ verify_jwt = false
 [functions.provider-chat]
 verify_jwt = false
 
+# send-appointment-reminder locked down 2026-05-08 (audit R-5). Caller
+# must present a valid JWT AND have role staff or admin.
 [functions.send-appointment-reminder]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-to-gohighlevel]
 verify_jwt = false
@@ -189,8 +181,10 @@ verify_jwt = false
 [functions.send-alacarte-payment-sms]
 verify_jwt = false
 
+# generate-consent-pdf locked down 2026-05-08 (audit R-5). Caller must
+# present a valid JWT AND be either the patient themselves or staff/admin.
 [functions.generate-consent-pdf]
-verify_jwt = false
+verify_jwt = true
 
 [functions.create-glp1-starter-checkout]
 verify_jwt = false
@@ -208,9 +202,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-labs-reviewed-notification]
-verify_jwt = false
-
-[functions.send-kit-payment-sms]
 verify_jwt = false
 
 [functions.send-consultation-invite-sms]
@@ -233,3 +224,15 @@ verify_jwt = false
 
 [functions.send-booking-confirmation]
 verify_jwt = false
+
+# recommend-lab-panel locked down 2026-05-08 (audit R-5). Clinical
+# decision-support tool — caller must be staff/admin.
+[functions.recommend-lab-panel]
+verify_jwt = true
+
+# request-hormone-review created 2026-05-08 (audit R-10). Patients call
+# this to enqueue a provider review of their latest symptom log. The
+# function looks up the symptom_log, validates patient ownership, then
+# inserts the orders row server-side via service role.
+[functions.request-hormone-review]
+verify_jwt = true

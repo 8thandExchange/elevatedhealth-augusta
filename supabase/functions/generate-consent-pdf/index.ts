@@ -1,3 +1,23 @@
+/**
+ * generate-consent-pdf
+ *
+ * Returns the rendered consent HTML for a patient (or emails it). Reads
+ * full PHI from the patients table.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = true in supabase/config.toml
+ *   - Caller MUST present a valid Supabase JWT
+ *   - Caller is allowed when EITHER:
+ *       (a) the caller is the patient themselves
+ *           (patients.user_id = auth.uid() AND patients.id = patientId), OR
+ *       (b) the caller has role = 'staff' OR role = 'admin'
+ *   - Anonymous and other-patient callers are rejected with 403.
+ *
+ * Background: previously anyone reachable to the function URL could submit
+ * any patientId and receive that patient's full consent PDF including
+ * full_name, dob, email, phone, address. Locking to patient-self or
+ * staff/admin closes that exfiltration vector.
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
@@ -6,6 +26,48 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+async function authorizePatientOrStaff(
+  req: Request,
+  patientId: string,
+): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return { ok: false, status: 401, error: "Missing Authorization header" };
+  }
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+  const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+  if (userErr || !userData?.user) {
+    return { ok: false, status: 401, error: "Invalid or expired session" };
+  }
+  const user_id = userData.user.id;
+
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  const { data: roles } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user_id);
+  const isStaffOrAdmin = (roles || []).some(
+    (r) => r.role === "staff" || r.role === "admin",
+  );
+  if (isStaffOrAdmin) return { ok: true };
+
+  const { data: patientRow } = await supabaseAdmin
+    .from("patients")
+    .select("id")
+    .eq("id", patientId)
+    .eq("user_id", user_id)
+    .maybeSingle();
+  if (patientRow) return { ok: true };
+
+  return { ok: false, status: 403, error: "Not authorized for this patient" };
+}
 
 // Input validation schema
 const consentPdfRequestSchema = z.object({
@@ -33,7 +95,15 @@ serve(async (req) => {
     }
     
     const { patientId, action } = validationResult.data;
-    
+
+    const authResult = await authorizePatientOrStaff(req, patientId);
+    if (!authResult.ok) {
+      return new Response(
+        JSON.stringify({ error: authResult.error }),
+        { status: authResult.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     console.log(`[generate-consent-pdf] Processing validated request for patient: ${patientId}, action: ${action}`);
 
     // Initialize Supabase client

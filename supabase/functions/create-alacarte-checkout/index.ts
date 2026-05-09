@@ -1,3 +1,27 @@
+/**
+ * create-alacarte-checkout
+ *
+ * Creates a Stripe Checkout Session for one of the à la carte products
+ * (testosterone cream, Bi-Est, progesterone, follow-up consult, lab panel)
+ * and pre-stamps a `consultation_bookings` row with status='pending_payment'
+ * so the post-payment surface (verify-alacarte-payment + AlaCartePaymentSuccess)
+ * has a row to attach the booking flow to.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = false (intentionally — public storefront flow)
+ *   - The pre-stamped consultation_bookings row contains ONLY:
+ *       customer_email, customer_name, service_type=`alacarte_${key}`,
+ *       status='pending_payment', stripe_session_id, amount_paid, notes
+ *     i.e. NO clinical data, no PHI beyond what the user typed in.
+ *   - The row is reconciled by verify-alacarte-payment which validates
+ *     the Stripe session before flipping status='paid'. Pre-payment rows
+ *     left orphaned are harmless (no money changes hands until Stripe
+ *     confirms). They can be cleaned up by a janitor later if desired.
+ *
+ * Audit decision: keep verify_jwt=false. The function is reachable only
+ * from the public pricing surfaces and the pre-stamped row contains no
+ * clinical secrets.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
@@ -117,7 +141,7 @@ serve(async (req) => {
         customer_email: patient_email,
         customer_name: patient_name || null,
         service_type: `alacarte_${product_key}`,
-        status: "pending",
+        status: "pending_payment",
         stripe_session_id: session.id,
         amount_paid: product.amount,
         notes: `À la carte order: ${product.name}`,

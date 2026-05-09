@@ -1,4 +1,4 @@
-import { Stethoscope, TestTube, Sparkles, Clock, Send, Check, AlertTriangle } from "lucide-react";
+import { Stethoscope, TestTube, Sparkles, Clock, Check, AlertTriangle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,6 @@ interface PatientStatusCardProps {
   patientName: string;
   patientEmail: string | null;
   onboardingStatus: string | null;
-  onSendKitLink?: () => void;
   onMarkConsultComplete?: () => void;
   onMarkLabsReviewed?: () => void;
   onApproveProtocol?: () => void;
@@ -21,7 +20,6 @@ export const PatientStatusCard = ({
   patientName,
   patientEmail,
   onboardingStatus,
-  onSendKitLink,
   onMarkConsultComplete,
   onMarkLabsReviewed,
   onApproveProtocol,
@@ -71,14 +69,10 @@ export const PatientStatusCard = ({
         return {
           step: 1,
           label: "Session Complete",
-          description: "Send the patient their lab kit payment link.",
+          description: "Patient has completed their consult. Awaiting next clinical action.",
           icon: <Check className="w-5 h-5" />,
           color: "green",
-          action: {
-            label: "Send Lab Kit Link",
-            onClick: onSendKitLink,
-            variant: "default" as const,
-          },
+          action: null,
         };
 
       case "labs_paid":

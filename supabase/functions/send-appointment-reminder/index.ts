@@ -1,3 +1,21 @@
+/**
+ * send-appointment-reminder
+ *
+ * Sends an SMS appointment reminder via Sinch. Two modes:
+ *   - Single patient (patient_phone supplied)
+ *   - Batch (send_to_all_tomorrow=true) — texts all patients with
+ *     scheduled status
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = true in supabase/config.toml
+ *   - Caller MUST present a valid Supabase JWT
+ *   - Caller MUST have role = 'staff' OR role = 'admin'
+ *
+ * Background: previously anyone could trigger SMS to any phone number
+ * (single mode) or to every scheduled patient (batch mode). Lock down to
+ * staff/admin since this is a staff-triggered operational tool, not a
+ * patient-facing surface.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
@@ -5,6 +23,38 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+async function requireStaffOrAdmin(req: Request): Promise<
+  | { ok: true; user_id: string }
+  | { ok: false; status: number; error: string }
+> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return { ok: false, status: 401, error: "Missing Authorization header" };
+  }
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+  const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+  if (userErr || !userData?.user) {
+    return { ok: false, status: 401, error: "Invalid or expired session" };
+  }
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data: roles } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userData.user.id);
+  const isStaffOrAdmin = (roles || []).some(
+    (r) => r.role === "staff" || r.role === "admin",
+  );
+  if (!isStaffOrAdmin) {
+    return { ok: false, status: 403, error: "Staff or admin role required" };
+  }
+  return { ok: true, user_id: userData.user.id };
+}
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -85,8 +135,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const authResult = await requireStaffOrAdmin(req);
+  if (!authResult.ok) {
+    return new Response(JSON.stringify({ error: authResult.error }), {
+      status: authResult.status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   try {
-    logStep("Function started");
+    logStep("Function started", { triggered_by: authResult.user_id });
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -153,9 +211,9 @@ serve(async (req) => {
 
         const programMap: Record<string, string> = {
           hormone: "hormone consultation",
-          ketamine: "ketamine consultation",
           weightloss: "weight loss consultation",
           peptide: "peptide therapy consultation",
+          iv: "IV therapy appointment",
         };
         const programName = programMap[patient.primary_program || "hormone"] || "consultation";
 

@@ -58,7 +58,6 @@ import SupplementPlanCard from "@/components/provider/SupplementPlanCard";
 import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
 import MyScheduleManager from "@/components/provider/MyScheduleManager";
 import PatientStatusCard from "@/components/provider/PatientStatusCard";
-import { SendKitLinkCard } from "@/components/provider/SendKitLinkCard";
 import MembershipAssignmentCard from "@/components/provider/MembershipAssignmentCard";
 import ProviderAssistant from "@/components/provider/ProviderAssistant";
 
@@ -2133,10 +2132,6 @@ const ProviderDashboard = () => {
                     toast.error(error.message);
                   }
                 }}
-                onSendKitLink={() => {
-                  // SendKitLinkCard is shown below
-                  toast.info("Use the Send Kit Link card below to send payment link.");
-                }}
                 onMarkLabsReviewed={async () => {
                   try {
                     await supabase.from("patients").update({ 
@@ -2170,18 +2165,6 @@ const ProviderDashboard = () => {
                   }
                 }}
               />
-
-              {/* Send Kit Link Card - Show when consultation is complete */}
-              {(selectedPatient.patient.onboarding_status === "consultation_paid" ||
-                selectedPatient.patient.onboarding_status === "consultation_complete" || 
-                selectedPatient.patient.onboarding_status === "intake_complete") && 
-                selectedPatient.patient.email && (
-                <SendKitLinkCard
-                  patientId={selectedPatient.patient.id}
-                  patientName={selectedPatient.patient.full_name}
-                  patientEmail={selectedPatient.patient.email}
-                />
-              )}
 
               {/* Safety Flags */}
               {(selectedPatient.patient.safety_flags?.length > 0 || selectedPatient.patient.risk_status === "high_risk_review") && (

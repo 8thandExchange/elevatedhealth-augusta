@@ -1,3 +1,34 @@
+/**
+ * get-available-slots
+ *
+ * Returns bookable time slots for the SlotPicker. Reads provider_schedules,
+ * schedule_blocks, schedule_exceptions, and appointments to compute live
+ * availability across the next N days.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = true in supabase/config.toml (existing — unchanged)
+ *   - No additional role check: any authenticated user can compute slots,
+ *     because both anonymous storefront flows (post-payment confirmation)
+ *     and patient-portal flows need this.
+ *
+ * KNOWN LEAK (deferred to a follow-up):
+ *   The response shape currently includes the raw `provider_id` per slot
+ *   so the SlotPicker can pass it back to book-iv-appointment /
+ *   book-consult-appointment. This exposes provider identity to any
+ *   caller, including unauthenticated flows that reach this fn through
+ *   the post-payment confirmation surfaces.
+ *
+ *   The right fix is an opaque slot_token (HMAC of provider_id + start
+ *   time, signed with a server secret). Booking edge fns would decode
+ *   the token and validate the HMAC. That requires:
+ *     1. New shared secret (SLOT_SIGNING_KEY env var)
+ *     2. Token issuance here, validation in book-iv-appointment and
+ *        book-consult-appointment
+ *     3. SlotPicker + ScheduleConsult.tsx + IVPaymentSuccess.tsx update
+ *        to pass slot_token instead of {provider_id, start}
+ *   That's a coordinated change across ~5 files. Tracked as audit doc
+ *   follow-up under R-5 / get-available-slots.
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 

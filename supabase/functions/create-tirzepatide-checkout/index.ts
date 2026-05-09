@@ -1,3 +1,16 @@
+/**
+ * create-tirzepatide-checkout
+ *
+ * Creates a Stripe subscription Checkout Session for compounded tirzepatide
+ * (member or non-member tier) and pre-stamps a `consultation_bookings` row.
+ * Same design as create-semaglutide-checkout — see that function's header
+ * comment for the audit rationale.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = false (intentionally — public weight-loss storefront)
+ *   - Patient read is scoped to `elevated_membership_status, email` only.
+ *   - Response shape is `{ url }` — no patient PHI.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";

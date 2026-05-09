@@ -1,5 +1,22 @@
-// AI lab panel recommender — uses Lovable AI Gateway (Gemini) to suggest a
-// LabCorp panel based on patient intake, gender, age, symptoms, and meds.
+/**
+ * recommend-lab-panel
+ *
+ * AI lab panel recommender — uses Lovable AI Gateway (Gemini) to suggest a
+ * LabCorp panel based on patient intake, gender, age, symptoms, and meds.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = true in supabase/config.toml
+ *   - Caller MUST present a valid Supabase JWT
+ *   - Caller MUST have role = 'staff' OR role = 'admin'
+ *
+ * Background: this is a clinical-decision-support tool that reads patient
+ * PHI (full_name, dob, gender, primary_program, medical_history,
+ * medications) and writes a recommendation snapshot back to the patient
+ * row. It is for provider use, not patient self-service. Previously
+ * anyone could submit any patient_id and get the AI's panel recommendation
+ * for that patient, which both leaks PHI to the AI provider and lets a
+ * caller exhaust the LOVABLE_API_KEY budget.
+ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -7,6 +24,38 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+async function requireStaffOrAdmin(req: Request): Promise<
+  | { ok: true; user_id: string }
+  | { ok: false; status: number; error: string }
+> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return { ok: false, status: 401, error: "Missing Authorization header" };
+  }
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+  const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+  if (userErr || !userData?.user) {
+    return { ok: false, status: 401, error: "Invalid or expired session" };
+  }
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data: roles } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userData.user.id);
+  const isStaffOrAdmin = (roles || []).some(
+    (r) => r.role === "staff" || r.role === "admin",
+  );
+  if (!isStaffOrAdmin) {
+    return { ok: false, status: 403, error: "Staff or admin role required" };
+  }
+  return { ok: true, user_id: userData.user.id };
+}
 
 const LAB_CATALOG = `
 Available LabCorp test codes (use these EXACTLY):
@@ -31,7 +80,7 @@ Available LabCorp test codes (use these EXACTLY):
 - 010363  Cortisol AM
 `;
 
-const SYSTEM = `You are a clinical lab ordering assistant for Réveil Health.
+const SYSTEM = `You are a clinical lab ordering assistant for Elevated Health Augusta.
 Recommend a focused LabCorp panel for this patient. Return ONLY structured data.
 Rules:
 - Male patients on TRT: ALWAYS include CBC, CMP, PSA, Testosterone Total+Free, Estradiol.
@@ -45,6 +94,14 @@ ${LAB_CATALOG}`;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
+
+  const authResult = await requireStaffOrAdmin(req);
+  if (!authResult.ok) {
+    return new Response(JSON.stringify({ error: authResult.error }), {
+      status: authResult.status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const { patient_id } = await req.json();

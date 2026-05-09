@@ -1,0 +1,52 @@
+-- ============================================================================
+-- R-10: Drop "Patients can create orders for themselves" on public.orders
+--
+-- Before: an open INSERT policy on public.orders let any authenticated patient
+-- write arbitrary rows into the orders table — including arbitrary
+-- protocol_snapshot JSON. The HormoneJourneyPage.tsx page used this to
+-- enqueue a provider review by inserting a row with status='pending_review'.
+--
+-- The risk: the patient client controlled the entire row shape, so a malicious
+-- patient (or a compromised browser session) could insert orders rows with
+-- crafted protocol_snapshot fields, fake medication names, fake dosing, fake
+-- status values, etc. Even if the orders.insert event triggered no automated
+-- fulfillment, polluted clinical history is a clinical-safety concern.
+--
+-- After: drop the patient self-insert policy. The new edge function
+-- request-hormone-review (verify_jwt = true) is the sanctioned path. It
+-- validates the symptom_log ownership server-side and constructs the orders
+-- row using only the symptom_scores copied from the symptom_log — the
+-- patient cannot inject arbitrary fields.
+--
+-- Coordination: src/pages/HormoneJourneyPage.tsx is updated in the same
+-- commit to call supabase.functions.invoke("request-hormone-review", ...)
+-- instead of supabase.from("orders").insert(...). After this migration
+-- applies and the edge function is deployed, only provider/staff surfaces
+-- (ProviderDashboard, FCCPortalModal) and service-role edge functions
+-- (send-rx-fax, sinch-fax-webhook, verify-neurotransmitter-payment, the new
+-- request-hormone-review) can write to public.orders.
+--
+-- Rollback: see commented block at the bottom of this file.
+-- ============================================================================
+
+DROP POLICY IF EXISTS "Patients can create orders for themselves"
+  ON public.orders;
+
+-- ----------------------------------------------------------------------------
+-- Rollback recipe (do not uncomment in this migration)
+--
+-- BEGIN;
+--   CREATE POLICY "Patients can create orders for themselves"
+--     ON public.orders FOR INSERT
+--     TO authenticated
+--     WITH CHECK (
+--       patient_id IN (
+--         SELECT id FROM public.patients WHERE user_id = auth.uid()
+--       )
+--     );
+-- COMMIT;
+--
+-- After rollback, also revert src/pages/HormoneJourneyPage.tsx to insert
+-- directly (or leave the request-hormone-review path in place — it will
+-- continue to work since service-role inserts bypass RLS).
+-- ----------------------------------------------------------------------------

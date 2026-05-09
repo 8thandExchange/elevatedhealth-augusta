@@ -8,10 +8,21 @@
  * URL. We:
  *   1. Confirm Stripe says the session is paid.
  *   2. Update the consultation_bookings row that create-alacarte-checkout
- *      pre-stamped from status='pending' to status='paid'.
+ *      pre-stamped from status='pending_payment' to status='paid'.
  *   3. Return the booking_id, product key, and product label so the page
  *      can render the correct post-payment surface (medication shipment
  *      confirmation OR a slot picker for follow-up / lab-draw bookings).
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = true in supabase/config.toml (existing — unchanged)
+ *   - The actual auth credential for this function is the Stripe
+ *     `session_id`, which is unguessable and held by the user who just
+ *     completed checkout. We validate the session against Stripe before
+ *     reading or writing any DB row, and only mutate the single
+ *     consultation_bookings row that matches that session id.
+ *   - Worst case if session_id is leaked: the leaker can re-run a
+ *     verification that has no side-effects beyond marking an already-
+ *     paid booking as paid (idempotent).
  *
  * This mirrors verify-consultation-payment for the alacarte flow. We do
  * NOT mutate inventory or fire fulfillment from here — that's

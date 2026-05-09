@@ -129,21 +129,15 @@ const HormoneJourneyPage = () => {
 
     setIsCreatingOrder(true);
     try {
-      const { error } = await supabase.from("orders").insert({
-        patient_id: patient.id,
-        status: "pending_review",
-        protocol_snapshot: {
-          symptom_scores: {
-            estrogen: latestLog.estrogen_score,
-            progesterone: latestLog.progesterone_score,
-            androgen: latestLog.androgen_score,
-            cortisol: latestLog.cortisol_score,
-          },
-          date_requested: new Date().toISOString(),
-        },
-      });
+      const { data, error } = await supabase.functions.invoke(
+        "request-hormone-review",
+        { body: { symptom_log_id: latestLog.id } },
+      );
 
       if (error) throw error;
+      if (!data?.success) {
+        throw new Error(data?.error || "Failed to submit review request");
+      }
       toast.success("Review request submitted! A provider will contact you soon.");
       await loadData();
     } catch (error: any) {

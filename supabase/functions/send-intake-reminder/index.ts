@@ -1,3 +1,25 @@
+/**
+ * send-intake-reminder
+ *
+ * Daily-cron-style email blast reminding patients with stale account_created
+ * status to finish their intake form.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = false (this is a scheduled function with no user context)
+ *   - Caller MUST present a header: `X-Cron-Secret: <CRON_SECRET env var>`
+ *     The secret is shared between the Supabase Scheduled Function trigger
+ *     and this function. Anyone without the secret is rejected with 401.
+ *   - Manual staff trigger from the dashboard should also pass the same
+ *     header (server-side proxy from a staff-gated edge function or a
+ *     dashboard handler that has the secret in its server env).
+ *
+ * Background: previously anyone reachable to the function URL could trigger
+ * a reminder blast to every patient with `account_created` status, reading
+ * patient PHI (full_name, email) in the process. The cron-secret header
+ * pattern lets the scheduled function continue to work while shutting down
+ * the public attack surface. Authenticated staff-only manual paths should
+ * be added as a follow-up.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
@@ -6,12 +28,32 @@ const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cron-secret",
 };
+
+function authorizeCron(req: Request): { ok: true } | { ok: false; status: number; error: string } {
+  const expected = Deno.env.get("CRON_SECRET");
+  if (!expected) {
+    return { ok: false, status: 500, error: "CRON_SECRET not configured on the server" };
+  }
+  const supplied = req.headers.get("X-Cron-Secret");
+  if (!supplied || supplied !== expected) {
+    return { ok: false, status: 401, error: "Invalid or missing X-Cron-Secret header" };
+  }
+  return { ok: true };
+}
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  const authResult = authorizeCron(req);
+  if (!authResult.ok) {
+    return new Response(JSON.stringify({ error: authResult.error }), {
+      status: authResult.status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -50,9 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
       if (!patient.email) continue;
 
       try {
-        const programText = patient.primary_program === 'ketamine' 
-          ? 'mental wellness journey'
-          : 'wellness transformation';
+        const programText = 'wellness transformation';
 
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",

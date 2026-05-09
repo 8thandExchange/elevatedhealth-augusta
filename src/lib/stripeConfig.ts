@@ -22,19 +22,24 @@ export const CONSULTATION_PRICES = {
 } as const;
 
 // ============================================================================
-// DIAGNOSTIC KITS (ZRT Labs)
+// DIAGNOSTIC KITS (legacy ZRT $250 hormone-mapping kit) — DEPRECATED
+//
+// Kept ONLY as a price-comparison reference for PricingComparison.tsx (which
+// shows what the old $349 lab kit would have cost vs. the current Elevated
+// pricing). The associated `create-hormone-checkout` edge function and
+// provider-side "send kit link" surface were removed in the R-5 audit
+// remediation. Do not wire this constant to any new checkout path.
 // ============================================================================
 
 export const DIAGNOSTIC_KIT_PRICES = {
   hormone: {
     priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
-    amount: 25000, // $250
+    amount: 25000, // $250 — historical reference only, no active checkout
     displayPrice: "$250",
-    name: "Hormone Mapping Panel",
-    description: "ZRT Saliva Profile III — at-home saliva test. Includes follow-up consultation.",
+    name: "Hormone Mapping Panel (legacy)",
+    description: "Réveil-era ZRT Saliva Profile III. No longer offered.",
     zrtPanel: "saliva_iii",
     mode: "payment" as const,
-    edgeFunction: "create-hormone-checkout",
   },
 } as const;
 
@@ -230,21 +235,6 @@ export const ADMIN_PRICES = {
 } as const;
 
 // ============================================================================
-// PROVIDER-INITIATED KITS
-// ============================================================================
-
-export const PROVIDER_KIT_PRICES = {
-  hormone: {
-    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
-    amount: 25000,
-    displayPrice: "$250",
-    name: "Hormone Mapping Panel",
-    description: "ZRT Saliva Profile III - at-home saliva test kit. Includes follow-up consultation.",
-    edgeFunction: "send-kit-payment-link",
-  },
-} as const;
-
-// ============================================================================
 // CONSULTATION CREDIT
 // ============================================================================
 
@@ -265,7 +255,6 @@ export type WeightLossPriceKey = keyof typeof WEIGHT_LOSS_PRICES;
 export type HairRestorationPriceKey = keyof typeof HAIR_RESTORATION_PRICES;
 export type SexualWellnessPriceKey = keyof typeof SEXUAL_WELLNESS_PRICES;
 export type AdminPriceKey = keyof typeof ADMIN_PRICES;
-export type ProviderKitPriceKey = keyof typeof PROVIDER_KIT_PRICES;
 
 // ============================================================================
 // AUDIT HELPER

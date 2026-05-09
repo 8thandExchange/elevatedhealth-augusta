@@ -1,3 +1,22 @@
+/**
+ * send-welcome-email
+ *
+ * Sends a welcome email to a newly-onboarded patient and (if patient_id is
+ * supplied) generates / persists an intake_token used by the public intake
+ * landing page.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = true in supabase/config.toml
+ *   - Caller MUST present a valid Supabase JWT
+ *   - Caller MUST have role = 'staff' OR role = 'admin'
+ *
+ * Background: prior to this change anyone reachable to the function URL
+ * could (a) spam welcome emails to arbitrary addresses, (b) force a fresh
+ * intake_token to be issued for any patient_id (which is a takeover vector
+ * because the token is the public key for the intake page), and
+ * (c) write a row into communication_logs. Restricting to staff/admin
+ * removes (a)/(b)/(c) from the unauthenticated attack surface.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
@@ -8,6 +27,40 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+async function requireStaffOrAdmin(req: Request): Promise<
+  | { ok: true; user_id: string }
+  | { ok: false; status: number; error: string }
+> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return { ok: false, status: 401, error: "Missing Authorization header" };
+  }
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+  const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+  if (userErr || !userData?.user) {
+    return { ok: false, status: 401, error: "Invalid or expired session" };
+  }
+  const user_id = userData.user.id;
+
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data: roles } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user_id);
+  const isStaffOrAdmin = (roles || []).some(
+    (r) => r.role === "staff" || r.role === "admin",
+  );
+  if (!isStaffOrAdmin) {
+    return { ok: false, status: 403, error: "Staff or admin role required" };
+  }
+  return { ok: true, user_id };
+}
 
 // Service-specific email content
 const serviceDescriptions: Record<string, { name: string; description: string }> = {
@@ -39,6 +92,14 @@ interface WelcomeEmailRequest {
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  const authResult = await requireStaffOrAdmin(req);
+  if (!authResult.ok) {
+    return new Response(
+      JSON.stringify({ error: authResult.error }),
+      { status: authResult.status, headers: { "Content-Type": "application/json", ...corsHeaders } },
+    );
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");

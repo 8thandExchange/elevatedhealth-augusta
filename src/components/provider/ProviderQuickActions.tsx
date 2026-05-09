@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Package, CreditCard, CheckCircle, MessageSquare, Mail, FileText, UserPlus, BookOpen, Boxes, CalendarPlus } from "lucide-react";
-import QuickSendKitModal from "./QuickSendKitModal";
+import { CreditCard, CheckCircle, MessageSquare, Mail, FileText, UserPlus, BookOpen, Boxes, CalendarPlus } from "lucide-react";
 import QuickPaymentModal from "./QuickPaymentModal";
 import QuickLabsReviewedModal from "./QuickLabsReviewedModal";
 import QuickMessageModal from "./QuickMessageModal";
@@ -17,7 +16,6 @@ interface ProviderQuickActionsProps {
 }
 
 const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
-  const [isKitModalOpen, setIsKitModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isLabsModalOpen, setIsLabsModalOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
@@ -89,16 +87,6 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setIsKitModalOpen(true)}
-            className="whitespace-nowrap"
-          >
-            <Package className="w-4 h-4 mr-2" />
-            Send Kit
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
             onClick={() => setIsPaymentModalOpen(true)}
             className="whitespace-nowrap"
           >
@@ -148,12 +136,6 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
         </div>
       </div>
 
-      <QuickSendKitModal 
-        open={isKitModalOpen} 
-        onOpenChange={setIsKitModalOpen}
-        onSuccess={onRefresh}
-      />
-      
       <QuickPaymentModal 
         open={isPaymentModalOpen} 
         onOpenChange={setIsPaymentModalOpen}

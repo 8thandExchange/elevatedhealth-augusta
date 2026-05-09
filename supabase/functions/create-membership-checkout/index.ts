@@ -1,3 +1,21 @@
+/**
+ * create-membership-checkout
+ *
+ * Creates a Stripe subscription Checkout Session for the $199/mo Elevated
+ * Membership.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = false in supabase/config.toml, BUT the function rejects
+ *     any request without a valid `Authorization: Bearer <jwt>` header
+ *     and a Supabase user it can resolve. The check is in-function rather
+ *     than via the verify_jwt config gate.
+ *   - Caller must have a Supabase auth session — there's no anonymous
+ *     membership purchase path.
+ *
+ * Audit decision: leave the in-function check in place. It already enforces
+ * authentication. A follow-up could move the check to verify_jwt = true in
+ * config.toml for symmetry with other authenticated functions.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";

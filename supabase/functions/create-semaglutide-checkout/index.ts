@@ -1,3 +1,24 @@
+/**
+ * create-semaglutide-checkout
+ *
+ * Creates a Stripe subscription Checkout Session for compounded semaglutide
+ * (member or non-member tier) and pre-stamps a `consultation_bookings` row.
+ *
+ * AUTH POSTURE (security audit R-5, 2026-05-08):
+ *   - verify_jwt = false (intentionally — public weight-loss storefront)
+ *   - The function reads ONLY two patient fields
+ *     (`elevated_membership_status`, `email`) to determine the correct
+ *     pricing tier. It does NOT include any patient PHI in the response;
+ *     the response shape is `{ url: session.url }` only.
+ *   - The pre-stamped consultation_bookings row contains no clinical data
+ *     beyond what the user typed in (email, name) plus pricing label.
+ *   - The patients-table read uses service-role and is intentionally
+ *     scoped to the membership-status column. We do NOT expose membership
+ *     status to the caller in the response.
+ *
+ * Audit decision: keep verify_jwt=false. The patient-row read is narrow
+ * and the response leaks nothing.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
