@@ -668,57 +668,57 @@ export type Database = {
       }
       eligibility_review_requests: {
         Row: {
+          created_at: string
+          flag_reasons: Json
           id: string
+          intake_id: string | null
+          notes: string | null
+          patient_email: string | null
           patient_id: string | null
           patient_name: string
-          patient_email: string | null
+          preferred_callback_window: Database["public"]["Enums"]["callback_window"]
           preferred_phone: string
-          preferred_callback_window: "morning" | "afternoon" | "evening" | "no_preference"
-          intake_id: string | null
-          flag_reasons: Json
-          treatment_type: string | null
-          status: "pending" | "contacted" | "scheduled" | "declined" | "referred_out"
-          reviewed_by_user_id: string | null
-          reviewed_at: string | null
-          notes: string | null
           resolved_booking_id: string | null
-          created_at: string
+          reviewed_at: string | null
+          reviewed_by_user_id: string | null
+          status: Database["public"]["Enums"]["eligibility_review_status"]
+          treatment_type: string | null
           updated_at: string
         }
         Insert: {
+          created_at?: string
+          flag_reasons?: Json
           id?: string
+          intake_id?: string | null
+          notes?: string | null
+          patient_email?: string | null
           patient_id?: string | null
           patient_name: string
-          patient_email?: string | null
+          preferred_callback_window?: Database["public"]["Enums"]["callback_window"]
           preferred_phone: string
-          preferred_callback_window?: "morning" | "afternoon" | "evening" | "no_preference"
-          intake_id?: string | null
-          flag_reasons?: Json
-          treatment_type?: string | null
-          status?: "pending" | "contacted" | "scheduled" | "declined" | "referred_out"
-          reviewed_by_user_id?: string | null
-          reviewed_at?: string | null
-          notes?: string | null
           resolved_booking_id?: string | null
-          created_at?: string
+          reviewed_at?: string | null
+          reviewed_by_user_id?: string | null
+          status?: Database["public"]["Enums"]["eligibility_review_status"]
+          treatment_type?: string | null
           updated_at?: string
         }
         Update: {
+          created_at?: string
+          flag_reasons?: Json
           id?: string
+          intake_id?: string | null
+          notes?: string | null
+          patient_email?: string | null
           patient_id?: string | null
           patient_name?: string
-          patient_email?: string | null
+          preferred_callback_window?: Database["public"]["Enums"]["callback_window"]
           preferred_phone?: string
-          preferred_callback_window?: "morning" | "afternoon" | "evening" | "no_preference"
-          intake_id?: string | null
-          flag_reasons?: Json
-          treatment_type?: string | null
-          status?: "pending" | "contacted" | "scheduled" | "declined" | "referred_out"
-          reviewed_by_user_id?: string | null
-          reviewed_at?: string | null
-          notes?: string | null
           resolved_booking_id?: string | null
-          created_at?: string
+          reviewed_at?: string | null
+          reviewed_by_user_id?: string | null
+          status?: Database["public"]["Enums"]["eligibility_review_status"]
+          treatment_type?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2772,6 +2772,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "staff" | "user" | "business_admin" | "provider"
+      callback_window: "morning" | "afternoon" | "evening" | "no_preference"
+      eligibility_review_status:
+        | "pending"
+        | "contacted"
+        | "scheduled"
+        | "declined"
+        | "referred_out"
       order_status:
         | "pending_review"
         | "authorized"
@@ -2906,6 +2913,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "staff", "user", "business_admin", "provider"],
+      callback_window: ["morning", "afternoon", "evening", "no_preference"],
+      eligibility_review_status: [
+        "pending",
+        "contacted",
+        "scheduled",
+        "declined",
+        "referred_out",
+      ],
       order_status: [
         "pending_review",
         "authorized",
