@@ -2711,6 +2711,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bootstrap_vault_create_cron_secret: {
+        Args: { _value: string }
+        Returns: string
+      }
+      bootstrap_vault_update_cron_secret: {
+        Args: { _value: string }
+        Returns: undefined
+      }
       dispense_from_lot: {
         Args: {
           p_appointment_id?: string
