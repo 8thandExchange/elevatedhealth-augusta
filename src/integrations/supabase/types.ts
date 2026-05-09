@@ -2727,6 +2727,30 @@ export type Database = {
       expire_inventory_lots: { Args: never; Returns: number }
       get_active_lot_for_sku: { Args: { p_sku_id: string }; Returns: string }
       get_inventory_status: { Args: { p_sku_id: string }; Returns: Json }
+      get_iv_booking_by_stripe_session: {
+        Args: { _session_id: string }
+        Returns: {
+          amount_paid: number
+          appointment_id: string
+          customer_email: string
+          customer_name: string
+          id: string
+          payment_status: string
+          therapy_id: string
+          therapy_name: string
+        }[]
+      }
+      get_patient_by_intake_token: {
+        Args: { _token: string }
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+          phone: string
+          primary_program: string
+          service_interests: Json
+        }[]
+      }
       get_providers_directory: {
         Args: never
         Returns: {
