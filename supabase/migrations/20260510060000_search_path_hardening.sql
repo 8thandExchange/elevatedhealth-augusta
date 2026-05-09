@@ -1,0 +1,140 @@
+-- ============================================================================
+-- search_path hardening + duplicate patients SELECT policy cleanup
+--
+-- This migration is intentionally additive and mechanical:
+--   * Part 1: pin search_path on the one trigger function in the public schema
+--             that is currently unpinned (public.touch_updated_at).
+--   * Part 2: drop the legacy "Staff and admins can view all patients" policy
+--             on public.patients, which was made redundant by the Batch A
+--             "Staff and admins can read all patients" policy.
+--
+-- No new policies. No new functions. No frontend changes. No edge-function
+-- changes.
+--
+-- ----------------------------------------------------------------------------
+-- AUDIT — SECURITY DEFINER functions in public schema (as of 2026-05-09)
+--
+-- Every SECURITY DEFINER function in the public schema was inspected. Each
+-- one already pins SET search_path = public in its CREATE statement, so no
+-- ALTER FUNCTION call is required for them in this migration.
+--
+--   public.has_role(uuid, app_role)                                  ✓ pinned
+--   public.has_business_admin_role(uuid)                             ✓ pinned
+--   public.handle_updated_at()                                       ✓ pinned
+--   public.calculate_symptom_scores()                                ✓ pinned
+--   public.sync_consultation_to_patient()                            ✓ pinned
+--   public.get_providers_directory()                                 ✓ pinned
+--   public.sign_clinical_protocol_version(uuid)                      ✓ pinned
+--   public.get_iv_booking_by_stripe_session(text)                    ✓ pinned
+--   public.get_patient_by_intake_token(text)                         ✓ pinned
+--   public.dispense_from_lot(uuid, numeric, text, uuid, uuid, uuid,
+--                            text, text)                             ✓ pinned
+--   public.expire_inventory_lots()                                   ✓ pinned
+--
+-- Sanity check on the list called out in the prompt:
+--   public.touch_updated_at()                              ✗ NOT pinned → fix
+--   public.get_iv_booking_by_stripe_session(text)          ✓ pinned
+--   public.get_patient_by_intake_token(text)               ✓ pinned
+--   public.dispense_from_lot(...)                          ✓ pinned
+--   public.get_active_lot_for_sku(uuid)                    ✓ pinned (INVOKER)
+--   public.get_inventory_status(uuid)                      ✓ pinned (INVOKER)
+--   public.expire_inventory_lots()                         ✓ pinned
+--
+-- Functions found out of scope of this migration but worth noting in the
+-- audit doc as defense-in-depth follow-ups (NOT fixed here):
+--   * public.update_updated_at_column()  — SECURITY INVOKER trigger function
+--     (lab_panels, lab_tests). Not pinned. Not a SECURITY DEFINER privilege
+--     boundary, so search_path injection cannot escalate, but pinning it is
+--     still good hygiene. Out of scope for this prompt's "SECURITY DEFINER
+--     functions" focus.
+--   * public.protect_inventory_lot_quantity()  — SECURITY INVOKER trigger.
+--     Already pinned; no action.
+--   * Existing pins use `SET search_path = public`. The strongest pattern
+--     adds pg_temp explicitly: `SET search_path = public, pg_temp`. The
+--     functions above are functionally safe with the current pin, so we
+--     don't churn the catalog by re-altering all 11. Logged as a follow-up
+--     in docs/security/rls-audit-2026-05-08.md.
+--
+-- No SECURITY DEFINER function was found that requires a mutable
+-- search_path. All eleven legitimately operate within the public schema.
+-- ============================================================================
+
+
+-- ----------------------------------------------------------------------------
+-- PART 1: pin search_path on public.touch_updated_at()
+--
+-- public.touch_updated_at() is a trigger function attached to
+-- public.eligibility_review_requests (created in migration
+-- 20260509062727 and re-asserted in 20260510020000). It is plain
+-- LANGUAGE plpgsql with no SECURITY DEFINER and no SET search_path
+-- clause, so it executes with whatever search_path the caller has.
+--
+-- For consistency with the rest of the schema's trigger functions and
+-- to remove the only "no explicit search_path" finding from the
+-- linter for trigger functions in public, pin it to (public, pg_temp).
+--
+-- pg_temp is the per-session temporary schema; including it last keeps
+-- temp-table lookups fast without exposing the function to a caller-
+-- planted shadow object earlier in the resolution order.
+-- ----------------------------------------------------------------------------
+
+ALTER FUNCTION public.touch_updated_at() SET search_path = public, pg_temp;
+
+
+-- ----------------------------------------------------------------------------
+-- PART 2: drop the duplicate patients SELECT policy
+--
+-- After Batch A applied (Lovable migration 20260509071111), the
+-- public.patients table ended up with two functionally-equivalent
+-- staff/admin SELECT policies:
+--
+--   Legacy (PERMISSIVE, role public, pre-existing):
+--     "Staff and admins can view all patients"
+--     -- created in 20251201205614, recreated in 20251202003729
+--
+--   Batch A (PERMISSIVE, role authenticated, more correctly scoped):
+--     "Staff and admins can read all patients"
+--     -- created in 20260509071111
+--
+-- Both grant the same staff-or-admin read access. Two PERMISSIVE policies
+-- evaluate as OR, so the legacy policy is purely redundant — but it muddies
+-- the policy listing in pg_policies and makes future audits noisier than
+-- they need to be.
+--
+-- Drop the legacy one. The Batch A policy already covers staff/admin read
+-- access to public.patients, scoped to the authenticated role and matching
+-- the explicit-role pattern applied to the other clinical tables in Batch A
+-- (clinical_notes, lab_results, medications, treatment_plans, soap_notes,
+-- encounter_forms, superbills).
+--
+-- Pre-flight assertion: the Cursor-authored Batch A migration
+-- (supabase/migrations/20260509071111_*.sql line 15) creates the new
+-- policy, and the user confirmed Lovable applied it. We rely on that
+-- assertion rather than a runtime DO-block, since this DROP is idempotent
+-- and the absence of the legacy policy is also a fine end state.
+-- ----------------------------------------------------------------------------
+
+DROP POLICY IF EXISTS "Staff and admins can view all patients"
+  ON public.patients;
+
+
+-- ----------------------------------------------------------------------------
+-- Rollback recipe (do not uncomment in this migration)
+--
+-- BEGIN;
+--   -- Reverse Part 1 — restore mutable search_path on touch_updated_at.
+--   -- (Reverting to "no explicit setting" requires recreating the function;
+--   -- ALTER FUNCTION ... RESET search_path is the closest in-place op.)
+--   ALTER FUNCTION public.touch_updated_at() RESET search_path;
+--
+--   -- Reverse Part 2 — restore the legacy patients SELECT policy.
+--   -- (Re-create with the historical role=public scope to match the pre-
+--   --  Batch A definition.)
+--   CREATE POLICY "Staff and admins can view all patients"
+--     ON public.patients FOR SELECT
+--     USING (
+--       has_role(auth.uid(), 'admin'::app_role)
+--       OR has_role(auth.uid(), 'staff'::app_role)
+--     );
+-- COMMIT;
+-- ----------------------------------------------------------------------------
