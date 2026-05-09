@@ -47,7 +47,18 @@ serve(async (req) => {
     });
   }
 
-  return new Response(JSON.stringify({ ok: true, action: "upserted" }), {
+  // If ?test=1, also fire both cron jobs through the SECURITY DEFINER trigger
+  // so we can verify end-to-end without touching the secret in chat.
+  const url = new URL(req.url);
+  let test1: any = null, test2: any = null;
+  if (url.searchParams.get("test") === "1") {
+    const r1 = await supabase.rpc("trigger_cron_job_manual", { _jobid: 1 });
+    test1 = r1.error ? { error: r1.error.message } : { request_id: r1.data };
+    const r2 = await supabase.rpc("trigger_cron_job_manual", { _jobid: 2 });
+    test2 = r2.error ? { error: r2.error.message } : { request_id: r2.data };
+  }
+
+  return new Response(JSON.stringify({ ok: true, action: "upserted", test1, test2 }), {
     status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
