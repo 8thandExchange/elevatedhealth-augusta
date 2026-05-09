@@ -196,8 +196,7 @@ export default function InventoryDashboard() {
         const total = skuLots.reduce((sum, l) => sum + Number(l.quantity_remaining), 0);
         const earliest = skuLots
           .map((l) => l.expiration_date)
-          .sort()
-          .at(0) ?? null;
+          .sort()[0] ?? null;
         let reorderStatus: ReorderStatus = "ok";
         if (total <= 0) reorderStatus = "out_of_stock";
         else if (total <= sku.reorder_threshold) reorderStatus = "reorder_now";
