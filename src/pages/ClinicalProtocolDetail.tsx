@@ -437,7 +437,7 @@ export default function ClinicalProtocolDetail() {
               <CardContent className="grid gap-2 text-sm md:grid-cols-2">
                 {Object.entries(structured.dosing).map(([k, v]) => (
                   <div key={k}>
-                    <span className="text-muted-foreground capitalize">{k.replaceAll("_", " ")}: </span>
+                    <span className="text-muted-foreground capitalize">{k.replace(/_/g, " ")}: </span>
                     <span>{v}</span>
                   </div>
                 ))}
