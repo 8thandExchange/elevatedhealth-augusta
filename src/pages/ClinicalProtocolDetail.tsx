@@ -68,7 +68,7 @@ function parseReviewerItems(raw: Json | null): ReviewerItem[] {
       }
       return null;
     })
-    .filter((x): x is ReviewerItem => !!x && !!x.note);
+    .filter((x): x is NonNullable<typeof x> => !!x && !!x.note);
 }
 
 export default function ClinicalProtocolDetail() {
