@@ -171,6 +171,24 @@ COMMENT ON TABLE public.inventory_dispensations IS
 -- ============================================================================
 -- 5. RLS POLICIES
 -- ============================================================================
+-- Posture (concierge clinic): RN + office manager are compliance partners with
+-- full operational visibility. Integrity comes from immutable dispensations
+-- + dispensed_by = auth.uid(), not from hiding history among trusted staff.
+--
+-- inventory_skus:
+--   SELECT — any authenticated user
+--   INSERT / UPDATE / DELETE — admin OR staff (catalog + thresholds)
+-- inventory_lots:
+--   SELECT / INSERT / UPDATE — admin OR staff (UPDATE: storage_location + status
+--   only in practice; quantity_remaining guarded by trigger + dispense_from_lot)
+--   DELETE — admin only, lots with zero dispensations only
+-- inventory_dispensations:
+--   SELECT — admin OR staff (full audit trail)
+--   INSERT — none (dispense_from_lot() SECURITY DEFINER; callable by admin/staff)
+--   UPDATE / DELETE — none (immutable)
+--
+-- dispense_from_lot(): role check is admin OR staff only (never patient "user").
+-- ============================================================================
 
 ALTER TABLE public.inventory_skus           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.inventory_lots           ENABLE ROW LEVEL SECURITY;
@@ -181,10 +199,16 @@ CREATE POLICY "Authenticated can read SKU catalog"
   ON public.inventory_skus FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
-CREATE POLICY "Admins can manage SKU catalog"
+CREATE POLICY "Staff and admins can manage SKU catalog"
   ON public.inventory_skus FOR ALL
-  USING (public.has_role(auth.uid(), 'admin'::app_role))
-  WITH CHECK (public.has_role(auth.uid(), 'admin'::app_role));
+  USING (
+    public.has_role(auth.uid(), 'admin'::app_role)
+    OR public.has_role(auth.uid(), 'staff'::app_role)
+  )
+  WITH CHECK (
+    public.has_role(auth.uid(), 'admin'::app_role)
+    OR public.has_role(auth.uid(), 'staff'::app_role)
+  );
 
 -- inventory_lots ------------------------------------------------------------
 CREATE POLICY "Staff and admins can read lots"
@@ -228,18 +252,14 @@ CREATE POLICY "Admins can delete unused lots"
     )
   );
 
--- inventory_dispensations: SELECT is admin-full / staff-self.
+-- inventory_dispensations
 -- INSERT is blocked at the policy layer; dispense_from_lot() runs SECURITY DEFINER.
 -- UPDATE and DELETE are blocked for everyone (no policies → denied with RLS on).
-CREATE POLICY "Admins can read all dispensations"
-  ON public.inventory_dispensations FOR SELECT
-  USING (public.has_role(auth.uid(), 'admin'::app_role));
-
-CREATE POLICY "Staff can read their own dispensations"
+CREATE POLICY "Staff and admins can read all dispensations"
   ON public.inventory_dispensations FOR SELECT
   USING (
-    public.has_role(auth.uid(), 'staff'::app_role)
-    AND dispensed_by = auth.uid()
+    public.has_role(auth.uid(), 'admin'::app_role)
+    OR public.has_role(auth.uid(), 'staff'::app_role)
   );
 
 -- (No INSERT / UPDATE / DELETE policies — everything goes through
@@ -391,6 +411,7 @@ BEGIN
     RAISE EXCEPTION 'dispense_from_lot requires an authenticated caller';
   END IF;
 
+  -- Only provider roles may dispense (never patient "user" role).
   IF NOT (
     public.has_role(v_caller, 'admin'::app_role)
     OR public.has_role(v_caller, 'staff'::app_role)
