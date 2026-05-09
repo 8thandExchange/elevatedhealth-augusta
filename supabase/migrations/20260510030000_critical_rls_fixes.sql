@@ -100,15 +100,30 @@ COMMENT ON FUNCTION public.get_iv_booking_by_stripe_session(text) IS
 -- After: drop the policy entirely. Public callers (the patient clicking the
 -- intake link from their welcome email) reach patient data through
 -- get_patient_by_intake_token(text), a SECURITY DEFINER function that:
---   1. Internally filters WHERE intake_token = $1 (exact match on the token
---      value the caller supplied)
---   2. Enforces the same expiry check that was on the policy
---   3. Returns at most one row, with only the fields PublicIntake needs
+--   1. Casts the supplied text token to uuid (the actual column type), inside
+--      a BEGIN/EXCEPTION block that returns zero rows if the cast fails.
+--      The original LANGUAGE SQL body compared `intake_token = _token` and
+--      Postgres rejected it at function-definition time with a
+--      "operator does not exist: uuid = text" error. The plpgsql wrapper
+--      below was the first working version Lovable deployed; keep this in
+--      sync with the deployed function.
+--   2. Enforces the same expiry check that was on the policy.
+--   3. Returns at most one row, with only the fields PublicIntake needs.
+--
+-- Behaviour on malformed input: the cast raises invalid_text_representation
+-- which we swallow → empty result set. PublicIntake treats an empty result
+-- as "invalid token", which is the correct UX. This also avoids leaking
+-- whether a token format is valid via a 500 response.
 --
 -- PublicIntake.tsx is updated in the same change set to call
 -- supabase.rpc('get_patient_by_intake_token', { _token: token }) instead of
 -- the prior .from('patients').select(...).eq('intake_token', token) query.
 -- The replacement query shape is preserved.
+--
+-- This file was reconciled in-place to match the deployed Lovable
+-- migration 20260509065337_*.sql. Do not push this migration — the live
+-- DB already runs the function below via that Lovable file. This file
+-- exists for schema-diff fidelity only.
 -- ----------------------------------------------------------------------------
 
 DROP POLICY IF EXISTS "Allow public intake token lookup"
@@ -125,17 +140,28 @@ RETURNS TABLE (
   primary_program text,
   service_interests jsonb
 )
-LANGUAGE sql
+LANGUAGE plpgsql
 SECURITY DEFINER
 STABLE
 SET search_path = public
 AS $$
-  SELECT id, full_name, email, phone, primary_program, service_interests
-  FROM public.patients
-  WHERE intake_token = _token
-    AND intake_token IS NOT NULL
-    AND intake_token_expires_at > NOW()
-  LIMIT 1
+DECLARE
+  _token_uuid uuid;
+BEGIN
+  BEGIN
+    _token_uuid := _token::uuid;
+  EXCEPTION WHEN invalid_text_representation THEN
+    RETURN;
+  END;
+
+  RETURN QUERY
+  SELECT p.id, p.full_name, p.email, p.phone, p.primary_program, p.service_interests
+  FROM public.patients p
+  WHERE p.intake_token = _token_uuid
+    AND p.intake_token IS NOT NULL
+    AND p.intake_token_expires_at > NOW()
+  LIMIT 1;
+END;
 $$;
 
 REVOKE ALL ON FUNCTION public.get_patient_by_intake_token(text) FROM PUBLIC;
@@ -148,7 +174,9 @@ COMMENT ON FUNCTION public.get_patient_by_intake_token(text) IS
   'returns at most one matching patient row, scoped to the columns the '
   'intake form needs. Unguessable token acts as the auth credential. '
   'Replaces the prior open RLS policy that filtered on token existence '
-  'rather than token value (security audit R-2, 2026-05-08).';
+  'rather than token value (security audit R-2, 2026-05-08). plpgsql '
+  'wrapper handles the text→uuid cast inside an exception block so '
+  'malformed tokens return empty rather than 500.';
 
 -- ----------------------------------------------------------------------------
 -- R-3: user_roles "Protect master admin role" had inverted DELETE logic
