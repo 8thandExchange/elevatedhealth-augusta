@@ -2727,30 +2727,6 @@ export type Database = {
       expire_inventory_lots: { Args: never; Returns: number }
       get_active_lot_for_sku: { Args: { p_sku_id: string }; Returns: string }
       get_inventory_status: { Args: { p_sku_id: string }; Returns: Json }
-      get_iv_booking_by_stripe_session: {
-        Args: { _session_id: string }
-        Returns: {
-          amount_paid: number | null
-          appointment_id: string | null
-          customer_email: string
-          customer_name: string | null
-          id: string
-          payment_status: string
-          therapy_id: string | null
-          therapy_name: string | null
-        }[]
-      }
-      get_patient_by_intake_token: {
-        Args: { _token: string }
-        Returns: {
-          email: string
-          full_name: string
-          id: string
-          phone: string | null
-          primary_program: string | null
-          service_interests: Json | null
-        }[]
-      }
       get_providers_directory: {
         Args: never
         Returns: {
