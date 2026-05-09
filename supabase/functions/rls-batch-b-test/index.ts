@@ -74,10 +74,10 @@ serve(async (req) => {
     results.test1_staff = await call("send-rx-fax", { token: staff.token, body: { order_id: "00000000-0000-0000-0000-000000000000" } });
 
     // ============= TEST 2: generate-consent-pdf =============
-    results.test2_anon = await call("generate-consent-pdf", { body: { patient_id: pRow.id } });
-    results.test2_patient_own = await call("generate-consent-pdf", { token: patient.token, body: { patient_id: pRow.id } });
-    results.test2_patient_other = await call("generate-consent-pdf", { token: patient.token, body: { patient_id: p2Row!.id } });
-    results.test2_staff_any = await call("generate-consent-pdf", { token: staff.token, body: { patient_id: pRow.id } });
+    results.test2_anon = await call("generate-consent-pdf", { body: { patientId: pRow.id } });
+    results.test2_patient_own = await call("generate-consent-pdf", { token: patient.token, body: { patientId: pRow.id } });
+    results.test2_patient_other = await call("generate-consent-pdf", { token: patient.token, body: { patientId: p2Row!.id } });
+    results.test2_staff_any = await call("generate-consent-pdf", { token: staff.token, body: { patientId: pRow.id } });
 
     // ============= TEST 3: cron secret =============
     results.test3_no_secret = await call("send-intake-reminder", { body: {} });
