@@ -38,44 +38,16 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  // Upsert into vault: if exists, update; else create.
-  const { data: existing, error: selErr } = await supabase
-    .schema("vault" as any)
-    .from("secrets")
-    .select("id")
-    .eq("name", "cron_secret")
-    .maybeSingle();
-
-  if (selErr) {
-    return new Response(JSON.stringify({ error: "vault select failed", detail: selErr.message }), {
+  const { error } = await supabase.rpc("bootstrap_vault_update_cron_secret", {
+    _value: expected,
+  });
+  if (error) {
+    return new Response(JSON.stringify({ error: "vault upsert failed", detail: error.message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
-  let action: string;
-  if (existing?.id) {
-    const { error } = await supabase.rpc("bootstrap_vault_update_cron_secret", {
-      _value: expected,
-    });
-    if (error) {
-      return new Response(JSON.stringify({ error: "vault update failed", detail: error.message }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    action = "updated";
-  } else {
-    const { error } = await supabase.rpc("bootstrap_vault_create_cron_secret", {
-      _value: expected,
-    });
-    if (error) {
-      return new Response(JSON.stringify({ error: "vault create failed", detail: error.message }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    action = "created";
-  }
-
-  return new Response(JSON.stringify({ ok: true, action }), {
+  return new Response(JSON.stringify({ ok: true, action: "upserted" }), {
     status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
