@@ -2451,7 +2451,28 @@ export type Database = {
       }
       sign_clinical_protocol_version: {
         Args: { version_id: string }
-        Returns: Database["public"]["Tables"]["clinical_protocol_versions"]["Row"]
+        Returns: {
+          authored_by: string | null
+          body_markdown: string
+          body_structured: Json
+          created_at: string
+          id: string
+          notes_for_reviewer: Json
+          protocol_id: string
+          retired_at: string | null
+          signature_hash: string | null
+          signed_at: string | null
+          signed_by: string | null
+          status: string
+          updated_at: string
+          version_number: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "clinical_protocol_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
