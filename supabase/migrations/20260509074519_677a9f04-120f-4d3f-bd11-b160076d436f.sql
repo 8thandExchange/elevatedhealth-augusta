@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Patients can create orders for themselves" ON public.orders;
