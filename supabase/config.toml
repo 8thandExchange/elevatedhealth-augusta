@@ -237,5 +237,3 @@ verify_jwt = true
 [functions.request-hormone-review]
 verify_jwt = true
 
-[functions.bootstrap-cron-secret-vault]
-verify_jwt = false
