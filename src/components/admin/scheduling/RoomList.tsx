@@ -47,8 +47,8 @@ export function RoomList() {
   const load = async () => {
     setLoading(true);
     const [{ data: roomData }, { data: utilData }] = await Promise.all([
-      supabase.from("rooms").select("*").order("display_order"),
-      supabase.from("v_room_utilization").select("*"),
+      (supabase as any).from("rooms").select("*").order("display_order"),
+      (supabase as any).from("v_room_utilization").select("*"),
     ]);
     setRooms((roomData as Room[]) || []);
     const utilMap: Record<string, Utilization> = {};

@@ -36,8 +36,8 @@ export function RoomBlackouts() {
   const load = async () => {
     setLoading(true);
     const [{ data: roomData }, { data: blackoutData }] = await Promise.all([
-      supabase.from("rooms").select("id, name, active, display_order").order("display_order"),
-      supabase.from("room_blackouts").select("*").order("start_at", { ascending: false }),
+      (supabase as any).from("rooms").select("id, name, active, display_order").order("display_order"),
+      (supabase as any).from("room_blackouts").select("*").order("start_at", { ascending: false }),
     ]);
     setRooms((roomData as Room[]) || []);
     setBlackouts((blackoutData as Blackout[]) || []);
@@ -55,7 +55,7 @@ export function RoomBlackouts() {
 
   const remove = async (id: string) => {
     if (!confirm("Remove this blackout?")) return;
-    const { error } = await supabase.from("room_blackouts").delete().eq("id", id);
+    const { error } = await (supabase as any).from("room_blackouts").delete().eq("id", id);
     if (error) toast.error(`Failed: ${error.message}`);
     else { toast.success("Blackout removed"); load(); }
   };
@@ -158,7 +158,7 @@ function BlackoutForm({ rooms, onCreated }: { rooms: Room[]; onCreated: () => vo
     setSaving(true);
     const startAt = new Date(`${date}T${startTime}:00-05:00`).toISOString();
     const endAt = new Date(`${date}T${endTime}:00-05:00`).toISOString();
-    const { error } = await supabase.from("room_blackouts").insert({
+    const { error } = await (supabase as any).from("room_blackouts").insert({
       room_id: roomId,
       start_at: startAt,
       end_at: endAt,

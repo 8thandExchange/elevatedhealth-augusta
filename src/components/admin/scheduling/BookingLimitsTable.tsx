@@ -37,7 +37,7 @@ export function BookingLimitsTable() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("booking_limits").select("*").order("created_at", { ascending: false });
+    const { data } = await (supabase as any).from("booking_limits").select("*").order("created_at", { ascending: false });
     setLimits((data as BookingLimit[]) || []);
     setLoading(false);
   };
@@ -55,7 +55,7 @@ export function BookingLimitsTable() {
 
   const remove = async (id: string) => {
     if (!confirm("Delete this booking limit?")) return;
-    const { error } = await supabase.from("booking_limits").delete().eq("id", id);
+    const { error } = await (supabase as any).from("booking_limits").delete().eq("id", id);
     if (error) toast.error(`Failed: ${error.message}`);
     else { toast.success("Limit deleted"); load(); }
   };
@@ -170,7 +170,7 @@ function LimitForm({ onCreated }: { onCreated: () => void }) {
     if (!name) { toast.error("Name is required"); return; }
     if (maxConcurrent < 1) { toast.error("Max concurrent must be ≥ 1"); return; }
     setSaving(true);
-    const { error } = await supabase.from("booking_limits").insert({
+    const { error } = await (supabase as any).from("booking_limits").insert({
       name,
       day_of_week: dow === "" ? null : Number(dow),
       start_time: startTime,

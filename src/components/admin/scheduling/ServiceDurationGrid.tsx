@@ -48,7 +48,7 @@ export function ServiceDurationGrid() {
   useEffect(() => { load(); }, []);
 
   const save = async (id: string, patch: Partial<Service>) => {
-    const { error } = await supabase.from("services").update(patch).eq("id", id);
+    const { error } = await (supabase as any).from("services").update(patch).eq("id", id);
     if (error) toast.error(`Save failed: ${error.message}`);
     else { toast.success("Service updated"); setEditingId(null); load(); }
   };
