@@ -231,12 +231,14 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                   Email Templates
                 </Link>
               </DropdownMenuItem>
+              {/* Temporarily hidden until room-scheduling backend is rebuilt
               <DropdownMenuItem asChild>
                 <Link to="/admin/scheduling" className="cursor-pointer gap-2">
                   <CalendarDays className="w-4 h-4" />
                   Scheduling Settings
                 </Link>
               </DropdownMenuItem>
+              */}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/staff-pricing-cheatsheet" target="_blank" className="cursor-pointer">
