@@ -2,10 +2,9 @@
  * SchedulingSettings (admin)
  *
  * Single page for managing the practice's scheduling infrastructure:
- *   - Rooms: activate/deactivate, edit capacity, edit allowed categories
+ *   - Rooms: activate/deactivate, edit capacity, edit allowed service lines
  *   - Blackouts: mark a specific room unavailable for a window
- *   - Booking limits: cap simultaneous appointments per category / room type
- *   - Service durations: tune duration + room requirements per service
+ *   - Booking limits: cap simultaneous appointments per service line / room type
  *
  * Access: admin / provider roles only (enforced by RLS).
  *
@@ -17,15 +16,13 @@ import { Helmet } from "react-helmet-async";
 import { RoomList } from "@/components/admin/scheduling/RoomList";
 import { RoomBlackouts } from "@/components/admin/scheduling/RoomBlackouts";
 import { BookingLimitsTable } from "@/components/admin/scheduling/BookingLimitsTable";
-import { ServiceDurationGrid } from "@/components/admin/scheduling/ServiceDurationGrid";
 
-type Tab = "rooms" | "blackouts" | "limits" | "durations";
+type Tab = "rooms" | "blackouts" | "limits";
 
 const TABS: { key: Tab; label: string; description: string }[] = [
   { key: "rooms", label: "Rooms", description: "The 5 spaces patients can be booked into" },
   { key: "blackouts", label: "Blackouts", description: "Mark a room unavailable for a window of time" },
-  { key: "limits", label: "Booking Limits", description: "Concurrent caps per service category" },
-  { key: "durations", label: "Service Durations", description: "How long each procedure takes" },
+  { key: "limits", label: "Booking Limits", description: "Concurrent caps per service line" },
 ];
 
 export default function SchedulingSettings() {
@@ -42,8 +39,8 @@ export default function SchedulingSettings() {
             <p className="font-jost text-xs uppercase tracking-[0.18em] text-accent mb-2">Practice Settings</p>
             <h1 className="font-playfair text-3xl md:text-4xl text-foreground">Scheduling</h1>
             <p className="font-jost text-sm text-muted-foreground mt-2 max-w-2xl">
-              Manage the four treatment rooms and lobby flex space, set blackouts and concurrent caps,
-              and tune service durations. Changes apply to patient-facing availability immediately.
+              Manage the four treatment rooms and lobby flex space, set blackouts, and concurrent caps.
+              Appointment durations are set per booking, not here.
             </p>
           </div>
         </div>
@@ -79,7 +76,6 @@ export default function SchedulingSettings() {
             {tab === "rooms" && <RoomList />}
             {tab === "blackouts" && <RoomBlackouts />}
             {tab === "limits" && <BookingLimitsTable />}
-            {tab === "durations" && <ServiceDurationGrid />}
           </div>
         </div>
       </div>
