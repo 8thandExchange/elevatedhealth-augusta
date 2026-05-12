@@ -83,9 +83,19 @@ const faxRequestSchema = z.object({
   diagnosis_description: z.string().max(200).optional(),
   provider_signature_url: z.string().url().max(500).optional(),
   pharmacy_id: z.string().uuid().optional(),
+  /** Optional override; normalized to E.164. When omitted, uses pharmacy / default resolution. */
+  fax_to: z.string().max(40).optional(),
 });
 
 type FaxRequest = z.infer<typeof faxRequestSchema>;
+
+function normalizeFaxDestination(raw: string | undefined, fallback: string): string {
+  if (!raw || !raw.trim()) return fallback;
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+  if (digits.length === 10) return `+1${digits}`;
+  return fallback;
+}
 
 function generatePrescriptionHtml(
   patient: any,
@@ -264,6 +274,7 @@ serve(async (req) => {
       diagnosis_description,
       provider_signature_url,
       pharmacy_id,
+      fax_to,
     } = validationResult.data;
 
     // Resolve destination pharmacy
@@ -329,6 +340,8 @@ serve(async (req) => {
     }
     console.log("Resolved pharmacy:", pharmacyName, "->", destinationFax);
 
+    const faxDestination = normalizeFaxDestination(fax_to, destinationFax);
+
     console.log("Processing validated fax request for patient:", patient_id);
     console.log("Provider:", provider_name, provider_credentials, "NPI:", provider_npi);
 
@@ -361,7 +374,7 @@ serve(async (req) => {
     // Send fax via Sinch API
     const sinchAuth = btoa(`${SINCH_ACCESS_KEY}:${SINCH_SECRET_KEY}`);
     
-    console.log("Sending fax to:", destinationFax);
+    console.log("Sending fax to:", faxDestination);
 
     const faxResponse = await fetch("https://fax.api.sinch.com/v3/faxes", {
       method: "POST",
@@ -370,7 +383,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        to: destinationFax,
+        to: faxDestination,
         contentUrl: `data:text/html;base64,${htmlBase64}`,
         headerText: "Elevated Health Augusta - Prescription",
       }),
@@ -399,11 +412,12 @@ serve(async (req) => {
           refills,
           supply_days,
           provider: provider_name,
+          submission_method: "fax",
         },
         fax_id: faxId,
         fax_status: "queued",
         fax_sent_at: new Date().toISOString(),
-        fax_destination: destinationFax,
+        fax_destination: faxDestination,
         pharmacy_id: resolvedPharmacyId,
         submission_method: "fax",
       })

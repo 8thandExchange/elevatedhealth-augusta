@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Pill, Sparkles } from "lucide-react";
-import FCCPortalModal from "./FCCPortalModal";
+import PrescriptionPortalModal from "./PrescriptionPortalModal";
 import { MedicationRecommendation } from "@/lib/medicationMapping";
 
 interface PatientData {
@@ -120,8 +120,8 @@ const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: 
   const [isRecommended, setIsRecommended] = useState(false);
 
   // Auto-select category based on patient gender
-  const defaultCategory = patient.gender === "male" ? "male_hormone" : 
-                          patient.gender === "female" ? "female_hormone" : "all";
+  const defaultCategory =
+    patient.gender === "male" ? "male_hormone" : patient.gender === "female" ? "female_hormone" : "all";
   
   // Auto-apply recommended medication when passed
   useEffect(() => {
@@ -144,6 +144,10 @@ const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: 
     : FORMULARY.filter(med => med.category === selectedCategory);
 
   const selectedMedication = FORMULARY.find((m) => m.id === selectedMed);
+
+  const orderCategory =
+    selectedMedication?.category ??
+    (defaultCategory === "all" ? "female_hormone" : defaultCategory);
 
   // Update cadence when medication changes
   const handleMedicationChange = (medId: string) => {
@@ -285,7 +289,7 @@ const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: 
         </CardContent>
       </Card>
 
-      <FCCPortalModal
+      <PrescriptionPortalModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         patient={patient}
@@ -294,6 +298,7 @@ const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: 
         quantity={parseInt(quantity) || 1}
         refills={parseInt(refills) || 0}
         supplyDays={parseInt(cadence) || 30}
+        category={orderCategory}
         onOrderCreated={onOrderCreated}
       />
     </>
