@@ -751,7 +751,8 @@ Every superbill must include:
 - **Website:** elevatedhealthaugusta.com
 
 ## Pharmacy Contacts
-- **FCC Compounding Pharmacy:** 404-555-0199
+- **FCC (Formulation Compounding Center):** 844-946-6690 | info@formulationrx.com | Portal: https://portal.formuconnect.com/login
+- **Custom Pharmacy of Evans (Eric Holgate, RPh):** Phone (706) 760-7956 | Fax (706) 993-3772
 
 ## Emergency Contacts
 - **Suicide Lifeline:** 988
