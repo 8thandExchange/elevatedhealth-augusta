@@ -403,7 +403,9 @@ serve(async (req) => {
         fax_id: faxId,
         fax_status: "queued",
         fax_sent_at: new Date().toISOString(),
-        fax_destination: HOLGATE_FAX_NUMBER,
+        fax_destination: destinationFax,
+        pharmacy_id: resolvedPharmacyId,
+        submission_method: "fax",
       })
       .select()
       .single();
