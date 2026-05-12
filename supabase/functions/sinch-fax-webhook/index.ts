@@ -21,7 +21,8 @@ async function sendFailureAlert(
   patientName: string,
   medication: string,
   errorMessage: string,
-  faxId: string
+  faxId: string,
+  pharmacyContactLine: string,
 ) {
   const html = `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 20px;">
