@@ -82,6 +82,7 @@ const faxRequestSchema = z.object({
   diagnosis_code: z.string().max(20).optional(),
   diagnosis_description: z.string().max(200).optional(),
   provider_signature_url: z.string().url().max(500).optional(),
+  pharmacy_id: z.string().uuid().optional(),
 });
 
 type FaxRequest = z.infer<typeof faxRequestSchema>;
