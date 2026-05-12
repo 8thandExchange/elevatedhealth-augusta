@@ -12,9 +12,9 @@ const Hero = () => {
       id="hero"
       className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-foreground"
     >
-      {/* Background video — TODO: Real ambient clinic loop video (15-30s, 1920x1080, compressed to <5MB).
-          Until /hero-video.mp4 and /hero-poster.jpg exist in /public, the section's bg-foreground keeps
-          a clean dark wash instead of a flash of white. */}
+      {/* Background video — DISABLED: /hero-video.mp4 and /hero-poster.jpg do not exist in /public,
+          so the <video> tag was producing 404s. Drop those two files into /public and uncomment to re-enable.
+          The section's bg-foreground keeps a clean dark wash in the meantime.
       <video
         autoPlay
         loop
@@ -26,6 +26,7 @@ const Hero = () => {
       >
         <source src="/hero-video.mp4" type="video/mp4" />
       </video>
+      */}
 
       {/* Dim overlay for text readability */}
       <div className="absolute inset-0 bg-foreground/50" aria-hidden="true" />

@@ -45,7 +45,7 @@
     <meta name="geo.placename" content="Evans" />
     <meta name="geo.position" content="33.5343;-82.1285" />
 
-    <!-- Google Analytics 4 -->
+    <!-- Google Analytics 4 — DISABLED: placeholder measurement ID. Replace G-XXXXXXXXXX with the real GA4 ID and uncomment to re-enable.
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -56,8 +56,9 @@
         'allow_ad_personalization_signals': false
       });
     </script>
+    -->
 
-    <!-- Hotjar -->
+    <!-- Hotjar — DISABLED: placeholder hjid. Replace XXXXXX with the real Hotjar Site ID and uncomment to re-enable.
     <script>
       (function(h,o,t,j,a,r){
         h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
@@ -68,8 +69,9 @@
         a.appendChild(r);
       })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
     </script>
+    -->
 
-    <!-- Meta Pixel -->
+    <!-- Meta Pixel — DISABLED: placeholder Pixel ID. Replace XXXXXXXXXXXXXXX with the real Pixel ID and uncomment to re-enable.
     <script>
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -79,6 +81,7 @@
       fbq('init', 'XXXXXXXXXXXXXXX');
       fbq('track', 'PageView');
     </script>
+    -->
 
     <!-- Metricool -->
     <script>
@@ -87,10 +90,12 @@
   </head>
 
   <body>
+    <!-- Meta Pixel <noscript> fallback — DISABLED: placeholder Pixel ID. Re-enable alongside the Meta Pixel script in <head>.
     <noscript>
-      <img height="1" width="1" style="display:none" 
+      <img height="1" width="1" style="display:none"
            src="https://www.facebook.com/tr?id=XXXXXXXXXXXXXXX&ev=PageView&noscript=1"/>
     </noscript>
+    -->
     
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
