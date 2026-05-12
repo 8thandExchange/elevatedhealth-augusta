@@ -1951,8 +1951,12 @@ export type Database = {
           fax_status: string | null
           id: string
           patient_id: string
+          pharmacy_id: string | null
+          portal_opened_at: string | null
+          portal_submitted_at: string | null
           protocol_snapshot: Json | null
           status: Database["public"]["Enums"]["order_status"] | null
+          submission_method: string | null
           updated_at: string | null
         }
         Insert: {
@@ -1964,8 +1968,12 @@ export type Database = {
           fax_status?: string | null
           id?: string
           patient_id: string
+          pharmacy_id?: string | null
+          portal_opened_at?: string | null
+          portal_submitted_at?: string | null
           protocol_snapshot?: Json | null
           status?: Database["public"]["Enums"]["order_status"] | null
+          submission_method?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -1977,8 +1985,12 @@ export type Database = {
           fax_status?: string | null
           id?: string
           patient_id?: string
+          pharmacy_id?: string | null
+          portal_opened_at?: string | null
+          portal_submitted_at?: string | null
           protocol_snapshot?: Json | null
           status?: Database["public"]["Enums"]["order_status"] | null
+          submission_method?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -1987,6 +1999,13 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
             referencedColumns: ["id"]
           },
         ]
@@ -2285,6 +2304,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pharmacies: {
+        Row: {
+          address: string | null
+          city: string | null
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string
+          default_for_categories: string[] | null
+          display_name: string
+          fax_number: string | null
+          fulfillment_method: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          phone_number: string | null
+          portal_url: string | null
+          slug: string
+          sort_order: number
+          state: string | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          default_for_categories?: string[] | null
+          display_name: string
+          fax_number?: string | null
+          fulfillment_method: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          phone_number?: string | null
+          portal_url?: string | null
+          slug: string
+          sort_order?: number
+          state?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          default_for_categories?: string[] | null
+          display_name?: string
+          fax_number?: string | null
+          fulfillment_method?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          phone_number?: string | null
+          portal_url?: string | null
+          slug?: string
+          sort_order?: number
+          state?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: []
       }
       protocols: {
         Row: {
