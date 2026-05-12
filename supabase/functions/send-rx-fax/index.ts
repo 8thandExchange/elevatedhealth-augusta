@@ -361,7 +361,7 @@ serve(async (req) => {
     // Send fax via Sinch API
     const sinchAuth = btoa(`${SINCH_ACCESS_KEY}:${SINCH_SECRET_KEY}`);
     
-    console.log("Sending fax to:", HOLGATE_FAX_NUMBER);
+    console.log("Sending fax to:", destinationFax);
 
     const faxResponse = await fetch("https://fax.api.sinch.com/v3/faxes", {
       method: "POST",
@@ -370,7 +370,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        to: HOLGATE_FAX_NUMBER,
+        to: destinationFax,
         contentUrl: `data:text/html;base64,${htmlBase64}`,
         headerText: "Elevated Health Augusta - Prescription",
       }),
