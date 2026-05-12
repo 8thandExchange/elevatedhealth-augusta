@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CheckCircle2, Loader2, Mail, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import SlotPicker from "@/components/booking/SlotPicker";
+import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 
@@ -65,6 +65,7 @@ const ConsultationConfirmed = () => {
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
   const [providerId, setProviderId] = useState<string | null>(null);
+  const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -138,6 +139,20 @@ const ConsultationConfirmed = () => {
         },
       },
     );
+    const code = (data as { error_code?: string } | null)?.error_code;
+    if (
+      code === "room_unavailable" ||
+      code === "limit_exceeded" ||
+      code === "room_blackout" ||
+      code === "slot_taken"
+    ) {
+      toast.error(
+        (data as { error?: string })?.error ||
+          "That slot is no longer available. Please pick another.",
+      );
+      await slotPickerRef.current?.reload();
+      return;
+    }
     if (error || data?.error) {
       toast.error(data?.error || "Could not book that slot. Please pick another.");
       return;
@@ -226,6 +241,7 @@ const ConsultationConfirmed = () => {
                     onChange={setProviderId}
                   />
                   <SlotPicker
+                    ref={slotPickerRef}
                     serviceLine="consult"
                     durationMinutes={30}
                     providerId={providerId || undefined}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
@@ -17,7 +17,7 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import SlotPicker from "@/components/booking/SlotPicker";
+import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 
@@ -72,6 +72,7 @@ const ScheduleConsult = () => {
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
   const [providerId, setProviderId] = useState<string | null>(null);
   const [processingRebooking, setProcessingRebooking] = useState(false);
+  const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   useEffect(() => {
     if (rebookingResult === "success") {
@@ -172,6 +173,20 @@ const ScheduleConsult = () => {
         },
       },
     );
+    const code = (data as { error_code?: string } | null)?.error_code;
+    if (
+      code === "room_unavailable" ||
+      code === "limit_exceeded" ||
+      code === "room_blackout" ||
+      code === "slot_taken"
+    ) {
+      toast.error(
+        (data as { error?: string })?.error ||
+          "That slot is no longer available. Please pick another.",
+      );
+      await slotPickerRef.current?.reload();
+      return;
+    }
     if (error || data?.error) {
       toast.error(data?.error || "Could not book that slot. Please pick another.");
       return;
@@ -373,6 +388,7 @@ const ScheduleConsult = () => {
                     onChange={setProviderId}
                   />
                   <SlotPicker
+                    ref={slotPickerRef}
                     serviceLine="consult"
                     durationMinutes={30}
                     providerId={providerId || undefined}

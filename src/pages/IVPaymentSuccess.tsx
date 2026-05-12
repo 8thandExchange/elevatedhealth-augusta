@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CheckCircle2, Calendar, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import SlotPicker from "@/components/booking/SlotPicker";
+import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ const IVPaymentSuccess = () => {
   const therapyName = searchParams.get("therapy") || "IV Therapy";
   const sessionId = searchParams.get("session_id") || "";
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
+  const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   const handleConfirm = async ({
     slot,
@@ -47,6 +48,20 @@ const IVPaymentSuccess = () => {
         },
       },
     );
+    const code = (data as { error_code?: string } | null)?.error_code;
+    if (
+      code === "room_unavailable" ||
+      code === "limit_exceeded" ||
+      code === "room_blackout" ||
+      code === "slot_taken"
+    ) {
+      toast.error(
+        (data as { error?: string })?.error ||
+          "That slot is no longer available. Please pick another.",
+      );
+      await slotPickerRef.current?.reload();
+      return;
+    }
     if (error || data?.error) {
       toast.error(data?.error || "Could not book that slot. Please pick another.");
       return;
@@ -103,6 +118,7 @@ const IVPaymentSuccess = () => {
                     Sessions run 45–60 minutes in our private IV lounge.
                   </p>
                   <SlotPicker
+                    ref={slotPickerRef}
                     serviceLine="iv"
                     durationMinutes={60}
                     onConfirm={handleConfirm}

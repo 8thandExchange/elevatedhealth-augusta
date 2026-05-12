@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,19 +27,26 @@ interface SlotPickerProps {
   confirmLabel?: string;
 }
 
+export interface SlotPickerHandle {
+  reload: () => Promise<void>;
+}
+
 // Token migration note: this widget previously used legacy `bg-gold` /
 // `text-gold` / `border-gold` tokens. Tailwind aliases those to the modern
 // camel/accent palette, but new pages render with `bg-accent`, so we updated
 // this widget to match — keeps the booking flow visually coherent with
 // BookingConfirmedCard / ProviderChooser.
 
-export default function SlotPicker({
-  serviceLine,
-  durationMinutes = 60,
-  providerId,
-  onConfirm,
-  confirmLabel = "Confirm Appointment",
-}: SlotPickerProps) {
+export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function SlotPicker(
+  {
+    serviceLine,
+    durationMinutes = 60,
+    providerId,
+    onConfirm,
+    confirmLabel = "Confirm Appointment",
+  },
+  ref,
+) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [slots, setSlots] = useState<Slot[]>([]);
@@ -40,29 +54,32 @@ export default function SlotPicker({
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase.functions.invoke("get-available-slots", {
-          body: {
-            service_line: serviceLine,
-            duration_minutes: durationMinutes,
-            provider_id: providerId,
-            days: 21,
-          },
-        });
-        if (error) throw error;
-        setSlots(data?.slots || []);
-      } catch (e: any) {
-        toast.error("Couldn't load availability. Please call us.");
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+  const loadSlots = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("get-available-slots", {
+        body: {
+          service_line: serviceLine,
+          duration_minutes: durationMinutes,
+          provider_id: providerId,
+          days: 21,
+        },
+      });
+      if (error) throw error;
+      setSlots(data?.slots || []);
+    } catch (e: unknown) {
+      toast.error("Couldn't load availability. Please call us.");
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   }, [serviceLine, durationMinutes, providerId]);
+
+  useImperativeHandle(ref, () => ({ reload: loadSlots }), [loadSlots]);
+
+  useEffect(() => {
+    void loadSlots();
+  }, [loadSlots]);
 
   const days = useMemo(() => {
     const start = addDays(startOfDay(new Date()), weekOffset * 7);
@@ -74,8 +91,7 @@ export default function SlotPicker({
     [slots, selectedDate],
   );
 
-  const dayHasSlots = (d: Date) =>
-    slots.some((s) => isSameDay(new Date(s.start), d));
+  const dayHasSlots = (d: Date) => slots.some((s) => isSameDay(new Date(s.start), d));
 
   const handleConfirm = async () => {
     if (!selectedSlot) return;
@@ -100,7 +116,13 @@ export default function SlotPicker({
       <Card>
         <CardContent className="p-8 text-center space-y-3">
           <p className="text-muted-foreground font-jost">No openings in the next 3 weeks.</p>
-          <p className="text-sm font-jost">Please call <a className="text-accent underline" href="tel:7067603470">(706) 760-3470</a> and we'll get you scheduled.</p>
+          <p className="text-sm font-jost">
+            Please call{" "}
+            <a className="text-accent underline" href="tel:7067603470">
+              (706) 760-3470
+            </a>{" "}
+            and we'll get you scheduled.
+          </p>
         </CardContent>
       </Card>
     );
@@ -111,13 +133,13 @@ export default function SlotPicker({
       {/* Week navigator */}
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={() => setWeekOffset((w) => Math.max(0, w - 1))} disabled={weekOffset === 0}>
-          <ChevronLeft className="h-4 w-4" /> Previous
+          <ChevronLeft className="w-4 h-4" /> Previous
         </Button>
         <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <Calendar className="h-4 w-4" /> {format(days[0], "MMM d")} – {format(days[6], "MMM d, yyyy")}
         </p>
         <Button variant="ghost" size="sm" onClick={() => setWeekOffset((w) => Math.min(2, w + 1))} disabled={weekOffset === 2}>
-          Next <ChevronRight className="h-4 w-4" />
+          Next <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
 
@@ -132,9 +154,11 @@ export default function SlotPicker({
               onClick={() => has && setSelectedDate(d)}
               disabled={!has}
               className={`p-3 rounded-lg border text-center transition-all ${
-                sel ? "bg-accent text-accent-foreground border-accent" :
-                has ? "bg-card hover:border-accent cursor-pointer" :
-                "bg-muted/30 text-muted-foreground cursor-not-allowed opacity-50"
+                sel
+                  ? "bg-accent text-accent-foreground border-accent"
+                  : has
+                    ? "bg-card hover:border-accent cursor-pointer"
+                    : "bg-muted/30 text-muted-foreground cursor-not-allowed opacity-50"
               }`}
             >
               <div className="text-xs uppercase">{format(d, "EEE")}</div>
@@ -181,11 +205,15 @@ export default function SlotPicker({
             <p className="font-semibold font-jost">{format(new Date(selectedSlot.start), "EEE, MMM d · h:mm a")}</p>
           </div>
           <Button onClick={handleConfirm} disabled={submitting}>
-            {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+            {submitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
             {confirmLabel}
           </Button>
         </div>
       )}
     </div>
   );
-}
+});
+
+SlotPicker.displayName = "SlotPicker";
+
+export default SlotPicker;

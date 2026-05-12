@@ -5,6 +5,11 @@
  * schedule_blocks, schedule_exceptions, and appointments to compute live
  * availability across the next N days.
  *
+ * Room-aware (v2): batch-loads rooms, room_blackouts, room-assigned
+ * appointments, and booking_limits once per request, then filters each
+ * candidate slot in-memory to match find_available_room + check_booking_limits
+ * trigger semantics.
+ *
  * AUTH POSTURE (security audit R-5, 2026-05-08):
  *   - verify_jwt = true in supabase/config.toml (existing — unchanged)
  *   - No additional role check: any authenticated user can compute slots,
@@ -37,6 +42,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const NY_TZ = "America/New_York";
+const DOW_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+
 interface Schedule {
   id: string;
   provider_id: string;
@@ -63,11 +71,49 @@ interface Appt {
 interface Exception {
   provider_id: string;
   exception_date: string; // YYYY-MM-DD
-  start_time: string;     // HH:MM:SS
+  start_time: string; // HH:MM:SS
   end_time: string;
   type: "addition" | "removal" | string;
   service_lines: string[];
   slot_minutes: number;
+}
+
+interface RoomRow {
+  id: string;
+  type: string;
+  is_active: boolean;
+  is_flex: boolean;
+  allowed_service_lines: string[];
+  max_concurrent_appointments: number;
+  display_order: number;
+}
+
+interface RoomBlackoutRow {
+  room_id: string;
+  start_at: string;
+  end_at: string;
+}
+
+interface RoomApptRow {
+  id: string;
+  room_id: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  service_line: string;
+  status: string;
+}
+
+interface BookingLimitRow {
+  id: string;
+  active: boolean;
+  day_of_week: number | null;
+  start_time: string | null;
+  end_time: string | null;
+  max_concurrent: number;
+  service_line: string | null;
+  applies_to_room_types: string[] | null;
+  effective_from: string | null;
+  effective_until: string | null;
 }
 
 function timeToMinutes(t: string) {
@@ -80,6 +126,124 @@ function dateKey(d: Date) {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+function nyDateString(d: Date): string {
+  return d.toLocaleDateString("en-CA", { timeZone: NY_TZ });
+}
+
+function nyDow(d: Date): number {
+  const s = new Intl.DateTimeFormat("en-US", { timeZone: NY_TZ, weekday: "short" }).format(d);
+  return DOW_SHORT.indexOf(s as (typeof DOW_SHORT)[number]);
+}
+
+function nyMinutesFromMidnight(d: Date): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: NY_TZ,
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  }).formatToParts(d);
+  let h = 0;
+  let m = 0;
+  for (const p of parts) {
+    if (p.type === "hour") h = parseInt(p.value, 10);
+    if (p.type === "minute") m = parseInt(p.value, 10);
+  }
+  return h * 60 + m;
+}
+
+function timeStrToMinutes(t: string | null): number | null {
+  if (!t) return null;
+  const [hh, mm] = t.split(":").map(Number);
+  return hh * 60 + mm;
+}
+
+function overlapsInterval(aStartMs: number, aEndMs: number, bStartMs: number, bEndMs: number): boolean {
+  return aStartMs < bEndMs && aEndMs > bStartMs;
+}
+
+function buildRoomHelpers(
+  rooms: RoomRow[],
+  blackouts: RoomBlackoutRow[],
+  roomAppts: RoomApptRow[],
+  bookingLimits: BookingLimitRow[],
+) {
+  const roomsById = new Map(rooms.map((r) => [r.id, r]));
+  const sortedRooms = [...rooms].sort((a, b) => {
+    if (a.is_flex !== b.is_flex) return Number(a.is_flex) - Number(b.is_flex);
+    return (a.display_order ?? 0) - (b.display_order ?? 0);
+  });
+
+  function isSlotRoomAvailable(slotStart: Date, slotEnd: Date, serviceLine: string): boolean {
+    const sMs = slotStart.getTime();
+    const eMs = slotEnd.getTime();
+    for (const r of sortedRooms) {
+      if (!r.is_active) continue;
+      if (!r.allowed_service_lines?.includes(serviceLine)) continue;
+
+      const blackoutHit = blackouts.some(
+        (b) =>
+          b.room_id === r.id &&
+          overlapsInterval(new Date(b.start_at).getTime(), new Date(b.end_at).getTime(), sMs, eMs),
+      );
+      if (blackoutHit) continue;
+
+      const apptHit = roomAppts.some((a) => {
+        if (a.room_id !== r.id) return false;
+        if (["cancelled", "no_show", "rescheduled"].includes(a.status)) return false;
+        const aStart = new Date(a.scheduled_at).getTime();
+        const aEnd = aStart + (a.duration_minutes || 30) * 60_000;
+        return overlapsInterval(aStart, aEnd, sMs, eMs);
+      });
+      if (!apptHit) return true;
+    }
+    return false;
+  }
+
+  function withinBookingLimits(slotStart: Date, slotEnd: Date, serviceLine: string): boolean {
+    const slotStartMs = slotStart.getTime();
+    const slotEndMs = slotEnd.getTime();
+    const apptDate = nyDateString(slotStart);
+    const apptDow = nyDow(slotStart);
+    const apptMin = nyMinutesFromMidnight(slotStart);
+
+    for (const lim of bookingLimits) {
+      if (!lim.active) continue;
+      if (lim.effective_from && lim.effective_from > apptDate) continue;
+      if (lim.effective_until && lim.effective_until < apptDate) continue;
+      if (lim.day_of_week !== null && lim.day_of_week !== apptDow) continue;
+      const stMin = timeStrToMinutes(lim.start_time);
+      const enMin = timeStrToMinutes(lim.end_time);
+      if (stMin !== null && stMin > apptMin) continue;
+      if (enMin !== null && enMin < apptMin) continue;
+      if (lim.service_line !== null && lim.service_line !== serviceLine) continue;
+
+      const appliesNull =
+        lim.applies_to_room_types === null || (lim.applies_to_room_types?.length ?? 0) === 0;
+
+      let count = 0;
+      for (const a of roomAppts) {
+        if (["cancelled", "no_show", "rescheduled"].includes(a.status)) continue;
+        const aStart = new Date(a.scheduled_at).getTime();
+        const aEnd = aStart + (a.duration_minutes || 30) * 60_000;
+        if (!overlapsInterval(aStart, aEnd, slotStartMs, slotEndMs)) continue;
+        if (lim.service_line !== null && a.service_line !== lim.service_line) continue;
+
+        const r = roomsById.get(a.room_id);
+        const rType = r?.type ?? null;
+        if (!appliesNull) {
+          const types = lim.applies_to_room_types!;
+          if (!rType || !types.includes(rType)) continue;
+        }
+        count++;
+      }
+      if (count + 1 > lim.max_concurrent) return false;
+    }
+    return true;
+  }
+
+  return { isSlotRoomAvailable, withinBookingLimits };
 }
 
 serve(async (req) => {
@@ -148,6 +312,35 @@ serve(async (req) => {
           .gte("exception_date", dateKey(exceptionStartDate))
           .lte("exception_date", dateKey(exceptionEndDate))
       : { data: [] as Exception[] };
+
+    const fetchStart = new Date(startWindow.getTime() - 48 * 60 * 60 * 1000);
+    const [{ data: roomsData }, { data: blackoutsData }, { data: roomApptsRaw }, { data: limitsData }] = await Promise.all([
+      supabase
+        .from("rooms")
+        .select("id, type, is_active, is_flex, allowed_service_lines, max_concurrent_appointments, display_order")
+        .eq("is_active", true),
+      supabase
+        .from("room_blackouts")
+        .select("room_id, start_at, end_at")
+        .lt("start_at", endWindow.toISOString())
+        .gt("end_at", startWindow.toISOString()),
+      supabase
+        .from("appointments")
+        .select("id, room_id, scheduled_at, duration_minutes, service_line, status")
+        .not("room_id", "is", null)
+        .gte("scheduled_at", fetchStart.toISOString())
+        .lt("scheduled_at", endWindow.toISOString()),
+      supabase.from("booking_limits").select("*").eq("active", true),
+    ]);
+
+    const rooms = (roomsData || []) as RoomRow[];
+    const blackouts = (blackoutsData || []) as RoomBlackoutRow[];
+    const roomAppts = ((roomApptsRaw || []) as RoomApptRow[]).filter(
+      (a) => !["cancelled", "no_show", "rescheduled"].includes(a.status),
+    );
+    const bookingLimits = (limitsData || []) as BookingLimitRow[];
+
+    const { isSlotRoomAvailable, withinBookingLimits } = buildRoomHelpers(rooms, blackouts, roomAppts, bookingLimits);
 
     const slots: { provider_id: string; start: string; end: string }[] = [];
     // Track unique (provider_id, slotStartIso) to avoid duplicates when an
@@ -239,6 +432,9 @@ serve(async (req) => {
               return slotStart.getTime() < bEnd && slotEnd.getTime() > bStart;
             });
             if (conflictBlock) continue;
+
+            if (!isSlotRoomAvailable(slotStart, slotEnd, service_line)) continue;
+            if (!withinBookingLimits(slotStart, slotEnd, service_line)) continue;
 
             const key = `${providerIdForDay}|${slotStart.toISOString()}`;
             if (seen.has(key)) continue;

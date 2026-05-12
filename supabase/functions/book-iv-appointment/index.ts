@@ -7,6 +7,47 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function responseForAppointmentInsertError(err: { message?: string } | null): Response | null {
+  const msg = err?.message || "";
+  if (/No room available/i.test(msg)) {
+    return new Response(
+      JSON.stringify({
+        error: "All rooms are booked at that time. Please pick another slot.",
+        error_code: "room_unavailable",
+      }),
+      { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+  if (/Booking limit exceeded/i.test(msg)) {
+    return new Response(
+      JSON.stringify({
+        error: "We've reached our concurrent booking limit for that time. Please pick another slot.",
+        error_code: "limit_exceeded",
+      }),
+      { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+  if (/Room blacked out/i.test(msg)) {
+    return new Response(
+      JSON.stringify({
+        error: "That time is no longer available. Please pick another slot.",
+        error_code: "room_blackout",
+      }),
+      { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+  if (/Room already booked/i.test(msg)) {
+    return new Response(
+      JSON.stringify({
+        error: "That slot was just taken. Please pick another.",
+        error_code: "slot_taken",
+      }),
+      { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+  return null;
+}
+
 // TODO(inventory): When inventory tracking goes live for the IV lounge, this
 // edge function should reserve (not yet decrement) the SKUs implied by the
 // chosen IV therapy + addons against inventory_skus / inventory_lots. Actual
@@ -236,7 +277,11 @@ serve(async (req) => {
         })
         .select("*")
         .single();
-      if (aErr) throw aErr;
+      if (aErr) {
+        const mapped = responseForAppointmentInsertError(aErr);
+        if (mapped) return mapped;
+        throw aErr;
+      }
 
       await supabase
         .from("iv_drip_bookings")
@@ -386,7 +431,11 @@ serve(async (req) => {
       booking_source: bookingSource,
       booked_by_user_id: bookedByUserId,
     }).select("*").single();
-    if (aErr) throw aErr;
+    if (aErr) {
+      const mapped = responseForAppointmentInsertError(aErr);
+      if (mapped) return mapped;
+      throw aErr;
+    }
 
     await supabase.from("iv_drip_bookings").update({ appointment_id: appt.id }).eq("id", bookingId);
 
@@ -414,6 +463,8 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error("book-iv-appointment error", e);
+    const mapped = responseForAppointmentInsertError(e && typeof e === "object" && "message" in e ? (e as { message?: string }) : null);
+    if (mapped) return mapped;
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" }
     });

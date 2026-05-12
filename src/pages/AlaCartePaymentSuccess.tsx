@@ -25,7 +25,7 @@
  * 'consult' availability is what backs lab-draw bookings until we
  * introduce that distinction.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Helmet } from "react-helmet";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -43,7 +43,7 @@ import {
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import SlotPicker from "@/components/booking/SlotPicker";
+import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 
@@ -134,6 +134,7 @@ const AlaCartePaymentSuccess = () => {
 
   const [existingAppointment, setExistingAppointment] = useState<BookedAppointment | null>(null);
   const [bookedAppointment, setBookedAppointment] = useState<BookedAppointment | null>(null);
+  const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -207,6 +208,20 @@ const AlaCartePaymentSuccess = () => {
           service_line_override: productInfo.serviceLine,
         },
       });
+      const code = (data as { error_code?: string } | null)?.error_code;
+      if (
+        code === "room_unavailable" ||
+        code === "limit_exceeded" ||
+        code === "room_blackout" ||
+        code === "slot_taken"
+      ) {
+        toast.error(
+          (data as { error?: string })?.error ||
+            "That slot is no longer available. Please pick another.",
+        );
+        await slotPickerRef.current?.reload();
+        return;
+      }
       if (error) throw error;
       const created = data?.appointment;
       if (!created) throw new Error("Booking did not return an appointment");
@@ -296,6 +311,7 @@ const AlaCartePaymentSuccess = () => {
 
         {providerId && (
           <SlotPicker
+            ref={slotPickerRef}
             serviceLine={productInfo.serviceLine === "follow_up" ? "follow_up" : "consult"}
             durationMinutes={productInfo.durationMinutes}
             providerId={providerId}

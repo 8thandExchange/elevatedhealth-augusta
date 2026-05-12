@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -26,7 +26,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, ArrowLeft, ArrowRight, Calendar, CheckCircle2, User, Search, Plus } from "lucide-react";
 import { toast } from "sonner";
-import SlotPicker from "@/components/booking/SlotPicker";
+import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import ProviderChooser from "@/components/booking/ProviderChooser";
 
 interface PatientLite {
@@ -148,6 +148,7 @@ const StaffBookingModal = ({
   const [pickedSlot, setPickedSlot] = useState<{ provider_id: string; start: string } | null>(
     null,
   );
+  const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   // ----- Step 4: payment -----
   type IvPaymentMethod = "pay_at_visit" | "card_on_file_pending" | "member_no_charge";
@@ -280,6 +281,24 @@ const StaffBookingModal = ({
     }
     setSubmitting(true);
     try {
+      const handleRoomConflictResponse = async (data: unknown) => {
+        const code = (data as { error_code?: string } | null)?.error_code;
+        if (
+          code === "room_unavailable" ||
+          code === "limit_exceeded" ||
+          code === "room_blackout" ||
+          code === "slot_taken"
+        ) {
+          toast.error(
+            (data as { error?: string })?.error ||
+              "That slot is no longer available. Please pick another.",
+          );
+          await slotPickerRef.current?.reload();
+          return true;
+        }
+        return false;
+      };
+
       if (serviceLine === "iv") {
         if (!therapyId) {
           toast.error("Pick an IV therapy.");
@@ -312,6 +331,7 @@ const StaffBookingModal = ({
           },
         });
         if (error || data?.error) {
+          if (await handleRoomConflictResponse(data)) return;
           throw new Error(data?.error || error?.message || "Booking failed");
         }
         setCreated({
@@ -340,6 +360,7 @@ const StaffBookingModal = ({
           },
         });
         if (error || data?.error) {
+          if (await handleRoomConflictResponse(data)) return;
           throw new Error(data?.error || error?.message || "Booking failed");
         }
         setCreated({
@@ -369,6 +390,7 @@ const StaffBookingModal = ({
           },
         });
         if (error || data?.error) {
+          if (await handleRoomConflictResponse(data)) return;
           throw new Error(data?.error || error?.message || "Booking failed");
         }
         const label = serviceMeta?.label || "Consultation";
@@ -600,6 +622,7 @@ const StaffBookingModal = ({
               onChange={setProviderId}
             />
             <SlotPicker
+              ref={slotPickerRef}
               serviceLine={SERVICE_LINE_FOR_SLOTS[serviceLine]}
               durationMinutes={serviceMeta?.duration || 30}
               providerId={providerId || undefined}
