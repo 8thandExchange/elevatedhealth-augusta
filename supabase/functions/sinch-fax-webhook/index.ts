@@ -49,7 +49,7 @@ async function sendFailureAlert(
           <li>Open the Provider Dashboard</li>
           <li>Navigate to the patient's profile</li>
           <li>Use "FCC Portal" button to manually enter the order</li>
-          <li>Or call the compounding pharmacy directly: (706) 993-3772</li>
+          <li>${pharmacyContactLine}</li>
         </ol>
       </div>
       
