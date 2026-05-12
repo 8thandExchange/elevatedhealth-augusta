@@ -8,27 +8,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
-interface Room {
-  id: string;
-  name: string;
-  active: boolean;
-  display_order: number;
-}
-
-interface Blackout {
-  id: string;
-  room_id: string;
-  start_at: string;
-  end_at: string;
-  reason: string | null;
-  created_at: string;
-}
+type RoomPick = Pick<Database["public"]["Tables"]["rooms"]["Row"], "id" | "name" | "is_active" | "display_order">;
+type BlackoutRow = Database["public"]["Tables"]["room_blackouts"]["Row"];
 
 export function RoomBlackouts() {
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [blackouts, setBlackouts] = useState<Blackout[]>([]);
+  const [rooms, setRooms] = useState<RoomPick[]>([]);
+  const [blackouts, setBlackouts] = useState<BlackoutRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<"upcoming" | "past" | "all">("upcoming");
@@ -36,15 +24,17 @@ export function RoomBlackouts() {
   const load = async () => {
     setLoading(true);
     const [{ data: roomData }, { data: blackoutData }] = await Promise.all([
-      (supabase as any).from("rooms").select("id, name, active, display_order").order("display_order"),
-      (supabase as any).from("room_blackouts").select("*").order("start_at", { ascending: false }),
+      supabase.from("rooms").select("id, name, is_active, display_order").order("display_order"),
+      supabase.from("room_blackouts").select("*").order("start_at", { ascending: false }),
     ]);
-    setRooms((roomData as Room[]) || []);
-    setBlackouts((blackoutData as Blackout[]) || []);
+    setRooms(roomData ?? []);
+    setBlackouts(blackoutData ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    void load();
+  }, []);
 
   const visible = useMemo(() => {
     const now = Date.now();
@@ -55,9 +45,12 @@ export function RoomBlackouts() {
 
   const remove = async (id: string) => {
     if (!confirm("Remove this blackout?")) return;
-    const { error } = await (supabase as any).from("room_blackouts").delete().eq("id", id);
+    const { error } = await supabase.from("room_blackouts").delete().eq("id", id);
     if (error) toast.error(`Failed: ${error.message}`);
-    else { toast.success("Blackout removed"); load(); }
+    else {
+      toast.success("Blackout removed");
+      void load();
+    }
   };
 
   return (
@@ -87,7 +80,7 @@ export function RoomBlackouts() {
         </button>
       </div>
 
-      {showForm && <BlackoutForm rooms={rooms} onCreated={() => { setShowForm(false); load(); }} />}
+      {showForm && <BlackoutForm rooms={rooms} onCreated={() => { setShowForm(false); void load(); }} />}
 
       {loading ? (
         <SkeletonRows />
@@ -111,9 +104,7 @@ export function RoomBlackouts() {
                 ].join(" ")}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="font-playfair text-lg text-foreground">
-                    {room?.name || "Unknown room"}
-                  </p>
+                  <p className="font-playfair text-lg text-foreground">{room?.name || "Unknown room"}</p>
                   <p className="font-jost text-sm text-muted-foreground mt-1">
                     {formatRange(b.start_at, b.end_at)}
                   </p>
@@ -123,7 +114,7 @@ export function RoomBlackouts() {
                 </div>
                 {!past && (
                   <button
-                    onClick={() => remove(b.id)}
+                    onClick={() => void remove(b.id)}
                     className="font-jost text-xs uppercase tracking-[0.14em] px-3 py-1.5 border border-border text-muted-foreground rounded-sm hover:border-destructive hover:text-destructive transition-colors"
                   >
                     Remove
@@ -138,8 +129,9 @@ export function RoomBlackouts() {
   );
 }
 
-function BlackoutForm({ rooms, onCreated }: { rooms: Room[]; onCreated: () => void }) {
-  const [roomId, setRoomId] = useState(rooms[0]?.id || "");
+function BlackoutForm({ rooms, onCreated }: { rooms: RoomPick[]; onCreated: () => void }) {
+  const activeRooms = rooms.filter((r) => r.is_active);
+  const [roomId, setRoomId] = useState(activeRooms[0]?.id || rooms[0]?.id || "");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
@@ -158,7 +150,7 @@ function BlackoutForm({ rooms, onCreated }: { rooms: Room[]; onCreated: () => vo
     setSaving(true);
     const startAt = new Date(`${date}T${startTime}:00-05:00`).toISOString();
     const endAt = new Date(`${date}T${endTime}:00-05:00`).toISOString();
-    const { error } = await (supabase as any).from("room_blackouts").insert({
+    const { error } = await supabase.from("room_blackouts").insert({
       room_id: roomId,
       start_at: startAt,
       end_at: endAt,
@@ -166,8 +158,13 @@ function BlackoutForm({ rooms, onCreated }: { rooms: Room[]; onCreated: () => vo
     });
     setSaving(false);
     if (error) toast.error(`Failed: ${error.message}`);
-    else { toast.success("Blackout created"); onCreated(); }
+    else {
+      toast.success("Blackout created");
+      onCreated();
+    }
   };
+
+  const roomOptions = activeRooms.length > 0 ? activeRooms : rooms;
 
   return (
     <div className="p-5 border border-accent/40 bg-muted/20 rounded-sm space-y-4">
@@ -179,8 +176,10 @@ function BlackoutForm({ rooms, onCreated }: { rooms: Room[]; onCreated: () => vo
             onChange={(e) => setRoomId(e.target.value)}
             className="mt-1 w-full font-jost text-sm px-3 py-2 bg-background border border-border rounded-sm focus:outline-none focus:border-accent"
           >
-            {rooms.map((r) => (
-              <option key={r.id} value={r.id}>{r.name}</option>
+            {roomOptions.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
             ))}
           </select>
         </label>
@@ -222,7 +221,7 @@ function BlackoutForm({ rooms, onCreated }: { rooms: Room[]; onCreated: () => vo
         />
       </label>
       <button
-        onClick={submit}
+        onClick={() => void submit()}
         disabled={saving}
         className="font-jost text-xs uppercase tracking-[0.14em] px-5 py-2.5 bg-primary text-accent rounded-sm hover:bg-primary-light transition-colors disabled:opacity-50"
       >

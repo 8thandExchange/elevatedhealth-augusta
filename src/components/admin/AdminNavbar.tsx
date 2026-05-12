@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -231,6 +231,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                   Email Templates
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/admin/scheduling" className="cursor-pointer gap-2">
+                  <CalendarDays className="w-4 h-4" />
+                  Scheduling Settings
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/staff-pricing-cheatsheet" target="_blank" className="cursor-pointer">
@@ -332,6 +338,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 <Link to="/admin/email-templates" className="cursor-pointer gap-2">
                   <Mail className="w-4 h-4" />
                   Email Templates
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/admin/scheduling" className="cursor-pointer gap-2">
+                  <CalendarDays className="w-4 h-4" />
+                  Scheduling Settings
                 </Link>
               </DropdownMenuItem>
               

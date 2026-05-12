@@ -2,24 +2,15 @@
  * RoomList — admin
  *
  * Shows all rooms with inline edit: name, active toggle, capacity,
- * allowed service categories. Today's utilization is shown alongside.
+ * allowed service lines. Today's utilization is shown alongside.
  */
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
-interface Room {
-  id: string;
-  name: string;
-  type: "treatment_room" | "consult_room" | "procedure_room" | "injection_room" | "lobby";
-  active: boolean;
-  is_flex: boolean;
-  display_order: number;
-  max_concurrent_appointments: number;
-  allowed_service_categories: string[];
-  notes: string | null;
-}
+type RoomRow = Database["public"]["Tables"]["rooms"]["Row"];
 
 interface Utilization {
   id: string;
@@ -28,18 +19,17 @@ interface Utilization {
   active_blackouts: number;
 }
 
-const ALL_CATEGORIES: { key: string; label: string }[] = [
+const ALL_SERVICE_LINES: { key: string; label: string }[] = [
   { key: "iv", label: "IV Hydration" },
-  { key: "nad", label: "NAD+" },
   { key: "hormone", label: "Hormone" },
-  { key: "peptide", label: "Peptide" },
-  { key: "weight_loss", label: "Weight Loss" },
   { key: "injection", label: "Injection" },
+  { key: "weight_loss", label: "Weight Loss" },
+  { key: "peptide", label: "Peptide" },
   { key: "consult", label: "Consult" },
 ];
 
 export function RoomList() {
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [rooms, setRooms] = useState<RoomRow[]>([]);
   const [utilization, setUtilization] = useState<Record<string, Utilization>>({});
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -47,38 +37,48 @@ export function RoomList() {
   const load = async () => {
     setLoading(true);
     const [{ data: roomData }, { data: utilData }] = await Promise.all([
-      (supabase as any).from("rooms").select("*").order("display_order"),
-      (supabase as any).from("v_room_utilization").select("*"),
+      supabase.from("rooms").select("*").order("display_order"),
+      supabase.from("v_room_utilization").select("*"),
     ]);
-    setRooms((roomData as Room[]) || []);
+    setRooms(roomData ?? []);
     const utilMap: Record<string, Utilization> = {};
-    (utilData || []).forEach((u: any) => { utilMap[u.id] = u; });
+    for (const u of utilData ?? []) {
+      if (!u.id) continue;
+      utilMap[u.id] = {
+        id: u.id,
+        appointments_today: u.appointments_today ?? 0,
+        appointments_this_week: u.appointments_this_week ?? 0,
+        active_blackouts: u.active_blackouts ?? 0,
+      };
+    }
     setUtilization(utilMap);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    void load();
+  }, []);
 
-  const toggleActive = async (room: Room) => {
-    const { error } = await (supabase as any)
+  const toggleActive = async (room: RoomRow) => {
+    const { error } = await supabase
       .from("rooms")
-      .update({ active: !room.active })
+      .update({ is_active: !room.is_active })
       .eq("id", room.id);
     if (error) {
       toast.error(`Failed to update ${room.name}: ${error.message}`);
     } else {
-      toast.success(`${room.name} ${!room.active ? "activated" : "deactivated"}`);
-      load();
+      toast.success(`${room.name} ${!room.is_active ? "activated" : "deactivated"}`);
+      void load();
     }
   };
 
-  const saveRoom = async (room: Partial<Room> & { id: string }) => {
-    const { error } = await (supabase as any)
+  const saveRoom = async (room: Partial<RoomRow> & { id: string }) => {
+    const { error } = await supabase
       .from("rooms")
       .update({
         name: room.name,
         max_concurrent_appointments: room.max_concurrent_appointments,
-        allowed_service_categories: room.allowed_service_categories,
+        allowed_service_lines: room.allowed_service_lines,
         notes: room.notes,
       })
       .eq("id", room.id);
@@ -87,7 +87,7 @@ export function RoomList() {
     } else {
       toast.success("Room updated");
       setEditingId(null);
-      load();
+      void load();
     }
   };
 
@@ -103,9 +103,11 @@ export function RoomList() {
             key={room.id}
             className={[
               "border rounded-sm bg-background transition-all",
-              room.active ? "border-border" : "border-border/50 bg-muted/30",
+              room.is_active ? "border-border" : "border-border/50 bg-muted/30",
               isEditing && "border-accent",
-            ].filter(Boolean).join(" ")}
+            ]
+              .filter(Boolean)
+              .join(" ")}
           >
             {isEditing ? (
               <RoomEditForm room={room} onCancel={() => setEditingId(null)} onSave={saveRoom} />
@@ -122,7 +124,7 @@ export function RoomList() {
                     <span className="font-jost text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                       {room.type.replace("_", " ")}
                     </span>
-                    {!room.active && (
+                    {!room.is_active && (
                       <span className="font-jost text-[10px] uppercase tracking-[0.16em] px-2 py-0.5 bg-destructive/10 text-destructive border border-destructive/30 rounded-sm">
                         Off
                       </span>
@@ -137,9 +139,12 @@ export function RoomList() {
                     )}
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {room.allowed_service_categories.map((cat) => (
-                      <span key={cat} className="font-jost text-[10px] px-2 py-0.5 bg-muted text-foreground/70 rounded-sm">
-                        {ALL_CATEGORIES.find((c) => c.key === cat)?.label || cat}
+                    {room.allowed_service_lines.map((line) => (
+                      <span
+                        key={line}
+                        className="font-jost text-[10px] px-2 py-0.5 bg-muted text-foreground/70 rounded-sm"
+                      >
+                        {ALL_SERVICE_LINES.find((c) => c.key === line)?.label || line}
                       </span>
                     ))}
                   </div>
@@ -149,15 +154,15 @@ export function RoomList() {
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   <button
-                    onClick={() => toggleActive(room)}
+                    onClick={() => void toggleActive(room)}
                     className={[
                       "font-jost text-xs uppercase tracking-[0.14em] px-3 py-1.5 rounded-sm border transition-colors",
-                      room.active
+                      room.is_active
                         ? "border-border text-muted-foreground hover:border-destructive hover:text-destructive"
                         : "border-accent/40 text-accent hover:bg-accent hover:text-primary-foreground",
                     ].join(" ")}
                   >
-                    {room.active ? "Deactivate" : "Activate"}
+                    {room.is_active ? "Deactivate" : "Activate"}
                   </button>
                   <button
                     onClick={() => setEditingId(room.id)}
@@ -175,10 +180,9 @@ export function RoomList() {
       <div className="mt-6 p-5 border border-border bg-muted/30 rounded-sm">
         <p className="font-jost text-xs text-muted-foreground">
           <span className="font-medium text-foreground">Note: </span>
-          Rooms 1–4 are treatment rooms intended for IV, NAD+, hormone, peptide, and weight-loss therapies.
-          The lobby is a flex space — it's only booked when treatment rooms are full, and only for
-          injections and brief consults. Deactivating a room makes it unavailable for any new booking
-          but doesn't affect existing appointments.
+          Rooms 1–4 are treatment rooms for IV (including NAD+), hormone, peptide, and weight-loss visits.
+          The lobby is a flex space — booked when treatment rooms are full, for shorter visits only.
+          Deactivating a room blocks new bookings but does not cancel existing appointments.
         </p>
       </div>
     </div>
@@ -190,17 +194,17 @@ function RoomEditForm({
   onCancel,
   onSave,
 }: {
-  room: Room;
+  room: RoomRow;
   onCancel: () => void;
-  onSave: (r: Partial<Room> & { id: string }) => void;
+  onSave: (r: Partial<RoomRow> & { id: string }) => void;
 }) {
   const [name, setName] = useState(room.name);
   const [capacity, setCapacity] = useState(room.max_concurrent_appointments);
-  const [cats, setCats] = useState<string[]>(room.allowed_service_categories);
+  const [lines, setLines] = useState<string[]>([...room.allowed_service_lines]);
   const [notes, setNotes] = useState(room.notes || "");
 
-  const toggleCat = (key: string) => {
-    setCats((prev) => (prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]));
+  const toggleLine = (key: string) => {
+    setLines((prev) => (prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]));
   };
 
   return (
@@ -222,23 +226,23 @@ function RoomEditForm({
             type="number"
             min={1}
             value={capacity}
-            onChange={(e) => setCapacity(parseInt(e.target.value) || 1)}
+            onChange={(e) => setCapacity(parseInt(e.target.value, 10) || 1)}
             className="mt-1 w-full font-jost text-sm px-3 py-2 bg-background border border-border rounded-sm focus:outline-none focus:border-accent"
           />
         </label>
       </div>
       <div>
         <span className="font-jost text-xs uppercase tracking-[0.14em] text-muted-foreground">
-          Allowed service categories
+          Allowed service lines
         </span>
         <div className="mt-2 flex flex-wrap gap-2">
-          {ALL_CATEGORIES.map((c) => {
-            const on = cats.includes(c.key);
+          {ALL_SERVICE_LINES.map((c) => {
+            const on = lines.includes(c.key);
             return (
               <button
                 key={c.key}
                 type="button"
-                onClick={() => toggleCat(c.key)}
+                onClick={() => toggleLine(c.key)}
                 className={[
                   "font-jost text-xs px-3 py-1.5 rounded-sm border transition-colors",
                   on
@@ -268,7 +272,7 @@ function RoomEditForm({
               id: room.id,
               name,
               max_concurrent_appointments: capacity,
-              allowed_service_categories: cats,
+              allowed_service_lines: lines,
               notes,
             })
           }

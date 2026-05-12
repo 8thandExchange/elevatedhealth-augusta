@@ -70,6 +70,7 @@ import ClinicalProtocolDetail from "./pages/ClinicalProtocolDetail";
 import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor";
 import InventoryDashboard from "./pages/InventoryDashboard";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
+import SchedulingSettings from "./pages/admin/SchedulingSettings";
 
 const queryClient = new QueryClient();
 
@@ -236,6 +237,11 @@ const App = () => {
           <Route path="/admin/settings" element={
             <ProviderLayout title="Clinic Settings" subtitle="Configuration" showNavbar={false}>
               <ClinicSettings />
+            </ProviderLayout>
+          } />
+          <Route path="/admin/scheduling" element={
+            <ProviderLayout title="Scheduling Settings" subtitle="Practice Settings" showNavbar={false}>
+              <SchedulingSettings />
             </ProviderLayout>
           } />
           <Route path="/office/dashboard" element={
