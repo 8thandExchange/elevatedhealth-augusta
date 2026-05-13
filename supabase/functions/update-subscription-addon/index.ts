@@ -1,13 +1,18 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Single flat hormone add-on price
+/**
+ * Legacy hormone subscription add-on SKU (pre–ELEVATED program catalog).
+ * Retained for existing Stripe subscriptions that still reference this item.
+ * New enrollments should use program-specific checkouts instead of stacking this add-on.
+ */
 const HORMONE_ADDON_PRICE_ID = "price_1SmMlOEOtKRY99puBAxTpw99"; // $149/mo
 
 const logStep = (step: string, details?: any) => {
@@ -21,6 +26,12 @@ serve(async (req) => {
   }
 
   try {
+    edgeStructuredLog("update-subscription-addon", {
+      event_type: "request",
+      success: true,
+      action_taken: "started",
+      product_recognition: "unknown",
+    });
     logStep("Function started");
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
@@ -138,6 +149,13 @@ serve(async (req) => {
       logStep("Patient record updated", { patient_id, has_hormone_addon: include_hormone_addon });
     }
 
+    edgeStructuredLog("update-subscription-addon", {
+      event_type: "complete",
+      success: true,
+      action_taken: "subscription_addon_updated",
+      product_recognition: "unknown",
+    });
+
     return new Response(JSON.stringify({ 
       success: true,
       has_hormone_addon: include_hormone_addon,
@@ -149,6 +167,16 @@ serve(async (req) => {
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
+    edgeStructuredLog(
+      "update-subscription-addon",
+      {
+        event_type: "error",
+        success: false,
+        action_taken: "handler_failed",
+        error_message: errorMessage,
+      },
+      "error",
+    );
     logStep("ERROR", { message: errorMessage });
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

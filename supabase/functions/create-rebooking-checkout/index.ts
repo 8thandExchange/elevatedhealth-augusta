@@ -1,13 +1,15 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const REBOOKING_FEE_PRICE_ID = "price_1Sa5UFEOtKRY99pupEQlaFvN";
+const REBOOKING_FEE_PRICE_ID = LIVE_CORE_SERVICES.rebookingFee;
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -85,7 +87,15 @@ serve(async (req) => {
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    edgeStructuredLog("create-rebooking-checkout", {
+      event_type: "checkout_created",
+      success: true,
+      action_taken: "stripe_checkout_session_created",
+      patient_id: patient.id,
+      product_recognition: "alacarte_fill",
+    });
+
+    return new Response(JSON.stringify({ url: session.url, session_id: session.id, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

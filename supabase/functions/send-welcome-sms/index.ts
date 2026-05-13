@@ -1,107 +1,145 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
-  console.log(`[SEND-WELCOME-SMS] ${step}${detailsStr}`);
-};
+const CLINIC_PHONE = "(706) 760-3470";
 
-interface WelcomeSMSRequest {
-  patient_id?: string;
-  patient_name: string;
-  patient_phone: string;
-  patient_email?: string;
-  first_name?: string;
-  primary_program?: string;
+function smsWelcomeLog(
+  event: string,
+  fields: {
+    patient_id?: string | null;
+    phone_last4?: string | null;
+    success: boolean;
+    error_message?: string | null;
+  },
+  level: "info" | "error" = "info",
+) {
+  edgeStructuredLog("send-welcome-sms", {
+    event,
+    patient_id: fields.patient_id ?? null,
+    phone_last4: fields.phone_last4 ?? null,
+    success: fields.success,
+    error_message: fields.error_message ?? null,
+  }, level);
 }
 
-const handler = async (req: Request): Promise<Response> => {
+serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    logStep("Function started");
+  let patientIdForLog: string | null = null;
+  let phoneLast4: string | null = null;
 
+  try {
     const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
     const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
 
     if (!sinchAccessKey || !sinchSecretKey) {
-      throw new Error("Sinch API credentials not configured");
+      smsWelcomeLog("config_error", {
+        patient_id: null,
+        phone_last4: null,
+        success: false,
+        error_message: "Sinch credentials not configured",
+      }, "error");
+      throw new Error("Sinch credentials not configured");
     }
 
-    const { patient_name, patient_phone, first_name, primary_program }: WelcomeSMSRequest = await req.json();
+    const { phone, first_name, primary_program, patient_id } = await req.json();
 
-    if (!patient_phone) {
-      throw new Error("Missing required field: patient_phone");
-    }
-
-    logStep("Preparing SMS", { patient_phone, patient_name });
-
-    // Clean and format phone number to E.164
-    let formattedPhone = patient_phone.replace(/\D/g, "");
-    if (formattedPhone.length === 10) {
-      formattedPhone = "1" + formattedPhone;
-    }
-    if (!formattedPhone.startsWith("+")) {
-      formattedPhone = "+" + formattedPhone;
-    }
-
-    const firstName = first_name || patient_name?.split(" ")[0] || "there";
-    
-    const programText = primary_program === 'ketamine' 
-      ? 'mental wellness'
-      : primary_program === 'weight_loss'
-      ? 'weight loss'
-      : 'personalized wellness';
-    
-    const message = `Hi ${firstName}! 🌟 Your Elevated Health Augusta patient portal is ready. Log in anytime at elevatedhealthaugusta.com/patient/login. Your next step: complete your health intake. Questions? (706) 760-3470`;
-
-    const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
-    
-    const response = await fetch(sinchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${sinchSecretKey}`,
-      },
-      body: JSON.stringify({
-        from: "12029533545",
-        to: [formattedPhone],
-        body: message,
-      }),
+    smsWelcomeLog("entry", {
+      patient_id: patient_id ?? null,
+      phone_last4: phone?.length >= 4 ? String(phone).replace(/\D/g, "").slice(-4) : null,
+      success: true,
+      error_message: null,
     });
+
+    if (!phone) {
+      smsWelcomeLog("validation_error", {
+        patient_id: patient_id ?? null,
+        phone_last4: null,
+        success: false,
+        error_message: "phone is required",
+      }, "error");
+      throw new Error("phone is required");
+    }
+
+    patientIdForLog = patient_id ?? null;
+    const digits = String(phone).replace(/\D/g, "");
+    phoneLast4 = digits.length >= 4 ? digits.slice(-4) : null;
+
+    const firstName = first_name || "there";
+    const rawProgram = primary_program || "general";
+    const programKey = rawProgram === "ketamine" ? "general" : rawProgram;
+
+    const programHints: Record<string, string> = {
+      hormone: "Hormone Optimization",
+      weight_loss: "Medical Weight Loss",
+      peptide: "Peptide Protocols",
+      general: "Elevated Health",
+    };
+    const programLabel = programHints[programKey] || programHints.general;
+
+    const message =
+      `Hi ${firstName}! Welcome to Elevated Health Augusta (${programLabel}). ` +
+      `Book your $79 Wellness Assessment; LabCorp draws in-office when ordered. ` +
+      `ELEVATED programs from $199/mo. Portal: elevatedhealthaugusta.com/patient/login ` +
+      `Questions: ${CLINIC_PHONE}`;
+
+    const response = await fetch(
+      `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sinchSecretKey}`,
+        },
+        body: JSON.stringify({
+          from: "+18339765929",
+          to: [digits],
+          body: message,
+        }),
+      },
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
-      logStep("Sinch API error", { status: response.status, error: errorText });
-      throw new Error(`SMS send failed: ${errorText}`);
+      smsWelcomeLog("sinch_error", {
+        patient_id: patientIdForLog,
+        phone_last4: phoneLast4,
+        success: false,
+        error_message: `${response.status}: ${errorText}`,
+      }, "error");
+      throw new Error(`Sinch API error: ${response.status}`);
     }
 
-    const result = await response.json();
-    logStep("SMS sent successfully", { batchId: result.id });
+    smsWelcomeLog("send_complete", {
+      patient_id: patientIdForLog,
+      phone_last4: phoneLast4,
+      success: true,
+      error_message: null,
+    });
 
     return new Response(
-      JSON.stringify({ success: true, batchId: result.id }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ success: true, message: "Welcome SMS sent" }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
-  } catch (error: any) {
-    logStep("ERROR", { message: error.message });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Welcome SMS error:", error);
+    smsWelcomeLog("handler_error", {
+      patient_id: patientIdForLog,
+      phone_last4: phoneLast4,
+      success: false,
+      error_message: message,
+    }, "error");
     return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ error: message }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 },
     );
   }
-};
-
-serve(handler);
+});

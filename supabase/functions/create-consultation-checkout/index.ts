@@ -1,36 +1,36 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-CONSULTATION-CHECKOUT] ${step}${detailsStr}`);
-};
-
 const SERVICE_CONFIG: Record<string, { name: string; description: string }> = {
   hormone: {
-    name: "Hormone Optimization — Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss physician-prescribed HRT and TRT. Includes $79 credit toward treatment."
+    name: "Wellness Assessment — Hormone Optimization",
+    description:
+      "30-minute in-person visit at Elevated Health Augusta (Evans, GA). RN intake, vitals, and provider pathway for physician-prescribed HRT/TRT. Labs and program pricing reviewed separately if you enroll.",
   },
   weight_loss: {
-    name: "Medical Weight Loss — Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss physician-supervised semaglutide/tirzepatide therapy. Includes $79 credit toward treatment."
+    name: "Wellness Assessment — Medical Weight Loss",
+    description:
+      "30-minute in-person visit at Elevated Health Augusta (Evans, GA). RN intake and GLP-1 eligibility review with physician-supervised semaglutide/tirzepatide options.",
   },
   peptide: {
-    name: "Peptide Protocols — Clinical Strategy Session",
-    description: "30-minute in-person consultation at Elevated Health Augusta (Evans, GA) to discuss Sermorelin, NAD+, GHK-Cu & more for cellular optimization. Includes $79 credit toward treatment."
+    name: "Wellness Assessment — Peptide Protocols",
+    description:
+      "30-minute in-person visit at Elevated Health Augusta (Evans, GA). RN intake and consult-gated pathway for Sermorelin, NAD+, GHK-Cu, and related protocols.",
   },
 };
 
 const generateCreditCode = () => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = 'RV-';
-  for (let i = 0; i < 6; i++) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "EH-";
+  for (let i = 0; i < 8; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return code;
@@ -42,19 +42,23 @@ serve(async (req) => {
   }
 
   try {
-    logStep("Function started");
+    edgeStructuredLog("create-consultation-checkout", {
+      event_type: "request",
+      success: true,
+      action_taken: "started",
+      product_recognition: "consultation",
+    });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
     );
 
     const body = await req.json().catch(() => ({}));
     const serviceType = body.serviceType || "hormone";
-    logStep("Service type", { serviceType });
 
     const validServiceTypes = ["hormone", "weight_loss", "peptide"];
     if (!validServiceTypes.includes(serviceType)) {
@@ -73,7 +77,6 @@ serve(async (req) => {
       if (userData.user?.email) {
         userEmail = userData.user.email;
         userId = userData.user.id;
-        logStep("Authenticated user found", { email: userEmail });
       }
     }
 
@@ -82,52 +85,59 @@ serve(async (req) => {
     let customerId: string | undefined;
     if (userEmail) {
       const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
-      if (customers.data.length > 0) {
-        customerId = customers.data[0].id;
-        logStep("Existing Stripe customer found", { customerId });
-      }
+      if (customers.data.length > 0) customerId = customers.data[0].id;
     }
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
     const creditCode = generateCreditCode();
-    logStep("Generated credit code", { creditCode });
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : userEmail,
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: config.name,
-              description: config.description,
-            },
-            unit_amount: 7900, // $79
-          },
+          price: LIVE_CORE_SERVICES.wellnessAssessment,
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: `${origin}/consultation-confirmed?session_id={CHECKOUT_SESSION_ID}&credit=${creditCode}&service=${serviceType}`,
+      success_url:
+        `${origin}/consultation-confirmed?session_id={CHECKOUT_SESSION_ID}&credit=${creditCode}&service=${serviceType}`,
       cancel_url: `${origin}/pricing`,
       metadata: {
         user_id: userId || "",
-        product: "clinical_strategy_session",
+        product: "wellness_assessment",
+        payment_type: "consultation",
         service_type: serviceType,
         credit_code: creditCode,
+        product_display_lane: config.name,
       },
     });
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url, creditCode });
+    edgeStructuredLog("create-consultation-checkout", {
+      event_type: "checkout_created",
+      success: true,
+      action_taken: "stripe_checkout_session_created",
+      product_recognition: "consultation",
+      stripe_customer_id: customerId ?? null,
+    });
 
-    return new Response(JSON.stringify({ url: session.url, sessionId: session.id, creditCode }), {
+    return new Response(JSON.stringify({ url: session.url, session_id: session.id, sessionId: session.id, creditCode }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: errorMessage });
+    edgeStructuredLog(
+      "create-consultation-checkout",
+      {
+        event_type: "error",
+        success: false,
+        action_taken: "checkout_failed",
+        error_message: errorMessage,
+      },
+      "error",
+    );
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,

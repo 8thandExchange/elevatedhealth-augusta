@@ -237,3 +237,27 @@ verify_jwt = true
 [functions.request-hormone-review]
 verify_jwt = true
 
+[functions.create-trt-checkout]
+verify_jwt = false
+
+[functions.create-hrt-checkout]
+verify_jwt = false
+
+[functions.create-glp1-checkout]
+verify_jwt = false
+
+[functions.create-wellness-membership-checkout]
+verify_jwt = false
+
+[functions.create-medical-review-checkout]
+verify_jwt = false
+
+[functions.create-phone-followup-checkout]
+verify_jwt = false
+
+[functions.create-lab-panel-checkout]
+verify_jwt = false
+
+[functions.create-medication-fill-checkout]
+verify_jwt = false
+

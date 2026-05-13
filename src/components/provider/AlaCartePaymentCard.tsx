@@ -21,7 +21,7 @@ import {
   MessageSquare,
   Send,
 } from "lucide-react";
-import { ALACARTE_PRICES, ELEVATED_MEMBERSHIP, type AlacartePriceKey } from "@/lib/stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripeConfig";
 
 interface AlaCartePaymentCardProps {
   patientId: string;
@@ -32,22 +32,35 @@ interface AlaCartePaymentCardProps {
   membershipTier?: string | null;
 }
 
-// Helper function to get member pricing based on tier
-const getMemberPrice = (basePrice: number, tier: string | null | undefined): number => {
-  if (tier === 'concierge') return Math.round(basePrice * 0.85); // 15% off
-  if (tier === 'vitality') return Math.round(basePrice * 0.90); // 10% off
-  return basePrice; // ACCESS or non-member = full price
+export type AlaCarteCatalogKey =
+  | keyof Pick<typeof MEDICATION_FILLS, "testosterone" | "biEst" | "progesterone">
+  | "followUp"
+  | "labPanel";
+
+const ALACARTE_CATALOG: Record<
+  AlaCarteCatalogKey,
+  { name: string; displayPrice: string; description: string; amount: number }
+> = {
+  testosterone: MEDICATION_FILLS.testosterone,
+  biEst: MEDICATION_FILLS.biEst,
+  progesterone: MEDICATION_FILLS.progesterone,
+  followUp: {
+    name: CORE_SERVICES.phoneFollowUp.name,
+    displayPrice: CORE_SERVICES.phoneFollowUp.displayPrice,
+    description: "Scheduled physician phone follow-up (non-member list).",
+    amount: CORE_SERVICES.phoneFollowUp.amount,
+  },
+  labPanel: {
+    name: CORE_SERVICES.comprehensivePanel.name,
+    displayPrice: CORE_SERVICES.comprehensivePanel.displayPrice,
+    description: CORE_SERVICES.comprehensivePanel.name + " — LabCorp in-office draw when ordered.",
+    amount: CORE_SERVICES.comprehensivePanel.amount,
+  },
 };
 
-const getTierDiscount = (tier: string | null | undefined): string => {
-  if (tier === 'concierge') return '15%';
-  if (tier === 'vitality') return '10%';
-  return '';
-};
-
-const ALACARTE_OPTIONS = Object.entries(ALACARTE_PRICES).map(([key, value]) => ({
-  key: key as AlacartePriceKey,
-  ...value,
+const ALACARTE_OPTIONS = (Object.keys(ALACARTE_CATALOG) as AlaCarteCatalogKey[]).map((key) => ({
+  key,
+  ...ALACARTE_CATALOG[key],
 }));
 
 type DeliveryMethod = "email" | "sms";
@@ -60,13 +73,13 @@ const AlaCartePaymentCard = ({
   hasMembership = false,
   membershipTier = null,
 }: AlaCartePaymentCardProps) => {
-  const [selectedProduct, setSelectedProduct] = useState<AlacartePriceKey | "">("");
+  const [selectedProduct, setSelectedProduct] = useState<AlaCarteCatalogKey | "">("");
   const [isSending, setIsSending] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
   const [linkSent, setLinkSent] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("email");
 
-  const selectedItem = selectedProduct ? ALACARTE_PRICES[selectedProduct] : null;
+  const selectedItem = selectedProduct ? ALACARTE_CATALOG[selectedProduct] : null;
 
   const canSendEmail = !!patientEmail;
   const canSendSMS = !!patientPhone;
@@ -184,15 +197,9 @@ const AlaCartePaymentCard = ({
             <div className="flex items-start gap-2">
               <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-medium text-green-600">
-                  {membershipTier?.toUpperCase() || 'MEMBER'} Pricing Applied
-                </p>
+                <p className="font-medium text-green-600">Active ELEVATED membership</p>
                 <p className="text-muted-foreground mt-1">
-                  {getTierDiscount(membershipTier) ? (
-                    <>You receive {getTierDiscount(membershipTier)} off à la carte items with your membership.</>
-                  ) : (
-                    <>Your membership includes many services. À la carte items available below.</>
-                  )}
+                  Eligible à la carte items may receive 20% off at checkout when the server applies the member coupon.
                 </p>
               </div>
             </div>
@@ -202,10 +209,10 @@ const AlaCartePaymentCard = ({
             <div className="flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-medium text-primary">Non-member pricing</p>
+                <p className="font-medium text-primary">Non-member list pricing</p>
                 <p className="text-muted-foreground mt-1">
-                  Consider the Elevated Membership at {ELEVATED_MEMBERSHIP.displayPrice} for 
-                  included medications and better value.
+                  ELEVATED program enrollment ({ELEVATED_PROGRAMS.wellness.displayPrice} wellness track and other
+                  program tiers) bundles clinical care; compare with your provider.
                 </p>
               </div>
             </div>
@@ -215,7 +222,7 @@ const AlaCartePaymentCard = ({
         {/* Product Selection */}
         <div>
           <label className="text-xs text-muted-foreground block mb-1.5">Select Medication</label>
-          <Select value={selectedProduct} onValueChange={(v) => setSelectedProduct(v as AlacartePriceKey)}>
+          <Select value={selectedProduct} onValueChange={(v) => setSelectedProduct(v as AlaCarteCatalogKey)}>
             <SelectTrigger className="bg-background">
               <SelectValue placeholder="Choose à la carte item..." />
             </SelectTrigger>
@@ -244,24 +251,8 @@ const AlaCartePaymentCard = ({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">{selectedItem.name}</span>
-              {hasMembership && getTierDiscount(membershipTier) ? (
-                <div className="text-right">
-                  <span className="text-muted-foreground line-through text-sm mr-2">
-                    {selectedItem.displayPrice}
-                  </span>
-                  <span className="text-green-600 text-xl font-bold">
-                    ${getMemberPrice(selectedItem.amount / 100, membershipTier)}
-                  </span>
-                </div>
-              ) : (
-                <span className="text-amber-600 text-xl font-bold">{selectedItem.displayPrice}</span>
-              )}
+              <span className="text-amber-600 text-xl font-bold">{selectedItem.displayPrice}</span>
             </div>
-            {hasMembership && getTierDiscount(membershipTier) && (
-              <p className="text-xs text-green-600 mt-1 text-right">
-                {getTierDiscount(membershipTier)} member discount applied
-              </p>
-            )}
           </div>
         )}
 
@@ -351,7 +342,8 @@ const AlaCartePaymentCard = ({
         <div className="border-t border-border pt-4 mt-4">
           <p className="text-xs text-muted-foreground text-center">
             <span className="font-medium">Membership comparison:</span> À la carte patients pay per item. 
-            Elevated members ({ELEVATED_MEMBERSHIP.displayPrice}) get medications included.
+            Elevated program enrollment may bundle medications; à la carte uses list pricing with possible 20% member
+            coupon on eligible SKUs.
           </p>
         </div>
       </CardContent>

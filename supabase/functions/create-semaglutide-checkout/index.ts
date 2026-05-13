@@ -1,72 +1,41 @@
 /**
  * create-semaglutide-checkout
  *
- * Creates a Stripe subscription Checkout Session for compounded semaglutide
- * (member or non-member tier) and pre-stamps a `consultation_bookings` row.
- *
- * AUTH POSTURE (security audit R-5, 2026-05-08):
- *   - verify_jwt = false (intentionally — public weight-loss storefront)
- *   - The function reads ONLY two patient fields
- *     (`elevated_membership_status`, `email`) to determine the correct
- *     pricing tier. It does NOT include any patient PHI in the response;
- *     the response shape is `{ url: session.url }` only.
- *   - The pre-stamped consultation_bookings row contains no clinical data
- *     beyond what the user typed in (email, name) plus pricing label.
- *   - The patients-table read uses service-role and is intentionally
- *     scoped to the membership-status column. We do NOT expose membership
- *     status to the caller in the response.
- *
- * Audit decision: keep verify_jwt=false. The patient-row read is narrow
- * and the response leaks nothing.
+ * Public weight-loss storefront — enrolls patient in **ELEVATED GLP-1** ($349/mo live catalog).
+ * Semaglutide vs tirzepatide is tracked in metadata for ops; Stripe line uses the single program price.
  */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { LIVE_ELEVATED_PROGRAMS } from "../_shared/live-prices.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SEMAGLUTIDE_PRICES = {
-  member:    { priceId: "price_1TUs38EOtKRY99puPpc6SFMs", amount: 19900, label: "$199/mo (Elevated Member)" },
-  nonmember: { priceId: "price_1TUs3AEOtKRY99puDOseqLDZ", amount: 24900, label: "$249/mo (Non-Member)" },
-};
-
-const log = (step: string, details?: unknown) =>
-  console.log(`[SEMAGLUTIDE-CHECKOUT] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
-
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    edgeStructuredLog("create-semaglutide-checkout", {
+      event_type: "request",
+      success: true,
+      action_taken: "started",
+      product_recognition: "elevated_glp1",
+    });
+
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    const { email, name, patientId } = await req.json();
-    log("Request", { email, patientId });
-
-    // Look up elevated_membership_status
-    let isElevatedMember = false;
-    let lookupQuery = supabaseClient.from("patients").select("elevated_membership_status, email");
-    const { data: patient } = patientId
-      ? await lookupQuery.eq("id", patientId).maybeSingle()
-      : email
-        ? await lookupQuery.eq("email", email).maybeSingle()
-        : { data: null };
-
-    if (patient?.elevated_membership_status === "active") {
-      isElevatedMember = true;
-    }
-
-    const priceConfig = isElevatedMember ? SEMAGLUTIDE_PRICES.member : SEMAGLUTIDE_PRICES.nonmember;
-    log("Routing", { isElevatedMember, price: priceConfig.label });
+    const { email, name, patientId } = await req.json().catch(() => ({}));
 
     let customerId: string | undefined;
     if (email) {
@@ -79,7 +48,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : email,
-      line_items: [{ price: priceConfig.priceId, quantity: 1 }],
+      line_items: [{ price: LIVE_ELEVATED_PROGRAMS.glp1, quantity: 1 }],
       mode: "subscription",
       success_url: `${origin}/medication-confirmed?med=semaglutide`,
       cancel_url: `${origin}/weight-loss`,
@@ -88,13 +57,15 @@ serve(async (req) => {
         patient_name: name || "",
         patient_email: email || "",
         patient_id: patientId || "",
-        elevated_member: isElevatedMember ? "true" : "false",
+        glp_med_variant: "semaglutide",
+        elevated_program: "glp1",
+        is_guest_checkout: patientId ? "false" : "true",
+        applied_discount: "none",
       },
       subscription_data: {
         metadata: {
           service_type: "semaglutide_membership",
-          patient_name: name || "",
-          elevated_member: isElevatedMember ? "true" : "false",
+          glp_med_variant: "semaglutide",
         },
       },
     });
@@ -106,17 +77,34 @@ serve(async (req) => {
         service_type: "semaglutide_membership",
         status: "pending_payment",
         stripe_session_id: session.id,
-        notes: `Semaglutide — ${priceConfig.label}`,
+        notes: "ELEVATED GLP-1 enrollment (semaglutide path)",
       });
     }
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    edgeStructuredLog("create-semaglutide-checkout", {
+      event_type: "checkout_created",
+      success: true,
+      action_taken: "stripe_checkout_session_created",
+      patient_id: patientId || null,
+      product_recognition: "elevated_glp1",
+    });
+
+    return new Response(JSON.stringify({ url: session.url, session_id: session.id, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    log("ERROR", { message: msg });
+    edgeStructuredLog(
+      "create-semaglutide-checkout",
+      {
+        event_type: "error",
+        success: false,
+        action_taken: "checkout_failed",
+        error_message: msg,
+      },
+      "error",
+    );
     return new Response(JSON.stringify({ error: msg }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,

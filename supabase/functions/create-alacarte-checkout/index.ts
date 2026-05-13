@@ -1,170 +1,94 @@
 /**
- * create-alacarte-checkout
+ * create-alacarte-checkout — dispatcher for legacy `product_key` values.
  *
- * Creates a Stripe Checkout Session for one of the à la carte products
- * (testosterone cream, Bi-Est, progesterone, follow-up consult, lab panel)
- * and pre-stamps a `consultation_bookings` row with status='pending_payment'
- * so the post-payment surface (verify-alacarte-payment + AlaCartePaymentSuccess)
- * has a row to attach the booking flow to.
- *
- * AUTH POSTURE (security audit R-5, 2026-05-08):
- *   - verify_jwt = false (intentionally — public storefront flow)
- *   - The pre-stamped consultation_bookings row contains ONLY:
- *       customer_email, customer_name, service_type=`alacarte_${key}`,
- *       status='pending_payment', stripe_session_id, amount_paid, notes
- *     i.e. NO clinical data, no PHI beyond what the user typed in.
- *   - The row is reconciled by verify-alacarte-payment which validates
- *     the Stripe session before flipping status='paid'. Pre-payment rows
- *     left orphaned are harmless (no money changes hands until Stripe
- *     confirms). They can be cleaned up by a janitor later if desired.
- *
- * Audit decision: keep verify_jwt=false. The function is reachable only
- * from the public pricing surfaces and the pre-stamped row contains no
- * clinical secrets.
+ * Routes medication fills, phone follow-up, and lab panels to live Stripe
+ * Price IDs + server-side ELEVATED member coupon (see `_shared/member-discount.ts`).
+ * Prefer dedicated functions (`create-medication-fill-checkout`, etc.) for new UI.
  */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-ALACARTE-CHECKOUT] ${step}${detailsStr}`);
-};
-
-// À La Carte Price IDs
-const ALACARTE_PRICES: Record<string, { priceId: string; name: string; amount: number }> = {
-  testosterone: {
-    priceId: "price_1Sga66EOtKRY99puQgPWACIy",
-    name: "Testosterone Cream",
-    amount: 14900,
-  },
-  biEst: {
-    priceId: "price_1Sga67EOtKRY99puoS8b5U6h",
-    name: "Bi-Est Cream",
-    amount: 8900,
-  },
-  progesterone: {
-    priceId: "price_1Sga69EOtKRY99puO8NJ5bpx",
-    name: "Progesterone",
-    amount: 7900,
-  },
-  followUp: {
-    priceId: "price_1Sga6AEOtKRY99puEx0mC3jx",
-    name: "Follow-up Consultation",
-    amount: 9900,
-  },
-  labPanel: {
-    priceId: "price_1T1AbVEOtKRY99pumPdgj1k3",
-    name: "Lab Panel",
-    amount: 25000,
-  },
-};
+import { LIVE_CORE_SERVICES, LIVE_MEDICATION_FILLS } from "../_shared/live-prices.ts";
+import { checkoutCorsHeaders, serveOnetimePriceCheckoutFromBody } from "../_shared/onetime-checkout-shared.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: checkoutCorsHeaders });
   }
 
   try {
-    logStep("Function started");
-
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    logStep("Stripe key verified");
-
     const body = await req.json();
-    const { product_key, patient_email, patient_name, patient_id, quantity = 1 } = body;
-
-    logStep("Request body", { product_key, patient_email, patient_name, patient_id });
-
-    if (!product_key || !ALACARTE_PRICES[product_key]) {
-      throw new Error(`Invalid product key: ${product_key}. Valid keys: ${Object.keys(ALACARTE_PRICES).join(", ")}`);
-    }
-
-    if (!patient_email) {
-      throw new Error("Patient email is required");
-    }
-
-    const product = ALACARTE_PRICES[product_key];
-    logStep("Product selected", { product });
-
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-
-    // Check if customer already exists
-    const customers = await stripe.customers.list({ email: patient_email, limit: 1 });
-    let customerId: string | undefined;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      logStep("Existing Stripe customer found", { customerId });
-    }
+    const product_key = body.product_key as string | undefined;
+    if (!product_key) throw new Error("product_key is required");
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    // Create one-time payment checkout session
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      customer_email: customerId ? undefined : patient_email,
-      line_items: [
-        {
-          price: product.priceId,
-          quantity: quantity,
-        },
-      ],
-      mode: "payment",
-      success_url: `${origin}/alacarte-success?product=${product_key}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/pricing`,
-      metadata: {
-        patient_id: patient_id || "",
-        patient_name: patient_name || "",
-        product_key: product_key,
-        product_name: product.name,
-        type: "alacarte",
-      },
+    edgeStructuredLog("create-alacarte-checkout", {
+      event_type: "dispatch",
+      success: true,
+      action_taken: `route:${product_key}`,
+      product_recognition: "alacarte_fill",
     });
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
-
-    // Store the payment link for tracking
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-
-    // Optionally log the à la carte order attempt
-    try {
-      await supabaseClient.from("consultation_bookings").insert({
-        customer_email: patient_email,
-        customer_name: patient_name || null,
-        service_type: `alacarte_${product_key}`,
-        status: "pending_payment",
-        stripe_session_id: session.id,
-        amount_paid: product.amount,
-        notes: `À la carte order: ${product.name}`,
+    if (product_key in LIVE_MEDICATION_FILLS) {
+      const stripePriceId = LIVE_MEDICATION_FILLS[product_key as keyof typeof LIVE_MEDICATION_FILLS];
+      return serveOnetimePriceCheckoutFromBody(body, {
+        functionName: "create-alacarte-checkout",
+        stripePriceId,
+        productKey: product_key,
+        success_url:
+          `${origin}/alacarte-success?product=${encodeURIComponent(product_key)}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/pricing`,
+        logConsultationBooking: true,
       });
-      logStep("Order logged in consultation_bookings");
-    } catch (dbError) {
-      logStep("Failed to log order (non-critical)", { error: dbError });
     }
 
-    return new Response(JSON.stringify({ 
-      url: session.url, 
-      sessionId: session.id,
-      product: product.name,
-      amount: product.amount,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    if (product_key === "followUp") {
+      return serveOnetimePriceCheckoutFromBody(body, {
+        functionName: "create-alacarte-checkout",
+        stripePriceId: LIVE_CORE_SERVICES.phoneFollowUp,
+        productKey: "phone_followup",
+        success_url: `${origin}/alacarte-success?product=followUp&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/pricing`,
+        logConsultationBooking: true,
+      });
+    }
+
+    if (product_key === "labPanel" || product_key === "labPanelExpanded") {
+      const comprehensive = product_key === "labPanel";
+      return serveOnetimePriceCheckoutFromBody(body, {
+        functionName: "create-alacarte-checkout",
+        stripePriceId: comprehensive
+          ? LIVE_CORE_SERVICES.comprehensivePanel
+          : LIVE_CORE_SERVICES.expandedPanel,
+        productKey: comprehensive ? "lab_comprehensive" : "lab_expanded",
+        success_url: `${origin}/alacarte-success?product=labPanel&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/pricing`,
+        logConsultationBooking: true,
+      });
+    }
+
+    throw new Error(
+      `Invalid product key: ${product_key}. Valid: ${[
+        ...Object.keys(LIVE_MEDICATION_FILLS),
+        "followUp",
+        "labPanel",
+        "labPanelExpanded",
+      ].join(", ")}`,
+    );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: errorMessage });
+    edgeStructuredLog(
+      "create-alacarte-checkout",
+      {
+        event_type: "error",
+        success: false,
+        action_taken: "dispatch_failed",
+        error_message: errorMessage,
+      },
+      "error",
+    );
     return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...checkoutCorsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
   }

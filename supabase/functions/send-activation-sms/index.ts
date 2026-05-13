@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { LIVE_ELEVATED_PROGRAMS } from "../_shared/live-prices.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -44,21 +46,9 @@ const checkRateLimit = (identifier: string): { allowed: boolean; retryAfter?: nu
   return { allowed: true };
 };
 
-// Simplified Stripe price IDs
-const PRICE_IDS = {
-  semaglutide: "price_1SlZnwEOtKRY99puaBhrh2iB", // $399/mo
-  tirzepatide: "price_1SlZnyEOtKRY99puE9JNOrTR", // $499/mo
-  vitality: "price_1Sga64EOtKRY99pu6NpP45Qq", // $249/mo
-  hormoneAddon: "price_1SmMlOEOtKRY99puBAxTpw99", // $149/mo
-};
-
-const BASE_PRICES: Record<string, number> = {
-  semaglutide: 399,
-  tirzepatide: 499,
-  vitality: 249,
-};
-
-const HORMONE_ADDON_PRICE = 149;
+/** Live ELEVATED GLP-1 program price — activation links use the single program SKU. */
+const GLP1_SUBSCRIPTION_PRICE_ID = LIVE_ELEVATED_PROGRAMS.glp1;
+const GLP1_MONTHLY_DISPLAY = 349;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -162,33 +152,33 @@ serve(async (req) => {
 
     logStep("Request body received", { first_name, phone, base_membership, include_hormone_addon, patient_email, send_email });
 
+    edgeStructuredLog("send-activation-sms", {
+      event_type: "request",
+      success: true,
+      action_taken: "started",
+      product_recognition: "elevated_glp1",
+    });
+
     if (!first_name) {
       throw new Error("Missing required field: first_name is required");
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    // Build line items based on selected membership
-    const lineItems: Array<{ price: string; quantity: number }> = [];
+    const lineItems: Array<{ price: string; quantity: number }> = [
+      { price: GLP1_SUBSCRIPTION_PRICE_ID, quantity: 1 },
+    ];
+    logStep("Line item", { price_id: GLP1_SUBSCRIPTION_PRICE_ID, base_membership });
 
-    // Add base membership
-    const basePriceId = PRICE_IDS[base_membership as keyof typeof PRICE_IDS];
-    if (!basePriceId) {
-      throw new Error(`Invalid base membership: ${base_membership}`);
-    }
-    lineItems.push({ price: basePriceId, quantity: 1 });
-    logStep("Added base membership", { base_membership, price_id: basePriceId });
-
-    // Add hormone add-on if selected
     if (include_hormone_addon) {
-      lineItems.push({ price: PRICE_IDS.hormoneAddon, quantity: 1 });
-      logStep("Added hormone addon", { price_id: PRICE_IDS.hormoneAddon });
+      edgeStructuredLog("send-activation-sms", {
+        event_type: "deprecated_addon_ignored",
+        success: true,
+        action_taken: "hormone_addon_not_applied_use_update_subscription_addon",
+      });
     }
 
-    // Calculate total for email
-    const basePrice = BASE_PRICES[base_membership] || 399;
-    const addonPrice = include_hormone_addon ? HORMONE_ADDON_PRICE : 0;
-    const totalMonthly = basePrice + addonPrice;
+    const totalMonthly = GLP1_MONTHLY_DISPLAY;
 
     // Create Stripe Checkout session for subscription
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
@@ -209,6 +199,13 @@ serve(async (req) => {
 
     logStep("Stripe Checkout session created", { sessionId: session.id, url: session.url });
 
+    edgeStructuredLog("send-activation-sms", {
+      event_type: "checkout_created",
+      success: true,
+      action_taken: "activation_checkout_created",
+      product_recognition: "elevated_glp1",
+    });
+
     const paymentLink = session.url;
     let emailSent = false;
 
@@ -217,11 +214,7 @@ serve(async (req) => {
       try {
         const resend = new Resend(resendKey);
         
-        const membershipName = base_membership === "tirzepatide" 
-          ? "Tirzepatide Membership" 
-          : base_membership === "vitality"
-          ? "Vitality Membership"
-          : "Semaglutide Membership";
+        const membershipName = "ELEVATED GLP-1 (monthly care)";
         
         const emailHtml = `
           <!DOCTYPE html>
@@ -249,8 +242,7 @@ serve(async (req) => {
                 <p>Great news! Your personalized treatment plan is ready.</p>
                 
                 <div class="breakdown">
-                  <p><strong>${membershipName}:</strong> $${basePrice}/mo</p>
-                  ${include_hormone_addon ? `<p><strong>Hormone Add-On:</strong> +$${HORMONE_ADDON_PRICE}/mo</p>` : ''}
+                  <p><strong>${membershipName}:</strong> $${totalMonthly}/mo</p>
                 </div>
                 
                 <p class="price">Total: $${totalMonthly}/month</p>
@@ -314,13 +306,23 @@ serve(async (req) => {
       success: true, 
       payment_link: paymentLink,
       email_sent: emailSent,
-      message: "Activation link generated successfully."
+      message: "Activation link generated successfully.",
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
+    edgeStructuredLog(
+      "send-activation-sms",
+      {
+        event_type: "error",
+        success: false,
+        action_taken: "handler_failed",
+        error_message: errorMessage,
+      },
+      "error",
+    );
     logStep("ERROR", { message: errorMessage });
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

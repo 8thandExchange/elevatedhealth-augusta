@@ -2,13 +2,75 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import {
+  LEGACY_ELEVATED_MEMBERSHIP_PRICE_ID,
+  LIVE_ELEVATED_PROGRAMS,
+  type LiveElevatedProgramKey,
+} from "../_shared/live-prices.ts";
 
-const ELEVATED_MEMBERSHIP_PRICE_ID = "price_1TUs3LEOtKRY99puWfQy8pHj";
+/** Legacy single-tier Elevated price IDs — stop recognizing after 2026-08-11 (PR12 sunset). */
 
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
+type ProductRecognition =
+  | "elevated_trt"
+  | "elevated_hrt"
+  | "elevated_glp1"
+  | "elevated_wellness"
+  | "legacy_elevated_membership"
+  | "alacarte_fill"
+  | "consultation"
+  | "unknown";
+
+type ElevatedProgramKey = LiveElevatedProgramKey;
+
+const ELEVATED_PROGRAM_PRICE_MAP: Record<string, ElevatedProgramKey> = {
+  [LIVE_ELEVATED_PROGRAMS.trt]: "trt",
+  [LIVE_ELEVATED_PROGRAMS.hrt]: "hrt",
+  [LIVE_ELEVATED_PROGRAMS.glp1]: "glp1",
+  [LIVE_ELEVATED_PROGRAMS.wellness]: "wellness",
 };
+
+/** Legacy compatibility — remove legacy ID recognition after 2026-08-11 (sunset). */
+const LEGACY_ELEVATED_PRICE_IDS = [LEGACY_ELEVATED_MEMBERSHIP_PRICE_ID];
+
+function getProgramFromPriceId(priceId: string): ElevatedProgramKey | null {
+  if (ELEVATED_PROGRAM_PRICE_MAP[priceId]) return ELEVATED_PROGRAM_PRICE_MAP[priceId];
+  if (LEGACY_ELEVATED_PRICE_IDS.includes(priceId)) return "wellness";
+  return null;
+}
+
+function recognitionForProgram(p: ElevatedProgramKey | null, legacy: boolean): ProductRecognition {
+  if (legacy) return "legacy_elevated_membership";
+  if (!p) return "unknown";
+  if (p === "trt") return "elevated_trt";
+  if (p === "hrt") return "elevated_hrt";
+  if (p === "glp1") return "elevated_glp1";
+  return "elevated_wellness";
+}
+
+function webhookLog(fields: {
+  timestamp?: string;
+  event_type: string;
+  event_id: string;
+  price_id?: string | null;
+  product_recognition: ProductRecognition;
+  patient_id?: string | null;
+  stripe_customer_id?: string | null;
+  stripe_subscription_id?: string | null;
+  action_taken: string;
+  success: boolean;
+  error_message?: string | null;
+}) {
+  console.log(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      ...fields,
+    }),
+  );
+}
+
+function isUuid(s: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+}
 
 const generateWelcomeEmail = (patientName: string) => `
 <!DOCTYPE html>
@@ -22,63 +84,48 @@ const generateWelcomeEmail = (patientName: string) => `
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-          <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #2C3E50 0%, #3d5166 100%); padding: 40px 40px 30px; text-align: center;">
               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 1px;">Welcome to Elevated Health Augusta</h1>
             </td>
           </tr>
-          
-          <!-- Content -->
           <tr>
             <td style="padding: 40px;">
               <p style="color: #2C3E50; font-size: 18px; margin: 0 0 20px; line-height: 1.6;">
                 Dear ${patientName},
               </p>
-              
               <p style="color: #4a5568; font-size: 16px; margin: 0 0 20px; line-height: 1.8;">
-                Your membership is now active! We're honored to welcome you to the Elevated Health Augusta family.
+                Your ELEVATED program membership is now active. Everything Included starts here: in-office LabCorp draws,
+                coordinated care, and your patient portal for plan updates and messaging.
               </p>
-              
               <p style="color: #4a5568; font-size: 16px; margin: 0 0 20px; line-height: 1.8;">
                 Here's what happens next:
               </p>
-              
               <table width="100%" cellpadding="0" cellspacing="0" style="margin: 20px 0;">
                 <tr>
                   <td style="padding: 15px 20px; background-color: #fef3c7; border-radius: 6px; border-left: 4px solid #d97706;">
-                    <p style="color: #92400e; font-size: 14px; margin: 0 0 8px; font-weight: 600;">⏳ ZRT Saliva Kit Shipping</p>
-                    <p style="color: #78350f; font-size: 14px; margin: 0;">Your diagnostic kit will ship within 1-2 business days. This is required before we can finalize your prescription.</p>
+                    <p style="color: #92400e; font-size: 14px; margin: 0 0 8px; font-weight: 600;">LabCorp — in-office lab draw</p>
+                    <p style="color: #78350f; font-size: 14px; margin: 0;">Your labs are drawn at our Evans clinic per your care plan. Our team schedules draws and posts results to your chart for provider review.</p>
                   </td>
                 </tr>
                 <tr><td style="height: 12px;"></td></tr>
                 <tr>
                   <td style="padding: 15px 20px; background-color: #f8f9fa; border-radius: 6px; border-left: 4px solid #2C3E50;">
-                    <p style="color: #2C3E50; font-size: 14px; margin: 0 0 8px; font-weight: 600;">✓ Your prescription is being prepared</p>
-                    <p style="color: #718096; font-size: 14px; margin: 0;">Once labs are reviewed, our pharmacy partner will ship your medications within 3-5 business days.</p>
+                    <p style="color: #2C3E50; font-size: 14px; margin: 0 0 8px; font-weight: 600;">✓ Pharmacy & fulfillment</p>
+                    <p style="color: #718096; font-size: 14px; margin: 0;">When your protocol is released, our 503A partner ships medications per your signed orders.</p>
                   </td>
                 </tr>
                 <tr><td style="height: 12px;"></td></tr>
                 <tr>
                   <td style="padding: 15px 20px; background-color: #f8f9fa; border-radius: 6px; border-left: 4px solid #2C3E50;">
-                    <p style="color: #2C3E50; font-size: 14px; margin: 0 0 8px; font-weight: 600;">✓ Access your Patient Portal</p>
-                    <p style="color: #718096; font-size: 14px; margin: 0;">Log in to view your treatment plan, track progress, and message your care team.</p>
-                  </td>
-                </tr>
-                <tr><td style="height: 12px;"></td></tr>
-                <tr>
-                  <td style="padding: 15px 20px; background-color: #f8f9fa; border-radius: 6px; border-left: 4px solid #2C3E50;">
-                    <p style="color: #2C3E50; font-size: 14px; margin: 0 0 8px; font-weight: 600;">✓ Monthly check-ins</p>
-                    <p style="color: #718096; font-size: 14px; margin: 0;">We'll reach out monthly to monitor your progress and adjust your protocol as needed.</p>
+                    <p style="color: #2C3E50; font-size: 14px; margin: 0 0 8px; font-weight: 600;">✓ Patient Portal</p>
+                    <p style="color: #718096; font-size: 14px; margin: 0;">Log in to view your plan, appointments, and secure messages from your care team.</p>
                   </td>
                 </tr>
               </table>
-              
               <p style="color: #4a5568; font-size: 16px; margin: 20px 0; line-height: 1.8;">
-                If you have any questions, simply reply to this email or call us at <strong>(706) 760-3470</strong>.
+                Questions? Reply to this email or call <strong>(706) 760-3470</strong>.
               </p>
-              
-              <!-- CTA Button -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
                 <tr>
                   <td align="center">
@@ -86,15 +133,12 @@ const generateWelcomeEmail = (patientName: string) => `
                   </td>
                 </tr>
               </table>
-              
               <p style="color: #4a5568; font-size: 16px; margin: 20px 0 0; line-height: 1.8;">
                 To your health,<br>
                 <strong style="color: #2C3E50;">The Elevated Health Augusta Team</strong>
               </p>
             </td>
           </tr>
-          
-          <!-- Footer -->
           <tr>
             <td style="background-color: #f8f9fa; padding: 25px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
               <p style="color: #718096; font-size: 13px; margin: 0 0 8px;">
@@ -114,6 +158,24 @@ const generateWelcomeEmail = (patientName: string) => `
 </html>
 `;
 
+async function firstSubscriptionPriceId(
+  stripe: Stripe,
+  session: Stripe.Checkout.Session,
+): Promise<string | null> {
+  try {
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10 });
+    const first = lineItems.data.find((li) => li.price?.id);
+    return first?.price?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function firstSubscriptionItemPriceId(sub: Stripe.Subscription): Promise<string | null> {
+  const first = sub.items.data.find((it) => it.price?.id);
+  return first?.price?.id ?? null;
+}
+
 serve(async (req) => {
   const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
     apiVersion: "2025-08-27.basil",
@@ -123,7 +185,14 @@ serve(async (req) => {
 
   const signature = req.headers.get("stripe-signature");
   if (!signature) {
-    logStep("ERROR", { message: "No stripe-signature header" });
+    webhookLog({
+      event_type: "webhook.received",
+      event_id: "none",
+      product_recognition: "unknown",
+      action_taken: "rejected_missing_signature",
+      success: false,
+      error_message: "No stripe-signature header",
+    });
     return new Response("No signature", { status: 400 });
   }
 
@@ -134,218 +203,560 @@ serve(async (req) => {
     event = await stripe.webhooks.constructEventAsync(
       body,
       signature,
-      Deno.env.get("STRIPE_WEBHOOK_SECRET") || ""
+      Deno.env.get("STRIPE_WEBHOOK_SECRET") || "",
     );
-    logStep("Event received", { type: event.type, id: event.id });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    logStep("Webhook signature verification failed", { message });
+    webhookLog({
+      event_type: "webhook.signature_error",
+      event_id: "unknown",
+      product_recognition: "unknown",
+      action_taken: "signature_verification_failed",
+      success: false,
+      error_message: message,
+    });
     return new Response(`Webhook Error: ${message}`, { status: 400 });
   }
 
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
+    { auth: { persistSession: false } },
   );
 
-  // Handle checkout.session.completed for all payment types
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    logStep("Checkout session completed", { 
-      sessionId: session.id, 
-      customerEmail: session.customer_email,
-      mode: session.mode 
-    });
+  webhookLog({
+    event_type: event.type,
+    event_id: event.id,
+    product_recognition: "unknown",
+    action_taken: "handler_dispatch",
+    success: true,
+  });
 
-    const customerEmail = session.customer_email || session.customer_details?.email;
-    const metadata = session.metadata || {};
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const customerEmail = session.customer_email || session.customer_details?.email || null;
+      const metadata = session.metadata || {};
+      const patientIdMeta = typeof metadata.patient_id === "string" ? metadata.patient_id : "";
+      const isGuestMeta = metadata.is_guest_checkout === "true";
 
-    // PHASE 4: Handle one-time payments (consultations, lab kits, etc.)
-    if (session.mode === "payment") {
-      const paymentType = metadata.payment_type;
-      
-      if (customerEmail) {
-        logStep("Processing one-time payment", { email: customerEmail, paymentType });
+      if (session.mode === "payment") {
+        const paymentType = metadata.payment_type as string | undefined;
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          price_id: null,
+          product_recognition: paymentType === "consultation" ? "consultation" : "unknown",
+          patient_id: isUuid(patientIdMeta) ? patientIdMeta : null,
+          stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+          stripe_subscription_id: null,
+          action_taken: "one_time_payment_branch",
+          success: true,
+        });
 
-        // Update patient status based on payment type
-        if (paymentType === "consultation") {
-          const { error } = await supabaseClient
-            .from("patients")
-            .update({ onboarding_status: "consultation_paid" })
-            .eq("email", customerEmail);
-          
-          if (error) {
-            logStep("Error updating patient for consultation payment", { error: error.message });
-          } else {
-            logStep("Patient status updated to consultation_paid", { email: customerEmail });
+        if (customerEmail) {
+          if (paymentType === "consultation") {
+            const { error } = await supabaseClient
+              .from("patients")
+              .update({ onboarding_status: "consultation_paid" })
+              .eq("email", customerEmail);
+            webhookLog({
+              event_type: event.type,
+              event_id: event.id,
+              product_recognition: "consultation",
+              patient_id: null,
+              stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+              stripe_subscription_id: null,
+              action_taken: error
+                ? `consultation_paid_update_failed: ${error.message}`
+                : "consultation_paid_updated",
+              success: !error,
+              error_message: error?.message ?? null,
+            });
+          }
+
+          if (paymentType === "hormone_mapping" || paymentType === "lab_kit") {
+            const { error } = await supabaseClient
+              .from("patients")
+              .update({ onboarding_status: "labs_paid" })
+              .eq("email", customerEmail);
+            webhookLog({
+              event_type: event.type,
+              event_id: event.id,
+              product_recognition: "alacarte_fill",
+              patient_id: null,
+              stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+              stripe_subscription_id: null,
+              action_taken: error
+                ? `labs_paid_update_failed: ${error.message}`
+                : "labs_paid_updated_legacy_kit_flow",
+              success: !error,
+              error_message: error?.message ?? null,
+            });
           }
         }
+      }
 
-        if (paymentType === "hormone_mapping" || paymentType === "lab_kit") {
-          const { error } = await supabaseClient
+      if (session.mode === "subscription") {
+        const priceId = await firstSubscriptionPriceId(stripe, session);
+        const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
+        const program = priceId ? getProgramFromPriceId(priceId) : null;
+        const recognition = recognitionForProgram(program, legacy);
+
+        const subId = typeof session.subscription === "string"
+          ? session.subscription
+          : session.subscription && typeof session.subscription === "object"
+          ? (session.subscription as Stripe.Subscription).id
+          : null;
+
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          price_id: priceId,
+          product_recognition: recognition,
+          patient_id: isUuid(patientIdMeta) ? patientIdMeta : null,
+          stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+          stripe_subscription_id: subId,
+          action_taken: "subscription_checkout_completed",
+          success: true,
+        });
+
+        if (!program || !priceId) {
+          webhookLog({
+            event_type: event.type,
+            event_id: event.id,
+            price_id: priceId,
+            product_recognition: "unknown",
+            patient_id: isUuid(patientIdMeta) ? patientIdMeta : null,
+            stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+            stripe_subscription_id: subId,
+            action_taken: "skipped_unrecognized_subscription_price",
+            success: true,
+          });
+        } else if (isGuestMeta || !isUuid(patientIdMeta)) {
+          webhookLog({
+            event_type: event.type,
+            event_id: event.id,
+            price_id: priceId,
+            product_recognition: recognition,
+            patient_id: null,
+            stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+            stripe_subscription_id: subId,
+            action_taken: "skipped_patient_update_guest_or_missing_patient_id",
+            success: true,
+          });
+        } else {
+          const { error: upErr } = await supabaseClient
             .from("patients")
-            .update({ onboarding_status: "labs_paid" })
-            .eq("email", customerEmail);
-          
-          if (error) {
-            logStep("Error updating patient for lab payment", { error: error.message });
-          } else {
-            logStep("Patient status updated to labs_paid", { email: customerEmail });
-          }
-        }
-      }
-    }
+            .update({
+              elevated_membership_status: "active",
+              elevated_program: program,
+              stripe_subscription_id: subId,
+            })
+            .eq("id", patientIdMeta);
 
-    // Handle subscription payments (membership activations)
-    if (session.mode === "subscription") {
-      // Detect Elevated Membership ($199/mo) by inspecting line items
-      let isElevatedMembership = false;
-      try {
-        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 5 });
-        isElevatedMembership = lineItems.data.some(li => li.price?.id === ELEVATED_MEMBERSHIP_PRICE_ID);
-      } catch (e) {
-        logStep("listLineItems failed", { error: String(e) });
-      }
-
-      if (isElevatedMembership && customerEmail) {
-        const { error: emErr } = await supabaseClient
-          .from("patients")
-          .update({ elevated_membership_status: "active" })
-          .eq("email", customerEmail);
-        if (emErr) logStep("Error setting elevated_membership_status=active", { error: emErr.message });
-        else logStep("Elevated membership ACTIVATED", { email: customerEmail });
-      }
-
-      // Prefer 'tier' metadata (from hormone membership checkout), fallback to 'base_membership'
-      const tierFromMetadata = metadata.tier || metadata.base_membership || "metabolic";
-      
-      if (customerEmail) {
-        logStep("Processing subscription activation", { email: customerEmail, tier: tierFromMetadata });
-
-        // Get activation link to find patient name and membership details
-        const { data: activationData, error: activationError } = await supabaseClient
-          .from("activation_links")
-          .update({ 
-            status: "activated", 
-            activated_at: new Date().toISOString() 
-          })
-          .eq("patient_email", customerEmail)
-          .eq("status", "pending")
-          .select();
-
-        if (activationError) {
-          logStep("Error updating activation_links", { error: activationError.message });
-        } else {
-          logStep("Activation links updated", { count: activationData?.length || 0 });
-        }
-
-        // Priority: metadata.tier > activation_link.base_membership > metadata.base_membership
-        const membershipTier = tierFromMetadata || activationData?.[0]?.base_membership || "metabolic";
-        
-        // PHASE 4: Set patient to treatment_active for subscription activations
-        const { data: patientData, error: patientError } = await supabaseClient
-          .from("patients")
-          .update({ 
-            onboarding_status: "treatment_active",
-            membership_tier: membershipTier,
-            lab_path: "zrt"
-          })
-          .eq("email", customerEmail)
-          .select();
-
-        if (patientError) {
-          logStep("Error updating patient status", { error: patientError.message });
-        } else {
-          logStep("Patient status updated to treatment_active", { 
-            count: patientData?.length || 0,
-            membershipTier 
+          webhookLog({
+            event_type: event.type,
+            event_id: event.id,
+            price_id: priceId,
+            product_recognition: recognition,
+            patient_id: patientIdMeta,
+            stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+            stripe_subscription_id: subId,
+            action_taken: upErr
+              ? `patient_program_update_failed: ${upErr.message}`
+              : "patient_program_and_subscription_set",
+            success: !upErr,
+            error_message: upErr?.message ?? null,
           });
         }
 
-        // Send welcome email
-        const patientName = activationData?.[0]?.patient_name || patientData?.[0]?.full_name || "Valued Patient";
-        
-        try {
-          const emailResponse = await resend.emails.send({
-            from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
-            to: [customerEmail],
-            subject: "Welcome to Elevated Health Augusta – Your Membership is Active!",
-            html: generateWelcomeEmail(patientName),
+        if (customerEmail && program && !isGuestMeta) {
+          const { data: activationData, error: activationError } = await supabaseClient
+            .from("activation_links")
+            .update({
+              status: "activated",
+              activated_at: new Date().toISOString(),
+            })
+            .eq("patient_email", customerEmail)
+            .eq("status", "pending")
+            .select();
+
+          if (activationError) {
+            webhookLog({
+              event_type: event.type,
+              event_id: event.id,
+              product_recognition: recognition,
+              patient_id: isUuid(patientIdMeta) ? patientIdMeta : null,
+              stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+              stripe_subscription_id: subId,
+              action_taken: `activation_links_error: ${activationError.message}`,
+              success: false,
+              error_message: activationError.message,
+            });
+          }
+
+          const tierFromMetadata = metadata.tier || metadata.base_membership || "metabolic";
+          const { data: patientData, error: patientError } = await supabaseClient
+            .from("patients")
+            .update({
+              onboarding_status: "treatment_active",
+              membership_tier: tierFromMetadata,
+              lab_path: "labcorp_in_office",
+            })
+            .eq("email", customerEmail)
+            .select();
+
+          webhookLog({
+            event_type: event.type,
+            event_id: event.id,
+            product_recognition: recognition,
+            patient_id: isUuid(patientIdMeta) ? patientIdMeta : null,
+            stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+            stripe_subscription_id: subId,
+            action_taken: patientError
+              ? `patient_onboarding_update_failed: ${patientError.message}`
+              : "patient_onboarding_treatment_active",
+            success: !patientError,
+            error_message: patientError?.message ?? null,
           });
-          
-          logStep("Welcome email sent", { emailId: emailResponse.data?.id, to: customerEmail });
-          
-          // Send SMS alert to staff about payment received
+
+          const patientName = activationData?.[0]?.patient_name || patientData?.[0]?.full_name ||
+            "Valued Patient";
+
           try {
-            const staffAlertResponse = await fetch(
-              `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-staff-alert-sms`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+            const emailResponse = await resend.emails.send({
+              from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+              to: [customerEmail],
+              subject: "Welcome to Elevated Health Augusta – Your Membership is Active!",
+              html: generateWelcomeEmail(patientName),
+            });
+            webhookLog({
+              event_type: event.type,
+              event_id: event.id,
+              product_recognition: recognition,
+              patient_id: isUuid(patientIdMeta) ? patientIdMeta : null,
+              stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+              stripe_subscription_id: subId,
+              action_taken: `welcome_email_sent:${emailResponse.data?.id ?? "unknown"}`,
+              success: true,
+            });
+
+            try {
+              const staffAlertResponse = await fetch(
+                `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-staff-alert-sms`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+                  },
+                  body: JSON.stringify({
+                    alert_type: "payment_received",
+                    patient_name: patientName,
+                    patient_email: customerEmail,
+                    amount: session.amount_total ? session.amount_total / 100 : null,
+                    payment_type: "subscription activation",
+                    program: program ?? "unknown",
+                  }),
                 },
-                body: JSON.stringify({
-                  alert_type: "payment_received",
-                  patient_name: patientName,
-                  patient_email: customerEmail,
-                  amount: session.amount_total ? session.amount_total / 100 : null,
-                  payment_type: "subscription activation",
-                  program: tierFromMetadata,
-                }),
-              }
-            );
-            logStep("Staff SMS alert sent", { success: staffAlertResponse.ok });
-          } catch (smsError) {
-            logStep("Staff SMS alert failed (non-critical)", { error: String(smsError) });
+              );
+              webhookLog({
+                event_type: event.type,
+                event_id: event.id,
+                product_recognition: recognition,
+                action_taken: staffAlertResponse.ok ? "staff_sms_alert_ok" : "staff_sms_alert_failed",
+                success: staffAlertResponse.ok,
+              });
+            } catch (smsError) {
+              webhookLog({
+                event_type: event.type,
+                event_id: event.id,
+                product_recognition: recognition,
+                action_taken: "staff_sms_alert_exception",
+                success: false,
+                error_message: String(smsError),
+              });
+            }
+          } catch (emailError) {
+            webhookLog({
+              event_type: event.type,
+              event_id: event.id,
+              product_recognition: recognition,
+              action_taken: "welcome_email_failed",
+              success: false,
+              error_message: emailError instanceof Error ? emailError.message : String(emailError),
+            });
           }
-        } catch (emailError) {
-          const errorMsg = emailError instanceof Error ? emailError.message : String(emailError);
-          logStep("Error sending welcome email", { error: errorMsg });
         }
-      } else {
-        logStep("No customer email found in session");
       }
     }
-  }
 
-  // Handle subscription status changes
-  if (event.type === "customer.subscription.deleted" || event.type === "customer.subscription.updated") {
-    const subscription = event.data.object as Stripe.Subscription;
-    logStep("Subscription event", { 
-      type: event.type, 
-      status: subscription.status,
-      customerId: subscription.customer 
-    });
+    if (event.type === "customer.subscription.created") {
+      const subscription = event.data.object as Stripe.Subscription;
+      const priceId = await firstSubscriptionItemPriceId(subscription);
+      const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
+      const program = priceId ? getProgramFromPriceId(priceId) : null;
+      const recognition = recognitionForProgram(program, legacy);
+      const customerId = typeof subscription.customer === "string"
+        ? subscription.customer
+        : subscription.customer.id;
+      const customer = await stripe.customers.retrieve(customerId);
+      const email = !customer.deleted && customer.email ? customer.email : null;
 
-    // If subscription is canceled or unpaid, update patient status
-    if (subscription.status === "canceled" || subscription.status === "unpaid") {
-      const customer = await stripe.customers.retrieve(subscription.customer as string);
-      if (customer && !customer.deleted && customer.email) {
-        // Check if this subscription was the Elevated Membership
-        const isElevated = subscription.items.data.some(
-          (it) => it.price?.id === ELEVATED_MEMBERSHIP_PRICE_ID
-        );
+      webhookLog({
+        event_type: event.type,
+        event_id: event.id,
+        price_id: priceId,
+        product_recognition: recognition,
+        patient_id: null,
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscription.id,
+        action_taken: "subscription_created_received",
+        success: true,
+      });
 
-        const updates: Record<string, unknown> = { onboarding_status: "subscription_canceled" };
-        if (isElevated) updates.elevated_membership_status = "cancelled";
-
+      if (program && email) {
         const { error } = await supabaseClient
           .from("patients")
-          .update(updates)
-          .eq("email", customer.email);
-
-        if (error) {
-          logStep("Error updating patient for canceled subscription", { error: error.message });
-        } else {
-          logStep("Patient status updated for canceled subscription", {
-            email: customer.email,
-            elevatedCancelled: isElevated,
-          });
-        }
+          .update({
+            elevated_membership_status: "active",
+            elevated_program: program,
+            stripe_subscription_id: subscription.id,
+          })
+          .eq("email", email);
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          price_id: priceId,
+          product_recognition: recognition,
+          patient_id: null,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscription.id,
+          action_taken: error ? `patient_update_failed:${error.message}` : "patient_subscription_linked",
+          success: !error,
+          error_message: error?.message ?? null,
+        });
       }
     }
+
+    if (event.type === "customer.subscription.updated") {
+      const subscription = event.data.object as Stripe.Subscription;
+      const priceId = await firstSubscriptionItemPriceId(subscription);
+      const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
+      const program = priceId ? getProgramFromPriceId(priceId) : null;
+      const recognition = recognitionForProgram(program, legacy);
+      const customerId = typeof subscription.customer === "string"
+        ? subscription.customer
+        : subscription.customer.id;
+      const customer = await stripe.customers.retrieve(customerId);
+      const email = !customer.deleted && customer.email ? customer.email : null;
+
+      webhookLog({
+        event_type: event.type,
+        event_id: event.id,
+        price_id: priceId,
+        product_recognition: recognition,
+        patient_id: null,
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscription.id,
+        action_taken: `subscription_status:${subscription.status}`,
+        success: true,
+      });
+
+      if (!email) {
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          product_recognition: recognition,
+          action_taken: "skipped_no_customer_email",
+          success: true,
+        });
+      } else if (subscription.status === "active" || subscription.status === "trialing") {
+        if (program) {
+          const { error } = await supabaseClient
+            .from("patients")
+            .update({
+              elevated_membership_status: "active",
+              elevated_program: program,
+              stripe_subscription_id: subscription.id,
+            })
+            .eq("email", email);
+          webhookLog({
+            event_type: event.type,
+            event_id: event.id,
+            price_id: priceId,
+            product_recognition: recognition,
+            stripe_customer_id: customerId,
+            stripe_subscription_id: subscription.id,
+            action_taken: error ? `active_update_failed:${error.message}` : "patient_marked_active",
+            success: !error,
+            error_message: error?.message ?? null,
+          });
+        }
+      } else if (
+        subscription.status === "canceled" || subscription.status === "unpaid" ||
+        subscription.status === "incomplete_expired"
+      ) {
+        const isElevated = !!(priceId && (getProgramFromPriceId(priceId) || legacy));
+        const { error } = await supabaseClient
+          .from("patients")
+          .update({
+            onboarding_status: "subscription_canceled",
+            ...(isElevated
+              ? {
+                elevated_membership_status: "cancelled",
+                elevated_program: null,
+                stripe_subscription_id: null,
+              }
+              : {}),
+          })
+          .eq("email", email);
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          price_id: priceId,
+          product_recognition: recognition,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscription.id,
+          action_taken: error ? `inactive_update_failed:${error.message}` : "patient_subscription_inactive",
+          success: !error,
+          error_message: error?.message ?? null,
+        });
+      }
+    }
+
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as Stripe.Subscription;
+      const priceId = await firstSubscriptionItemPriceId(subscription);
+      const program = priceId ? getProgramFromPriceId(priceId) : null;
+      const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
+      const recognition = recognitionForProgram(program, legacy);
+      const customerId = typeof subscription.customer === "string"
+        ? subscription.customer
+        : subscription.customer.id;
+      const customer = await stripe.customers.retrieve(customerId);
+      const email = !customer.deleted && customer.email ? customer.email : null;
+
+      webhookLog({
+        event_type: event.type,
+        event_id: event.id,
+        price_id: priceId,
+        product_recognition: recognition,
+        patient_id: null,
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscription.id,
+        action_taken: "subscription_deleted_received",
+        success: true,
+      });
+
+      if (email) {
+        const isElevated = !!(program || legacy);
+        const elevatedClear = {
+          elevated_membership_status: "cancelled",
+          elevated_program: null as string | null,
+          stripe_subscription_id: null as string | null,
+        };
+        const { error } = await supabaseClient
+          .from("patients")
+          .update(
+            isElevated
+              ? elevatedClear
+              : { onboarding_status: "subscription_canceled" },
+          )
+          .eq("email", email);
+
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          price_id: priceId,
+          product_recognition: recognition,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscription.id,
+          action_taken: error ? `deleted_update_failed:${error.message}` : "elevated_fields_cleared",
+          success: !error,
+          error_message: error?.message ?? null,
+        });
+      }
+    }
+
+    if (event.type === "invoice.payment_succeeded") {
+      const invoice = event.data.object as Stripe.Invoice;
+      const subId = typeof invoice.subscription === "string"
+        ? invoice.subscription
+        : invoice.subscription?.id ?? null;
+      webhookLog({
+        event_type: event.type,
+        event_id: event.id,
+        price_id: invoice.lines?.data?.[0]?.price?.id ?? null,
+        product_recognition: "unknown",
+        patient_id: null,
+        stripe_customer_id: typeof invoice.customer === "string" ? invoice.customer : null,
+        stripe_subscription_id: subId,
+        action_taken: "invoice_payment_succeeded_logged",
+        success: true,
+      });
+    }
+
+    if (event.type === "invoice.payment_failed") {
+      const invoice = event.data.object as Stripe.Invoice;
+      const subId = typeof invoice.subscription === "string"
+        ? invoice.subscription
+        : invoice.subscription?.id ?? null;
+      let patientId: string | null = null;
+      if (subId) {
+        const { data: rows } = await supabaseClient
+          .from("patients")
+          .select("id")
+          .eq("stripe_subscription_id", subId)
+          .limit(1);
+        patientId = rows?.[0]?.id ?? null;
+        if (patientId) {
+          const { error } = await supabaseClient
+            .from("patients")
+            .update({ elevated_membership_status: "payment_failed" })
+            .eq("id", patientId);
+          webhookLog({
+            event_type: event.type,
+            event_id: event.id,
+            price_id: invoice.lines?.data?.[0]?.price?.id ?? null,
+            product_recognition: "unknown",
+            patient_id: patientId,
+            stripe_customer_id: typeof invoice.customer === "string" ? invoice.customer : null,
+            stripe_subscription_id: subId,
+            action_taken: error ? `payment_failed_flag_error:${error.message}` : "marked_payment_failed",
+            success: !error,
+            error_message: error?.message ?? null,
+          });
+        } else {
+          webhookLog({
+            event_type: event.type,
+            event_id: event.id,
+            product_recognition: "unknown",
+            stripe_subscription_id: subId,
+            action_taken: "payment_failed_no_patient_match",
+            success: true,
+          });
+        }
+      } else {
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          product_recognition: "unknown",
+          action_taken: "payment_failed_no_subscription_on_invoice",
+          success: true,
+        });
+      }
+    }
+  } catch (handlerErr) {
+    webhookLog({
+      event_type: event.type,
+      event_id: event.id,
+      product_recognition: "unknown",
+      action_taken: "handler_exception",
+      success: false,
+      error_message: handlerErr instanceof Error ? handlerErr.message : String(handlerErr),
+    });
   }
 
   return new Response(JSON.stringify({ received: true }), {

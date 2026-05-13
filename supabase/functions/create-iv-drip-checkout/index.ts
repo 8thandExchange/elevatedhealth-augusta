@@ -1,15 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { resolveMemberCouponForCheckout } from "../_shared/member-discount.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-IV-DRIP-CHECKOUT] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
@@ -18,43 +15,67 @@ serve(async (req) => {
   }
 
   try {
-    logStep("Function started");
+    edgeStructuredLog("create-iv-drip-checkout", {
+      event_type: "request",
+      success: true,
+      action_taken: "started",
+      product_recognition: "alacarte_fill",
+    });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    logStep("Stripe key verified");
 
-    const supabaseClient = createClient(
+    const supabaseAnon = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    );
+    const supabaseService = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    // Parse request body
     const body = await req.json().catch(() => ({}));
-    const { therapy_id, addon_ids = [] } = body;
-    
+    const { therapy_id, addon_ids = [], patient_id: bodyPatientId } = body as {
+      therapy_id?: string;
+      addon_ids?: string[];
+      patient_id?: string;
+    };
+
     if (!therapy_id) {
       throw new Error("therapy_id is required");
     }
-    logStep("Request parsed", { therapy_id, addon_ids });
 
-    // Check for authenticated user (optional - supports guest checkout)
     const authHeader = req.headers.get("Authorization");
     let userEmail: string | undefined;
     let userId: string | undefined;
 
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
-      const { data: userData } = await supabaseClient.auth.getUser(token);
+      const { data: userData } = await supabaseAnon.auth.getUser(token);
       if (userData.user?.email) {
         userEmail = userData.user.email;
         userId = userData.user.id;
-        logStep("Authenticated user found", { email: userEmail });
       }
     }
 
-    // Fetch therapy from database
-    const { data: therapy, error: therapyError } = await supabaseClient
+    let resolvedPatientId: string | undefined;
+    if (userId) {
+      const { data: pat } = await supabaseAnon
+        .from("patients")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+      resolvedPatientId = pat?.id ?? undefined;
+    }
+
+    const patientId = (typeof bodyPatientId === "string" && bodyPatientId.trim())
+      ? bodyPatientId.trim()
+      : resolvedPatientId;
+    const isGuest = !patientId;
+
+    const discount = await resolveMemberCouponForCheckout(supabaseService, patientId ?? null, "iv_session");
+
+    const { data: therapy, error: therapyError } = await supabaseAnon
       .from("iv_therapies")
       .select("*")
       .eq("id", therapy_id)
@@ -63,12 +84,10 @@ serve(async (req) => {
     if (therapyError || !therapy) {
       throw new Error(`Therapy not found: ${therapy_id}`);
     }
-    logStep("Therapy fetched", { name: therapy.name, price: therapy.price });
 
-    // Fetch add-ons if any
     let addons: any[] = [];
     if (addon_ids.length > 0) {
-      const { data: addonData, error: addonError } = await supabaseClient
+      const { data: addonData, error: addonError } = await supabaseAnon
         .from("iv_addons")
         .select("*")
         .in("id", addon_ids);
@@ -77,32 +96,22 @@ serve(async (req) => {
         throw new Error(`Failed to fetch add-ons: ${addonError.message}`);
       }
       addons = addonData || [];
-      logStep("Add-ons fetched", { count: addons.length });
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    // Check if customer already exists
     let customerId: string | undefined;
     if (userEmail) {
       const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
-      if (customers.data.length > 0) {
-        customerId = customers.data[0].id;
-        logStep("Existing Stripe customer found", { customerId });
-      }
+      if (customers.data.length > 0) customerId = customers.data[0].id;
     }
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    // Build line items
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
-    // Add therapy
     if (therapy.stripe_price_id) {
-      lineItems.push({
-        price: therapy.stripe_price_id,
-        quantity: 1,
-      });
+      lineItems.push({ price: therapy.stripe_price_id, quantity: 1 });
     } else {
       lineItems.push({
         price_data: {
@@ -117,13 +126,9 @@ serve(async (req) => {
       });
     }
 
-    // Add add-ons
     for (const addon of addons) {
       if (addon.stripe_price_id) {
-        lineItems.push({
-          price: addon.stripe_price_id,
-          quantity: 1,
-        });
+        lineItems.push({ price: addon.stripe_price_id, quantity: 1 });
       } else {
         lineItems.push({
           price_data: {
@@ -139,10 +144,7 @@ serve(async (req) => {
       }
     }
 
-    logStep("Line items built", { count: lineItems.length });
-
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : userEmail,
       line_items: lineItems,
@@ -155,18 +157,42 @@ serve(async (req) => {
         therapy_id: therapy_id,
         therapy_name: therapy.name,
         addon_ids: addon_ids.join(","),
+        patient_id: patientId || "",
+        is_guest_checkout: isGuest ? "true" : "false",
+        applied_discount: discount.applied_discount,
       },
+    };
+
+    if (discount.discounts && discount.discounts.length > 0) {
+      sessionParams.discounts = discount.discounts;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
+
+    edgeStructuredLog("create-iv-drip-checkout", {
+      event_type: "checkout_created",
+      success: true,
+      action_taken: "stripe_checkout_session_created",
+      patient_id: patientId || null,
+      product_recognition: "alacarte_fill",
     });
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
-
-    return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
+    return new Response(JSON.stringify({ url: session.url, session_id: session.id, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: errorMessage });
+    edgeStructuredLog(
+      "create-iv-drip-checkout",
+      {
+        event_type: "error",
+        success: false,
+        action_taken: "checkout_failed",
+        error_message: errorMessage,
+      },
+      "error",
+    );
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,

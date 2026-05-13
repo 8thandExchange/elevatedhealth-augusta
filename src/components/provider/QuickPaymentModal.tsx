@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { CORE_SERVICES, MEDICATION_FILLS } from "@/lib/stripeConfig";
 import { Loader2, Search, CreditCard, Mail, MessageSquare, Copy } from "lucide-react";
 
 interface Patient {
@@ -45,13 +46,13 @@ interface QuickPaymentModalProps {
 const PRODUCTS = [
   { value: "elevated_membership", label: "Elevated Membership", price: "$199/mo", category: "Membership" },
   { value: "consultation", label: "Wellness Assessment", price: "$79", category: "Consultation" },
-  { value: "semaglutide", label: "Semaglutide (non-member)", price: "$249/mo", category: "Weight Loss" },
-  { value: "tirzepatide", label: "Tirzepatide (non-member)", price: "$499/mo", category: "Weight Loss" },
-  { value: "alacarte_testosterone", label: "Testosterone Cream", price: "$149", category: "À la carte HRT" },
-  { value: "alacarte_biEst", label: "Bi-Est Cream", price: "$89", category: "À la carte HRT" },
-  { value: "alacarte_progesterone", label: "Progesterone", price: "$79", category: "À la carte HRT" },
-  { value: "alacarte_followUp", label: "Follow-up Visit", price: "$99", category: "À la carte" },
-  { value: "alacarte_labPanel", label: "Lab Panel", price: "$250", category: "À la carte" },
+  { value: "semaglutide", label: "ELEVATED GLP-1 (semaglutide path)", price: "$349/mo", category: "Weight Loss" },
+  { value: "tirzepatide", label: "ELEVATED GLP-1 (tirzepatide path)", price: "$349/mo", category: "Weight Loss" },
+  { value: "alacarte_testosterone", label: "Testosterone Cream", price: MEDICATION_FILLS.testosterone.displayPrice, category: "À la carte HRT" },
+  { value: "alacarte_biEst", label: "Bi-Est Cream", price: MEDICATION_FILLS.biEst.displayPrice, category: "À la carte HRT" },
+  { value: "alacarte_progesterone", label: "Progesterone", price: MEDICATION_FILLS.progesterone.displayPrice, category: "À la carte HRT" },
+  { value: "alacarte_followUp", label: "Physician Phone Follow-Up", price: CORE_SERVICES.phoneFollowUp.displayPrice, category: "À la carte" },
+  { value: "alacarte_labPanel", label: "Comprehensive Wellness Panel", price: CORE_SERVICES.comprehensivePanel.displayPrice, category: "À la carte" },
 ];
 
 const getProductDisplayName = (product: string): string => {
@@ -124,12 +125,7 @@ const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalP
     }
     if (product === "consultation") {
       return {
-        email: patient.email,
-        name: patient.full_name,
-        patient_id: patient.id,
-        // Default to the hormone consult lane; staff can route to a
-        // different storefront from the patient detail panel if needed.
-        service_type: "hormone",
+        serviceType: "hormone",
       };
     }
     return {

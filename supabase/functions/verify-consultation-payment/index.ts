@@ -2,16 +2,43 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+const logStep = (step: string, details?: unknown) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[VERIFY-CONSULTATION-PAYMENT] ${step}${detailsStr}`);
 };
+
+function vcpLog(
+  event: string,
+  fields: {
+    product_recognized?: string | null;
+    patient_id_resolved?: string | null;
+    session_id?: string | null;
+    success: boolean;
+    error_message?: string | null;
+  },
+  level: "info" | "error" = "info",
+) {
+  edgeStructuredLog(
+    "verify-consultation-payment",
+    {
+      event,
+      product_recognized: fields.product_recognized ?? null,
+      patient_id_resolved: fields.patient_id_resolved ?? null,
+      session_id: fields.session_id ?? null,
+      success: fields.success,
+      error_message: fields.error_message ?? null,
+    },
+    level,
+  );
+}
 
 // Brand tokens — kept in sync with .cursorrules.
 const BRAND_CHARCOAL = "#2A2826";
@@ -19,9 +46,11 @@ const BRAND_CAMEL = "#B8956A";
 const BRAND_BONE = "#F2EBDC";
 
 const CONSULT_FEE_USD = 79;
+const WELLNESS_ASSESSMENT_PRICE_ID = LIVE_CORE_SERVICES.wellnessAssessment;
 
-// Generate a unique credit code for the $79 consultation credit applied
-// against treatment if the patient enrolls in a program.
+/** Legacy Discovery-era list price (cents) — recognize for ~90-day sunset window. */
+const LEGACY_DISCOVERY_AMOUNT_CENTS = 9900;
+
 const generateCreditCode = (): string => {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "EH-";
@@ -31,11 +60,44 @@ const generateCreditCode = (): string => {
   return code;
 };
 
-// Helper to send SMS via Sinch
+async function recognizeConsultationProduct(
+  stripe: Stripe,
+  sessionId: string,
+  session: Stripe.Checkout.Session,
+): Promise<{ product_recognized: string; legacy_path: boolean }> {
+  const items = await stripe.checkout.sessions.listLineItems(sessionId, { limit: 10 });
+  const li0 = items.data[0];
+  const priceId = li0?.price?.id ?? null;
+  const desc = (li0?.description || "").toLowerCase();
+  const nickname = ((li0?.price as { nickname?: string } | null)?.nickname || "").toLowerCase();
+  const blob = `${desc} ${nickname}`;
+
+  if (priceId === WELLNESS_ASSESSMENT_PRICE_ID) {
+    return { product_recognized: "wellness_assessment_live_price", legacy_path: false };
+  }
+
+  const total = session.amount_total ?? 0;
+  if (total === 7900) {
+    return { product_recognized: "wellness_assessment_amount_7900", legacy_path: false };
+  }
+  if (total === LEGACY_DISCOVERY_AMOUNT_CENTS) {
+    return { product_recognized: "legacy_discovery_9900_cents", legacy_path: true };
+  }
+
+  if (blob.includes("wellness assessment")) {
+    return { product_recognized: "wellness_assessment_line_name", legacy_path: false };
+  }
+  if (blob.includes("discovery consultation") || blob.includes("discovery")) {
+    return { product_recognized: "legacy_discovery_consultation_name", legacy_path: true };
+  }
+
+  return { product_recognized: "consult_checkout_unknown_line", legacy_path: false };
+}
+
 async function sendSMS(to: string, message: string): Promise<boolean> {
   const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
   const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-  
+
   if (!sinchAccessKey || !sinchSecretKey) {
     logStep("SMS credentials not configured");
     return false;
@@ -50,7 +112,7 @@ async function sendSMS(to: string, message: string): Promise<boolean> {
       },
       body: JSON.stringify({
         from: "+18339765929",
-        to: [to.replace(/\D/g, '')],
+        to: [to.replace(/\D/g, "")],
         body: message,
       }),
     });
@@ -74,14 +136,36 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  let sessionIdForLog: string | null = null;
+  let patientIdResolved: string | null = null;
+  let productRecognizedForLog: string | null = null;
+
   try {
     logStep("Function started");
 
     const { session_id } = await req.json();
+    sessionIdForLog = session_id ?? null;
     if (!session_id) {
-      throw new Error("session_id is required");
+      vcpLog("validation_error", {
+        session_id: null,
+        patient_id_resolved: null,
+        product_recognized: null,
+        success: false,
+        error_message: "session_id is required",
+      }, "error");
+      return new Response(JSON.stringify({ error: "session_id is required" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
     }
-    logStep("Session ID received", { session_id });
+
+    vcpLog("entry", {
+      session_id,
+      patient_id_resolved: null,
+      product_recognized: null,
+      success: true,
+      error_message: null,
+    });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     const resendKey = Deno.env.get("RESEND_API_KEY");
@@ -92,36 +176,71 @@ serve(async (req) => {
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    // Retrieve the checkout session
     const session = await stripe.checkout.sessions.retrieve(session_id);
-    logStep("Session retrieved", { 
-      status: session.payment_status, 
+    const recognition = await recognizeConsultationProduct(stripe, session_id, session);
+
+    const customerEmail = session.customer_email || session.customer_details?.email;
+    if (customerEmail) {
+      const { data: pat } = await supabaseClient
+        .from("patients")
+        .select("id")
+        .eq("email", customerEmail)
+        .maybeSingle();
+      patientIdResolved = pat?.id ?? null;
+    }
+
+    productRecognizedForLog = recognition.product_recognized;
+
+    vcpLog("session_retrieved", {
+      session_id,
+      patient_id_resolved: patientIdResolved,
+      product_recognized: recognition.product_recognized,
+      success: true,
+      error_message: null,
+    });
+
+    logStep("Session retrieved", {
+      status: session.payment_status,
       email: session.customer_email,
-      metadata: session.metadata 
+      metadata: session.metadata,
+      product_recognized: recognition.product_recognized,
+      legacy_path: recognition.legacy_path,
     });
 
     if (session.payment_status !== "paid") {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: "Payment not completed" 
+      vcpLog("payment_incomplete", {
+        session_id,
+        patient_id_resolved: patientIdResolved,
+        product_recognized: recognition.product_recognized,
+        success: false,
+        error_message: "Payment not completed",
+      }, "error");
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Payment not completed",
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
 
-    const customerEmail = session.customer_email || session.customer_details?.email;
     const customerName = session.customer_details?.name || session.metadata?.patient_name;
     const serviceType = session.metadata?.service_type || "hormone";
 
     if (!customerEmail) {
+      vcpLog("missing_email", {
+        session_id,
+        patient_id_resolved: patientIdResolved,
+        product_recognized: recognition.product_recognized,
+        success: false,
+        error_message: "Customer email not found in session",
+      }, "error");
       throw new Error("Customer email not found in session");
     }
 
-    // Check if already recorded (with credit code)
     const { data: existing } = await supabaseClient
       .from("consultation_bookings")
       .select("id, credit_code, customer_name")
@@ -130,23 +249,27 @@ serve(async (req) => {
 
     if (existing?.credit_code) {
       logStep("Payment already recorded with credit code", { existingId: existing.id, creditCode: existing.credit_code });
-      return new Response(JSON.stringify({ 
-        success: true, 
+      vcpLog("already_recorded", {
+        session_id,
+        patient_id_resolved: patientIdResolved,
+        product_recognized: recognition.product_recognized,
+        success: true,
+        error_message: null,
+      });
+      return new Response(JSON.stringify({
+        success: true,
         already_recorded: true,
-        credit_code: existing.credit_code 
+        credit_code: existing.credit_code,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
     }
 
-    // Generate credit code NOW (after payment confirmed)
     const creditCode = generateCreditCode();
     logStep("Generated credit code after payment", { creditCode });
 
-    // Update or insert the consultation booking with credit code
     if (existing) {
-      // Update existing record with credit code
       const { error: updateError } = await supabaseClient
         .from("consultation_bookings")
         .update({
@@ -162,11 +285,17 @@ serve(async (req) => {
 
       if (updateError) {
         logStep("Update error", { error: updateError });
+        vcpLog("booking_update_failed", {
+          session_id,
+          patient_id_resolved: patientIdResolved,
+          product_recognized: recognition.product_recognized,
+          success: false,
+          error_message: updateError.message,
+        }, "error");
         throw updateError;
       }
       logStep("Updated existing booking with credit code", { bookingId: existing.id });
     } else {
-      // Create new record
       const { data: booking, error: insertError } = await supabaseClient
         .from("consultation_bookings")
         .insert({
@@ -187,12 +316,18 @@ serve(async (req) => {
 
       if (insertError) {
         logStep("Insert error", { error: insertError });
+        vcpLog("booking_insert_failed", {
+          session_id,
+          patient_id_resolved: patientIdResolved,
+          product_recognized: recognition.product_recognized,
+          success: false,
+          error_message: insertError.message,
+        }, "error");
         throw insertError;
       }
       logStep("Created new consultation booking with credit code", { bookingId: booking.id });
     }
 
-    // Update patient onboarding status
     const { error: patientUpdateError } = await supabaseClient
       .from("patients")
       .update({ onboarding_status: "consultation_paid" })
@@ -204,22 +339,18 @@ serve(async (req) => {
       logStep("Patient status updated to consultation_paid");
     }
 
-    // Service-specific email configuration. Ketamine and any "Hormone
-    // Mapping ($349→$250)" / ZRT-era branches removed — those products
-    // are no longer offered (see .cursorrules). The credit applies toward
-    // whichever treatment program the patient enrolls in.
-    const SERVICE_EMAIL_CONFIG: Record<string, { title: string; creditUse: string }> = {
+    const SERVICE_EMAIL_CONFIG: Record<string, { title: string; programPhrase: string }> = {
       hormone: {
-        title: "Hormone Optimization Consultation",
-        creditUse: "your hormone optimization protocol",
+        title: "Wellness Assessment — Hormone Optimization",
+        programPhrase: "your hormone optimization protocol",
       },
       weight_loss: {
-        title: "Medical Weight Loss Consultation",
-        creditUse: "your medical weight loss protocol",
+        title: "Wellness Assessment — Medical Weight Loss",
+        programPhrase: "your medical weight loss protocol",
       },
       peptide: {
-        title: "Peptide Protocols Consultation",
-        creditUse: "your peptide therapy protocol",
+        title: "Wellness Assessment — Peptide Protocols",
+        programPhrase: "your peptide therapy protocol",
       },
     };
 
@@ -227,15 +358,12 @@ serve(async (req) => {
       SERVICE_EMAIL_CONFIG[serviceType] || SERVICE_EMAIL_CONFIG.hormone;
     const firstName = customerName ? customerName.split(" ")[0] : "there";
 
-    // Send receipt + credit code email to patient (only sent AFTER payment).
-    // Brand-aligned with the Charcoal/Camel/Bone palette and Playfair display
-    // type so this matches what patients see on the storefront.
     if (resend) {
       try {
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
           to: [customerEmail],
-          subject: `Your $${CONSULT_FEE_USD} consult is paid · pick a time inside`,
+          subject: `Your $${CONSULT_FEE_USD} Wellness Assessment is paid · pick a time inside`,
           html: `
             <!DOCTYPE html>
             <html>
@@ -256,22 +384,22 @@ serve(async (req) => {
                     <tr>
                       <td style="padding:36px 32px 8px;">
                         <h2 style="margin:0 0 12px;color:${BRAND_CHARCOAL};font-size:20px;font-weight:400;font-family:Georgia,'Times New Roman',serif;">${emailConfig.title}</h2>
-                        <p style="margin:0 0 24px;color:${BRAND_CHARCOAL};font-size:15px;line-height:1.6;">Your $${CONSULT_FEE_USD} consultation is paid. The next step is choosing a time — head back to the confirmation page (or check the link we just sent) and pick the slot that works for you.</p>
+                        <p style="margin:0 0 24px;color:${BRAND_CHARCOAL};font-size:15px;line-height:1.6;">Your $${CONSULT_FEE_USD} Wellness Assessment is paid. The next step is choosing a time — return to the confirmation page and pick the slot that works for you.</p>
                         <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="margin:0 0 24px;background-color:${BRAND_BONE};border-left:3px solid ${BRAND_CAMEL};border-radius:6px;">
                           <tr><td style="padding:18px 20px;">
-                            <p style="margin:0 0 4px;color:${BRAND_CHARCOAL}99;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;">Your credit code</p>
+                            <p style="margin:0 0 4px;color:${BRAND_CHARCOAL}99;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;">Your enrollment code</p>
                             <p style="margin:0 0 6px;color:${BRAND_CHARCOAL};font-size:22px;font-weight:600;letter-spacing:0.18em;font-family:'SF Mono',Menlo,monospace;">${creditCode}</p>
-                            <p style="margin:0;color:${BRAND_CHARCOAL}99;font-size:13px;">Worth $${CONSULT_FEE_USD} toward ${emailConfig.creditUse}, applied automatically when you enroll.</p>
+                            <p style="margin:0;color:${BRAND_CHARCOAL}99;font-size:13px;">Good for $${CONSULT_FEE_USD} off your first program invoice when you enroll in ${emailConfig.programPhrase}.</p>
                           </td></tr>
                         </table>
                         <p style="margin:0 0 8px;color:${BRAND_CHARCOAL}99;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;">What happens next</p>
                         <ol style="margin:0 0 24px;padding-left:20px;color:${BRAND_CHARCOAL};font-size:14px;line-height:1.7;">
                           <li>Pick your visit time on the confirmation page</li>
-                          <li>Get a confirmation with calendar invite + pre-visit instructions</li>
-                          <li>Show up — we'll meet you in person at the Evans clinic, draw any needed labs at the visit, and walk through the plan</li>
-                          <li>If you enroll in a program, your $${CONSULT_FEE_USD} credit comes off the first invoice</li>
+                          <li>Receive confirmation with calendar invite and pre-visit instructions</li>
+                          <li>In-person visit at our Evans clinic; LabCorp blood draws in-office when your provider orders them</li>
+                          <li>If you enroll in a program, we apply this $${CONSULT_FEE_USD} to your first invoice</li>
                         </ol>
-                        <p style="margin:0 0 24px;color:${BRAND_CHARCOAL};font-size:14px;">Questions before then? Call us at <a href="tel:+17067603470" style="color:${BRAND_CAMEL};text-decoration:none;">(706) 760-3470</a>.</p>
+                        <p style="margin:0 0 24px;color:${BRAND_CHARCOAL};font-size:14px;">Questions? Call <a href="tel:+17067603470" style="color:${BRAND_CAMEL};text-decoration:none;">(706) 760-3470</a>.</p>
                       </td>
                     </tr>
                     <tr>
@@ -291,22 +419,22 @@ serve(async (req) => {
         logStep("Patient email failed", { error: emailError });
       }
 
-      // Send admin notification
       try {
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
           to: ["booking@elevatedhealthaugusta.com"],
           subject: `New ${emailConfig.title} paid — ${customerName || customerEmail}`,
           html: `
-            <h2>New ${emailConfig.title} payment</h2>
+            <h2>New Wellness Assessment payment</h2>
             <p><strong>Customer:</strong> ${customerEmail}</p>
             <p><strong>Name:</strong> ${customerName || "Not provided"}</p>
             <p><strong>Service type:</strong> ${serviceType}</p>
-            <p><strong>Credit code:</strong> ${creditCode}</p>
+            <p><strong>Product recognition:</strong> ${recognition.product_recognized}${recognition.legacy_path ? " (legacy path)" : ""}</p>
+            <p><strong>Enrollment code:</strong> ${creditCode}</p>
             <p><strong>Amount:</strong> $${(session.amount_total || 0) / 100}</p>
             <hr/>
-            <p>The patient is currently on the in-app confirmation page picking a time slot via the native scheduler.</p>
-            <p>Their $${CONSULT_FEE_USD} credit code <strong>${creditCode}</strong> applies toward ${emailConfig.creditUse}.</p>
+            <p>The patient is on the in-app confirmation page picking a time slot.</p>
+            <p>Code <strong>${creditCode}</strong> reduces the first program invoice by $${CONSULT_FEE_USD} when they enroll in ${emailConfig.programPhrase}.</p>
           `,
         });
         logStep("Admin notification sent");
@@ -315,16 +443,15 @@ serve(async (req) => {
       }
     }
 
-    // Send SMS alerts to staff
     const staffPhoneNumbers = Deno.env.get("STAFF_NOTIFICATION_PHONE");
     if (staffPhoneNumbers) {
-      const smsMessage = `NEW CONSULT PAID\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCredit: ${creditCode}\nPatient is on the confirmation page picking a time.`;
+      const smsMessage = `NEW WELLNESS ASSESSMENT PAID\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCode: ${creditCode}\nPatient is on the confirmation page picking a time.`;
 
-      const phoneNumbers = staffPhoneNumbers.split(",").map(p => p.trim());
+      const phoneNumbers = staffPhoneNumbers.split(",").map((p) => p.trim());
 
       for (const phone of phoneNumbers) {
         if (phone) {
-          sendSMS(phone, smsMessage).catch(err => {
+          sendSMS(phone, smsMessage).catch((err) => {
             logStep("SMS send error (non-blocking)", { phone, error: err });
           });
         }
@@ -332,9 +459,17 @@ serve(async (req) => {
       logStep("SMS notifications queued", { phones: phoneNumbers });
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      credit_code: creditCode 
+    vcpLog("verify_complete", {
+      session_id,
+      patient_id_resolved: patientIdResolved,
+      product_recognized: recognition.product_recognized,
+      success: true,
+      error_message: null,
+    });
+
+    return new Response(JSON.stringify({
+      success: true,
+      credit_code: creditCode,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
@@ -342,6 +477,13 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
+    vcpLog("handler_error", {
+      session_id: sessionIdForLog,
+      patient_id_resolved: patientIdResolved,
+      product_recognized: productRecognizedForLog,
+      success: false,
+      error_message: errorMessage,
+    }, "error");
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,

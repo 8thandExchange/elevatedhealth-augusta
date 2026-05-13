@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -66,27 +67,22 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const origin = "https://elevatedhealthaugusta.com";
 
-    // Create Stripe Checkout session for $299 Hormone Mapping
-    // After payment, redirect to account creation page
+    // Create Stripe Checkout for Comprehensive Wellness Panel ($199 non-member list)
     const session = await stripe.checkout.sessions.create({
       customer_email: patient_email,
       line_items: [
         {
-          price: "price_1SZiRMEOtKRY99pua6QMu12h", // Hormone Mapping Package $299
+          price: LIVE_CORE_SERVICES.comprehensivePanel,
           quantity: 1,
         },
       ],
       mode: "payment",
-      shipping_address_collection: {
-        allowed_countries: ["US"],
-      },
-      // Redirect to account creation after payment
       success_url: `${origin}/patient/create-account?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(patient_email)}&name=${encodeURIComponent(patient_name)}`,
       cancel_url: `${origin}/`,
       metadata: {
         patient_email,
         patient_name,
-        product: "hormone_mapping_package",
+        product: "comprehensive_wellness_panel",
         invite_type: "provider_invite",
       },
     });
@@ -160,17 +156,16 @@ serve(async (req) => {
               <p class="intro">You've been personally invited to begin your hormone optimization journey with Elevated Health Augusta. We're excited to help you feel your best.</p>
               
               <div class="price-box">
-                <p class="price">$299</p>
-                <p class="price-label">Hormone Mapping Experience • One-Time</p>
+                <p class="price">$199</p>
+                <p class="price-label">Comprehensive Wellness Panel • LabCorp (in-office draw)</p>
               </div>
               
               <div class="includes">
                 <p class="includes-title">What's Included:</p>
                 <ul>
-                  <li><span class="check">✓</span> At-home ZRT Saliva Test Kit shipped directly to you</li>
-                  <li><span class="check">✓</span> Comprehensive hormone panel analysis</li>
-                  <li><span class="check">✓</span> 45-minute deep-dive clinical review with your provider</li>
-                  <li><span class="check">✓</span> Personalized treatment protocol design</li>
+                  <li><span class="check">✓</span> In-office LabCorp blood draw at our Evans clinic</li>
+                  <li><span class="check">✓</span> Baseline wellness labs reviewed with your provider</li>
+                  <li><span class="check">✓</span> Clear next steps if you enroll in a consult-gated program</li>
                   <li><span class="check">✓</span> Secure patient portal access for ongoing care</li>
                 </ul>
               </div>
@@ -197,7 +192,7 @@ serve(async (req) => {
                 </div>
                 <div class="step">
                   <span class="step-num">4</span>
-                  <span class="step-text"><strong>Receive your test kit</strong> and follow simple at-home instructions</span>
+                  <span class="step-text"><strong>Schedule your draw</strong> after account setup — our team coordinates your in-office LabCorp visit</span>
                 </div>
               </div>
               

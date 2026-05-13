@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,6 +10,27 @@ const logStep = (step: string, details?: unknown) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[BOOKING-CONFIRM] ${step}${detailsStr}`);
 };
+
+function bookingConfirmLog(
+  event: string,
+  fields: {
+    service_label?: string | null;
+    success: boolean;
+    error_message?: string | null;
+    email_sent?: boolean;
+    sms_sent?: boolean;
+  },
+  level: "info" | "error" = "info",
+) {
+  edgeStructuredLog("send-booking-confirmation", {
+    event,
+    service_label: fields.service_label ?? null,
+    success: fields.success,
+    error_message: fields.error_message ?? null,
+    email_sent: fields.email_sent ?? null,
+    sms_sent: fields.sms_sent ?? null,
+  }, level);
+}
 
 // Brand tokens — kept in sync with src/index.css and .cursorrules.
 // Charcoal #2A2826, Camel #B8956A, Bone #F2EBDC.
@@ -283,6 +305,7 @@ serve(async (req) => {
 
   try {
     logStep("Function started");
+    bookingConfirmLog("entry", { service_label: null, success: true, error_message: null });
 
     const body = (await req.json()) as Partial<SendBookingArgs>;
     const args: SendBookingArgs = {
@@ -305,6 +328,12 @@ serve(async (req) => {
       hasPhone: Boolean(args.phone),
       service_label: args.service_label,
       scheduled_at: args.scheduled_at,
+    });
+
+    bookingConfirmLog("request_parsed", {
+      service_label: args.service_label,
+      success: true,
+      error_message: null,
     });
 
     const results = {
@@ -342,6 +371,16 @@ serve(async (req) => {
       smsSent: results.sms.success,
     });
 
+    bookingConfirmLog("send_complete", {
+      service_label: args.service_label,
+      success: overallSuccess,
+      error_message: overallSuccess
+        ? null
+        : [results.email.error, results.sms.error].filter(Boolean).join(" | ") || null,
+      email_sent: results.email.success,
+      sms_sent: results.sms.success,
+    }, overallSuccess ? "info" : "error");
+
     return new Response(
       JSON.stringify({ success: overallSuccess, results }),
       {
@@ -352,6 +391,11 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
+    bookingConfirmLog("handler_error", {
+      service_label: null,
+      success: false,
+      error_message: errorMessage,
+    }, "error");
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,

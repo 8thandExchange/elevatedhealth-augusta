@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
+import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -76,21 +78,13 @@ serve(async (req) => {
       ketamine: "Ketamine Therapy",
       general: "General Consultation",
     };
-    const serviceLabel = serviceLabels[service_type] || "Discovery Consultation";
+    const serviceLabel = serviceLabels[service_type] || "Wellness Assessment";
 
-    // Create Stripe Checkout session for $149 Discovery Consultation
     const session = await stripe.checkout.sessions.create({
       customer_email: patient_email,
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "Discovery Consultation",
-              description: `30-minute ${serviceLabel} consultation with Elevated Health Augusta.`,
-            },
-            unit_amount: 9900, // $99
-          },
+          price: LIVE_CORE_SERVICES.wellnessAssessment,
           quantity: 1,
         },
       ],
@@ -100,11 +94,20 @@ serve(async (req) => {
       metadata: {
         patient_email,
         patient_name,
-        product: "discovery_consultation",
+        product: "wellness_assessment",
+        payment_type: "consultation",
         service_type,
         invite_type,
         scheduled_date: scheduled_date || "",
       },
+    });
+
+    edgeStructuredLog("send-consultation-invite", {
+      event_type: "checkout_created",
+      event_id: session.id,
+      success: true,
+      action_taken: "stripe_checkout_session_created",
+      product_recognition: "consultation",
     });
 
     logStep("Stripe checkout session created", { sessionId: session.id });
@@ -207,12 +210,12 @@ serve(async (req) => {
                 ` : ''}
                 
                 <div class="price-box">
-                  <p class="price">$99</p>
-                  <p class="price-label">Consultation Fee • 30 Minutes</p>
+                  <p class="price">$79</p>
+                  <p class="price-label">Wellness Assessment • 30 Minutes</p>
                 </div>
                 
                 <div class="credit-note">
-                  <p>💡 This $99 becomes a <strong>credit toward your Hormone Mapping Kit</strong> if you decide to proceed with treatment.</p>
+                  <p>Your visit is the consult-gated front door. In-office LabCorp draws and any panels are coordinated separately after your provider orders them.</p>
                 </div>
                 
                 <div class="cta-container">
@@ -288,17 +291,17 @@ serve(async (req) => {
                 <p class="intro">You've been personally invited to begin your hormone optimization journey with Elevated Health Augusta. Let's start with a personalized consultation to understand your unique needs.</p>
                 
                 <div class="price-box">
-                  <p class="price">$99</p>
-                  <p class="price-label">Discovery Consultation • 30 Minutes</p>
+                  <p class="price">$79</p>
+                  <p class="price-label">Wellness Assessment • 30 Minutes</p>
                 </div>
                 
                 <div class="includes">
-                  <p class="includes-title">Your Consultation Includes:</p>
+                  <p class="includes-title">Your Wellness Assessment includes:</p>
                   <ul>
-                    <li><span class="check">✓</span> 30-minute one-on-one with your provider</li>
-                    <li><span class="check">✓</span> Complete symptom assessment</li>
-                    <li><span class="check">✓</span> Personalized treatment path discussion</li>
-                    <li><span class="check">✓</span> <strong>$149 credit toward your Hormone Mapping Kit</strong></li>
+                    <li><span class="check">✓</span> 30-minute in-person visit with your care team</li>
+                    <li><span class="check">✓</span> Symptom and history review for your pathway</li>
+                    <li><span class="check">✓</span> Clear next steps if you enroll in a program</li>
+                    <li><span class="check">✓</span> In-office LabCorp draws when ordered (panels billed separately)</li>
                   </ul>
                 </div>
                 

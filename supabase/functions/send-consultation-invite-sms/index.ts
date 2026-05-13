@@ -78,10 +78,10 @@ const handler = async (req: Request): Promise<Response> => {
         ? new Date(scheduled_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         : "your upcoming appointment";
       
-      message = `Hi ${firstName}! Please complete your $149 payment to confirm your ${serviceLabel} consultation${scheduled_date ? ` on ${dateDisplay}` : ''}. Pay here: ${payment_url} - Elevated Health Augusta`;
+      message = `Hi ${firstName}! Please complete your $79 payment to confirm your ${serviceLabel} Wellness Assessment${scheduled_date ? ` on ${dateDisplay}` : ''}. Pay here: ${payment_url} - Elevated Health Augusta`;
     } else {
       // Standard invite message - needs to book
-      message = `Hi ${firstName}! Thanks for your interest in ${serviceLabel} at Elevated Health Augusta. Book your $149 Strategy Session here: ${payment_url} - This $99 becomes a credit toward treatment. Questions? Call (706) 760-3470`;
+      message = `Hi ${firstName}! Thanks for your interest in ${serviceLabel} at Elevated Health Augusta. Book your $79 Wellness Assessment here: ${payment_url} Questions? Call (706) 760-3470`;
     }
 
     const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;

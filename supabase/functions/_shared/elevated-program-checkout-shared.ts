@@ -1,18 +1,7 @@
-/**
- * create-membership-checkout (deprecated umbrella)
- *
- * Prefer dedicated program checkouts: `create-trt-checkout`, `create-hrt-checkout`,
- * `create-glp1-checkout`, `create-wellness-membership-checkout`.
- *
- * This function remains for backward-compatible callers; it resolves a program from
- * optional JSON `{ program?: "trt"|"hrt"|"glp1"|"wellness" }` or infers from the
- * patient's `treatment_request` / `primary_program`, defaulting to **wellness**.
- */
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { LIVE_ELEVATED_PROGRAMS, type LiveElevatedProgramKey } from "../_shared/live-prices.ts";
-import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import { LIVE_ELEVATED_PROGRAMS, type LiveElevatedProgramKey } from "./live-prices.ts";
+import { edgeStructuredLog } from "./edge-structured-log.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -26,34 +15,31 @@ const ALLOWED_ONBOARDING = [
   "pending_pharmacy_order",
 ];
 
-function inferProgramFromPatient(p: {
-  treatment_request?: string | null;
-  primary_program?: string | null;
-}): LiveElevatedProgramKey {
-  const t = `${p.treatment_request || ""} ${p.primary_program || ""}`.toLowerCase();
-  if (/weight|glp|semaglutide|tirzepatide|obes|ozempic|mounjaro/.test(t)) return "glp1";
-  if (/trt|testosterone|androgen|male/.test(t)) return "trt";
-  if (/hrt|bhrt|bi-?est|estrogen|progesterone|female|women/.test(t)) return "hrt";
-  return "wellness";
-}
-
-serve(async (req) => {
+/**
+ * Fixed-program ELEVATED subscription checkout (TRT / HRT / GLP-1 / WELLNESS).
+ * Each edge function passes its own program key — price ID is deterministic.
+ */
+export async function serveFixedElevatedProgramCheckout(
+  program: LiveElevatedProgramKey,
+  req: Request,
+  functionName: string,
+): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    edgeStructuredLog("create-membership-checkout", {
+    edgeStructuredLog(functionName, {
       event_type: "request",
       success: true,
       action_taken: "started",
-      product_recognition: "legacy_elevated_membership",
+      product_recognition: `elevated_${program}`,
     });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
-    const supabaseClient = createClient(
+    const supabaseAnon = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
     );
@@ -62,26 +48,15 @@ serve(async (req) => {
     if (!authHeader) throw new Error("Authentication required");
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData } = await supabaseClient.auth.getUser(token);
+    const { data: userData } = await supabaseAnon.auth.getUser(token);
     if (!userData.user?.email) throw new Error("User not authenticated");
 
     const userEmail = userData.user.email;
     const userId = userData.user.id;
 
-    let bodyProgram: LiveElevatedProgramKey | undefined;
-    try {
-      const body = await req.json().catch(() => ({}));
-      if (body?.program && typeof body.program === "string") {
-        const k = body.program as LiveElevatedProgramKey;
-        if (k in LIVE_ELEVATED_PROGRAMS) bodyProgram = k;
-      }
-    } catch {
-      /* empty */
-    }
-
-    const { data: patient, error: patientError } = await supabaseClient
+    const { data: patient, error: patientError } = await supabaseAnon
       .from("patients")
-      .select("id, onboarding_status, full_name, treatment_request, primary_program")
+      .select("id, onboarding_status, full_name")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -94,9 +69,7 @@ serve(async (req) => {
       );
     }
 
-    const program = bodyProgram ?? inferProgramFromPatient(patient);
     const priceId = LIVE_ELEVATED_PROGRAMS[program];
-
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
     let customerId: string | undefined;
@@ -122,7 +95,7 @@ serve(async (req) => {
       },
     });
 
-    edgeStructuredLog("create-membership-checkout", {
+    edgeStructuredLog(functionName, {
       event_type: "checkout_created",
       success: true,
       action_taken: "stripe_checkout_session_created",
@@ -138,7 +111,7 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     edgeStructuredLog(
-      "create-membership-checkout",
+      functionName,
       {
         event_type: "error",
         success: false,
@@ -152,4 +125,4 @@ serve(async (req) => {
       status: 500,
     });
   }
-});
+}
