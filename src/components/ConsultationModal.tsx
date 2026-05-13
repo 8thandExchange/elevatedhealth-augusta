@@ -5,98 +5,55 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Loader2, CreditCard, Phone, MessageCircle } from "lucide-react";
+import { Loader2, Phone, MessageCircle, CreditCard } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { cn } from "@/lib/utils";
 
 interface ConsultationModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// Elegant thin-line SVG icons
-const HormoneIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="24" cy="24" r="8" />
-    <path d="M24 8V4" /><path d="M24 44V40" />
-    <path d="M40 24H44" /><path d="M4 24H8" />
-    <path d="M35.3 12.7L38.1 9.9" /><path d="M9.9 38.1L12.7 35.3" />
-    <path d="M35.3 35.3L38.1 38.1" /><path d="M9.9 9.9L12.7 12.7" />
-  </svg>
-);
-
-const WeightLossIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 6 C16 14 32 18 32 26 C32 34 16 38 16 46" />
-    <path d="M32 6 C32 14 16 18 16 26 C16 34 32 38 32 46" />
-    <line x1="18" y1="10" x2="30" y2="10" />
-    <line x1="17" y1="16" x2="31" y2="16" />
-    <line x1="17" y1="32" x2="31" y2="32" />
-    <line x1="18" y1="38" x2="30" y2="38" />
-  </svg>
-);
-
-const IVIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M24 4 L24 16" />
-    <rect x="18" y="16" width="12" height="20" rx="2" />
-    <path d="M24 36 L24 44" />
-    <path d="M18 22 L30 22" />
-    <path d="M18 28 L30 28" />
-    <circle cx="24" cy="25" r="1.5" fill="currentColor" />
-  </svg>
-);
-
-const PeptideIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="24" cy="24" r="10" />
-    <circle cx="24" cy="24" r="4" />
-    <circle cx="24" cy="8" r="3" />
-    <circle cx="24" cy="40" r="3" />
-    <circle cx="10" cy="16" r="3" />
-    <circle cx="38" cy="16" r="3" />
-    <circle cx="10" cy="32" r="3" />
-    <circle cx="38" cy="32" r="3" />
-    <line x1="24" y1="11" x2="24" y2="14" />
-    <line x1="24" y1="34" x2="24" y2="37" />
-  </svg>
-);
+const VISIT_REASONS: { id: string; label: string }[] = [
+  { id: "hormone", label: "Hormone optimization (HRT/TRT)" },
+  { id: "weight_loss", label: "Weight loss (GLP-1 therapy)" },
+  { id: "peptide", label: "Peptide therapy" },
+  { id: "iv", label: "IV therapy / wellness drips" },
+  { id: "sexual_wellness", label: "Sexual wellness" },
+  { id: "hair_restoration", label: "Hair restoration" },
+  { id: "general_wellness", label: "General wellness / longevity" },
+  { id: "exploring", label: "Just exploring" },
+];
 
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
-  const [loadingService, setLoadingService] = useState<string | null>(null);
+  const [selectedReasons, setSelectedReasons] = useState<Set<string>>(new Set());
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const consultationOptions = [
-    {
-      icon: HormoneIcon,
-      title: "Hormone Optimization",
-      description: "Physician-prescribed HRT and TRT for men and women",
-      serviceType: "hormone"
-    },
-    {
-      icon: WeightLossIcon,
-      title: "Medical Weight Loss",
-      description: "Physician-supervised semaglutide & tirzepatide (GLP-1) therapy",
-      serviceType: "weight_loss"
-    },
-    {
-      icon: PeptideIcon,
-      title: "Peptide Protocols",
-      description: "Sermorelin, NAD+, GHK-Cu & more for cellular optimization",
-      serviceType: "peptide"
-    },
-  ];
+  const toggleReason = (id: string, checked: boolean) => {
+    setSelectedReasons((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
 
-  const handlePaidConsultation = async (serviceType: string) => {
-    setLoadingService(serviceType);
+  const handleContinueToCheckout = async () => {
+    const reasons = [...selectedReasons];
+    setCheckoutLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-consultation-checkout", {
-        body: { serviceType }
+        body: { serviceType: "wellness_assessment", reasons },
       });
-      
+
       if (error) throw error;
-      
+
       if (data?.url) {
         window.open(data.url, "_blank");
         onClose();
@@ -107,67 +64,82 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
       console.error("Consultation checkout error:", err);
       toast.error("Failed to start checkout. Please try again or call us.");
     } finally {
-      setLoadingService(null);
+      setCheckoutLoading(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border border-border rounded-2xl shadow-2xl">
-        <DialogHeader className="pb-4">
-          <DialogTitle className="text-3xl font-playfair font-normal text-center text-foreground tracking-wide">
-            What brings you in today?
+        <DialogHeader className="pb-2 text-left sm:text-center">
+          <DialogTitle className="text-2xl sm:text-3xl font-playfair font-normal text-foreground tracking-wide">
+            Book Your $79 Wellness Assessment
           </DialogTitle>
-          <DialogDescription className="text-center text-muted-foreground font-jost text-base mt-1">
-            Select your primary concern and we'll guide you to the right service.
+          <DialogDescription className="text-left sm:text-center text-muted-foreground font-jost text-sm sm:text-base mt-2 leading-relaxed">
+            30-minute in-person visit at Elevated Health Augusta (Evans, GA) to review your goals,
+            health history, and labs, and design your personalized treatment plan.
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-3 mt-4">
-          {consultationOptions.map((option, index) => {
-            const Icon = option.icon;
-            const isLoading = loadingService === option.serviceType;
-            return (
-              <div 
-                key={index}
-                className="group flex items-center gap-4 p-4 rounded-xl border border-border/50 hover:border-primary/40 transition-all duration-300 bg-card hover:shadow-md cursor-pointer"
-                onClick={() => !isLoading && handlePaidConsultation(option.serviceType)}
+
+        <div className="mt-4 space-y-3">
+          <div>
+            <p className="text-sm font-jost font-medium text-foreground">
+              What&apos;s bringing you in? (optional)
+            </p>
+            <p className="text-xs text-muted-foreground font-jost mt-1">
+              Help us prepare for your visit. You can skip this and we&apos;ll cover it in the assessment.
+            </p>
+          </div>
+
+          <div
+            className={cn(
+              "grid gap-3 pt-1",
+              "grid-cols-1 sm:grid-cols-2",
+            )}
+          >
+            {VISIT_REASONS.map(({ id, label }) => (
+              <div
+                key={id}
+                className="flex items-start gap-3 rounded-lg border border-border/50 bg-muted/20 px-3 py-2.5"
               >
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-playfair font-normal text-foreground mb-0.5">
-                    {option.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-jost leading-snug">
-                    {option.description}
-                  </p>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <span className="text-xl font-playfair font-semibold text-foreground">$79</span>
-                  <p className="text-[10px] text-primary font-medium font-jost">
-                    Applied as credit if you proceed
-                  </p>
-                </div>
-
-                <div className="shrink-0">
-                  {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-colors">
-                      <CreditCard className="h-4 w-4 text-primary group-hover:text-primary-foreground transition-colors" />
-                    </div>
-                  )}
-                </div>
+                <Checkbox
+                  id={`reason-${id}`}
+                  checked={selectedReasons.has(id)}
+                  onCheckedChange={(v) => toggleReason(id, v === true)}
+                  className="mt-0.5"
+                />
+                <Label
+                  htmlFor={`reason-${id}`}
+                  className="text-sm font-jost font-normal text-foreground leading-snug cursor-pointer"
+                >
+                  {label}
+                </Label>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
-        {/* Not Ready Section */}
+        <div className="mt-6 space-y-3">
+          <Button
+            type="button"
+            disabled={checkoutLoading}
+            className="w-full bg-primary text-primary-foreground font-jost font-medium rounded-md py-6 text-base"
+            onClick={handleContinueToCheckout}
+          >
+            {checkoutLoading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin mr-2 inline" />
+                Starting checkout…
+              </>
+            ) : (
+              "Continue to Checkout — $79"
+            )}
+          </Button>
+          <p className="text-[10px] sm:text-xs text-muted-foreground font-jost text-center leading-snug px-1">
+            Paid upfront. Not a deposit or credit. Refund policy: full refund if canceled 24+ hours in advance.
+          </p>
+        </div>
+
         <div className="mt-6 p-4 bg-secondary/50 rounded-xl border border-border/30">
           <p className="text-sm font-medium text-foreground mb-2 text-center font-jost">
             Have questions? Chat with our virtual care team first.
@@ -177,6 +149,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           </p>
           <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
             <button
+              type="button"
               onClick={() => {
                 onClose();
                 setTimeout(() => {
@@ -203,7 +176,6 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
           </p>
         </div>
 
-        {/* IV direct-book pointer */}
         <div className="mt-4 py-3 border-t border-b border-border/30 text-center">
           <p className="text-sm font-jost text-muted-foreground">
             Looking for IV therapy? Book directly without a consultation.
@@ -216,11 +188,6 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
             Book IV →
           </a>
         </div>
-
-        <p className="text-[10px] text-muted-foreground text-center mt-4 max-w-md mx-auto font-jost">
-          The $79 Wellness Assessment fee is non-refundable. Onboarding labs and program memberships
-          are priced separately and quoted before you enroll.
-        </p>
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground font-jost">
           <div className="flex items-center gap-2">
@@ -238,7 +205,10 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-3 font-jost">
-          Questions? Call us at <a href={`tel:${SITE_CONFIG.phone}`} className="text-primary hover:underline">{SITE_CONFIG.phone}</a>
+          Questions? Call us at{" "}
+          <a href={`tel:+1${SITE_CONFIG.phoneRaw}`} className="text-primary hover:underline">
+            {SITE_CONFIG.phone}
+          </a>
         </p>
       </DialogContent>
     </Dialog>
