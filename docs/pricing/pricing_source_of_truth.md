@@ -94,5 +94,99 @@ What patients pay first time: Most patients spend $79 (intake) + $199 (labs) + f
 ## Operational Contact
 Clinic phone: (706) 760-3470
 Note: This number must appear consistently on every patient-facing surface. Any other phone number found in the codebase (e.g. 706-973-3866 on /affordability) is incorrect and must be corrected to (706) 760-3470.
+## Live Stripe Price IDs (Production)
+**Stripe Account:** acct_1SQrM7CXbCBPFEeI (live mode)  
+**Last verified:** 2026-05-13
+All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy codebase (those prefixed with `…EOtKRY99pu…`) are deprecated and must not be referenced in any patient-facing code path.
+### Program Memberships (Recurring Monthly)
+| Product | Price | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|
+| ELEVATED TRT | $249/mo | prod_UVdgaw0SyMI2jz | price_1TWcPICXbCBPFEeInMGSsjDN |
+| ELEVATED HRT | $229/mo | prod_UVdgH1SlumTl5O | price_1TWcPKCXbCBPFEeIJKBf62b9 |
+| ELEVATED GLP-1 | $349/mo | prod_UVdgUmNtkHxr3V | price_1TWcPLCXbCBPFEeIK7tkeIAM |
+| ELEVATED WELLNESS | $199/mo | prod_UVdg37MnW1puuK | price_1TWcPNCXbCBPFEeIXo6IDpPf |
+### Core Services (One-Time)
+| Product | Price | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|
+| Wellness Assessment | $79 | prod_UVe4fac4EOfgDG | price_1TWcmaCXbCBPFEeImikpoTPo |
+| Medical Review | $149 | prod_UVe5QPpWNyYLpU | price_1TWcn3CXbCBPFEeILKHcCnTR |
+| Physician Phone Follow-Up | $99 | prod_UVe5hSb451qkZ4 | price_1TWcnXCXbCBPFEeIEojOHJDL |
+| Rebooking Fee | $99 | prod_UVe6AiMtx1xDO0 | price_1TWcnsCXbCBPFEeIFltNQdpi |
+| Comprehensive Wellness Panel | $199 | prod_UVe6QvjqrmgbXa | price_1TWcoMCXbCBPFEeIKTLxoYYs |
+| Expanded Panel | $299 | prod_UVe64hyL4IIMt6 | price_1TWcolCXbCBPFEeI11uF9lyf |
+### À La Carte Medication Fills (Non-Member, One-Time)
+| Product | Price | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|
+| Testosterone Fill | $179 | prod_UVe7nW7JJ1xuC6 | price_1TWcp8CXbCBPFEeI8pQsOIVm |
+| Bi-Est Cream Fill | $109 | prod_UVe7Ntu4xUg72s | price_1TWcpTCXbCBPFEeIIt4jKgoR |
+| Progesterone Fill | $99 | prod_UVe8jVlaypTCLy | price_1TWcq1CXbCBPFEeI35J50U0I |
+| Semaglutide Single Fill | $299 | prod_UVe8LmywoayLOE | price_1TWcqTCXbCBPFEeIP1U1HSld |
+| Tirzepatide Single Fill | $399 | prod_UVeAmnWt8FMQCf | price_1TWcsCCXbCBPFEeI8iA8kbrx |
+### À La Carte Peptide Therapy (Recurring Monthly)
+| Product | Price | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|
+| Sermorelin Injection | $149/mo | prod_UVeBkWZPGxLdmc | price_1TWcskCXbCBPFEeIBSytC63Q |
+| CJC-1295/Ipamorelin | $179/mo | prod_UVeB6yGA5Sy73e | price_1TWct7CXbCBPFEeIXT7Mv0A3 |
+| Tesamorelin | $399/mo | prod_UVeCDgLGVJ04hm | price_1TWctuCXbCBPFEeI4rpKGThG |
+| NAD+ Troches | $99/mo | prod_UVeDctVXwIySHX | price_1TWcujCXbCBPFEeIgLXiONWC |
+| NAD+ Injection | $199/mo | prod_UVeDVPf2YZCceL | price_1TWcv4CXbCBPFEeIqJILZWQY |
+| NAD+ Nasal Spray | $99/mo | prod_UVeDO4N214JNkQ | price_1TWcvUCXbCBPFEeILsUFp0tq |
+| GHK-Cu Sublingual | $99/mo | prod_UVeEjWP5nRaa3z | price_1TWcvrCXbCBPFEeIJYVzAjXS |
+| GHK-Cu Topical | $149/mo | prod_UVeEx971R0NYhK | price_1TWcwJCXbCBPFEeIL3UgXgTu |
+### À La Carte Sexual Wellness
+| Product | Price | Type | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|---|
+| Tadalafil | $99/mo | Recurring | prod_UVeFMp6Re5QcwP | price_1TWcwsCXbCBPFEeI9yGko9k8 |
+| Sildenafil | $79/mo | Recurring | prod_UVeFzuXMRsbfR3 | price_1TWcxGCXbCBPFEeIezbJUMS1 |
+| PT-141 (Bremelanotide) | $225 | One-time | prod_UVeGVXyl1tyGGx | price_1TWcxgCXbCBPFEeIVx833x02 |
+| Oxytocin Nasal Spray | $89/mo | Recurring | prod_UVeGd7W941z5zi | price_1TWcyCCXbCBPFEeITwirLO84 |
+### À La Carte Hair Restoration (Recurring Monthly)
+| Product | Price | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|
+| Minoxidil + Finasteride | $129/mo | prod_UVeHUF34WxfW2b | price_1TWcz6CXbCBPFEeI3fWrJOU0 |
+| Dutasteride Protocol | $149/mo | prod_UVeIHluYVIXexo | price_1TWczRCXbCBPFEeIGjWNLOYX |
+| GHK-Cu Scalp Therapy | $149/mo | prod_UVeIyhp13vmLLw | price_1TWczwCXbCBPFEeIXCBtnslN |
+### Member Pricing on À La Carte
+Members of any ELEVATED tier (TRT, HRT, GLP-1, or WELLNESS) receive **20% off** all à la carte services and products. Member discount logic must be applied in the checkout layer; no separate member-pricing Stripe products exist.
+### Deprecated Stripe Price IDs (Do Not Use)
+The following test-mode price IDs are deprecated. They appear in legacy code that will be replaced by the live IDs above. Any code referencing these must be updated:
+- `price_1TUs3LEOtKRY99puWfQy8pHj` (legacy single-tier Elevated $199/mo) → use ELEVATED WELLNESS or program-specific tier
+- `price_1TUs38EOtKRY99puPpc6SFMs` (Semaglutide member $199) → use ELEVATED GLP-1
+- `price_1TUs3AEOtKRY99puDOseqLDZ` (Semaglutide non-member $249) → use ELEVATED GLP-1 or Semaglutide Single Fill
+- `price_1TUs39EOtKRY99puWAF4oZT7` (Tirzepatide member $399) → use ELEVATED GLP-1
+- `price_1SlZnyEOtKRY99puE9JNOrTR` (Tirzepatide non-member $499) → use ELEVATED GLP-1 or Tirzepatide Single Fill
+- `price_1SlZnwEOtKRY99puaBhrh2iB` (semaglutide $399 keyed) → use ELEVATED GLP-1
+- `price_1Sga64EOtKRY99pu6NpP45Qq` (Vitality membership) → DELETE all references; Vitality is discontinued
+- `price_1Sga66EOtKRY99puQgPWACIy` (legacy Testosterone fill) → use new Testosterone Fill ID
+- `price_1Sga67EOtKRY99puoS8b5U6h` (legacy Bi-Est fill) → use new Bi-Est Cream Fill ID
+- `price_1Sga69EOtKRY99puO8NJ5bpx` (legacy Progesterone fill) → use new Progesterone Fill ID
+- `price_1Sga6AEOtKRY99puEx0mC3jx` (legacy follow-up consult $99) → use Physician Phone Follow-Up ID
+- `price_1Sa5UFEOtKRY99pupEQlaFvN` (legacy rebooking) → use new Rebooking Fee ID
+- `price_1Sa3oyEOtKRY99puGS2t9EZv` (legacy Sermorelin) → use new Sermorelin Injection ID
+- `price_1Sfm0oEOtKRY99puEurPSCU6` (legacy CJC-1295/Ipamorelin) → use new ID
+- `price_1SfibZEOtKRY99pud5SNVeXI` (legacy Tesamorelin) → use new ID
+- `price_1Sa3x1EOtKRY99pufL3wEyIN` (legacy NAD+ Troches) → use new ID
+- `price_1Sa3waEOtKRY99puCB267VpA` (legacy NAD+ Injection) → use new ID
+- `price_1SfibeEOtKRY99puUPRACDHQ` (legacy NAD+ Nasal Spray) → use new ID
+- `price_1Sa3xIEOtKRY99puIXSB3L31` (legacy peptide/sexual) → use PT-141 or correct peptide
+- `price_1SfibXEOtKRY99puuRkJc5g3` (legacy GHK-Cu) → use new GHK-Cu Sublingual or Topical
+- `price_1SfibXEOtKRY99puDbZKu1zw` (legacy GHK-Cu) → use new GHK-Cu Topical or Scalp Therapy
+- `price_1SfibUEOtKRY99pujkcHdFLc` (legacy Oxytocin staff) → use new Oxytocin Nasal Spray ID
+- `price_1SfijTEOtKRY99puE2WxgmrI` (legacy Minoxidil/Finasteride) → use new ID
+- `price_1SfijUEOtKRY99puH5TqvFks` (legacy Dutasteride) → use new ID
+- `price_1SfijUEOtKRY99pubB9WRUs1` (legacy Dutasteride duplicate) → use new ID (deduplicate)
+- `price_1SfijVEOtKRY99puXq7N3Lp2` (legacy GHK-Cu Scalp) → use new GHK-Cu Scalp Therapy ID
+- `price_1SfijREOtKRY99puq0ITndfC` (legacy Tadalafil) → use new ID
+- `price_1SfijSEOtKRY99pumi7jjNvs` (legacy Sildenafil) → use new ID
+- `price_1Sa67YEOtKRY99puQlYCjH4m` (legacy PT-141) → use new PT-141 ID
+- `price_1SfijWEOtKRY99puB9Rq4Lm3` (legacy Oxytocin) → use new Oxytocin Nasal Spray ID
+- `price_1SmMlOEOtKRY99puBAxTpw99` (legacy hormone add-on subscription) → DELETE; rolled into ELEVATED TRT/HRT
+- `price_1TDovoEOtKRY99pus14I47X3` (Founding Wellness Pass) → DELETE; Founding tiers discontinued
+- `price_1TDovpEOtKRY99pu8sW2tl9N` (Founding Longevity) → DELETE
+- `price_1TDovsEOtKRY99puPtteAgOu` (Founding Concierge) → DELETE
+- `price_1SZiRMEOtKRY99pua6QMu12h` (Hormone Mapping $299) → DELETE; ZRT discontinued
+- `price_1T1AbVEOtKRY99pumPdgj1k3` (legacy ZRT diagnostic) → DELETE
+- `price_1SgcM9EOtKRY99puXlVr5s6o` (GLP-1 starter) → DELETE; rolled into ELEVATED GLP-1
+- `price_1Sd8ChEOtKRY99pu7iaAF3Jd` (GLP-1 continuation) → DELETE; rolled into ELEVATED GLP-1
 ---
 End of Pricing Source of Truth. Last updated 2026-05-13.
