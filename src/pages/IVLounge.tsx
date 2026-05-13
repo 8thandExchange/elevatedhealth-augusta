@@ -480,7 +480,7 @@ const IVLounge = () => {
               {[
                 { q: "Do I need a consultation first?", a: "No — IV therapy is direct-book. Our RN screens for contraindications at the visit." },
                 { q: "How long does an IV take?", a: "Most drips take 30–45 minutes. NAD+ runs longer — typically 1–2 hours depending on the dose." },
-                { q: "Can I add boosters at the visit?", a: "Yes. Let your RN know when you arrive — add-ons are charged at checkout after." },
+                { q: "Can I add boosters at the visit?", a: "Yes. Let the clinical team know when you arrive — add-ons are charged at checkout after." },
                 { q: "Are members charged differently?", a: `ELEVATED members save ${MEMBER_DISCOUNT_PERCENT}% on eligible à la carte IV, peptide, and injectable add-ons and receive priority booking. Base walk-in IV pricing is the same.` },
                 { q: "What if I'm not feeling well after?", a: "Reach out. We follow up with every patient. Reactions are rare, but we take every concern seriously." },
               ].map((f, i) => (

@@ -45,7 +45,7 @@ const PROGRAM_ROWS = [
 
 const SHARED_INCLUDES = [
   "Medication included when prescribed as part of your selected ELEVATED program",
-  "Monthly RN check-in and unlimited secure messaging",
+  "Monthly check-in with our clinical team and unlimited secure messaging",
   "Quarterly labs and lab review included in program pricing",
   "Priority scheduling and in-clinic coordination at Evans",
 ];
@@ -69,7 +69,7 @@ const FAQ = [
   },
   {
     q: "Can I share the membership with a spouse?",
-    a: "Memberships are individual. We offer a household discount when two members enroll together — ask Caroline at your Wellness Assessment.",
+    a: "Memberships are individual. We offer a household discount when two members enroll together — ask our clinical team at your Wellness Assessment.",
   },
   {
     q: "What's the cancellation policy?",
@@ -324,7 +324,7 @@ const Membership = () => {
               </Button>
             </div>
             <p className="mt-6 font-jost text-xs text-muted-foreground max-w-md mx-auto">
-              Already a patient? Talk to Caroline at your next visit — she will confirm the right time to enroll based
+              Already a patient? Talk to our clinical team at your next visit — they will confirm the right time to enroll based
               on your protocol.
             </p>
           </div>

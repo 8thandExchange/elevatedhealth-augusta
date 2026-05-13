@@ -50,7 +50,7 @@ const StaffPricingCheatsheet = () => {
               <CardTitle className="font-playfair text-xl">ELEVATED programs (recurring)</CardTitle>
             </CardHeader>
             <CardContent className="font-jost text-sm space-y-2">
-              <p className="text-muted-foreground mb-3">Each includes medication when prescribed in-program, monthly RN check-in, quarterly labs, lab review, unlimited messaging.</p>
+              <p className="text-muted-foreground mb-3">Each includes medication when prescribed in-program, monthly check-in with our clinical team, quarterly labs, lab review, unlimited messaging.</p>
               <ul className="space-y-1">
                 {Object.values(ELEVATED_PROGRAMS).map((p) => (
                   <li key={p.priceId}>

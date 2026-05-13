@@ -123,7 +123,7 @@ const PricingComparison = () => {
                 <div className="rounded-lg border border-border bg-background p-6">
                   <h3 className="font-medium mb-2">What is included in ELEVATED memberships?</h3>
                   <p className="text-sm text-muted-foreground">
-                    Program memberships include monthly medication where applicable, monthly RN check-ins,
+                    Program memberships include monthly medication where applicable, monthly check-ins with our clinical team,
                     quarterly in-office labs, clinically appropriate physician review, and unlimited
                     messaging. Initial {CORE_SERVICES.wellnessAssessment.displayPrice} assessment and baseline
                     labs ({CORE_SERVICES.comprehensivePanel.displayPrice} or {CORE_SERVICES.expandedPanel.displayPrice}{" "}

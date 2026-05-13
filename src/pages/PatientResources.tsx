@@ -226,7 +226,7 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
     {
       question: "What are the ELEVATED programs?",
       answer:
-        "We offer four monthly ELEVATED programs — TRT, HRT, GLP-1, and WELLNESS — each with medication included when prescribed as part of that program, monthly RN check-ins, quarterly labs, lab review, and unlimited messaging. See elevatedhealthaugusta.com/membership for details.",
+        "We offer four monthly ELEVATED programs — TRT, HRT, GLP-1, and WELLNESS — each with medication included when prescribed as part of that program, monthly check-ins with our clinical team, quarterly labs, lab review, and unlimited messaging. See elevatedhealthaugusta.com/membership for details.",
     },
     {
       question: "What does 'Everything Included' mean for billing?",

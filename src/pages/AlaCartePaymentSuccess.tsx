@@ -3,7 +3,7 @@
  *
  * Post-payment landing for à la carte purchases. Five product paths:
  *
- *   testosterone / biEst / progesterone  → medication ships from FCC.
+ *   testosterone / biEst / progesterone  → medication ships from our compounding pharmacy.
  *                                          No CTA, no slot picker, just a
  *                                          shipment confirmation block.
  *
@@ -21,7 +21,7 @@
  *
  * Flag for follow-up work: lab_draw is currently routed through
  * service_line='consult' because we don't yet have a separate lab_draw
- * service line or a phlebotomy capability flag on providers. Caroline's
+ * service line or a phlebotomy capability flag on providers. The clinical team's
  * 'consult' availability is what backs lab-draw bookings until we
  * introduce that distinction.
  */
@@ -255,12 +255,12 @@ const AlaCartePaymentSuccess = () => {
               {productInfo?.label}
             </p>
             <p className="font-jost font-light text-sm text-muted-foreground mb-3">
-              Compounded under 503A pharmacy authority at FCC (Lewisville, TX)
+              Compounded under 503A pharmacy authority at our state-licensed compounding pharmacy
               and shipped direct to the address on file.
             </p>
             <p className="font-jost text-sm text-foreground">
               You already have an active prescription — no visit is required.
-              Caroline will reach out within 2 business days if there's anything
+              Our clinical team will reach out within 2 business days if there&apos;s anything
               we need to confirm.
             </p>
           </div>
@@ -296,8 +296,8 @@ const AlaCartePaymentSuccess = () => {
             </h2>
             <p className="font-jost font-light text-sm text-muted-foreground">
               {productInfo.fulfillment === "lab_draw"
-                ? "Lab draws are quick (about 15 minutes). Caroline runs the draw on-site at our Evans clinic."
-                : "Follow-up visits are 30 minutes with your physician or RN."}
+                ? "Lab draws are quick (about 15 minutes). Our clinical team runs the draw on-site at our Evans clinic."
+                : "Follow-up visits are 30 minutes with our clinical team. Physician review is available when clinically indicated."}
             </p>
           </CardContent>
         </Card>
@@ -405,7 +405,7 @@ const AlaCartePaymentSuccess = () => {
                 Need to make a change or have a question?
               </h3>
               <p className="font-jost font-light text-sm text-muted-foreground mb-4">
-                Reach Caroline directly. Members get same-day SMS response during clinic hours.
+                Reach our clinical team directly. Members get same-day SMS response during clinic hours.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button

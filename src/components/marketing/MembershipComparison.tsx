@@ -57,7 +57,7 @@ function buildTrtRows(): Row[] {
       member: INCLUDED,
     },
     {
-      service: "Monthly check-in (RN)",
+      service: "Monthly check-in (clinical team)",
       nonMember: `${CORE_SERVICES.wellnessAssessment.displayPrice}/visit`,
       member: INCLUDED,
     },
@@ -67,7 +67,7 @@ function buildTrtRows(): Row[] {
       member: `${INCLUDED} (free quarterly)`,
     },
     {
-      service: "Lab review by Dr. Akers",
+      service: "Lab review by our physician",
       nonMember: `${CORE_SERVICES.medicalReview.displayPrice} if needed`,
       member: `${INCLUDED} for staff-initiated`,
     },
@@ -131,7 +131,7 @@ function buildHrtRows(): Row[] {
       member: INCLUDED,
     },
     {
-      service: "Monthly check-in (RN)",
+      service: "Monthly check-in (clinical team)",
       nonMember: `${CORE_SERVICES.wellnessAssessment.displayPrice}/visit`,
       member: INCLUDED,
     },
@@ -141,7 +141,7 @@ function buildHrtRows(): Row[] {
       member: INCLUDED,
     },
     {
-      service: "Lab review by Dr. Akers",
+      service: "Lab review by our physician",
       nonMember: `${CORE_SERVICES.medicalReview.displayPrice} if needed`,
       member: `${INCLUDED} for staff-initiated`,
     },
@@ -197,7 +197,7 @@ function buildGlp1Rows(drug: "semaglutide" | "tirzepatide"): Row[] {
       member: INCLUDED,
     },
     {
-      service: "Monthly check-in (RN)",
+      service: "Monthly check-in (clinical team)",
       nonMember: `${CORE_SERVICES.wellnessAssessment.displayPrice}/visit`,
       member: INCLUDED,
     },
@@ -207,7 +207,7 @@ function buildGlp1Rows(drug: "semaglutide" | "tirzepatide"): Row[] {
       member: `${INCLUDED} (free quarterly)`,
     },
     {
-      service: "Lab review by Dr. Akers",
+      service: "Lab review by our physician",
       nonMember: `${CORE_SERVICES.medicalReview.displayPrice} if needed`,
       member: `${INCLUDED} for staff-initiated`,
     },
@@ -262,7 +262,7 @@ function buildWellnessRows(): Row[] {
       member: `${MEMBER_DISCOUNT_PERCENT}% off`,
     },
     {
-      service: "Monthly check-in (RN)",
+      service: "Monthly check-in (clinical team)",
       nonMember: `${CORE_SERVICES.wellnessAssessment.displayPrice}/visit`,
       member: INCLUDED,
     },

@@ -13,7 +13,7 @@
  *     day.
  *   - Collects callback contact info + preferred window.
  *   - On submit, calls send-safety-callback-request which inserts a row
- *     into eligibility_review_requests so Caroline / Troy have a real
+ *     into eligibility_review_requests so the clinical team has a real
  *     queue, and emails the clinical staff.
  *   - Surfaces (706) 760-3470 as the urgent escape hatch.
  *

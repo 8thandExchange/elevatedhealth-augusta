@@ -204,7 +204,7 @@ const Pricing = () => {
                 "name": "What is included in an ELEVATED membership?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ELEVATED program memberships include monthly medication where applicable to the program, monthly RN check-in, free quarterly labs at the clinic, clinically appropriate lab review and protocol adjustments, and unlimited messaging—one transparent monthly price. Initial Wellness Assessment and baseline labs are separate one-time onboarding fees.",
+                  "text": "ELEVATED program memberships include monthly medication where applicable to the program, monthly check-in with our clinical team, free quarterly labs at the clinic, clinically appropriate lab review and protocol adjustments, and unlimited messaging—one transparent monthly price. Initial Wellness Assessment and baseline labs are separate one-time onboarding fees.",
                 },
               },
             ],
@@ -330,7 +330,7 @@ const Pricing = () => {
                     <CardContent className="flex flex-col flex-grow pt-0">
                       <p className="text-3xl font-playfair text-foreground mb-4">{p.displayPrice}</p>
                       <p className="text-xs text-muted-foreground font-jost flex-grow mb-4 leading-relaxed">
-                        Medication included where prescribed, monthly RN check-in, quarterly labs,
+                        Medication included where prescribed, monthly check-in with our clinical team, quarterly labs,
                         lab review when needed, unlimited messaging.
                       </p>
                       <Button variant="outline" asChild className="mt-auto rounded-full">
@@ -707,8 +707,8 @@ const Pricing = () => {
                               {ELEVATED_PROGRAMS.trt.name} / {ELEVATED_PROGRAMS.hrt.name}
                             </h3>
                             <p className="text-sm text-slate-600 font-lato leading-relaxed">
-                              Program memberships include hormone therapy where prescribed, monthly RN
-                              check-ins, quarterly labs, clinically appropriate physician review, and
+                              Program memberships include hormone therapy where prescribed, monthly check-ins with our clinical team,
+                              quarterly labs, clinically appropriate physician review, and
                               unlimited messaging—see men&apos;s and women&apos;s program pages for
                               details.
                             </p>

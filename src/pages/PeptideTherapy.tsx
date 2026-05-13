@@ -132,7 +132,7 @@ const alacarte: AlaCarte[] = [
           bestFor: "Tendon · ligament · muscle",
           priceMember: "—",
           priceNonMember: "—",
-          note: "Subject to FCC compliance verification; priced at enrollment.",
+          note: "Subject to 503A pharmacy compliance verification; priced at enrollment.",
         },
       ] as AlaCarte[])
     : []),
@@ -179,15 +179,15 @@ const steps = [
     t: "Targeted Lab Panel",
     d: `Foundation labs plus IGF-1 (for GH peptides) and hormone markers if relevant. Common panels include ${CORE_SERVICES.comprehensivePanel.name} (${CORE_SERVICES.comprehensivePanel.displayPrice}) or ${CORE_SERVICES.expandedPanel.name} (${CORE_SERVICES.expandedPanel.displayPrice}) when ordered.`,
   },
-  { n: "03", t: "Custom Protocol", d: "Physician selects your stack or à la carte peptides, designs dosing, sends Rx to FCC. Compounded for you and shipped refrigerated (5-day fulfillment)." },
-  { n: "04", t: "Self-Administer or In-Clinic", d: "Most peptides are subcutaneous self-injection at home — Caroline trains you in 15 minutes. Or come in weekly with your ELEVATED program for in-clinic administration." },
+  { n: "03", t: "Custom Protocol", d: "Physician selects your stack or à la carte peptides, designs dosing, sends Rx to our compounding pharmacy. Compounded for you and shipped refrigerated (5-day fulfillment)." },
+  { n: "04", t: "Self-Administer or In-Clinic", d: "Most peptides are subcutaneous self-injection at home — our clinical team trains you in 15 minutes. Or come in weekly with your ELEVATED program for in-clinic administration." },
 ];
 
 const faqs = [
   { q: "Why don't you offer BPC-157?", a: "BPC-157 is currently on the FDA's Category 2 list, meaning licensed compounding pharmacies cannot legally produce it. We use Pentadeca Arginate (PDA) instead — it's the regulatory-cleared successor with similar mechanism. Some online vendors still sell BPC-157 as 'research grade' — that's outside the legal pharmacy framework, and we don't participate in that market." },
   { q: "Are peptides FDA-approved?", a: "Some are — PT-141 is FDA-approved as Vyleesi. Most peptides we prescribe are compounded under 503A authority for specific patients, which is a different legal framework than FDA approval but still regulated. It's not the same as 'research grade' or 'physician use only' branded products." },
   { q: "Can I get peptides cheaper online?", a: "Yes, you can find research-grade peptide kits cheaper. Those are sold for 'research use only' and aren't intended for human medical use — selling them for human use is outside the legal framework. We're not competing on price; we're offering pharmacy-grade compounding with physician oversight and lab monitoring." },
-  { q: "How are peptides administered?", a: "Most are subcutaneous self-injection at home — Caroline trains you. Some are sublingual or topical. NAD+ can be IV at our IV Lounge or subcutaneous take-home depending on preference." },
+  { q: "How are peptides administered?", a: "Most are subcutaneous self-injection at home — our clinical team trains you. Some are sublingual or topical. NAD+ can be IV at our IV Lounge or subcutaneous take-home depending on preference." },
   { q: "How long until I notice results?", a: "Recovery peptides: 1–3 weeks for inflammation reduction, 4–8 weeks for tissue healing. Sexual wellness peptides: same-day to 2 weeks. Longevity peptides: subjective changes in 4–6 weeks; objective changes (labs, body composition) in 3–6 months." },
   { q: "Do peptides have side effects?", a: "Generally well-tolerated. Specific peptides have specific considerations — PT-141 can cause facial flushing, NAD+ can cause flushing during IV. Your physician will review the profile before starting." },
   { q: "Will more peptides become available later?", a: "Likely yes. The FDA announced in early 2026 the intent to reclassify several peptides currently restricted — including CJC/Ipamorelin and Thymosin Alpha-1 — back to available status. We monitor this and will add new options as they become legally compoundable." },
@@ -276,7 +276,7 @@ const PeptideTherapy = () => {
                 </div>
                 <div className="md:col-span-7 space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
                   <p>Most online peptide vendors operate outside the FDA's compounding framework. Their peptides are sold under labels like "research use only" or "physician-use only" — language that gives an appearance of legitimacy without the legal protection of pharmacy compounding. We don't work with those vendors.</p>
-                  <p>Every peptide we prescribe is compounded by a licensed 503A compounding pharmacy — primarily Formulation Compounding Center (FCC) in Lewisville, Texas. Each prescription is written for a specific patient, dispensed under pharmacy oversight, and shipped refrigerated directly to your door.</p>
+                  <p>Every peptide we prescribe is compounded by a licensed 503A compounding pharmacy. Each prescription is written for a specific patient, dispensed under pharmacy oversight, and shipped refrigerated directly to your door.</p>
                   <p>Some peptides commonly discussed online — including BPC-157 — are not currently legal to compound under FDA guidance. We use the regulatory-cleared alternatives where they exist (Pentadeca Arginate is the modern BPC-157 successor) and are transparent when a popular peptide isn't available through legal channels. You'll never get an unapproved gray-market substance from us.</p>
                 </div>
               </div>

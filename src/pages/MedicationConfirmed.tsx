@@ -4,11 +4,11 @@
  * Post-payment landing for compounded medication subscriptions
  * (semaglutide, tirzepatide, GLP-1 starter, GLP-1 continuation).
  *
- * These medications ship from FCC; no in-clinic visit is required at the
+ * These medications ship from our state-licensed 503A compounding pharmacy; no in-clinic visit is required at the
  * confirmation step, so this page intentionally does not embed a slot
  * picker. Patients see what they paid for, what to expect (kit ships in
  * 5-7 business days, dosing instructions arrive separately), and a
- * direct line to Caroline if they have questions.
+ * direct line to our clinical team if they have questions.
  */
 import { Helmet } from "react-helmet";
 import { useEffect, useMemo } from "react";
@@ -37,9 +37,9 @@ const MEDICATION_INFO: Record<MedKey, {
     cadence: "Monthly subscription",
     shipsIn: "5–7 business days",
     whatToExpect: [
-      "Refrigerated, direct-ship from FCC (Formulation Compounding Center)",
+      "Refrigerated, direct-ship from our state-licensed 503A compounding pharmacy",
       "Patient-specific compounded under 503A pharmacy authority",
-      "Caroline reaches out within 2 business days to confirm titration schedule and answer questions",
+      "Our clinical team reaches out within 2 business days to confirm titration schedule and answer questions",
     ],
   },
   tirzepatide: {
@@ -49,9 +49,9 @@ const MEDICATION_INFO: Record<MedKey, {
     cadence: "Monthly subscription",
     shipsIn: "5–7 business days",
     whatToExpect: [
-      "Refrigerated, direct-ship from FCC (Formulation Compounding Center)",
+      "Refrigerated, direct-ship from our state-licensed 503A compounding pharmacy",
       "Patient-specific compounded under 503A pharmacy authority",
-      "Caroline reaches out within 2 business days to confirm titration schedule and answer questions",
+      "Our clinical team reaches out within 2 business days to confirm titration schedule and answer questions",
     ],
   },
   "glp1-continuation": {
@@ -61,7 +61,7 @@ const MEDICATION_INFO: Record<MedKey, {
     cadence: "Monthly continuation",
     shipsIn: "5–7 business days",
     whatToExpect: [
-      "Refrigerated refill ships direct from FCC",
+      "Refrigerated refill ships direct from our compounding pharmacy",
       "Same dose tier as your previous month unless your physician adjusted",
       "Reach out if your titration schedule changes — refills can be paused at any time",
     ],
@@ -73,9 +73,9 @@ const MEDICATION_INFO: Record<MedKey, {
     cadence: "Starter dose, monthly thereafter",
     shipsIn: "5–7 business days",
     whatToExpect: [
-      "Refrigerated, direct-ship from FCC (Formulation Compounding Center)",
+      "Refrigerated, direct-ship from our state-licensed 503A compounding pharmacy",
       "Begin at your starter dose; titration is supervised by your physician",
-      "Caroline reaches out within 2 business days to confirm your start date and answer questions",
+      "Our clinical team reaches out within 2 business days to confirm your start date and answer questions",
     ],
   },
 };
@@ -134,8 +134,7 @@ const MedicationConfirmed = () => {
                       </p>
                       <p className="font-playfair text-2xl text-foreground mb-3">{med.shipsIn}</p>
                       <p className="font-jost font-light text-sm text-muted-foreground">
-                        {med.cadence}. Refrigerated direct-ship from our 503A compounding pharmacy
-                        (FCC, Lewisville TX).
+                        {med.cadence}. Refrigerated direct-ship from our state-licensed 503A compounding pharmacy.
                       </p>
                     </div>
                   </div>
@@ -167,7 +166,7 @@ const MedicationConfirmed = () => {
                   Questions, dose changes, or anything urgent?
                 </h3>
                 <p className="font-jost font-light text-sm text-muted-foreground mb-4">
-                  Reach Caroline directly. Members get same-day SMS response during clinic hours.
+                  Reach our clinical team directly. Members get same-day SMS response during clinic hours.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button

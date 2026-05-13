@@ -1,7 +1,7 @@
 /**
  * /admin/eligibility-reviews
  *
- * Caroline / Troy queue of patients flagged by SafetyGate during intake.
+ * Clinical review queue of patients flagged by SafetyGate during intake.
  * Each row corresponds to an eligibility_review_requests record.
  *
  * One-click resolutions:

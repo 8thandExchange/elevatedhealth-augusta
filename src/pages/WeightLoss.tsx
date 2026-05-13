@@ -118,7 +118,7 @@ const WeightLoss = () => {
     {
       step: "03",
       headline: "Enroll in ELEVATED GLP-1 monthly care.",
-      body: `One program (${PRICE_PROGRAM_GLP1}) bundles medication when prescribed, monthly RN check-ins, quarterly labs, and unlimited messaging. À la carte single fills are ${MEDICATION_FILLS.semaglutide.displayPrice} (semaglutide) or ${MEDICATION_FILLS.tirzepatide.displayPrice} (tirzepatide) when your clinician recommends pay-per-fill fulfillment.`,
+      body: `One program (${PRICE_PROGRAM_GLP1}) bundles medication when prescribed, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging. À la carte single fills are ${MEDICATION_FILLS.semaglutide.displayPrice} (semaglutide) or ${MEDICATION_FILLS.tirzepatide.displayPrice} (tirzepatide) when your clinician recommends pay-per-fill fulfillment.`,
     },
   ];
 
@@ -154,7 +154,7 @@ const WeightLoss = () => {
 
   const membershipInclusions = [
     "Medication included when you are on the ELEVATED GLP-1 program.",
-    "Monthly RN check-in and unlimited secure messaging.",
+    "Monthly check-in with our clinical team and unlimited secure messaging.",
     "Quarterly labs and lab review included in program pricing.",
     "Dosage adjustments as clinically appropriate.",
     "Compounded medication from our 503A pharmacy partner when prescribed.",

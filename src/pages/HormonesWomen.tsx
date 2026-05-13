@@ -36,8 +36,8 @@ const symptoms = [
 const steps = [
   { n: "01", t: "Wellness Assessment ($79)", d: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
   { n: "02", t: "Lab Draw On-Site", d: `Comprehensive hormone panel — drawn at your visit, processed by LabCorp. Baseline comprehensive wellness panel ${PRICE_PANEL}.` },
-  { n: "03", t: "Custom Protocol", d: "Physician reviews labs, designs your protocol, sends Rx to FCC. Your medication ships directly to your door." },
-  { n: "04", t: "Ongoing Care", d: `ELEVATED HRT (${PRICE_MEMBERSHIP}) includes prescribed creams, monthly RN check-ins, quarterly labs, and unlimited messaging.` },
+  { n: "03", t: "Custom Protocol", d: "Physician reviews labs, designs your protocol, sends Rx to our compounding pharmacy. Your medication ships directly to your door." },
+  { n: "04", t: "Ongoing Care", d: `ELEVATED HRT (${PRICE_MEMBERSHIP}) includes prescribed creams, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];
 
 const faqs = [
@@ -137,7 +137,7 @@ const HormonesWomen = () => {
                   </h2>
                   <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
                     <p>Standard FDA estradiol patches are in nationwide shortage through end of 2026 due to surging demand. We don't depend on that fragile supply.</p>
-                    <p>Our default is compounded transdermal cream — Bi-Est (E2/E3), Estradiol, Progesterone, Testosterone — formulated by FCC, a 503A pharmacy in Texas, dosed to your labs and shipped directly to your door.</p>
+                    <p>Our default is compounded transdermal cream — Bi-Est (E2/E3), Estradiol, Progesterone, Testosterone — formulated by a state-licensed 503A compounding pharmacy in Texas, dosed to your labs and shipped directly to your door.</p>
                     <p>For patients who prefer FDA-approved gels, sprays, or patches when available, we prescribe via standard e-Rx to your pharmacy of choice. You're not locked into one delivery method.</p>
                   </div>
                 </div>
@@ -219,7 +219,7 @@ const HormonesWomen = () => {
                         {ELEVATED_PROGRAMS.hrt.name}
                         <br />
                         <span className="font-light text-sm text-muted-foreground">
-                          Prescribed creams, monthly RN visit, quarterly labs, messaging included
+                          Prescribed creams, monthly clinical check-in, quarterly labs, messaging included
                         </span>
                       </span>
                       <span className="font-medium whitespace-nowrap">{PRICE_MEMBERSHIP}</span>

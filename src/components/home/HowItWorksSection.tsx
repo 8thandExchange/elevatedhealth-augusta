@@ -20,7 +20,7 @@ const steps = [
   {
     n: "04",
     title: "Ongoing Optimization",
-    body: "An ELEVATED program keeps you on track with medication included where prescribed, monthly RN check-ins, quarterly labs, and unlimited messaging.",
+    body: "An ELEVATED program keeps you on track with medication included where prescribed, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.",
   },
 ];
 

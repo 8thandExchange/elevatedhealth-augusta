@@ -92,7 +92,7 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
             {!program && (
               <li className="flex items-start gap-2">
                 <Check className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
-                If you are still on a legacy label, ask Caroline to migrate you to an ELEVATED program when clinically appropriate
+                If you are still on a legacy label, ask our clinical team to migrate you to an ELEVATED program when clinically appropriate
               </li>
             )}
           </ul>

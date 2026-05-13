@@ -38,7 +38,7 @@ const steps = [
   { n: "01", t: "Wellness Assessment ($79)", d: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
   { n: "02", t: "Comprehensive Male Panel", d: `Total T, Free T, Estradiol Sensitive, SHBG, DHEA-S, PSA (if ≥40), full thyroid, foundation labs. Baseline draw in-office, processed by LabCorp. ${PRICE_PANEL}.` },
   { n: "03", t: "Custom Protocol", d: "Physician designs your protocol — typically Test cyp weekly with ancillaries (anastrozole if needed, gonadorelin for fertility preservation if desired)." },
-  { n: "04", t: "Ongoing Care", d: `ELEVATED TRT (${PRICE_MEMBERSHIP}) includes medication, monthly RN check-ins, quarterly labs, and unlimited messaging.` },
+  { n: "04", t: "Ongoing Care", d: `ELEVATED TRT (${PRICE_MEMBERSHIP}) includes medication, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];
 
 const faqs = [
@@ -195,7 +195,7 @@ const HormonesMen = () => {
                 ))}
               </ul>
               <p className="font-jost font-light text-sm text-muted-foreground italic border-l-2 border-accent pl-4">
-                Schedule III prescribing requires DEA registration; the physician's DEA is on file. Compounded TRT prescriptions are faxed directly to FCC pharmacy, which ships to clinic or to the patient's home.
+                Schedule III prescribing requires DEA registration; the physician's DEA is on file. Compounded TRT prescriptions are faxed directly to our state-licensed 503A compounding pharmacy, which ships to clinic or to the patient's home.
               </p>
             </div>
           </section>
@@ -223,7 +223,7 @@ const HormonesMen = () => {
                         {ELEVATED_PROGRAMS.trt.name}
                         <br />
                         <span className="font-light text-sm text-muted-foreground">
-                          Medication, monthly RN visit, quarterly labs, messaging included
+                          Medication, monthly clinical check-in, quarterly labs, messaging included
                         </span>
                       </span>
                       <span className="font-medium whitespace-nowrap">{PRICE_MEMBERSHIP}</span>
