@@ -1973,7 +1973,7 @@ const ProviderDashboard = () => {
       <Dialog open={isPanelOpen && !!selectedPatient} onOpenChange={setIsPanelOpen}>
         {selectedPatient && (
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-visible flex flex-col p-0">
-            <DialogHeader className="flex-shrink-0 border-b border-border px-6 py-4">
+            <DialogHeader className="flex-shrink-0 border-b border-border px-6 py-4 mx-0 mt-0 pb-4 pt-4 sticky top-14 bg-background">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground">Patient Profile</p>
@@ -2805,17 +2805,15 @@ const ProviderDashboard = () => {
               )}
             </div>
 
-          <DialogFooter className="flex-shrink-0 border-t border-border px-6 py-4">
-            <Button variant="outline" onClick={() => setIsPanelOpen(false)}>
+          <DialogFooter className="flex-shrink-0 border-t border-border px-6 py-4 mx-0 mb-0 mt-0 sticky bottom-0 bg-background">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsPanelOpen(false);
+                setSelectedPatient(null);
+              }}
+            >
               Close
-            </Button>
-            <Button onClick={handleSaveContactInfo} disabled={isSavingContact}>
-              {isSavingContact ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Save className="w-4 h-4 mr-2" />
-              )}
-              Save Changes
             </Button>
           </DialogFooter>
           </DialogContent>
