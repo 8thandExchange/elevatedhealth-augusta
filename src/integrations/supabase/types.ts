@@ -532,6 +532,190 @@ export type Database = {
           },
         ]
       }
+      consent_acknowledgments: {
+        Row: {
+          acknowledgment_text: string
+          acknowledgment_type: string
+          acknowledged_at: string
+          acknowledged_ip: string
+          acknowledged_user_agent: string
+          created_at: string
+          id: string
+          parent_consent_record_id: string
+          patient_id: string
+          substance_added: string | null
+        }
+        Insert: {
+          acknowledgment_text: string
+          acknowledgment_type: string
+          acknowledged_at?: string
+          acknowledged_ip: string
+          acknowledged_user_agent: string
+          created_at?: string
+          id?: string
+          parent_consent_record_id: string
+          patient_id: string
+          substance_added?: string | null
+        }
+        Update: {
+          acknowledgment_text?: string
+          acknowledgment_type?: string
+          acknowledged_at?: string
+          acknowledged_ip?: string
+          acknowledged_user_agent?: string
+          created_at?: string
+          id?: string
+          parent_consent_record_id?: string
+          patient_id?: string
+          substance_added?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_acknowledgments_parent_consent_record_id_fkey"
+            columns: ["parent_consent_record_id"]
+            isOneToOne: false
+            referencedRelation: "consent_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_acknowledgments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consent_records: {
+        Row: {
+          consent_type: string
+          consent_version_id: string
+          created_at: string
+          document_text_hash: string
+          expires_at: string
+          id: string
+          patient_id: string
+          pdf_storage_path: string | null
+          revoked_at: string | null
+          section_attestations: Json | null
+          signed_at: string
+          signed_ip: string
+          signed_session_id: string | null
+          signed_typed_name: string
+          signed_user_agent: string
+          superseded_by_consent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          consent_type: string
+          consent_version_id: string
+          created_at?: string
+          document_text_hash: string
+          expires_at: string
+          id?: string
+          patient_id: string
+          pdf_storage_path?: string | null
+          revoked_at?: string | null
+          section_attestations?: Json | null
+          signed_at?: string
+          signed_ip: string
+          signed_session_id?: string | null
+          signed_typed_name: string
+          signed_user_agent: string
+          superseded_by_consent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          consent_type?: string
+          consent_version_id?: string
+          created_at?: string
+          document_text_hash?: string
+          expires_at?: string
+          id?: string
+          patient_id?: string
+          pdf_storage_path?: string | null
+          revoked_at?: string | null
+          section_attestations?: Json | null
+          signed_at?: string
+          signed_ip?: string
+          signed_session_id?: string | null
+          signed_typed_name?: string
+          signed_user_agent?: string
+          superseded_by_consent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_records_consent_version_id_fkey"
+            columns: ["consent_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_records_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_records_superseded_by_consent_id_fkey"
+            columns: ["superseded_by_consent_id"]
+            isOneToOne: false
+            referencedRelation: "consent_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consent_versions: {
+        Row: {
+          body_hash: string
+          body_markdown: string
+          consent_type: string
+          created_at: string
+          effective_from: string
+          effective_to: string | null
+          id: string
+          is_active: boolean
+          legal_review_notes: string | null
+          legal_review_status: string | null
+          title: string
+          updated_at: string
+          version_label: string
+        }
+        Insert: {
+          body_hash: string
+          body_markdown: string
+          consent_type: string
+          created_at?: string
+          effective_from: string
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          legal_review_notes?: string | null
+          legal_review_status?: string | null
+          title: string
+          updated_at?: string
+          version_label: string
+        }
+        Update: {
+          body_hash?: string
+          body_markdown?: string
+          consent_type?: string
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          legal_review_notes?: string | null
+          legal_review_status?: string | null
+          title?: string
+          updated_at?: string
+          version_label?: string
+        }
+        Relationships: []
+      }
       consultation_bookings: {
         Row: {
           amount_paid: number | null
