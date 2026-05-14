@@ -200,7 +200,7 @@ const SupplementPlanCard = ({ patient, latestLabResult, onPlanUpdate }: Suppleme
                 <Label htmlFor="includeInKit" className="font-medium">Include in Kit Shipment</Label>
               </div>
               <p className="text-xs text-muted-foreground">
-                Ship with ZRT kit (100% margin) vs. Fullscript (25% commission)
+                Ship with in-clinic supplement program vs. Fullscript (25% commission)
               </p>
             </div>
             <Switch

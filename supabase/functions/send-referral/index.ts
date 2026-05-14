@@ -80,7 +80,7 @@ const handler = async (req: Request): Promise<Response> => {
         <body>
           <div class="container">
             <h1>Referral Request from ${patientName}</h1>
-            <p>You have received a referral request for ketamine-assisted therapy at Elevated Health Augusta.</p>
+            <p>You have received a referral request for cash-pay wellness services at Elevated Health Augusta (hormone optimization, medical weight management, IV therapy, or peptides when prescribed).</p>
             
             <h2>Patient Information:</h2>
             <ul>
@@ -138,7 +138,7 @@ const handler = async (req: Request): Promise<Response> => {
             <h1>Your Referral Request Has Been Submitted</h1>
             <p>Dear ${patientName},</p>
             
-            <p>Thank you for requesting a referral to Elevated Health Augusta for ketamine-assisted therapy.</p>
+            <p>Thank you for requesting a referral to Elevated Health Augusta for concierge wellness care.</p>
 
             <p>We have sent your referral request to:</p>
             <ul>

@@ -29,7 +29,7 @@ interface AddExistingPatientCardProps {
 const SERVICE_TYPES = [
   { value: "hormone", label: "Hormone Therapy" },
   { value: "weight_loss", label: "Weight Loss" },
-  { value: "ketamine", label: "Ketamine Therapy" },
+  { value: "peptide", label: "Peptide Therapy" },
   { value: "general", label: "General" },
 ] as const;
 

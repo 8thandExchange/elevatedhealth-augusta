@@ -11,7 +11,7 @@ import SafetyGate from "@/components/patient/SafetyGate";
 import ConsultationModal from "@/components/ConsultationModal";
 import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
 
-type PrimaryProgram = "hormone" | "ketamine";
+type PrimaryProgram = string;
 
 const PatientLogin = () => {
   const navigate = useNavigate();

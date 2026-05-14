@@ -32,8 +32,6 @@ const COVERAGE_DATA: Record<string, {
   bcbs: {
     label: "Blue Cross Blue Shield",
     coveredServices: [
-      { service: "SPRAVATO® (Induction)", cpt: "G2082", billedAmount: "$2,500–$3,500", expectedReimbursement: "$1,800–$2,800", notes: "Prior auth required" },
-      { service: "SPRAVATO® (Maintenance)", cpt: "G2083", billedAmount: "$1,500–$2,500", expectedReimbursement: "$1,200–$2,000", notes: "Prior auth required" },
       { service: "New Patient E&M (Moderate)", cpt: "99204", billedAmount: "$350", expectedReimbursement: "$180–$220" },
       { service: "New Patient E&M (High)", cpt: "99205", billedAmount: "$500", expectedReimbursement: "$250–$320" },
       { service: "Established E&M (Low)", cpt: "99213", billedAmount: "$175", expectedReimbursement: "$80–$100" },
@@ -41,15 +39,13 @@ const COVERAGE_DATA: Record<string, {
       { service: "Drug Screen (Qualitative)", cpt: "80305", billedAmount: "$150", expectedReimbursement: "$40–$60" },
     ],
     notCovered: [
-      "IV Ketamine infusions (off-label)",
-      "Compounded hormone creams (not FDA-approved)",
+      "Compounded hormone creams (not FDA-approved for insurance billing)",
       "GLP-1 weight loss medications (usually excluded)",
-      "ZRT saliva test kits",
+      "Direct-to-consumer at-home lab kits",
       "Supplement plans",
     ],
     tips: [
-      "SPRAVATO® requires prior authorization — we handle the paperwork",
-      "E&M visits (office visits) are typically covered when medically necessary",
+      "E&M visits (office visits) may be eligible for out-of-network reimbursement when medically necessary",
       "Ask about out-of-network benefits if your plan has them",
       "We provide superbills for HSA/FSA reimbursement on non-covered services",
     ],
@@ -57,30 +53,24 @@ const COVERAGE_DATA: Record<string, {
   tricare: {
     label: "TRICARE",
     coveredServices: [
-      { service: "SPRAVATO® (Induction)", cpt: "G2082", billedAmount: "$2,500", expectedReimbursement: "$2,000–$2,500", notes: "Prior auth + REMS required" },
-      { service: "SPRAVATO® (Maintenance)", cpt: "G2083", billedAmount: "$1,800", expectedReimbursement: "$1,500–$1,800", notes: "Prior auth + REMS required" },
       { service: "New Patient E&M (Moderate)", cpt: "99204", billedAmount: "$350", expectedReimbursement: "$200–$250" },
       { service: "Established E&M (Moderate)", cpt: "99214", billedAmount: "$250", expectedReimbursement: "$130–$170" },
       { service: "Drug Screen", cpt: "80305", billedAmount: "$150", expectedReimbursement: "$45–$65" },
     ],
     notCovered: [
-      "IV Ketamine infusions",
       "Compounded medications (hormones, peptides)",
       "Weight loss medications (GLP-1 typically excluded)",
       "At-home lab test kits",
     ],
     tips: [
-      "TRICARE Prime requires referral from PCM for mental health",
+      "TRICARE Prime may require referral from PCM for specialty care",
       "TRICARE Select allows self-referral to in-network providers",
-      "SPRAVATO® covered under pharmacy benefit + medical benefit",
       "Veterans may also have VA benefits — check both",
     ],
   },
   va: {
     label: "VA (Veterans Affairs)",
     coveredServices: [
-      { service: "SPRAVATO® (Induction)", cpt: "G2082", billedAmount: "VA Schedule", expectedReimbursement: "Full coverage", notes: "Must be VA-authorized" },
-      { service: "SPRAVATO® (Maintenance)", cpt: "G2083", billedAmount: "VA Schedule", expectedReimbursement: "Full coverage", notes: "Must be VA-authorized" },
       { service: "E&M Visit", cpt: "99214", billedAmount: "VA Schedule", expectedReimbursement: "Full coverage via VACCN" },
     ],
     notCovered: [

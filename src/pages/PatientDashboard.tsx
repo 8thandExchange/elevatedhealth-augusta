@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, Activity, Zap, Heart, Brain, Plus, Clock, CreditCard, Lock, FileText, Sparkles, ArrowRight, BookOpen, LayoutGrid, ClipboardList } from "lucide-react";
+import { Loader2, Activity, Zap, Heart, Plus, Clock, CreditCard, Lock, FileText, Sparkles, ArrowRight, BookOpen, LayoutGrid, ClipboardList } from "lucide-react";
 import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
 import OnboardingProgress from "@/components/patient/OnboardingProgress";
@@ -13,8 +13,6 @@ import NextActionCard from "@/components/patient/NextActionCard";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import KitTracker from "@/components/patient/KitTracker";
-import MindCareCard from "@/components/patient/MindCareCard";
-// import NeurotransmitterCard from "@/components/patient/NeurotransmitterCard"; // TEMPORARILY HIDDEN
 import SafetyGate from "@/components/patient/SafetyGate";
 import MinimalPatientHeader from "@/components/patient/MinimalPatientHeader";
 import BottomTabBar from "@/components/patient/BottomTabBar";
@@ -32,16 +30,12 @@ import {
   useLatestOrder, 
   useKitTracking, 
   useLatestLabResult,
-  // useNeurotransmitterPayment, // TEMPORARILY HIDDEN
-  // useMetabolicPayment, // TEMPORARILY HIDDEN
   useCreateOrder,
   useInvalidatePatientData,
   Patient,
   SymptomLog,
   Order,
   KitTracking as KitTrackingType,
-  // NeurotransmitterPayment, // TEMPORARILY HIDDEN
-  // MetabolicPayment, // TEMPORARILY HIDDEN
   LabResult
 } from "@/hooks/usePatient";
 
@@ -71,33 +65,9 @@ const PatientDashboard = () => {
   const { data: latestOrder } = useLatestOrder(patient?.id);
   const { data: kitTracking } = useKitTracking(patient?.id);
   const { data: labResult } = useLatestLabResult(patient?.id);
-  // TEMPORARILY HIDDEN — legacy diagnostics path (superseded by in-office LabCorp draws)
-  // const { data: neuroPayment } = useNeurotransmitterPayment(
-  //   patient?.primary_program === "ketamine" ? patient?.id : undefined
-  // );
-  // const { data: metabolicPayment } = useMetabolicPayment(
-  //   (patient?.primary_program === 'weight_loss' || patient?.treatment_request?.includes('weight')) 
-  //     ? patient?.id 
-  //     : undefined
-  // );
   
   const createOrderMutation = useCreateOrder();
   const { invalidateAll } = useInvalidatePatientData();
-
-  // TEMPORARILY HIDDEN - Payment verification for kits we're not currently offering
-  // useEffect(() => {
-  //   const sessionId = searchParams.get("session_id");
-  //   if (searchParams.get("neurotransmitter") === "success" && sessionId) {
-  //     verifyNeurotransmitterPayment(sessionId);
-  //   }
-  //   if (searchParams.get("metabolic") === "success" && sessionId) {
-  //     verifyMetabolicPayment(sessionId);
-  //   }
-  // }, [searchParams]);
-
-  // TEMPORARILY HIDDEN - Verification functions for kits we're not currently offering
-  // const verifyNeurotransmitterPayment = async (sessionId: string) => { ... };
-  // const verifyMetabolicPayment = async (sessionId: string) => { ... };
 
   const handleRequestReview = async () => {
     if (!patient || !latestLog) return;
@@ -211,7 +181,7 @@ const PatientDashboard = () => {
     );
   }
 
-  if (!patient.intake_completed && patient.primary_program !== "ketamine") {
+  if (!patient.intake_completed) {
     return <WelcomeIntake patientName={patient.full_name} />;
   }
 
@@ -233,7 +203,6 @@ const PatientDashboard = () => {
     );
   }
 
-  const isKetaminePatient = patient.primary_program === "ketamine";
   const isAuthorized = latestOrder?.status === "authorized";
   const isPendingReview = latestOrder?.status === "pending_review";
   
@@ -264,50 +233,6 @@ const PatientDashboard = () => {
       />
 
       <main className="container mx-auto px-4 py-6 space-y-6 max-w-2xl">
-        {/* KETAMINE PATIENT DASHBOARD */}
-        {isKetaminePatient ? (
-          <>
-            <AnimatedCard delay={0} animation="fadeUp">
-              <DailyProtocolCard 
-                patientName={patient.full_name}
-                hasInjections={false}
-                hasSupplements={false}
-              />
-            </AnimatedCard>
-
-            <AnimatedCard delay={100} animation="fadeUp">
-              <MindCareCard />
-            </AnimatedCard>
-
-            {/* TEMPORARILY HIDDEN — legacy diagnostics path (superseded by in-office LabCorp draws) */}
-            {/* <AnimatedCard delay={200} animation="fadeUp">
-              <NeurotransmitterCard 
-                patientEmail={patient.email || undefined}
-                patientName={patient.full_name}
-                patientId={patient.id}
-                existingPayment={neuroPayment}
-              />
-            </AnimatedCard> */}
-
-            <AnimatedCard delay={300} animation="scaleIn">
-              <Card className="bg-card border-border/50 rounded-2xl overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="text-center space-y-3">
-                    <Brain className="w-10 h-10 text-gold mx-auto" />
-                    <h3 className="font-playfair text-lg text-foreground">
-                      Your Mental Wellness Journey
-                    </h3>
-                    <p className="text-sm text-muted-foreground font-inter">
-                      Your ketamine therapy is coordinated through Osmind. Check your email for your secure portal invitation.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </AnimatedCard>
-          </>
-        ) : (
-          /* HORMONE PATIENT DASHBOARD */
-          <>
             {patient.elevated_membership_status === "active" && (
               <AnimatedCard delay={25} animation="fadeUp">
                 <div className="rounded-xl border border-accent/30 bg-muted/30 p-4 md:p-6">
@@ -550,8 +475,6 @@ const PatientDashboard = () => {
                 )}
               </div>
             </AnimatedCard>
-          </>
-        )}
       </main>
 
       {/* Bottom Tab Bar (Mobile Only) */}
@@ -568,7 +491,7 @@ const PatientDashboard = () => {
       />
 
       {/* Secure Chat Widget */}
-      {(patient.intake_completed || isKetaminePatient) && (
+      {patient.intake_completed && (
         <PatientChatWidget patientId={patient.id} />
       )}
     </div>

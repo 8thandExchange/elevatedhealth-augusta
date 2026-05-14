@@ -71,8 +71,6 @@ const TodayScheduleWidget = ({ onPatientSelect, compact = false }: TodaySchedule
     const types: Record<string, { label: string; className: string }> = {
       hormone: { label: "Hormones", className: "bg-purple-100 text-purple-700" },
       weight_loss: { label: "Weight Loss", className: "bg-green-100 text-green-700" },
-      ketamine: { label: "Ketamine", className: "bg-blue-100 text-blue-700" },
-      spravato: { label: "Spravato", className: "bg-indigo-100 text-indigo-700" },
       iv_therapy: { label: "IV Therapy", className: "bg-cyan-100 text-cyan-700" },
     };
     return types[serviceType || ""] || { label: serviceType || "Consultation", className: "bg-gray-100 text-gray-700" };

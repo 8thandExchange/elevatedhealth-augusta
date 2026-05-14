@@ -75,7 +75,7 @@ serve(async (req) => {
     const serviceLabels: Record<string, string> = {
       hormone: "Hormone Therapy",
       weight_loss: "Weight Loss",
-      ketamine: "Ketamine Therapy",
+      ketamine: "General Wellness",
       general: "General Consultation",
     };
     const serviceLabel = serviceLabels[service_type] || "Wellness Assessment";

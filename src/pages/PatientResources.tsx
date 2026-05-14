@@ -29,7 +29,6 @@ import { Helmet } from "react-helmet";
 type ResourceCategory = 
   | "hormone_therapy" 
   | "weight_loss" 
-  | "ketamine_therapy" 
   | "peptide_therapy" 
   | "iv_hydration"
   | "general_wellness"
@@ -61,12 +60,6 @@ const categoryConfig: Record<string, { label: string; icon: any; description: st
     icon: Scale,
     description: "GLP-1 injection tutorials and metabolic optimization",
     color: "green"
-  },
-  ketamine_therapy: {
-    label: "Mental Wellness",
-    icon: Brain,
-    description: "Ketamine therapy preparation and integration guides",
-    color: "purple"
   },
   peptide_therapy: {
     label: "Peptide Therapy",
@@ -135,7 +128,7 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
     },
     {
       question: "Do I need to fast for my hormone lab tests?",
-      answer: "ZRT saliva testing does not require fasting. Collect samples first thing in the morning before eating, drinking, or brushing teeth. For LabCorp blood work, fasting 8-12 hours is recommended for accurate results."
+      answer: "For LabCorp blood work ordered by your provider, fasting 8-12 hours is recommended when specified on your requisition. Morning collection is typical for baseline panels."
     }
   ],
   weight_loss: [
@@ -154,24 +147,6 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
     {
       question: "How much weight can I expect to lose?",
       answer: "Clinical trials show 15-20% body weight loss over 12-18 months with GLP-1 therapy. Results vary based on starting weight, diet adherence, and activity level. Our metabolic optimization approach typically enhances these results."
-    }
-  ],
-  ketamine_therapy: [
-    {
-      question: "How do I prepare for my ketamine session?",
-      answer: "Avoid eating 4 hours before your session (clear liquids OK until 2 hours before). Wear comfortable clothing. Arrange transportation—you cannot drive for 24 hours post-treatment. Set an intention for your session. Bring headphones and an eye mask if you prefer."
-    },
-    {
-      question: "What does a ketamine session feel like?",
-      answer: "Experiences vary. Many describe a dreamlike state with altered perception of time and space. You may feel deeply relaxed or have profound insights. Some experience mild nausea or dizziness. Our team monitors you throughout the entire session for safety and comfort."
-    },
-    {
-      question: "How do I access my Osmind portal?",
-      answer: "After your initial payment, you'll receive a secure invite email from Osmind within 1-2 hours. Check your spam folder. The portal is where you'll complete intake assessments, track progress, and communicate with your care team between sessions."
-    },
-    {
-      question: "How many sessions will I need?",
-      answer: "A typical initial series is 6 IV infusions over 2-3 weeks. Many patients experience significant improvement by session 3-4. Maintenance sessions (monthly or as needed) help sustain benefits. Your provider will create a personalized plan based on your response."
     }
   ],
   peptide_therapy: [
@@ -213,7 +188,7 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
   billing_payment: [
     {
       question: "Can I use my HSA or FSA card to pay?",
-      answer: "Yes! HSA (Health Savings Account) and FSA (Flexible Spending Account) cards work just like credit cards at checkout. Our hormone therapy, weight loss, and mental wellness services are typically eligible expenses. Simply use your HSA/FSA card when paying online or in-clinic."
+      answer: "Yes! HSA (Health Savings Account) and FSA (Flexible Spending Account) cards work just like credit cards at checkout. Many of our cash-pay services are eligible expenses—confirm with your plan administrator."
     },
     {
       question: "What is a superbill and how do I use it?",
@@ -242,7 +217,7 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
   getting_started: [
     {
       question: "What happens after I complete the intake form?",
-      answer: "After you submit your intake and symptom questionnaire, our team reviews your information within 24-48 hours. You'll receive a ZRT test kit shipped to your home. Complete your saliva collection and return it using the prepaid mailer. Results typically take 7-10 business days."
+      answer: "After you submit your intake and symptom questionnaire, our team reviews your information within 24-48 hours. If labs are ordered, we coordinate LabCorp draws in-office at your visit. Results timing depends on the panel ordered."
     },
     {
       question: "How long until I start treatment?",
@@ -280,11 +255,6 @@ const quickReferenceCards: Record<string, Array<{ title: string; content: string
     { title: "Pre-Session", content: "Eat a light meal 1-2 hours before. Stay hydrated.", highlight: true },
     { title: "During Session", content: "Relax and hydrate. Sessions last 45-60 minutes.", highlight: false },
     { title: "Post-Session", content: "Continue hydrating. Results are immediate.", highlight: false }
-  ],
-  ketamine_therapy: [
-    { title: "Before Session", content: "No food 4 hours before. Clear liquids OK until 2 hours before.", highlight: true },
-    { title: "Transportation", content: "Arrange a ride. No driving for 24 hours post-treatment.", highlight: false },
-    { title: "Integration", content: "Journal after sessions. Set an intention beforehand.", highlight: false }
   ]
 };
 
@@ -298,9 +268,8 @@ const suggestedResources: Record<string, Array<{ title: string; description: str
     { title: "GLP-1 Injection Technique", description: "Step-by-step guide to self-injecting Semaglutide or Tirzepatide.", url: "https://www.youtube.com/watch?v=2HqzLgNQpCU", type: "video" },
     { title: "Managing GLP-1 Side Effects", description: "Tips for reducing nausea and optimizing your weight loss journey.", url: "https://www.youtube.com/watch?v=bOOJxMQeRm4", type: "video" }
   ],
-  ketamine_therapy: [
-    { title: "Preparing for Ketamine Therapy", description: "What to expect before, during, and after your IV ketamine session.", url: "https://www.youtube.com/watch?v=GsYoDBqDuBk", type: "video" },
-    { title: "Integration After Ketamine", description: "How to maximize the benefits of ketamine therapy with integration practices.", url: "https://www.youtube.com/watch?v=WsVGJDnV-Fc", type: "video" }
+  general_wellness: [
+    { title: "Sleep and stress foundations", description: "Evidence-based habits that support hormone balance, recovery, and mood.", url: "https://www.youtube.com/watch?v=Jui9L-TY6Ac", type: "video" },
   ],
   peptide_therapy: [
     { title: "How to Reconstitute Peptides", description: "Proper technique for mixing and storing your peptide medications.", url: "https://www.youtube.com/watch?v=1KqD-JaNcug", type: "video" }
@@ -464,7 +433,7 @@ const PatientResources = () => {
   const categoryMap: Record<string, string> = {
     hormone: "hormone_therapy",
     weight_loss: "weight_loss",
-    ketamine: "ketamine_therapy",
+    ketamine: "general_wellness",
     peptides: "peptide_therapy",
     iv_lounge: "iv_hydration"
   };
@@ -485,7 +454,7 @@ const PatientResources = () => {
   const mainCategories = [
     { key: "hormone_therapy", label: "Hormones", icon: Sparkles },
     { key: "weight_loss", label: "Weight Loss", icon: Scale },
-    { key: "ketamine_therapy", label: "Mental Wellness", icon: Brain },
+    { key: "general_wellness", label: "Wellness", icon: Heart },
     { key: "peptide_therapy", label: "Peptides", icon: Syringe },
     { key: "iv_hydration", label: "IV Therapy", icon: Droplets },
   ];

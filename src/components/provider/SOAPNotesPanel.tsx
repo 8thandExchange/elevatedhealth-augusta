@@ -116,9 +116,9 @@ const SOAPNotesPanel = ({ patientId, patientName, serviceLine = "hormone", provi
 
   const getServiceLineBadge = (line: string) => {
     const lines: Record<string, { label: string; className: string }> = {
-      ketamine: { label: "Ketamine", className: "bg-purple-100 text-purple-700" },
       hormone: { label: "HRT", className: "bg-blue-100 text-blue-700" },
       weight_loss: { label: "Weight Loss", className: "bg-emerald-100 text-emerald-700" },
+      peptide: { label: "Peptide", className: "bg-amber-100 text-amber-800" },
     };
     return lines[line] || { label: line, className: "bg-gray-100 text-gray-700" };
   };

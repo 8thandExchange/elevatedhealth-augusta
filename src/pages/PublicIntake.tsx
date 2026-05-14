@@ -596,7 +596,7 @@ export default function PublicIntake() {
                     <strong>Your interests:</strong>{" "}
                     {Array.isArray(patient?.service_interests) 
                       ? (patient.service_interests as string[]).map(s => 
-                          s === "ketamine" ? "Mental Wellness & Ketamine" :
+                          s === "ketamine" ? "General Wellness" :
                           s === "hormone" ? "Hormone Optimization" :
                           s === "weight_loss" ? "Weight Loss" : s
                         ).join(", ") 
@@ -614,7 +614,7 @@ export default function PublicIntake() {
                   <div className="bg-slate-50 p-4 rounded-lg border">
                     <h4 className="font-semibold mb-2">Informed Consent for Treatment</h4>
                     <div className="max-h-48 overflow-y-auto bg-white border rounded p-3 text-sm text-slate-600 space-y-3 mb-4">
-                      <p><strong>1. CONSENT TO TREATMENT:</strong> I voluntarily consent to medical treatment and services provided by Elevated Health Augusta ("Clinic"). I understand that treatment may include hormone replacement therapy, weight management medications, ketamine therapy, IV therapy, or other wellness services as recommended by my provider.</p>
+                      <p><strong>1. CONSENT TO TREATMENT:</strong> I voluntarily consent to medical treatment and services provided by Elevated Health Augusta ("Clinic"). I understand that treatment may include hormone optimization, peptide therapy when prescribed, weight management medications, IV therapy, or other cash-pay wellness services as recommended by my provider.</p>
                       <p><strong>2. BENEFITS AND RISKS:</strong> I understand that while treatment may provide benefits such as improved energy, mood, metabolism, or mental clarity, there are inherent risks including but not limited to: allergic reactions, medication side effects, injection site reactions, changes in blood pressure, mood changes, and other complications. I have been given the opportunity to ask questions about these risks.</p>
                       <p><strong>3. ALTERNATIVES:</strong> I understand that I may choose not to proceed with treatment or may seek alternative treatments. I have been informed of my options.</p>
                       <p><strong>4. MEDICATION COMPLIANCE:</strong> I agree to follow all medication instructions, attend follow-up appointments, complete required lab work, and report any concerning symptoms immediately to the Clinic.</p>

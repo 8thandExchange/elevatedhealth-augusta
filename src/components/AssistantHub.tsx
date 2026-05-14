@@ -162,7 +162,7 @@ const AssistantHub = () => {
       detectedInterest = "hormone";
     } else if (conversationText.includes("weight") || conversationText.includes("semaglutide") || conversationText.includes("tirzepatide")) {
       detectedInterest = "weight_loss";
-    } else if (conversationText.includes("ketamine") || conversationText.includes("depression") || conversationText.includes("anxiety") || conversationText.includes("mental")) {
+    } else if (conversationText.includes("depression") || conversationText.includes("anxiety") || conversationText.includes("mental")) {
       detectedInterest = "general";
     }
 

@@ -113,8 +113,7 @@ const TermsOfService = () => {
                       Medical Disclaimer
                     </h2>
                     <p className="text-red-700 dark:text-red-300 mb-4">
-                      Elevated Health Augusta provides <strong>functional medicine consulting, hormone optimization, 
-                      ketamine therapy, and weight management services</strong>. We do <strong>NOT</strong> provide 
+                      Elevated Health Augusta provides <strong>cash-pay concierge wellness care</strong>, including hormone optimization, peptide therapy when prescribed, medical weight management, IV therapy, and related lab and telehealth services. We do <strong>NOT</strong> provide 
                       primary care or emergency medical services.
                     </p>
                     <p className="text-red-700 dark:text-red-300 font-semibold mb-4">
@@ -187,11 +186,12 @@ const TermsOfService = () => {
                       <li className="flex items-start gap-3">
                         <span className="font-bold mt-1">•</span>
                         <div>
-                          <strong>Diagnostic Fees ($299/$399):</strong>
+                          <strong>Wellness Assessment &amp; labs (published rates):</strong>
                           <p className="mt-1">
-                            This fee covers the cost of your ZRT Laboratory Kit (Hormone Mapping or Metabolic Mapping) 
-                            and the provider&#39;s analysis time. <strong>Once a kit has been shipped to your address, 
-                            this fee is 100% Non-Refundable</strong>, regardless of whether you complete the test.
+                            Fees for the initial Wellness Assessment, add-on lab panels, and in-office phlebotomy are 
+                            collected at booking or checkout as described at checkout. <strong>Services already rendered 
+                            (including completed visits and drawn labs) are non-refundable.</strong> Rescheduling is subject 
+                            to the cancellation policy below.
                           </p>
                         </div>
                       </li>
@@ -218,10 +218,10 @@ const TermsOfService = () => {
                       <li className="flex items-start gap-3">
                         <span className="font-bold mt-1">•</span>
                         <div>
-                          <strong>Ketamine Sessions:</strong>
+                          <strong>Scheduled clinical visits:</strong>
                           <p className="mt-1">
-                            Paid ketamine sessions are non-refundable within 48 hours of the scheduled appointment. 
-                            Rescheduling is available with at least 48 hours notice.
+                            Missed appointments or cancellations with less than 24 hours notice may incur the rebooking 
+                            fee described in our cancellation policy. Fees for completed visits are not refunded.
                           </p>
                         </div>
                       </li>
@@ -256,7 +256,7 @@ const TermsOfService = () => {
                     External Links
                   </h2>
                   <p className="text-foreground/80">
-                    This site may contain links to third-party websites (such as Osmind, Stripe, ZRT Laboratory, 
+                    This site may contain links to third-party websites (such as LabCorp, Stripe, Doxy.me, 
                     or educational resources). We are not responsible for their content, privacy practices, or availability.
                   </p>
                 </section>

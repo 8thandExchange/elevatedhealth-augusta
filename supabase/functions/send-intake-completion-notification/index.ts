@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
       testosterone: "Testosterone Therapy (TRT)",
       hormone_male: "Hormone Optimization (Men)",
       weight_loss: "Medical Weight Loss",
-      ketamine: "Ketamine Therapy",
+      ketamine: "General Wellness",
       peptides: "Peptide Therapy",
     };
 
@@ -96,7 +96,7 @@ const handler = async (req: Request): Promise<Response> => {
       `;
     }
 
-    // Mental wellness scores for ketamine patients
+    // Optional PHQ-9 / GAD-7 scores when supplied by the intake flow
     let mentalScoresHtml = "";
     if (data.mentalWellnessScores) {
       const { phq9, gad7 } = data.mentalWellnessScores;
@@ -186,7 +186,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </tr>
                 <tr>
                   <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #6b7280;">Lab Path:</td>
-                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #111827; text-transform: uppercase;">${data.labPath || "ZRT"}</td>
+                  <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #111827; text-transform: uppercase;">${data.labPath || "LabCorp"}</td>
                 </tr>
                 <tr>
                   <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #6b7280;">Treatment Interests:</td>
@@ -227,7 +227,11 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     // Determine subject based on risk and program
-    const programLabel = data.treatmentInterests.includes("ketamine") ? "Ketamine" : "Hormone/Weight";
+    const programLabel = data.treatmentInterests.includes("weight_loss")
+      ? "GLP-1 / Weight"
+      : data.treatmentInterests.includes("peptides")
+      ? "Peptides"
+      : "Hormone / Wellness";
     const subject = `📋 Intake Complete: ${data.patientName}${data.isHighRisk ? " ⚠️ HIGH RISK" : ""} - ${programLabel}`;
 
     const emailResponse = await resend.emails.send({

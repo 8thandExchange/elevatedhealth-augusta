@@ -1,3 +1,15 @@
+/**
+ * send-welcome-email
+ *
+ * OPTION I-3 (with hardening): Resend runs with the service-role Supabase client.
+ * Callers must present a valid JWT. Allowed:
+ *   - Staff/admin (QuickEmailModal, ConsultationTracker, ResendWelcomeEmailButton), or
+ *   - The newly registered auth user (CreateAccount): JWT sub must equal body.user_id,
+ *     and auth.admin.getUserById must confirm the same email as body.email.
+ *
+ * Legacy request shapes still accepted: patient_email / patient_name in addition to
+ * email / first_name / last_name.
+ */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
@@ -15,8 +27,10 @@ const CLINIC_ADDRESS = "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809"
 function welcomeLog(
   event: string,
   fields: {
+    user_id?: string | null;
     patient_id?: string | null;
     email_domain?: string | null;
+    email_sent?: boolean;
     success: boolean;
     error_message?: string | null;
   },
@@ -24,11 +38,43 @@ function welcomeLog(
 ) {
   edgeStructuredLog("send-welcome-email", {
     event,
+    user_id: fields.user_id ?? null,
     patient_id: fields.patient_id ?? null,
     email_domain: fields.email_domain ?? null,
+    email_sent: fields.email_sent ?? null,
     success: fields.success,
     error_message: fields.error_message ?? null,
   }, level);
+}
+
+async function getJwtUser(req: Request): Promise<
+  | { ok: true; user_id: string }
+  | { ok: false; status: number; error: string }
+> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return { ok: false, status: 401, error: "Missing Authorization header" };
+  }
+  const url = Deno.env.get("SUPABASE_URL")!;
+  const anon = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const authClient = createClient(url, anon, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: userData, error: userErr } = await authClient.auth.getUser();
+  if (userErr || !userData?.user) {
+    return { ok: false, status: 401, error: "Invalid or expired session" };
+  }
+  return { ok: true, user_id: userData.user.id };
+}
+
+async function isStaffOrAdmin(userId: string): Promise<boolean> {
+  const url = Deno.env.get("SUPABASE_URL")!;
+  const service = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const { data: roles } = await service
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId);
+  return (roles || []).some((r) => r.role === "staff" || r.role === "admin");
 }
 
 serve(async (req) => {
@@ -36,40 +82,132 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const ts = new Date().toISOString();
+  let userIdForLog: string | null = null;
   let patientIdForLog: string | null = null;
   let emailDomainForLog: string | null = null;
 
   try {
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (!resendApiKey) {
-      welcomeLog("config_error", { patient_id: null, email_domain: null, success: false, error_message: "RESEND_API_KEY not configured" }, "error");
-      throw new Error("RESEND_API_KEY not configured");
+    const jwt = await getJwtUser(req);
+    if (!jwt.ok) {
+      welcomeLog("auth_error", {
+        user_id: null,
+        patient_id: null,
+        email_domain: null,
+        email_sent: false,
+        success: false,
+        error_message: jwt.error,
+      }, "error");
+      return new Response(JSON.stringify({ error: jwt.error }), {
+        status: jwt.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
+    userIdForLog = jwt.user_id;
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const raw = await req.json();
+    const email = (raw.email ?? raw.patient_email) as string | undefined;
+    const patient_id = raw.patient_id as string | undefined;
+    const user_id = raw.user_id as string | undefined;
+    const primary_program = raw.primary_program as string | undefined;
 
-    const { patient_id, email, first_name, last_name, primary_program } = await req.json();
+    const nameFromFields = raw.first_name != null || raw.last_name != null
+      ? `${raw.first_name || ""} ${raw.last_name || ""}`.trim()
+      : (raw.patient_name as string | undefined);
+    const first_name = (raw.first_name as string | undefined) ??
+      (nameFromFields ? nameFromFields.split(/\s+/)[0] : undefined);
+    const last_name = (raw.last_name as string | undefined) ??
+      (nameFromFields ? nameFromFields.split(/\s+/).slice(1).join(" ") : undefined);
 
     welcomeLog("entry", {
+      user_id: userIdForLog,
       patient_id: patient_id ?? null,
       email_domain: email?.includes("@") ? email.split("@")[1] : null,
+      email_sent: false,
       success: true,
       error_message: null,
     });
 
     if (!email) {
-      welcomeLog("validation_error", { patient_id: patient_id ?? null, email_domain: null, success: false, error_message: "email is required" }, "error");
+      welcomeLog("validation_error", {
+        user_id: userIdForLog,
+        patient_id: patient_id ?? null,
+        email_domain: null,
+        email_sent: false,
+        success: false,
+        error_message: "email is required",
+      }, "error");
       throw new Error("email is required");
     }
 
     patientIdForLog = patient_id ?? null;
     emailDomainForLog = email.includes("@") ? email.split("@")[1] : null;
 
-    const firstName = first_name || "there";
-    const lastName = last_name || "";
+    const url = Deno.env.get("SUPABASE_URL")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(url, serviceKey);
 
+    const staff = await isStaffOrAdmin(jwt.user_id);
+    const selfWelcome = Boolean(user_id && jwt.user_id === user_id);
+
+    if (!staff && !selfWelcome) {
+      welcomeLog("forbidden", {
+        user_id: userIdForLog,
+        patient_id: patientIdForLog,
+        email_domain: emailDomainForLog,
+        email_sent: false,
+        success: false,
+        error_message: "staff/admin or matching new-user session required",
+      }, "error");
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (selfWelcome) {
+      const { data: authData, error: authLookupErr } = await supabase.auth.admin.getUserById(
+        user_id,
+      );
+      if (authLookupErr || !authData?.user?.email) {
+        welcomeLog("auth_user_missing", {
+          user_id,
+          patient_id: patientIdForLog,
+          email_domain: emailDomainForLog,
+          email_sent: false,
+          success: false,
+          error_message: authLookupErr?.message || "auth user not found",
+        }, "error");
+        throw new Error("Invalid user_id — not found in auth.users");
+      }
+      const canonical = (authData.user.email || "").trim().toLowerCase();
+      if (canonical !== email.trim().toLowerCase()) {
+        welcomeLog("email_mismatch", {
+          user_id,
+          patient_id: patientIdForLog,
+          email_domain: emailDomainForLog,
+          email_sent: false,
+          success: false,
+          error_message: "email does not match auth.users for user_id",
+        }, "error");
+        throw new Error("Email does not match authenticated user");
+      }
+    }
+
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      welcomeLog("config_error", {
+        user_id: userIdForLog,
+        patient_id: patientIdForLog,
+        email_domain: emailDomainForLog,
+        email_sent: false,
+        success: false,
+        error_message: "RESEND_API_KEY not configured",
+      }, "error");
+      throw new Error("RESEND_API_KEY not configured");
+    }
+
+    const firstName = first_name || "there";
     const rawProgram = primary_program || "general";
     const programKey = rawProgram === "ketamine" ? "general" : rawProgram;
 
@@ -128,7 +266,6 @@ serve(async (req) => {
             <tr>
               <td align="center">
                 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(42, 40, 38, 0.1);">
-                  <!-- Header -->
                   <tr>
                     <td style="background: linear-gradient(135deg, #2A2826 0%, #3d3a37 100%); padding: 40px 30px; text-align: center;">
                       <h1 style="margin: 0; color: #F2EBDC; font-size: 28px; font-weight: 300; font-style: italic; font-family: Georgia, serif;">
@@ -139,18 +276,14 @@ serve(async (req) => {
                       </p>
                     </td>
                   </tr>
-                  
-                  <!-- Main Content -->
                   <tr>
                     <td style="padding: 40px 30px;">
                       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
                         Thank you for choosing <strong style="color: #B8956A;">Elevated Health Augusta</strong>. We're honored to be part of your health journey.
                       </p>
-                      
                       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
                         ${service.description}
                       </p>
-
                       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #F2EBDC; border-radius: 8px; margin: 25px 0; border-left: 4px solid #B8956A;">
                         <tr>
                           <td style="padding: 25px;">
@@ -166,15 +299,12 @@ serve(async (req) => {
                           </td>
                         </tr>
                       </table>
-                      
                       <h2 style="color: #2A2826; font-size: 20px; margin: 30px 0 15px; font-family: Georgia, serif; font-style: italic;">
                         What's Next?
                       </h2>
-                      
                       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
                         ${service.nextSteps}
                       </p>
-                      
                       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 30px 0;">
                         <tr>
                           <td align="center">
@@ -184,14 +314,11 @@ serve(async (req) => {
                           </td>
                         </tr>
                       </table>
-                      
                       <p style="font-size: 14px; line-height: 1.6; color: #666; text-align: center; margin: 20px 0 0;">
                         Complete your intake forms before your first visit to make the most of your appointment time.
                       </p>
                     </td>
                   </tr>
-                  
-                  <!-- Contact Footer -->
                   <tr>
                     <td style="background-color: #2A2826; padding: 30px; text-align: center;">
                       <p style="margin: 0 0 10px; color: #B8956A; font-size: 14px; font-weight: 600;">
@@ -219,8 +346,10 @@ serve(async (req) => {
     if (emailError) {
       console.error("Welcome email error:", emailError);
       welcomeLog("resend_error", {
+        user_id: userIdForLog,
         patient_id: patientIdForLog,
         email_domain: emailDomainForLog,
+        email_sent: false,
         success: false,
         error_message: String(emailError),
       }, "error");
@@ -234,9 +363,21 @@ serve(async (req) => {
         .eq("id", patient_id);
     }
 
+    console.log(JSON.stringify({
+      timestamp: ts,
+      event: "send-welcome-email",
+      user_id: userIdForLog,
+      patient_id: patientIdForLog,
+      email_sent: true,
+      success: true,
+      error_message: null,
+    }));
+
     welcomeLog("send_complete", {
+      user_id: userIdForLog,
       patient_id: patientIdForLog,
       email_domain: emailDomainForLog,
+      email_sent: true,
       success: true,
       error_message: null,
     });
@@ -247,10 +388,20 @@ serve(async (req) => {
     );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Welcome email function error:", error);
+    console.error(JSON.stringify({
+      timestamp: ts,
+      event: "send-welcome-email",
+      user_id: userIdForLog,
+      patient_id: patientIdForLog,
+      email_sent: false,
+      success: false,
+      error_message: message,
+    }));
     welcomeLog("handler_error", {
+      user_id: userIdForLog,
       patient_id: patientIdForLog,
       email_domain: emailDomainForLog,
+      email_sent: false,
       success: false,
       error_message: message,
     }, "error");

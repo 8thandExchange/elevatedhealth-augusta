@@ -92,14 +92,16 @@ const QuickMessageModal = ({ open, onOpenChange }: QuickMessageModalProps) => {
       if (!user) throw new Error("Not authenticated");
 
       // Send message
-      const { error: msgError } = await supabase
+      const { data: insertedMessage, error: msgError } = await supabase
         .from("messages")
         .insert({
           conversation_id: conversationId,
           sender_id: user.id,
           sender_role: "provider",
           content: message.trim(),
-        });
+        })
+        .select("id")
+        .single();
 
       if (msgError) throw msgError;
 
@@ -108,6 +110,21 @@ const QuickMessageModal = ({ open, onOpenChange }: QuickMessageModalProps) => {
         .from("conversations")
         .update({ last_message_at: new Date().toISOString() })
         .eq("id", conversationId);
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+      if (accessToken && insertedMessage?.id) {
+        const { error: deliverErr } = await supabase.functions.invoke("send-patient-message", {
+          body: {
+            patient_id: selectedPatient.id,
+            message_id: insertedMessage.id,
+          },
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (deliverErr) {
+          console.warn("send-patient-message:", deliverErr);
+        }
+      }
 
       toast.success(`Message sent to ${selectedPatient.full_name}`);
       onOpenChange(false);

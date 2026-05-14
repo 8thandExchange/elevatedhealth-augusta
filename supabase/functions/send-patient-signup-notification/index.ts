@@ -11,7 +11,7 @@ const corsHeaders = {
 interface PatientSignupNotificationRequest {
   patientName: string;
   patientEmail: string;
-  primaryProgram: "hormone" | "ketamine";
+  primaryProgram: "hormone" | "weight_loss" | "peptide" | string;
   isHighRisk: boolean;
   safetyFlags?: string[];
 }
@@ -38,9 +38,12 @@ const handler = async (req: Request): Promise<Response> => {
       isHighRisk
     });
 
-    const programLabel = primaryProgram === "ketamine" 
-      ? "Ketamine Therapy / Mental Wellness" 
-      : "Hormone Optimization / Weight Loss";
+    const programLabel =
+      primaryProgram === "weight_loss"
+        ? "Medical Weight Loss (GLP-1)"
+        : primaryProgram === "peptide"
+        ? "Peptide Therapy"
+        : "Hormone Optimization / Wellness";
 
     const riskBadge = isHighRisk 
       ? `<span style="background-color: #fee2e2; color: #dc2626; padding: 4px 12px; border-radius: 4px; font-weight: 600;">⚠️ HIGH RISK - REQUIRES REVIEW</span>`
@@ -121,7 +124,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
       to: ["booking@elevatedhealthaugusta.com"],
-      subject: `🆕 New ${primaryProgram === "ketamine" ? "Ketamine" : "Hormone"} Patient: ${patientName}${isHighRisk ? " ⚠️ HIGH RISK" : ""}`,
+      subject: `🆕 New patient: ${patientName} (${primaryProgram})${isHighRisk ? " ⚠️ HIGH RISK" : ""}`,
       html: emailHtml,
     });
 

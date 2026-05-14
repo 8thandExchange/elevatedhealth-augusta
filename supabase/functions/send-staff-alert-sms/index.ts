@@ -88,7 +88,12 @@ const handler = async (req: Request): Promise<Response> => {
         break;
       
       case "new_signup":
-        const programStr = program === "ketamine" ? "Ketamine" : "Hormone/Weight";
+        const programStr =
+          program === "weight_loss"
+            ? "Weight / GLP-1"
+            : program === "peptide" || program === "peptides"
+            ? "Peptides"
+            : "Hormone / Wellness";
         message = `🆕 NEW PATIENT: ${patient_name} registered for ${programStr} program. Awaiting intake completion.`;
         break;
       

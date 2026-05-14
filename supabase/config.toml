@@ -60,12 +60,6 @@ verify_jwt = false
 [functions.create-rebooking-checkout]
 verify_jwt = false
 
-[functions.create-neurotransmitter-checkout]
-verify_jwt = false
-
-[functions.verify-neurotransmitter-payment]
-verify_jwt = false
-
 [functions.send-provider-invite]
 verify_jwt = false
 
@@ -90,9 +84,13 @@ verify_jwt = false
 [functions.get-business-metrics]
 verify_jwt = false
 
-# send-welcome-email locked down 2026-05-08 (audit R-5). Caller must
-# present a valid JWT AND have role staff or admin. See function comment.
+# send-welcome-email: verify_jwt = true. Allowed callers — (1) staff/admin
+# invoking for a patient, or (2) a newly registered patient whose JWT sub
+# matches body.user_id (see OPTION I-3 + auth.users email check in function).
 [functions.send-welcome-email]
+verify_jwt = true
+
+[functions.send-patient-message]
 verify_jwt = true
 
 # send-intake-reminder is invoked by Supabase Scheduled Functions only.
@@ -126,18 +124,6 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.update-team-roles]
-verify_jwt = false
-
-[functions.create-toxicity-checkout]
-verify_jwt = false
-
-[functions.verify-toxicity-payment]
-verify_jwt = false
-
-[functions.create-total-body-checkout]
-verify_jwt = false
-
-[functions.verify-total-body-payment]
 verify_jwt = false
 
 [functions.create-hair-restoration-checkout]

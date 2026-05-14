@@ -272,7 +272,6 @@ const TreatmentPlanPanel = ({ patientId, patientName, serviceLine = "hormone" }:
               <Select value={selectedServiceLine} onValueChange={setSelectedServiceLine}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ketamine">Ketamine</SelectItem>
                   <SelectItem value="hormone">HRT</SelectItem>
                   <SelectItem value="weight_loss">Weight Loss</SelectItem>
                 </SelectContent>
@@ -492,7 +491,7 @@ const TreatmentPlanPanel = ({ patientId, patientName, serviceLine = "hormone" }:
                       <div className="flex items-center gap-2">
                         <Badge className={getStatusColor(plan.status)}>{plan.status}</Badge>
                         <Badge variant="outline" className="text-xs">
-                          {plan.service_line === "ketamine" ? "Ketamine" : plan.service_line === "weight_loss" ? "Weight Loss" : "HRT"}
+                          {plan.service_line === "weight_loss" ? "Weight Loss" : plan.service_line === "peptide" ? "Peptide" : "HRT"}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-1">

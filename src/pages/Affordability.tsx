@@ -22,7 +22,7 @@ const Affordability = () => {
           name="description"
           content="Flexible payment plans with Klarna and Affirm. We accept Blue Cross Blue Shield, TRICARE, and VA insurance where applicable. HSA/FSA eligible. $79 Wellness Assessment, paid at booking."
         />
-        <meta name="keywords" content="payment plans Augusta GA, Klarna healthcare, Affirm medical financing, BCBS mental health coverage, TRICARE ketamine therapy, HSA FSA eligible" />
+        <meta name="keywords" content="payment plans Augusta GA, Klarna healthcare, Affirm medical financing, HSA FSA eligible, cash-pay wellness Evans GA" />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/affordability" />
       </Helmet>
 

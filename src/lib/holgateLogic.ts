@@ -285,7 +285,7 @@ function analyzeNeurotransmitters(values: LabValues): Finding[] {
   if (values.glutamate && values.glutamate > REFERENCE_RANGES.glutamate_high) {
     findings.push({
       pattern: 'Excitotoxicity Alert',
-      description: 'Brain is inflamed/over-firing. Perfect candidate for Ketamine Therapy + NAC/Magnesium.',
+      description: 'Brain is inflamed/over-firing. Consider NAC/magnesium support and coordinated medical review.',
       priority: 'high',
       category: 'neurotransmitter',
     });
@@ -510,11 +510,11 @@ function generateProtocols(findings: Finding[]): Protocol[] {
       rationale: 'Reduce glutamate toxicity and neuroinflammation',
     });
     protocols.push({
-      name: 'Consider Ketamine Therapy',
-      dosage: 'Evaluate for IV ketamine protocol',
-      timing: 'After baseline stabilization',
+      name: 'Discuss neuromodulation options with clinician',
+      dosage: 'Per individualized plan after intake and labs',
+      timing: 'After baseline stabilization with NAC/magnesium',
       priority: priority++,
-      rationale: 'Ketamine is highly effective for glutamate dysregulation',
+      rationale: 'Severe glutamate dysregulation may warrant referral or adjunctive therapies chosen in clinic',
     });
   }
   
@@ -685,7 +685,7 @@ function generateStory(findings: Finding[], values: LabValues, kitType: string):
   } else if (hasNeuroIssue) {
     story = "Your neurotransmitter panel reveals imbalances that explain your symptoms. ";
     if (findings.some(f => f.pattern === 'Excitotoxicity Alert')) {
-      story += "Elevated glutamate indicates your brain is in an inflamed, over-firing state—this is where ketamine therapy can be particularly effective. ";
+      story += "Elevated glutamate suggests increased excitatory tone; your clinician may discuss targeted lifestyle, sleep, and follow-up lab strategies. ";
     }
     if (findings.some(f => f.pattern === 'Catecholamine Deficit')) {
       story += "Low dopamine is affecting your motivation and focus. ";

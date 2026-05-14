@@ -112,7 +112,7 @@ const ConsentPDFCard = ({
         <CardContent>
           <p className="text-sm text-amber-700">
             {isOsmind 
-              ? "Patient consent will be collected through Osmind for ketamine therapy."
+              ? "Patient consent is collected in-app before treatment begins."
               : "Patient has not yet completed the consent form."}
           </p>
         </CardContent>

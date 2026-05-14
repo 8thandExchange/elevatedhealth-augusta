@@ -24,10 +24,8 @@ import PeptideTherapy from "./pages/PeptideTherapy";
 import Membership from "./pages/Membership";
 
 import About from "./pages/About";
-import MilitaryVeteran from "./pages/MilitaryVeteran";
 import Pricing from "./pages/Pricing";
 import PricingComparison from "./pages/PricingComparison";
-import WhatToExpect from "./pages/WhatToExpect";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HipaaNotice from "./pages/HipaaNotice";
 import TermsOfService from "./pages/TermsOfService";
@@ -53,7 +51,6 @@ import CreateAccount from "./pages/CreateAccount";
 import HealthReport from "./pages/HealthReport";
 import PatientServices from "./pages/PatientServices";
 import ConsultationConfirmed from "./pages/ConsultationConfirmed";
-import MentalWellnessPage from "./pages/MentalWellnessPage";
 import HormoneJourneyPage from "./pages/HormoneJourneyPage";
 import IVPaymentSuccess from "./pages/IVPaymentSuccess";
 import Affordability from "./pages/Affordability";
@@ -63,7 +60,6 @@ import StaffPricingCheatsheet from "./pages/StaffPricingCheatsheet";
 import StaffQuickCard from "./pages/StaffQuickCard";
 import EmailTemplates from "./pages/EmailTemplates";
 import PublicIntake from "./pages/PublicIntake";
-import InsuranceReimbursement from "./pages/InsuranceReimbursement";
 import OfficeSchedule from "./pages/OfficeSchedule";
 import ClinicalProtocolLibrary from "./pages/ClinicalProtocolLibrary";
 import ClinicalProtocolDetail from "./pages/ClinicalProtocolDetail";
@@ -71,6 +67,7 @@ import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor
 import InventoryDashboard from "./pages/InventoryDashboard";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -142,20 +139,24 @@ const App = () => {
           <Route path="/iv-ketamine" element={<Navigate to="/" replace />} />
           <Route path="/spravato" element={<Navigate to="/" replace />} />
           <Route path="/how-ketamine-works" element={<Navigate to="/" replace />} />
-          <Route path="/military-veteran" element={<MilitaryVeteran />} />
+          <Route path="/military-veteran" element={<Navigate to="/" replace />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/pricing-comparison" element={<PricingComparison />} />
           <Route path="/affordability" element={<Affordability />} />
-          <Route path="/what-to-expect" element={<WhatToExpect />} />
+          <Route path="/what-to-expect" element={<Navigate to="/" replace />} />
+          <Route path="/insurance" element={<Navigate to="/pricing" replace />} />
+          <Route path="/insurance-reimbursement" element={<Navigate to="/pricing" replace />} />
+          <Route path="/services" element={<Navigate to="/pricing" replace />} />
+          <Route path="/book" element={<Navigate to="/" replace />} />
+          <Route path="/how-it-works" element={<Navigate to="/membership" replace />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/accessibility" element={<Accessibility />} />
-          <Route path="/consult" element={
-            <SecurePatientRoute>
-              <Consult />
-            </SecurePatientRoute>
-          } />
+          <Route path="/mental-wellness" element={<Navigate to="/" replace />} />
+          <Route path="/mental-wellness-page" element={<Navigate to="/" replace />} />
+          <Route path="/consult" element={<Consult />} />
           {/* Per-flow medication confirmation (replaces legacy /payment-success which served 6 flows) */}
           <Route path="/medication-confirmed" element={<MedicationConfirmed />} />
           {/* Legacy /payment-success — preserved as redirect so old emails / bookmarks don't 404 */}
@@ -166,7 +167,6 @@ const App = () => {
           {/* Public intake form (no auth required, token-validated) */}
           <Route path="/intake" element={<PublicIntake />} />
           <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
-          <Route path="/insurance-reimbursement" element={<InsuranceReimbursement />} />
           <Route path="/iv-payment-success" element={<IVPaymentSuccess />} />
           <Route path="/alacarte-success" element={<AlaCartePaymentSuccess />} />
           <Route path="/staff-pricing-cheatsheet" element={
@@ -201,11 +201,7 @@ const App = () => {
             </SecurePatientRoute>
           } />
           {/* Service-specific journey pages */}
-          <Route path="/patient/mental-wellness" element={
-            <SecurePatientRoute>
-              <MentalWellnessPage />
-            </SecurePatientRoute>
-          } />
+          <Route path="/patient/mental-wellness" element={<Navigate to="/consult" replace />} />
           <Route path="/patient/hormone-journey" element={
             <SecurePatientRoute>
               <HormoneJourneyPage />

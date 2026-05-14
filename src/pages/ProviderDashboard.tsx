@@ -31,7 +31,6 @@ import { Label } from "@/components/ui/label";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
 import AILabPanelCard from "@/components/provider/AILabPanelCard";
-import ZRTRequisitionGenerator from "@/components/provider/ZRTRequisitionGenerator";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
 import HairRestorationAddonSelector from "@/components/provider/HairRestorationAddonSelector";
@@ -312,7 +311,7 @@ const ProviderDashboard = () => {
       if (ordersError) throw ordersError;
 
       // Also load patients with intake complete, account_created, or pending_invite but no order yet
-      // This ensures newly signed up patients (including ketamine) appear in triage
+      // This ensures newly signed up patients appear in triage
       const { data: intakePatients, error: intakeError } = await supabase
         .from("patients")
         .select("*")
@@ -1418,11 +1417,7 @@ const ProviderDashboard = () => {
                           </td>
                           <td className="py-4 px-4" onClick={() => selectPatient(p)}>
                             {/* Consent Status Badge */}
-                            {p.patient.treatment_request?.includes("ketamine") ? (
-                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                                Osmind
-                              </Badge>
-                            ) : p.patient.consent_completed_at ? (
+                            {p.patient.consent_completed_at ? (
                               <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100">
                                 <Check className="w-3 h-3 mr-1" />
                                 Signed
@@ -1522,7 +1517,7 @@ const ProviderDashboard = () => {
                                 </td>
                                 <td className="py-4 px-4">
                                   <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"}>
-                                    {patient.lab_path === "labcorp" ? "LabCorp Required" : "ZRT Kit"}
+                                    {patient.lab_path === "labcorp" ? "LabCorp Required" : "Labs (see chart)"}
                                   </Badge>
                                 </td>
                                 <td className="py-4 px-4">
@@ -1583,7 +1578,7 @@ const ProviderDashboard = () => {
                                 <p className="text-xs text-muted-foreground">Paid: {paidDate}</p>
                               </div>
                               <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"} className="flex-shrink-0">
-                                {patient.lab_path === "labcorp" ? "LabCorp" : "ZRT"}
+                                {patient.lab_path === "labcorp" ? "LabCorp" : "Other / legacy"}
                               </Badge>
                             </div>
                             
@@ -2065,7 +2060,6 @@ const ProviderDashboard = () => {
                 patientId={selectedPatient.patient.id}
                 patientName={selectedPatient.patient.full_name}
                 serviceLine={
-                  selectedPatient.patient.treatment_request?.includes("ketamine") ? "ketamine" :
                   selectedPatient.patient.treatment_request?.includes("weight") || selectedPatient.patient.treatment_request === "glp1" ? "weight_loss" :
                   "hormone"
                 }
@@ -2077,7 +2071,6 @@ const ProviderDashboard = () => {
                 patientId={selectedPatient.patient.id}
                 patientName={selectedPatient.patient.full_name}
                 serviceLine={
-                  selectedPatient.patient.treatment_request?.includes("ketamine") ? "ketamine" :
                   selectedPatient.patient.treatment_request?.includes("weight") || selectedPatient.patient.treatment_request === "glp1" ? "weight_loss" :
                   "hormone"
                 }
@@ -2275,35 +2268,6 @@ const ProviderDashboard = () => {
                 />
               )}
 
-              {/* Legacy saliva kit requisition */}
-              {selectedPatient.labPath?.path === "zrt" && (
-                <ZRTRequisitionGenerator
-                  patient={{
-                    full_name: selectedPatient.patient.full_name,
-                    dob: selectedPatient.patient.dob,
-                    gender: selectedPatient.patient.gender,
-                    street_address: selectedPatient.patient.street_address,
-                    city: selectedPatient.patient.city,
-                    state: selectedPatient.patient.state,
-                    zip_code: selectedPatient.patient.zip_code,
-                    phone: selectedPatient.patient.phone,
-                    email: selectedPatient.patient.email,
-                    treatment_request: selectedPatient.patient.treatment_request,
-                  }}
-                  symptomLog={selectedPatient.latestLog ? {
-                    estrogen_score: selectedPatient.latestLog.estrogen_score,
-                    progesterone_score: selectedPatient.latestLog.progesterone_score,
-                    androgen_score: selectedPatient.latestLog.androgen_score,
-                    cortisol_score: selectedPatient.latestLog.cortisol_score,
-                    raw_answers: selectedPatient.latestLog.raw_answers as any,
-                  } : null}
-                  membershipType={selectedPatient.patient.treatment_request?.includes("weight") ? "weight_management" : "hormone"}
-                  providerName={providerInfo.name}
-                  providerCredentials={providerInfo.credentials}
-                />
-              )}
-
-              {/* Blood Work History (for Labcorp patients) */}
               {selectedPatient.labPath?.path === "labcorp" && (
                 <BloodWorkHistory 
                   patientId={selectedPatient.patient.id}

@@ -180,8 +180,7 @@ serve(async (req) => {
     }
     if (formData.safety_screening.substance_use_history) {
       safetyFlags.push("substance_use_history");
-      // Only flag for ketamine patients
-      if (patient.primary_program === "ketamine") {
+      if (riskStatus !== "high") {
         riskStatus = "elevated";
       }
     }

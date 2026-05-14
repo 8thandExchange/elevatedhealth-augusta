@@ -31,6 +31,7 @@ const ResendWelcomeEmailButton = ({
       const { data, error } = await supabase.functions.invoke("send-welcome-email", {
         body: {
           patient_id: patientId,
+          email: patientEmail,
           patient_name: patientName,
           patient_email: patientEmail,
           primary_program: primaryProgram,

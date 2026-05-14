@@ -15,10 +15,9 @@ import { useToast } from "@/hooks/use-toast";
 type ResourceCategory = 
   | "hormone_therapy" 
   | "weight_loss" 
-  | "ketamine_therapy" 
+  | "general_wellness" 
   | "peptide_therapy" 
   | "iv_hydration"
-  | "general_wellness"
   | "injection_tutorials" 
   | "nutrition_guides" 
   | "stress_management";
@@ -39,10 +38,9 @@ interface Resource {
 const categoryLabels: Record<ResourceCategory, string> = {
   hormone_therapy: "Hormone Therapy",
   weight_loss: "Weight Loss / GLP-1",
-  ketamine_therapy: "Mental Wellness / Ketamine",
+  general_wellness: "General Wellness",
   peptide_therapy: "Peptide Therapy",
   iv_hydration: "IV Hydration",
-  general_wellness: "General Wellness",
   injection_tutorials: "Injection Tutorials",
   nutrition_guides: "Nutrition Guides",
   stress_management: "Stress Management"

@@ -130,7 +130,6 @@ const LogFreeConsultationModal = ({ isOpen, onClose, onSuccess }: LogFreeConsult
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="hormone">Hormone Therapy</SelectItem>
-                <SelectItem value="ketamine">Ketamine Therapy</SelectItem>
                 <SelectItem value="weight_loss">Weight Loss</SelectItem>
                 <SelectItem value="peptides">Peptide Therapy</SelectItem>
                 <SelectItem value="iv_therapy">IV Therapy</SelectItem>

@@ -179,8 +179,7 @@ const PatientServices = () => {
     );
   }
 
-  // Show welcome intake if not completed (only for non-ketamine patients)
-  if (!patient.intake_completed && patient.primary_program !== "ketamine") {
+  if (!patient.intake_completed) {
     return <WelcomeIntake patientName={patient.full_name} />;
   }
 

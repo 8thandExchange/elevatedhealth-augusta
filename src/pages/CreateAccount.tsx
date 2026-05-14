@@ -108,48 +108,73 @@ const CreateAccount = () => {
       if (signUpData.user) {
         const cleanPhone = phone.replace(/\D/g, "");
         const formattedPhoneForStorage = cleanPhone.length === 10 ? cleanPhone : null;
+        const displayName = (name || email.split("@")[0]).trim();
+        const nameParts = displayName.split(/\s+/).filter(Boolean);
+        const firstName = nameParts[0] || "Patient";
+        const lastName = nameParts.slice(1).join(" ");
+
+        let resolvedPatientId: string | null = null;
+        let primaryProgram: string | null | undefined;
 
         const { data: patientData, error: updateError } = await supabase
           .from("patients")
           .update({
             user_id: signUpData.user.id,
             onboarding_status: "account_created",
-            full_name: name || email.split("@")[0],
+            full_name: displayName,
             ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
           })
           .eq("email", email)
-          .select("primary_program, phone")
+          .select("id, primary_program, phone")
           .single();
 
-        const primaryProgram = patientData?.primary_program;
+        primaryProgram = patientData?.primary_program;
         let patientPhone = formattedPhoneForStorage || patientData?.phone || null;
 
-        if (updateError) {
-          // No existing patient row — create one.
-          await supabase.from("patients").insert({
-            user_id: signUpData.user.id,
-            email,
-            full_name: name || email.split("@")[0],
-            onboarding_status: "account_created",
-            ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
-          });
-          patientPhone = formattedPhoneForStorage;
+        if (!updateError && patientData?.id) {
+          resolvedPatientId = patientData.id;
         }
 
-        supabase.functions.invoke("send-welcome-email", {
-          body: {
-            patient_name: name || email.split("@")[0],
-            patient_email: email,
-            primary_program: primaryProgram,
-          },
-        }).catch((err) => console.error("Welcome email error", err));
+        if (updateError) {
+          const { data: insertedPatient, error: insertError } = await supabase
+            .from("patients")
+            .insert({
+              user_id: signUpData.user.id,
+              email,
+              full_name: displayName,
+              onboarding_status: "account_created",
+              ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
+            })
+            .select("id, primary_program")
+            .single();
+          if (!insertError && insertedPatient?.id) {
+            resolvedPatientId = insertedPatient.id;
+            primaryProgram = insertedPatient.primary_program;
+            patientPhone = formattedPhoneForStorage;
+          }
+        }
+
+        const accessToken = signUpData.session?.access_token;
+        if (accessToken) {
+          supabase.functions.invoke("send-welcome-email", {
+            body: {
+              user_id: signUpData.user.id,
+              email,
+              first_name: firstName,
+              last_name: lastName,
+              primary_program: primaryProgram,
+              ...(resolvedPatientId ? { patient_id: resolvedPatientId } : {}),
+            },
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }).catch((err) => console.error("Welcome email error", err));
+        }
 
         if (patientPhone) {
           supabase.functions.invoke("send-welcome-sms", {
             body: {
-              patient_name: name || email.split("@")[0],
-              patient_phone: patientPhone,
-              first_name: name?.split(" ")[0],
+              patient_id: resolvedPatientId,
+              phone: patientPhone,
+              first_name: firstName,
               primary_program: primaryProgram,
             },
           }).catch((err) => console.error("Welcome SMS error", err));

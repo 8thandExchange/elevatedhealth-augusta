@@ -118,7 +118,7 @@ const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', lat
             <div className="text-center py-8 text-muted-foreground">
               <Beaker className="w-10 h-10 mx-auto mb-2 opacity-40" />
               <p className="text-sm">No lab results yet</p>
-              <p className="text-xs mt-1">Click "Add Labs" to enter ZRT results</p>
+              <p className="text-xs mt-1">Click &quot;Add Labs&quot; to enter LabCorp or legacy PDF results</p>
             </div>
           ) : (
             <>

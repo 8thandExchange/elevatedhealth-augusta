@@ -213,9 +213,9 @@ const generateActionItems = (data: LabData | null, gender?: string): ActionItem[
       severity: 'yellow',
       finding: `Low Serotonin (${data.serotonin} μg/g)`,
       description: 'Serotonin deficiency causes mood instability, anxiety, and sleep disturbances.',
-      recommendation: '5-HTP 100mg + B6 Support + Mental Wellness Coaching',
-      actionLabel: 'Explore Mental Wellness',
-      actionLink: '/patient/mental-wellness',
+      recommendation: 'Discuss mood support and sleep optimization with your clinician at your Wellness Assessment',
+      actionLabel: 'Book Wellness Assessment',
+      actionLink: '/consult',
       actionType: 'learn',
       icon: Brain,
     });

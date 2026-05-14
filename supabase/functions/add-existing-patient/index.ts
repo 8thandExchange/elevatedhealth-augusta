@@ -13,10 +13,10 @@ const logStep = (step: string, details?: any) => {
 
 // Service-specific email content
 const serviceDescriptions: Record<string, { name: string; tagline: string; description: string }> = {
-  ketamine: {
-    name: "Mental Wellness & Ketamine Therapy",
-    tagline: "breakthrough mental health support",
-    description: "Our ketamine therapy program offers breakthrough treatment for depression, anxiety, and PTSD. Our medical team will guide you through every step of your healing journey."
+  peptides: {
+    name: "Peptide Therapy",
+    tagline: "targeted recovery and optimization",
+    description: "When prescribed, our peptide protocols use 503A pharmacy partners and informed consent — your clinician selects stacks that match your goals and labs."
   },
   hormone: {
     name: "Hormone Optimization",

@@ -1,4 +1,4 @@
-import { ArrowRight, Calendar, CreditCard, Mail, TestTube, Sparkles, Clock, CheckCircle, Pill, Stethoscope, FileCheck } from "lucide-react";
+import { ArrowRight, Calendar, CreditCard, Mail, TestTube, Sparkles, Clock, CheckCircle, Pill, Stethoscope } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,7 +24,6 @@ export const NextActionCard = ({
 }: NextActionCardProps) => {
   const status = onboardingStatus || "pending_invite";
   const isWeightLoss = primaryProgram === "weight_loss" || primaryProgram === "glp1";
-  const isKetamine = primaryProgram === "ketamine";
 
   // Define action based on current status
   const getActionConfig = () => {
@@ -92,21 +91,6 @@ export const NextActionCard = ({
       }
     }
 
-    // ===== KETAMINE SPECIFIC STATUSES =====
-    if (isKetamine) {
-      if (status === "ketamine_screening" || status === "intake_complete" || status === "consultation_complete") {
-        return {
-          icon: <FileCheck className="w-6 h-6" />,
-          title: "Ketamine Screening Complete",
-          description: "Check your email for your Osmind portal invitation to continue your mental wellness journey.",
-          buttonText: null,
-          buttonAction: null,
-          timeEstimate: "Portal invite sent to email",
-          accentColor: "blue",
-        };
-      }
-    }
-
     // ===== GENERAL CONSULTATION FLOW =====
     if (status === "account_created") {
       return {
@@ -146,7 +130,7 @@ export const NextActionCard = ({
 
     // ===== HORMONE THERAPY LAB FLOW =====
     if (status === "consultation_complete" || status === "intake_complete") {
-      if (!isWeightLoss && !isKetamine) {
+      if (!isWeightLoss) {
         return {
           icon: <TestTube className="w-6 h-6" />,
           title: "Complete Your Lab Payment",

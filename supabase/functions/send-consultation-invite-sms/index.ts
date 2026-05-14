@@ -22,7 +22,7 @@ interface ConsultationInviteSMSRequest {
 const SERVICE_LABELS: Record<string, string> = {
   hormone: "Hormone Therapy",
   weight_loss: "Weight Loss",
-  ketamine: "Ketamine Therapy",
+  ketamine: "General Wellness",
   general: "your consultation",
 };
 

@@ -286,7 +286,6 @@ const AppointmentPanel = ({ patientId, patientName }: AppointmentPanelProps) => 
               <Select value={selectedServiceLine} onValueChange={setSelectedServiceLine}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ketamine">Ketamine</SelectItem>
                   <SelectItem value="hormone">HRT</SelectItem>
                   <SelectItem value="weight_loss">Weight Loss</SelectItem>
                 </SelectContent>

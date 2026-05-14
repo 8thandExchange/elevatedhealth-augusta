@@ -48,8 +48,6 @@ interface EncounterFormModalProps {
 }
 
 const SERVICE_TYPES = [
-  { value: "spravato", label: "Spravato/Ketamine" },
-  { value: "iv_ketamine", label: "IV Ketamine" },
   { value: "hormones", label: "Hormone Therapy" },
   { value: "weight_loss", label: "Weight Loss" },
 ];
@@ -107,12 +105,6 @@ const EncounterFormModal = ({
       // Map service type to panel groups
       let panelGroups: string[] = [];
       switch (serviceType) {
-        case "spravato":
-          panelGroups = ["spravato", "drug_screen"];
-          break;
-        case "iv_ketamine":
-          panelGroups = ["iv_ketamine", "supplies", "drug_screen"];
-          break;
         case "hormones":
           panelGroups = ["saliva_profile_iii", "labcorp"];
           break;
@@ -423,8 +415,6 @@ const EncounterFormModal = ({
   }, {} as Record<string, CPTCode[]>);
 
   const panelLabels: Record<string, string> = {
-    spravato: "Spravato Services",
-    iv_ketamine: "IV Ketamine Infusion",
     supplies: "Supplies & Medications",
     drug_screen: "Drug Screens",
     saliva_profile_iii: "Saliva Profile III",

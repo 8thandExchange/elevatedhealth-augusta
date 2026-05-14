@@ -272,11 +272,7 @@ const PrivacyPolicy = () => {
                   <ul className="space-y-2 text-foreground/80 mb-4">
                     <li className="flex items-start gap-3">
                       <span className="text-primary font-bold mt-1">•</span>
-                      <span><strong>Osmind</strong> – Mental health platform for ketamine therapy coordination</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-primary font-bold mt-1">•</span>
-                      <span><strong>ZRT Laboratory</strong> – Hormone, metabolic, and neurotransmitter testing</span>
+                      <span><strong>LabCorp</strong> – CLIA-certified laboratory testing (client-billed panels)</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-primary font-bold mt-1">•</span>

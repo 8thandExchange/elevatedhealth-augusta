@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, ChevronRight, Heart, Brain, Check, ShieldAlert, Phone } from "lucide-react";
+import { Loader2, ChevronRight, Check, ShieldAlert, Phone } from "lucide-react";
 import SafetyGate from "./SafetyGate";
 
 interface OAuthOnboardingProps {
@@ -17,12 +16,11 @@ interface OAuthOnboardingProps {
   onComplete: () => void;
 }
 
-type PrimaryProgram = "hormone" | "ketamine";
+type PrimaryProgram = "hormone" | "weight_loss" | "peptide";
 
 const INTEREST_OPTIONS = [
   { id: "hormone", label: "Hormone Replacement Therapy", description: "Bio-identical hormones, menopause, perimenopause, testosterone" },
   { id: "weight_loss", label: "Medical Weight Loss", description: "GLP-1 therapy, metabolic optimization" },
-  { id: "ketamine", label: "Ketamine Therapy / Mental Wellness", description: "IV ketamine infusions, Spravato®, depression & anxiety" },
   { id: "peptides", label: "Peptide Therapy", description: "Sermorelin, NAD+, PT-141, cellular optimization" },
 ];
 
@@ -33,28 +31,19 @@ const HORMONE_HIGH_RISK_CONDITIONS = [
   { id: "pregnantBreastfeeding", label: "Pregnant or Breastfeeding", description: "Are you currently pregnant or breastfeeding?" },
 ];
 
-const KETAMINE_HIGH_RISK_CONDITIONS = [
-  { id: "activePsychosis", label: "Active Psychosis", description: "Are you currently experiencing psychotic symptoms?" },
-  { id: "uncontrolledHypertension", label: "Uncontrolled High Blood Pressure", description: "Do you have uncontrolled high blood pressure?" },
-  { id: "seizureDisorder", label: "Seizure Disorder", description: "Do you have a history of seizures or epilepsy?" },
-  { id: "pregnancy", label: "Pregnant or Trying to Conceive", description: "Are you currently pregnant or trying to become pregnant?" },
-];
-
-// Phone number validation - accepts US formats
 const formatPhoneNumber = (value: string): string => {
-  const numbers = value.replace(/\D/g, '');
+  const numbers = value.replace(/\D/g, "");
   if (numbers.length <= 3) return numbers;
   if (numbers.length <= 6) return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
   return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;
 };
 
 const isValidPhoneNumber = (phone: string): boolean => {
-  const numbers = phone.replace(/\D/g, '');
+  const numbers = phone.replace(/\D/g, "");
   return numbers.length === 10;
 };
 
 const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: OAuthOnboardingProps) => {
-  const navigate = useNavigate();
   const [step, setStep] = useState<"info" | "program" | "safety">("info");
   const [isLoading, setIsLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -66,20 +55,12 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
     bloodClot: false,
     pregnantBreastfeeding: false,
   });
-  const [ketamineSafetyScreening, setKetamineSafetyScreening] = useState({
-    activePsychosis: false,
-    uncontrolledHypertension: false,
-    seizureDisorder: false,
-    pregnancy: false,
-  });
   const [confirmedNoneApply, setConfirmedNoneApply] = useState(false);
   const [showSafetyGate, setShowSafetyGate] = useState(false);
 
   const handleInterestToggle = (interestId: string) => {
-    setSelectedInterests(prev => 
-      prev.includes(interestId) 
-        ? prev.filter(id => id !== interestId)
-        : [...prev, interestId]
+    setSelectedInterests((prev) =>
+      prev.includes(interestId) ? prev.filter((id) => id !== interestId) : [...prev, interestId],
     );
   };
 
@@ -88,56 +69,36 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
       toast.error("Please select at least one area of interest");
       return;
     }
-    
-    // Determine primary program based on interests
-    if (selectedInterests.includes("ketamine")) {
-      setPrimaryProgram("ketamine");
-    } else {
-      setPrimaryProgram("hormone");
-    }
+
+    let program: PrimaryProgram = "hormone";
+    if (selectedInterests.includes("weight_loss")) program = "weight_loss";
+    else if (selectedInterests.includes("peptides")) program = "peptide";
+
+    setPrimaryProgram(program);
     setStep("safety");
   };
 
   const isHighRisk = () => {
-    if (primaryProgram === "hormone") {
-      return hormoneSafetyScreening.breastCancer || 
-             hormoneSafetyScreening.uterineCancer || 
-             hormoneSafetyScreening.bloodClot || 
-             hormoneSafetyScreening.pregnantBreastfeeding;
-    } else if (primaryProgram === "ketamine") {
-      return ketamineSafetyScreening.activePsychosis || 
-             ketamineSafetyScreening.uncontrolledHypertension || 
-             ketamineSafetyScreening.seizureDisorder || 
-             ketamineSafetyScreening.pregnancy;
-    }
-    return false;
+    if (primaryProgram !== "hormone") return false;
+    return (
+      hormoneSafetyScreening.breastCancer ||
+      hormoneSafetyScreening.uterineCancer ||
+      hormoneSafetyScreening.bloodClot ||
+      hormoneSafetyScreening.pregnantBreastfeeding
+    );
   };
 
   const getSafetyFlags = () => {
-    if (primaryProgram === "hormone") {
-      return Object.entries(hormoneSafetyScreening)
-        .filter(([_, value]) => value)
-        .map(([key]) => {
-          const condition = HORMONE_HIGH_RISK_CONDITIONS.find(c => c.id === key);
-          return condition?.label || key;
-        });
-    } else if (primaryProgram === "ketamine") {
-      return Object.entries(ketamineSafetyScreening)
-        .filter(([_, value]) => value)
-        .map(([key]) => {
-          const condition = KETAMINE_HIGH_RISK_CONDITIONS.find(c => c.id === key);
-          return condition?.label || key;
-        });
-    }
-    return [];
-  };
-
-  const isKetamineOnly = () => {
-    return selectedInterests.length === 1 && selectedInterests.includes("ketamine");
+    if (primaryProgram !== "hormone") return [];
+    return Object.entries(hormoneSafetyScreening)
+      .filter(([_, value]) => value)
+      .map(([key]) => {
+        const condition = HORMONE_HIGH_RISK_CONDITIONS.find((c) => c.id === key);
+        return condition?.label || key;
+      });
   };
 
   const handleContinueFromInfo = () => {
-    // Phone is optional but if provided, must be valid
     if (phoneNumber && !isValidPhoneNumber(phoneNumber)) {
       toast.error("Please enter a valid 10-digit phone number");
       return;
@@ -151,15 +112,10 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
     try {
       const highRisk = isHighRisk();
       const safetyFlags = getSafetyFlags();
-      const medicalHistory = primaryProgram === "hormone" 
-        ? hormoneSafetyScreening 
-        : ketamineSafetyScreening;
-      const skipIntake = isKetamineOnly();
-      
-      // Clean phone number for storage (digits only)
-      const cleanPhone = phoneNumber ? phoneNumber.replace(/\D/g, '') : null;
+      const medicalHistory = primaryProgram === "hormone" ? hormoneSafetyScreening : {};
 
-      // Update patient record with program selection, phone, and safety screening
+      const cleanPhone = phoneNumber ? phoneNumber.replace(/\D/g, "") : null;
+
       const { error } = await supabase
         .from("patients")
         .update({
@@ -169,14 +125,13 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
           risk_status: highRisk ? "high_risk_review" : "standard",
           medical_history: medicalHistory as unknown as Record<string, boolean>,
           safety_flags: highRisk ? safetyFlags : [],
-          intake_completed: skipIntake,
-          onboarding_status: highRisk ? "high_risk_review" : (skipIntake ? "intake_complete" : "account_created"),
+          intake_completed: false,
+          onboarding_status: highRisk ? "high_risk_review" : "account_created",
         })
         .eq("id", patientId);
 
       if (error) throw error;
 
-      // Send notification to providers
       try {
         await supabase.functions.invoke("send-patient-signup-notification", {
           body: {
@@ -198,8 +153,9 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
         toast.success("Welcome to Elevated Health Augusta!");
         onComplete();
       }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to complete setup");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to complete setup";
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +166,7 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
       <SafetyGate
         patientName={patientName}
         patientEmail={patientEmail}
-        patientPhone={phoneNumber ? phoneNumber.replace(/\D/g, '') : ""}
+        patientPhone={phoneNumber ? phoneNumber.replace(/\D/g, "") : ""}
         safetyFlags={getSafetyFlags()}
         treatmentType={primaryProgram || "treatment"}
       />
@@ -219,19 +175,31 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
 
   const getStepTitle = () => {
     switch (step) {
-      case "info": return `Welcome, ${patientName.split(' ')[0]}!`;
-      case "program": return "Tell Us About Your Goals";
-      case "safety": return "Quick Safety Check";
+      case "info":
+        return `Welcome, ${patientName.split(" ")[0]}!`;
+      case "program":
+        return "Tell Us About Your Goals";
+      case "safety":
+        return "Quick Safety Check";
     }
   };
 
   const getStepDescription = () => {
     switch (step) {
-      case "info": return "Let's get your contact info so we can reach you";
-      case "program": return "Select all the areas you're interested in exploring";
-      case "safety": return "Help us ensure your safety with a few quick questions";
+      case "info":
+        return "Let's get your contact info so we can reach you";
+      case "program":
+        return "Select all the areas you're interested in exploring";
+      case "safety":
+        return primaryProgram === "hormone"
+          ? "Help us ensure your safety with a few quick questions"
+          : "Confirm to finish onboarding — your clinician will review goals at your visit.";
     }
   };
+
+  const needsHormoneSafety = primaryProgram === "hormone";
+  const canCompleteSafety =
+    needsHormoneSafety ? isHighRisk() || confirmedNoneApply : true;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
@@ -294,11 +262,13 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
-                        selectedInterests.includes(option.id)
-                          ? "bg-primary border-primary"
-                          : "border-muted-foreground"
-                      }`}>
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                          selectedInterests.includes(option.id)
+                            ? "bg-primary border-primary"
+                            : "border-muted-foreground"
+                        }`}
+                      >
                         {selectedInterests.includes(option.id) && (
                           <Check className="w-3 h-3 text-white" />
                         )}
@@ -321,11 +291,7 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
 
-              <Button
-                variant="ghost"
-                onClick={() => setStep("info")}
-                className="w-full text-muted-foreground"
-              >
+              <Button variant="ghost" onClick={() => setStep("info")} className="w-full text-muted-foreground">
                 Back
               </Button>
             </>
@@ -340,58 +306,55 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
                 </p>
               </div>
 
-              <div className="space-y-3">
-                {(primaryProgram === "hormone" ? HORMONE_HIGH_RISK_CONDITIONS : KETAMINE_HIGH_RISK_CONDITIONS).map((condition) => (
-                  <div
-                    key={condition.id}
-                    className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
-                  >
-                    <Checkbox
-                      id={condition.id}
-                      checked={primaryProgram === "hormone" 
-                        ? hormoneSafetyScreening[condition.id as keyof typeof hormoneSafetyScreening]
-                        : ketamineSafetyScreening[condition.id as keyof typeof ketamineSafetyScreening]
-                      }
-                      onCheckedChange={(checked) => {
-                        if (primaryProgram === "hormone") {
-                          setHormoneSafetyScreening(prev => ({
+              {needsHormoneSafety ? (
+                <div className="space-y-3">
+                  {HORMONE_HIGH_RISK_CONDITIONS.map((condition) => (
+                    <div
+                      key={condition.id}
+                      className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
+                    >
+                      <Checkbox
+                        id={condition.id}
+                        checked={hormoneSafetyScreening[condition.id as keyof typeof hormoneSafetyScreening]}
+                        onCheckedChange={(checked) => {
+                          setHormoneSafetyScreening((prev) => ({
                             ...prev,
-                            [condition.id]: checked === true
+                            [condition.id]: checked === true,
                           }));
-                        } else {
-                          setKetamineSafetyScreening(prev => ({
-                            ...prev,
-                            [condition.id]: checked === true
-                          }));
-                        }
-                        setConfirmedNoneApply(false);
-                      }}
-                      className="mt-0.5"
-                    />
-                    <label htmlFor={condition.id} className="cursor-pointer">
-                      <p className="font-medium text-foreground text-sm">{condition.label}</p>
-                      <p className="text-xs text-muted-foreground">{condition.description}</p>
-                    </label>
-                  </div>
-                ))}
+                          setConfirmedNoneApply(false);
+                        }}
+                        className="mt-0.5"
+                      />
+                      <label htmlFor={condition.id} className="cursor-pointer">
+                        <p className="font-medium text-foreground text-sm">{condition.label}</p>
+                        <p className="text-xs text-muted-foreground">{condition.description}</p>
+                      </label>
+                    </div>
+                  ))}
 
-                {!isHighRisk() && (
-                  <div className="flex items-center gap-3 p-3 rounded-lg border-2 border-green-500/30 bg-green-500/5">
-                    <Checkbox
-                      id="noneApply"
-                      checked={confirmedNoneApply}
-                      onCheckedChange={(checked) => setConfirmedNoneApply(checked === true)}
-                    />
-                    <label htmlFor="noneApply" className="text-sm text-foreground cursor-pointer">
-                      I confirm none of the above conditions apply to me
-                    </label>
-                  </div>
-                )}
-              </div>
+                  {!isHighRisk() && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg border-2 border-green-500/30 bg-green-500/5">
+                      <Checkbox
+                        id="noneApply"
+                        checked={confirmedNoneApply}
+                        onCheckedChange={(checked) => setConfirmedNoneApply(checked === true)}
+                      />
+                      <label htmlFor="noneApply" className="text-sm text-foreground cursor-pointer">
+                        I confirm none of the above conditions apply to me
+                      </label>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  You can complete medical intake next. Clinical safety screening for weight loss and peptide protocols
+                  continues at your Wellness Assessment.
+                </p>
+              )}
 
               <Button
                 onClick={handleCompleteOnboarding}
-                disabled={isLoading || (!isHighRisk() && !confirmedNoneApply)}
+                disabled={isLoading || !canCompleteSafety}
                 className="w-full bg-primary hover:bg-primary/90 text-white h-12"
               >
                 {isLoading ? (
@@ -404,11 +367,7 @@ const OAuthOnboarding = ({ patientId, patientName, patientEmail, onComplete }: O
                 )}
               </Button>
 
-              <Button
-                variant="ghost"
-                onClick={() => setStep("program")}
-                className="w-full text-muted-foreground"
-              >
+              <Button variant="ghost" onClick={() => setStep("program")} className="w-full text-muted-foreground">
                 Back to Program Selection
               </Button>
             </>

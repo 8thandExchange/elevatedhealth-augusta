@@ -198,8 +198,7 @@ const ConsultationTracker = () => {
       const serviceType = consult.service_type?.toLowerCase() || '';
       const isWeightLoss = serviceType.includes('weight') || serviceType.includes('glp') || serviceType.includes('semaglutide') || serviceType.includes('tirzepatide');
       const isPeptide = serviceType.includes('peptide');
-      // Ketamine path removed — service is no longer offered (per .cursorrules).
-      // ZRT $250 hormone-mapping kit path removed — labs now drawn on-site at the
+      // Legacy mapping path removed — labs are drawn in-office (LabCorp) for current patients.
       // consult via LabCorp client billing; no separate kit payment.
 
       if (isWeightLoss) {
@@ -279,8 +278,10 @@ const ConsultationTracker = () => {
         // before the visit.
         supabase.functions.invoke("send-welcome-email", {
           body: {
-            patient_name: consult.customer_name,
+            email: consult.customer_email,
             patient_email: consult.customer_email,
+            first_name: (consult.customer_name || "").trim().split(/\s+/)[0] || undefined,
+            last_name: (consult.customer_name || "").trim().split(/\s+/).slice(1).join(" ") || undefined,
             primary_program: program,
           },
         }).catch((err) => console.error("send-welcome-email error", err));

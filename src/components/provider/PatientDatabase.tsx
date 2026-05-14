@@ -100,7 +100,6 @@ const statusLabels: Record<string, { label: string; variant: "default" | "second
   active: { label: "Active", variant: "default" },
   paused: { label: "Paused", variant: "outline" },
   awaiting_medical_clearance: { label: "Awaiting Clearance", variant: "secondary" },
-  ketamine_screening: { label: "Ketamine Screening", variant: "secondary" },
 };
 
 const membershipLabels: Record<string, { label: string; color: string }> = {
@@ -118,7 +117,7 @@ const membershipLabels: Record<string, { label: string; color: string }> = {
 const programLabels: Record<string, string> = {
   hormone: "Hormone",
   weight_loss: "Weight Loss",
-  ketamine: "Ketamine",
+  peptide: "Peptide",
   iv_therapy: "IV Therapy",
 };
 
@@ -326,7 +325,6 @@ export default function PatientDatabase({
             <SelectItem value="all">All Programs</SelectItem>
             <SelectItem value="hormone">Hormone</SelectItem>
             <SelectItem value="weight_loss">Weight Loss</SelectItem>
-            <SelectItem value="ketamine">Ketamine</SelectItem>
             <SelectItem value="iv_therapy">IV Therapy</SelectItem>
           </SelectContent>
         </Select>

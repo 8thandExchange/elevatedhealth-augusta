@@ -61,7 +61,7 @@ serve(async (req) => {
                 interest: {
                   type: "string",
                   enum: [
-                    "ketamine",
+                    "wellness_assessment",
                     "hormone",
                     "weight_loss",
                     "peptides",

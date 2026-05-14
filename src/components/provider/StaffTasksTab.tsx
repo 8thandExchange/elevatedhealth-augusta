@@ -11,9 +11,7 @@ import {
   AlertTriangle,
   Calendar,
   FileText,
-  Brain,
   ClipboardCheck,
-  ExternalLink,
   Send
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,8 +54,6 @@ interface WaiverTask {
   consent_method: string | null;
   created_at: string | null;
 }
-
-const OSMIND_URL = "https://app.osmind.org";
 
 const StaffTasksTab = () => {
   const [kitsToShip, setKitsToShip] = useState<KitToShip[]>([]);
@@ -247,8 +243,7 @@ const StaffTasksTab = () => {
   }
 
   // Split waiver tasks by type
-  const ketamineWaivers = waiverTasks.filter(w => w.primary_program === "ketamine");
-  const internalWaivers = waiverTasks.filter(w => w.primary_program !== "ketamine");
+  const internalWaivers = waiverTasks.filter((w) => w.primary_program !== "ketamine");
 
   const totalTasks = kitsToShip.length + consultationFollowUps.length + pharmacyOrders.length + waiverTasks.length;
 
@@ -315,76 +310,6 @@ const StaffTasksTab = () => {
         </Card>
       )}
 
-      {/* Waivers to Send - Ketamine (Osmind) */}
-      {ketamineWaivers.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-blue-600" />
-              Ketamine Waivers (Osmind)
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700">Osmind</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {ketamineWaivers.map((patient) => {
-                const hoursWaiting = patient.created_at ? getHoursWaiting(patient.created_at) : 0;
-                const isUrgent = hoursWaiting > 2;
-                const isSent = !!patient.consent_sent_at;
-                
-                return (
-                  <div 
-                    key={patient.id} 
-                    className={`flex items-center justify-between p-4 rounded-lg border ${
-                      isUrgent && !isSent ? "border-red-300 bg-red-50" : "bg-muted/30"
-                    }`}
-                  >
-                    <div>
-                      <p className="font-medium">{patient.full_name}</p>
-                      <p className="text-sm text-muted-foreground">{patient.email}</p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                        <Clock className="h-3 w-3" />
-                        <span>Added {hoursWaiting} hour(s) ago</span>
-                        {isUrgent && !isSent && (
-                          <Badge variant="outline" className="text-red-600 border-red-400">
-                            <AlertTriangle className="h-3 w-3 mr-1" /> Urgent
-                          </Badge>
-                        )}
-                        {isSent && (
-                          <Badge className="bg-green-100 text-green-700">
-                            <Check className="h-3 w-3 mr-1" /> Sent
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => window.open(OSMIND_URL, "_blank")}
-                      >
-                        <ExternalLink className="h-4 w-4 mr-1" />
-                        Open Osmind
-                      </Button>
-                      {!isSent && (
-                        <Button
-                          size="sm"
-                          onClick={() => markConsentSent(patient.id, "osmind")}
-                          disabled={processingId === patient.id}
-                        >
-                          {processingId === patient.id ? "..." : "Mark Sent"}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Waivers to Send - Internal (Hormone/Weight Loss) */}
       {internalWaivers.length > 0 && (
         <Card>
           <CardHeader>

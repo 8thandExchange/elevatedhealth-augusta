@@ -426,7 +426,7 @@ const BusinessDashboard = () => {
                   <Package className="w-5 h-5" />
                   Kits Pending Shipment
                 </CardTitle>
-                <CardDescription>Patients paid $299 but ZRT kit not shipped</CardDescription>
+                <CardDescription>Legacy kit orders awaiting shipment (historical)</CardDescription>
               </CardHeader>
               <CardContent>
                 {blockers.filter(b => b.type === "kit_to_ship").length === 0 ? (

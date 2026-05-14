@@ -123,7 +123,7 @@ const handler = async (req: Request): Promise<Response> => {
         moodQuizResultSchema.parse(requestData.data) : 
         moodQuizResultSchema.parse(requestData);
       
-      emailSubject = "New Ketamine Treatment Quiz Result";
+      emailSubject = "New wellness pathway quiz result";
       emailContent = `<html><body><h1>${validatedData.treatment}</h1><p>${validatedData.reason}</p></body></html>`;
     }
 

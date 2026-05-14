@@ -269,8 +269,11 @@ serve(async (req) => {
     const creditCode = generateCreditCode();
     logStep("Generated credit code after payment", { creditCode });
 
+    let bookingCreditCode = creditCode;
+    let shouldSendNotifications = false;
+
     if (existing) {
-      const { error: updateError } = await supabaseClient
+      const { data: updatedRow, error: updateError } = await supabaseClient
         .from("consultation_bookings")
         .update({
           credit_code: creditCode,
@@ -281,7 +284,10 @@ serve(async (req) => {
           status: "paid",
           customer_name: customerName || existing.customer_name,
         })
-        .eq("id", existing.id);
+        .eq("id", existing.id)
+        .is("credit_code", null)
+        .select("id, credit_code")
+        .maybeSingle();
 
       if (updateError) {
         logStep("Update error", { error: updateError });
@@ -294,9 +300,38 @@ serve(async (req) => {
         }, "error");
         throw updateError;
       }
-      logStep("Updated existing booking with credit code", { bookingId: existing.id });
+
+      if (updatedRow?.credit_code) {
+        shouldSendNotifications = true;
+        bookingCreditCode = updatedRow.credit_code;
+        logStep("Updated existing booking with credit code", { bookingId: updatedRow.id });
+      } else {
+        const { data: peer } = await supabaseClient
+          .from("consultation_bookings")
+          .select("credit_code")
+          .eq("stripe_session_id", session_id)
+          .maybeSingle();
+        if (peer?.credit_code) {
+          logStep("Concurrent claim: peer set credit first", { creditCode: peer.credit_code });
+          vcpLog("already_recorded", {
+            session_id,
+            patient_id_resolved: patientIdResolved,
+            product_recognized: recognition.product_recognized,
+            success: true,
+            error_message: null,
+          });
+          return new Response(JSON.stringify({
+            success: true,
+            already_recorded: true,
+            credit_code: peer.credit_code,
+          }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          });
+        }
+      }
     } else {
-      const { data: booking, error: insertError } = await supabaseClient
+      const { data: inserted, error: insertError } = await supabaseClient
         .from("consultation_bookings")
         .insert({
           customer_email: customerEmail,
@@ -311,10 +346,37 @@ serve(async (req) => {
           service_type: serviceType,
           booking_source: "self_service",
         })
-        .select()
-        .single();
+        .select("id, credit_code")
+        .maybeSingle();
 
       if (insertError) {
+        const pgCode = (insertError as { code?: string }).code;
+        const msg = insertError.message || "";
+        if (pgCode === "23505" || msg.includes("duplicate") || msg.includes("unique")) {
+          const { data: peer } = await supabaseClient
+            .from("consultation_bookings")
+            .select("credit_code")
+            .eq("stripe_session_id", session_id)
+            .maybeSingle();
+          if (peer?.credit_code) {
+            logStep("Insert lost race; using peer booking", { creditCode: peer.credit_code });
+            vcpLog("already_recorded", {
+              session_id,
+              patient_id_resolved: patientIdResolved,
+              product_recognized: recognition.product_recognized,
+              success: true,
+              error_message: null,
+            });
+            return new Response(JSON.stringify({
+              success: true,
+              already_recorded: true,
+              credit_code: peer.credit_code,
+            }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+              status: 200,
+            });
+          }
+        }
         logStep("Insert error", { error: insertError });
         vcpLog("booking_insert_failed", {
           session_id,
@@ -325,7 +387,45 @@ serve(async (req) => {
         }, "error");
         throw insertError;
       }
-      logStep("Created new consultation booking with credit code", { bookingId: booking.id });
+
+      if (inserted?.credit_code) {
+        shouldSendNotifications = true;
+        bookingCreditCode = inserted.credit_code;
+        logStep("Created new consultation booking with credit code", { bookingId: inserted.id });
+      }
+    }
+
+    if (!shouldSendNotifications) {
+      const { data: snap } = await supabaseClient
+        .from("consultation_bookings")
+        .select("credit_code")
+        .eq("stripe_session_id", session_id)
+        .maybeSingle();
+      if (snap?.credit_code) {
+        vcpLog("already_recorded", {
+          session_id,
+          patient_id_resolved: patientIdResolved,
+          product_recognized: recognition.product_recognized,
+          success: true,
+          error_message: null,
+        });
+        return new Response(JSON.stringify({
+          success: true,
+          already_recorded: true,
+          credit_code: snap.credit_code,
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      vcpLog("booking_claim_failed", {
+        session_id,
+        patient_id_resolved: patientIdResolved,
+        product_recognized: recognition.product_recognized,
+        success: false,
+        error_message: "no credit_code after insert/update attempt",
+      }, "error");
+      throw new Error("Consultation booking was not recorded after successful payment");
     }
 
     const { error: patientUpdateError } = await supabaseClient
@@ -358,7 +458,7 @@ serve(async (req) => {
       SERVICE_EMAIL_CONFIG[serviceType] || SERVICE_EMAIL_CONFIG.hormone;
     const firstName = customerName ? customerName.split(" ")[0] : "there";
 
-    if (resend) {
+    if (shouldSendNotifications && resend) {
       try {
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
@@ -388,7 +488,7 @@ serve(async (req) => {
                         <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="margin:0 0 24px;background-color:${BRAND_BONE};border-left:3px solid ${BRAND_CAMEL};border-radius:6px;">
                           <tr><td style="padding:18px 20px;">
                             <p style="margin:0 0 4px;color:${BRAND_CHARCOAL}99;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;">Your enrollment code</p>
-                            <p style="margin:0 0 6px;color:${BRAND_CHARCOAL};font-size:22px;font-weight:600;letter-spacing:0.18em;font-family:'SF Mono',Menlo,monospace;">${creditCode}</p>
+                            <p style="margin:0 0 6px;color:${BRAND_CHARCOAL};font-size:22px;font-weight:600;letter-spacing:0.18em;font-family:'SF Mono',Menlo,monospace;">${bookingCreditCode}</p>
                             <p style="margin:0;color:${BRAND_CHARCOAL}99;font-size:13px;">Good for $${CONSULT_FEE_USD} off your first program invoice when you enroll in ${emailConfig.programPhrase}.</p>
                           </td></tr>
                         </table>
@@ -430,11 +530,11 @@ serve(async (req) => {
             <p><strong>Name:</strong> ${customerName || "Not provided"}</p>
             <p><strong>Service type:</strong> ${serviceType}</p>
             <p><strong>Product recognition:</strong> ${recognition.product_recognized}${recognition.legacy_path ? " (legacy path)" : ""}</p>
-            <p><strong>Enrollment code:</strong> ${creditCode}</p>
+            <p><strong>Enrollment code:</strong> ${bookingCreditCode}</p>
             <p><strong>Amount:</strong> $${(session.amount_total || 0) / 100}</p>
             <hr/>
             <p>The patient is on the in-app confirmation page picking a time slot.</p>
-            <p>Code <strong>${creditCode}</strong> reduces the first program invoice by $${CONSULT_FEE_USD} when they enroll in ${emailConfig.programPhrase}.</p>
+            <p>Code <strong>${bookingCreditCode}</strong> reduces the first program invoice by $${CONSULT_FEE_USD} when they enroll in ${emailConfig.programPhrase}.</p>
           `,
         });
         logStep("Admin notification sent");
@@ -444,8 +544,8 @@ serve(async (req) => {
     }
 
     const staffPhoneNumbers = Deno.env.get("STAFF_NOTIFICATION_PHONE");
-    if (staffPhoneNumbers) {
-      const smsMessage = `NEW WELLNESS ASSESSMENT PAID\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCode: ${creditCode}\nPatient is on the confirmation page picking a time.`;
+    if (shouldSendNotifications && staffPhoneNumbers) {
+      const smsMessage = `NEW WELLNESS ASSESSMENT PAID\n${customerName || customerEmail}\nService: ${emailConfig.title}\nCode: ${bookingCreditCode}\nPatient is on the confirmation page picking a time.`;
 
       const phoneNumbers = staffPhoneNumbers.split(",").map((p) => p.trim());
 
@@ -469,7 +569,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({
       success: true,
-      credit_code: creditCode,
+      credit_code: bookingCreditCode,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

@@ -33,7 +33,7 @@ const sendAdminNotification = async (resend: Resend, customerEmail: string, mapp
           </div>
           
           <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-            <p style="margin: 0; color: #856404;"><strong>⚡ Action Required:</strong> Ship the ZRT kit to this patient.</p>
+            <p style="margin: 0; color: #856404;"><strong>⚡ Action Required:</strong> Confirm lab scheduling / fulfillment per current clinic protocol (in-office LabCorp draws; legacy kit flows may still appear on historical checkouts).</p>
           </div>
           
           <p style="color: #6c757d; font-size: 14px;">This is an automated notification from the Elevated Health Augusta payment system.</p>
