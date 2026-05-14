@@ -485,15 +485,18 @@ const AssistantHub = () => {
                     <p className="text-sm whitespace-pre-wrap leading-relaxed">
                       {message.content
                         .replace(/\[BOOK_RN_ASSESSMENT\]/g, "")
+                        .replace(/\[BOOK_WELLNESS_ASSESSMENT\]/g, "")
                         .replace(/\[BOOK_IV_DIRECT\]/g, "")
                         .trim()}
                     </p>
-                    {message.role === "assistant" && message.content.includes("[BOOK_RN_ASSESSMENT]") && (
+                    {message.role === "assistant" &&
+                      (message.content.includes("[BOOK_WELLNESS_ASSESSMENT]") ||
+                        message.content.includes("[BOOK_RN_ASSESSMENT]")) && (
                       <a
                         href="/schedule-consult"
                         className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-4 py-2 text-xs font-medium hover:opacity-90 transition"
                       >
-                        Book $79 RN Assessment →
+                        Book $79 Wellness Assessment →
                       </a>
                     )}
                     {message.role === "assistant" && message.content.includes("[BOOK_IV_DIRECT]") && (

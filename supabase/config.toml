@@ -6,9 +6,6 @@ verify_jwt = false
 [functions.send-labs-reviewed-sms]
 verify_jwt = false
 
-[functions.send-vitality-activation-sms]
-verify_jwt = false
-
 [functions.send-glp1-activation-sms]
 verify_jwt = false
 
@@ -37,9 +34,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.create-membership-checkout]
-verify_jwt = false
-
-[functions.create-vitality-checkout]
 verify_jwt = false
 
 [functions.update-subscription-addon]
@@ -134,12 +128,6 @@ verify_jwt = false
 [functions.update-team-roles]
 verify_jwt = false
 
-[functions.create-metabolic-checkout]
-verify_jwt = false
-
-[functions.verify-metabolic-payment]
-verify_jwt = false
-
 [functions.create-toxicity-checkout]
 verify_jwt = false
 
@@ -186,16 +174,7 @@ verify_jwt = false
 [functions.generate-consent-pdf]
 verify_jwt = true
 
-[functions.create-glp1-starter-checkout]
-verify_jwt = false
-
-[functions.create-glp1-continuation-checkout]
-verify_jwt = false
-
 [functions.add-existing-patient]
-verify_jwt = false
-
-[functions.send-vitality-activation]
 verify_jwt = false
 
 [functions.send-glp1-activation]
