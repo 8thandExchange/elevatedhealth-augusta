@@ -47,7 +47,7 @@ const AssistantHub = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Welcome to Elevated Health Augusta! I can help with questions about our process, pricing, and insurance. What would you like to know?",
+      content: "Hi! I'm Elevated Health Augusta's AI assistant. I can help you understand our programs, pricing, and how to book — but I'm not a clinician, so I can't give medical advice. For anything clinical, your $79 Wellness Assessment is the right next step. What brings you here today?",
     },
   ]);
   const [input, setInput] = useState("");

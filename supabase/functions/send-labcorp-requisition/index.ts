@@ -115,7 +115,7 @@ const handler = async (req: Request): Promise<Response> => {
 
         <div class="alert">
           <strong>⚠️ LabCorp Requisition Needed</strong><br/>
-          A patient requires blood work instead of the standard ZRT Saliva Kit.
+          A patient requires a LabCorp in-office blood draw (requisition below).
         </div>
 
         <h2 style="color: #2C3E50; margin-top: 0;">LabCorp Laboratory Requisition</h2>
