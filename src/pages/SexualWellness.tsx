@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
 import AssistantHub from "@/components/AssistantHub";
 import { SEXUAL_WELLNESS_PRODUCTS, CORE_SERVICES } from "@/lib/stripeConfig";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Check, Shield, Clock, Package, Heart } from "lucide-react";
 import NotReadyToBook from "@/components/NotReadyToBook";
 
