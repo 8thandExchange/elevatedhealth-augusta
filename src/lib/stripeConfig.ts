@@ -295,7 +295,7 @@ export const ALL_LIVE_PRICE_IDS = [
   ...Object.values(HAIR_RESTORATION_PRODUCTS).map((p) => p.priceId),
 ];
 
-export const ELEVATED_PROGRAM_PRICE_IDS = Object.values(ELEVATED_PROGRAMS).map((p) => p.priceId);
+export const ELEVATED_PROGRAM_PRICE_IDS: string[] = Object.values(ELEVATED_PROGRAMS).map((p) => p.priceId);
 
 export function isElevatedProgramPrice(priceId: string): boolean {
   return ELEVATED_PROGRAM_PRICE_IDS.includes(priceId);
