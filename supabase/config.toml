@@ -229,3 +229,15 @@ verify_jwt = false
 [functions.create-medication-fill-checkout]
 verify_jwt = false
 
+[functions.create-intake-magic-link]
+verify_jwt = true
+
+[functions.send-intake-magic-link]
+verify_jwt = true
+
+[functions.consume-intake-magic-link]
+verify_jwt = false
+
+[functions.send-intake-reminders]
+verify_jwt = false
+

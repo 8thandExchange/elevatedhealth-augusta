@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { triggerIntakeMagicLinkDelivery } from "../_shared/trigger-intake-magic-link.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -333,6 +334,13 @@ serve(async (req) => {
         console.warn("send-booking-confirmation failed", e);
       }
 
+      triggerIntakeMagicLinkDelivery(supabase, {
+        patientId: patient.id,
+        bookingId: created.id,
+        appointmentTimeIso: slotStart.toISOString(),
+        serviceType: staff_booking.service_type,
+      });
+
       return new Response(
         JSON.stringify({ appointment: appt, booking_id: created.id, mode: "staff" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
@@ -450,6 +458,13 @@ serve(async (req) => {
         },
       });
     } catch (e) { console.warn("send-booking-confirmation failed", e); }
+
+    triggerIntakeMagicLinkDelivery(supabase, {
+      patientId,
+      bookingId: booking.id,
+      appointmentTimeIso: slotStart.toISOString(),
+      serviceType: booking.service_type as string,
+    });
 
     return new Response(JSON.stringify({ appointment: appt }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200,
