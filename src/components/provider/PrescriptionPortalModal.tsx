@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Copy, Check, ExternalLink, CheckCircle, Loader2, Send, AlertCircle, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import type { FCCItem } from "@/lib/fccFormulary";
 import FCCFormularyLookup from "./FCCFormularyLookup";
 import { PharmacySelector, type Pharmacy } from "./PharmacySelector";
@@ -572,7 +573,7 @@ const PrescriptionPortalModal = ({
             pharmacy_id: pharmacy.id,
             submission_method: "portal",
             status: "sent_to_pharmacy",
-            protocol_snapshot: protocol_snapshot as Record<string, unknown>,
+            protocol_snapshot: protocol_snapshot as Json,
             portal_opened_at: new Date().toISOString(),
           }])
           .select()

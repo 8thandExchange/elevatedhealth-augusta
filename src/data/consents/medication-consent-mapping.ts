@@ -353,10 +353,7 @@ function inferCanonicalFromFccNameAndCategory(
     return "nad_plus_injection";
   }
 
-  if (
-    category === "hormone_injectable" ||
-    (n.includes("testosterone") && (n.includes("cypionate") || n.includes("inject")))
-  ) {
+  if (n.includes("testosterone") && (n.includes("cypionate") || n.includes("inject"))) {
     return "testosterone_cypionate_injectable";
   }
 
