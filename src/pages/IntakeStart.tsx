@@ -47,6 +47,7 @@ export default function IntakeStart() {
 
         const targetPatientId = consumeData.patient_id as string;
         const tokenHash = consumeData.token_hash as string;
+        const pendingConsentTypes = consumeData.pending_consent_types as string[] | null | undefined;
 
         const { data: sessionData } = await supabase.auth.getSession();
         if (sessionData.session?.user) {
@@ -71,7 +72,14 @@ export default function IntakeStart() {
         }
 
         setState("redirecting");
-        navigate("/intake/consents", { replace: true });
+        if (pendingConsentTypes?.length) {
+          navigate(
+            `/intake/treatment-consents?types=${encodeURIComponent(pendingConsentTypes.join(","))}`,
+            { replace: true },
+          );
+        } else {
+          navigate("/intake/consents", { replace: true });
+        }
       } catch (err) {
         if (cancelled) return;
         setState("error");

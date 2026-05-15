@@ -1,7 +1,29 @@
 const CLINIC_ADDRESS = "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809";
 const CLINIC_PHONE = "(706) 760-3470";
 
-export type IntakeLinkContext = "initial_booking" | "reminder_24h" | "staff_resend";
+/** Labels aligned with consent catalog types — edge-safe duplicates for messaging only */
+export function intakeConsentTypeDisplayLabel(type: string): string {
+  const labels: Record<string, string> = {
+    terms_of_service: "Terms of Service",
+    hipaa_acknowledgment: "HIPAA Acknowledgment",
+    general_medical_treatment: "General Medical Treatment",
+    telehealth: "Telehealth",
+    communication: "Communication Preferences",
+    hormone_therapy: "Hormone Therapy",
+    glp1: "GLP-1 / Weight Management",
+    off_label: "Off-Label Treatment",
+    research_peptide: "Research Peptide",
+    notice_of_privacy_practices: "Notice of Privacy Practices",
+  };
+  return labels[type] ?? type;
+}
+
+export type IntakeLinkContext =
+  | "initial_booking"
+  | "reminder_24h"
+  | "staff_resend"
+  | "tier2_consent_request"
+  | "consent_expiration_reminder";
 
 export function firstNameFromFullName(fullName: string): string {
   return fullName.trim().split(/\s+/)[0] || "there";
@@ -13,8 +35,83 @@ export function buildIntakeLinkMessages(params: {
   magicLinkUrl: string;
   appointmentDate?: string;
   appointmentTime?: string;
+  consentDocumentLabels?: string[];
+  expirationReminder?: {
+    consentLabel: string;
+    expiryFormatted: string;
+    daysRemaining: number;
+  };
 }): { emailSubject: string; emailText: string; emailHtml: string; smsBody: string } {
-  const { context, firstName, magicLinkUrl, appointmentDate, appointmentTime } = params;
+  const {
+    context,
+    firstName,
+    magicLinkUrl,
+    appointmentDate,
+    appointmentTime,
+    consentDocumentLabels,
+    expirationReminder,
+  } = params;
+
+  if (context === "tier2_consent_request") {
+    const bullets =
+      (consentDocumentLabels && consentDocumentLabels.length > 0
+        ? consentDocumentLabels.map((l) => `- ${l}`).join("\n")
+        : "- Your clinician-listed consent documents");
+
+    const emailSubject = "Action needed: sign your treatment consent at Elevated Health Augusta";
+    const emailText = `Hi ${firstName},
+
+Your clinician at Elevated Health Augusta is ready to prescribe your treatment, but we need your signed consent first.
+
+Please review and sign the following consent(s):
+${bullets}
+
+This usually takes 5-10 minutes. Click below to start:
+${magicLinkUrl}
+
+Once you've signed, your clinician can complete your prescription.
+
+Questions? Call us at ${CLINIC_PHONE}.
+
+Elevated Health Augusta team`;
+
+    const smsBody =
+      `Elevated Health Augusta: Please sign your treatment consent so we can complete your prescription. ${magicLinkUrl} Reply STOP to opt out.`;
+
+    return {
+      emailSubject,
+      emailText,
+      emailHtml: textToHtml(emailText, magicLinkUrl),
+      smsBody,
+    };
+  }
+
+  if (context === "consent_expiration_reminder" && expirationReminder) {
+    const { consentLabel, expiryFormatted, daysRemaining } = expirationReminder;
+    const emailSubject = `Reminder: your treatment consent expires in ${daysRemaining} days`;
+    const emailText = `Hi ${firstName},
+
+Your ${consentLabel} consent expires on ${expiryFormatted} (${daysRemaining} days from now).
+
+To continue uninterrupted treatment, please re-sign before then:
+${magicLinkUrl}
+
+This usually takes 2-3 minutes.
+
+Questions? Call us at ${CLINIC_PHONE}.
+
+Elevated Health Augusta team`;
+
+    const smsBody =
+      `Elevated Health Augusta: Your treatment consent expires in ${daysRemaining} days. Re-sign: ${magicLinkUrl} Reply STOP to opt out.`;
+
+    return {
+      emailSubject,
+      emailText,
+      emailHtml: textToHtml(emailText, magicLinkUrl),
+      smsBody,
+    };
+  }
 
   if (context === "reminder_24h") {
     const when =

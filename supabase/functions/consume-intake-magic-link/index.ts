@@ -22,7 +22,7 @@ serve(async (req) => {
 
     const { data: link, error: linkError } = await supabase
       .from("intake_magic_links")
-      .select("id, patient_id, expires_at, revoked_at, use_count, first_used_at")
+      .select("id, patient_id, expires_at, revoked_at, use_count, first_used_at, pending_consent_types")
       .eq("token", token)
       .maybeSingle();
 
@@ -121,6 +121,7 @@ serve(async (req) => {
         patient_id: patient.id,
         patient_name: patient.full_name,
         email: patient.email,
+        pending_consent_types: link.pending_consent_types ?? null,
         token_hash: linkData.properties.hashed_token,
         verification_type: linkData.properties.verification_type || "magiclink",
       }),

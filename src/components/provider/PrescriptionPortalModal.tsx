@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,9 @@ import {
   type CustomPharmacyRxSelection,
 } from "./CustomPharmacyPreparationPicker";
 import type { CustomPharmacyCategory } from "@/lib/customPharmacyFormulary";
+import type { RxConsentResolutionInput } from "@/data/consents/medication-consent-mapping";
+import { checkConsentGateForRxContexts, type ConsentGateResult } from "@/lib/consents/consent-gate";
+import { ConsentGatePanel } from "@/components/consents/ConsentGatePanel";
 
 const DIAGNOSIS_MAP: Record<string, { code: string; description: string }[]> = {
   male_hormone: [
@@ -229,6 +232,10 @@ const PrescriptionPortalModal = ({
   const [submittedOrderId, setSubmittedOrderId] = useState<string | null>(null);
   const [portalSubmitting, setPortalSubmitting] = useState(false);
   const [markingPortal, setMarkingPortal] = useState(false);
+  const [consentGateOpen, setConsentGateOpen] = useState(false);
+  const [consentGateResult, setConsentGateResult] = useState<ConsentGateResult | null>(null);
+  const [staffUserId, setStaffUserId] = useState<string | null>(null);
+  const pendingRxActionRef = useRef<(() => Promise<void>) | null>(null);
 
   const hormoneCustomCategory: CustomPharmacyCategory | null =
     category === "male_hormone" || category === "female_hormone" ? category : null;
@@ -308,6 +315,12 @@ const PrescriptionPortalModal = ({
   }, []);
 
   useEffect(() => {
+    void supabase.auth.getUser().then(({ data }) => {
+      setStaffUserId(data.user?.id ?? null);
+    });
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       setFaxStatus("idle");
       setFaxTimestamp(null);
@@ -368,6 +381,40 @@ const PrescriptionPortalModal = ({
     return medication;
   }, [pharmacy?.fulfillment_method, customSelection, medication, category]);
 
+  const rxConsentContexts = useMemo((): RxConsentResolutionInput[] => {
+    if (pharmacy?.fulfillment_method === "online_portal" && portalFccItem) {
+      return [
+        {
+          fccSku: portalFccItem.sku,
+          fccName: portalFccItem.name,
+          fccCategory: portalFccItem.category,
+          routingCategory: category,
+        },
+      ];
+    }
+    return [
+      {
+        medicationLineId: effectiveMedication?.id ?? null,
+        routingCategory: category,
+      },
+    ];
+  }, [pharmacy?.fulfillment_method, portalFccItem, effectiveMedication?.id, category]);
+
+  const runPrescriptionActionWithConsentGate = async (action: () => Promise<void>) => {
+    try {
+      const gate = await checkConsentGateForRxContexts(patient.id, rxConsentContexts);
+      if (!gate.allowed || gate.expiringSoonConsents.length > 0) {
+        setConsentGateResult(gate);
+        setConsentGateOpen(true);
+        pendingRxActionRef.current = action;
+        return;
+      }
+      await action();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Consent verification failed");
+    }
+  };
+
   const effectiveRefills = pharmacy?.fulfillment_method === "fax" && customSelection
     ? customSelection.refills
     : refills;
@@ -426,53 +473,55 @@ const PrescriptionPortalModal = ({
       return;
     }
 
-    setFaxStatus("transmitting");
-    setFaxError(null);
-
     const [diagnosisCode, diagnosisDescription] = selectedDiagnosis.split("|");
 
-    try {
-      const { data, error } = await supabase.functions.invoke("send-rx-fax", {
-        body: {
-          patient_id: patient.id,
-          medication_name: med.name,
-          medication_strength: med.strength,
-          medication_sig: med.sig,
-          quantity,
-          refills: effectiveRefills,
-          supply_days: supplyDays,
-          provider_name: matchedProvider.name,
-          provider_credentials: matchedProvider.credentials,
-          provider_npi: matchedProvider.npi,
-          diagnosis_code: diagnosisCode,
-          diagnosis_description: diagnosisDescription,
-          provider_signature_url: matchedProvider.signatureUrl,
-          pharmacy_id: pharmacy.id,
-          fax_to: pharmacy.fax_number ?? undefined,
-        },
-      });
+    await runPrescriptionActionWithConsentGate(async () => {
+      setFaxStatus("transmitting");
+      setFaxError(null);
 
-      if (error) throw error;
+      try {
+        const { data, error } = await supabase.functions.invoke("send-rx-fax", {
+          body: {
+            patient_id: patient.id,
+            medication_name: med.name,
+            medication_strength: med.strength,
+            medication_sig: med.sig,
+            quantity,
+            refills: effectiveRefills,
+            supply_days: supplyDays,
+            provider_name: matchedProvider.name,
+            provider_credentials: matchedProvider.credentials,
+            provider_npi: matchedProvider.npi,
+            diagnosis_code: diagnosisCode,
+            diagnosis_description: diagnosisDescription,
+            provider_signature_url: matchedProvider.signatureUrl,
+            pharmacy_id: pharmacy.id,
+            fax_to: pharmacy.fax_number ?? undefined,
+          },
+        });
 
-      if (!data?.success) {
-        throw new Error(data?.error || "Fax transmission failed");
+        if (error) throw error;
+
+        if (!data?.success) {
+          throw new Error(data?.error || "Fax transmission failed");
+        }
+
+        setFaxStatus("sent");
+        setFaxTimestamp(
+          new Date().toLocaleString("en-US", {
+            dateStyle: "short",
+            timeStyle: "short",
+          }),
+        );
+        toast.success("Prescription faxed to pharmacy!");
+        onOrderCreated?.();
+      } catch (error: unknown) {
+        console.error("Fax error:", error);
+        setFaxStatus("failed");
+        setFaxError(error instanceof Error ? error.message : "Failed to send fax");
+        toast.error("Fax failed - use manual fallback");
       }
-
-      setFaxStatus("sent");
-      setFaxTimestamp(
-        new Date().toLocaleString("en-US", {
-          dateStyle: "short",
-          timeStyle: "short",
-        }),
-      );
-      toast.success("Prescription faxed to pharmacy!");
-      onOrderCreated?.();
-    } catch (error: any) {
-      console.error("Fax error:", error);
-      setFaxStatus("failed");
-      setFaxError(error.message || "Failed to send fax");
-      toast.error("Fax failed - use manual fallback");
-    }
+    });
   };
 
   const handleLaunchPortal = () => {
@@ -499,48 +548,51 @@ const PrescriptionPortalModal = ({
     if (!rxData) return;
 
     const formatted = formatPrescriptionForClipboard(rxData);
-    setPortalSubmitting(true);
-    try {
-      await navigator.clipboard.writeText(formatted);
-      toast.success("Prescription copied to clipboard");
 
-      const protocol_snapshot = {
-        ...rxData,
-        rx_string: rxString,
-        quantity_units: quantity,
-        refills,
-        supply_days: supplyDays,
-        portal_fcc_sku: portalFccItem.sku,
-        submission_method: "portal",
-      };
+    await runPrescriptionActionWithConsentGate(async () => {
+      setPortalSubmitting(true);
+      try {
+        await navigator.clipboard.writeText(formatted);
+        toast.success("Prescription copied to clipboard");
 
-      const { data: order, error } = await supabase
-        .from("orders")
-        .insert([{
-          patient_id: patient.id,
-          pharmacy_id: pharmacy.id,
+        const protocol_snapshot = {
+          ...rxData,
+          rx_string: rxString,
+          quantity_units: quantity,
+          refills,
+          supply_days: supplyDays,
+          portal_fcc_sku: portalFccItem.sku,
           submission_method: "portal",
-          status: "sent_to_pharmacy",
-          protocol_snapshot: protocol_snapshot as any,
-          portal_opened_at: new Date().toISOString(),
-        }])
-        .select()
-        .single();
+        };
 
-      if (error) {
-        toast.error(`Failed to log submission: ${error.message}`);
-        return;
+        const { data: order, error } = await supabase
+          .from("orders")
+          .insert([{
+            patient_id: patient.id,
+            pharmacy_id: pharmacy.id,
+            submission_method: "portal",
+            status: "sent_to_pharmacy",
+            protocol_snapshot: protocol_snapshot as Record<string, unknown>,
+            portal_opened_at: new Date().toISOString(),
+          }])
+          .select()
+          .single();
+
+        if (error) {
+          toast.error(`Failed to log submission: ${error.message}`);
+          return;
+        }
+
+        setSubmittedOrderId(order.id);
+        const portalUrl = pharmacy.portal_url || "https://portal.formuconnect.com/login";
+        window.open(portalUrl, "_blank", "noopener,noreferrer");
+      } catch (e: unknown) {
+        console.error(e);
+        toast.error(e instanceof Error ? e.message : "Portal submission failed");
+      } finally {
+        setPortalSubmitting(false);
       }
-
-      setSubmittedOrderId(order.id);
-      const portalUrl = pharmacy.portal_url || "https://portal.formuconnect.com/login";
-      window.open(portalUrl, "_blank", "noopener,noreferrer");
-    } catch (e: any) {
-      console.error(e);
-      toast.error(e?.message || "Portal submission failed");
-    } finally {
-      setPortalSubmitting(false);
-    }
+    });
   };
 
   const handleMarkPortalSubmitted = async () => {
@@ -568,35 +620,37 @@ const PrescriptionPortalModal = ({
   };
 
   const handleMarkAsOrdered = async () => {
-    setIsMarking(true);
-    try {
-      const { error } = await supabase.from("orders").insert({
-        patient_id: patient.id,
-        status: "sent_to_pharmacy",
-        protocol_snapshot: {
-          medication: medication?.name,
-          medication_id: medication?.id,
-          strength: medication?.strength,
-          sig: medication?.sig,
-          rx_string: rxString,
-          quantity,
-          refills,
-          ordered_via: "FCC Portal (Manual)",
-          ordered_at: new Date().toISOString(),
-        },
-      });
+    await runPrescriptionActionWithConsentGate(async () => {
+      setIsMarking(true);
+      try {
+        const { error } = await supabase.from("orders").insert({
+          patient_id: patient.id,
+          status: "sent_to_pharmacy",
+          protocol_snapshot: {
+            medication: medication?.name,
+            medication_id: medication?.id,
+            strength: medication?.strength,
+            sig: medication?.sig,
+            rx_string: rxString,
+            quantity,
+            refills,
+            ordered_via: "FCC Portal (Manual)",
+            ordered_at: new Date().toISOString(),
+          },
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast.success("Order marked as sent to pharmacy");
-      onOrderCreated?.();
-      onClose();
-    } catch (error: any) {
-      console.error("Error marking order:", error);
-      toast.error(error.message || "Failed to mark order");
-    } finally {
-      setIsMarking(false);
-    }
+        toast.success("Order marked as sent to pharmacy");
+        onOrderCreated?.();
+        onClose();
+      } catch (error: unknown) {
+        console.error("Error marking order:", error);
+        toast.error(error instanceof Error ? error.message : "Failed to mark order");
+      } finally {
+        setIsMarking(false);
+      }
+    });
   };
 
   const handleCustomSelectionChange = useCallback((sel: CustomPharmacyRxSelection | null) => {
@@ -969,6 +1023,38 @@ const PrescriptionPortalModal = ({
             </Button>
           </div>
         </div>
+
+        {consentGateResult && (
+          <ConsentGatePanel
+            open={consentGateOpen}
+            onOpenChange={(v) => {
+              setConsentGateOpen(v);
+              if (!v) pendingRxActionRef.current = null;
+            }}
+            gateResult={consentGateResult}
+            patientId={patient.id}
+            patientName={formattedName}
+            patientEmail={patient.email ?? ""}
+            patientPhone={patient.phone}
+            staffWitnessUserId={staffUserId}
+            staffDisplayName={matchedProvider?.name}
+            onGateRecheck={() => checkConsentGateForRxContexts(patient.id, rxConsentContexts)}
+            onGateResultUpdated={(next) => setConsentGateResult(next)}
+            onGateCleared={() => {
+              const run = pendingRxActionRef.current;
+              pendingRxActionRef.current = null;
+              setConsentGateOpen(false);
+              void run?.();
+            }}
+            onConsentRequestSent={() => {
+              pendingRxActionRef.current = null;
+            }}
+            onCancel={() => {
+              pendingRxActionRef.current = null;
+              setConsentGateOpen(false);
+            }}
+          />
+        )}
 
         <FCCFormularyLookup
           isOpen={showFormulary}

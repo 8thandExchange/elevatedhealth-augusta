@@ -63,14 +63,22 @@ serve(async (req) => {
     const token = generateMagicLinkToken();
     const expiresAt = computeIntakeLinkExpiry(appointmentTime, expiresAtOverride);
 
-    const { error: insertError } = await supabase.from("intake_magic_links").insert({
+    const pendingConsentTypes = body.pending_consent_types as string[] | undefined;
+
+    const insertPayload: Record<string, unknown> = {
       token,
       patient_id: patientId,
       booking_id: bookingId ?? null,
       email_address: patient.email,
       phone_number: patient.phone,
       expires_at: expiresAt,
-    });
+    };
+
+    if (pendingConsentTypes?.length) {
+      insertPayload.pending_consent_types = pendingConsentTypes;
+    }
+
+    const { error: insertError } = await supabase.from("intake_magic_links").insert(insertPayload);
 
     if (insertError) {
       throw new Error(insertError.message);

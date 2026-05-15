@@ -6,6 +6,7 @@ import {
   buildIntakeLinkMessages,
   firstNameFromFullName,
   sendIntakeSms,
+  intakeConsentTypeDisplayLabel,
   type IntakeLinkContext,
 } from "../_shared/intake-magic-link-messages.ts";
 import {
@@ -91,12 +92,25 @@ serve(async (req) => {
 
     const magicLinkUrl = buildIntakeMagicLinkUrl(magicLinkToken);
     const firstName = firstNameFromFullName(patient.full_name || "Patient");
+    const consentTypesRaw = body.consent_types as string[] | undefined;
+    const consentDocumentLabels =
+      consentTypesRaw?.map((t) => intakeConsentTypeDisplayLabel(t)) ?? [];
+
     const messages = buildIntakeLinkMessages({
       context,
       firstName,
       magicLinkUrl,
       appointmentDate,
       appointmentTime,
+      consentDocumentLabels: context === "tier2_consent_request" ? consentDocumentLabels : undefined,
+      expirationReminder:
+        context === "consent_expiration_reminder"
+          ? {
+              consentLabel: (body.expiration_consent_label as string) || "Treatment",
+              expiryFormatted: (body.expiration_expiry_formatted as string) || "",
+              daysRemaining: Number(body.expiration_days_remaining ?? 0),
+            }
+          : undefined,
     });
 
     const wantEmail = channelOverride?.includes("email") ?? true;

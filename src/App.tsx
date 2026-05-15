@@ -70,6 +70,7 @@ import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import FAQ from "./pages/FAQ";
 import ConsentPreview from "./pages/_dev/ConsentPreview";
 import PatientIntakeConsents from "./pages/PatientIntakeConsents";
+import PatientTreatmentConsents from "./pages/PatientTreatmentConsents";
 import IntakeKiosk from "./pages/IntakeKiosk";
 import IntakeStart from "./pages/IntakeStart";
 
@@ -220,6 +221,11 @@ const App = () => {
           <Route path="/intake/consents" element={
             <SecurePatientRoute>
               <PatientIntakeConsents />
+            </SecurePatientRoute>
+          } />
+          <Route path="/intake/treatment-consents" element={
+            <SecurePatientRoute>
+              <PatientTreatmentConsents />
             </SecurePatientRoute>
           } />
           <Route path="/patient/checkin" element={
