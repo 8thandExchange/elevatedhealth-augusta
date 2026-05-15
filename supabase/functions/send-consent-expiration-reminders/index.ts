@@ -39,12 +39,20 @@ serve(async (req) => {
 
   const functionName = "send-consent-expiration-reminders";
 
-  const auth = requireServiceRoleOnly(req);
-  if (!auth.ok) {
-    return new Response(JSON.stringify({ error: auth.message }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  // Auth: accept either service-role bearer (edge-to-edge) or X-Cron-Secret
+  // header (pg_cron scheduled invocation, mirrors send-intake-reminder).
+  const cronSecret = Deno.env.get("CRON_SECRET");
+  const suppliedCronSecret = req.headers.get("X-Cron-Secret");
+  const cronOk = Boolean(cronSecret && suppliedCronSecret && suppliedCronSecret === cronSecret);
+
+  if (!cronOk) {
+    const auth = requireServiceRoleOnly(req);
+    if (!auth.ok) {
+      return new Response(JSON.stringify({ error: auth.message }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
   }
 
   const supabase = createServiceClient();
