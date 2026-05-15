@@ -63,6 +63,7 @@ import ProviderAssistant from "@/components/provider/ProviderAssistant";
 import ConsentPDFCard from "@/components/provider/ConsentPDFCard";
 import CreditCodeLookup from "@/components/provider/CreditCodeLookup";
 import ResendWelcomeEmailButton from "@/components/provider/ResendWelcomeEmailButton";
+import ResendIntakeLinkButton from "@/components/provider/ResendIntakeLinkButton";
 import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 import InventoryAlerts from "@/components/provider/InventoryAlerts";
 import PatientDatabase from "@/components/provider/PatientDatabase";
@@ -2029,15 +2030,23 @@ const ProviderDashboard = () => {
                     {isSavingContact ? "Saving..." : "Save Contact Info"}
                   </Button>
                   
-                  {/* Resend Welcome Email Button */}
-                  {selectedPatient.patient.email && (
-                    <div className="pt-2 border-t border-border/50 mt-3">
-                      <ResendWelcomeEmailButton
+                  {/* Intake / welcome delivery */}
+                  {(selectedPatient.patient.email || selectedPatient.patient.phone) && (
+                    <div className="pt-2 border-t border-border/50 mt-3 space-y-2">
+                      <ResendIntakeLinkButton
                         patientId={selectedPatient.patient.id}
                         patientName={selectedPatient.patient.full_name}
                         patientEmail={selectedPatient.patient.email}
-                        primaryProgram={selectedPatient.patient.treatment_request || "hormone"}
+                        patientPhone={selectedPatient.patient.phone}
                       />
+                      {selectedPatient.patient.email && (
+                        <ResendWelcomeEmailButton
+                          patientId={selectedPatient.patient.id}
+                          patientName={selectedPatient.patient.full_name}
+                          patientEmail={selectedPatient.patient.email}
+                          primaryProgram={selectedPatient.patient.treatment_request || "hormone"}
+                        />
+                      )}
                     </div>
                   )}
                 </CardContent>

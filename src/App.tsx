@@ -71,6 +71,7 @@ import FAQ from "./pages/FAQ";
 import ConsentPreview from "./pages/_dev/ConsentPreview";
 import PatientIntakeConsents from "./pages/PatientIntakeConsents";
 import IntakeKiosk from "./pages/IntakeKiosk";
+import IntakeStart from "./pages/IntakeStart";
 
 const queryClient = new QueryClient();
 
@@ -169,6 +170,7 @@ const App = () => {
           <Route path="/schedule-consult" element={<ScheduleConsult />} />
           {/* Public intake form (no auth required, token-validated) */}
           <Route path="/intake" element={<PublicIntake />} />
+          <Route path="/intake/start" element={<IntakeStart />} />
           <Route path="/consultation-confirmed" element={<ConsultationConfirmed />} />
           <Route path="/iv-payment-success" element={<IVPaymentSuccess />} />
           <Route path="/alacarte-success" element={<AlaCartePaymentSuccess />} />
