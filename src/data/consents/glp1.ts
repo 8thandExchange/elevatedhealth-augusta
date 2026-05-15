@@ -1,22 +1,19 @@
 import type { ConsentDocument } from "./types";
 
 /**
- * TODO: Full consent text will be pasted in via subsequent commit.
- * Reference: /docs/consent_drafts/glp1.md (when available)
- * OR see the prior drafting conversation.
- *
- * The version_label below + body_hash in the DB seed represent the
- * approved version. The text body below is a placeholder pending paste.
+ * TODO(PR follow-up): Full GLP-1 consent body was not found in-repo.
+ * Paste into body_markdown and add matching consent_versions seed row.
  */
 export const glp1Consent: ConsentDocument = {
   type: "glp1",
-  version_label: "2026-05-v1",
+  version_label: "2026-05-14-v1",
   title: "GLP-1 Consent",
   tier: 2,
   body_markdown: `
 # GLP-1 Consent
 
-[Full text to be pasted here]
+**TODO:** Full legal text pending paste from prior drafting session or counsel.
+Do not activate in production until body_markdown matches the seeded consent_versions row.
 `.trim(),
   sections: [
     { id: "fda_warnings", title: "Section 4 — FDA Black Box Warnings", requires_attestation: true },
@@ -27,5 +24,5 @@ export const glp1Consent: ConsentDocument = {
   ],
   expiration_months: 12,
   signing_method: "typed_name_with_section_attestation",
-  effective_from: "2026-05-15",
+  effective_from: "2026-05-14T00:00:00Z",
 };

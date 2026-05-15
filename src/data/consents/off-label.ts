@@ -1,25 +1,22 @@
 import type { ConsentDocument } from "./types";
 
 /**
- * TODO: Full consent text will be pasted in via subsequent commit.
- * Reference: /docs/consent_drafts/off-label.md (when available)
- * OR see the prior drafting conversation.
- *
- * The version_label below + body_hash in the DB seed represent the
- * approved version. The text body below is a placeholder pending paste.
+ * TODO(PR follow-up): Full off-label acknowledgment body was not found in-repo.
+ * Paste into body_markdown and add matching consent_versions seed row.
  */
 export const offLabelConsent: ConsentDocument = {
   type: "off_label",
-  version_label: "2026-05-v1",
+  version_label: "2026-05-14-v1",
   title: "Off-Label Use Acknowledgment",
   tier: 2,
   body_markdown: `
 # Off-Label Use Acknowledgment
 
-[Full text to be pasted here]
+**TODO:** Full legal text pending paste from prior drafting session or counsel.
+Do not activate in production until body_markdown matches the seeded consent_versions row.
 `.trim(),
   sections: [{ id: "all", title: "Off-Label Use Acknowledgment", requires_attestation: true }],
   expiration_months: 12,
   signing_method: "typed_name",
-  effective_from: "2026-05-15",
+  effective_from: "2026-05-14T00:00:00Z",
 };

@@ -1,22 +1,20 @@
 import type { ConsentDocument } from "./types";
 
 /**
- * TODO: Full consent text will be pasted in via subsequent commit.
- * Reference: /docs/consent_drafts/hormone-therapy.md (when available)
- * OR see the prior drafting conversation.
- *
- * The version_label below + body_hash in the DB seed represent the
- * approved version. The text body below is a placeholder pending paste.
+ * TODO(PR follow-up): Full HRT consent body (13 sections + section attestations)
+ * was not found in-repo. Paste into body_markdown and add matching row to
+ * `supabase/migrations/20260515194500_seed_consent_versions.sql` (or a new migration).
  */
 export const hormoneTherapyConsent: ConsentDocument = {
   type: "hormone_therapy",
-  version_label: "2026-05-v1",
+  version_label: "2026-05-14-v1",
   title: "Hormone Therapy Consent",
   tier: 2,
   body_markdown: `
 # Hormone Therapy Consent
 
-[Full text to be pasted here]
+**TODO:** Full legal text pending paste from prior drafting session or counsel.
+Do not activate in production until body_markdown matches the seeded consent_versions row.
 `.trim(),
   sections: [
     { id: "general_risks", title: "Section 3 — General Risks", requires_attestation: true },
@@ -27,5 +25,5 @@ export const hormoneTherapyConsent: ConsentDocument = {
   ],
   expiration_months: 12,
   signing_method: "typed_name_with_section_attestation",
-  effective_from: "2026-05-15",
+  effective_from: "2026-05-14T00:00:00Z",
 };
