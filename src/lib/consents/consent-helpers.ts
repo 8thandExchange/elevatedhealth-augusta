@@ -11,7 +11,7 @@ export async function hasValidConsent(
   patientId: string,
   consentType: ConsentType
 ): Promise<{ valid: boolean; consentRecordId?: string; expiresAt?: string }> {
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from("consent_records")
     .select("id, expires_at, signed_at")
     .eq("patient_id", patientId)
@@ -51,7 +51,7 @@ const ALL_CONSENT_TYPES: ConsentType[] = [
 export async function getValidConsents(patientId: string): Promise<Record<ConsentType, boolean>> {
   const base = Object.fromEntries(ALL_CONSENT_TYPES.map((t) => [t, false])) as Record<ConsentType, boolean>;
 
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from("consent_records")
     .select("consent_type, expires_at")
     .eq("patient_id", patientId)
@@ -75,7 +75,7 @@ export async function getValidConsents(patientId: string): Promise<Record<Consen
 
 /** Latest active catalog row for a consent type (by effective_from). */
 export async function getActiveConsentVersion(consentType: ConsentType) {
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from("consent_versions")
     .select("*")
     .eq("consent_type", consentType)
