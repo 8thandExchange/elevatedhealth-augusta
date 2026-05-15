@@ -22,6 +22,8 @@ export interface ConsentSigningFlowProps {
   signingSessionId?: string;
   /** When true, tags records for dev preview (still real DB rows). */
   isDevPreview?: boolean;
+  signingMethod?: "patient_typed_name" | "patient_typed_name_in_clinic" | "staff_verbal_documented";
+  staffWitnessUserId?: string;
 }
 
 function defaultAttestationText(sectionTitle: string): string {
@@ -37,6 +39,8 @@ export function ConsentSigningFlow({
   onCancel,
   signingSessionId: signingSessionIdProp,
   isDevPreview = false,
+  signingMethod = "patient_typed_name",
+  staffWitnessUserId,
 }: ConsentSigningFlowProps) {
   const requiredSections = useMemo(
     () => consentDocument.sections.filter((s) => s.requires_attestation),
@@ -106,6 +110,8 @@ export function ConsentSigningFlow({
           signed_session_id: isDevPreview ? `dev-preview:${sessionId}` : sessionId,
           section_attestations: sectionPayload,
           expires_at: expiresAt.toISOString(),
+          signing_method: signingMethod,
+          staff_witness_user_id: staffWitnessUserId ?? null,
         })
         .select()
         .single();

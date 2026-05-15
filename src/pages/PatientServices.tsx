@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,8 @@ import SafetyGate from "@/components/patient/SafetyGate";
 import OAuthOnboarding from "@/components/patient/OAuthOnboarding";
 import { usePatient, useInvalidatePatientData } from "@/hooks/usePatient";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
+import { hasCompletedTier1Intake } from "@/lib/consents/intake-status";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface Service {
   id: string;
@@ -103,11 +105,25 @@ const PatientServices = () => {
   // Use React Query hook for patient data
   const { data: patient, isLoading, error } = usePatient();
   const { invalidateAll, invalidatePatient } = useInvalidatePatientData();
+  const [tier1IntakeComplete, setTier1IntakeComplete] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!patient?.id) return;
+    hasCompletedTier1Intake(patient.id).then(setTier1IntakeComplete).catch(() => setTier1IntakeComplete(null));
+  }, [patient?.id]);
 
   // Parse current interests from patient data
   const currentInterests = patient?.treatment_request?.split(",").filter(Boolean) || [];
 
   const hasService = (treatmentKey: string) => currentInterests.includes(treatmentKey);
+
+  const openServiceJourney = (journeyPage: string) => {
+    if (tier1IntakeComplete === false) {
+      navigate("/intake/consents");
+      return;
+    }
+    navigate(journeyPage);
+  };
 
   const getColorClasses = (color: string) => {
     const colors: Record<string, string> = {
@@ -214,6 +230,19 @@ const PatientServices = () => {
       />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {tier1IntakeComplete === false && (
+          <Alert className="mb-6 border-accent/40 bg-accent/5">
+            <AlertDescription className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <span>
+                Please complete your required clinic consents before starting clinical services.
+              </span>
+              <Button asChild variant="default" size="sm" className="shrink-0">
+                <Link to="/intake/consents">Complete consents</Link>
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="mb-8">
           <EverythingIncludedPillars intro="When you are on an ELEVATED program, your care team bundles clinical access the same way we describe on our public site — ask us any time how your plan maps to these pillars." />
         </div>
@@ -239,7 +268,7 @@ const PatientServices = () => {
                 <Card 
                   key={service.id}
                   className={`bg-gradient-to-br ${getColorClasses(service.color)} transition-all hover:shadow-lg cursor-pointer group`}
-                  onClick={() => navigate(service.journeyPage)}
+                  onClick={() => openServiceJourney(service.journeyPage)}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
@@ -260,7 +289,7 @@ const PatientServices = () => {
                       className="w-full group-hover:bg-foreground group-hover:text-background transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(service.journeyPage);
+                        openServiceJourney(service.journeyPage);
                       }}
                     >
                       {service.actionLabel}

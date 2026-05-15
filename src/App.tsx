@@ -69,6 +69,8 @@ import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import FAQ from "./pages/FAQ";
 import ConsentPreview from "./pages/_dev/ConsentPreview";
+import PatientIntakeConsents from "./pages/PatientIntakeConsents";
+import IntakeKiosk from "./pages/IntakeKiosk";
 
 const queryClient = new QueryClient();
 
@@ -213,6 +215,11 @@ const App = () => {
               <PatientIntake />
             </SecurePatientRoute>
           } />
+          <Route path="/intake/consents" element={
+            <SecurePatientRoute>
+              <PatientIntakeConsents />
+            </SecurePatientRoute>
+          } />
           <Route path="/patient/checkin" element={
             <SecurePatientRoute>
               <SymptomCheckIn />
@@ -249,6 +256,11 @@ const App = () => {
           <Route path="/office/schedule" element={
             <ProviderLayout title="Schedule" subtitle="Office-wide schedule" showNavbar={false}>
               <OfficeSchedule />
+            </ProviderLayout>
+          } />
+          <Route path="/kiosk/intake" element={
+            <ProviderLayout title="Intake kiosk" subtitle="Front desk iPad" showNavbar={false}>
+              <IntakeKiosk />
             </ProviderLayout>
           } />
           <Route path="/admin/business" element={

@@ -15,6 +15,7 @@ import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import KitTracker from "@/components/patient/KitTracker";
 import PatientNavbar from "@/components/patient/PatientNavbar";
+import { hasCompletedTier1Intake } from "@/lib/consents/intake-status";
 
 interface SymptomLog {
   id: string;
@@ -79,6 +80,12 @@ const HormoneJourneyPage = () => {
       if (patientError) throw patientError;
       if (!patientData) {
         toast.error("Patient profile not found");
+        return;
+      }
+
+      const tier1Done = await hasCompletedTier1Intake(patientData.id);
+      if (!tier1Done) {
+        navigate("/intake/consents");
         return;
       }
 

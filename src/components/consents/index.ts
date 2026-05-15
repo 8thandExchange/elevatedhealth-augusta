@@ -12,3 +12,12 @@ export type { ConsentSigningFlowProps } from "./ConsentSigningFlow";
 
 export { ConsentReviewView } from "./ConsentReviewView";
 export type { ConsentReviewViewProps } from "./ConsentReviewView";
+
+export { DobVerification } from "./DobVerification";
+export type { DobVerificationProps } from "./DobVerification";
+
+export { Tier1IntakeBundle } from "./Tier1IntakeBundle";
+export type { Tier1IntakeBundleProps } from "./Tier1IntakeBundle";
+
+export { StaffOverrideModal } from "./StaffOverrideModal";
+export type { StaffOverrideModalProps } from "./StaffOverrideModal";

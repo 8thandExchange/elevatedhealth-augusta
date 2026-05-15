@@ -27,6 +27,7 @@ export interface Patient {
   zip_code: string | null;
   allergies: string | null;
   consent_completed_at: string | null;
+  intake_consents_completed_at?: string | null;
 }
 
 export interface SymptomLog {
