@@ -35,7 +35,7 @@ See you soon,
 The Elevated Health Augusta team`;
 
     const smsBody =
-      `Elevated Health Augusta reminder: please complete your intake before your appointment tomorrow. ${magicLinkUrl}`;
+      `Elevated Health Augusta reminder: please complete your intake before your appointment tomorrow. ${magicLinkUrl} Reply STOP to opt out.`;
 
     return {
       emailSubject,
@@ -57,7 +57,8 @@ This link will let you complete your intake forms and consents.
 Elevated Health Augusta team
 ${CLINIC_PHONE}`;
 
-    const smsBody = `Elevated Health Augusta: your intake link as requested. ${magicLinkUrl}`;
+    const smsBody =
+      `Elevated Health Augusta: your intake link as requested. ${magicLinkUrl} Reply STOP to opt out.`;
 
     return {
       emailSubject,
