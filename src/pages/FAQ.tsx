@@ -187,10 +187,24 @@ const FAQ = () => {
     <div className="min-h-screen bg-background">
       <Helmet>
         <title>Frequently Asked Questions | Elevated Health Augusta</title>
-        <meta
-          name="description"
-          content="Answers about the Wellness Assessment, ELEVATED programs, membership, peptides, labs, and cash-pay pricing at Elevated Health Augusta in Evans, GA."
-        />
+        <meta name="description" content="Answers about the Wellness Assessment, ELEVATED programs, membership, peptides, labs, and cash-pay pricing at Elevated Health Augusta." />
+        <link rel="canonical" href="https://elevatedhealthaugusta.com/faq" />
+        <meta property="og:title" content="FAQ | Elevated Health Augusta" />
+        <meta property="og:description" content="Answers about Wellness Assessment, programs, membership, peptides, labs, and pricing." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/faq" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            { "@type": "Question", "name": "What is the Wellness Assessment?", "acceptedAnswer": { "@type": "Answer", "text": "A $79, 30-minute in-person visit at our Evans, GA clinic to review your goals, history, and labs and recommend a personalized plan." } },
+            { "@type": "Question", "name": "Do you accept insurance?", "acceptedAnswer": { "@type": "Answer", "text": "We accept Blue Cross Blue Shield, TRICARE, and VA benefits for covered services. Many wellness services are cash-pay with transparent pricing." } },
+            { "@type": "Question", "name": "What hormone therapy do you offer?", "acceptedAnswer": { "@type": "Answer", "text": "Compounded transdermal bioidentical hormone creams for women and physician-led testosterone replacement therapy for men, all guided by lab work." } },
+            { "@type": "Question", "name": "How does medical weight loss work?", "acceptedAnswer": { "@type": "Answer", "text": "Physician-supervised GLP-1 therapy (semaglutide or tirzepatide when clinically appropriate) with LabCorp labs and ongoing follow-up." } },
+            { "@type": "Question", "name": "Do I need a consultation for IV therapy?", "acceptedAnswer": { "@type": "Answer", "text": "No. IV hydration drips can be booked online and are administered by a registered nurse. Same-day appointments are usually available." } },
+            { "@type": "Question", "name": "How much does membership cost?", "acceptedAnswer": { "@type": "Answer", "text": "Memberships are tiered at $199, $399, and $699 per month, with included services and member pricing on add-ons." } }
+          ]
+        })}</script>
       </Helmet>
       <Navbar />
 
