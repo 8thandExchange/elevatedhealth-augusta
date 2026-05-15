@@ -200,9 +200,22 @@ const PeptideTherapy = () => {
   return (
     <>
       <Helmet>
-        <title>Peptide Therapy Augusta GA | Pharmacy-Sourced Protocols — Elevated Health</title>
-        <meta name="description" content="Physician-prescribed, pharmacy-compounded peptide protocols in Augusta, GA. PDA, PT-141, Sermorelin, NAD+, GHK-Cu. Lab-monitored, shipped to your door. No gray-market." />
+        <title>Peptide Therapy Augusta GA — Elevated Health</title>
+        <meta name="description" content="Physician-prescribed, pharmacy-compounded peptide protocols in Augusta, GA. PDA, PT-141, Sermorelin, NAD+, GHK-Cu. Lab-monitored, shipped to your door." />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/peptides" />
+        <meta property="og:title" content="Peptide Therapy Augusta GA — Elevated Health" />
+        <meta property="og:description" content="Pharmacy-sourced peptide protocols. Lab-monitored, physician-prescribed. Shipped to your door." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/peptides" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "MedicalProcedure",
+          "name": "Peptide Therapy",
+          "description": "Pharmacy-compounded peptide protocols including PDA, PT-141, Sermorelin, NAD+, and GHK-Cu, prescribed and lab-monitored by a physician.",
+          "procedureType": "https://schema.org/TherapeuticProcedure",
+          "url": "https://elevatedhealthaugusta.com/peptides",
+          "provider": { "@type": "MedicalClinic", "name": "Elevated Health Augusta", "url": "https://elevatedhealthaugusta.com" }
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
