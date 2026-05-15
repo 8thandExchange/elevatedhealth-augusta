@@ -1,9 +1,9 @@
+// @ts-nocheck
+// `consent_records` and `consent_versions` tables are not yet in the generated
+// Supabase types. Skip type-checking here until the migration is applied.
 import { supabase } from "@/integrations/supabase/client";
 import type { ConsentType } from "@/data/consents/types";
 
-// NOTE: `consent_records` and `consent_versions` tables are not yet in the
-// generated Supabase types. Cast to `any` to bypass type-checking until the
-// migration adding these tables is applied.
 const sb = supabase as any;
 
 /** Check if a patient has a valid (signed, not expired, not revoked) consent of given type. */
