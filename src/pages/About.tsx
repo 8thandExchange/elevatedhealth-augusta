@@ -37,8 +37,12 @@ const About = () => {
     <>
       <Helmet>
         <title>About | Elevated Health Augusta</title>
-        <meta name="description" content="Elevated Health Augusta was built by a team of physicians and nurses with experience across emergency medicine and physical medicine & rehabilitation. Evans, GA." />
+        <meta name="description" content="Elevated Health Augusta was built by physicians and nurses with experience across emergency medicine and physical medicine & rehabilitation. Evans, GA." />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/about" />
+        <meta property="og:title" content="About | Elevated Health Augusta" />
+        <meta property="og:description" content="Built by physicians and nurses from emergency medicine and PM&R. Evans, GA." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/about" />
       </Helmet>
       <div className="min-h-screen">
         <Navbar />
