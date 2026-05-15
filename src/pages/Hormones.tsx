@@ -22,9 +22,22 @@ const Hormones = () => {
     <>
       <Helmet>
         <title>Hormone Therapy Augusta GA | BHRT & TRT — Elevated Health</title>
-        <meta name="description" content="Bioidentical hormone therapy in Augusta, GA. Compounded transdermal creams for women, physician-led TRT for men. Lab-driven, custom-dosed, no shortcuts." />
+        <meta name="description" content="Bioidentical hormone therapy in Augusta, GA. Compounded transdermal creams for women, physician-led TRT for men. Lab-driven, custom-dosed." />
         <meta name="keywords" content="hormone therapy Augusta, BHRT Augusta GA, TRT Augusta GA, bioidentical hormones, testosterone replacement" />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/hormones" />
+        <meta property="og:title" content="Hormone Therapy Augusta GA | BHRT & TRT" />
+        <meta property="og:description" content="Lab-driven, custom-dosed bioidentical hormone therapy. Transdermal creams and physician-led TRT." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://elevatedhealthaugusta.com/hormones" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "MedicalProcedure",
+          "name": "Hormone Replacement Therapy",
+          "description": "Bioidentical hormone therapy with compounded transdermal creams for women and physician-led testosterone therapy for men, guided by lab work.",
+          "procedureType": "https://schema.org/TherapeuticProcedure",
+          "url": "https://elevatedhealthaugusta.com/hormones",
+          "provider": { "@type": "MedicalClinic", "name": "Elevated Health Augusta", "url": "https://elevatedhealthaugusta.com" }
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
