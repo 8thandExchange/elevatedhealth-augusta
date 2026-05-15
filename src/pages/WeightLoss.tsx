@@ -182,18 +182,25 @@ const WeightLoss = () => {
   return (
     <>
       <Helmet>
-        <title>Metabolic Optimization Program - Weight Loss Augusta | Elevated Health Augusta</title>
-        <meta name="description" content="Medical weight loss in Augusta, GA. Start with a $79 Wellness Assessment. In-person GLP-1 care, LabCorp labs, compounded semaglutide and tirzepatide when clinically appropriate." />
-        <meta name="keywords" content="metabolic optimization Augusta, semaglutide Augusta GA, tirzepatide Augusta, GLP-1 Augusta, weight loss clinic Georgia, metabolic labs" />
-        <meta property="og:title" content="Metabolic Optimization Program - Weight Loss Augusta | Elevated Health Augusta" />
-        <meta property="og:description" content="Medical weight loss in Augusta, GA. $79 Wellness Assessment. In-person GLP-1 therapy with transparent program pricing." />
+        <title>Medical Weight Loss Augusta GA — Elevated Health</title>
+        <meta name="description" content="Medical weight loss in Augusta, GA. $79 Wellness Assessment, in-person GLP-1 care, LabCorp labs, compounded semaglutide and tirzepatide when appropriate." />
+        <link rel="canonical" href="https://elevatedhealthaugusta.com/weight-loss" />
+        <meta property="og:title" content="Medical Weight Loss Augusta GA — Elevated Health" />
+        <meta property="og:description" content="$79 Wellness Assessment. In-person GLP-1 therapy with transparent monthly program pricing." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/weight-loss" />
-        <meta property="og:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Medical Weight Loss Augusta | Metabolic Optimization" />
-        <meta name="twitter:description" content="$79 Wellness Assessment. In-person GLP-1 care with clear monthly program pricing." />
-        <meta name="twitter:image" content="https://elevatedhealthaugusta.com/og-image.jpg" />
+        <meta name="twitter:title" content="Medical Weight Loss Augusta | Elevated Health" />
+        <meta name="twitter:description" content="$79 Wellness Assessment. In-person GLP-1 care with clear monthly pricing." />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "MedicalProcedure",
+          "name": "Medical Weight Loss Program",
+          "description": "Physician-supervised GLP-1 weight loss with semaglutide or tirzepatide, lab monitoring, and lifestyle coaching.",
+          "procedureType": "https://schema.org/TherapeuticProcedure",
+          "url": "https://elevatedhealthaugusta.com/weight-loss",
+          "provider": { "@type": "MedicalClinic", "name": "Elevated Health Augusta", "url": "https://elevatedhealthaugusta.com" }
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen">
