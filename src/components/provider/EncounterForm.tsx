@@ -133,7 +133,7 @@ export function EncounterForm({
         .limit(1)
         .maybeSingle();
       if (vRow) {
-        const v = vRow as Record<string, number | null>;
+        const v = vRow as Record<string, number | string | null>;
         setVitals({
           systolic_bp: v.systolic_bp ?? null,
           diastolic_bp: v.diastolic_bp ?? null,
@@ -493,7 +493,7 @@ export function EncounterForm({
         </Collapsible>
 
         {["Subjective", "Objective", "Assessment", "Plan"].map((label, i) => {
-          const key = ["subjective", "objective", "assessment", "plan"][i] as const;
+          const key = ["subjective", "objective", "assessment", "plan"][i];
           const val = [subjective, objective, assessment, plan][i];
           const set = [setSubjective, setObjective, setAssessment, setPlan][i];
           return (

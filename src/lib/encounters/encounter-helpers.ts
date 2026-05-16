@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import type { EncounterType, PatientEncounter } from "@/data/encounters/types";
 
 export interface EncounterDraftFields {
@@ -28,7 +29,7 @@ export async function logEncounterAction(
     encounter_id: encounterId,
     user_id: user.id,
     action,
-    action_details: details,
+    action_details: details as unknown as Json,
     ip_address: meta?.ip ?? null,
     user_agent: meta?.userAgent ?? (typeof navigator !== "undefined" ? navigator.userAgent : null),
   });
@@ -234,17 +235,17 @@ export async function createAmendment(originalEncounterId: string): Promise<Pati
     .maybeSingle();
 
   if (vit) {
-    const v = vit as Record<string, unknown>;
+    const v = vit as Record<string, number | null>;
     await supabase.from("encounter_vitals").insert({
       encounter_id: row.id,
-      systolic_bp: v.systolic_bp,
-      diastolic_bp: v.diastolic_bp,
-      heart_rate: v.heart_rate,
-      respiratory_rate: v.respiratory_rate,
-      temperature_f: v.temperature_f,
-      weight_lbs: v.weight_lbs,
-      height_inches: v.height_inches,
-      spo2_pct: v.spo2_pct,
+      systolic_bp: v.systolic_bp ?? null,
+      diastolic_bp: v.diastolic_bp ?? null,
+      heart_rate: v.heart_rate ?? null,
+      respiratory_rate: v.respiratory_rate ?? null,
+      temperature_f: v.temperature_f ?? null,
+      weight_lbs: v.weight_lbs ?? null,
+      height_inches: v.height_inches ?? null,
+      spo2_pct: v.spo2_pct ?? null,
       recorded_by_user_id: user.id,
     });
   }
