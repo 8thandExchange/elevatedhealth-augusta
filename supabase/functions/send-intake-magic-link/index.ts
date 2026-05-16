@@ -102,7 +102,10 @@ serve(async (req) => {
       magicLinkUrl,
       appointmentDate,
       appointmentTime,
-      consentDocumentLabels: context === "tier2_consent_request" ? consentDocumentLabels : undefined,
+      consentDocumentLabels:
+        context === "tier2_consent_request" || context === "reconsent_request"
+          ? consentDocumentLabels
+          : undefined,
       expirationReminder:
         context === "consent_expiration_reminder"
           ? {
@@ -110,6 +113,18 @@ serve(async (req) => {
               expiryFormatted: (body.expiration_expiry_formatted as string) || "",
               daysRemaining: Number(body.expiration_days_remaining ?? 0),
             }
+          : undefined,
+      reconsentReminder:
+        context === "reconsent_reminder"
+          ? {
+              consentLabel: (body.reconsent_consent_label as string) || "Treatment",
+              deadlineFormatted: (body.reconsent_deadline_formatted as string) || "",
+              daysRemaining: Number(body.reconsent_days_remaining ?? 0),
+            }
+          : undefined,
+      substanceLabel:
+        context === "substance_acknowledgment_request"
+          ? ((body.substance_label as string) || undefined)
           : undefined,
     });
 

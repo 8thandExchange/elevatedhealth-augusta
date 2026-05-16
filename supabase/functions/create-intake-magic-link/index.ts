@@ -64,6 +64,8 @@ serve(async (req) => {
     const expiresAt = computeIntakeLinkExpiry(appointmentTime, expiresAtOverride);
 
     const pendingConsentTypes = body.pending_consent_types as string[] | undefined;
+    const pendingReconsentRequestId = body.pending_reconsent_request_id as string | undefined;
+    const pendingSubstanceId = body.pending_substance_id as string | undefined;
 
     const insertPayload: Record<string, unknown> = {
       token,
@@ -76,6 +78,12 @@ serve(async (req) => {
 
     if (pendingConsentTypes?.length) {
       insertPayload.pending_consent_types = pendingConsentTypes;
+    }
+    if (pendingReconsentRequestId) {
+      insertPayload.pending_reconsent_request_id = pendingReconsentRequestId;
+    }
+    if (pendingSubstanceId) {
+      insertPayload.pending_substance_id = pendingSubstanceId;
     }
 
     const { error: insertError } = await supabase.from("intake_magic_links").insert(insertPayload);

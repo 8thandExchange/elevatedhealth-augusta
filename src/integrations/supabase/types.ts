@@ -817,6 +817,179 @@ export type Database = {
         }
         Relationships: []
       }
+      consent_reconsent_reminders_sent: {
+        Row: {
+          channels_delivered: string[]
+          id: string
+          reminder_window: string
+          reconsent_request_id: string
+          sent_at: string
+        }
+        Insert: {
+          channels_delivered?: string[]
+          id?: string
+          reminder_window: string
+          reconsent_request_id: string
+          sent_at?: string
+        }
+        Update: {
+          channels_delivered?: string[]
+          id?: string
+          reminder_window?: string
+          reconsent_request_id?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_reconsent_reminders_sent_reconsent_request_id_fkey"
+            columns: ["reconsent_request_id"]
+            isOneToOne: false
+            referencedRelation: "consent_reconsent_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consent_reconsent_requests: {
+        Row: {
+          consent_type: string
+          fulfilled_at: string | null
+          fulfilled_consent_record_id: string | null
+          id: string
+          new_version_id: string
+          patient_id: string
+          prior_consent_record_id: string
+          prior_version_id: string
+          reconsent_deadline: string
+          reminders_sent_at: Json
+          triggered_at: string
+        }
+        Insert: {
+          consent_type: string
+          fulfilled_at?: string | null
+          fulfilled_consent_record_id?: string | null
+          id?: string
+          new_version_id: string
+          patient_id: string
+          prior_consent_record_id: string
+          prior_version_id: string
+          reconsent_deadline: string
+          reminders_sent_at?: Json
+          triggered_at?: string
+        }
+        Update: {
+          consent_type?: string
+          fulfilled_at?: string | null
+          fulfilled_consent_record_id?: string | null
+          id?: string
+          new_version_id?: string
+          patient_id?: string
+          prior_consent_record_id?: string
+          prior_version_id?: string
+          reconsent_deadline?: string
+          reminders_sent_at?: Json
+          triggered_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_reconsent_requests_fulfilled_consent_record_id_fkey"
+            columns: ["fulfilled_consent_record_id"]
+            isOneToOne: false
+            referencedRelation: "consent_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_reconsent_requests_new_version_id_fkey"
+            columns: ["new_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_reconsent_requests_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_reconsent_requests_prior_consent_record_id_fkey"
+            columns: ["prior_consent_record_id"]
+            isOneToOne: false
+            referencedRelation: "consent_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_reconsent_requests_prior_version_id_fkey"
+            columns: ["prior_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      substance_addition_acknowledgments: {
+        Row: {
+          acknowledgment_body_hash: string
+          acknowledgment_body_markdown: string
+          acknowledged_at: string
+          capture_metadata: Json
+          id: string
+          parent_consent_record_id: string
+          patient_id: string
+          signed_typed_name: string
+          signing_method: string
+          staff_witness_user_id: string | null
+          substance_added_date: string
+          substance_display_name: string
+          substance_id: string
+        }
+        Insert: {
+          acknowledgment_body_hash: string
+          acknowledgment_body_markdown: string
+          acknowledged_at?: string
+          capture_metadata?: Json
+          id?: string
+          parent_consent_record_id: string
+          patient_id: string
+          signed_typed_name: string
+          signing_method?: string
+          staff_witness_user_id?: string | null
+          substance_added_date: string
+          substance_display_name: string
+          substance_id: string
+        }
+        Update: {
+          acknowledgment_body_hash?: string
+          acknowledgment_body_markdown?: string
+          acknowledged_at?: string
+          capture_metadata?: Json
+          id?: string
+          parent_consent_record_id?: string
+          patient_id?: string
+          signed_typed_name?: string
+          signing_method?: string
+          staff_witness_user_id?: string | null
+          substance_added_date?: string
+          substance_display_name?: string
+          substance_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "substance_addition_acknowledgments_parent_consent_record_id_fkey"
+            columns: ["parent_consent_record_id"]
+            isOneToOne: false
+            referencedRelation: "consent_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "substance_addition_acknowledgments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultation_bookings: {
         Row: {
           amount_paid: number | null
@@ -1370,6 +1543,8 @@ export type Database = {
           last_used_at: string | null
           patient_id: string
           pending_consent_types: string[] | null
+          pending_reconsent_request_id: string | null
+          pending_substance_id: string | null
           phone_number: string | null
           reminder_sent_at: string | null
           revoked_at: string | null
@@ -1386,6 +1561,8 @@ export type Database = {
           last_used_at?: string | null
           patient_id: string
           pending_consent_types?: string[] | null
+          pending_reconsent_request_id?: string | null
+          pending_substance_id?: string | null
           phone_number?: string | null
           reminder_sent_at?: string | null
           revoked_at?: string | null
@@ -1402,6 +1579,8 @@ export type Database = {
           last_used_at?: string | null
           patient_id?: string
           pending_consent_types?: string[] | null
+          pending_reconsent_request_id?: string | null
+          pending_substance_id?: string | null
           phone_number?: string | null
           reminder_sent_at?: string | null
           revoked_at?: string | null
@@ -1414,6 +1593,13 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_magic_links_pending_reconsent_request_id_fkey"
+            columns: ["pending_reconsent_request_id"]
+            isOneToOne: false
+            referencedRelation: "consent_reconsent_requests"
             referencedColumns: ["id"]
           },
         ]

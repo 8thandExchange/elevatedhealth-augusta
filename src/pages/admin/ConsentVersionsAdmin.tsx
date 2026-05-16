@@ -27,6 +27,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Table,
@@ -190,7 +199,35 @@ export default function ConsentVersionsAdmin() {
     };
   }, [publishOpen, publishType]);
 
-  const handlePublish = async () => {
+  const preparePublish = async () => {
+    const trimmed = bodyMd.trim();
+    if (!trimmed) {
+      toast.error("Body markdown is required.");
+      return;
+    }
+
+    if (forceReConsent && activeForType?.id) {
+      const nowIso = new Date().toISOString();
+      const { count, error: cErr } = await supabase
+        .from("consent_records")
+        .select("id", { count: "exact", head: true })
+        .eq("consent_version_id", activeForType.id)
+        .is("revoked_at", null)
+        .gt("expires_at", nowIso);
+
+      if (cErr) {
+        toast.error(cErr.message);
+        return;
+      }
+      setAffectedReconsentCount(count ?? 0);
+      setPublishConfirmOpen(true);
+      return;
+    }
+
+    await executePublish();
+  };
+
+  const executePublish = async () => {
     const trimmed = bodyMd.trim();
     if (!trimmed) {
       toast.error("Body markdown is required.");
@@ -198,11 +235,14 @@ export default function ConsentVersionsAdmin() {
     }
 
     setPublishing(true);
+    setPublishConfirmOpen(false);
     try {
       const effectiveFromIso = localInputToIso(effectiveFromLocal);
       const hash = await hashConsentBody(trimmed);
+      const priorId = activeForType?.id;
+      const shouldTriggerReconsent = !!forceReConsent && !!priorId;
 
-      if (activeForType?.id) {
+      if (priorId) {
         const priorPatch: {
           is_active: boolean;
           effective_to: string;
@@ -213,32 +253,50 @@ export default function ConsentVersionsAdmin() {
         };
         if (forceReConsent) priorPatch.force_re_consent_required = true;
 
-        const { error: upErr } = await supabase
-          .from("consent_versions")
-          .update(priorPatch)
-          .eq("id", activeForType.id);
+        const { error: upErr } = await supabase.from("consent_versions").update(priorPatch).eq("id", priorId);
 
         if (upErr) throw upErr;
       }
 
-      const { error: insErr } = await supabase.from("consent_versions").insert({
-        consent_type: publishType,
-        version_label:
-          versionLabel.trim() ||
-          (activeForType ? suggestNextVersionLabel(activeForType.version_label) : "v1.0.0"),
-        title: title.trim() || activeForType?.title || consentTypeDisplayName(publishType),
-        body_markdown: trimmed,
-        body_hash: hash,
-        effective_from: effectiveFromIso,
-        effective_to: null,
-        is_active: true,
-        changelog_notes: changelogNotes.trim() || null,
-        force_re_consent_required: false,
-      });
+      const { data: inserted, error: insErr } = await supabase
+        .from("consent_versions")
+        .insert({
+          consent_type: publishType,
+          version_label:
+            versionLabel.trim() ||
+            (activeForType ? suggestNextVersionLabel(activeForType.version_label) : "v1.0.0"),
+          title: title.trim() || activeForType?.title || consentTypeDisplayName(publishType),
+          body_markdown: trimmed,
+          body_hash: hash,
+          effective_from: effectiveFromIso,
+          effective_to: null,
+          is_active: true,
+          changelog_notes: changelogNotes.trim() || null,
+          force_re_consent_required: false,
+        })
+        .select("id")
+        .single();
 
       if (insErr) throw insErr;
 
-      toast.success("Published new consent version.");
+      if (shouldTriggerReconsent && priorId && inserted?.id) {
+        const { data: trig, error: trigErr } = await supabase.functions.invoke("trigger-reconsent-requests", {
+          body: { prior_version_id: priorId, new_version_id: inserted.id },
+        });
+
+        if (trigErr) {
+          toast.error(`Published version, but re-consent fan-out failed: ${trigErr.message}`);
+        } else if (trig?.errors?.length) {
+          toast.error(`Re-consent partially failed: ${(trig.errors as string[]).slice(0, 3).join("; ")}`);
+        } else {
+          toast.success(
+            `Published. Created ${trig?.requests_created ?? 0} re-consent request(s); ${trig?.links_sent ?? 0} magic link(s) sent.`,
+          );
+        }
+      } else {
+        toast.success("Published new consent version.");
+      }
+
       setPublishOpen(false);
       await refreshVersions();
     } catch (e: unknown) {
@@ -282,6 +340,9 @@ export default function ConsentVersionsAdmin() {
           <Button type="button" onClick={() => setPublishOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             Publish New Version
+          </Button>
+          <Button type="button" variant="outline" size="sm" asChild>
+            <Link to="/admin/substance-acknowledgments">Substance acknowledgments</Link>
           </Button>
         </div>
 
@@ -377,6 +438,26 @@ export default function ConsentVersionsAdmin() {
           joining consent_records for dashboard rollups (see provider patient list badges).
         </p>
       </main>
+
+      <AlertDialog open={publishConfirmOpen} onOpenChange={setPublishConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-playfair">Confirm re-consent fan-out</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground">
+              This will create re-consent requests for{" "}
+              <span className="font-medium text-foreground">{affectedReconsentCount ?? "—"}</span> patient(s) with
+              current valid signatures on the superseded version. They will receive email/SMS within minutes (where
+              contact info and opt-outs allow).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0">
+            <AlertDialogCancel disabled={publishing}>Cancel</AlertDialogCancel>
+            <Button type="button" disabled={publishing} onClick={() => void executePublish()}>
+              {publishing ? "Publishing…" : "Publish & notify"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={publishOpen} onOpenChange={setPublishOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -478,7 +559,7 @@ export default function ConsentVersionsAdmin() {
             <Button type="button" variant="outline" onClick={() => setPreviewOpen(true)}>
               Preview
             </Button>
-            <Button type="button" onClick={() => void handlePublish()} disabled={publishing}>
+            <Button type="button" onClick={() => void preparePublish()} disabled={publishing}>
               {publishing ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

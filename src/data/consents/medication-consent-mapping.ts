@@ -246,6 +246,10 @@ const RULE_BY_ID: Record<string, MedicationConsentRule> = Object.fromEntries(
   MEDICATION_CONSENT_RULES.map((r) => [r.medication_id, r]),
 );
 
+export function getMedicationConsentRule(medicationId: string): MedicationConsentRule | undefined {
+  return RULE_BY_ID[medicationId];
+}
+
 /** PharmacyOrderCard `FORMULARY[].id` → canonical medication_id */
 export const FORMULARY_LINE_ID_TO_CANONICAL: Record<string, string> = {
   male_test_100: "testosterone_cream",

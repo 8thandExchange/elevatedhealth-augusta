@@ -19,6 +19,36 @@ export function isServiceRoleRequest(req: Request): boolean {
   return Boolean(serviceKey && auth === serviceKey);
 }
 
+export async function requireBusinessAdminJwt(
+  supabase: SupabaseClient,
+  req: Request,
+): Promise<{ ok: true; userId: string } | { ok: false; status: number; message: string }> {
+  if (isServiceRoleRequest(req)) {
+    return { ok: false, status: 403, message: "Business administrator JWT required (not service role)" };
+  }
+
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return { ok: false, status: 401, message: "Unauthorized" };
+  }
+
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+  const { data: userData, error } = await supabase.auth.getUser(token);
+  if (error || !userData.user) {
+    return { ok: false, status: 401, message: "Unauthorized" };
+  }
+
+  const { data: isBiz, error: rpcErr } = await supabase.rpc("has_business_admin_role", {
+    _user_id: userData.user.id,
+  });
+
+  if (rpcErr || !isBiz) {
+    return { ok: false, status: 403, message: "Business admin access required" };
+  }
+
+  return { ok: true, userId: userData.user.id };
+}
+
 export async function requireStaffOrServiceRole(
   supabase: SupabaseClient,
   req: Request,

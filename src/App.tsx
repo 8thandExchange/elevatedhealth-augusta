@@ -68,10 +68,13 @@ import InventoryDashboard from "./pages/InventoryDashboard";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import ConsentVersionsAdmin from "./pages/admin/ConsentVersionsAdmin";
+import SubstanceAcknowledgmentsAdmin from "./pages/admin/SubstanceAcknowledgmentsAdmin";
 import FAQ from "./pages/FAQ";
 import ConsentPreview from "./pages/_dev/ConsentPreview";
 import PatientIntakeConsents from "./pages/PatientIntakeConsents";
 import PatientTreatmentConsents from "./pages/PatientTreatmentConsents";
+import PatientReconsent from "./pages/PatientReconsent";
+import PatientSubstanceAcknowledgment from "./pages/PatientSubstanceAcknowledgment";
 import IntakeKiosk from "./pages/IntakeKiosk";
 import IntakeStart from "./pages/IntakeStart";
 
@@ -229,6 +232,16 @@ const App = () => {
               <PatientTreatmentConsents />
             </SecurePatientRoute>
           } />
+          <Route path="/intake/reconsent" element={
+            <SecurePatientRoute>
+              <PatientReconsent />
+            </SecurePatientRoute>
+          } />
+          <Route path="/intake/substance-acknowledgment" element={
+            <SecurePatientRoute>
+              <PatientSubstanceAcknowledgment />
+            </SecurePatientRoute>
+          } />
           <Route path="/patient/checkin" element={
             <SecurePatientRoute>
               <SymptomCheckIn />
@@ -283,6 +296,7 @@ const App = () => {
             </ProviderLayout>
           } />
           <Route path="/admin/consent-versions" element={<ConsentVersionsAdmin />} />
+          <Route path="/admin/substance-acknowledgments" element={<SubstanceAcknowledgmentsAdmin />} />
           <Route path="/clinical-protocols" element={
             <ProviderLayout title="Clinical Protocols" subtitle="Standing orders & SOPs" showNavbar={true}>
               <ClinicalProtocolLibrary />

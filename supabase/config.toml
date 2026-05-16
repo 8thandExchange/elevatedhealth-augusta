@@ -244,3 +244,6 @@ verify_jwt = false
 [functions.send-consent-expiration-reminders]
 verify_jwt = false
 
+[functions.trigger-reconsent-requests]
+verify_jwt = true
+

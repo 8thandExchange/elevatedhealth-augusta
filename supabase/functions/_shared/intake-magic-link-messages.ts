@@ -23,7 +23,10 @@ export type IntakeLinkContext =
   | "reminder_24h"
   | "staff_resend"
   | "tier2_consent_request"
-  | "consent_expiration_reminder";
+  | "consent_expiration_reminder"
+  | "reconsent_request"
+  | "reconsent_reminder"
+  | "substance_acknowledgment_request";
 
 export function firstNameFromFullName(fullName: string): string {
   return fullName.trim().split(/\s+/)[0] || "there";
@@ -41,6 +44,13 @@ export function buildIntakeLinkMessages(params: {
     expiryFormatted: string;
     daysRemaining: number;
   };
+  /** Re-consent reminder batch — deadline-focused wording */
+  reconsentReminder?: {
+    consentLabel: string;
+    deadlineFormatted: string;
+    daysRemaining: number;
+  };
+  substanceLabel?: string;
 }): { emailSubject: string; emailText: string; emailHtml: string; smsBody: string } {
   const {
     context,
@@ -50,6 +60,8 @@ export function buildIntakeLinkMessages(params: {
     appointmentTime,
     consentDocumentLabels,
     expirationReminder,
+    reconsentReminder,
+    substanceLabel,
   } = params;
 
   if (context === "tier2_consent_request") {
@@ -77,6 +89,93 @@ Elevated Health Augusta team`;
 
     const smsBody =
       `Elevated Health Augusta: Please sign your treatment consent so we can complete your prescription. ${magicLinkUrl} Reply STOP to opt out.`;
+
+    return {
+      emailSubject,
+      emailText,
+      emailHtml: textToHtml(emailText, magicLinkUrl),
+      smsBody,
+    };
+  }
+
+  if (context === "reconsent_request") {
+    const label =
+      (consentDocumentLabels && consentDocumentLabels.length > 0
+        ? consentDocumentLabels[0]
+        : "treatment");
+
+    const emailSubject = "Updated consent required — Elevated Health Augusta";
+    const emailText = `Hi ${firstName},
+
+We've updated our ${label} consent document. To continue your treatment, please re-sign the updated version.
+
+This usually takes 3-5 minutes. Click below to start:
+${magicLinkUrl}
+
+Your current treatment is not interrupted while you re-sign. However, your next prescription refill or new prescription will require the updated signature.
+
+You have 30 days from today to complete this re-signature before any treatment activity is blocked.
+
+Questions? Call us at ${CLINIC_PHONE}.
+
+Elevated Health Augusta team`;
+
+    const smsBody =
+      `Elevated Health Augusta: We've updated your ${label} consent. Please re-sign so we can continue your care: ${magicLinkUrl} Reply STOP to opt out.`;
+
+    return {
+      emailSubject,
+      emailText,
+      emailHtml: textToHtml(emailText, magicLinkUrl),
+      smsBody,
+    };
+  }
+
+  if (context === "reconsent_reminder" && reconsentReminder) {
+    const { consentLabel, deadlineFormatted, daysRemaining } = reconsentReminder;
+    const emailSubject = `Reminder: updated ${consentLabel} consent — ${daysRemaining} days remaining`;
+    const emailText = `Hi ${firstName},
+
+This is a friendly reminder to sign our updated ${consentLabel} consent document.
+
+Deadline: ${deadlineFormatted} (${daysRemaining} day${daysRemaining === 1 ? "" : "s"} remaining).
+
+Please complete your updated consent here:
+${magicLinkUrl}
+
+Your current prescriptions stay active while this is pending; the updated signature is required before your next prescription decision.
+
+Questions? Call us at ${CLINIC_PHONE}.
+
+Elevated Health Augusta team`;
+
+    const smsBody =
+      `Elevated Health Augusta: Reminder — updated ${consentLabel} consent due in ${daysRemaining} days. ${magicLinkUrl} Reply STOP to opt out.`;
+
+    return {
+      emailSubject,
+      emailText,
+      emailHtml: textToHtml(emailText, magicLinkUrl),
+      smsBody,
+    };
+  }
+
+  if (context === "substance_acknowledgment_request") {
+    const label = substanceLabel ?? "a formulary substance";
+    const emailSubject = "Acknowledgment needed — Elevated Health Augusta";
+    const emailText = `Hi ${firstName},
+
+Before we prescribe ${label}, please review and sign a brief formulary acknowledgment:
+${magicLinkUrl}
+
+This takes about two minutes.
+
+Questions? Call us at ${CLINIC_PHONE}.
+
+Elevated Health Augusta team`;
+
+    const smsBody =
+      `Elevated Health Augusta: Acknowledgment needed before prescribing ${label}. ${magicLinkUrl} Reply STOP to opt out.`;
 
     return {
       emailSubject,

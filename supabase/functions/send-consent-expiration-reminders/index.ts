@@ -32,6 +32,16 @@ interface ConsentRow {
   patients: PatientJoinRow | PatientJoinRow[] | null;
 }
 
+type ReconsentReminderWindow = "30_day" | "14_day" | "3_day" | "due_day";
+
+interface ReconsentRow {
+  id: string;
+  patient_id: string;
+  consent_type: string;
+  reconsent_deadline: string;
+  patients: PatientJoinRow | PatientJoinRow[] | null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -83,6 +93,11 @@ serve(async (req) => {
   let sent = 0;
   let skipped = 0;
   let failed = 0;
+
+  let reconsent_candidates = 0;
+  let reconsent_sent = 0;
+  let reconsent_skipped = 0;
+  let reconsent_failed = 0;
 
   try {
     for (const w of windows) {
@@ -216,13 +231,171 @@ serve(async (req) => {
       }
     }
 
+    const reconsentWindows: { key: ReconsentReminderWindow; start: string; end: string }[] = [
+      {
+        key: "30_day",
+        start: new Date(now + 28 * DAY_MS).toISOString(),
+        end: new Date(now + 32 * DAY_MS).toISOString(),
+      },
+      {
+        key: "14_day",
+        start: new Date(now + 12 * DAY_MS).toISOString(),
+        end: new Date(now + 16 * DAY_MS).toISOString(),
+      },
+      {
+        key: "3_day",
+        start: new Date(now + 1 * DAY_MS).toISOString(),
+        end: new Date(now + 5 * DAY_MS).toISOString(),
+      },
+      {
+        key: "due_day",
+        start: new Date(now).toISOString(),
+        end: new Date(now + 36 * 60 * 60 * 1000).toISOString(),
+      },
+    ];
+
+    for (const w of reconsentWindows) {
+      const { data: rrows, error: rErr } = await supabase
+        .from("consent_reconsent_requests")
+        .select(
+          `
+          id,
+          patient_id,
+          consent_type,
+          reconsent_deadline,
+          patients!inner (
+            full_name,
+            email,
+            phone,
+            intake_link_email_opt_out,
+            intake_link_sms_opt_out
+          )
+        `,
+        )
+        .is("fulfilled_at", null)
+        .gte("reconsent_deadline", w.start)
+        .lte("reconsent_deadline", w.end);
+
+      if (rErr) throw rErr;
+
+      for (const raw of rrows ?? []) {
+        const row = raw as ReconsentRow;
+        reconsent_candidates++;
+
+        const { data: already } = await supabase
+          .from("consent_reconsent_reminders_sent")
+          .select("id")
+          .eq("reconsent_request_id", row.id)
+          .eq("reminder_window", w.key)
+          .maybeSingle();
+
+        if (already) {
+          reconsent_skipped++;
+          continue;
+        }
+
+        const patientJoin = Array.isArray(row.patients) ? row.patients[0] : row.patients;
+        if (!patientJoin?.email) {
+          reconsent_skipped++;
+          continue;
+        }
+
+        const deadlineMs = new Date(row.reconsent_deadline).getTime();
+        const daysRemaining = Math.max(1, Math.ceil((deadlineMs - now) / DAY_MS));
+        const deadlineFormatted = new Date(row.reconsent_deadline).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        const token = generateMagicLinkToken();
+        const expiresAt = computeIntakeLinkExpiry(null, new Date(now + 7 * DAY_MS).toISOString());
+
+        const { error: rcLinkErr } = await supabase.from("intake_magic_links").insert({
+          token,
+          patient_id: row.patient_id,
+          email_address: patientJoin.email,
+          phone_number: patientJoin.phone,
+          expires_at: expiresAt,
+          pending_consent_types: [row.consent_type],
+          pending_reconsent_request_id: row.id,
+        });
+
+        if (rcLinkErr) {
+          reconsent_failed++;
+          edgeStructuredLog(functionName, {
+            event: "reconsent_link_insert_failed",
+            reconsent_request_id: row.id,
+            error_message: rcLinkErr.message,
+          }, "error");
+          continue;
+        }
+
+        const rcSendPayload = {
+          patient_id: row.patient_id,
+          magic_link_token: token,
+          context: "reconsent_reminder",
+          consent_types: [row.consent_type],
+          reconsent_consent_label: intakeConsentTypeDisplayLabel(row.consent_type),
+          reconsent_deadline_formatted: deadlineFormatted,
+          reconsent_days_remaining: daysRemaining,
+          channels: ["email", "sms"],
+        };
+
+        const rcResp = await fetch(`${supabaseUrl}/functions/v1/send-intake-magic-link`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${serviceKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(rcSendPayload),
+        });
+
+        const rcSendJson = await rcResp.json().catch(() => ({}));
+
+        if (!rcResp.ok || rcSendJson?.success !== true) {
+          reconsent_failed++;
+          edgeStructuredLog(functionName, {
+            event: "reconsent_send_failed",
+            reconsent_request_id: row.id,
+            reminder_window: w.key,
+            status: rcResp.status,
+          }, "error");
+          continue;
+        }
+
+        const rcDelivered = (rcSendJson.delivered_channels as string[]) ?? [];
+
+        const { error: rcTrackErr } = await supabase.from("consent_reconsent_reminders_sent").insert({
+          reconsent_request_id: row.id,
+          reminder_window: w.key,
+          channels_delivered: rcDelivered,
+        });
+
+        if (rcTrackErr) {
+          edgeStructuredLog(functionName, {
+            event: "reconsent_dedupe_insert_failed",
+            reconsent_request_id: row.id,
+            error_message: rcTrackErr.message,
+            success: false,
+          }, "error");
+        }
+
+        reconsent_sent++;
+      }
+    }
+
     edgeStructuredLog(functionName, {
       event: "batch_complete",
       candidates,
       sent,
       skipped,
       failed,
-      success: failed === 0,
+      reconsent_candidates,
+      reconsent_sent,
+      reconsent_skipped,
+      reconsent_failed,
+      success: failed === 0 && reconsent_failed === 0,
     });
 
     return new Response(
@@ -232,6 +405,10 @@ serve(async (req) => {
         sent,
         skipped,
         failed,
+        reconsent_candidates,
+        reconsent_sent,
+        reconsent_skipped,
+        reconsent_failed,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

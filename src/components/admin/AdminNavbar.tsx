@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -261,6 +261,14 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                   </Link>
                 </DropdownMenuItem>
               )}
+              {isBusinessAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/substance-acknowledgments" className="cursor-pointer gap-2">
+                    <FlaskConical className="w-4 h-4" />
+                    Substance acknowledgments
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/staff-pricing-cheatsheet" target="_blank" className="cursor-pointer">
@@ -375,6 +383,14 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                   <Link to="/admin/consent-versions" className="cursor-pointer gap-2">
                     <ScrollText className="w-4 h-4" />
                     Consent versions
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              {isBusinessAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/substance-acknowledgments" className="cursor-pointer gap-2">
+                    <FlaskConical className="w-4 h-4" />
+                    Substance acknowledgments
                   </Link>
                 </DropdownMenuItem>
               )}
