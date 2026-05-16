@@ -573,7 +573,7 @@ const PrescriptionPortalModal = ({
             pharmacy_id: pharmacy.id,
             submission_method: "portal",
             status: "sent_to_pharmacy",
-            protocol_snapshot: protocol_snapshot as Json,
+            protocol_snapshot: protocol_snapshot as unknown as Json,
             portal_opened_at: new Date().toISOString(),
           }])
           .select()

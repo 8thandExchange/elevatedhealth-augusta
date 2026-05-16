@@ -86,6 +86,8 @@ export default function ConsentVersionsAdmin() {
   const [sigCounts, setSigCounts] = useState<Record<string, number>>({});
 
   const [publishOpen, setPublishOpen] = useState(false);
+  const [publishConfirmOpen, setPublishConfirmOpen] = useState(false);
+  const [affectedReconsentCount, setAffectedReconsentCount] = useState<number | null>(null);
   const [publishType, setPublishType] = useState<ConsentType>("hormone_therapy");
   const [activeForType, setActiveForType] = useState<ConsentVersion | null>(null);
   const [versionLabel, setVersionLabel] = useState("");
