@@ -68,6 +68,12 @@ import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 import InventoryAlerts from "@/components/provider/InventoryAlerts";
 import PatientDatabase from "@/components/provider/PatientDatabase";
 import { PatientConsentStatusSection } from "@/components/provider/PatientConsentStatusSection";
+import { PatientAllergies } from "@/components/provider/PatientAllergies";
+import { PatientCurrentMedications } from "@/components/provider/PatientCurrentMedications";
+import { PatientProblemList } from "@/components/provider/PatientProblemList";
+import { VitalsTrend } from "@/components/provider/VitalsTrend";
+import { EncounterList } from "@/components/provider/EncounterList";
+import { ExportPatientRecordsButton } from "@/components/provider/ExportPatientRecordsButton";
 import DashboardActivityWidget from "@/components/provider/DashboardActivityWidget";
 import NextActionsWidget from "@/components/provider/NextActionsWidget";
 import CommunicationLog from "@/components/provider/CommunicationLog";
@@ -2095,16 +2101,51 @@ const ProviderDashboard = () => {
                 patientPhone={selectedPatient.patient.phone ?? null}
               />
 
-              {/* SOAP Notes - Clinical Encounter Documentation */}
-              <SOAPNotesPanel
-                patientId={selectedPatient.patient.id}
-                patientName={selectedPatient.patient.full_name}
-                serviceLine={
-                  selectedPatient.patient.treatment_request?.includes("weight") || selectedPatient.patient.treatment_request === "glp1" ? "weight_loss" :
-                  "hormone"
-                }
-                providerName={providerInfo.name}
-              />
+              <Card className="border-border/50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex flex-wrap items-center justify-between gap-2">
+                    <span>Clinical charting</span>
+                    <ExportPatientRecordsButton
+                      patientId={selectedPatient.patient.id}
+                      patientName={selectedPatient.patient.full_name}
+                    />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-3 md:grid-cols-3">
+                    <PatientAllergies patientId={selectedPatient.patient.id} />
+                    <PatientCurrentMedications patientId={selectedPatient.patient.id} />
+                    <PatientProblemList patientId={selectedPatient.patient.id} />
+                  </div>
+                  <VitalsTrend patientId={selectedPatient.patient.id} />
+                  <Tabs defaultValue="encounters" className="w-full">
+                    <TabsList className="grid w-full max-w-md grid-cols-2">
+                      <TabsTrigger value="encounters">Encounters (SOAP)</TabsTrigger>
+                      <TabsTrigger value="legacy">Legacy SOAP notes</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="encounters" className="mt-4">
+                      <EncounterList
+                        patientId={selectedPatient.patient.id}
+                        patientName={selectedPatient.patient.full_name}
+                        isAdmin={providerInfo.role === "admin"}
+                      />
+                    </TabsContent>
+                    <TabsContent value="legacy" className="mt-4">
+                      <SOAPNotesPanel
+                        patientId={selectedPatient.patient.id}
+                        patientName={selectedPatient.patient.full_name}
+                        serviceLine={
+                          selectedPatient.patient.treatment_request?.includes("weight") ||
+                          selectedPatient.patient.treatment_request === "glp1"
+                            ? "weight_loss"
+                            : "hormone"
+                        }
+                        providerName={providerInfo.name}
+                      />
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
 
               {/* Treatment Plans */}
               <TreatmentPlanPanel

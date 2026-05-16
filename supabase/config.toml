@@ -247,3 +247,7 @@ verify_jwt = false
 [functions.trigger-reconsent-requests]
 verify_jwt = true
 
+# export-patient-records — staff chart PDF export; JWT required.
+[functions.export-patient-records]
+verify_jwt = true
+
