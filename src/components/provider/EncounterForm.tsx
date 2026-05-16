@@ -38,6 +38,7 @@ import {
 } from "@/lib/encounters/encounter-helpers";
 import { supabase } from "@/integrations/supabase/client";
 import { getEprescribeUrl } from "@/lib/encounters/eprescribe-url";
+import { getFullscriptUrl } from "@/lib/encounters/fullscript-url";
 import type { EncounterAttachment } from "@/data/encounters/types";
 
 const ENCOUNTER_TYPES = Object.keys(ENCOUNTER_TYPE_LABELS) as EncounterType[];
@@ -259,6 +260,44 @@ export function EncounterForm({
     return Math.round(((w / (h * h)) * 703 + Number.EPSILON) * 10) / 10;
   }, [vitals.weight_lbs, vitals.height_inches]);
 
+  const handleOpenFullscript = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("patients")
+        .select("email, full_name")
+        .eq("id", patientId)
+        .single();
+
+      if (error || !data) {
+        toast.error("Could not load patient details");
+        window.open(getFullscriptUrl(), "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      if (data.email) {
+        try {
+          await navigator.clipboard.writeText(data.email);
+          toast.success("Patient email copied", {
+            description: `${data.email} — paste into Fullscript patient search`,
+          });
+        } catch {
+          toast.info(`Patient email: ${data.email}`, {
+            description: "Clipboard unavailable — copy manually",
+          });
+        }
+      } else {
+        toast.warning(`No email on file for ${data.full_name}`, {
+          description: "Search Fullscript by name instead",
+        });
+      }
+
+      window.open(getFullscriptUrl(), "_blank", "noopener,noreferrer");
+    } catch (err) {
+      console.error("Fullscript handoff error:", err);
+      toast.error("Could not open Fullscript");
+    }
+  };
+
   const handleFile = async (file: File) => {
     const id = encounterIdProp ?? resolvedId;
     if (!id || readOnly || status !== "draft") return;
@@ -363,6 +402,17 @@ export function EncounterForm({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Opens your iPrescribe account in a new tab</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" variant="outline" size="sm" onClick={handleOpenFullscript}>
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  Open Fullscript
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Copies patient email to clipboard and opens Fullscript in a new tab
+              </TooltipContent>
             </Tooltip>
           </div>
         </div>
