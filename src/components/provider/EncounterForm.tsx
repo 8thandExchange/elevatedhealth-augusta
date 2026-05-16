@@ -133,16 +133,17 @@ export function EncounterForm({
         .limit(1)
         .maybeSingle();
       if (vRow) {
-        const v = vRow as Record<string, number | string | null>;
+        const v = vRow as Record<string, unknown>;
+        const num = (x: unknown): number | null => (x == null ? null : Number(x));
         setVitals({
-          systolic_bp: v.systolic_bp ?? null,
-          diastolic_bp: v.diastolic_bp ?? null,
-          heart_rate: v.heart_rate ?? null,
-          respiratory_rate: v.respiratory_rate ?? null,
-          temperature_f: v.temperature_f != null ? Number(v.temperature_f) : null,
-          weight_lbs: v.weight_lbs != null ? Number(v.weight_lbs) : null,
-          height_inches: v.height_inches != null ? Number(v.height_inches) : null,
-          spo2_pct: v.spo2_pct ?? null,
+          systolic_bp: num(v.systolic_bp),
+          diastolic_bp: num(v.diastolic_bp),
+          heart_rate: num(v.heart_rate),
+          respiratory_rate: num(v.respiratory_rate),
+          temperature_f: num(v.temperature_f),
+          weight_lbs: num(v.weight_lbs),
+          height_inches: num(v.height_inches),
+          spo2_pct: num(v.spo2_pct),
         });
       } else setVitals({});
 
