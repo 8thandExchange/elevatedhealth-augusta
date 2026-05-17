@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Check, Clock, Droplet, Plus, Star, X } from "lucide-react";
-import { BrandCategoryGlyph, normalizeBrandGlyphCategory } from "@/components/brand/BrandCategoryGlyph";
+import { BrandCategoryGlyph, BrandTherapyMark } from "@/components/brand/BrandTherapyMark";
 import { ELEVATED_PROGRAMS, MEMBER_DISCOUNT_PERCENT } from "@/lib/stripeConfig";
 
 interface Therapy {
@@ -250,7 +250,6 @@ const IVLounge = () => {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filtered.map((therapy) => {
                   const meta = CATEGORY_META[therapy.category] || CATEGORY_META.Wellness;
-                  const glyphCategory = normalizeBrandGlyphCategory(therapy.category);
                   const isSelected = selectedTherapyId === therapy.id;
                   const isPopular = therapy.name === "The Meyers";
 
@@ -278,10 +277,15 @@ const IVLounge = () => {
                       <CardContent className="relative p-6 md:p-7 flex flex-col h-full min-h-[360px]">
                         <div className="flex items-start justify-between mb-5">
                           <div
-                            className="w-14 h-14 rounded-sm border border-accent/35 bg-[var(--color-paper)] flex items-center justify-center"
+                            className="w-14 h-14 rounded-full border-2 border-accent/35 bg-gradient-to-br from-accent/20 via-[var(--color-paper)] to-primary/10 flex items-center justify-center shadow-sm ring-1 ring-accent/15"
                             aria-hidden
                           >
-                            <BrandCategoryGlyph category={glyphCategory} size={26} className="text-primary" />
+                            <BrandTherapyMark
+                              therapyName={therapy.name}
+                              category={therapy.category}
+                              size={30}
+                              className="text-primary"
+                            />
                           </div>
                           <span className="section-label text-[10px] tracking-[0.2em]">
                             {therapy.category}

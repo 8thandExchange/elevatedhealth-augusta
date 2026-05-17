@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => ({
       },
       workbox: {
         cleanupOutdatedCaches: true,
-        cacheId: 'elevated-health-v1',
+        cacheId: 'elevated-health-v2',
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MiB (main bundle growth / precache limit)
         skipWaiting: true,
