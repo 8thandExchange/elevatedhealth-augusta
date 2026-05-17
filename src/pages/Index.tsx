@@ -4,7 +4,6 @@ import IVDirectBookBanner from "@/components/IVDirectBookBanner";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SEOSchema from "@/components/SEOSchema";
-import AssistantHub from "@/components/AssistantHub";
 import { FloatingMobileCTA } from "@/components/FloatingMobileCTA";
 import { FloatingMobileChatCTA } from "@/components/FloatingMobileChatCTA";
 import CacheRefreshBanner from "@/components/CacheRefreshBanner";
@@ -76,7 +75,6 @@ const Index = () => {
         <Contact />
       </main>
       <Footer />
-      <AssistantHub />
       <FloatingMobileCTA />
       <FloatingMobileChatCTA />
     </div>

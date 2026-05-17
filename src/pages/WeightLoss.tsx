@@ -11,7 +11,6 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Helmet } from "react-helmet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { trackEvent } from "@/lib/analytics";
-import AssistantHub from "@/components/AssistantHub";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -1035,7 +1034,6 @@ const WeightLoss = () => {
         </main>
 
         <Footer />
-        <AssistantHub />
       </div>
     </>
   );

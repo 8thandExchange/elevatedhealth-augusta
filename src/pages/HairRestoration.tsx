@@ -6,7 +6,6 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
-import AssistantHub from "@/components/AssistantHub";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { HAIR_RESTORATION_PRODUCTS, CORE_SERVICES } from "@/lib/stripeConfig";
 import { Check, Sparkles, Shield, Zap, Users } from "lucide-react";
@@ -487,7 +486,6 @@ const HairRestoration = () => {
         </main>
 
         <Footer />
-        <AssistantHub />
         <ConsultationModal 
           isOpen={isConsultOpen} 
           onClose={() => setIsConsultOpen(false)} 

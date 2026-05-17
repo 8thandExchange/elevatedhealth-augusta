@@ -58,7 +58,6 @@ import FaxHistoryLog from "@/components/provider/FaxHistoryLog";
 import MyScheduleManager from "@/components/provider/MyScheduleManager";
 import PatientStatusCard from "@/components/provider/PatientStatusCard";
 import MembershipAssignmentCard from "@/components/provider/MembershipAssignmentCard";
-import ProviderAssistant from "@/components/provider/ProviderAssistant";
 
 import ConsentPDFCard from "@/components/provider/ConsentPDFCard";
 import CreditCodeLookup from "@/components/provider/CreditCodeLookup";
@@ -2897,7 +2896,6 @@ const ProviderDashboard = () => {
       )}
 
       {/* Provider AI Assistant - Floating Chat */}
-      <ProviderAssistant />
     </div>
   );
 };

@@ -6,7 +6,6 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
-import AssistantHub from "@/components/AssistantHub";
 import { SEXUAL_WELLNESS_PRODUCTS, CORE_SERVICES } from "@/lib/stripeConfig";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Check, Shield, Clock, Package, Heart } from "lucide-react";
@@ -491,7 +490,6 @@ const SexualWellness = () => {
         </main>
 
         <Footer />
-        <AssistantHub />
         <ConsultationModal 
           isOpen={isConsultOpen} 
           onClose={() => setIsConsultOpen(false)} 
