@@ -40,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
       priorTreatments,
     } = data;
 
-    // Configure Paubox HIPAA-compliant SMTP client (port 465 with implicit TLS)
+    // Send emails via Resend
 
     const timestamp = new Date().toLocaleString('en-US', { 
       timeZone: 'America/New_York',
@@ -160,45 +160,56 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    // Send email to provider (or just clinic if provider unknown) using Paubox SMTP
+    // Send email to provider (or just clinic if provider unknown)
     let providerResult = null;
     
     // Only send to provider if we have a valid email
     if (providerEmail && providerEmail !== "unknown" && providerEmail !== "custom") {
       console.log("Sending referral to provider:", providerEmail);
-      await client.send({
-        from: "care@elevatedhealthaugusta.com",
-        to: providerEmail,
-        cc: "care@elevatedhealthaugusta.com",
-        replyTo: patientEmail,
-        subject: `Referral Request for ${patientName} - ${benefitType.toUpperCase()}`,
-        content: "auto",
-        html: providerEmailHtml,
+      const emailResponse = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Elevated Health Augusta <care@stripe.elevatedhealthaugusta.com>",
+          to: [providerEmail],
+          cc: ["care@elevatedhealthaugusta.com"],
+          reply_to: patientEmail,
+          subject: `Referral Request for ${patientName} - ${benefitType.toUpperCase()}`,
+          html: providerEmailHtml,
+        }),
       });
-      console.log("Provider email sent via Paubox SMTP");
+
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text();
+        throw new Error(`Resend API error (${emailResponse.status}): ${errorText}`);
+      }
+      console.log("Provider email sent via Resend");
       providerResult = { success: true, recipient: providerEmail };
     } else {
       // Send only to clinic if no valid provider email
       console.log("No valid provider email, sending to clinic only");
       const emailResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "Elevated Health Augusta <care@stripe.elevatedhealthaugusta.com>",
-        to: ["care@elevatedhealthaugusta.com"],
-        subject: `Referral Request for ${patientName} - ${benefitType.toUpperCase()} (No Provider Contact)`,
-        html: providerEmailHtml,
-      }),
-    });
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Elevated Health Augusta <care@stripe.elevatedhealthaugusta.com>",
+          to: ["care@elevatedhealthaugusta.com"],
+          subject: `Referral Request for ${patientName} - ${benefitType.toUpperCase()} (No Provider Contact)`,
+          html: providerEmailHtml,
+        }),
+      });
 
-    if (!emailResponse.ok) {
-      const errorText = await emailResponse.text();
-      throw new Error(`Resend API error (${emailResponse.status}): ${errorText}`);
-    }
-      console.log("Clinic-only email sent via Paubox SMTP");
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text();
+        throw new Error(`Resend API error (${emailResponse.status}): ${errorText}`);
+      }
+      console.log("Clinic-only email sent via Resend");
       providerResult = { success: true, recipient: "clinic-only" };
     }
 
@@ -222,7 +233,7 @@ const handler = async (req: Request): Promise<Response> => {
       const errorText = await emailResponse.text();
       throw new Error(`Resend API error (${emailResponse.status}): ${errorText}`);
     }
-    console.log("Patient confirmation email sent via Paubox SMTP");
+    console.log("Patient confirmation email sent via Resend");
 
     return new Response(
       JSON.stringify({

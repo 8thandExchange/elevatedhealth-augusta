@@ -170,7 +170,7 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    // Send email via Paubox HIPAA-compliant SMTP
+    // Send email via Resend
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -191,7 +191,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(`Resend API error (${emailResponse.status}): ${errorText}`);
     }
 
-    console.log("LabCorp requisition email sent successfully via Paubox HIPAA-compliant SMTP");
+    console.log("LabCorp requisition email sent successfully via Resend");
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
