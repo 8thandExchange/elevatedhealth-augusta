@@ -1,15 +1,9 @@
 project_id = "jiiparpfkjytdcuelcns"
 
-[functions.chat]
-verify_jwt = false
-
 [functions.send-labs-reviewed-sms]
 verify_jwt = false
 
 [functions.send-glp1-activation-sms]
-verify_jwt = false
-
-[functions.voice-session]
 verify_jwt = false
 
 [functions.send-referral]
@@ -123,6 +117,9 @@ verify_jwt = true
 [functions.sinch-fax-webhook]
 verify_jwt = false
 
+[functions.telnyx-fax-webhook]
+verify_jwt = false
+
 [functions.update-team-roles]
 verify_jwt = false
 
@@ -130,9 +127,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.create-sexual-wellness-checkout]
-verify_jwt = false
-
-[functions.provider-chat]
 verify_jwt = false
 
 # send-appointment-reminder locked down 2026-05-08 (audit R-5). Caller

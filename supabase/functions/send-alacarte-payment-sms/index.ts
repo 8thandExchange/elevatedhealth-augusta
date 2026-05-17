@@ -18,6 +18,12 @@ interface PaymentSMSRequest {
   amount: string;
 }
 
+
+async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  return sendSmsViaGhl(to, message);
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -25,13 +31,6 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     logStep("Function started");
-
-    const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
-    const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-
-    if (!sinchAccessKey || !sinchSecretKey) {
-      throw new Error("Sinch credentials not configured");
-    }
 
     const { patient_phone, patient_name, payment_url, product_name, amount }: PaymentSMSRequest = await req.json();
 
@@ -60,32 +59,14 @@ const handler = async (req: Request): Promise<Response> => {
 
     logStep("SMS message created", { length: smsMessage.length });
 
-    // Send SMS via Sinch
-    const sinchUrl = "https://us.sms.api.sinch.com/xms/v1/5ab91e9cd05e4dd6a2a2c5d2d9b5b48d/batches";
-    
-    const sinchResponse = await fetch(sinchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${sinchAccessKey}`,
-      },
-      body: JSON.stringify({
-        from: "12029317706", // Sinch sender ID
-        to: [cleanPhone],
-        body: smsMessage,
-      }),
-    });
-
-    const sinchResult = await sinchResponse.json();
-    logStep("Sinch response", { status: sinchResponse.status, result: sinchResult });
-
-    if (!sinchResponse.ok) {
-      throw new Error(`SMS send failed: ${JSON.stringify(sinchResult)}`);
+    const smsResult = await sendSMS(formattedPhone, message);
+    if (!smsResult.success) {
+      throw new Error(smsResult.error || "SMS send failed");
     }
-
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message_id: sinchResult.id,
+    logStep("GHL SMS sent");
+    return new Response(JSON.stringify({
+      success: true,
+      message_id: smsResult.messageId,
     }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },

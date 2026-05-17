@@ -24,40 +24,9 @@ function formatPhoneNumber(phone: string): string {
   return `+${digits}`;
 }
 
-async function sendSMS(to: string, message: string): Promise<{ success: boolean; error?: string }> {
-  const accessKey = Deno.env.get("SINCH_ACCESS_KEY");
-  const secretKey = Deno.env.get("SINCH_SECRET_KEY");
-
-  if (!accessKey || !secretKey) {
-    throw new Error("Sinch credentials not configured");
-  }
-
-  const formattedPhone = formatPhoneNumber(to);
-  const url = `https://us.sms.api.sinch.com/xms/v1/${accessKey}/batches`;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: SMS_SENDER,
-        to: [formattedPhone],
-        body: message,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return { success: false, error: errorText };
-    }
-
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: String(error) };
-  }
+async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  return sendSmsViaGhl(to, message);
 }
 
 interface AppointmentRow {

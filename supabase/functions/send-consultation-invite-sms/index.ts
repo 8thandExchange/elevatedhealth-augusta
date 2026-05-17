@@ -22,7 +22,7 @@ interface ConsultationInviteSMSRequest {
 const SERVICE_LABELS: Record<string, string> = {
   hormone: "Hormone Therapy",
   weight_loss: "Weight Loss",
-  ketamine: "General Wellness",
+  ketamine: "Ketamine Therapy",
   general: "your consultation",
 };
 
@@ -33,13 +33,6 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     logStep("Function started");
-
-    const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
-    const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-
-    if (!sinchAccessKey || !sinchSecretKey) {
-      throw new Error("Sinch API credentials not configured");
-    }
 
     const { 
       patient_name, 
@@ -83,26 +76,9 @@ const handler = async (req: Request): Promise<Response> => {
       // Standard invite message - needs to book
       message = `Hi ${firstName}! Thanks for your interest in ${serviceLabel} at Elevated Health Augusta. Book your $79 Wellness Assessment here: ${payment_url} Questions? Call (706) 760-3470`;
     }
-
-    const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
-    
-    const response = await fetch(sinchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${sinchSecretKey}`,
-      },
-      body: JSON.stringify({
-        from: "12029533545",
-        to: [formattedPhone],
-        body: message,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      logStep("Sinch API error", { status: response.status, error: errorText });
-      throw new Error(`SMS send failed: ${errorText}`);
+    const smsResult = await sendSMS(formattedPhone, message);
+    if (!smsResult.success) {
+      throw new Error(smsResult.error || "SMS send failed");
     }
 
     const result = await response.json();

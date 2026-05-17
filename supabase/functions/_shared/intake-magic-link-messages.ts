@@ -304,30 +304,7 @@ function textToHtml(text: string, linkUrl: string): string {
 }
 
 export async function sendIntakeSms(to: string, body: string): Promise<{ ok: boolean; error?: string }> {
-  const accessKey = Deno.env.get("SINCH_ACCESS_KEY");
-  const secretKey = Deno.env.get("SINCH_SECRET_KEY");
-  if (!accessKey || !secretKey) {
-    return { ok: false, error: "Sinch not configured" };
-  }
-
-  const digits = to.replace(/\D/g, "");
-  const formatted = digits.length === 10 ? `+1${digits}` : digits.length === 11 && digits.startsWith("1") ? `+${digits}` : `+${digits}`;
-
-  const response = await fetch(`https://us.sms.api.sinch.com/xms/v1/${accessKey}/batches`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${secretKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "ElevatedHealth",
-      to: [formatted],
-      body,
-    }),
-  });
-
-  if (!response.ok) {
-    return { ok: false, error: await response.text() };
-  }
-  return { ok: true };
+  const { sendSmsViaGhl } = await import("./ghl-sms.ts");
+  const r = await sendSmsViaGhl(to, body);
+  return { ok: r.success, error: r.error };
 }

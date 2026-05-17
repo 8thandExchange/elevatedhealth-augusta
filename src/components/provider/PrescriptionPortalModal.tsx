@@ -15,6 +15,12 @@ import type { Json } from "@/integrations/supabase/types";
 import type { FCCItem } from "@/lib/fccFormulary";
 import FCCFormularyLookup from "./FCCFormularyLookup";
 import { PharmacySelector, type Pharmacy } from "./PharmacySelector";
+import { AddPharmacyDialog } from "./AddPharmacyDialog";
+import {
+  PharmacyFaxOverride,
+  resolveOutboundFaxNumber,
+} from "./PharmacyFaxOverride";
+import { formatFaxDisplay } from "@/lib/faxNumber";
 import {
   CustomPharmacyPreparationPicker,
   type CustomPharmacyRxSelection,
@@ -228,6 +234,10 @@ const PrescriptionPortalModal = ({
   const [availableProviders, setAvailableProviders] = useState<ProviderData[]>([]);
   const [isLoadingProviders, setIsLoadingProviders] = useState(true);
   const [pharmacy, setPharmacy] = useState<Pharmacy | null>(null);
+  const [pharmacyRefreshToken, setPharmacyRefreshToken] = useState(0);
+  const [addPharmacyOpen, setAddPharmacyOpen] = useState(false);
+  const [useFaxOverride, setUseFaxOverride] = useState(false);
+  const [faxOverrideValue, setFaxOverrideValue] = useState("");
   const [customSelection, setCustomSelection] = useState<CustomPharmacyRxSelection | null>(null);
   const [portalFccItem, setPortalFccItem] = useState<FCCItem | null>(null);
   const [submittedOrderId, setSubmittedOrderId] = useState<string | null>(null);
@@ -474,6 +484,16 @@ const PrescriptionPortalModal = ({
       return;
     }
 
+    const { e164: faxDestination, error: faxError } = resolveOutboundFaxNumber(
+      pharmacy,
+      useFaxOverride,
+      faxOverrideValue,
+    );
+    if (!faxDestination) {
+      toast.error(faxError ?? "Invalid fax number");
+      return;
+    }
+
     const [diagnosisCode, diagnosisDescription] = selectedDiagnosis.split("|");
 
     await runPrescriptionActionWithConsentGate(async () => {
@@ -497,7 +517,7 @@ const PrescriptionPortalModal = ({
             diagnosis_description: diagnosisDescription,
             provider_signature_url: matchedProvider.signatureUrl,
             pharmacy_id: pharmacy.id,
-            fax_to: pharmacy.fax_number ?? undefined,
+            fax_to: faxDestination,
           },
         });
 
@@ -662,12 +682,20 @@ const PrescriptionPortalModal = ({
   const lastName = lastParts.join(" ") || "";
   const formattedName = `${firstName} ${lastName}`.trim();
 
+  const resolvedFax = pharmacy?.fulfillment_method === "fax"
+    ? resolveOutboundFaxNumber(pharmacy, useFaxOverride, faxOverrideValue)
+    : null;
+
   const submitLabel =
     pharmacy?.fulfillment_method === "online_portal"
       ? `Open ${pharmacy.display_name} & Copy Prescription`
-      : pharmacy
-        ? `Fax to ${pharmacy.display_name}`
-        : "Send Prescription";
+      : pharmacy && resolvedFax?.e164
+        ? useFaxOverride
+          ? `Fax to ${formatFaxDisplay(resolvedFax.e164)}`
+          : `Fax to ${pharmacy.display_name}`
+        : pharmacy
+          ? `Fax to ${pharmacy.display_name}`
+          : "Send Prescription";
 
   const showCustomPicker =
     pharmacy?.fulfillment_method === "fax" && hormoneCustomCategory !== null;
@@ -758,8 +786,34 @@ const PrescriptionPortalModal = ({
             key={`${patient.id}-${category}-${isOpen ? "open" : "closed"}`}
             category={category}
             selectedPharmacyId={pharmacy?.id ?? null}
-            onChange={(_id, p) => setPharmacy(p)}
+            refreshToken={pharmacyRefreshToken}
+            onAddPharmacyClick={() => setAddPharmacyOpen(true)}
+            onChange={(_id, p) => {
+              setPharmacy(p);
+              setUseFaxOverride(false);
+              setFaxOverrideValue("");
+            }}
           />
+          {pharmacy?.fulfillment_method === "fax" && (
+            <PharmacyFaxOverride
+              pharmacy={pharmacy}
+              useOverride={useFaxOverride}
+              onUseOverrideChange={setUseFaxOverride}
+              overrideValue={faxOverrideValue}
+              onOverrideValueChange={setFaxOverrideValue}
+              disabled={faxStatus === "transmitting"}
+            />
+          )}
+          {pharmacy?.fulfillment_method === "fax" && useFaxOverride && faxOverrideValue.trim() && (
+            <Button
+              type="button"
+              variant="link"
+              className="h-auto p-0 text-xs text-gold"
+              onClick={() => setAddPharmacyOpen(true)}
+            >
+              Save this number as a new pharmacy for next time
+            </Button>
+          )}
         </div>
 
         {showCustomPicker && hormoneCustomCategory && (
@@ -1065,6 +1119,18 @@ const PrescriptionPortalModal = ({
             setPortalFccItem(item);
             setShowFormulary(false);
             toast.success(`Using SKU ${item.sku}`);
+          }}
+        />
+
+        <AddPharmacyDialog
+          open={addPharmacyOpen}
+          onOpenChange={setAddPharmacyOpen}
+          initialFaxNumber={useFaxOverride ? faxOverrideValue : ""}
+          onSaved={(p) => {
+            setPharmacyRefreshToken((n) => n + 1);
+            setPharmacy(p);
+            setUseFaxOverride(false);
+            setFaxOverrideValue("");
           }}
         />
       </DialogContent>

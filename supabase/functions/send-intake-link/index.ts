@@ -177,44 +177,19 @@ serve(async (req) => {
       emailSent = true;
     }
 
-    // Send SMS if phone is available
     if (patientPhone) {
       try {
-        const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
-        const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-        
-        if (sinchAccessKey && sinchSecretKey) {
-          const smsMessage = `Hi ${firstName}! Please complete your medical intake form for Elevated Health Augusta: ${intakeLink} - This link expires in 7 days.`;
-          
-          // Format phone number
-          let formattedPhone = patientPhone.replace(/\D/g, '');
-          if (formattedPhone.length === 10) {
-            formattedPhone = '1' + formattedPhone;
-          }
-          
-          const smsResponse = await fetch("https://us.sms.api.sinch.com/xms/v1/c6f2cc5c6cfd4e69b35f3d14ec67cea1/batches", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${sinchAccessKey}`,
-            },
-            body: JSON.stringify({
-              from: "12029491946",
-              to: [formattedPhone],
-              body: smsMessage,
-            }),
-          });
-          
-          if (smsResponse.ok) {
-            logStep("SMS sent", { phone: patientPhone });
-            smsSent = true;
-          } else {
-            logStep("SMS failed", { status: smsResponse.status });
-          }
+        const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+        const smsMessage = `Hi ${firstName}! Please complete your medical intake form for Elevated Health Augusta: ${intakeLink} - This link expires in 7 days.`;
+        const smsResult = await sendSmsViaGhl(patientPhone, smsMessage, firstName);
+        if (smsResult.success) {
+          logStep("SMS sent via GHL", { phone: patientPhone });
+          smsSent = true;
+        } else {
+          logStep("SMS failed via GHL", { error: smsResult.error });
         }
       } catch (smsError) {
         logStep("SMS error", { error: String(smsError) });
-        // Don't fail the whole function if SMS fails
       }
     }
 

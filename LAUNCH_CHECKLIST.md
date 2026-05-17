@@ -57,7 +57,7 @@
 - [x] Auth: master admin (`admin@elevatedhealthaugusta.com`)
 - [x] Provider invite flow (create-now or email-invite)
 - [x] Stripe checkout for active services
-- [x] Resend (email) + Sinch (SMS) integrations live
+- [x] Resend (email) live; patient/staff SMS via GoHighLevel (Sinch removed from app)
 - [x] Booking confirmations (email + SMS)
 - [x] Patient portal: invitation-only post-consult
 
@@ -81,6 +81,10 @@
 ---
 
 ## URLs
-- Preview: https://id-preview--3e0ecc51-58fe-4887-a815-a661f9f18555.lovable.app
-- Staging: https://elevatedhealthaugusta.lovable.app
+- Local dev: http://localhost:8080 (run `npm run dev`; Vite falls back to 8081 if 8080 is busy)
 - Production: https://elevatedhealthaugusta.com
+- Supabase project: https://supabase.com/dashboard/project/jiiparpfkjytdcuelcns
+
+> Note: As of 2026-05-17, production is still served from Lovable's
+> hosting against the pre-migration codebase. Cutover to direct hosting
+> (Vercel/Netlify/etc) is pending — see Pre-Launch section.

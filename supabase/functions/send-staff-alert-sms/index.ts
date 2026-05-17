@@ -42,6 +42,12 @@ function formatPhoneNumber(phone: string): string {
   return `+${digits}`;
 }
 
+
+async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  return sendSmsViaGhl(to, message);
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -88,12 +94,7 @@ const handler = async (req: Request): Promise<Response> => {
         break;
       
       case "new_signup":
-        const programStr =
-          program === "weight_loss"
-            ? "Weight / GLP-1"
-            : program === "peptide" || program === "peptides"
-            ? "Peptides"
-            : "Hormone / Wellness";
+        const programStr = program === "ketamine" ? "Ketamine" : "Hormone/Weight";
         message = `🆕 NEW PATIENT: ${patient_name} registered for ${programStr} program. Awaiting intake completion.`;
         break;
       
@@ -115,25 +116,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send SMS to staff
     const formattedPhone = formatPhoneNumber(staffPhone);
-    const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
-    
-    const response = await fetch(sinchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${sinchSecretKey}`,
-      },
-      body: JSON.stringify({
-        from: "12029533545",
-        to: [formattedPhone],
-        body: message,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      logStep("Sinch API error", { status: response.status, error: errorText });
-      throw new Error(`SMS send failed: ${errorText}`);
+    const smsResult = await sendSMS(formattedPhone, message);
+    if (!smsResult.success) {
+      throw new Error(smsResult.error || "SMS send failed");
     }
 
     const result = await response.json();

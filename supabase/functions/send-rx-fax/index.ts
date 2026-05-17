@@ -1,7 +1,7 @@
 /**
  * send-rx-fax
  *
- * Faxes a prescription to the FCC compounding pharmacy via Sinch and writes
+ * Faxes a prescription to the pharmacy via Telnyx and writes
  * an `orders` row + a `communication_logs` row.
  *
  * AUTH POSTURE (security audit R-5, 2026-05-08):
@@ -19,6 +19,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
+import { prescriptionHtmlToSignedPdfUrl } from "../_shared/rx-fax-pdf.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -94,7 +95,7 @@ function normalizeFaxDestination(raw: string | undefined, fallback: string): str
   const digits = raw.replace(/\D/g, "");
   if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
   if (digits.length === 10) return `+1${digits}`;
-  return fallback;
+  throw new Error("Invalid fax number. Use a 10-digit US number.");
 }
 
 function generatePrescriptionHtml(
@@ -235,15 +236,23 @@ serve(async (req) => {
   }
 
   try {
-    const SINCH_ACCESS_KEY = Deno.env.get("SINCH_ACCESS_KEY");
-    const SINCH_SECRET_KEY = Deno.env.get("SINCH_SECRET_KEY");
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const TELNYX_API_KEY = Deno.env.get("TELNYX_API_KEY");
+    const TELNYX_FAX_CONNECTION_ID = Deno.env.get("TELNYX_FAX_CONNECTION_ID");
+    const TELNYX_FAX_FROM_NUMBER = Deno.env.get("TELNYX_FAX_FROM_NUMBER");
 
-    if (!SINCH_ACCESS_KEY || !SINCH_SECRET_KEY) {
-      throw new Error("Sinch API credentials not configured");
+    if (!TELNYX_API_KEY || !TELNYX_FAX_CONNECTION_ID || !TELNYX_FAX_FROM_NUMBER) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error:
+            "Telnyx fax is not configured. Set TELNYX_API_KEY, TELNYX_FAX_CONNECTION_ID, and TELNYX_FAX_FROM_NUMBER in Supabase secrets.",
+        }),
+        { status: 503, headers: { "Content-Type": "application/json", ...corsHeaders } },
+      );
     }
 
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const rawBody = await req.json();
@@ -368,35 +377,40 @@ serve(async (req) => {
       diagnosis_code && diagnosis_description ? { code: diagnosis_code, description: diagnosis_description } : undefined
     );
 
-    // Convert HTML to base64 for Sinch API
-    const htmlBase64 = btoa(unescape(encodeURIComponent(prescriptionHtml)));
+    const pdfStoragePath = `fax-outbound/${patient_id}/${Date.now()}_rx.pdf`;
+    const mediaUrl = await prescriptionHtmlToSignedPdfUrl(
+      supabase,
+      prescriptionHtml,
+      pdfStoragePath,
+    );
 
-    // Send fax via Sinch API
-    const sinchAuth = btoa(`${SINCH_ACCESS_KEY}:${SINCH_SECRET_KEY}`);
-    
-    console.log("Sending fax to:", faxDestination);
+    console.log("Sending Telnyx fax to:", faxDestination);
 
-    const faxResponse = await fetch("https://fax.api.sinch.com/v3/faxes", {
+    const faxResponse = await fetch("https://api.telnyx.com/v2/faxes", {
       method: "POST",
       headers: {
-        "Authorization": `Basic ${sinchAuth}`,
+        Authorization: `Bearer ${TELNYX_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        connection_id: TELNYX_FAX_CONNECTION_ID,
+        from: TELNYX_FAX_FROM_NUMBER,
         to: faxDestination,
-        contentUrl: `data:text/html;base64,${htmlBase64}`,
-        headerText: "Elevated Health Augusta - Prescription",
+        media_url: mediaUrl,
       }),
     });
 
     const faxResult = await faxResponse.json();
-    console.log("Sinch API response:", JSON.stringify(faxResult));
+    console.log("Telnyx API response:", JSON.stringify(faxResult));
 
     if (!faxResponse.ok) {
-      throw new Error(`Sinch API error: ${faxResult.error?.message || JSON.stringify(faxResult)}`);
+      const errDetail = faxResult.errors?.[0]?.detail ||
+        faxResult.errors?.[0]?.title ||
+        JSON.stringify(faxResult);
+      throw new Error(`Telnyx API error: ${errDetail}`);
     }
 
-    const faxId = faxResult.id || faxResult.faxId || `fax_${Date.now()}`;
+    const faxId = faxResult.data?.id || faxResult.id || `fax_${Date.now()}`;
 
     // Create order record with fax tracking
     const { data: order, error: orderError } = await supabase

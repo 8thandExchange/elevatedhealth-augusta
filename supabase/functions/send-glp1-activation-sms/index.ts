@@ -26,13 +26,6 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     logStep("Function started");
 
-    const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
-    const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-
-    if (!sinchAccessKey || !sinchSecretKey) {
-      throw new Error("Sinch API credentials not configured");
-    }
-
     const { patient_name, patient_phone, first_name }: GLP1ActivationSMSRequest = await req.json();
 
     if (!patient_phone) {
@@ -55,26 +48,9 @@ const handler = async (req: Request): Promise<Response> => {
     
     // Link to weight loss page where they can choose Semaglutide or Tirzepatide
     const message = `Hi ${firstName}! Your GLP-1 weight loss membership from Elevated Health Augusta is ready. Semaglutide $399/mo or Tirzepatide $499/mo. Start here: ${origin}/weight-loss Questions? (706) 760-3470`;
-
-    const sinchUrl = `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`;
-    
-    const response = await fetch(sinchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${sinchSecretKey}`,
-      },
-      body: JSON.stringify({
-        from: "12029533545",
-        to: [formattedPhone],
-        body: message,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      logStep("Sinch API error", { status: response.status, error: errorText });
-      throw new Error(`SMS send failed: ${errorText}`);
+    const smsResult = await sendSMS(formattedPhone, message);
+    if (!smsResult.success) {
+      throw new Error(smsResult.error || "SMS send failed");
     }
 
     const result = await response.json();

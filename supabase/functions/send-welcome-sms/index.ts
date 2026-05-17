@@ -27,6 +27,12 @@ function smsWelcomeLog(
   }, level);
 }
 
+
+async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  return sendSmsViaGhl(to, message);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -36,18 +42,6 @@ serve(async (req) => {
   let phoneLast4: string | null = null;
 
   try {
-    const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
-    const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-
-    if (!sinchAccessKey || !sinchSecretKey) {
-      smsWelcomeLog("config_error", {
-        patient_id: null,
-        phone_last4: null,
-        success: false,
-        error_message: "Sinch credentials not configured",
-      }, "error");
-      throw new Error("Sinch credentials not configured");
-    }
 
     const { phone, first_name, primary_program, patient_id } = await req.json();
 
@@ -90,31 +84,15 @@ serve(async (req) => {
       `ELEVATED programs from $199/mo. Portal: elevatedhealthaugusta.com/patient/login ` +
       `Questions: ${CLINIC_PHONE}`;
 
-    const response = await fetch(
-      `https://us.sms.api.sinch.com/xms/v1/${sinchAccessKey}/batches`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sinchSecretKey}`,
-        },
-        body: JSON.stringify({
-          from: "+18339765929",
-          to: [digits],
-          body: message,
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      smsWelcomeLog("sinch_error", {
+    const smsResult = await sendSMS(phone, message);
+    if (!smsResult.success) {
+      smsWelcomeLog("ghl_error", {
         patient_id: patientIdForLog,
         phone_last4: phoneLast4,
         success: false,
-        error_message: `${response.status}: ${errorText}`,
+        error_message: smsResult.error || "SMS failed",
       }, "error");
-      throw new Error(`Sinch API error: ${response.status}`);
+      throw new Error(smsResult.error || "GHL SMS failed");
     }
 
     smsWelcomeLog("send_complete", {

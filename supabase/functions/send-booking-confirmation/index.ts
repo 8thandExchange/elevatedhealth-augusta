@@ -122,50 +122,9 @@ interface SendBookingArgs {
   confirmation_number?: string | null;
 }
 
-async function sendSMS(
-  to: string,
-  message: string,
-): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  const accessKey = Deno.env.get("SINCH_ACCESS_KEY");
-  const secretKey = Deno.env.get("SINCH_SECRET_KEY");
-
-  if (!accessKey || !secretKey) {
-    logStep("Sinch credentials not configured - skipping SMS");
-    return { success: false, error: "Sinch credentials not configured" };
-  }
-
-  const formattedPhone = formatPhoneNumber(to);
-  logStep("Sending SMS", { to: formattedPhone });
-
-  const url = `https://us.sms.api.sinch.com/xms/v1/${accessKey}/batches`;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "ElevatedHealth",
-        to: [formattedPhone],
-        body: message,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      logStep("Sinch API error", { status: response.status, result });
-      return { success: false, error: result.text || "Failed to send SMS" };
-    }
-
-    logStep("SMS sent successfully", { batchId: result.id });
-    return { success: true, messageId: result.id };
-  } catch (error) {
-    logStep("SMS send error", { error: String(error) });
-    return { success: false, error: String(error) };
-  }
+async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  return sendSmsViaGhl(to, message);
 }
 
 function buildEmailHtml(args: SendBookingArgs): string {

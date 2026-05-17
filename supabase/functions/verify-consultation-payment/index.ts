@@ -95,40 +95,9 @@ async function recognizeConsultationProduct(
 }
 
 async function sendSMS(to: string, message: string): Promise<boolean> {
-  const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
-  const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-
-  if (!sinchAccessKey || !sinchSecretKey) {
-    logStep("SMS credentials not configured");
-    return false;
-  }
-
-  try {
-    const response = await fetch("https://us.sms.api.sinch.com/xms/v1/" + sinchAccessKey + "/batches", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + sinchSecretKey,
-      },
-      body: JSON.stringify({
-        from: "+18339765929",
-        to: [to.replace(/\D/g, "")],
-        body: message,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      logStep("SMS send failed", { status: response.status, error: errorText });
-      return false;
-    }
-
-    logStep("SMS sent successfully", { to });
-    return true;
-  } catch (error) {
-    logStep("SMS error", { error: error instanceof Error ? error.message : String(error) });
-    return false;
-  }
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  const r = await sendSmsViaGhl(to, message);
+  return r.success;
 }
 
 serve(async (req) => {

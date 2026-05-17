@@ -6,6 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Pharmacy {
@@ -30,6 +32,9 @@ interface PharmacySelectorProps {
   selectedPharmacyId: string | null;
   onChange: (pharmacyId: string, pharmacy: Pharmacy) => void;
   disabled?: boolean;
+  /** Bump to reload the pharmacy list after adding one */
+  refreshToken?: number;
+  onAddPharmacyClick?: () => void;
 }
 
 export function PharmacySelector({
@@ -37,6 +42,8 @@ export function PharmacySelector({
   selectedPharmacyId,
   onChange,
   disabled,
+  refreshToken = 0,
+  onAddPharmacyClick,
 }: PharmacySelectorProps) {
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +77,7 @@ export function PharmacySelector({
     return () => {
       cancelled = true;
     };
-  }, [category]);
+  }, [category, refreshToken]);
 
   const selected = pharmacies.find((p) => p.id === selectedPharmacyId);
   const isNonDefault = selected && !selected.default_for_categories.includes(category);
@@ -89,6 +96,7 @@ export function PharmacySelector({
 
   return (
     <div className="space-y-2">
+      <div className="flex items-center gap-2">
       <Select
         value={selectedPharmacyId ?? undefined}
         onValueChange={(id) => {
@@ -108,6 +116,20 @@ export function PharmacySelector({
           ))}
         </SelectContent>
       </Select>
+      {onAddPharmacyClick && (
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="shrink-0 border-gold/30"
+          onClick={onAddPharmacyClick}
+          disabled={disabled}
+          title="Add fax pharmacy"
+        >
+          <Plus className="w-4 h-4" />
+        </Button>
+      )}
+      </div>
       {selected && (
         <p className="text-xs text-muted-foreground">
           {selected.fulfillment_method === "online_portal"

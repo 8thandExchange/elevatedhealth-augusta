@@ -86,48 +86,8 @@ function formatPhoneNumber(phone: string): string {
 
 // Send SMS via Sinch
 async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  const accessKey = Deno.env.get("SINCH_ACCESS_KEY");
-  const secretKey = Deno.env.get("SINCH_SECRET_KEY");
-  
-  if (!accessKey || !secretKey) {
-    throw new Error("Sinch credentials not configured");
-  }
-
-  const formattedPhone = formatPhoneNumber(to);
-  logStep("Sending SMS", { to: formattedPhone, messageLength: message.length });
-
-  // Sinch SMS API endpoint
-  const url = "https://us.sms.api.sinch.com/xms/v1/" + accessKey + "/batches";
-  
-  const payload = {
-    from: "ElevatedHealth", // Sinch sender ID (alphanumeric or phone number)
-    to: [formattedPhone],
-    body: message,
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${secretKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
-    
-    if (!response.ok) {
-      logStep("Sinch API error", { status: response.status, result });
-      return { success: false, error: result.text || "Failed to send SMS" };
-    }
-
-    logStep("SMS sent successfully", { batchId: result.id });
-    return { success: true, messageId: result.id };
-  } catch (error) {
-    logStep("SMS send error", { error: String(error) });
-    return { success: false, error: String(error) };
-  }
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  return sendSmsViaGhl(to, message);
 }
 
 serve(async (req) => {
@@ -156,7 +116,7 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const body = await req.json();
-    const { 
+    let { 
       patient_id,
       patient_phone,
       patient_name,
@@ -164,10 +124,35 @@ serve(async (req) => {
       appointment_time,
       appointment_type,
       custom_message,
-      send_to_all_tomorrow // If true, send reminders to all patients with appointments tomorrow
+      send_to_all_tomorrow,
+      appointment_id,
     } = body;
 
-    logStep("Request received", { patient_id, patient_phone, appointment_type, send_to_all_tomorrow });
+    if (appointment_id && !patient_phone) {
+      const { data: appt, error: apptErr } = await supabase
+        .from("appointments")
+        .select(
+          `id, scheduled_at, service_line, reason, patient_id, patients:patients ( full_name, phone )`,
+        )
+        .eq("id", appointment_id)
+        .maybeSingle();
+      if (apptErr || !appt) {
+        throw new Error(apptErr?.message || "Appointment not found");
+      }
+      const scheduled = new Date(appt.scheduled_at);
+      patient_id = appt.patient_id;
+      patient_phone = appt.patients?.phone;
+      patient_name = appt.patients?.full_name;
+      appointment_date = scheduled.toLocaleDateString("en-US", {
+        weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York",
+      });
+      appointment_time = scheduled.toLocaleTimeString("en-US", {
+        hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
+      });
+      appointment_type = appt.reason || appt.service_line || "appointment";
+    }
+
+    logStep("Request received", { patient_id, patient_phone, appointment_type, send_to_all_tomorrow, appointment_id });
 
     const results: Array<{ patient_id?: string; phone: string; success: boolean; error?: string }> = [];
 
