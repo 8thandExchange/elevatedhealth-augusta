@@ -57,16 +57,15 @@ export const ServiceWorkerUpdater = () => {
       if (storedVersion !== CACHE_VERSION) {
         console.log(`[SW Updater] Version mismatch: ${storedVersion} → ${CACHE_VERSION}`);
         
-        // For Firefox, be more aggressive
-        if (isFirefox) {
-          console.log('[SW Updater] Firefox detected - aggressive cache clearing');
-          await clearAllCaches();
-          await unregisterAllServiceWorkers();
-        } else {
-          await clearAllCaches();
+        console.log("[SW Updater] Clearing stale caches and service workers");
+        await clearAllCaches();
+        await unregisterAllServiceWorkers();
+        localStorage.setItem("app-cache-version", CACHE_VERSION);
+
+        if (storedVersion) {
+          window.location.reload();
+          return;
         }
-        
-        localStorage.setItem('app-cache-version', CACHE_VERSION);
       }
     };
     

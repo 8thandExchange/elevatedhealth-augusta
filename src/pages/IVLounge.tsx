@@ -276,17 +276,11 @@ const IVLounge = () => {
                       )}
                       <CardContent className="relative p-6 md:p-7 flex flex-col h-full min-h-[360px]">
                         <div className="flex items-start justify-between mb-5">
-                          <div
-                            className="w-14 h-14 rounded-full border-2 border-accent/35 bg-gradient-to-br from-accent/20 via-[var(--color-paper)] to-primary/10 flex items-center justify-center shadow-sm ring-1 ring-accent/15"
-                            aria-hidden
-                          >
-                            <BrandTherapyMark
-                              therapyName={therapy.name}
-                              category={therapy.category}
-                              size={30}
-                              className="text-primary"
-                            />
-                          </div>
+                          <BrandTherapyMark
+                            therapyName={therapy.name}
+                            category={therapy.category}
+                            size={56}
+                          />
                           <span className="section-label text-[10px] tracking-[0.2em]">
                             {therapy.category}
                           </span>
