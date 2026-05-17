@@ -36,6 +36,12 @@
     --input: 36 20% 87%;
     --ring: 32 36% 56%;
     --radius: 0.1875rem;
+    /* EHA brand raw values — for .btn-* utility classes */
+    --color-ink: #2A2826;
+    --color-paper: #F2EBDC;
+    --color-accent: #B8956A;
+    --color-accent-on: #2A2826;
+    --rule: 1px solid var(--color-accent);
     --shadow-sm: none;
     --shadow-md: none;
     --shadow-lg: none;
@@ -120,6 +126,47 @@
     color: hsl(var(--accent));
     font-size: 0.8125rem;
   }
+}
+
+/* EHA brand button utility classes — editorial, squared, uppercase tracked */
+@layer components {
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 13px;
+    border-radius: 0;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+  }
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    border: 0;
+    padding: 14px 28px;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary {
+    background: var(--color-accent);
+    color: var(--color-accent-on); /* NEVER white */
+    border: 0;
+    padding: 14px 28px;
+  }
+  .btn-secondary:hover { filter: brightness(0.95); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border: 0;
+    border-bottom: var(--rule);
+    padding: 8px 0;
+  }
+  .btn-ghost:hover { color: var(--color-accent); }
 }
 
 /* Section divider — 1px gold at 40% opacity */
