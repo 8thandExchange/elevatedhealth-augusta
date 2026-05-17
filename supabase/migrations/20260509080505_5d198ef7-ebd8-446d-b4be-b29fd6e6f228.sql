@@ -11,9 +11,9 @@ DECLARE
   v_req_id bigint;
 BEGIN
   IF _jobid = 1 THEN
-    v_url := 'https://szcbfgnucdhwtccsolru.supabase.co/functions/v1/send-intake-reminder';
+    v_url := 'https://eserdstrggzfremnsvrf.supabase.co/functions/v1/send-intake-reminder';
   ELSIF _jobid = 2 THEN
-    v_url := 'https://szcbfgnucdhwtccsolru.supabase.co/functions/v1/send-stale-intake-alert';
+    v_url := 'https://eserdstrggzfremnsvrf.supabase.co/functions/v1/send-stale-intake-alert';
   ELSE
     RAISE EXCEPTION 'unsupported jobid %', _jobid;
   END IF;

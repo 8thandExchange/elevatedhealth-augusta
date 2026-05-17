@@ -44,7 +44,7 @@ SELECT cron.alter_job(
   job_id := 1,
   command := $cmd$
     SELECT net.http_post(
-      url := 'https://szcbfgnucdhwtccsolru.supabase.co/functions/v1/send-intake-reminder',
+      url := 'https://eserdstrggzfremnsvrf.supabase.co/functions/v1/send-intake-reminder',
       headers := jsonb_build_object(
         'Content-Type', 'application/json',
         'X-Cron-Secret', (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'cron_secret' LIMIT 1)
@@ -58,7 +58,7 @@ SELECT cron.alter_job(
   job_id := 2,
   command := $cmd$
     SELECT net.http_post(
-      url := 'https://szcbfgnucdhwtccsolru.supabase.co/functions/v1/send-stale-intake-alert',
+      url := 'https://eserdstrggzfremnsvrf.supabase.co/functions/v1/send-stale-intake-alert',
       headers := jsonb_build_object(
         'Content-Type', 'application/json',
         'X-Cron-Secret', (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'cron_secret' LIMIT 1)
