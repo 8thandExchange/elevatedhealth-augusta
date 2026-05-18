@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Check, Clock, Droplet, Plus, ShieldCheck, Star, X } from "lucide-react";
 import { ELEVATED_PROGRAMS, MEMBER_DISCOUNT_PERCENT } from "@/lib/stripeConfig";
 import { IV_THERAPIES_CATALOG } from "@/lib/ivTherapiesCatalog";
+import { IV_ADDONS_CATALOG } from "@/lib/ivAddonsCatalog";
 
 interface Therapy {
   id: string;
@@ -53,7 +54,7 @@ const scrollToMenu = () => {
 const IVLounge = () => {
   const { toast } = useToast();
   const [therapies, setTherapies] = useState<Therapy[]>(IV_THERAPIES_CATALOG as Therapy[]);
-  const [addons, setAddons] = useState<Addon[]>([]);
+  const [addons, setAddons] = useState<Addon[]>(IV_ADDONS_CATALOG as Addon[]);
   const [loading, setLoading] = useState(true);
   const [menuLoadError, setMenuLoadError] = useState<string | null>(null);
   const [selectedTherapyId, setSelectedTherapyId] = useState<string | null>(null);
@@ -86,15 +87,17 @@ const IVLounge = () => {
 
         if (addonsRes.error) {
           console.warn("[IVLounge] add-ons load failed:", addonsRes.error.message);
-          setAddons([]);
+          setAddons(IV_ADDONS_CATALOG as Addon[]);
         } else {
-          setAddons((addonsRes.data as Addon[]) || []);
+          const addonRows = (addonsRes.data as Addon[]) || [];
+          setAddons(addonRows.length > 0 ? addonRows : (IV_ADDONS_CATALOG as Addon[]));
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Could not load menu from server";
         console.warn("[IVLounge] using built-in menu fallback:", message);
         setMenuLoadError(message);
         setTherapies(IV_THERAPIES_CATALOG as Therapy[]);
+        setAddons(IV_ADDONS_CATALOG as Addon[]);
       } finally {
         setLoading(false);
       }
@@ -137,24 +140,42 @@ const IVLounge = () => {
     }, 80);
   };
 
-  const resolveTherapyIdForCheckout = async (therapy: Therapy): Promise<string> => {
-    if (!therapy.id.startsWith("catalog-")) {
-      return therapy.id;
+  const resolveCatalogRowId = async (
+    table: "iv_therapies" | "iv_addons",
+    catalogId: string,
+    name: string
+  ): Promise<string | null> => {
+    if (!catalogId.startsWith("catalog-")) {
+      return catalogId;
     }
-
     const { data, error } = await supabase
-      .from("iv_therapies")
+      .from(table)
       .select("id")
-      .eq("name", therapy.name)
+      .eq("name", name)
       .eq("is_active", true)
       .maybeSingle();
-
     if (error) throw error;
-    if (data?.id) return data.id;
+    return data?.id ?? null;
+  };
+
+  const resolveTherapyIdForCheckout = async (therapy: Therapy): Promise<string> => {
+    const id = await resolveCatalogRowId("iv_therapies", therapy.id, therapy.name);
+    if (id) return id;
 
     throw new Error(
       "Online checkout for this drip is not available yet. Please call us at (706) 760-3470 to book."
     );
+  };
+
+  const resolveAddonIdsForCheckout = async (ids: string[]): Promise<string[]> => {
+    const resolved: string[] = [];
+    for (const id of ids) {
+      const addon = addons.find((a) => a.id === id);
+      if (!addon) continue;
+      const dbId = await resolveCatalogRowId("iv_addons", addon.id, addon.name);
+      if (dbId) resolved.push(dbId);
+    }
+    return resolved;
   };
 
   const handleCheckout = async () => {
@@ -162,8 +183,9 @@ const IVLounge = () => {
     setCheckingOut(true);
     try {
       const therapyId = await resolveTherapyIdForCheckout(selectedTherapy);
+      const addonIds = await resolveAddonIdsForCheckout(selectedAddonIds);
       const { data, error } = await supabase.functions.invoke("create-iv-drip-checkout", {
-        body: { therapy_id: therapyId, addon_ids: selectedAddonIds },
+        body: { therapy_id: therapyId, addon_ids: addonIds },
       });
       if (error) throw error;
       if (data?.url) window.location.href = data.url;
@@ -414,10 +436,8 @@ const IVLounge = () => {
         {/* BUILD YOUR DRIP / CHECKOUT */}
         <section
           id="your-drip"
-          className={`py-16 md:py-20 scroll-mt-28 transition-shadow ${
-            selectedTherapy
-              ? "bg-secondary/60 ring-2 ring-accent/40 ring-inset"
-              : "bg-secondary/40"
+          className={`py-16 md:py-20 scroll-mt-28 border-t border-border bg-background transition-shadow ${
+            selectedTherapy ? "ring-2 ring-accent/30 ring-inset" : ""
           }`}
         >
           <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
@@ -429,7 +449,7 @@ const IVLounge = () => {
               <Button
                 type="button"
                 variant="link"
-                className="mt-3 text-accent font-jost"
+                className="mt-3 text-primary font-jost underline-offset-4 hover:text-accent"
                 onClick={scrollToMenu}
               >
                 ← Back to menu
@@ -440,18 +460,20 @@ const IVLounge = () => {
               {/* Add-ons list */}
               <div className="lg:col-span-3 space-y-4">
                 <h3 className="font-playfair text-xl text-foreground mb-2">Optional Boosters</h3>
-                <p className="text-sm text-muted-foreground mb-4">Stack any add-on for $25 each.</p>
+                <p className="text-sm text-foreground/80 font-jost mb-4">
+                  Most add-ons $25 · Glutathione $35 · NAD+ $50
+                </p>
 
                 {!selectedTherapy ? (
-                  <p className="text-sm text-muted-foreground font-jost py-6">
+                  <p className="text-sm text-foreground/70 font-jost py-6">
                     Select a drip from the menu above to unlock booster options.
                   </p>
-                ) : loading ? (
+                ) : loading && addons.length === 0 ? (
                   <div className="space-y-3">
                     {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}
                   </div>
                 ) : addons.length === 0 ? (
-                  <p className="text-sm text-muted-foreground font-jost py-6">
+                  <p className="text-sm text-foreground/70 font-jost py-6">
                     No boosters listed online yet — you can still check out with your drip only, or call us to add boosters at your visit.
                   </p>
                 ) : (
@@ -463,10 +485,10 @@ const IVLounge = () => {
                           key={addon.id}
                           onClick={() => toggleAddon(addon.id)}
                           disabled={!selectedTherapy}
-                          className={`w-full text-left p-5 rounded-xl border-2 transition-all ${
+                          className={`w-full text-left p-5 rounded-xl border-2 shadow-sm transition-all ${
                             checked
-                              ? "border-accent bg-accent/5"
-                              : "border-border bg-background hover:border-accent/50"
+                              ? "border-accent bg-card ring-1 ring-accent/30"
+                              : "border-border bg-card hover:border-accent/50 hover:shadow-md"
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                           <div className="flex items-center gap-4">
@@ -481,7 +503,7 @@ const IVLounge = () => {
                                 <span className="font-jost font-medium text-accent">+${addon.price}</span>
                               </div>
                               {addon.description && (
-                                <p className="text-sm text-muted-foreground">{addon.description}</p>
+                                <p className="text-sm text-foreground/75">{addon.description}</p>
                               )}
                             </div>
                           </div>
