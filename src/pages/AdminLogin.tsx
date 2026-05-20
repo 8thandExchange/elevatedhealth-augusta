@@ -146,7 +146,7 @@ const AdminLogin = () => {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/admin/login`,
+        redirectTo: `${window.location.origin}/reset-password`,
       });
 
       if (error) throw error;
@@ -166,7 +166,7 @@ const AdminLogin = () => {
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/admin/login`,
+        redirectTo: `${window.location.origin}/reset-password`,
       });
 
       if (error) throw error;

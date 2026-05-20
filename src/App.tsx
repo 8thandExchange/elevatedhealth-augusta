@@ -79,6 +79,7 @@ import PatientSubstanceAcknowledgment from "./pages/PatientSubstanceAcknowledgme
 import IntakeKiosk from "./pages/IntakeKiosk";
 import IntakeStart from "./pages/IntakeStart";
 import ProviderAppointmentRoute from "./pages/provider/ProviderAppointmentRoute";
+import SetNewPassword from "./pages/SetNewPassword";
 
 const queryClient = new QueryClient();
 
@@ -131,6 +132,7 @@ const App = () => {
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<SetNewPassword />} />
           <Route path="/weightloss" element={<WeightLoss />} />
           <Route path="/weight-loss" element={<WeightLoss />} />
           <Route path="/hormones" element={<Hormones />} />
