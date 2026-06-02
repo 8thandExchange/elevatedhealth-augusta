@@ -23,10 +23,10 @@ If you find references to "ketamine," "spravato," "esketamine,"
 to be cleaned up — not active features. Treat them the same way
 you'd treat dead code from a previous architecture.
 
-The repo name (elevated-ketra-augusta) and some database/file
-names still reflect the old era. Do not rename the repo (it
-breaks Lovable's GitHub sync). Internal renames in code are fine
-when called out explicitly.
+Some database/file names still reflect the old era. Avoid
+renaming the GitHub repo — it would break the git remote and the
+Vercel GitHub integration wiring. Internal renames in code are
+fine when called out explicitly.
 
 LAUNCH_CHECKLIST.md (if present) is a stale planning document
 from the old era. Do not treat it as a source of truth.
@@ -212,9 +212,17 @@ TECHNICAL ARCHITECTURE
 STACK
   Frontend: Vite + React + TypeScript + shadcn/ui + Tailwind
   Backend: Supabase (Postgres + Auth + Edge Functions)
-  Hosting: Lovable Cloud (auto-deploys on push to main)
+  Source of truth: GitHub (github.com/8thandExchange/elevatedhealth-augusta, branch main)
+  Frontend hosting: Vercel. Auto-deploys the frontend on push to
+    main via Vercel's GitHub integration. A git push ONLY deploys
+    the frontend — it does NOT touch the backend.
+  Backend deploy: Supabase, deployed DIRECTLY by the developer/agent
+    via the Supabase CLI. Edge functions: `supabase functions deploy
+    <name> --project-ref jiiparpfkjytdcuelcns`. Migrations: `supabase
+    db push`. Pushing to GitHub does NOT deploy edge functions or
+    migrations — you must run the CLI deploy explicitly.
+  Supabase project ref: jiiparpfkjytdcuelcns
   Payments: Stripe Checkout + Webhooks + Customer Portal
-  GitHub repo: github.com/CornerClix-Group/elevated-ketra-augusta
 
 DESIGN SYSTEM
   Colors: Charcoal #2A2826, Camel #B8956A, Bone #F2EBDC
@@ -252,8 +260,8 @@ STRIPE PRINCIPLES
   - Stripe Price IDs are the source of truth for actual charges.
   - All webhook events feed back into Supabase to update patient
     state (elevated_membership_status, etc.)
-  - Never use HTML <form> tags in React (Lovable convention).
-    Use button onClick handlers.
+  - Avoid HTML <form> tags in React; use button onClick handlers.
+    (Established convention throughout this codebase.)
 
 KEY DATABASE TABLES (do not modify schema without surfacing)
   patients — patient records with elevated_membership_status,
@@ -388,41 +396,40 @@ malformed input. This protects against 500 errors and avoids leaking
   END;
   $$;
 
-When a Lovable apply produces a refined or corrected version of a
-migration that Cursor authored, reconcile the Cursor file in place
-to match the deployed SQL. Commit the reconciliation with a message
-that names the deployed Lovable migration so future schema diffs do
-not show drift. Do not push the reconciliation as a new migration —
-the live DB already runs the deployed version.
+Migrations are authored as files under supabase/migrations and
+applied directly with `supabase db push` against project
+jiiparpfkjytdcuelcns. Author the migration, review the SQL, apply
+it with the CLI, then commit the migration file. If you correct a
+migration after authoring but before applying, edit the file in
+place. Once a migration has been applied to the live DB, do not
+edit that applied file to change its meaning — write a new
+forward migration instead.
 
 ═══════════════════════════════════════════════════════════════════
 WORKING WITH THIS CODEBASE
 ═══════════════════════════════════════════════════════════════════
 
-LOVABLE COEXISTENCE
-  This codebase is connected to Lovable.dev with bidirectional
-  GitHub sync. Lovable changes flow to GitHub; GitHub changes
-  flow to Lovable. Be careful not to fight Lovable mid-edit.
+DEVELOPMENT WORKFLOW
+  GitHub is the source of truth; this repo is edited directly in
+  Cursor (no external editor syncing changes underneath you).
 
-  Before substantive work:
+  Standard flow:
     1. git pull origin main
-    2. Verify the user has confirmed Lovable isn't running
-       a prompt
-    3. Make changes
-    4. Commit with descriptive message
-    5. Push
-
-  If you find files that look mid-edit (unfinished functions,
-  syntax errors, half-done refactors), STOP and ask the user.
-  Lovable might be in the middle of writing them.
+    2. Make changes
+    3. Commit with a descriptive message
+    4. git push origin main  (this deploys the FRONTEND to Vercel)
+    5. If you changed anything under supabase/ (edge functions or
+       migrations), deploy the BACKEND explicitly via the Supabase
+       CLI — a git push does NOT deploy it:
+         supabase functions deploy <name> --project-ref jiiparpfkjytdcuelcns
+         supabase db push
+    6. Verify the deploy (e.g. curl the function endpoint).
 
 CHANGES TO BE EXTRA CAREFUL ABOUT
   - Stripe Price IDs and stripeConfig.ts (real money)
   - Edge functions that send communications (Twilio, Sinch)
   - Database migrations (RLS policies in particular — this app
     handles PHI)
-  - Any file Lovable claimed to have just modified (potential
-    merge conflict zone)
 
 WHEN UNSURE, ASK
   Default to surfacing concerns over silently making changes.
@@ -434,7 +441,6 @@ WHEN UNSURE, ASK
 WHAT NOT TO TOUCH WITHOUT EXPLICIT REQUEST
   - Brand colors or design system tokens
   - Pricing values (the constants pattern is the source of truth)
-  - The bidirectional sync configuration with Lovable
   - The patients table schema (PHI, RLS-protected)
   - Any edge function that talks to Stripe webhooks
 
@@ -442,7 +448,7 @@ WHAT NOT TO TOUCH WITHOUT EXPLICIT REQUEST
 PROMPT HISTORY (for reference only)
 ═══════════════════════════════════════════════════════════════════
 
-Built so far via Lovable prompts:
+Build history (for reference only):
   Prompt 1: Foundation cleanup, ketamine removal
   Prompt 2: Homepage transformation
   Prompt 2.5/2.6/2.7/2.8: Homepage hero, auth separation,
