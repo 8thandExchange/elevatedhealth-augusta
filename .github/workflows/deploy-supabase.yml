@@ -45,5 +45,27 @@ jobs:
         with:
           version: latest
 
-      - name: Deploy all Edge Functions
-        run: supabase functions deploy --project-ref "$PROJECT_REF"
+      # `supabase functions deploy` bundles every function, each fetching its
+      # remote imports (esm.sh / deno.land) at build time. A single transient
+      # CDN error (e.g. Cloudflare 522) aborts the whole batch, so we retry.
+      # Re-deploying already-deployed functions is idempotent and safe.
+      - name: Deploy all Edge Functions (retry transient CDN errors)
+        run: |
+          set +e
+          attempt=1
+          max=4
+          until [ "$attempt" -gt "$max" ]; do
+            echo "::group::Deploy attempt $attempt/$max"
+            supabase functions deploy --project-ref "$PROJECT_REF"
+            code=$?
+            echo "::endgroup::"
+            if [ "$code" -eq 0 ]; then
+              echo "Deploy succeeded on attempt $attempt."
+              exit 0
+            fi
+            echo "Attempt $attempt failed (exit $code) — likely a transient import/CDN error. Retrying in 20s..."
+            attempt=$((attempt + 1))
+            sleep 20
+          done
+          echo "::error::Edge Function deploy failed after $max attempts."
+          exit 1
