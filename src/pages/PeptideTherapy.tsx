@@ -14,6 +14,7 @@ import {
   MEMBER_DISCOUNT_PERCENT,
   PEPTIDE_PRODUCTS,
   SEXUAL_WELLNESS_PRODUCTS,
+  WEIGHT_LOSS_PRICES,
 } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
@@ -97,6 +98,45 @@ const stacks: Stack[] = [
       nonMember: `${fmt(vitalityIvNon)}/mo`,
     },
     note: "Sermorelin and NAD+ are well-established peptides with clear regulatory standing. IV add-on uses IV Lounge walk-in pricing reference.",
+  },
+];
+
+type WeightLossMed = {
+  name: string;
+  tagline: string;
+  includes: string[];
+  bestFor: string[];
+  priceMember: string;
+  priceNonMember: string;
+  note: string;
+};
+
+const weightLoss: WeightLossMed[] = [
+  {
+    name: "Compounded Semaglutide",
+    tagline: "The GLP-1 that reset the category — appetite, cravings, and steady metabolic control.",
+    includes: [
+      "Compounded semaglutide, shipped monthly",
+      "Physician dose titration & lab monitoring",
+      "Weekly subcutaneous self-injection",
+    ],
+    bestFor: ["Sustained weight loss", "Appetite regulation", "Metabolic health"],
+    priceMember: WEIGHT_LOSS_PRICES.semaglutide.memberDisplayPrice,
+    priceNonMember: WEIGHT_LOSS_PRICES.semaglutide.displayPrice,
+    note: "Compounded under 503A pharmacy authority, physician-prescribed. Begins after your Wellness Assessment and labs.",
+  },
+  {
+    name: "Compounded Tirzepatide",
+    tagline: "Dual GLP-1/GIP action — the most significant appetite and weight response available.",
+    includes: [
+      "Compounded tirzepatide, shipped monthly",
+      "Physician dose titration & lab monitoring",
+      "Weekly subcutaneous self-injection",
+    ],
+    bestFor: ["Maximal weight loss", "Dual-pathway support", "Plateau breakthrough"],
+    priceMember: WEIGHT_LOSS_PRICES.tirzepatide.memberDisplayPrice,
+    priceNonMember: WEIGHT_LOSS_PRICES.tirzepatide.displayPrice,
+    note: "Compounded under 503A pharmacy authority, physician-prescribed. Begins after your Wellness Assessment and labs.",
   },
 ];
 
@@ -201,7 +241,7 @@ const PeptideTherapy = () => {
     <>
       <Helmet>
         <title>Peptide Therapy Augusta GA — Elevated Health</title>
-        <meta name="description" content="Physician-prescribed, pharmacy-compounded peptide protocols in Augusta, GA. PDA, PT-141, Sermorelin, NAD+, GHK-Cu. Lab-monitored, shipped to your door." />
+        <meta name="description" content="Physician-prescribed, pharmacy-compounded peptide protocols in Augusta, GA. PDA, PT-141, Sermorelin, NAD+, GHK-Cu, plus compounded GLP-1 medical weight loss (semaglutide, tirzepatide). Lab-monitored, shipped to your door." />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/peptides" />
         <meta property="og:title" content="Peptide Therapy Augusta GA — Elevated Health" />
         <meta property="og:description" content="Pharmacy-sourced peptide protocols. Lab-monitored, physician-prescribed. Shipped to your door." />
@@ -230,7 +270,7 @@ const PeptideTherapy = () => {
                 Targeted regeneration.<br /><span className="italic">Pharmacy-sourced. Physician-led.</span>
               </h1>
               <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl">
-                Custom peptide protocols compounded by a licensed 503A pharmacy and shipped to your door. Recovery, sexual wellness, longevity — physician-supervised, lab-monitored, no gray-market shortcuts.
+                Custom peptide protocols compounded by a licensed 503A pharmacy and shipped to your door. Recovery, sexual wellness, longevity, and medical weight loss (GLP-1) — physician-supervised, lab-monitored, no gray-market shortcuts.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
@@ -377,6 +417,66 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
+          {/* 5b. Medical Weight Loss — GLP-1 */}
+          <section id="weight-loss" className="py-20 md:py-28 bg-background border-t border-border scroll-mt-24">
+            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+              <div className="mb-16 max-w-2xl">
+                <p className="section-label mb-4">Medical Weight Loss</p>
+                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">
+                  GLP-1 therapy, <span className="italic">physician-guided</span>.
+                </h2>
+                <p className="font-jost font-light text-lg text-muted-foreground leading-relaxed mt-6">
+                  GLP-1 medications are peptides too. Ours are compounded by a licensed 503A pharmacy,
+                  prescribed and titrated by your physician, and monitored with labs — never gray-market.
+                </p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8 max-w-4xl">
+                {weightLoss.map((m) => (
+                  <div key={m.name} className="border border-border p-8 flex flex-col bg-background">
+                    <h3 className="font-playfair italic text-2xl md:text-3xl text-foreground mb-3">{m.name}</h3>
+                    <p className="font-jost font-light text-muted-foreground mb-6 leading-relaxed">{m.tagline}</p>
+
+                    <p className="section-label mb-3">What's included</p>
+                    <ul className="space-y-2 mb-6">
+                      {m.includes.map((i) => (
+                        <li key={i} className="font-jost font-light text-sm text-foreground flex items-start gap-2">
+                          <span className="text-accent mt-1.5 text-xs">—</span>{i}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <p className="section-label mb-3">Best for</p>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {m.bestFor.map((b) => (
+                        <span key={b} className="font-jost text-xs uppercase tracking-widest text-muted-foreground border border-border px-2 py-1">{b}</span>
+                      ))}
+                    </div>
+
+                    <div className="mt-auto pt-6 border-t border-border">
+                      <div className="flex justify-between font-jost text-sm mb-1">
+                        <span className="text-muted-foreground">Member</span>
+                        <span className="font-medium text-foreground">{m.priceMember}</span>
+                      </div>
+                      <div className="flex justify-between font-jost text-sm">
+                        <span className="text-muted-foreground">Non-member</span>
+                        <span className="font-medium text-foreground">{m.priceNonMember}</span>
+                      </div>
+                      <p className="font-jost text-xs italic text-muted-foreground mt-4 leading-relaxed">{m.note}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-12 flex flex-col sm:flex-row gap-4">
+                <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
+                  Book your {PRICE_CONSULT} Wellness Assessment <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button asChild variant="outline" size="lg" className="font-jost tracking-wide">
+                  <a href="/weight-loss">See the full weight-loss program →</a>
+                </Button>
+              </div>
+            </div>
+          </section>
+
           {/* 6. À la carte */}
           <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
@@ -460,6 +560,8 @@ const PeptideTherapy = () => {
                     <div className="flex justify-between border-b border-border/60 pb-3"><span>Restore Protocol</span><span className="font-medium whitespace-nowrap">{stacks[0].priceNonMember}</span></div>
                     <div className="flex justify-between border-b border-border/60 pb-3"><span>Healing Protocol</span><span className="font-medium whitespace-nowrap">{stacks[1].priceNonMember}</span></div>
                     <div className="flex justify-between border-b border-border/60 pb-3"><span>Vitality Protocol<br /><span className="font-light text-sm text-muted-foreground">depending on NAD+ delivery</span></span><span className="font-medium whitespace-nowrap">{stacks[2].priceNonMember}</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Compounded Semaglutide (GLP-1)<br /><span className="font-light text-sm text-muted-foreground">{weightLoss[0].priceMember} with ELEVATED membership</span></span><span className="font-medium whitespace-nowrap">{weightLoss[0].priceNonMember}</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Compounded Tirzepatide (GLP-1)<br /><span className="font-light text-sm text-muted-foreground">{weightLoss[1].priceMember} with ELEVATED membership</span></span><span className="font-medium whitespace-nowrap">{weightLoss[1].priceNonMember}</span></div>
                     <div className="flex justify-between border-b border-border/60 pb-3"><span>Individual peptides (à la carte)</span><span className="font-medium whitespace-nowrap">See catalog below</span></div>
                   </div>
                 </div>
