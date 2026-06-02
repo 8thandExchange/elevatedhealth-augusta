@@ -17,6 +17,11 @@ interface LabsReviewedSMSRequest {
   first_name?: string;
 }
 
+async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
+  return sendSmsViaGhl(to, message);
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -50,11 +55,10 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(smsResult.error || "SMS send failed");
     }
 
-    const result = await response.json();
-    logStep("SMS sent successfully", { batchId: result.id });
+    logStep("SMS sent successfully", { messageId: smsResult.messageId });
 
     return new Response(
-      JSON.stringify({ success: true, batchId: result.id }),
+      JSON.stringify({ success: true, messageId: smsResult.messageId }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

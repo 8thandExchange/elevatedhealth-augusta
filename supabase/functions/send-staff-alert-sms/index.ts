@@ -56,16 +56,19 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     logStep("Function started");
 
-    const sinchAccessKey = Deno.env.get("SINCH_ACCESS_KEY");
-    const sinchSecretKey = Deno.env.get("SINCH_SECRET_KEY");
-    const staffPhone = Deno.env.get("STAFF_NOTIFICATION_PHONE");
-
-    if (!sinchAccessKey || !sinchSecretKey) {
-      throw new Error("Sinch API credentials not configured");
+    const staffPhoneRaw = Deno.env.get("STAFF_NOTIFICATION_PHONE");
+    if (!staffPhoneRaw) {
+      throw new Error("STAFF_NOTIFICATION_PHONE not configured");
     }
 
-    if (!staffPhone) {
-      throw new Error("STAFF_NOTIFICATION_PHONE not configured");
+    // Support one or more staff numbers (comma / semicolon / whitespace separated).
+    const staffPhones = staffPhoneRaw
+      .split(/[,;\s]+/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+
+    if (staffPhones.length === 0) {
+      throw new Error("STAFF_NOTIFICATION_PHONE contained no valid numbers");
     }
 
     const data: StaffAlertRequest = await req.json();
@@ -114,18 +117,36 @@ const handler = async (req: Request): Promise<Response> => {
         message = `📢 ALERT: ${patient_name} - Action required. Check provider dashboard.`;
     }
 
-    // Send SMS to staff
-    const formattedPhone = formatPhoneNumber(staffPhone);
-    const smsResult = await sendSMS(formattedPhone, message);
-    if (!smsResult.success) {
-      throw new Error(smsResult.error || "SMS send failed");
+    // Send SMS to every configured staff number (best-effort across recipients).
+    const results: { phone: string; success: boolean; error?: string }[] = [];
+    for (const phone of staffPhones) {
+      const formattedPhone = formatPhoneNumber(phone);
+      const smsResult = await sendSMS(formattedPhone, message);
+      results.push({
+        phone: formattedPhone,
+        success: smsResult.success,
+        error: smsResult.error,
+      });
+      if (!smsResult.success) {
+        logStep("SMS send failed for recipient", {
+          phone: formattedPhone,
+          error: smsResult.error,
+        });
+      }
     }
 
-    const result = await response.json();
-    logStep("Staff alert sent successfully", { batchId: result.id, alertType: alert_type });
+    const anySent = results.some((r) => r.success);
+    if (!anySent) {
+      throw new Error(
+        results.map((r) => `${r.phone}: ${r.error ?? "unknown error"}`).join("; ") ||
+          "SMS send failed",
+      );
+    }
+
+    logStep("Staff alert sent", { alertType: alert_type, results });
 
     return new Response(
-      JSON.stringify({ success: true, batchId: result.id }),
+      JSON.stringify({ success: true, results }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

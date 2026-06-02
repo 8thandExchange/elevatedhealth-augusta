@@ -158,6 +158,142 @@ const generateWelcomeEmail = (patientName: string) => `
 </html>
 `;
 
+const STAFF_NOTIFICATION_EMAIL =
+  Deno.env.get("STAFF_NOTIFICATION_EMAIL") || "booking@elevatedhealthaugusta.com";
+
+function generateStaffPaymentEmail(opts: {
+  patientName: string;
+  patientEmail: string | null;
+  amountLabel: string;
+  description: string;
+  isGuest: boolean;
+}): string {
+  const { patientName, patientEmail, amountLabel, description, isGuest } = opts;
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8f9fa;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f9fa;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <tr><td style="background:linear-gradient(135deg,#2C3E50 0%,#34495e 100%);padding:24px 32px;">
+          <h1 style="color:#fff;margin:0;font-size:22px;">&#128176; New Payment Received</h1>
+          <p style="color:#C5A059;margin:6px 0 0;font-size:13px;">Elevated Health Augusta &mdash; action needed: contact patient</p>
+        </td></tr>
+        <tr><td style="padding:28px 32px;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;width:150px;">Patient</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;font-weight:600;">${patientName}</td></tr>
+            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;">Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;">${patientEmail ?? "&mdash;"}</td></tr>
+            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;">Amount</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;font-weight:600;">${amountLabel}</td></tr>
+            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;">Purchased</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;">${description}</td></tr>
+            <tr><td style="padding:10px 0;color:#6b7280;">Type</td><td style="padding:10px 0;color:#111;">${isGuest ? "Guest checkout (new lead)" : "Existing patient"}</td></tr>
+          </table>
+          <div style="margin-top:24px;">
+            <a href="https://elevatedhealthaugusta.com/provider/dashboard" style="display:inline-block;background:#C5A059;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;">Open Provider Dashboard &rarr;</a>
+          </div>
+        </td></tr>
+        <tr><td style="background:#f3f4f6;padding:14px 32px;text-align:center;"><p style="color:#6b7280;font-size:12px;margin:0;">Automated payment alert &middot; Elevated Health Augusta</p></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+/**
+ * Notify staff of a completed checkout so a person can be contacted.
+ * Sends an email (reliable, via Resend) and a staff SMS (best-effort, via
+ * send-staff-alert-sms). Never throws — notification failures must not block
+ * the webhook's 200 response (Stripe would otherwise retry indefinitely).
+ */
+async function notifyStaffOfPayment(
+  resend: Resend,
+  opts: {
+    patientName: string;
+    patientEmail: string | null;
+    amount: number | null;
+    description: string;
+    paymentType: string;
+    program?: string | null;
+    isGuest: boolean;
+    eventId: string;
+    eventType: string;
+  },
+): Promise<void> {
+  const amountLabel = opts.amount != null ? `$${opts.amount.toFixed(2)}` : "—";
+
+  // 1) Email — reliable channel.
+  try {
+    const emailResp = await resend.emails.send({
+      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      to: [STAFF_NOTIFICATION_EMAIL],
+      subject: `💰 New payment: ${opts.patientName} — ${amountLabel} (${opts.description})`,
+      html: generateStaffPaymentEmail({
+        patientName: opts.patientName,
+        patientEmail: opts.patientEmail,
+        amountLabel,
+        description: opts.description,
+        isGuest: opts.isGuest,
+      }),
+    });
+    webhookLog({
+      event_type: opts.eventType,
+      event_id: opts.eventId,
+      product_recognition: "unknown",
+      action_taken: `staff_email_alert_sent:${emailResp.data?.id ?? "unknown"}`,
+      success: true,
+    });
+  } catch (emailErr) {
+    webhookLog({
+      event_type: opts.eventType,
+      event_id: opts.eventId,
+      product_recognition: "unknown",
+      action_taken: "staff_email_alert_failed",
+      success: false,
+      error_message: emailErr instanceof Error ? emailErr.message : String(emailErr),
+    });
+  }
+
+  // 2) SMS — best-effort via GHL.
+  try {
+    const smsResp = await fetch(
+      `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-staff-alert-sms`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+        },
+        body: JSON.stringify({
+          alert_type: "payment_received",
+          patient_name: opts.patientName,
+          patient_email: opts.patientEmail ?? undefined,
+          amount: opts.amount,
+          payment_type: opts.paymentType,
+          program: opts.program ?? undefined,
+        }),
+      },
+    );
+    webhookLog({
+      event_type: opts.eventType,
+      event_id: opts.eventId,
+      product_recognition: "unknown",
+      action_taken: smsResp.ok ? "staff_sms_alert_ok" : "staff_sms_alert_failed",
+      success: smsResp.ok,
+    });
+  } catch (smsErr) {
+    webhookLog({
+      event_type: opts.eventType,
+      event_id: opts.eventId,
+      product_recognition: "unknown",
+      action_taken: "staff_sms_alert_exception",
+      success: false,
+      error_message: smsErr instanceof Error ? smsErr.message : String(smsErr),
+    });
+  }
+}
+
 async function firstSubscriptionPriceId(
   stripe: Stripe,
   session: Stripe.Checkout.Session,
@@ -239,6 +375,45 @@ serve(async (req) => {
       const metadata = session.metadata || {};
       const patientIdMeta = typeof metadata.patient_id === "string" ? metadata.patient_id : "";
       const isGuestMeta = metadata.is_guest_checkout === "true";
+
+      // Notify staff of EVERY completed checkout (one-time OR subscription,
+      // guest OR member, recognized OR not) so the patient can be contacted.
+      // This is intentionally outside the mode/program branches below so no
+      // paying customer slips through without an alert.
+      try {
+        const staffPatientName =
+          (typeof metadata.patient_name === "string" && metadata.patient_name.trim()) ||
+          session.customer_details?.name ||
+          customerEmail ||
+          "New patient";
+        const staffAmount = session.amount_total != null ? session.amount_total / 100 : null;
+        const staffProductKey =
+          typeof metadata.product_key === "string" ? metadata.product_key : "";
+        const staffPaymentType =
+          typeof metadata.payment_type === "string" ? metadata.payment_type : "";
+        const staffDescription = session.mode === "subscription"
+          ? `${staffProductKey || "Membership"} subscription`
+          : (staffPaymentType || staffProductKey || "Service payment");
+        await notifyStaffOfPayment(resend, {
+          patientName: staffPatientName,
+          patientEmail: customerEmail,
+          amount: staffAmount,
+          description: staffDescription,
+          paymentType: staffPaymentType || staffProductKey || session.mode || "payment",
+          isGuest: isGuestMeta,
+          eventId: event.id,
+          eventType: event.type,
+        });
+      } catch (notifyErr) {
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          product_recognition: "unknown",
+          action_taken: "staff_notify_exception",
+          success: false,
+          error_message: notifyErr instanceof Error ? notifyErr.message : String(notifyErr),
+        });
+      }
 
       if (session.mode === "payment") {
         const paymentType = metadata.payment_type as string | undefined;
@@ -441,43 +616,6 @@ serve(async (req) => {
               action_taken: `welcome_email_sent:${emailResponse.data?.id ?? "unknown"}`,
               success: true,
             });
-
-            try {
-              const staffAlertResponse = await fetch(
-                `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-staff-alert-sms`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-                  },
-                  body: JSON.stringify({
-                    alert_type: "payment_received",
-                    patient_name: patientName,
-                    patient_email: customerEmail,
-                    amount: session.amount_total ? session.amount_total / 100 : null,
-                    payment_type: "subscription activation",
-                    program: program ?? "unknown",
-                  }),
-                },
-              );
-              webhookLog({
-                event_type: event.type,
-                event_id: event.id,
-                product_recognition: recognition,
-                action_taken: staffAlertResponse.ok ? "staff_sms_alert_ok" : "staff_sms_alert_failed",
-                success: staffAlertResponse.ok,
-              });
-            } catch (smsError) {
-              webhookLog({
-                event_type: event.type,
-                event_id: event.id,
-                product_recognition: recognition,
-                action_taken: "staff_sms_alert_exception",
-                success: false,
-                error_message: String(smsError),
-              });
-            }
           } catch (emailError) {
             webhookLog({
               event_type: event.type,
