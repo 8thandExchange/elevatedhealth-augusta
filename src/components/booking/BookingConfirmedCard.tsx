@@ -54,7 +54,7 @@ const BookingConfirmedCard = ({
         endUtc: end,
         organizer: {
           name: SITE_CONFIG.clinicName,
-          email: "booking@elevatedhealthaugusta.com",
+          email: "appointments@elevatedhealthaugusta.com",
         },
       },
       `eha-${confirmationNumber}.ics`,

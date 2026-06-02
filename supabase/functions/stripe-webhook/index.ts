@@ -159,7 +159,7 @@ const generateWelcomeEmail = (patientName: string) => `
 `;
 
 const STAFF_NOTIFICATION_EMAIL =
-  Deno.env.get("STAFF_NOTIFICATION_EMAIL") || "booking@elevatedhealthaugusta.com";
+  Deno.env.get("STAFF_NOTIFICATION_EMAIL") || "appointments@elevatedhealthaugusta.com";
 
 function generateStaffPaymentEmail(opts: {
   patientName: string;

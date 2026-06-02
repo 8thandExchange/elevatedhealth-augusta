@@ -12,7 +12,7 @@
  *
  * Background: previously anyone reachable to the function URL could read
  * patient PHI (full_name, email, phone) for every stale intake patient and
- * trigger an outbound email to booking@elevatedhealthaugusta.com. The
+ * trigger an outbound email to appointments@elevatedhealthaugusta.com. The
  * cron-secret header pattern preserves the scheduled function while
  * shutting down the public attack surface.
  */
@@ -188,7 +188,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const emailResponse = await resend.emails.send({
       from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      to: ["appointments@elevatedhealthaugusta.com"],
       subject: `⏰ ${patientCount} Patient${patientCount > 1 ? 's' : ''} Need Outreach - Stale Intake Alert`,
       html: emailHtml,
     });

@@ -147,7 +147,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "Elevated Health Augusta <care@stripe.elevatedhealthaugusta.com>",
-        to: ["care@elevatedhealthaugusta.com"],
+        to: ["appointments@elevatedhealthaugusta.com"],
         subject: "New Elevated Health Augusta Inquiry",
         html: `
         <!DOCTYPE html>

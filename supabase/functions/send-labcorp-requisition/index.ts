@@ -180,7 +180,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "Elevated Health Augusta <care@stripe.elevatedhealthaugusta.com>",
-        to: ["booking@elevatedhealthaugusta.com"],
+        to: ["appointments@elevatedhealthaugusta.com"],
         subject: `LabCorp Requisition Required - ${patientName} (${panel.title})`,
         html: emailHtml,
       }),

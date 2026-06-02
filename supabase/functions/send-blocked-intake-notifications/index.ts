@@ -121,7 +121,7 @@ serve(async (req) => {
       if (therapy?.name) therapyName = therapy.name;
     }
 
-    const staffTo = "admin@elevatedhealthaugusta.com";
+    const staffTo = "appointments@elevatedhealthaugusta.com";
     const from = "admin@elevatedhealthaugusta.com";
 
     let staffSent = false;

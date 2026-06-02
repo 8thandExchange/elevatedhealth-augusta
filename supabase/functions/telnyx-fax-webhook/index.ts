@@ -55,7 +55,7 @@ async function sendFailureAlert(
   try {
     await resend.emails.send({
       from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      to: ["appointments@elevatedhealthaugusta.com"],
       subject: `Fax failed: ${patientName} - ${medication}`,
       html,
     });

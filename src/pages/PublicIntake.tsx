@@ -259,7 +259,7 @@ export default function PublicIntake() {
             </p>
             <div className="space-y-2">
               <p className="font-medium">{SITE_CONFIG.phone}</p>
-              <p className="text-sm text-slate-500">booking@elevatedhealthaugusta.com</p>
+              <p className="text-sm text-slate-500">appointments@elevatedhealthaugusta.com</p>
             </div>
           </CardContent>
         </Card>
@@ -285,7 +285,7 @@ export default function PublicIntake() {
             </p>
             <div className="bg-teal-50 p-4 rounded-lg">
               <p className="text-sm text-teal-800">
-                <strong>Questions?</strong> Call us at {SITE_CONFIG.phone} or email booking@elevatedhealthaugusta.com
+                <strong>Questions?</strong> Call us at {SITE_CONFIG.phone} or email appointments@elevatedhealthaugusta.com
               </p>
             </div>
           </CardContent>

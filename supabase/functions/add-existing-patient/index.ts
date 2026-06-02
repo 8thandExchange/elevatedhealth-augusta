@@ -361,7 +361,7 @@ serve(async (req) => {
                 </ul>
               </div>
               
-              <p>If you have any questions, don't hesitate to reach out to us at <a href="mailto:booking@elevatedhealthaugusta.com" style="color: #0d9488;">booking@elevatedhealthaugusta.com</a> or call us at <a href="tel:7067603470" style="color: #0d9488;">(706) 760-3470</a>.</p>
+              <p>If you have any questions, don't hesitate to reach out to us at <a href="mailto:appointments@elevatedhealthaugusta.com" style="color: #0d9488;">appointments@elevatedhealthaugusta.com</a> or call us at <a href="tel:7067603470" style="color: #0d9488;">(706) 760-3470</a>.</p>
               
               <p style="margin-top: 30px;">
                 Warm regards,<br>
@@ -371,7 +371,7 @@ serve(async (req) => {
               <div style="border-top: 1px solid #e5e5e5; margin-top: 30px; padding-top: 20px; text-align: center; color: #666; font-size: 12px;">
                 <p style="margin: 0;">Elevated Health Augusta</p>
                 <p style="margin: 5px 0;">7013 Evans Town Center Blvd, Suite 203 | Evans, GA 30809</p>
-                <p style="margin: 5px 0;">(706) 760-3470 | booking@elevatedhealthaugusta.com</p>
+                <p style="margin: 5px 0;">(706) 760-3470 | appointments@elevatedhealthaugusta.com</p>
               </div>
             </body>
             </html>

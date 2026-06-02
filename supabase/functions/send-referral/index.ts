@@ -90,7 +90,7 @@ const handler = async (req: Request): Promise<Response> => {
               7013 Evans Town Center Blvd, Suite 203<br>
               Evans, GA 30809<br>
               Phone: (706) 550-9202<br>
-              Email: care@elevatedhealthaugusta.com
+              Email: appointments@elevatedhealthaugusta.com
             </p>
 
             <p>Please contact the clinic or patient to coordinate this referral.</p>
@@ -146,7 +146,7 @@ const handler = async (req: Request): Promise<Response> => {
             <p>
               <strong>Elevated Health Augusta</strong><br>
               Phone: (706) 550-9202<br>
-              Email: care@elevatedhealthaugusta.com
+              Email: appointments@elevatedhealthaugusta.com
             </p>
 
             <p>Thank you for choosing Elevated Health Augusta.</p>
@@ -175,7 +175,7 @@ const handler = async (req: Request): Promise<Response> => {
         body: JSON.stringify({
           from: "Elevated Health Augusta <care@stripe.elevatedhealthaugusta.com>",
           to: [providerEmail],
-          cc: ["care@elevatedhealthaugusta.com"],
+          cc: ["appointments@elevatedhealthaugusta.com"],
           reply_to: patientEmail,
           subject: `Referral Request for ${patientName} - ${benefitType.toUpperCase()}`,
           html: providerEmailHtml,
@@ -199,7 +199,7 @@ const handler = async (req: Request): Promise<Response> => {
         },
         body: JSON.stringify({
           from: "Elevated Health Augusta <care@stripe.elevatedhealthaugusta.com>",
-          to: ["care@elevatedhealthaugusta.com"],
+          to: ["appointments@elevatedhealthaugusta.com"],
           subject: `Referral Request for ${patientName} - ${benefitType.toUpperCase()} (No Provider Contact)`,
           html: providerEmailHtml,
         }),

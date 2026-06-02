@@ -491,7 +491,7 @@ serve(async (req) => {
       try {
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
-          to: ["booking@elevatedhealthaugusta.com"],
+          to: ["appointments@elevatedhealthaugusta.com"],
           subject: `New ${emailConfig.title} paid — ${customerName || customerEmail}`,
           html: `
             <h2>New Wellness Assessment payment</h2>

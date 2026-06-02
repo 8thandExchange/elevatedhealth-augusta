@@ -216,7 +216,7 @@ serve(async (req) => {
     }
 
     const from = "admin@elevatedhealthaugusta.com";
-    const staffTo = "admin@elevatedhealthaugusta.com";
+    const staffTo = "appointments@elevatedhealthaugusta.com";
 
     await sendResendEmail({
       apiKey: resendApiKey,

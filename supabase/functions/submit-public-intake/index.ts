@@ -268,7 +268,7 @@ serve(async (req) => {
 
         await resend.emails.send({
           from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
-          to: ["booking@elevatedhealthaugusta.com"],
+          to: ["appointments@elevatedhealthaugusta.com"],
           subject: `📋 Intake Completed: ${patient.full_name} ${riskStatus !== "standard" ? "⚠️" : ""}`,
           html: `
             <!DOCTYPE html>

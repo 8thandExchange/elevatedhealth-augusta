@@ -174,7 +174,7 @@ serve(async (req) => {
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
-      const fallback = ["caroline@elevatedhealthaugusta.com", "troy@elevatedhealthaugusta.com"];
+      const fallback = ["appointments@elevatedhealthaugusta.com"];
       const recipients = notifyTargets.length ? notifyTargets : fallback;
       const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 

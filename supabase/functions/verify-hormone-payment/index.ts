@@ -20,7 +20,7 @@ const sendAdminNotification = async (resend: Resend, customerEmail: string, mapp
     
     await resend.emails.send({
       from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
-      to: ["booking@elevatedhealthaugusta.com"],
+      to: ["appointments@elevatedhealthaugusta.com"],
       subject: `💰 New ${mappingLabel} Payment Received - $${formattedAmount}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
