@@ -92,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+        from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
         to: [patientEmail],
         subject: "Your Labcorp Requisition is Ready - Elevated Health Augusta",
         html: emailHtml,

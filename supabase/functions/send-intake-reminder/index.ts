@@ -95,7 +95,7 @@ const handler = async (req: Request): Promise<Response> => {
         const programText = 'wellness transformation';
 
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
           to: [patient.email],
           subject: "Don't forget to complete your health profile!",
           html: `

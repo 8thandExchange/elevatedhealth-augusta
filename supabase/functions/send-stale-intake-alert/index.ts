@@ -187,7 +187,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
       to: ["appointments@elevatedhealthaugusta.com"],
       subject: `⏰ ${patientCount} Patient${patientCount > 1 ? 's' : ''} Need Outreach - Stale Intake Alert`,
       html: emailHtml,

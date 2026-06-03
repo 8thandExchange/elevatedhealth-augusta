@@ -122,7 +122,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send to clinic booking email
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
       to: ["appointments@elevatedhealthaugusta.com"],
       subject: `🆕 New patient: ${patientName} (${primaryProgram})${isHighRisk ? " ⚠️ HIGH RISK" : ""}`,
       html: emailHtml,

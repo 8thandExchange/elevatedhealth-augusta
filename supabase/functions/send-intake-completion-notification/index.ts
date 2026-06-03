@@ -235,7 +235,7 @@ const handler = async (req: Request): Promise<Response> => {
     const subject = `📋 Intake Complete: ${data.patientName}${data.isHighRisk ? " ⚠️ HIGH RISK" : ""} - ${programLabel}`;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
       to: ["appointments@elevatedhealthaugusta.com"],
       subject,
       html: emailHtml,

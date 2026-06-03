@@ -128,7 +128,7 @@ serve(async (req) => {
 `;
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
       to: [patient_email],
       subject: "Your Treatment Has Been Authorized – Next Steps Inside",
       html: emailHtml,

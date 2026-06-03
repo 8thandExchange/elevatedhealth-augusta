@@ -308,7 +308,7 @@ serve(async (req) => {
         const intakeUrl = `https://elevatedhealthaugusta.com/intake?token=${intakeToken}`;
 
         const { error: emailError } = await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
           to: [patient_email],
           subject: `Welcome to Elevated Health Augusta, ${firstName}!`,
           html: `

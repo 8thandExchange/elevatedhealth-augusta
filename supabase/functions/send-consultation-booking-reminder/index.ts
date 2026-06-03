@@ -141,7 +141,7 @@ serve(async (req) => {
       const serviceLabel = SERVICE_LABEL[row.service_type as string] || "Wellness Assessment";
       try {
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
           to: [row.customer_email],
           subject: `Pick a time for your ${serviceLabel}`,
           html: renderEmail({

@@ -15,7 +15,7 @@ import {
   requireStaffOrServiceRole,
 } from "../_shared/intake-magic-link-auth.ts";
 
-const FROM_EMAIL = "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>";
+const FROM_EMAIL = "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

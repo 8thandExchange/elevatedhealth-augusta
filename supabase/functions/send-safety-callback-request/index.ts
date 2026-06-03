@@ -180,7 +180,7 @@ serve(async (req) => {
 
       try {
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
           to: recipients,
           subject: `Eligibility review requested — ${body.patient_name}`,
           html: renderClinicEmail({
@@ -202,7 +202,7 @@ serve(async (req) => {
       if (body.patient_email) {
         try {
           await resend.emails.send({
-            from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+            from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
             to: [body.patient_email],
             subject: "We have your request — Elevated Health Augusta",
             html: renderPatientConfirmationEmail({ patientName: body.patient_name }),

@@ -226,7 +226,7 @@ async function notifyStaffOfPayment(
   // 1) Email — reliable channel.
   try {
     const emailResp = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
       to: [STAFF_NOTIFICATION_EMAIL],
       subject: `💰 New payment: ${opts.patientName} — ${amountLabel} (${opts.description})`,
       html: generateStaffPaymentEmail({
@@ -601,7 +601,7 @@ serve(async (req) => {
 
           try {
             const emailResponse = await resend.emails.send({
-              from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+              from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
               to: [customerEmail],
               subject: "Welcome to Elevated Health Augusta – Your Membership is Active!",
               html: generateWelcomeEmail(patientName),

@@ -430,7 +430,7 @@ serve(async (req) => {
     if (shouldSendNotifications && resend) {
       try {
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
           to: [customerEmail],
           subject: `Your $${CONSULT_FEE_USD} Wellness Assessment is paid · pick a time inside`,
           html: `
@@ -490,7 +490,7 @@ serve(async (req) => {
 
       try {
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
           to: ["appointments@elevatedhealthaugusta.com"],
           subject: `New ${emailConfig.title} paid — ${customerName || customerEmail}`,
           html: `

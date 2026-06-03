@@ -19,7 +19,7 @@ const sendAdminNotification = async (resend: Resend, customerEmail: string, mapp
     const mappingLabel = mappingType === 'metabolic' ? 'Metabolic Mapping' : 'Hormone Mapping';
     
     await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
       to: ["appointments@elevatedhealthaugusta.com"],
       subject: `💰 New ${mappingLabel} Payment Received - $${formattedAmount}`,
       html: `

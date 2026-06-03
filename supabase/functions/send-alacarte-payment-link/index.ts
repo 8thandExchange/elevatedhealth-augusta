@@ -40,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
     const firstName = patient_name?.split(" ")[0] || "there";
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
       to: [patient_email],
       subject: `Your ${product_name} Payment Link - Elevated Health Augusta`,
       html: `

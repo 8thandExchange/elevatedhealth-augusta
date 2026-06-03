@@ -267,7 +267,7 @@ serve(async (req) => {
           : "<p style='color: #22c55e;'>No safety flags</p>";
 
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@stripe.elevatedhealthaugusta.com>",
+          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
           to: ["appointments@elevatedhealthaugusta.com"],
           subject: `📋 Intake Completed: ${patient.full_name} ${riskStatus !== "standard" ? "⚠️" : ""}`,
           html: `
