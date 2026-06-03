@@ -42,7 +42,6 @@ import AddExistingPatientCard from "@/components/provider/AddExistingPatientCard
 import SuperbillGenerator from "@/components/provider/SuperbillGenerator";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 import ProviderInbox from "@/components/chat/ProviderInbox";
-import KitStatusAdmin from "@/components/provider/KitStatusAdmin";
 import ResourceManager from "@/components/provider/ResourceManager";
 
 import { InviteProviderModal } from "@/components/provider/InviteProviderModal";
@@ -143,7 +142,7 @@ interface Protocol {
 }
 
 interface LabPathInfo {
-  path: "zrt" | "labcorp";
+  path: "labcorp";
   panel?: "mens_safety" | "thyroid" | "safety_cmp" | null;
   reason?: string | null;
 }
@@ -240,13 +239,6 @@ const ProviderDashboard = () => {
   const [isInviteProviderOpen, setIsInviteProviderOpen] = useState(false);
   // Labcorp order modal state
   const [isLabcorpModalOpen, setIsLabcorpModalOpen] = useState(false);
-  // Kit tracking state
-  const [selectedPatientKit, setSelectedPatientKit] = useState<{
-    id: string;
-    zrt_kit_status: string;
-    tracking_number: string | null;
-    customer_email: string;
-  } | null>(null);
   // Latest lab result for supplement recommendations
   const [selectedPatientLabResult, setSelectedPatientLabResult] = useState<{
     testosterone_t: number | null;
@@ -481,11 +473,12 @@ const ProviderDashboard = () => {
         }
 
         // Get lab path info from symptom log
-        let labPath: LabPathInfo = { path: "labcorp" };
+        let labPath: LabPathInfo = { path: "labcorp", reason: "In-office LabCorp draw per clinic protocol" };
         if (latestLog) {
           const rawAnswers = latestLog.raw_answers as Record<string, any> | null;
           if (rawAnswers?.labPath) {
-            labPath = rawAnswers.labPath as LabPathInfo;
+            const fromLog = rawAnswers.labPath as LabPathInfo;
+            labPath = { path: "labcorp", panel: fromLog.panel, reason: fromLog.reason };
           } else {
             // Determine lab path from patient data if not in log
             const medHistory = patient.medical_history as Record<string, boolean> | null;
@@ -599,18 +592,6 @@ const ProviderDashboard = () => {
     // Initialize contact info editing state
     setEditPhone(patientWithLog.patient.phone || "");
     setEditEmail(patientWithLog.patient.email || "");
-
-    // Fetch kit tracking info
-    const { data: kitData } = await supabase
-      .from("hormone_mapping_payments")
-      .select("id, zrt_kit_status, tracking_number, customer_email")
-      .eq("patient_id", patientWithLog.patient.id)
-      .eq("payment_status", "paid")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    setSelectedPatientKit(kitData);
 
     // Fetch latest lab result for supplement recommendations
     const { data: labData } = await supabase
@@ -1706,9 +1687,7 @@ const ProviderDashboard = () => {
                                   </div>
                                 </td>
                                 <td className="py-4 px-4">
-                                  <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"}>
-                                    {patient.lab_path === "labcorp" ? "LabCorp Required" : "Labs (see chart)"}
-                                  </Badge>
+                                  <Badge variant="destructive">LabCorp</Badge>
                                 </td>
                                 <td className="py-4 px-4">
                                   <span className="text-sm text-muted-foreground">{paidDate}</span>
@@ -1767,9 +1746,7 @@ const ProviderDashboard = () => {
                                 <p className="font-medium text-foreground truncate">{patient.full_name}</p>
                                 <p className="text-xs text-muted-foreground">Paid: {paidDate}</p>
                               </div>
-                              <Badge variant={patient.lab_path === "labcorp" ? "destructive" : "secondary"} className="flex-shrink-0">
-                                {patient.lab_path === "labcorp" ? "LabCorp" : "Other / legacy"}
-                              </Badge>
+                              <Badge variant="destructive" className="flex-shrink-0">LabCorp</Badge>
                             </div>
                             
                             <div className="flex flex-col gap-1 text-xs text-muted-foreground">
@@ -2403,17 +2380,6 @@ const ProviderDashboard = () => {
                 </Card>
               )}
 
-              {/* Legacy ZRT kit — hide when patient is on LabCorp path */}
-              {selectedPatientKit && selectedPatient.labPath?.path !== "labcorp" && (
-                <KitStatusAdmin
-                  paymentId={selectedPatientKit.id}
-                  currentStatus={selectedPatientKit.zrt_kit_status}
-                  currentTrackingNumber={selectedPatientKit.tracking_number}
-                  patientEmail={selectedPatientKit.customer_email}
-                  onUpdate={() => selectPatient(selectedPatient)}
-                />
-              )}
-
               {/* Androgen Excess Warning */}
               {(selectedPatient.latestLog?.raw_answers as Record<string, any> | null)?.androgen_excess_risk && (
                 <Card className="border-amber-500 border-2 bg-amber-50/50 dark:bg-amber-950/20">
@@ -2433,25 +2399,13 @@ const ProviderDashboard = () => {
 
               {/* Lab Path Indicator */}
               {selectedPatient.labPath && (
-                <Card className={`border-2 ${
-                  selectedPatient.labPath.path === "labcorp" 
-                    ? "border-amber-500 bg-amber-50/30 dark:bg-amber-950/10" 
-                    : "border-green-500 bg-green-50/30 dark:bg-green-950/10"
-                }`}>
+                <Card className="border-2 border-amber-500 bg-amber-50/30 dark:bg-amber-950/10">
                   <CardContent className="pt-4">
                     <div className="flex items-start gap-3">
-                      {selectedPatient.labPath.path === "labcorp" ? (
-                        <TestTube className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                      ) : (
-                        <Droplet className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      )}
+                      <TestTube className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className={`font-semibold ${
-                          selectedPatient.labPath.path === "labcorp" 
-                            ? "text-amber-700 dark:text-amber-400" 
-                            : "text-green-700 dark:text-green-400"
-                        }`}>
-                          {selectedPatient.labPath.path === "labcorp" ? "LabCorp Blood Work Required" : "Legacy saliva kit (standard)"}
+                        <p className="font-semibold text-amber-700 dark:text-amber-400">
+                          LabCorp Blood Work Required
                         </p>
                         {selectedPatient.labPath.reason && (
                           <p className="text-sm text-muted-foreground mt-1">
@@ -2742,7 +2696,7 @@ const ProviderDashboard = () => {
                       serviceType={
                         selectedPatient.patient.treatment_request?.includes("weight") 
                           ? "weight_management" 
-                          : "saliva_profile_iii"
+                          : "labcorp"
                       }
                       chargeAmount={
                         selectedPatient.patient.treatment_request?.includes("weight") ? 399 : 299

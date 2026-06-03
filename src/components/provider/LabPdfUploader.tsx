@@ -7,7 +7,7 @@ import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from "lucide-rea
 interface ParsedLabData {
   collectionDate: string | null;
   patientName: string | null;
-  labSource?: 'zrt' | 'labcorp' | 'unknown';
+  labSource?: 'labcorp' | 'unknown';
   estradiol: number | null;
   progesterone: number | null;
   testosterone: number | null;
@@ -116,7 +116,7 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
       setParseStatus("success");
       onParsed(parsedData);
       
-      const sourceLabel = parsedData.labSource === 'labcorp' ? 'LabCorp' : parsedData.labSource === 'zrt' ? 'ZRT' : 'Lab';
+      const sourceLabel = parsedData.labSource === 'labcorp' ? 'LabCorp' : 'Lab';
       toast.success(`${sourceLabel} values extracted!`, {
         description: `Confidence: ${Math.round((parsedData.confidence?.overall || 0.9) * 100)}%`
       });
@@ -222,7 +222,7 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
             <Upload className="w-6 h-6 text-muted-foreground" />
             <div>
               <span className="text-sm font-medium text-primary">Upload Lab PDF</span>
-              <span className="text-sm text-muted-foreground"> (ZRT or LabCorp)</span>
+              <span className="text-sm text-muted-foreground"> (LabCorp PDF)</span>
             </div>
             <p className="text-xs text-muted-foreground">
               AI will extract lab values automatically

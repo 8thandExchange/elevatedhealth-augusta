@@ -12,7 +12,6 @@ import OnboardingProgress from "@/components/patient/OnboardingProgress";
 import NextActionCard from "@/components/patient/NextActionCard";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
-import KitTracker from "@/components/patient/KitTracker";
 import SafetyGate from "@/components/patient/SafetyGate";
 import MinimalPatientHeader from "@/components/patient/MinimalPatientHeader";
 import BottomTabBar from "@/components/patient/BottomTabBar";
@@ -28,7 +27,6 @@ import {
   usePatient, 
   useLatestSymptomLog, 
   useLatestOrder, 
-  useKitTracking, 
   useLatestLabResult,
   useCreateOrder,
   useInvalidatePatientData,
@@ -63,7 +61,6 @@ const PatientDashboard = () => {
   const { data: patient, isLoading: isPatientLoading, error: patientError } = usePatient();
   const { data: latestLog } = useLatestSymptomLog(patient?.id);
   const { data: latestOrder } = useLatestOrder(patient?.id);
-  const { data: kitTracking } = useKitTracking(patient?.id);
   const { data: labResult } = useLatestLabResult(patient?.id);
   
   const createOrderMutation = useCreateOrder();
@@ -246,7 +243,6 @@ const PatientDashboard = () => {
               <AnimatedCard delay={0} animation="fadeUp">
                 <NextActionCard
                   onboardingStatus={patient.onboarding_status || null}
-                  kitStatus={kitTracking?.zrt_kit_status}
                   hasAuthorizedOrder={isAuthorized}
                   primaryProgram={patient.primary_program}
                   onBookConsultation={() => navigate("/schedule-consult")}
@@ -307,8 +303,6 @@ const PatientDashboard = () => {
                       onboardingStatus={patient.onboarding_status || null}
                       intakeCompleted={patient.intake_completed || false}
                       hasAuthorizedOrder={isAuthorized}
-                      kitStatus={kitTracking?.zrt_kit_status}
-                      trackingNumber={kitTracking?.tracking_number}
                     />
                   )}
 
@@ -327,20 +321,6 @@ const PatientDashboard = () => {
                 </TabsContent>
               </Tabs>
             </AnimatedCard>
-
-            {/* Kit Tracker */}
-            {kitTracking && kitTracking.zrt_kit_status !== "not_ordered" && (
-              <AnimatedCard delay={200} animation="slideInLeft">
-                <KitTracker
-                  status={kitTracking.zrt_kit_status}
-                  trackingNumber={kitTracking.tracking_number}
-                  shippedAt={kitTracking.shipped_at}
-                  sampleReceivedAt={kitTracking.sample_received_at}
-                  resultsReadyAt={kitTracking.results_ready_at}
-                  onBookCall={() => navigate("/schedule-consult")}
-                />
-              </AnimatedCard>
-            )}
 
             {/* Status Cards */}
             {isPendingReview && (

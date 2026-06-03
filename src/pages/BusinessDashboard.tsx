@@ -92,11 +92,11 @@ const BusinessDashboard = () => {
         .select("*", { count: "exact", head: true })
         .eq("is_archived", false);
 
-      // Get diagnostics paid (patients who paid $299)
       const { count: diagnosticsCount } = await supabase
-        .from("hormone_mapping_payments")
+        .from("patients")
         .select("*", { count: "exact", head: true })
-        .eq("payment_status", "completed");
+        .in("onboarding_status", ["awaiting_blood_work", "labs_in_progress", "results_ready", "labs_reviewed"])
+        .eq("is_archived", false);
 
       // Get active members
       const { count: membersCount } = await supabase
@@ -125,53 +125,45 @@ const BusinessDashboard = () => {
       const blockersList: OperationalBlocker[] = [];
       const now = new Date();
 
-      // 1. Kits to ship - patients who paid but kit still "ordered" status
-      const { data: kitsToShip } = await supabase
-        .from("hormone_mapping_payments")
-        .select(`
-          id, customer_email, created_at, patient_id,
-          patients!hormone_mapping_payments_patient_id_fkey(full_name)
-        `)
-        .eq("payment_status", "completed")
-        .eq("zrt_kit_status", "ordered");
+      const { data: awaitingDraw } = await supabase
+        .from("patients")
+        .select("id, full_name, email, updated_at, onboarding_status")
+        .eq("onboarding_status", "awaiting_blood_work")
+        .eq("is_archived", false);
 
-      if (kitsToShip) {
-        for (const kit of kitsToShip) {
-          const createdAt = new Date(kit.created_at);
-          const daysPending = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+      if (awaitingDraw) {
+        for (const p of awaitingDraw) {
+          const updated = p.updated_at ? new Date(p.updated_at) : now;
+          const daysPending = Math.floor((now.getTime() - updated.getTime()) / (1000 * 60 * 60 * 24));
           blockersList.push({
-            id: kit.id,
+            id: p.id,
             type: "kit_to_ship",
-            patientName: (kit.patients as any)?.full_name || "Unknown",
-            patientEmail: kit.customer_email,
+            patientName: p.full_name || "Unknown",
+            patientEmail: p.email || "",
             daysPending,
-            details: `Paid ${daysPending} days ago, kit not shipped`,
+            details: `Awaiting LabCorp draw (${daysPending}d in status)`,
           });
         }
       }
 
-      // 2. Awaiting upgrade - lab review completed > 48 hours ago, not yet active member
       const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
       const { data: awaitingUpgrade } = await supabase
-        .from("hormone_mapping_payments")
-        .select(`
-          id, customer_email, results_ready_at, patient_id,
-          patients!hormone_mapping_payments_patient_id_fkey(full_name, onboarding_status)
-        `)
-        .eq("zrt_kit_status", "results_ready")
-        .lt("results_ready_at", fortyEightHoursAgo.toISOString());
+        .from("patients")
+        .select("id, full_name, email, updated_at, onboarding_status")
+        .eq("onboarding_status", "results_ready")
+        .lt("updated_at", fortyEightHoursAgo.toISOString())
+        .eq("is_archived", false);
 
       if (awaitingUpgrade) {
         for (const patient of awaitingUpgrade) {
-          const patientData = patient.patients as any;
-          if (patientData?.onboarding_status !== "treatment_active") {
-            const resultsReady = new Date(patient.results_ready_at!);
+          if (patient.onboarding_status !== "treatment_active") {
+            const resultsReady = new Date(patient.updated_at!);
             const daysPending = Math.floor((now.getTime() - resultsReady.getTime()) / (1000 * 60 * 60 * 24));
             blockersList.push({
               id: patient.id,
               type: "awaiting_upgrade",
-              patientName: patientData?.full_name || "Unknown",
-              patientEmail: patient.customer_email,
+              patientName: patient.full_name || "Unknown",
+              patientEmail: patient.email || "",
               daysPending,
               details: `Lab review complete ${daysPending} days ago, no membership`,
             });

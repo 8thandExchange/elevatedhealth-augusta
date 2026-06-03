@@ -40,14 +40,14 @@ export const NextActionCard = ({
       };
     }
 
-    if (status === "kit_link_sent") {
+    if (status === "kit_link_sent" || status === "labs_paid") {
       return {
-        icon: <CreditCard className="w-6 h-6" />,
-        title: "Kit Payment Pending",
-        description: "Check your email or text messages for a payment link to receive your at-home testing kit.",
+        icon: <TestTube className="w-6 h-6" />,
+        title: "Lab Work Next",
+        description: "Your clinic team will coordinate your in-office LabCorp blood draw. Watch for requisition details by email.",
         buttonText: null,
         buttonAction: null,
-        timeEstimate: "Complete payment to proceed",
+        timeEstimate: "Typically scheduled at your visit",
         accentColor: "amber",
       };
     }
@@ -128,58 +128,44 @@ export const NextActionCard = ({
       };
     }
 
-    // ===== HORMONE THERAPY LAB FLOW =====
-    if (status === "consultation_complete" || status === "intake_complete") {
-      if (!isWeightLoss) {
-        return {
-          icon: <TestTube className="w-6 h-6" />,
-          title: "Complete Your Lab Payment",
-          description: "Your provider has recommended diagnostic labs. Pay now to receive your at-home testing kit.",
-          buttonText: "Pay for Labs",
-          buttonAction: onPayForLabs,
-          timeEstimate: "Kit ships in 2-3 business days",
-          accentColor: "amber",
-        };
-      }
-    }
-
-    if (status === "labs_paid") {
-      return {
-        icon: <Mail className="w-6 h-6" />,
-        title: "Kit Shipping Soon",
-        description: "Your diagnostic kit is being prepared. Watch your mailbox!",
-        buttonText: null,
-        buttonAction: null,
-        timeEstimate: "Ships within 2-3 business days",
-        accentColor: "blue",
-      };
-    }
-
-    if (status === "kit_shipped" || kitStatus === "shipped") {
+    // ===== HORMONE THERAPY — LabCorp in-office =====
+    if ((status === "consultation_complete" || status === "intake_complete") && !isWeightLoss) {
       return {
         icon: <TestTube className="w-6 h-6" />,
-        title: "Kit In Transit",
-        description: "Your testing kit is on its way. Follow the instructions inside when it arrives.",
+        title: "Lab Work Scheduled",
+        description: "Your provider will order in-office LabCorp labs. Our team will contact you with draw instructions.",
         buttonText: null,
         buttonAction: null,
-        timeEstimate: "Arrives in 3-5 business days",
+        timeEstimate: "Usually at your next clinic visit",
+        accentColor: "amber",
+      };
+    }
+
+    if (status === "awaiting_blood_work" || status === "kit_shipped") {
+      return {
+        icon: <TestTube className="w-6 h-6" />,
+        title: "Awaiting Lab Draw",
+        description: "Visit LabCorp or our coordinated draw site when instructed. Fasting may be required for some panels.",
+        buttonText: null,
+        buttonAction: null,
+        timeEstimate: "Bring your requisition if provided",
         accentColor: "blue",
       };
     }
 
-    if (status === "sample_received" || kitStatus === "sample_received") {
+    if (status === "labs_in_progress" || status === "sample_received") {
       return {
         icon: <Clock className="w-6 h-6" />,
-        title: "Sample Being Analyzed",
-        description: "Our lab is processing your sample. Results typically take 7-10 business days.",
+        title: "Labs In Progress",
+        description: "Your blood work is being processed at the lab. We'll notify you when results are ready for review.",
         buttonText: null,
         buttonAction: null,
-        timeEstimate: "Results in 7-10 business days",
+        timeEstimate: "Typically 3–7 business days",
         accentColor: "blue",
       };
     }
 
-    if (status === "results_ready" || status === "labs_reviewed" || kitStatus === "results_ready") {
+    if (status === "results_ready" || status === "labs_reviewed") {
       return {
         icon: <Sparkles className="w-6 h-6" />,
         title: "Results Ready!",

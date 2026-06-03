@@ -12,17 +12,18 @@ import {
   Calendar,
   FileText,
   ClipboardCheck,
-  Send
+  Send,
+  TestTube,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-interface KitToShip {
+interface LabDrawTask {
   id: string;
-  customer_email: string;
-  customer_name?: string;
-  created_at: string;
-  zrt_kit_status: string;
+  full_name: string;
+  email: string | null;
+  onboarding_status: string;
+  updated_at: string | null;
 }
 
 interface ConsultationFollowUp {
@@ -56,7 +57,7 @@ interface WaiverTask {
 }
 
 const StaffTasksTab = () => {
-  const [kitsToShip, setKitsToShip] = useState<KitToShip[]>([]);
+  const [labDrawTasks, setLabDrawTasks] = useState<LabDrawTask[]>([]);
   const [consultationFollowUps, setConsultationFollowUps] = useState<ConsultationFollowUp[]>([]);
   const [pharmacyOrders, setPharmacyOrders] = useState<PharmacyOrder[]>([]);
   const [waiverTasks, setWaiverTasks] = useState<WaiverTask[]>([]);
@@ -70,15 +71,13 @@ const StaffTasksTab = () => {
   const loadTasks = async () => {
     setIsLoading(true);
     try {
-      // Load kits that need to be shipped (status = 'Ordered' or 'pending')
-      const { data: kits } = await supabase
-        .from("hormone_mapping_payments")
-        .select("id, customer_email, created_at, zrt_kit_status")
-        .eq("payment_status", "paid")
-        .in("zrt_kit_status", ["not_ordered", "Ordered"])
-        .order("created_at", { ascending: true });
+      const { data: labPatients } = await supabase
+        .from("patients")
+        .select("id, full_name, email, onboarding_status, updated_at")
+        .in("onboarding_status", ["awaiting_blood_work", "labs_in_progress", "labs_paid", "kit_shipped"])
+        .order("updated_at", { ascending: true });
 
-      setKitsToShip((kits || []) as KitToShip[]);
+      setLabDrawTasks((labPatients || []) as LabDrawTask[]);
 
       // Load consultation follow-ups (pending consultations that need scheduling or completed ones needing nurture)
       const { data: consultations } = await supabase
@@ -115,19 +114,19 @@ const StaffTasksTab = () => {
     }
   };
 
-  const markKitShipped = async (id: string) => {
-    setProcessingId(id);
+  const advanceLabStatus = async (patientId: string, nextStatus: string) => {
+    setProcessingId(patientId);
     try {
       const { error } = await supabase
-        .from("hormone_mapping_payments")
-        .update({ zrt_kit_status: "Shipped", shipped_at: new Date().toISOString() })
-        .eq("id", id);
+        .from("patients")
+        .update({ onboarding_status: nextStatus, lab_path: "labcorp" })
+        .eq("id", patientId);
 
       if (error) throw error;
-      toast.success("Kit marked as shipped");
+      toast.success("Lab status updated");
       loadTasks();
     } catch (error) {
-      toast.error("Failed to update kit status");
+      toast.error("Failed to update lab status");
     } finally {
       setProcessingId(null);
     }
@@ -245,7 +244,7 @@ const StaffTasksTab = () => {
   // Split waiver tasks by type
   const internalWaivers = waiverTasks.filter((w) => w.primary_program !== "ketamine");
 
-  const totalTasks = kitsToShip.length + consultationFollowUps.length + pharmacyOrders.length + waiverTasks.length;
+  const totalTasks = labDrawTasks.length + consultationFollowUps.length + pharmacyOrders.length + waiverTasks.length;
 
   return (
     <div className="space-y-6">
@@ -254,10 +253,10 @@ const StaffTasksTab = () => {
         <Card className="border-green-200 bg-green-50">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Package className="h-8 w-8 text-green-600" />
+              <TestTube className="h-8 w-8 text-green-600" />
               <div>
-                <p className="text-2xl font-bold text-green-700">{kitsToShip.length}</p>
-                <p className="text-sm text-green-600">Kits to Ship</p>
+                <p className="text-2xl font-bold text-green-700">{labDrawTasks.length}</p>
+                <p className="text-sm text-green-600">LabCorp Draws</p>
               </div>
             </div>
           </CardContent>
@@ -389,45 +388,44 @@ const StaffTasksTab = () => {
         </Card>
       )}
 
-      {/* Kits to Ship */}
-      {kitsToShip.length > 0 && (
+      {/* LabCorp draws */}
+      {labDrawTasks.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-green-600" />
-              Kits to Ship
+              <TestTube className="h-5 w-5 text-green-600" />
+              LabCorp — schedule / confirm draw
               <Badge variant="secondary" className="bg-green-100 text-green-700">Staff Task</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {kitsToShip.map((kit) => {
-                const daysWaiting = getDaysWaiting(kit.created_at);
+              {labDrawTasks.map((p) => {
+                const daysWaiting = p.updated_at ? getDaysWaiting(p.updated_at) : 0;
+                const nextStatus =
+                  p.onboarding_status === "labs_in_progress" ? "results_ready" : "labs_in_progress";
+                const actionLabel =
+                  p.onboarding_status === "labs_in_progress" ? "Results in" : "Draw complete";
                 return (
-                  <div 
-                    key={kit.id} 
+                  <div
+                    key={p.id}
                     className={`flex items-center justify-between p-4 rounded-lg border ${
-                      daysWaiting > 2 ? "border-yellow-300 bg-yellow-50" : "bg-muted/30"
+                      daysWaiting > 3 ? "border-yellow-300 bg-yellow-50" : "bg-muted/30"
                     }`}
                   >
                     <div>
-                      <p className="font-medium">{kit.customer_email}</p>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        <span>Paid {daysWaiting} day(s) ago</span>
-                        {daysWaiting > 2 && (
-                          <Badge variant="outline" className="text-yellow-600 border-yellow-400">
-                            <AlertTriangle className="h-3 w-3 mr-1" /> Overdue
-                          </Badge>
-                        )}
-                      </div>
+                      <p className="font-medium">{p.full_name}</p>
+                      <p className="text-sm text-muted-foreground">{p.email}</p>
+                      <Badge variant="outline" className="mt-1 text-xs">
+                        {p.onboarding_status}
+                      </Badge>
                     </div>
                     <Button
                       size="sm"
-                      onClick={() => markKitShipped(kit.id)}
-                      disabled={processingId === kit.id}
+                      onClick={() => void advanceLabStatus(p.id, nextStatus)}
+                      disabled={processingId === p.id}
                     >
-                      {processingId === kit.id ? "..." : "Mark Shipped"}
+                      {processingId === p.id ? "..." : actionLabel}
                     </Button>
                   </div>
                 );

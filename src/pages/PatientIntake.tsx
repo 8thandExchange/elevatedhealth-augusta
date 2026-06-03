@@ -375,7 +375,7 @@ const PatientIntake = () => {
         medical_history: { ...medicalHistory, ...labcorpConditions },
         gender,
         treatment_request: treatmentRequests.join(","),
-        lab_path: labPathResult.path,
+        lab_path: "labcorp",
         street_address: streetAddress.trim() || null,
         city: city.trim() || null,
         state: state.trim() || null,
@@ -802,7 +802,7 @@ const PatientIntake = () => {
                         className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                       <p className="text-xs text-muted-foreground mt-2">
-                        This helps us interpret your saliva hormone levels accurately.
+                        This helps us interpret your hormone therapy in context of your labs and symptoms.
                       </p>
                     </div>
                   )}

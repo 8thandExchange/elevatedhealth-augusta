@@ -159,7 +159,9 @@ const PatientPipeline = () => {
       ) || [];
 
       const awaitingLabs = patients?.filter(p => 
-        p.onboarding_status === "kit_shipped" || 
+        p.onboarding_status === "awaiting_blood_work" ||
+        p.onboarding_status === "labs_in_progress" ||
+        p.onboarding_status === "kit_shipped" ||
         p.onboarding_status === "results_ready"
       ) || [];
 

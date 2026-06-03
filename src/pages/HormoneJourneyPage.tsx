@@ -13,7 +13,6 @@ import MyRegimenCard from "@/components/patient/MyRegimenCard";
 import OnboardingProgress from "@/components/patient/OnboardingProgress";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
-import KitTracker from "@/components/patient/KitTracker";
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import { hasCompletedTier1Intake } from "@/lib/consents/intake-status";
 
@@ -43,22 +42,12 @@ interface Order {
   protocol_snapshot: any;
 }
 
-interface KitTracking {
-  id: string;
-  zrt_kit_status: string;
-  tracking_number: string | null;
-  shipped_at: string | null;
-  sample_received_at: string | null;
-  results_ready_at: string | null;
-}
-
 const HormoneJourneyPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [patient, setPatient] = useState<Patient | null>(null);
   const [latestLog, setLatestLog] = useState<SymptomLog | null>(null);
   const [latestOrder, setLatestOrder] = useState<Order | null>(null);
-  const [kitTracking, setKitTracking] = useState<KitTracking | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
@@ -113,17 +102,6 @@ const HormoneJourneyPage = () => {
 
       setLatestOrder(orderData);
 
-      // Get kit tracking info
-      const { data: kitData } = await supabase
-        .from("hormone_mapping_payments")
-        .select("id, zrt_kit_status, tracking_number, shipped_at, sample_received_at, results_ready_at")
-        .eq("patient_id", patientData.id)
-        .eq("payment_status", "paid")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      setKitTracking(kitData);
     } catch (error: any) {
       toast.error(error.message || "Failed to load data");
     } finally {
@@ -271,18 +249,6 @@ const HormoneJourneyPage = () => {
             onboardingStatus={patient?.onboarding_status || null}
             intakeCompleted={patient?.intake_completed || false}
             hasAuthorizedOrder={isAuthorized}
-          />
-        )}
-
-        {/* Kit Tracker */}
-        {kitTracking && kitTracking.zrt_kit_status !== "not_ordered" && (
-          <KitTracker
-            status={kitTracking.zrt_kit_status}
-            trackingNumber={kitTracking.tracking_number}
-            shippedAt={kitTracking.shipped_at}
-            sampleReceivedAt={kitTracking.sample_received_at}
-            resultsReadyAt={kitTracking.results_ready_at}
-            onBookCall={() => navigate("/schedule-consult")}
           />
         )}
 

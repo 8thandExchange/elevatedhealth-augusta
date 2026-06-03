@@ -453,7 +453,7 @@ serve(async (req) => {
           if (paymentType === "hormone_mapping" || paymentType === "lab_kit") {
             const { error } = await supabaseClient
               .from("patients")
-              .update({ onboarding_status: "labs_paid" })
+              .update({ onboarding_status: "awaiting_blood_work", lab_path: "labcorp" })
               .eq("email", customerEmail);
             webhookLog({
               event_type: event.type,
@@ -463,8 +463,8 @@ serve(async (req) => {
               stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
               stripe_subscription_id: null,
               action_taken: error
-                ? `labs_paid_update_failed: ${error.message}`
-                : "labs_paid_updated_legacy_kit_flow",
+                ? `awaiting_blood_work_update_failed: ${error.message}`
+                : "awaiting_blood_work_labcorp_panel_paid",
               success: !error,
               error_message: error?.message ?? null,
             });

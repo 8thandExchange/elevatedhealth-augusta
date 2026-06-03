@@ -15,12 +15,12 @@ interface JourneyStep {
   icon: React.ReactNode;
 }
 
-// Hormone therapy journey (requires labs)
+// Hormone therapy journey (LabCorp in-office)
 const HORMONE_STEPS: JourneyStep[] = [
   { id: 'consultation', label: 'Consultation', shortLabel: 'Consult', icon: <Stethoscope className="h-4 w-4" /> },
-  { id: 'kit_sent', label: 'Kit Sent', shortLabel: 'Kit', icon: <TestTube className="h-4 w-4" /> },
-  { id: 'sample_collected', label: 'Sample Collected', shortLabel: 'Sample', icon: <Activity className="h-4 w-4" /> },
-  { id: 'labs_ready', label: 'Labs Ready', shortLabel: 'Labs', icon: <TestTube className="h-4 w-4" /> },
+  { id: 'lab_ordered', label: 'Lab Ordered', shortLabel: 'Labs', icon: <TestTube className="h-4 w-4" /> },
+  { id: 'draw_complete', label: 'Draw Complete', shortLabel: 'Draw', icon: <Activity className="h-4 w-4" /> },
+  { id: 'labs_ready', label: 'Results Ready', shortLabel: 'Results', icon: <TestTube className="h-4 w-4" /> },
   { id: 'protocol_approved', label: 'Protocol Approved', shortLabel: 'Protocol', icon: <Sparkles className="h-4 w-4" /> },
   { id: 'rx_sent', label: 'Rx Sent', shortLabel: 'Rx', icon: <Pill className="h-4 w-4" /> },
   { id: 'active', label: 'Active Treatment', shortLabel: 'Active', icon: <Check className="h-4 w-4" /> },
@@ -49,8 +49,10 @@ function getHormoneStepIndex(status: string | null): number {
     'intake_complete': 0,
     'kit_link_sent': 1,
     'labs_paid': 1,
+    'awaiting_blood_work': 1,
     'kit_shipped': 2,
-    'sample_received': 3,
+    'labs_in_progress': 2,
+    'sample_received': 2,
     'results_ready': 3,
     'labs_reviewed': 4,
     'protocol_approved': 4,
@@ -99,11 +101,13 @@ function getNextAction(status: string | null, primaryProgram: string | null): st
     'glp1_approved': 'Send Rx to pharmacy',
     'medical_clearance_complete': 'Send Rx to pharmacy',
   } : {
-    'consultation_complete': 'Send $349 kit link',
-    'intake_complete': 'Send $349 kit link',
-    'labs_paid': 'Ship kit to patient',
-    'kit_shipped': 'Waiting for sample return',
-    'sample_received': 'Waiting for lab results',
+    'consultation_complete': 'Order LabCorp panel',
+    'intake_complete': 'Order LabCorp panel',
+    'labs_paid': 'Schedule LabCorp draw',
+    'awaiting_blood_work': 'Patient awaiting draw',
+    'kit_shipped': 'Confirm draw completed',
+    'labs_in_progress': 'Await LabCorp results',
+    'sample_received': 'Await LabCorp results',
     'results_ready': 'Review labs & create protocol',
     'labs_reviewed': 'Approve protocol',
     'protocol_approved': 'Send Rx to pharmacy',

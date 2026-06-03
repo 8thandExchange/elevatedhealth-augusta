@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { 
-  Loader2, User, Users, Clock, Package, Phone, Mail, 
+  Loader2, User, Users, Clock, Package, Phone, Mail, TestTube,
   Calendar, CalendarPlus, CheckCircle, AlertCircle, RefreshCw, Search,
   FileText, CreditCard, MessageSquare, Mic, Filter
 } from "lucide-react";
@@ -38,13 +38,12 @@ interface PendingActivation {
   status: string;
 }
 
-interface KitTracking {
+interface LabPendingPatient {
   id: string;
-  customer_email: string;
-  zrt_kit_status: string;
-  tracking_number: string | null;
-  patient_id: string | null;
-  created_at: string;
+  full_name: string;
+  email: string | null;
+  onboarding_status: string;
+  updated_at: string | null;
 }
 
 interface ChatLead {
@@ -64,7 +63,7 @@ const OfficeManagerDashboard = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [pendingActivations, setPendingActivations] = useState<PendingActivation[]>([]);
-  const [kitTrackings, setKitTrackings] = useState<KitTracking[]>([]);
+  const [labPendingPatients, setLabPendingPatients] = useState<LabPendingPatient[]>([]);
   const [leads, setLeads] = useState<ChatLead[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("patients");
@@ -110,15 +109,15 @@ const OfficeManagerDashboard = () => {
       if (activationsError) throw activationsError;
       setPendingActivations(activationsData || []);
 
-      // Load kit trackings
-      const { data: kitData, error: kitError } = await supabase
-        .from("hormone_mapping_payments")
-        .select("id, customer_email, zrt_kit_status, tracking_number, patient_id, created_at")
-        .order("created_at", { ascending: false })
+      const { data: labData, error: labError } = await supabase
+        .from("patients")
+        .select("id, full_name, email, onboarding_status, updated_at")
+        .in("onboarding_status", ["awaiting_blood_work", "labs_in_progress", "results_ready"])
+        .order("updated_at", { ascending: false })
         .limit(50);
 
-      if (kitError) throw kitError;
-      setKitTrackings(kitData || []);
+      if (labError) throw labError;
+      setLabPendingPatients(labData || []);
 
       // Load chat leads
       const { data: leadsData, error: leadsError } = await supabase
@@ -377,10 +376,10 @@ const OfficeManagerDashboard = () => {
               <span className="hidden sm:inline">Pending ({pendingActivations.length})</span>
               <span className="sm:hidden">Pending</span>
             </TabsTrigger>
-            <TabsTrigger value="kits" className="flex items-center gap-2">
-              <Package className="w-4 h-4" />
-              <span className="hidden sm:inline">Kit Tracking</span>
-              <span className="sm:hidden">Kits</span>
+            <TabsTrigger value="labs" className="flex items-center gap-2">
+              <TestTube className="w-4 h-4" />
+              <span className="hidden sm:inline">LabCorp ({labPendingPatients.length})</span>
+              <span className="sm:hidden">Labs</span>
             </TabsTrigger>
           </TabsList>
 
@@ -729,54 +728,50 @@ const OfficeManagerDashboard = () => {
             </Card>
           </TabsContent>
 
-          {/* Kit Tracking Tab */}
-          <TabsContent value="kits">
+          {/* LabCorp pipeline */}
+          <TabsContent value="labs">
             <Card className="bg-card border-border/50">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Package className="w-5 h-5" />
-                  Diagnostic Kit Status
+                  <TestTube className="w-5 h-5" />
+                  LabCorp pipeline
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Track legacy home-kit orders and sample status (historical rows only; new patients use in-office LabCorp)
+                  Patients awaiting draw, in progress, or results ready for provider review.
                 </p>
               </CardHeader>
               <CardContent>
-                {kitTrackings.length === 0 ? (
+                {labPendingPatients.length === 0 ? (
                   <div className="text-center py-8">
-                    <Package className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-muted-foreground">No kit orders yet</p>
+                    <TestTube className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-muted-foreground">No patients in lab pipeline</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-border/50">
-                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Customer Email</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
                           <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Tracking #</th>
-                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Ordered</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Updated</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {kitTrackings.map((kit) => (
-                          <tr key={kit.id} className="border-b border-border/30 hover:bg-muted/30">
+                        {labPendingPatients.map((p) => (
+                          <tr key={p.id} className="border-b border-border/30 hover:bg-muted/30">
                             <td className="py-4 px-4">
-                              <a 
-                                href={`mailto:${kit.customer_email}`}
-                                className="text-sm text-foreground hover:text-primary"
-                              >
-                                {kit.customer_email}
-                              </a>
+                              <p className="font-medium text-sm">{p.full_name}</p>
+                              {p.email && (
+                                <a href={`mailto:${p.email}`} className="text-xs text-muted-foreground hover:text-primary">
+                                  {p.email}
+                                </a>
+                              )}
                             </td>
                             <td className="py-4 px-4">
-                              {getKitStatusBadge(kit.zrt_kit_status)}
+                              <Badge variant="secondary">{p.onboarding_status}</Badge>
                             </td>
                             <td className="py-4 px-4 text-sm text-muted-foreground">
-                              {kit.tracking_number || "-"}
-                            </td>
-                            <td className="py-4 px-4 text-sm text-muted-foreground">
-                              {new Date(kit.created_at).toLocaleDateString()}
+                              {p.updated_at ? new Date(p.updated_at).toLocaleDateString() : "—"}
                             </td>
                           </tr>
                         ))}

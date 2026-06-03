@@ -48,13 +48,13 @@ function getNextAction(
     consultation_paid: { label: "Complete consult", icon: <Stethoscope className="w-4 h-4" />, urgency: "high" },
     consultation_scheduled: { label: "Consult scheduled", icon: <Clock className="w-4 h-4" />, urgency: "low" },
     consultation_complete: { 
-      label: isWeightLoss ? "Medical clearance" : "Send $349 kit", 
-      icon: isWeightLoss ? <Scale className="w-4 h-4" /> : <Package className="w-4 h-4" />, 
+      label: isWeightLoss ? "Medical clearance" : "Order LabCorp panel", 
+      icon: isWeightLoss ? <Scale className="w-4 h-4" /> : <TestTube className="w-4 h-4" />, 
       urgency: "high" 
     },
     intake_complete: { 
-      label: isWeightLoss ? "Medical clearance" : "Send $349 kit", 
-      icon: isWeightLoss ? <Scale className="w-4 h-4" /> : <Package className="w-4 h-4" />, 
+      label: isWeightLoss ? "Medical clearance" : "Order LabCorp panel", 
+      icon: isWeightLoss ? <Scale className="w-4 h-4" /> : <TestTube className="w-4 h-4" />, 
       urgency: "high" 
     },
     
@@ -64,10 +64,12 @@ function getNextAction(
     medical_clearance_complete: { label: "Send Rx", icon: <Pill className="w-4 h-4" />, urgency: "high" },
     glp1_rx_sent: { label: "Rx sent - await activation", icon: <CheckCircle className="w-4 h-4" />, urgency: "low" },
     
-    // Hormone path
-    kit_link_sent: { label: "Await payment", icon: <Package className="w-4 h-4" />, urgency: "low" },
-    labs_paid: { label: "Ship kit", icon: <Package className="w-4 h-4" />, urgency: "high" },
-    kit_shipped: { label: "Await sample return", icon: <TestTube className="w-4 h-4" />, urgency: "low" },
+    // Hormone path — LabCorp
+    kit_link_sent: { label: "Schedule LabCorp draw", icon: <TestTube className="w-4 h-4" />, urgency: "high" },
+    labs_paid: { label: "Schedule LabCorp draw", icon: <TestTube className="w-4 h-4" />, urgency: "high" },
+    awaiting_blood_work: { label: "Awaiting draw", icon: <TestTube className="w-4 h-4" />, urgency: "medium" },
+    kit_shipped: { label: "Confirm draw done", icon: <TestTube className="w-4 h-4" />, urgency: "medium" },
+    labs_in_progress: { label: "Await lab results", icon: <TestTube className="w-4 h-4" />, urgency: "low" },
     sample_received: { label: "Await lab results", icon: <TestTube className="w-4 h-4" />, urgency: "low" },
     results_ready: { label: "Review labs", icon: <TestTube className="w-4 h-4" />, urgency: "high" },
     labs_reviewed: { label: "Approve protocol", icon: <Pill className="w-4 h-4" />, urgency: "high" },

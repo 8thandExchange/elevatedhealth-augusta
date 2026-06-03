@@ -44,17 +44,14 @@ export const OnboardingProgress = ({
       return { step: 1, subStep: "complete", progress: 33 };
     }
     
-    // Step 2: Diagnostic Labs
-    if (status === "labs_paid") {
-      return { step: 2, subStep: "paid", progress: 40 };
+    // Step 2: Diagnostic Labs (LabCorp in-office)
+    if (status === "labs_paid" || status === "awaiting_blood_work" || status === "kit_link_sent") {
+      return { step: 2, subStep: "ordered", progress: 40 };
     }
-    if (status === "kit_shipped" || kitStatus === "shipped") {
-      return { step: 2, subStep: "shipped", progress: 50 };
+    if (status === "kit_shipped" || status === "labs_in_progress" || status === "sample_received") {
+      return { step: 2, subStep: "in_progress", progress: 55 };
     }
-    if (status === "sample_received" || kitStatus === "sample_received") {
-      return { step: 2, subStep: "received", progress: 60 };
-    }
-    if (status === "results_ready" || status === "labs_reviewed" || kitStatus === "results_ready") {
+    if (status === "results_ready" || status === "labs_reviewed") {
       return { step: 2, subStep: "ready", progress: 66 };
     }
     
@@ -106,13 +103,12 @@ export const OnboardingProgress = ({
     }
   }
 
-  function getStep2Description(sub: string, tracking?: string | null): string {
+  function getStep2Description(sub: string, _tracking?: string | null): string {
     switch (sub) {
-      case "paid": return "Labs ordered — processing";
-      case "shipped": return tracking ? `In transit: ${tracking}` : "Supplies shipped — watch for delivery";
-      case "received": return "Sample received — analyzing…";
+      case "ordered": return "LabCorp panel ordered — schedule your draw";
+      case "in_progress": return "Blood draw complete — awaiting lab results";
       case "ready": return "Results ready for review!";
-      default: return "Baseline labs";
+      default: return "In-office LabCorp labs";
     }
   }
 
