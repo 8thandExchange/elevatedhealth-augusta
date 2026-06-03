@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft, CheckCircle, Mail, AlertCircle } from "lucide-react";
+import { getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -41,9 +42,7 @@ const AdminLogin = () => {
             r.role === "provider",
         );
         if (hasAccess) {
-          const officeManagerEmails = ["kcovington@pmrehab.net"];
-          const isOfficeManager = officeManagerEmails.includes(session.user.email?.toLowerCase() || "");
-          navigate(isOfficeManager ? "/office/dashboard" : "/provider/dashboard", { replace: true });
+          navigate(getStaffPortalLoginPath(session.user.email), { replace: true });
           return;
         }
       }
@@ -119,13 +118,9 @@ const AdminLogin = () => {
         }
 
         toast.success("Logged in successfully");
-        
-        // Determine redirect based on email (office manager vs provider)
-        const officeManagerEmails = ["kcovington@pmrehab.net"];
-        const isOfficeManager = officeManagerEmails.includes(data.user.email?.toLowerCase() || "");
-        
+
         // Small delay to ensure session is propagated
-        setTimeout(() => navigate(isOfficeManager ? "/office/dashboard" : "/provider/dashboard"), 100);
+        setTimeout(() => navigate(getStaffPortalLoginPath(data.user.email)), 100);
       }
     } catch (error: any) {
       setLoginError(error.message || "An unexpected error occurred. Please try again.");

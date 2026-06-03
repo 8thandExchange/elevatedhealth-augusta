@@ -41,6 +41,7 @@ import PatientDashboard from "./pages/PatientDashboard";
 import PatientIntake from "./pages/PatientIntake";
 import SymptomCheckIn from "./pages/SymptomCheckIn";
 import ProviderDashboard from "./pages/ProviderDashboard";
+import ProviderSchedule from "./pages/ProviderSchedule";
 import OfficeManagerDashboard from "./pages/OfficeManagerDashboard";
 import BusinessDashboard from "./pages/BusinessDashboard";
 import ClinicSettings from "./pages/ClinicSettings";
@@ -286,6 +287,15 @@ const App = () => {
               <ProviderDashboard />
             </ProviderLayout>
           } />
+          <Route path="/provider/schedule" element={
+            <ProviderLayout
+              title="My Schedule"
+              subtitle="Clinical scheduling"
+              allowedRoles={["admin", "staff", "business_admin", "provider"]}
+            >
+              <ProviderSchedule />
+            </ProviderLayout>
+          } />
           <Route path="/provider/appointments/:appointmentId" element={
             <ProviderLayout
               title="Appointment"
@@ -332,12 +342,22 @@ const App = () => {
             </ProviderLayout>
           } />
           <Route path="/office/dashboard" element={
-            <ProviderLayout title="Office Manager" subtitle="Patient Overview" showNavbar={false}>
+            <ProviderLayout
+              title="Office Manager"
+              subtitle="Patient Overview"
+              showNavbar={false}
+              allowedRoles={["admin", "staff", "business_admin", "provider"]}
+            >
               <OfficeManagerDashboard />
             </ProviderLayout>
           } />
           <Route path="/office/schedule" element={
-            <ProviderLayout title="Schedule" subtitle="Office-wide schedule" showNavbar={false}>
+            <ProviderLayout
+              title="Schedule"
+              subtitle="Office-wide schedule"
+              showNavbar={false}
+              allowedRoles={["admin", "staff", "business_admin", "provider"]}
+            >
               <OfficeSchedule />
             </ProviderLayout>
           } />

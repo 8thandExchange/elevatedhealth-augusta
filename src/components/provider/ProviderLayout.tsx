@@ -33,7 +33,7 @@ const ProviderLayout = ({
   isRefreshing,
   onNavigateToMessages,
   showNavbar = true,
-  allowedRoles = ["admin", "staff", "business_admin"],
+  allowedRoles = ["admin", "staff", "business_admin", "provider"],
 }: ProviderLayoutProps) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);

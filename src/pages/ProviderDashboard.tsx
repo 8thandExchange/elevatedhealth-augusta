@@ -1,5 +1,5 @@
 import { type KeyboardEvent, useCallback, useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -209,7 +209,8 @@ const ProviderDashboard = () => {
   const [isEmailingRequisition, setIsEmailingRequisition] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState("triage");
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => searchParams.get("tab") || "triage");
   const [canManageTeam, setCanManageTeam] = useState(false);
   const [renewingPatientId, setRenewingPatientId] = useState<string | null>(null);
   const [resendingActivationId, setResendingActivationId] = useState<string | null>(null);
@@ -663,6 +664,13 @@ const ProviderDashboard = () => {
       riskLevel: "green",
     });
   };
+
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const routeState = location.state as ProviderDashboardRouteState | null;
@@ -1177,6 +1185,13 @@ const ProviderDashboard = () => {
                     {pendingPatients.filter(p => !showArchivedPatients ? !p.patient.is_archived : true).length}
                   </Badge>
                 </TabsTrigger>
+                <TabsTrigger
+                  value="schedule"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                >
+                  <Clock className="w-4 h-4 flex-shrink-0" />
+                  <span>My Schedule</span>
+                </TabsTrigger>
                 {canManageTeam && (
                   <TabsTrigger 
                     value="team" 
@@ -1289,13 +1304,6 @@ const ProviderDashboard = () => {
                 >
                   <Send className="w-4 h-4 flex-shrink-0" />
                   <span>Fax</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="schedule" 
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
-                >
-                  <Clock className="w-4 h-4 flex-shrink-0" />
-                  <span>My Schedule</span>
                 </TabsTrigger>
               </TabsList>
             </div>

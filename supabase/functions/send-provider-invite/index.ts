@@ -125,7 +125,7 @@ serve(async (req: Request) => {
           full_name,
           invited_roles: roles,
         },
-        redirectTo: `${req.headers.get("origin")}/provider/dashboard`,
+        redirectTo: `${req.headers.get("origin") || "https://elevatedhealthaugusta.com"}/admin/login`,
       });
 
       if (inviteError) {

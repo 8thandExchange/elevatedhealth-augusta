@@ -32,6 +32,8 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
   const [canSeeIntakeFollowUps, setCanSeeIntakeFollowUps] = useState(false);
 
   const isOnProviderDashboard = location.pathname === "/provider/dashboard";
+  const isOnProviderSchedule = location.pathname === "/provider/schedule";
+  const isOnOfficeSchedule = location.pathname === "/office/schedule";
   const isOnSettings = location.pathname === "/admin/settings";
 
   useEffect(() => {
@@ -196,6 +198,15 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
               <Link to="/provider/dashboard">
                 <Stethoscope className="w-4 h-4 mr-2" />
                 Provider Dashboard
+              </Link>
+            </Button>
+          )}
+
+          {!isOnProviderSchedule && (
+            <Button variant={isOnOfficeSchedule ? "default" : "outline"} size="sm" asChild title="My Schedule">
+              <Link to="/provider/schedule">
+                <CalendarDays className="w-4 h-4 mr-2" />
+                Schedule
               </Link>
             </Button>
           )}
@@ -381,6 +392,14 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                   <Link to="/provider/dashboard" className="cursor-pointer gap-2">
                     <Stethoscope className="w-4 h-4" />
                     Dashboard
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              {!isOnProviderSchedule && (
+                <DropdownMenuItem asChild>
+                  <Link to="/provider/schedule" className="cursor-pointer gap-2">
+                    <CalendarDays className="w-4 h-4" />
+                    Schedule
                   </Link>
                 </DropdownMenuItem>
               )}
