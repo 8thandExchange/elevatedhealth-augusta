@@ -9,6 +9,13 @@ import { useBooking } from "@/contexts/BookingContext";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
+import {
+  storefrontHeroInner,
+  storefrontHeroLabel,
+  storefrontHeroLead,
+  storefrontHeroSection,
+  storefrontHeroTitle,
+} from "@/lib/storefrontHero";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
@@ -45,13 +52,13 @@ const Hormones = () => {
 
         <main>
           {/* Hero */}
-          <section className="min-h-[70vh] flex items-center bg-muted/30">
-            <div className="container mx-auto px-6 lg:px-8 max-w-4xl py-24">
-              <p className="section-label mb-6">Hormone Therapy</p>
-              <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl text-foreground mb-8 leading-tight">
+          <section className={storefrontHeroSection}>
+            <div className={storefrontHeroInner}>
+              <p className={storefrontHeroLabel}>Hormone Therapy</p>
+              <h1 className={storefrontHeroTitle}>
                 Hormones,<br /><span className="italic">done thoughtfully.</span>
               </h1>
-              <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl">
+              <p className={storefrontHeroLead}>
                 Bioidentical, compounded, custom-dosed. For men and women rebuilding what time took.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">

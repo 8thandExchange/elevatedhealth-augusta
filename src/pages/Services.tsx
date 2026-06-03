@@ -9,6 +9,13 @@ import { useBooking } from "@/contexts/BookingContext";
 import { SERVICE_PILLARS } from "@/lib/marketingPillars";
 import { CORE_SERVICES } from "@/lib/stripeConfig";
 import { ArrowRight } from "lucide-react";
+import {
+  storefrontHeroInner,
+  storefrontHeroLabel,
+  storefrontHeroLead,
+  storefrontHeroSection,
+  storefrontHeroTitle,
+} from "@/lib/storefrontHero";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 
@@ -34,13 +41,13 @@ const Services = () => {
         <Navbar />
 
         <main>
-          <section className="pt-28 pb-16 md:pt-36 md:pb-20 bg-muted/30">
-            <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center">
-              <p className="section-label mb-6">Our services</p>
-              <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-foreground mb-6 leading-tight">
+          <section className={`${storefrontHeroSection} text-center`}>
+            <div className={`${storefrontHeroInner} max-w-4xl mx-auto`}>
+              <p className={storefrontHeroLabel}>Our services</p>
+              <h1 className={storefrontHeroTitle}>
                 Five ways we help you <span className="italic">feel elevated</span>
               </h1>
-              <p className="font-jost font-light text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
+              <p className={`${storefrontHeroLead} max-w-2xl mx-auto`}>
                 Physician-owned care in Evans. IV walk-ins, consult-gated programs for hormones, peptides, and weight
                 management, plus one transparent membership.
               </p>

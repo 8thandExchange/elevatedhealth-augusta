@@ -207,7 +207,7 @@ const WeightLoss = () => {
         
         <main>
           {/* Hero Section - Warm Alabaster with Golden Balance */}
-          <section className="pt-32 pb-16 md:pb-24 relative overflow-hidden">
+          <section className="min-h-[88vh] md:min-h-[90vh] flex items-center pt-32 pb-20 md:pb-28 relative overflow-hidden">
             {/* Warm Alabaster/Cream Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3]">
               {/* Abstract Golden Fluid Balance Pattern */}
@@ -242,7 +242,7 @@ const WeightLoss = () => {
                     💳 As low as $100/month with Klarna
                   </span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 animate-fade-in-up text-primary font-playfair" style={{ animationDelay: "0.1s" }}>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 md:mb-8 animate-fade-in-up text-primary font-playfair leading-[1.06]" style={{ animationDelay: "0.1s" }}>
                   Hormonal Weight Reset
                 </h1>
                 <p className="text-xl md:text-2xl text-accent mb-6 animate-fade-in-up font-jost font-medium" style={{ animationDelay: "0.15s" }}>

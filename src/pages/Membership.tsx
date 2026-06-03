@@ -132,14 +132,14 @@ const Membership = () => {
         )}
 
         {/* HERO — Pattern A */}
-        <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-background">
-          <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center">
-            <p className="section-label mb-6">ELEVATED Programs</p>
-            <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-foreground mb-8 leading-tight">
+        <section className="min-h-[88vh] md:min-h-[90vh] flex items-center bg-background">
+          <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center py-28 md:py-36">
+            <p className="section-label mb-6 md:mb-8">ELEVATED Programs</p>
+            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl text-foreground mb-8 md:mb-10 leading-[1.05]">
               Real medicine, real local care,{" "}
               <span className="italic">one transparent monthly price.</span>
             </h1>
-            <p className="font-jost font-light text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+            <p className="font-jost font-light text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10">
               Four ELEVATED programs — each bundles medication when prescribed, monthly check-ins, quarterly labs, lab
               review, and unlimited messaging. Initial Wellness Assessment and baseline labs are paid upfront; then
               predictable membership pricing.

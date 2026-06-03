@@ -47,10 +47,10 @@ const About = () => {
       <div className="min-h-screen">
         <Navbar />
         
-        <section className="pt-32 pb-20 md:pt-40 md:pb-28 bg-background">
-          <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
-            <p className="section-label mb-6">About Elevated Health Augusta</p>
-            <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-foreground mb-10 leading-tight">
+        <section className="min-h-[88vh] md:min-h-[90vh] flex items-center bg-background">
+          <div className="container mx-auto px-6 lg:px-8 max-w-3xl py-28 md:py-36">
+            <p className="section-label mb-6 md:mb-8">About Elevated Health Augusta</p>
+            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl text-foreground mb-10 md:mb-12 leading-[1.05]">
               Built by a team that spent years watching patients suffer through what was preventable.
             </h1>
             <div className="space-y-6 font-jost font-light text-lg text-muted-foreground leading-relaxed">

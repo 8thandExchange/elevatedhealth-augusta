@@ -10,8 +10,15 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
-import { EditorialPanel } from "@/components/marketing/EditorialPanel";
+import { PatternCSplit } from "@/components/marketing/PatternCSplit";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import {
+  storefrontHeroInner,
+  storefrontHeroLabel,
+  storefrontHeroLead,
+  storefrontHeroSection,
+  storefrontHeroTitle,
+} from "@/lib/storefrontHero";
 
 // Display values — actual charges flow through Stripe via
 // create-consultation-checkout and program checkout edge functions.
@@ -77,13 +84,13 @@ const HormonesMen = () => {
 
         <main>
           {/* 1. Hero (Pattern A) */}
-          <section className="min-h-[70vh] flex items-center bg-muted/30">
-            <div className="container mx-auto px-6 lg:px-8 max-w-4xl py-24">
-              <p className="section-label mb-6">Men's Hormones</p>
-              <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl text-foreground mb-8 leading-tight">
+          <section className={storefrontHeroSection}>
+            <div className={storefrontHeroInner}>
+              <p className={storefrontHeroLabel}>Men's Hormones</p>
+              <h1 className={storefrontHeroTitle}>
                 You used to recover faster.<br /><span className="italic">You can again.</span>
               </h1>
-              <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl">
+              <p className={storefrontHeroLead}>
                 Testosterone replacement therapy under physician supervision. Lab-driven, custom-dosed, no shortcuts.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -126,25 +133,20 @@ const HormonesMen = () => {
           {/* 3. What it is (Pattern C) */}
           <section className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <div className="grid md:grid-cols-12 gap-12 items-center">
-                <div className="md:col-span-5">
-                  <EditorialPanel
-                    src={MARKETING_IMAGES.editorialHormonesMen}
-                    alt="Men's hormone optimization at Elevated Health Augusta"
-                  />
+              <PatternCSplit
+                imageSrc={MARKETING_IMAGES.editorialHormonesMen}
+                imageAlt="Men's hormone optimization at Elevated Health Augusta"
+              >
+                <p className="section-label mb-4">What it is</p>
+                <h2 className="font-playfair italic text-4xl md:text-5xl lg:text-6xl text-foreground mb-8">
+                  TRT done right.
+                </h2>
+                <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
+                  <p>Most men's TRT clinics push you to the maximum dose, fastest, with minimal labs. We don't.</p>
+                  <p>Your protocol is built from your testosterone, free testosterone, estradiol-sensitive, SHBG, DHEA, and PSA (if ≥40). We monitor quarterly and adjust to keep you in optimal range — not just "above the floor."</p>
+                  <p>Most patients use compounded testosterone cypionate (injectable, weekly). We also offer testosterone cream (transdermal) for patients who prefer it. Brand-name options like AndroGel, Testim, and Androderm are available via standard e-Rx when preferred.</p>
                 </div>
-                <div className="md:col-span-7">
-                  <p className="section-label mb-4">What it is</p>
-                  <h2 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-8">
-                    TRT done right.
-                  </h2>
-                  <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
-                    <p>Most men's TRT clinics push you to the maximum dose, fastest, with minimal labs. We don't.</p>
-                    <p>Your protocol is built from your testosterone, free testosterone, estradiol-sensitive, SHBG, DHEA, and PSA (if ≥40). We monitor quarterly and adjust to keep you in optimal range — not just "above the floor."</p>
-                    <p>Most patients use compounded testosterone cypionate (injectable, weekly). We also offer testosterone cream (transdermal) for patients who prefer it. Brand-name options like AndroGel, Testim, and Androderm are available via standard e-Rx when preferred.</p>
-                  </div>
-                </div>
-              </div>
+              </PatternCSplit>
             </div>
           </section>
 

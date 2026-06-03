@@ -1,6 +1,6 @@
 /**
  * Drop files into /public/images/ with these filenames — they appear automatically.
- * Until then, components show branded visual fallbacks (no placeholder copy on the site).
+ * Until then, image components render nothing on the public site (no placeholder panels).
  */
 export const MARKETING_IMAGES = {
   heroPoster: "/images/hero-poster.jpg",

@@ -10,8 +10,15 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
-import { EditorialPanel } from "@/components/marketing/EditorialPanel";
+import { PatternCSplit } from "@/components/marketing/PatternCSplit";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import {
+  storefrontHeroInner,
+  storefrontHeroLabel,
+  storefrontHeroLead,
+  storefrontHeroSection,
+  storefrontHeroTitle,
+} from "@/lib/storefrontHero";
 
 // Display values — actual charges flow through Stripe via
 // create-consultation-checkout and program checkout edge functions.
@@ -76,13 +83,13 @@ const HormonesWomen = () => {
 
         <main>
           {/* 1. Hero (Pattern A) */}
-          <section className="min-h-[70vh] flex items-center bg-muted/30">
-            <div className="container mx-auto px-6 lg:px-8 max-w-4xl py-24">
-              <p className="section-label mb-6">Women's Hormones</p>
-              <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl text-foreground mb-8 leading-tight">
+          <section className={storefrontHeroSection}>
+            <div className={storefrontHeroInner}>
+              <p className={storefrontHeroLabel}>Women's Hormones</p>
+              <h1 className={storefrontHeroTitle}>
                 The fog isn't permanent.<br /><span className="italic">Neither is the fatigue.</span>
               </h1>
-              <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl">
+              <p className={storefrontHeroLead}>
                 Hot flashes, night sweats, weight that won't move, mood that isn't yours. You've been told this is just aging. It isn't. It's hormones — and they're fixable.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -125,25 +132,20 @@ const HormonesWomen = () => {
           {/* 3. What it is (Pattern C) */}
           <section className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <div className="grid md:grid-cols-12 gap-12 items-center">
-                <div className="md:col-span-5">
-                  <EditorialPanel
-                    src={MARKETING_IMAGES.editorialHormonesWomen}
-                    alt="Compounded hormone therapy at Elevated Health Augusta"
-                  />
+              <PatternCSplit
+                imageSrc={MARKETING_IMAGES.editorialHormonesWomen}
+                imageAlt="Compounded hormone therapy at Elevated Health Augusta"
+              >
+                <p className="section-label mb-4">What it is</p>
+                <h2 className="font-playfair italic text-4xl md:text-5xl lg:text-6xl text-foreground mb-8">
+                  Compounded transdermal creams.
+                </h2>
+                <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
+                  <p>Standard FDA estradiol patches are in nationwide shortage through end of 2026 due to surging demand. We don't depend on that fragile supply.</p>
+                  <p>Our default is compounded transdermal cream — Bi-Est (E2/E3), Estradiol, Progesterone, Testosterone — formulated by a state-licensed 503A compounding pharmacy in Texas, dosed to your labs and shipped directly to your door.</p>
+                  <p>For patients who prefer FDA-approved gels, sprays, or patches when available, we prescribe via standard e-Rx to your pharmacy of choice. You're not locked into one delivery method.</p>
                 </div>
-                <div className="md:col-span-7">
-                  <p className="section-label mb-4">What it is</p>
-                  <h2 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-8">
-                    Compounded transdermal creams.
-                  </h2>
-                  <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
-                    <p>Standard FDA estradiol patches are in nationwide shortage through end of 2026 due to surging demand. We don't depend on that fragile supply.</p>
-                    <p>Our default is compounded transdermal cream — Bi-Est (E2/E3), Estradiol, Progesterone, Testosterone — formulated by a state-licensed 503A compounding pharmacy in Texas, dosed to your labs and shipped directly to your door.</p>
-                    <p>For patients who prefer FDA-approved gels, sprays, or patches when available, we prescribe via standard e-Rx to your pharmacy of choice. You're not locked into one delivery method.</p>
-                  </div>
-                </div>
-              </div>
+              </PatternCSplit>
             </div>
           </section>
 

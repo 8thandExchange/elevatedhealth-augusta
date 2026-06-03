@@ -1,5 +1,6 @@
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import { MarketingImage } from "@/components/marketing/MarketingImage";
+import { useAnyMarketingImageAvailable } from "@/hooks/useMarketingImageAvailable";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 
 const panels = [
@@ -25,6 +26,9 @@ const panels = [
 
 const HomeClinicGallery = () => {
   const { ref, isVisible } = useScrollReveal();
+  const hasAnyPhoto = useAnyMarketingImageAvailable(panels.map((p) => p.src));
+
+  if (hasAnyPhoto === false) return null;
 
   return (
     <section ref={ref} className="py-20 md:py-28 bg-foreground text-background overflow-hidden">
@@ -40,28 +44,29 @@ const HomeClinicGallery = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-px bg-accent/30 border border-accent/20">
-          {panels.map((p, i) => (
-            <figure
-              key={p.tag}
-              className={`group bg-foreground ${revealClasses.fadeUp(isVisible)}`}
-              style={{ transitionDelay: `${i * 100}ms` }}
-            >
-              <MarketingImage
-                src={p.src}
-                alt={p.alt}
-                fallbackVariant="dark"
-                className="aspect-[4/5] md:aspect-[3/4] transition-transform duration-500 group-hover:scale-[1.02]"
-              />
-              <figcaption className="px-6 py-5 border-t border-accent/20">
-                <p className="font-jost text-[10px] uppercase tracking-[2.5px] text-accent mb-1">
-                  {p.tag}
-                </p>
-                <p className="font-playfair text-lg text-background">{p.caption}</p>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        {hasAnyPhoto === true && (
+          <div className="grid md:grid-cols-3 gap-px bg-accent/30 border border-accent/20">
+            {panels.map((p, i) => (
+              <figure
+                key={p.tag}
+                className={`group bg-foreground ${revealClasses.fadeUp(isVisible)}`}
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
+                <MarketingImage
+                  src={p.src}
+                  alt={p.alt}
+                  className="aspect-[4/5] md:aspect-[3/4] transition-transform duration-500 group-hover:scale-[1.02]"
+                />
+                <figcaption className="px-6 py-5 border-t border-accent/20">
+                  <p className="font-jost text-[10px] uppercase tracking-[2.5px] text-accent mb-1">
+                    {p.tag}
+                  </p>
+                  <p className="font-playfair text-lg text-background">{p.caption}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

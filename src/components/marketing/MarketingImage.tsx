@@ -1,48 +1,30 @@
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { EditorialFallback } from "@/components/marketing/EditorialFallback";
-
-type FallbackVariant = "light" | "dark" | "warm";
+import { useMarketingImageAvailable } from "@/hooks/useMarketingImageAvailable";
 
 type Props = {
   src: string;
   alt: string;
   className?: string;
   imgClassName?: string;
-  fallbackVariant?: FallbackVariant;
 };
 
 /**
- * Renders src when the file exists in /public; otherwise a branded fallback only.
+ * Renders only when the file exists under /public. No placeholder panels on the live site.
  */
-export function MarketingImage({
-  src,
-  alt,
-  className,
-  imgClassName,
-  fallbackVariant = "light",
-}: Props) {
-  const [loaded, setLoaded] = useState(false);
-  const [failed, setFailed] = useState(false);
+export function MarketingImage({ src, alt, className, imgClassName }: Props) {
+  const available = useMarketingImageAvailable(src);
+
+  if (available !== true) return null;
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
-      <EditorialFallback variant={fallbackVariant} />
-      {!failed && (
-        <img
-          src={src}
-          alt={alt}
-          className={cn(
-            "relative z-10 h-full w-full object-cover transition-opacity duration-700",
-            loaded ? "opacity-100" : "opacity-0",
-            imgClassName,
-          )}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setLoaded(true)}
-          onError={() => setFailed(true)}
-        />
-      )}
+      <img
+        src={src}
+        alt={alt}
+        className={cn("h-full w-full object-cover", imgClassName)}
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   );
 }

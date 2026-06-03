@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
-import { EditorialFallback } from "@/components/marketing/EditorialFallback";
 
 type MediaMode = "video" | "poster" | "mesh";
 
@@ -55,10 +54,5 @@ export function HeroMedia() {
     );
   }
 
-  return (
-    <>
-      <div className="hero-mesh absolute inset-0" aria-hidden />
-      <EditorialFallback variant="dark" className="opacity-90" />
-    </>
-  );
+  return <div className="hero-mesh absolute inset-0" aria-hidden />;
 }

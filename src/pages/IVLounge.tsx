@@ -180,7 +180,7 @@ const IVLounge = () => {
         <Navbar />
 
         {/* HERO */}
-        <section className="relative pt-32 pb-16 md:pt-40 md:pb-20 overflow-hidden">
+        <section className="relative min-h-[88vh] md:min-h-[90vh] flex items-center pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
           <div className="absolute top-20 -right-32 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -189,11 +189,11 @@ const IVLounge = () => {
             <Badge className="mb-6 bg-card text-foreground border border-accent/30 hover:bg-card font-jost">
               Walk-in friendly · No consult needed
             </Badge>
-            <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl text-foreground leading-[1.1] mb-6">
+            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl xl:text-[5.25rem] text-foreground leading-[1.06] mb-8 md:mb-10">
               Pick your drip.<br />
               <span className="italic text-accent">Book in 60 seconds.</span>
             </h1>
-            <p className="font-jost font-light text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+            <p className="font-jost font-light text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10">
               Physician-formulated IV therapy, administered by a registered nurse in our private Augusta lounge.
               Choose your drip, add boosters, pay online — schedule instantly after checkout.
             </p>

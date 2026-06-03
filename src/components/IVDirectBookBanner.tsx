@@ -2,16 +2,20 @@ import { Link } from "react-router-dom";
 import { Droplet, MessageCircle, ArrowRight } from "lucide-react";
 import { MarketingImage } from "@/components/marketing/MarketingImage";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import { useMarketingImageAvailable } from "@/hooks/useMarketingImageAvailable";
 
 export default function IVDirectBookBanner() {
+  const hasBg = useMarketingImageAvailable(MARKETING_IMAGES.ivLounge) === true;
+
   return (
     <section className="relative overflow-hidden border-y border-accent/25 bg-foreground text-background">
-      <MarketingImage
-        src={MARKETING_IMAGES.ivLounge}
-        alt=""
-        fallbackVariant="dark"
-        className="absolute inset-0 opacity-40"
-      />
+      {hasBg && (
+        <MarketingImage
+          src={MARKETING_IMAGES.ivLounge}
+          alt=""
+          className="absolute inset-0 opacity-40"
+        />
+      )}
       <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/95 to-foreground/80" aria-hidden />
 
       <div className="container relative z-10 mx-auto px-6 py-14 md:py-16">

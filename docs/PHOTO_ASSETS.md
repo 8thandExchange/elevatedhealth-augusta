@@ -18,6 +18,6 @@ Drop JPG/WebP files into `public/images/` using these exact names. They appear o
 | `editorial-hormones-men.jpg` | Men's health storefront |
 | `editorial-peptides.jpg` | Peptides storefront |
 
-Until files exist, visitors see branded gradient panels only (no placeholder text).
+Until files exist, **image slots are hidden on the live site** (no placeholder panels, no “add photo” UI). Text-only layouts remain. Sections such as the homepage clinic gallery do not render until at least one gallery file is present.
 
 Recommended: landscape 16:9 for hero; 4:5 portrait for editorial columns; 16:10 for service cards.

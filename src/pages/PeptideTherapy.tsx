@@ -18,8 +18,15 @@ import {
 } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
-import { EditorialPanel } from "@/components/marketing/EditorialPanel";
+import { PatternCSplit } from "@/components/marketing/PatternCSplit";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import {
+  storefrontHeroInner,
+  storefrontHeroLabel,
+  storefrontHeroLead,
+  storefrontHeroSection,
+  storefrontHeroTitle,
+} from "@/lib/storefrontHero";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
@@ -265,13 +272,13 @@ const PeptideTherapy = () => {
 
         <main>
           {/* 1. Hero (Pattern A) */}
-          <section className="min-h-[70vh] flex items-center bg-muted/30">
-            <div className="container mx-auto px-6 lg:px-8 max-w-4xl py-24">
-              <p className="section-label mb-6">Peptide Protocols</p>
-              <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl text-foreground mb-8 leading-tight">
+          <section className={storefrontHeroSection}>
+            <div className={storefrontHeroInner}>
+              <p className={storefrontHeroLabel}>Peptide Protocols</p>
+              <h1 className={storefrontHeroTitle}>
                 Targeted regeneration.<br /><span className="italic">Pharmacy-sourced. Physician-led.</span>
               </h1>
-              <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 max-w-2xl">
+              <p className={`${storefrontHeroLead} mb-6`}>
                 Physician-supervised peptide therapy at Elevated Health Augusta. We do not sell peptides direct to consumer.
                 Care begins with a {PRICE_CONSULT} consultation and, where indicated, lab work — then personalized protocols
                 compounded by a licensed 503A pharmacy when prescribed.
@@ -349,16 +356,12 @@ const PeptideTherapy = () => {
           {/* 4. What it is (Pattern C) */}
           <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <div className="grid md:grid-cols-12 gap-12 items-center">
-                <div className="md:col-span-5">
-                  <EditorialPanel
-                    src={MARKETING_IMAGES.editorialPeptides}
-                    alt="Peptide therapy protocols at Elevated Health Augusta"
-                  />
-                </div>
-                <div className="md:col-span-7">
+              <PatternCSplit
+                imageSrc={MARKETING_IMAGES.editorialPeptides}
+                imageAlt="Peptide therapy protocols at Elevated Health Augusta"
+              >
                   <p className="section-label mb-4">What it is</p>
-                  <h2 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-8">
+                  <h2 className="font-playfair italic text-4xl md:text-5xl lg:text-6xl text-foreground mb-8">
                     Compounded peptides, custom-dosed.
                   </h2>
                   <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
@@ -366,8 +369,7 @@ const PeptideTherapy = () => {
                     <p>Your protocol is built from your labs and your goals. Custom doses, custom delivery — subcutaneous injection, sublingual, topical, or IV depending on the peptide.</p>
                     <p>This is meaningfully different from the off-the-shelf "stack kits" sold by online vendors. Every dose is tied to your physician's clinical judgment, your bloodwork, and your monitoring schedule.</p>
                   </div>
-                </div>
-              </div>
+              </PatternCSplit>
             </div>
           </section>
 

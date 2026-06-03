@@ -5,21 +5,14 @@ type Props = {
   src: string;
   alt: string;
   className?: string;
-  fallbackVariant?: "light" | "dark" | "warm";
 };
 
-/** Pattern C editorial column — photo when available, branded panel otherwise. */
-export function EditorialPanel({
-  src,
-  alt,
-  className,
-  fallbackVariant = "light",
-}: Props) {
+/** Pattern C editorial column — only when photo exists in /public/images/. */
+export function EditorialPanel({ src, alt, className }: Props) {
   return (
     <MarketingImage
       src={src}
       alt={alt}
-      fallbackVariant={fallbackVariant}
       className={cn("aspect-[4/5] border border-border", className)}
     />
   );

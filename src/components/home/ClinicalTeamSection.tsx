@@ -1,23 +1,29 @@
 import { MarketingImage } from "@/components/marketing/MarketingImage";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import { useMarketingImageAvailable } from "@/hooks/useMarketingImageAvailable";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 
 const ClinicalTeamSection = () => {
   const { ref, isVisible } = useScrollReveal();
+  const hasPortrait = useMarketingImageAvailable(MARKETING_IMAGES.physician) === true;
+
   return (
     <section ref={ref} className="py-24 md:py-32 bg-muted/30">
       <div className="container mx-auto px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Portrait — 4:5 */}
-          <MarketingImage
-            src={MARKETING_IMAGES.physician}
-            alt="Elevated Health Augusta Medical Director"
-            fallbackVariant="warm"
-            className={`aspect-[4/5] border border-border ${revealClasses.fadeUp(isVisible)}`}
-            imgClassName="grayscale-[15%]"
-          />
+        <div
+          className={`max-w-5xl mx-auto grid gap-12 lg:gap-20 items-center ${
+            hasPortrait ? "md:grid-cols-2" : "md:grid-cols-1 max-w-3xl"
+          }`}
+        >
+          {hasPortrait && (
+            <MarketingImage
+              src={MARKETING_IMAGES.physician}
+              alt="Elevated Health Augusta Medical Director"
+              className={`aspect-[4/5] border border-border ${revealClasses.fadeUp(isVisible)}`}
+              imgClassName="grayscale-[15%]"
+            />
+          )}
 
-          {/* Bio */}
           <div className={`${revealClasses.fadeUp(isVisible)}`} style={{ transitionDelay: "100ms" }}>
             <p className="section-label mb-5">Clinical Leadership</p>
             <h2 className="font-playfair italic text-3xl md:text-4xl lg:text-5xl text-foreground mb-3 leading-tight">

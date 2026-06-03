@@ -77,14 +77,14 @@ const WhatWeDoSection = () => {
                 className={`group text-left bg-background flex flex-col overflow-hidden transition-colors duration-300 hover:bg-muted/40 hover:shadow-[0_12px_40px_rgba(42,40,38,0.08)] ${revealClasses.fadeUp(isVisible)}`}
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
-                {"image" in s && s.image && (
+                {"image" in s && s.image ? (
                   <MarketingImage
                     src={s.image}
                     alt={s.title}
                     className="aspect-[16/10] w-full shrink-0"
                     imgClassName="transition-transform duration-500 group-hover:scale-105"
                   />
-                )}
+                ) : null}
                 <div className="p-10 flex flex-col flex-1">
                 <p className="section-label mb-4 text-[11px]">{s.tagline}</p>
                 <h3 className="font-playfair text-xl md:text-2xl text-foreground mb-4 leading-snug">

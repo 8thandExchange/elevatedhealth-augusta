@@ -11,15 +11,15 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-foreground"
+      className="relative min-h-[92vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-foreground"
     >
       <HeroMedia />
 
       <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/85" aria-hidden />
 
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-32 pb-20">
-        <p className="section-label mb-6 text-accent animate-fade-in-up">Physician-Owned · Evans, GA</p>
-        <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-background leading-[1.08] mb-8 animate-fade-in-up">
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-36 pb-24 md:pt-40 md:pb-28">
+        <p className="section-label mb-8 md:mb-10 text-accent animate-fade-in-up">Physician-Owned · Evans, GA</p>
+        <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.5rem] text-background leading-[1.06] mb-10 md:mb-12 animate-fade-in-up">
           You remember what it felt like
           <br />
           <span className="italic" style={{ letterSpacing: "-0.02em" }}>
@@ -28,7 +28,7 @@ const Hero = () => {
         </h1>
 
         <p
-          className="text-base sm:text-lg md:text-xl text-background/80 font-jost font-light leading-relaxed mb-12 max-w-2xl mx-auto animate-fade-in-up"
+          className="text-lg sm:text-xl md:text-2xl text-background/80 font-jost font-light leading-relaxed mb-14 max-w-2xl mx-auto animate-fade-in-up"
           style={{ animationDelay: "0.2s" }}
         >
           Physician-owned wellness for hormone optimization, peptide therapy, and IV care.
