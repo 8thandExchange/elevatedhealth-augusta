@@ -17,7 +17,22 @@ import {
 import type { MedicationRecommendation } from "@/lib/medicationMapping";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Brain, AlertTriangle, CheckCircle2, Copy, Loader2, Pill, Save } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  Brain,
+  AlertTriangle,
+  CheckCircle2,
+  Copy,
+  ExternalLink,
+  Loader2,
+  Pill,
+  Save,
+} from "lucide-react";
+import { protocolSlugsForInterpretationKey } from "@/lib/protocolInterpretationLinks";
+import {
+  fetchClinicalProtocolsBySlugs,
+  type ProtocolLinkInfo,
+} from "@/lib/clinicalProtocolLookup";
 
 type LabRow = Record<string, unknown> & { id: string; treatment_plan?: unknown; clinical_story?: string | null };
 
@@ -52,6 +67,7 @@ export function LabInterpretationPanel({
   const [medicationRecs, setMedicationRecs] = useState<MedicationRecommendation[]>([]);
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [protocolLinks, setProtocolLinks] = useState<Map<string, ProtocolLinkInfo>>(new Map());
 
   const values = useMemo(() => labResultRowToValues(labRow), [labRow]);
 
@@ -75,6 +91,27 @@ export function LabInterpretationPanel({
   useEffect(() => {
     runAnalysis();
   }, [runAnalysis]);
+
+  useEffect(() => {
+    if (!interpretation?.protocolSuggestions.length) {
+      setProtocolLinks(new Map());
+      return;
+    }
+    const slugs = interpretation.protocolSuggestions.flatMap((p) =>
+      protocolSlugsForInterpretationKey(p.key),
+    );
+    let cancelled = false;
+    fetchClinicalProtocolsBySlugs(slugs)
+      .then((map) => {
+        if (!cancelled) setProtocolLinks(map);
+      })
+      .catch(() => {
+        if (!cancelled) setProtocolLinks(new Map());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [interpretation?.protocolSuggestions]);
 
   const handleReanalyze = () => {
     const result = analyzeLabcorpResults(values, patientGender, primaryProgram);
@@ -220,21 +257,54 @@ export function LabInterpretationPanel({
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Protocol suggestions (physician approval required)
             </p>
-            {interpretation.protocolSuggestions.map((p) => (
-              <div
-                key={p.key}
-                className="flex items-start gap-2 text-xs rounded-md bg-accent/10 px-3 py-2"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium text-foreground">{p.title}</p>
-                  <p className="text-muted-foreground mt-0.5">{p.rationale}</p>
-                  <Badge variant="outline" className="mt-1 text-[10px]">
-                    {confidenceLabel(p.confidence)}
-                  </Badge>
+            {interpretation.protocolSuggestions.map((p) => {
+              const slugs = protocolSlugsForInterpretationKey(p.key);
+              return (
+                <div
+                  key={p.key}
+                  className="flex items-start gap-2 text-xs rounded-md bg-accent/10 px-3 py-2"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-foreground">{p.title}</p>
+                    <p className="text-muted-foreground mt-0.5">{p.rationale}</p>
+                    <Badge variant="outline" className="mt-1 text-[10px]">
+                      {confidenceLabel(p.confidence)}
+                    </Badge>
+                    {slugs.length > 0 && (
+                      <ul className="mt-2 space-y-1">
+                        {slugs.map((slug) => {
+                          const info = protocolLinks.get(slug);
+                          const label = info?.title ?? slug;
+                          const status = info?.versionStatus;
+                          return (
+                            <li key={slug}>
+                              <Link
+                                to={`/clinical-protocols/${slug}`}
+                                className="inline-flex items-center gap-1 text-accent hover:underline font-medium"
+                              >
+                                <ExternalLink className="w-3 h-3 shrink-0" />
+                                {label}
+                              </Link>
+                              {status && (
+                                <Badge variant="outline" className="ml-2 text-[10px]">
+                                  {status === "signed" ? "Signed" : "Draft — review required"}
+                                </Badge>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    {p.key === "thyroid_evaluation" && slugs.length === 0 && (
+                      <p className="text-muted-foreground mt-1 italic">
+                        No seeded thyroid protocol yet — use clinical judgment and lab follow-up.
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}

@@ -85,7 +85,7 @@ Every active row must show `approved`. If any show `pending_review`, intake will
 
 **Booking widget** opens from CTAs → consult Stripe checkout or IV flow.
 
-**Optional later:** Meta Pixel on allowlisted routes only, after cookie accept (not wired yet).
+**Meta Pixel (optional):** Set `VITE_META_PIXEL_ID` in Vercel env; loads via `MarketingPixel` on allowlisted public routes after cookie accept. See `.env.example`.
 
 ---
 

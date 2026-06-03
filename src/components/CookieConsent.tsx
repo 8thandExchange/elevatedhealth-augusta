@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
+import { MARKETING_CONSENT_EVENT } from "@/lib/marketingPixel";
 
 const CONSENT_KEY = "cookie_consent";
 const CONSENT_EXPIRY_DAYS = 365;
@@ -47,7 +48,7 @@ const CookieConsent = () => {
     }));
 
     if (status === "accepted") {
-      console.log("Cookie consent accepted - analytics enabled");
+      window.dispatchEvent(new Event(MARKETING_CONSENT_EVENT));
     }
 
     setIsVisible(false);

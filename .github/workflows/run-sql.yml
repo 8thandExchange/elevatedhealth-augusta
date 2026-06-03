@@ -5,6 +5,11 @@ name: Run SQL (manual)
 # the backend counterpart to `supabase db push` for an environment where the
 # CLI isn't linked locally. Manual dispatch only.
 #
+# IMPORTANT: migration_file must already exist on the main branch at checkout time.
+# Push the .sql file first, then dispatch — otherwise the job fails with
+# "Migration file not found" (that failure does not mean the DB is broken).
+# See docs/RUN_SQL_WORKFLOW.md
+#
 # Provide EITHER:
 #   - migration_file: path to a .sql file in the repo (preferred for migrations), OR
 #   - sql: an inline SQL string (handy for quick diagnostics)
@@ -13,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       migration_file:
-        description: "Path to a .sql file in the repo to execute (takes precedence over sql)"
+        description: "Path to .sql on main (push file first). See docs/RUN_SQL_WORKFLOW.md"
         required: false
         type: string
       sql:

@@ -11,6 +11,7 @@ import ConsultationModal from "@/components/ConsultationModal";
 import { useBooking } from "@/contexts/BookingContext";
 import SecurePatientRoute from "@/components/auth/SecurePatientRoute";
 import CookieConsent from "@/components/CookieConsent";
+import MarketingPixel from "@/components/MarketingPixel";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
 import { ServiceWorkerUpdater } from "@/components/ServiceWorkerUpdater";
 import { CACHE_VERSION } from "@/lib/cacheVersion";
@@ -134,6 +135,7 @@ const App = () => {
             Skip to main content
           </a>
           <CookieConsent />
+          <MarketingPixel />
           <FloatingFinancingBanner />
           <GlobalBookingModal />
         <Routes>
