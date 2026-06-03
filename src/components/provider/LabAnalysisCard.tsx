@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Beaker, Plus, TrendingUp, Pencil } from "lucide-react";
 import LabGauge from "./LabGauge";
 import NewLabResultModal from "./NewLabResultModal";
+import { LabInterpretationPanel } from "./LabInterpretationPanel";
 import { MedicationRecommendation } from "@/lib/medicationMapping";
 
 interface LabResult {
@@ -33,6 +34,7 @@ interface LabAnalysisCardProps {
   patientId: string;
   patientName: string;
   patientGender?: string;
+  primaryProgram?: string | null;
   latestSymptomScore?: {
     estrogen: number;
     progesterone: number;
@@ -42,7 +44,7 @@ interface LabAnalysisCardProps {
   onApplyToRx?: (medications: MedicationRecommendation[]) => void;
 }
 
-const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', latestSymptomScore, onApplyToRx }: LabAnalysisCardProps) => {
+const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', primaryProgram, latestSymptomScore, onApplyToRx }: LabAnalysisCardProps) => {
   const [latestLab, setLatestLab] = useState<LabResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,9 +157,9 @@ const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', lat
                   value={latestLab.testosterone_t}
                   unit="ng/dL"
                   min={0}
-                  max={60}
-                  optimalMin={30}
-                  optimalMax={45}
+                  max={patientGender?.toLowerCase() === "male" ? 1200 : 80}
+                  optimalMin={patientGender?.toLowerCase() === "male" ? 450 : 20}
+                  optimalMax={patientGender?.toLowerCase() === "male" ? 900 : 60}
                 />
                 <LabGauge
                   label="Progesterone"
@@ -179,7 +181,52 @@ const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', lat
                     optimalMax={18}
                   />
                 )}
+                {(latestLab.a1c != null || latestLab.fasting_insulin != null) && (
+                  <>
+                    {latestLab.a1c != null && (
+                      <LabGauge
+                        label="HbA1c"
+                        value={latestLab.a1c}
+                        unit="%"
+                        min={4}
+                        max={10}
+                        optimalMin={4.5}
+                        optimalMax={5.6}
+                      />
+                    )}
+                    {latestLab.fasting_insulin != null && (
+                      <LabGauge
+                        label="Fasting Insulin"
+                        value={latestLab.fasting_insulin}
+                        unit="µIU/mL"
+                        min={0}
+                        max={30}
+                        optimalMin={2}
+                        optimalMax={12}
+                      />
+                    )}
+                  </>
+                )}
+                {patientGender?.toLowerCase() === "male" && latestLab.psa != null && (
+                  <LabGauge
+                    label="PSA"
+                    value={latestLab.psa}
+                    unit="ng/mL"
+                    min={0}
+                    max={10}
+                    optimalMin={0}
+                    optimalMax={4}
+                  />
+                )}
               </div>
+
+              <LabInterpretationPanel
+                labRow={latestLab as Record<string, unknown> & { id: string }}
+                patientGender={patientGender}
+                primaryProgram={primaryProgram}
+                onApplyToRx={onApplyToRx}
+                onSaved={loadLatestLab}
+              />
             </>
           )}
         </CardContent>

@@ -2508,6 +2508,7 @@ const ProviderDashboard = () => {
                 patientId={selectedPatient.patient.id}
                 patientName={selectedPatient.patient.full_name}
                 patientGender={selectedPatient.patient.gender || 'female'}
+                primaryProgram={selectedPatient.patient.primary_program}
                 latestSymptomScore={selectedPatient.latestLog ? {
                   estrogen: selectedPatient.latestLog.estrogen_score || 0,
                   progesterone: selectedPatient.latestLog.progesterone_score || 0,

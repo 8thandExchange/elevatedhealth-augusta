@@ -213,9 +213,23 @@ supabase functions deploy trigger-reconsent-requests --project-ref jiiparpfkjytd
 
 ---
 
+## Lab interpretation (Phase B — provider chart)
+
+On **Provider dashboard → patient → Lab Analysis**, after labs are entered:
+
+1. **LabCorp interpretation** runs automatically (TRT/BHRT/GLP-1/thyroid patterns, ng/dL testosterone).
+2. **Protocol suggestions** are advisory; physician must approve.
+3. **Save to record** writes `clinical_story` + `treatment_plan` snapshot on `lab_results`.
+4. **Apply to order card** pre-selects cream formulary lines (GLP-1 → use Rx portal / FCC).
+
+Logic: `src/lib/labcorpInterpretation.ts`, `src/lib/labcorpMedicationRecommendations.ts`.
+
+---
+
 ## Known gaps (honest)
 
 - Lab requisition auto-email: only male hormone template; other panels need PDF upload.
+- AI evidence layer (OpenEvidence / BAA LLM + PubMed citations) not wired — deterministic rules only.
 - Patient portal services card: hormones + weight visible; peptides/IV upsell mainly via public site.
 - Meta/GA analytics disabled in `index.html` until real IDs + PHI-safe allowlist.
 - Stripe **test vs live** must be confirmed before first real charge.
