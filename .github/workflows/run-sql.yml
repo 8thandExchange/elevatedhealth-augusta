@@ -1,0 +1,81 @@
+name: Run SQL (manual)
+
+# Runs SQL against the production Supabase project via the Management API,
+# using the SUPABASE_ACCESS_TOKEN repo secret (no DB password needed). This is
+# the backend counterpart to `supabase db push` for an environment where the
+# CLI isn't linked locally. Manual dispatch only.
+#
+# Provide EITHER:
+#   - migration_file: path to a .sql file in the repo (preferred for migrations), OR
+#   - sql: an inline SQL string (handy for quick diagnostics)
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration_file:
+        description: "Path to a .sql file in the repo to execute (takes precedence over sql)"
+        required: false
+        type: string
+      sql:
+        description: "Inline SQL to execute (used only if migration_file is empty)"
+        required: false
+        type: string
+
+concurrency:
+  group: supabase-sql
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: jiiparpfkjytdcuelcns
+      MIGRATION_FILE: ${{ github.event.inputs.migration_file }}
+      INLINE_SQL: ${{ github.event.inputs.sql }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify access token
+        run: |
+          if [ -z "${SUPABASE_ACCESS_TOKEN}" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN secret is not set."
+            exit 1
+          fi
+
+      - name: Execute SQL via Management API
+        run: |
+          set -euo pipefail
+          if [ -n "${MIGRATION_FILE}" ]; then
+            if [ ! -f "${MIGRATION_FILE}" ]; then
+              echo "::error::Migration file not found: ${MIGRATION_FILE}"
+              exit 1
+            fi
+            echo "Executing migration file: ${MIGRATION_FILE}"
+            PAYLOAD=$(jq -Rs '{query: .}' "${MIGRATION_FILE}")
+          elif [ -n "${INLINE_SQL}" ]; then
+            echo "Executing inline SQL."
+            PAYLOAD=$(printf '%s' "${INLINE_SQL}" | jq -Rs '{query: .}')
+          else
+            echo "::error::Provide either migration_file or sql."
+            exit 1
+          fi
+
+          RESP=$(printf '%s' "$PAYLOAD" | curl -sS -w $'\n%{http_code}' \
+            -X POST "https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query" \
+            -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data @-)
+
+          BODY=$(printf '%s' "$RESP" | sed '$d')
+          CODE=$(printf '%s' "$RESP" | tail -n1)
+          echo "HTTP ${CODE}"
+          echo "----- response -----"
+          echo "$BODY"
+          echo "--------------------"
+          if [ "${CODE}" -ge 300 ]; then
+            echo "::error::SQL execution failed (HTTP ${CODE})."
+            exit 1
+          fi
+          echo "SQL executed successfully."
