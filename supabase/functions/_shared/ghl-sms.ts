@@ -3,7 +3,8 @@
  * Requires Supabase secrets: GHL_API_KEY, GHL_LOCATION_ID
  */
 const GHL_BASE = "https://services.leadconnectorhq.com";
-const GHL_VERSION = "2021-04-15";
+// GHL docs recommend 2021-07-28+ for contacts/upsert; older Version values can 401.
+const GHL_VERSION = "2021-07-28";
 
 export function formatPhoneE164(phone: string): string {
   const digits = phone.replace(/\D/g, "");
@@ -77,9 +78,10 @@ export async function sendGhlSms(opts: {
 
   if (!upsertRes.ok) {
     console.error("[ghl-sms] contact upsert failed", upsertRes.status, upsertText);
+    const detail = upsertText.length > 200 ? `${upsertText.slice(0, 200)}…` : upsertText;
     return {
       success: false,
-      error: `GHL contact upsert failed (${upsertRes.status})`,
+      error: `GHL contact upsert failed (${upsertRes.status})${detail ? `: ${detail}` : ""}`,
     };
   }
 
