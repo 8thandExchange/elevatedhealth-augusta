@@ -41,7 +41,7 @@
 | Role | Login | Primary surfaces |
 |------|-------|------------------|
 | Kristen | `/admin/login` | `/office/dashboard`, `/formulary`, `/inventory`, `/office/schedule` |
-| Caroline | `/admin/login` | **`/provider/schedule`** (scheduler), `/provider/dashboard`, `/inventory`. Needs `staff` + `provider` in `user_roles` (migration `20260603150000_caroline_portal_roles.sql`). |
+| Caroline | `/admin/login` | **`/provider/schedule`** (scheduler), `/provider/dashboard`, `/inventory`. Account: `caroline@elevatedhealthaugusta.com` (`staff` + `provider`). First login: **Forgot password** on staff login if no password was set in person. |
 | Provider MD | `/admin/login` | `/provider/dashboard` |
 | Patient | `/patient/login` | `/patient/dashboard` |
 

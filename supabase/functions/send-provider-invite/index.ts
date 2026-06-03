@@ -92,15 +92,20 @@ serve(async (req: Request) => {
 
     // Check if user already exists
     const { data: existingUsers } = await adminClient.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(u => u.email === email);
-
-    if (existingUser) {
-      throw new Error("A user with this email already exists");
-    }
+    const existingUser = existingUsers?.users?.find(
+      (u) => u.email?.toLowerCase() === email.toLowerCase(),
+    );
 
     let createdUserId: string | undefined;
 
-    if (mode === "create") {
+    if (existingUser) {
+      if (mode === "create") {
+        throw new Error(
+          "A user with this email already exists. Use invite mode or Team management to add roles.",
+        );
+      }
+      createdUserId = existingUser.id;
+    } else if (mode === "create") {
       // Provision account directly — no email sent, password set by admin, email auto-confirmed
       const { data: createdData, error: createError } = await adminClient.auth.admin.createUser({
         email,
@@ -119,7 +124,7 @@ serve(async (req: Request) => {
       }
       createdUserId = createdData?.user?.id;
     } else {
-      // Send invite email
+      // Send invite email (new users only)
       const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
         data: {
           full_name,
@@ -146,6 +151,15 @@ serve(async (req: Request) => {
       }> = [];
 
       for (const role of roles) {
+        const { data: existingRole } = await adminClient
+          .from("user_roles")
+          .select("id")
+          .eq("user_id", createdUserId)
+          .eq("role", role)
+          .maybeSingle();
+
+        if (existingRole) continue;
+
         const { error: roleError } = await adminClient
           .from("user_roles")
           .insert({
@@ -178,15 +192,23 @@ serve(async (req: Request) => {
       }
     }
 
-    console.log(`Successfully ${mode === "create" ? "created" : "invited"} ${email} with roles: ${roles.join(", ")}`);
+    const actionLabel = existingUser
+      ? "updated roles for"
+      : mode === "create"
+        ? "created"
+        : "invited";
+    console.log(`Successfully ${actionLabel} ${email} with roles: ${roles.join(", ")}`);
 
     return new Response(
       JSON.stringify({
         success: true,
         mode,
-        message: mode === "create"
-          ? `Account created for ${email}. They can sign in immediately.`
-          : `Invitation sent to ${email}`,
+        existing_user: !!existingUser,
+        message: existingUser
+          ? `Roles updated for ${email}.`
+          : mode === "create"
+            ? `Account created for ${email}. They can sign in immediately.`
+            : `Invitation sent to ${email}`,
         user_id: createdUserId,
         roles: roles,
       }),
