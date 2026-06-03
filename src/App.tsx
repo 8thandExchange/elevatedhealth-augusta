@@ -375,11 +375,19 @@ const App = () => {
               <InventoryDashboard />
             </ProviderLayout>
           } />
-          <Route path="/formulary" element={
-            <ProviderLayout title="Formulary" subtitle="Pricing · supplier · dose" showNavbar={true}>
-              <FormularyDashboard />
-            </ProviderLayout>
-          } />
+          <Route
+            path="/formulary"
+            element={
+              <ProviderLayout
+                title="Formulary"
+                subtitle="Pricing · supplier · dose"
+                showNavbar={true}
+                allowedRoles={["admin", "staff", "business_admin", "provider"]}
+              >
+                <FormularyDashboard />
+              </ProviderLayout>
+            }
+          />
           {import.meta.env.DEV && (
             <Route path="/_dev/consent-preview" element={<ConsentPreview />} />
           )}
