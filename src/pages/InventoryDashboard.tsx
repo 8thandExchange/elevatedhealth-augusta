@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Loader2, PackagePlus, RefreshCw, Search, Syringe, Download, AlarmClock } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import DispenseFromInventoryModal from "@/components/provider/DispenseFromInventoryModal";
 
@@ -481,7 +482,10 @@ export default function InventoryDashboard() {
         <div>
           <h1 className="font-playfair text-2xl text-foreground">Inventory</h1>
           <p className="text-sm text-muted-foreground">
-            Lot-level traceability with FEFO. {skus.length} active SKUs · {lots.filter((l) => l.status === "active").length} active lots.
+            Lot-level traceability with FEFO. {skus.length} active SKUs · {lots.filter((l) => l.status === "active").length} active lots.{" "}
+            <Link to="/formulary" className="text-accent underline-offset-2 hover:underline">
+              Formulary &amp; pricing
+            </Link>
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

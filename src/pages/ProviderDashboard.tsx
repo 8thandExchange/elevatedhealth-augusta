@@ -88,6 +88,7 @@ import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
 import HealthReportPreview from "@/components/provider/HealthReportPreview";
 import InsuranceReimbursementHub from "@/components/provider/InsuranceReimbursementHub";
 import LabResultsQueue from "@/components/provider/LabResultsQueue";
+import LabOrderWorkflow from "@/components/provider/LabOrderWorkflow";
 
 interface Patient {
   id: string;
@@ -2402,8 +2403,8 @@ const ProviderDashboard = () => {
                 </Card>
               )}
 
-              {/* Kit Tracking Admin - Show if patient has paid for hormone mapping */}
-              {selectedPatientKit && (
+              {/* Legacy ZRT kit — hide when patient is on LabCorp path */}
+              {selectedPatientKit && selectedPatient.labPath?.path !== "labcorp" && (
                 <KitStatusAdmin
                   paymentId={selectedPatientKit.id}
                   currentStatus={selectedPatientKit.zrt_kit_status}
@@ -2490,6 +2491,22 @@ const ProviderDashboard = () => {
                 <BloodWorkHistory 
                   patientId={selectedPatient.patient.id}
                   patientName={selectedPatient.patient.full_name}
+                />
+              )}
+
+              {selectedPatient.labPath?.path === "labcorp" && (
+                <LabOrderWorkflow
+                  patient={{
+                    id: selectedPatient.patient.id,
+                    full_name: selectedPatient.patient.full_name,
+                    dob: selectedPatient.patient.dob,
+                    gender: selectedPatient.patient.gender,
+                    lab_path: selectedPatient.labPath.path,
+                    onboarding_status: selectedPatient.patient.onboarding_status,
+                  }}
+                  providerName={providerInfo.name}
+                  providerCredentials={providerInfo.credentials}
+                  onOrderUpdated={() => void selectPatient(selectedPatient)}
                 />
               )}
 

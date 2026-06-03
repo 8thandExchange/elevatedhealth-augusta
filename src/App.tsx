@@ -65,6 +65,7 @@ import ClinicalProtocolLibrary from "./pages/ClinicalProtocolLibrary";
 import ClinicalProtocolDetail from "./pages/ClinicalProtocolDetail";
 import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor";
 import InventoryDashboard from "./pages/InventoryDashboard";
+import FormularyDashboard from "./pages/FormularyDashboard";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import ProviderSchedules from "./pages/admin/ProviderSchedules";
@@ -372,6 +373,11 @@ const App = () => {
           <Route path="/inventory" element={
             <ProviderLayout title="Inventory" subtitle="Lot tracking · FEFO" showNavbar={true}>
               <InventoryDashboard />
+            </ProviderLayout>
+          } />
+          <Route path="/formulary" element={
+            <ProviderLayout title="Formulary" subtitle="Pricing · supplier · dose" showNavbar={true}>
+              <FormularyDashboard />
             </ProviderLayout>
           } />
           {import.meta.env.DEV && (

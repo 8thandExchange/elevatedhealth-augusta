@@ -1833,6 +1833,137 @@ export type Database = {
           },
         ]
       }
+      clinic_formulary: {
+        Row: {
+          billing_unit: string
+          category: string
+          client_price_cents: number | null
+          client_price_member_cents: number | null
+          created_at: string
+          display_name: string
+          dose_notes: string | null
+          dose_strength: string | null
+          id: string
+          internal_notes: string | null
+          inventory_sku_id: string | null
+          is_active: boolean
+          item_code: string
+          iv_addon_id: string | null
+          sort_order: number
+          stripe_price_id: string | null
+          supplier: string
+          supplier_cost_cents: number | null
+          supplier_cost_unit: string | null
+          supplier_sku: string | null
+          tracks_inventory: boolean
+          updated_at: string
+        }
+        Insert: {
+          billing_unit?: string
+          category: string
+          client_price_cents?: number | null
+          client_price_member_cents?: number | null
+          created_at?: string
+          display_name: string
+          dose_notes?: string | null
+          dose_strength?: string | null
+          id?: string
+          internal_notes?: string | null
+          inventory_sku_id?: string | null
+          is_active?: boolean
+          item_code: string
+          iv_addon_id?: string | null
+          sort_order?: number
+          stripe_price_id?: string | null
+          supplier: string
+          supplier_cost_cents?: number | null
+          supplier_cost_unit?: string | null
+          supplier_sku?: string | null
+          tracks_inventory?: boolean
+          updated_at?: string
+        }
+        Update: {
+          billing_unit?: string
+          category?: string
+          client_price_cents?: number | null
+          client_price_member_cents?: number | null
+          created_at?: string
+          display_name?: string
+          dose_notes?: string | null
+          dose_strength?: string | null
+          id?: string
+          internal_notes?: string | null
+          inventory_sku_id?: string | null
+          is_active?: boolean
+          item_code?: string
+          iv_addon_id?: string | null
+          sort_order?: number
+          stripe_price_id?: string | null
+          supplier?: string
+          supplier_cost_cents?: number | null
+          supplier_cost_unit?: string | null
+          supplier_sku?: string | null
+          tracks_inventory?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinic_formulary_inventory_sku_id_fkey"
+            columns: ["inventory_sku_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_skus"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinic_formulary_iv_addon_id_fkey"
+            columns: ["iv_addon_id"]
+            isOneToOne: false
+            referencedRelation: "iv_addons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      formulary_change_log: {
+        Row: {
+          change_note: string | null
+          changed_at: string
+          changed_by: string | null
+          field_name: string
+          formulary_id: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+        }
+        Insert: {
+          change_note?: string | null
+          changed_at?: string
+          changed_by?: string | null
+          field_name: string
+          formulary_id: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Update: {
+          change_note?: string | null
+          changed_at?: string
+          changed_by?: string | null
+          field_name?: string
+          formulary_id?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "formulary_change_log_formulary_id_fkey"
+            columns: ["formulary_id"]
+            isOneToOne: false
+            referencedRelation: "clinic_formulary"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_skus: {
         Row: {
           category: string
@@ -2031,6 +2162,65 @@ export type Database = {
         }
         Relationships: []
       }
+      lab_orders: {
+        Row: {
+          clinical_reason: string | null
+          created_at: string
+          document_url: string | null
+          id: string
+          notes: string | null
+          ordered_at: string
+          ordered_by: string | null
+          panel_slug: string
+          patient_id: string
+          requisition_key: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          clinical_reason?: string | null
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          notes?: string | null
+          ordered_at?: string
+          ordered_by?: string | null
+          panel_slug: string
+          patient_id: string
+          requisition_key?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          clinical_reason?: string | null
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          notes?: string | null
+          ordered_at?: string
+          ordered_by?: string | null
+          panel_slug?: string
+          patient_id?: string
+          requisition_key?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_orders_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lab_panels: {
         Row: {
           created_at: string
@@ -2038,6 +2228,7 @@ export type Database = {
           display_order: number
           id: string
           is_active: boolean
+          labcorp_requisition_key: string | null
           member_price_cents: number
           name: string
           non_member_price_cents: number
@@ -2051,6 +2242,7 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
+          labcorp_requisition_key?: string | null
           member_price_cents: number
           name: string
           non_member_price_cents: number
@@ -2064,6 +2256,7 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
+          labcorp_requisition_key?: string | null
           member_price_cents?: number
           name?: string
           non_member_price_cents?: number

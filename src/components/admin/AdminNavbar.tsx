@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical, ClipboardList } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -253,6 +253,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
+                <Link to="/formulary" className="cursor-pointer gap-2">
+                  <ClipboardList className="w-4 h-4" />
+                  Formulary &amp; pricing
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to="/admin/email-templates" className="cursor-pointer gap-2">
                   <Mail className="w-4 h-4" />
                   Email Templates
@@ -389,6 +395,12 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 <Link to="/inventory" className="cursor-pointer gap-2">
                   <Boxes className="w-4 h-4" />
                   Inventory
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/formulary" className="cursor-pointer gap-2">
+                  <ClipboardList className="w-4 h-4" />
+                  Formulary &amp; pricing
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
