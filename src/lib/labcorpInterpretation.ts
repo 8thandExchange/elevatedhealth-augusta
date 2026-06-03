@@ -435,6 +435,8 @@ export interface LabInterpretationSnapshot {
   engine: "labcorp";
   interpreted_at: string;
   interpretation: LabcorpInterpretation;
+  /** Fingerprint of lab values at interpret time — stale if edited later. */
+  values_fingerprint?: string;
 }
 
 export function parseInterpretationSnapshot(

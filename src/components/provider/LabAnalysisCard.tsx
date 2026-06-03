@@ -241,6 +241,7 @@ const LabAnalysisCard = ({ patientId, patientName, patientGender = 'female', pri
         patientId={patientId}
         patientName={patientName}
         patientGender={patientGender}
+        primaryProgram={primaryProgram}
         latestSymptomScore={latestSymptomScore}
         onSaved={loadLatestLab}
         onApplyToRx={onApplyToRx}

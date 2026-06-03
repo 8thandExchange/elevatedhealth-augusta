@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
-interface ParsedLabData {
+export interface ParsedLabData {
   collectionDate: string | null;
   patientName: string | null;
   labSource?: 'labcorp' | 'unknown';

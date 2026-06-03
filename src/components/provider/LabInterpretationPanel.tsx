@@ -8,12 +8,13 @@ import {
   labResultRowToValues,
   parseInterpretationSnapshot,
   type LabcorpInterpretation,
-  type LabInterpretationSnapshot,
 } from "@/lib/labcorpInterpretation";
 import {
-  findingsSummaryForAlert,
-  generateLabcorpMedicationRecommendations,
-} from "@/lib/labcorpMedicationRecommendations";
+  buildLabcorpInterpretationUpdate,
+  persistLabcorpInterpretation,
+  valuesChangedSinceSnapshot,
+} from "@/lib/persistLabcorpInterpretation";
+import { generateLabcorpMedicationRecommendations } from "@/lib/labcorpMedicationRecommendations";
 import type { MedicationRecommendation } from "@/lib/medicationMapping";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -34,7 +35,12 @@ import {
   type ProtocolLinkInfo,
 } from "@/lib/clinicalProtocolLookup";
 
-type LabRow = Record<string, unknown> & { id: string; treatment_plan?: unknown; clinical_story?: string | null };
+type LabRow = Record<string, unknown> & {
+  id: string;
+  treatment_plan?: unknown;
+  clinical_story?: string | null;
+  correlation_alert?: string | null;
+};
 
 interface LabInterpretationPanelProps {
   labRow: LabRow;
@@ -73,7 +79,10 @@ export function LabInterpretationPanel({
 
   const runAnalysis = useCallback(() => {
     const saved = parseInterpretationSnapshot(labRow.treatment_plan);
-    if (saved?.interpretation) {
+    if (
+      saved?.interpretation &&
+      !valuesChangedSinceSnapshot(values, saved)
+    ) {
       setInterpretation(saved.interpretation);
       setSavedAt(saved.interpreted_at);
       setMedicationRecs(
@@ -125,25 +134,44 @@ export function LabInterpretationPanel({
     if (!interpretation) return;
     setIsSaving(true);
     try {
-      const snapshot: LabInterpretationSnapshot = {
-        version: 1,
-        engine: "labcorp",
-        interpreted_at: new Date().toISOString(),
-        interpretation,
-      };
-      const alert = findingsSummaryForAlert(interpretation.findings);
-      const { error } = await supabase
-        .from("lab_results")
-        .update({
-          clinical_story: interpretation.story,
-          treatment_plan: JSON.parse(JSON.stringify(snapshot)),
-          correlation_alert: alert,
-        })
-        .eq("id", labRow.id);
+      const result = await persistLabcorpInterpretation({
+        labResultId: labRow.id,
+        row: { ...labRow, ...values },
+        patientGender,
+        primaryProgram,
+        existingTreatmentPlan: labRow.treatment_plan,
+        existingCorrelationAlert:
+          typeof labRow.correlation_alert === "string" ? labRow.correlation_alert : null,
+      });
 
-      if (error) throw error;
-      setSavedAt(snapshot.interpreted_at);
-      toast.success("Interpretation saved to lab record");
+      if (result.status === "failed") {
+        throw new Error(result.error ?? "Could not save interpretation");
+      }
+      if (result.status === "skipped") {
+        const built = buildLabcorpInterpretationUpdate(
+          { ...labRow, ...values },
+          patientGender,
+          primaryProgram,
+          { existingTreatmentPlan: labRow.treatment_plan },
+        );
+        if (!built) {
+          toast.error("No lab values to save");
+          return;
+        }
+        const { error } = await supabase
+          .from("lab_results")
+          .update({
+            clinical_story: built.clinical_story,
+            correlation_alert: built.correlation_alert,
+          })
+          .eq("id", labRow.id);
+        if (error) throw error;
+        setSavedAt(new Date().toISOString());
+        toast.success("Clinical summary saved (legacy treatment plan preserved)");
+      } else {
+        setSavedAt(result.snapshot?.interpreted_at ?? new Date().toISOString());
+        toast.success("Interpretation saved to lab record");
+      }
       onSaved?.();
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : "Could not save interpretation");

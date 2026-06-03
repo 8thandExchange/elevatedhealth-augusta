@@ -13,6 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Beaker, AlertCircle } from "lucide-react";
 import { MedicationRecommendation } from "@/lib/medicationMapping";
+import LabPdfUploader, { type ParsedLabData } from "./LabPdfUploader";
+import { autoPersistLabcorpInterpretationAfterSave } from "@/lib/persistLabcorpInterpretation";
 
 interface ExistingLabResult {
   id: string;
@@ -25,12 +27,69 @@ interface ExistingLabResult {
   lab_source: string | null;
 }
 
+interface PdfExtraLabFields {
+  estradiol_e2: number | null;
+  progesterone_pg: number | null;
+  testosterone_t: number | null;
+  dhea_s: number | null;
+  cortisol_morning: number | null;
+  tsh: number | null;
+  free_t3: number | null;
+  free_t4: number | null;
+  vitamin_d: number | null;
+  fasting_insulin: number | null;
+  triglycerides: number | null;
+  hdl: number | null;
+  ldl: number | null;
+  parsed_from_pdf: boolean;
+  pdf_url: string | null;
+}
+
+const emptyPdfExtras = (): PdfExtraLabFields => ({
+  estradiol_e2: null,
+  progesterone_pg: null,
+  testosterone_t: null,
+  dhea_s: null,
+  cortisol_morning: null,
+  tsh: null,
+  free_t3: null,
+  free_t4: null,
+  vitamin_d: null,
+  fasting_insulin: null,
+  triglycerides: null,
+  hdl: null,
+  ldl: null,
+  parsed_from_pdf: false,
+  pdf_url: null,
+});
+
+function pdfExtrasFromParsed(parsed: ParsedLabData, pdfUrl: string | null): PdfExtraLabFields {
+  return {
+    estradiol_e2: parsed.estradiol,
+    progesterone_pg: parsed.progesterone,
+    testosterone_t: parsed.testosterone,
+    dhea_s: parsed.dheas,
+    cortisol_morning: parsed.cortisol,
+    tsh: parsed.tsh ?? null,
+    free_t3: parsed.freeT3 ?? null,
+    free_t4: parsed.freeT4 ?? null,
+    vitamin_d: parsed.vitaminD ?? null,
+    fasting_insulin: parsed.fastingInsulin ?? null,
+    triglycerides: parsed.triglycerides ?? null,
+    hdl: parsed.hdl ?? null,
+    ldl: parsed.ldl ?? null,
+    parsed_from_pdf: true,
+    pdf_url: pdfUrl,
+  };
+}
+
 interface NewLabResultModalProps {
   isOpen: boolean;
   onClose: () => void;
   patientId: string;
   patientName: string;
   patientGender?: string;
+  primaryProgram?: string | null;
   latestSymptomScore?: {
     estrogen: number;
     progesterone: number;
@@ -55,6 +114,8 @@ const NewLabResultModal = ({
   onClose,
   patientId,
   patientName,
+  patientGender = "female",
+  primaryProgram,
   onSaved,
   existingLab,
 }: NewLabResultModalProps) => {
@@ -69,6 +130,7 @@ const NewLabResultModal = ({
   const [ast, setAst] = useState("");
   const [labcorpA1c, setLabcorpA1c] = useState("");
   const [labcorpAlerts, setLabcorpAlerts] = useState<ProtocolRecommendation[]>([]);
+  const [pdfExtras, setPdfExtras] = useState<PdfExtraLabFields>(emptyPdfExtras);
 
   useEffect(() => {
     if (isOpen && existingLab?.lab_source === "zrt") {
@@ -167,6 +229,9 @@ const NewLabResultModal = ({
 
       const labcorpNotes = `LabCorp Blood Panel: Hematocrit=${hctValue || "N/A"}%, PSA=${psaValue || "N/A"} ng/mL, ALT=${altValue || "N/A"} U/L, AST=${astValue || "N/A"} U/L, A1c=${a1cValue || "N/A"}%`;
 
+      const safetyCorrelation =
+        alerts.length > 0 ? alerts.map((a) => a.title).join("; ") : null;
+
       const labcorpData = {
         patient_id: patientId,
         collection_date: collectionDate,
@@ -175,40 +240,81 @@ const NewLabResultModal = ({
         alt: altValue,
         ast: astValue,
         a1c: a1cValue,
+        estradiol_e2: pdfExtras.estradiol_e2,
+        progesterone_pg: pdfExtras.progesterone_pg,
+        testosterone_t: pdfExtras.testosterone_t,
+        dhea_s: pdfExtras.dhea_s,
+        cortisol_morning: pdfExtras.cortisol_morning,
+        tsh: pdfExtras.tsh,
+        free_t3: pdfExtras.free_t3,
+        free_t4: pdfExtras.free_t4,
+        vitamin_d: pdfExtras.vitamin_d,
+        fasting_insulin: pdfExtras.fasting_insulin,
+        triglycerides: pdfExtras.triglycerides,
+        hdl: pdfExtras.hdl,
+        ldl: pdfExtras.ldl,
+        parsed_from_pdf: pdfExtras.parsed_from_pdf,
+        pdf_url: pdfExtras.pdf_url,
         notes: labcorpNotes,
         lab_source: "labcorp",
-        correlation_alert:
-          alerts.length > 0 ? alerts.map((a) => a.title).join("; ") : null,
+        correlation_alert: safetyCorrelation,
         created_by: user?.id,
       };
 
       let error;
+      let labResultId: string | undefined;
       if (isEditMode && existingLab) {
+        labResultId = existingLab.id;
         const result = await supabase
           .from("lab_results")
           .update(labcorpData)
           .eq("id", existingLab.id);
         error = result.error;
       } else {
-        const result = await supabase.from("lab_results").insert(labcorpData);
+        const result = await supabase
+          .from("lab_results")
+          .insert(labcorpData)
+          .select("id")
+          .single();
         error = result.error;
+        labResultId = result.data?.id;
       }
 
       if (error) throw error;
+
+      let interpretationSaved = false;
+      if (labResultId) {
+        const interp = await autoPersistLabcorpInterpretationAfterSave({
+          labResultId,
+          row: { ...labcorpData, id: labResultId, lab_source: "labcorp" },
+          patientGender,
+          primaryProgram,
+          existingCorrelationAlert: safetyCorrelation,
+        });
+        if (interp.status === "failed") {
+          console.warn("Auto interpretation failed:", interp.error);
+        } else if (interp.status === "persisted") {
+          interpretationSaved = true;
+        }
+      }
+
+      const interpNote = interpretationSaved
+        ? " Lab interpretation saved to chart."
+        : "";
 
       if (alerts.length > 0) {
         setLabcorpAlerts(alerts);
         toast.success(
           isEditMode ? "LabCorp labs updated!" : "LabCorp labs saved!",
           {
-            description: `${alerts.length} safety alert(s) detected.`,
+            description: `${alerts.length} safety alert(s) detected.${interpNote}`,
           }
         );
       } else {
         toast.success(
           isEditMode
             ? "LabCorp labs updated!"
-            : "LabCorp labs saved. All values within normal range!"
+            : `LabCorp labs saved.${interpNote || " All values within normal range!"}`
         );
         resetAndClose();
       }
@@ -223,6 +329,19 @@ const NewLabResultModal = ({
     }
   };
 
+  const handleParsed = (parsed: ParsedLabData) => {
+    setPdfExtras((prev) => ({
+      ...pdfExtrasFromParsed(parsed, prev.pdf_url),
+      pdf_url: prev.pdf_url,
+    }));
+    if (parsed.hematocrit != null && !hematocrit) setHematocrit(String(parsed.hematocrit));
+    if (parsed.psa != null && !psa) setPsa(String(parsed.psa));
+    if (parsed.alt != null && !alt) setAlt(String(parsed.alt));
+    if (parsed.ast != null && !ast) setAst(String(parsed.ast));
+    if (parsed.a1c != null && !labcorpA1c) setLabcorpA1c(String(parsed.a1c));
+    if (parsed.collectionDate) setCollectionDate(parsed.collectionDate);
+  };
+
   const resetAndClose = () => {
     setCollectionDate(new Date().toISOString().split("T")[0]);
     setHematocrit("");
@@ -231,6 +350,7 @@ const NewLabResultModal = ({
     setAst("");
     setLabcorpA1c("");
     setLabcorpAlerts([]);
+    setPdfExtras(emptyPdfExtras());
     onClose();
   };
 
@@ -313,6 +433,13 @@ const NewLabResultModal = ({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            <LabPdfUploader
+              patientName={patientName}
+              onParsed={handleParsed}
+              onPdfUploaded={(url) =>
+                setPdfExtras((prev) => ({ ...prev, pdf_url: url, parsed_from_pdf: true }))
+              }
+            />
             <div className="space-y-4">
               <div>
                 <Label htmlFor="labcorpDate">Collection Date</Label>
