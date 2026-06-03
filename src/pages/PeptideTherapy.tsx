@@ -18,6 +18,8 @@ import {
 } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
+import { EditorialPanel } from "@/components/marketing/EditorialPanel";
+import { MARKETING_IMAGES } from "@/lib/marketingImages";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
@@ -341,9 +343,10 @@ const PeptideTherapy = () => {
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="grid md:grid-cols-12 gap-12 items-center">
                 <div className="md:col-span-5">
-                  <div className="aspect-[4/5] bg-background flex items-center justify-center text-muted-foreground/40 font-jost text-xs tracking-widest uppercase border border-border">
-                    Editorial Image
-                  </div>
+                  <EditorialPanel
+                    src={MARKETING_IMAGES.editorialPeptides}
+                    alt="Peptide therapy protocols at Elevated Health Augusta"
+                  />
                 </div>
                 <div className="md:col-span-7">
                   <p className="section-label mb-4">What it is</p>

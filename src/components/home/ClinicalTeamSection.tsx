@@ -1,8 +1,6 @@
+import { MarketingImage } from "@/components/marketing/MarketingImage";
+import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
-
-// TODO: Replace with real physician portrait. Use 4:5 portrait aspect ratio.
-// Path: /public/physician-portrait.jpg
-const PORTRAIT_PLACEHOLDER = "/placeholder.svg";
 
 const ClinicalTeamSection = () => {
   const { ref, isVisible } = useScrollReveal();
@@ -11,16 +9,13 @@ const ClinicalTeamSection = () => {
       <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Portrait — 4:5 */}
-          <div
-            className={`relative aspect-[4/5] bg-background border border-border overflow-hidden ${revealClasses.fadeUp(isVisible)}`}
-          >
-            <img
-              src={PORTRAIT_PLACEHOLDER}
-              alt="Elevated Health Augusta Medical Director"
-              className="w-full h-full object-cover grayscale"
-              loading="lazy"
-            />
-          </div>
+          <MarketingImage
+            src={MARKETING_IMAGES.physician}
+            alt="Elevated Health Augusta Medical Director"
+            fallbackVariant="warm"
+            className={`aspect-[4/5] border border-border ${revealClasses.fadeUp(isVisible)}`}
+            imgClassName="grayscale-[15%]"
+          />
 
           {/* Bio */}
           <div className={`${revealClasses.fadeUp(isVisible)}`} style={{ transitionDelay: "100ms" }}>

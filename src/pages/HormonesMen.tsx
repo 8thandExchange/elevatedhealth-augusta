@@ -10,6 +10,8 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
+import { EditorialPanel } from "@/components/marketing/EditorialPanel";
+import { MARKETING_IMAGES } from "@/lib/marketingImages";
 
 // Display values — actual charges flow through Stripe via
 // create-consultation-checkout and program checkout edge functions.
@@ -126,10 +128,10 @@ const HormonesMen = () => {
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="grid md:grid-cols-12 gap-12 items-center">
                 <div className="md:col-span-5">
-                  <div className="aspect-[4/5] bg-muted/40 flex items-center justify-center text-muted-foreground/40 font-jost text-xs tracking-widest uppercase">
-                    {/* TODO: editorial photograph — TRT clinical setting */}
-                    Editorial Image
-                  </div>
+                  <EditorialPanel
+                    src={MARKETING_IMAGES.editorialHormonesMen}
+                    alt="Men's hormone optimization at Elevated Health Augusta"
+                  />
                 </div>
                 <div className="md:col-span-7">
                   <p className="section-label mb-4">What it is</p>

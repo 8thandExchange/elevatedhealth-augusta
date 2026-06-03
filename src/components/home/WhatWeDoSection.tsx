@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { MarketingImage } from "@/components/marketing/MarketingImage";
+import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 import { ACTIVE_SERVICES } from "@/lib/serviceConfig";
 
@@ -9,13 +11,15 @@ const services = [
     tagline: "Transdermal HRT & TRT",
     body: "Physician-prescribed bioidentical hormones, compounded as transdermal creams. For men and women rebuilding energy, sleep, and clarity.",
     route: "/hormones",
+    image: MARKETING_IMAGES.serviceHormones,
     enabled: ACTIVE_SERVICES.hormones,
   },
   {
     title: "Medical Weight Loss",
     tagline: "GLP-1 protocols",
     body: "Semaglutide and tirzepatide protocols supervised by physicians. Real titration, real labs, real accountability.",
-    route: "/weightloss",
+    route: "/weight-loss",
+    image: MARKETING_IMAGES.serviceWeightLoss,
     enabled: ACTIVE_SERVICES.weightLoss,
   },
   {
@@ -23,6 +27,7 @@ const services = [
     tagline: "Book direct, no consult",
     body: "Curated drips and boosters for hydration, recovery, immunity, and performance. Pick your protocol, schedule online.",
     route: "/iv-lounge",
+    image: MARKETING_IMAGES.serviceIv,
     enabled: ACTIVE_SERVICES.ivLounge,
   },
   {
@@ -30,6 +35,7 @@ const services = [
     tagline: "Targeted regeneration",
     body: "The first physician-supervised peptide program in the Augusta area. For recovery, longevity, and cellular performance.",
     route: "/peptides",
+    image: MARKETING_IMAGES.servicePeptides,
     enabled: ACTIVE_SERVICES.peptides,
   },
   {
@@ -68,9 +74,18 @@ const WhatWeDoSection = () => {
               <button
                 key={s.title}
                 onClick={() => navigate(s.route)}
-                className={`group text-left bg-background p-10 transition-colors duration-300 hover:bg-muted/40 ${revealClasses.fadeUp(isVisible)}`}
+                className={`group text-left bg-background flex flex-col overflow-hidden transition-colors duration-300 hover:bg-muted/40 hover:shadow-[0_12px_40px_rgba(42,40,38,0.08)] ${revealClasses.fadeUp(isVisible)}`}
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
+                {"image" in s && s.image && (
+                  <MarketingImage
+                    src={s.image}
+                    alt={s.title}
+                    className="aspect-[16/10] w-full shrink-0"
+                    imgClassName="transition-transform duration-500 group-hover:scale-105"
+                  />
+                )}
+                <div className="p-10 flex flex-col flex-1">
                 <p className="section-label mb-4 text-[11px]">{s.tagline}</p>
                 <h3 className="font-playfair text-xl md:text-2xl text-foreground mb-4 leading-snug">
                   {s.title}
@@ -78,9 +93,10 @@ const WhatWeDoSection = () => {
                 <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed mb-6 min-h-[60px]">
                   {s.body}
                 </p>
-                <div className="flex items-center gap-2 font-jost text-xs uppercase tracking-[2px] text-accent group-hover:gap-3 transition-all">
+                <div className="flex items-center gap-2 font-jost text-xs uppercase tracking-[2px] text-accent group-hover:gap-3 transition-all mt-auto">
                   <span>Explore</span>
                   <ArrowRight className="h-3.5 w-3.5" />
+                </div>
                 </div>
               </button>
             );

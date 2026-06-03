@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useBooking } from "@/contexts/BookingContext";
+import { HeroMedia } from "@/components/home/HeroMedia";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,27 +13,12 @@ const Hero = () => {
       id="hero"
       className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-foreground"
     >
-      {/* Background video — DISABLED: /hero-video.mp4 and /hero-poster.jpg do not exist in /public,
-          so the <video> tag was producing 404s. Drop those two files into /public and uncomment to re-enable.
-          The section's bg-foreground keeps a clean dark wash in the meantime.
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        poster="/hero-poster.jpg"
-        className="absolute inset-0 w-full h-full object-cover"
-        aria-hidden="true"
-      >
-        <source src="/hero-video.mp4" type="video/mp4" />
-      </video>
-      */}
+      <HeroMedia />
 
-      {/* Dim overlay for text readability */}
-      <div className="absolute inset-0 bg-foreground/50" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/85" aria-hidden />
 
-      {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-32 pb-20">
+        <p className="section-label mb-6 text-accent animate-fade-in-up">Physician-Owned · Evans, GA</p>
         <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-background leading-[1.08] mb-8 animate-fade-in-up">
           You remember what it felt like
           <br />
@@ -56,7 +42,7 @@ const Hero = () => {
           <Button
             size="lg"
             onClick={openBooking}
-            className="bg-background text-foreground font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm transition-all duration-300 hover:bg-background/90"
+            className="bg-background text-foreground font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm transition-all duration-300 hover:bg-background/90 shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
           >
             Book a $79 Wellness Assessment
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -64,14 +50,13 @@ const Hero = () => {
 
           <button
             onClick={() => navigate("/iv-lounge")}
-            className="text-background/80 font-jost text-sm underline-offset-4 hover:underline"
+            className="text-background/80 font-jost text-sm underline-offset-4 hover:text-accent transition-colors"
           >
             Or book an IV walk-in →
           </button>
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce"
         aria-hidden="true"

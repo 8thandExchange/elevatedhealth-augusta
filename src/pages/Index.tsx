@@ -13,6 +13,7 @@ import HowItWorksSection from "@/components/home/HowItWorksSection";
 import WhatWeDoSection from "@/components/home/WhatWeDoSection";
 import DifferenceSection from "@/components/home/DifferenceSection";
 import ClinicalTeamSection from "@/components/home/ClinicalTeamSection";
+import HomeClinicGallery from "@/components/home/HomeClinicGallery";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 
 const Index = () => {
@@ -25,6 +26,9 @@ const Index = () => {
         <Hero />
 
         <PromiseSection />
+        <div className="section-divider max-w-5xl mx-auto" />
+
+        <HomeClinicGallery />
         <div className="section-divider max-w-5xl mx-auto" />
 
         <section className="py-16 md:py-20 bg-background">

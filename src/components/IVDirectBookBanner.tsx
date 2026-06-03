@@ -1,34 +1,46 @@
 import { Link } from "react-router-dom";
 import { Droplet, MessageCircle, ArrowRight } from "lucide-react";
+import { MarketingImage } from "@/components/marketing/MarketingImage";
+import { MARKETING_IMAGES } from "@/lib/marketingImages";
 
 export default function IVDirectBookBanner() {
   return (
-    <section className="py-10 bg-gradient-to-r from-gold/10 via-gold/5 to-transparent border-y border-gold/20">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="rounded-full bg-gold/20 p-3 flex-shrink-0">
-              <Droplet className="h-6 w-6 text-gold" />
+    <section className="relative overflow-hidden border-y border-accent/25 bg-foreground text-background">
+      <MarketingImage
+        src={MARKETING_IMAGES.ivLounge}
+        alt=""
+        fallbackVariant="dark"
+        className="absolute inset-0 opacity-40"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/95 to-foreground/80" aria-hidden />
+
+      <div className="container relative z-10 mx-auto px-6 py-14 md:py-16">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex items-start gap-4 max-w-xl">
+            <div className="rounded-sm bg-accent/20 p-3 flex-shrink-0 border border-accent/30">
+              <Droplet className="h-6 w-6 text-accent" />
             </div>
             <div>
-              <h2 className="font-cormorant text-2xl md:text-3xl font-semibold text-foreground">
-                Book IV Hydration in 60 seconds
+              <p className="section-label mb-2 text-accent">Walk-In Lane</p>
+              <h2 className="font-playfair text-2xl md:text-3xl lg:text-4xl leading-tight">
+                Book IV hydration in <span className="italic">60 seconds.</span>
               </h2>
-              <p className="text-sm md:text-base text-muted-foreground mt-1">
-                No consultation required. Pick your drip, add boosters, pay & schedule online.
+              <p className="font-jost font-light text-sm md:text-base text-background/75 mt-3 leading-relaxed">
+                No consultation required. Pick your drip, add boosters, pay and schedule online.
               </p>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
             <Link
               to="/iv-lounge"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gold hover:bg-gold/90 text-white font-medium transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-accent-foreground font-jost text-xs font-medium uppercase tracking-[0.12em] transition-opacity hover:opacity-90"
             >
-              Browse Drips <ArrowRight className="h-4 w-4" />
+              Browse drips <ArrowRight className="h-4 w-4" />
             </Link>
             <button
+              type="button"
               onClick={() => document.dispatchEvent(new CustomEvent("open-assistant-chat"))}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-gold/40 hover:bg-gold/10 text-foreground font-medium transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-background/30 text-background font-jost text-xs font-medium uppercase tracking-[0.12em] transition-colors hover:border-accent/50"
             >
               <MessageCircle className="h-4 w-4" /> Not sure? Chat with us
             </button>
