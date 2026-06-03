@@ -49,11 +49,21 @@ const escapeHtml = (str: string): string => str
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#039;');
 
+const LEAD_AREAS = [
+  "iv_therapy",
+  "hormone_optimization",
+  "peptide_therapy",
+  "medical_weight_loss",
+  "membership",
+  "general",
+] as const;
+
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
   email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
   phone: z.string().trim().regex(/^[0-9+\(\)\-\s]+$/, "Phone number can only contain numbers and +()-").max(20, "Phone number must be less than 20 characters"),
-  message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000, "Message must be less than 2000 characters"),
+  area_of_interest: z.enum(LEAD_AREAS),
+  message: z.string().trim().min(1, "Message is required").max(500, "Message must be less than 500 characters"),
   _fax: z.string().optional() // Honeypot field - named to avoid browser autofill
 });
 
@@ -117,7 +127,7 @@ const handler = async (req: Request): Promise<Response> => {
         email: validatedData.email,
         phone: validatedData.phone,
         chat_summary: validatedData.message,
-        interest: "contact_form",
+        interest: validatedData.area_of_interest,
         source: "website_contact",
         status: "new"
       })
@@ -190,6 +200,11 @@ const handler = async (req: Request): Promise<Response> => {
                   <div class="field-value">
                     <a href="tel:${escapeHtml(validatedData.phone)}">${escapeHtml(validatedData.phone)}</a>
                   </div>
+                </div>
+
+                <div class="field">
+                  <div class="field-label">Area of interest:</div>
+                  <div class="field-value">${escapeHtml(validatedData.area_of_interest)}</div>
                 </div>
                 
                 <div class="field">

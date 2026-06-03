@@ -11,3 +11,7 @@ export const servableConsentVersionFilters = {
   is_active: true,
   legal_review_status: SERVABLE_LEGAL_REVIEW_STATUS,
 } as const;
+
+export function isServableLegalReviewStatus(status: string | null | undefined): boolean {
+  return status === SERVABLE_LEGAL_REVIEW_STATUS;
+}

@@ -230,7 +230,7 @@ const faqs = [
   { q: "Are peptides FDA-approved?", a: "Some are — PT-141 is FDA-approved as Vyleesi. Most peptides we prescribe are compounded under 503A authority for specific patients, which is a different legal framework than FDA approval but still regulated. It's not the same as 'research grade' or 'physician use only' branded products." },
   { q: "Can I get peptides cheaper online?", a: "Yes, you can find research-grade peptide kits cheaper. Those are sold for 'research use only' and aren't intended for human medical use — selling them for human use is outside the legal framework. We're not competing on price; we're offering pharmacy-grade compounding with physician oversight and lab monitoring." },
   { q: "How are peptides administered?", a: "Most are subcutaneous self-injection at home — our clinical team trains you. Some are sublingual or topical. NAD+ can be IV at our IV Lounge or subcutaneous take-home depending on preference." },
-  { q: "How long until I notice results?", a: "Recovery peptides: 1–3 weeks for inflammation reduction, 4–8 weeks for tissue healing. Sexual wellness peptides: same-day to 2 weeks. Longevity peptides: subjective changes in 4–6 weeks; objective changes (labs, body composition) in 3–6 months." },
+  { q: "How long until I might notice changes?", a: "Timelines vary by individual and protocol. Your physician sets expectations at the visit — we avoid guaranteed timelines because response depends on labs, adherence, and overall health." },
   { q: "Do peptides have side effects?", a: "Generally well-tolerated. Specific peptides have specific considerations — PT-141 can cause facial flushing, NAD+ can cause flushing during IV. Your physician will review the profile before starting." },
   { q: "Will more peptides become available later?", a: "Likely yes. The FDA announced in early 2026 the intent to reclassify several peptides currently restricted — including CJC/Ipamorelin and Thymosin Alpha-1 — back to available status. We monitor this and will add new options as they become legally compoundable." },
 ];
@@ -243,7 +243,7 @@ const PeptideTherapy = () => {
     <>
       <Helmet>
         <title>Peptide Therapy Augusta GA — Elevated Health</title>
-        <meta name="description" content="Physician-prescribed, pharmacy-compounded peptide protocols in Augusta, GA. PDA, PT-141, Sermorelin, NAD+, GHK-Cu, plus compounded GLP-1 medical weight loss (semaglutide, tirzepatide). Lab-monitored, shipped to your door." />
+        <meta name="description" content="Physician-supervised peptide therapy in Evans, GA. Consult-gated protocols including Restore, Healing, and Vitality stacks. Pharmacy-compounded, lab-monitored care." />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/peptides" />
         <meta property="og:title" content="Peptide Therapy Augusta GA — Elevated Health" />
         <meta property="og:description" content="Pharmacy-sourced peptide protocols. Lab-monitored, physician-prescribed. Shipped to your door." />
@@ -271,15 +271,23 @@ const PeptideTherapy = () => {
               <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl text-foreground mb-8 leading-tight">
                 Targeted regeneration.<br /><span className="italic">Pharmacy-sourced. Physician-led.</span>
               </h1>
-              <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl">
-                Custom peptide protocols compounded by a licensed 503A pharmacy and shipped to your door. Recovery, sexual wellness, longevity, and medical weight loss (GLP-1) — physician-supervised, lab-monitored, no gray-market shortcuts.
+              <p className="font-jost font-light text-lg md:text-xl text-muted-foreground leading-relaxed mb-6 max-w-2xl">
+                Physician-supervised peptide therapy at Elevated Health Augusta. We do not sell peptides direct to consumer.
+                Care begins with a {PRICE_CONSULT} consultation and, where indicated, lab work — then personalized protocols
+                compounded by a licensed 503A pharmacy when prescribed.
+              </p>
+              <p className="font-jost text-sm text-muted-foreground leading-relaxed mb-10 max-w-2xl border-l-2 border-accent/40 pl-4">
+                Certain research peptides are prescribed under our Research Peptide Consent and are not FDA-approved.
+                In April 2026 the FDA removed several peptides from its 503A Category 2 list, which reduced compounding
+                restrictions. This is not FDA approval, and FDA advisory-committee review is ongoing. Your physician
+                discusses status and the research nature of these therapies before prescribing.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
-                  Book your {PRICE_CONSULT} Wellness Assessment <ArrowRight className="ml-2 h-4 w-4" />
+                  Book a {PRICE_CONSULT} consultation <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button asChild variant="link" size="lg" className="font-jost tracking-wide text-foreground">
-                  <a href="#stacks">Explore the protocols ↓</a>
+                <Button asChild variant="outline" size="lg" className="font-jost tracking-wide">
+                  <a href="/membership">Elevated Membership ({PRICE_PROGRAM_WELLNESS})</a>
                 </Button>
               </div>
             </div>

@@ -24,6 +24,7 @@ import PeptideTherapy from "./pages/PeptideTherapy";
 import Membership from "./pages/Membership";
 
 import About from "./pages/About";
+import Services from "./pages/Services";
 import Pricing from "./pages/Pricing";
 import PricingComparison from "./pages/PricingComparison";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -172,7 +173,7 @@ const App = () => {
           <Route path="/what-to-expect" element={<Navigate to="/" replace />} />
           <Route path="/insurance" element={<Navigate to="/pricing" replace />} />
           <Route path="/insurance-reimbursement" element={<Navigate to="/pricing" replace />} />
-          <Route path="/services" element={<Navigate to="/pricing" replace />} />
+          <Route path="/services" element={<Services />} />
           <Route path="/book" element={<Navigate to="/" replace />} />
           <Route path="/how-it-works" element={<Navigate to="/membership" replace />} />
           <Route path="/faq" element={<FAQ />} />

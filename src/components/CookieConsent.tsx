@@ -6,6 +6,21 @@ const CONSENT_EXPIRY_DAYS = 365;
 
 type ConsentStatus = "accepted" | "declined" | null;
 
+/** Used by marketing analytics loaders (Meta Pixel, GA4) — Task C. */
+export function getMarketingCookieConsent(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = localStorage.getItem(CONSENT_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw) as { status?: ConsentStatus; expiry?: string };
+    if (parsed.status !== "accepted") return false;
+    if (parsed.expiry && new Date(parsed.expiry).getTime() < Date.now()) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const CookieConsent = () => {
   const [showBanner, setShowBanner] = useState(false);
   const [isVisible, setIsVisible] = useState(false);

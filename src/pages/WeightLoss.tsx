@@ -246,10 +246,15 @@ const WeightLoss = () => {
                   Hormonal Weight Reset
                 </h1>
                 <p className="text-xl md:text-2xl text-accent mb-6 animate-fade-in-up font-jost font-medium" style={{ animationDelay: "0.15s" }}>
-                  FDA-Approved GLP-1s. Optimized by Your Biology.
+                  Medically supervised weight management
                 </p>
-                <p className="text-lg md:text-xl text-primary/70 leading-relaxed mb-10 max-w-3xl mx-auto animate-fade-in-up font-jost" style={{ animationDelay: "0.2s" }}>
-                  Weight loss isn&apos;t only about calories—it&apos;s about metabolism, hormones, and follow-through. We pair evidence-based GLP-1 therapy with in-person Evans visits, LabCorp labs when ordered, and ongoing clinical oversight.
+                <p className="text-lg md:text-xl text-primary/70 leading-relaxed mb-6 max-w-3xl mx-auto animate-fade-in-up font-jost" style={{ animationDelay: "0.2s" }}>
+                  Our program uses compounded semaglutide and compounded tirzepatide, prescribed and monitored by a physician
+                  after consultation and appropriate evaluation. These are compounded medications, not brand-name products,
+                  and availability depends on current FDA compounding rules. Begin with a {PRICE_CONSULT} consultation.
+                </p>
+                <p className="text-sm text-primary/60 leading-relaxed mb-10 max-w-2xl mx-auto animate-fade-in-up font-jost" style={{ animationDelay: "0.22s" }}>
+                  Individual results vary. We do not promise specific weight-loss amounts or timelines.
                 </p>
 
                 {/* Differentiator Icons */}
@@ -764,9 +769,9 @@ const WeightLoss = () => {
                         <td className="p-4 text-center font-jost text-accent bg-accent/5 font-medium">Very Strong</td>
                       </tr>
                       <tr className="border-b border-accent/10">
-                        <td className="p-4 font-jost text-primary font-medium">FDA Approved For</td>
-                        <td className="p-4 text-center font-jost text-primary/70 text-sm">Diabetes (Ozempic) & Weight Loss (Wegovy)</td>
-                        <td className="p-4 text-center font-jost text-primary/70 text-sm bg-accent/5">Diabetes (Mounjaro) & Weight Loss (Zepbound)</td>
+                        <td className="p-4 font-jost text-primary font-medium">Regulatory context</td>
+                        <td className="p-4 text-center font-jost text-primary/70 text-sm">Compounded semaglutide (503A patient-specific)</td>
+                        <td className="p-4 text-center font-jost text-primary/70 text-sm bg-accent/5">Compounded tirzepatide (503A patient-specific)</td>
                       </tr>
                       <tr className="border-b border-accent/10">
                         <td className="p-4 font-jost text-primary font-medium">Injection Frequency</td>

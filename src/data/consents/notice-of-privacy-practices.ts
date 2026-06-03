@@ -155,7 +155,7 @@ If you have given someone medical power of attorney or if someone is your legal 
 ### 3.9 — Right to File a Complaint
 If you believe your privacy rights have been violated, you may file a complaint with:
 **The Practice:**
-Privacy Officer
+Privacy Officer: Troy Akers, DO
 Elevated Health Augusta
 7013 Evans Town Center Blvd, Suite 203
 Evans, GA 30809
@@ -204,7 +204,7 @@ The effective date of this Notice is shown at the top of the first page. If we m
 ---
 ## SECTION 8 — CONTACT INFORMATION
 If you have questions about this Notice, want to request a copy, or want to exercise any of the rights described in this Notice, please contact us:
-**Privacy Officer**
+**Privacy Officer:** Troy Akers, DO
 Elevated Health Augusta
 7013 Evans Town Center Blvd, Suite 203
 Evans, GA 30809

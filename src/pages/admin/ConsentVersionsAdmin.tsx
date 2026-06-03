@@ -6,6 +6,7 @@ import type { ConsentVersion } from "@/data/consents/types";
 import type { ConsentType } from "@/data/consents/types";
 import { consentTypeDisplayName } from "@/data/consents/medication-consent-mapping";
 import { hashConsentBody } from "@/lib/consents/consent-helpers";
+import { isServableLegalReviewStatus, SERVABLE_LEGAL_REVIEW_STATUS } from "@/lib/consents/consent-catalog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -97,6 +98,7 @@ export default function ConsentVersionsAdmin() {
   const [forceReConsent, setForceReConsent] = useState(false);
   const [changelogNotes, setChangelogNotes] = useState("");
   const [publishing, setPublishing] = useState(false);
+  const [legalReviewAck, setLegalReviewAck] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [docDialog, setDocDialog] = useState<{ title: string; body: string } | null>(null);
   const [historyVersionId, setHistoryVersionId] = useState<string | null>(null);
@@ -166,7 +168,10 @@ export default function ConsentVersionsAdmin() {
   }, [navigate, refreshVersions]);
 
   useEffect(() => {
-    if (!publishOpen) return;
+    if (!publishOpen) {
+      setLegalReviewAck(false);
+      return;
+    }
     let cancelled = false;
     void (async () => {
       const { data, error } = await supabase
@@ -206,6 +211,10 @@ export default function ConsentVersionsAdmin() {
     const trimmed = bodyMd.trim();
     if (!trimmed) {
       toast.error("Body markdown is required.");
+      return;
+    }
+    if (!legalReviewAck) {
+      toast.error("Confirm clinical and legal review before publishing.");
       return;
     }
 
@@ -350,6 +359,16 @@ export default function ConsentVersionsAdmin() {
           </Button>
         </div>
 
+        <Alert className="border-border/60 bg-muted/30">
+          <TriangleAlert className="h-4 w-4" />
+          <AlertTitle>Approved-only intake rule</AlertTitle>
+          <AlertDescription className="text-sm">
+            Patients only see catalog rows where <code className="text-xs">is_active</code> and{" "}
+            <code className="text-xs">legal_review_status = approved</code>. The database trigger blocks activating
+            unapproved versions. New publishes are inserted as approved and active.
+          </AlertDescription>
+        </Alert>
+
         <Card className="border-border/50">
           <CardHeader>
             <CardTitle className="font-playfair text-xl">Version catalog</CardTitle>
@@ -365,6 +384,7 @@ export default function ConsentVersionsAdmin() {
                   <TableHead>Type</TableHead>
                   <TableHead>Version</TableHead>
                   <TableHead>Active</TableHead>
+                  <TableHead>Legal status</TableHead>
                   <TableHead>Effective from</TableHead>
                   <TableHead>Effective until</TableHead>
                   <TableHead>Force re-consent</TableHead>
@@ -381,6 +401,9 @@ export default function ConsentVersionsAdmin() {
                     </TableCell>
                     <TableCell className="text-sm">{v.version_label}</TableCell>
                     <TableCell>{v.is_active ? <CheckBadge /> : <span className="text-muted-foreground">—</span>}</TableCell>
+                    <TableCell>
+                      <LegalStatusBadge status={v.legal_review_status} isActive={v.is_active} />
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                       {format(new Date(v.effective_from), "MMM d, yyyy HH:mm")}
                     </TableCell>
@@ -557,13 +580,26 @@ export default function ConsentVersionsAdmin() {
                 placeholder="What changed in this legal version?"
               />
             </div>
+
+            <div className="flex items-start gap-3 rounded-lg border border-border/60 p-3">
+              <Switch
+                id="cv-legal-ack"
+                checked={legalReviewAck}
+                onCheckedChange={setLegalReviewAck}
+              />
+              <Label htmlFor="cv-legal-ack" className="text-sm font-normal leading-snug cursor-pointer">
+                I confirm clinical and legal review are complete. This version will publish as{" "}
+                <span className="font-medium">{SERVABLE_LEGAL_REVIEW_STATUS}</span> and{" "}
+                <span className="font-medium">active</span> (prior active row for this type will be deactivated).
+              </Label>
+            </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button type="button" variant="outline" onClick={() => setPreviewOpen(true)}>
               Preview
             </Button>
-            <Button type="button" onClick={() => void preparePublish()} disabled={publishing}>
+            <Button type="button" onClick={() => void preparePublish()} disabled={publishing || !legalReviewAck}>
               {publishing ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -613,6 +649,29 @@ function CheckBadge() {
   return (
     <Badge variant="outline" className="border-green-600/40 bg-green-500/10 text-green-800">
       ✓
+    </Badge>
+  );
+}
+
+function LegalStatusBadge({ status, isActive }: { status: string | null; isActive: boolean }) {
+  const approved = isServableLegalReviewStatus(status);
+  if (isActive && !approved) {
+    return (
+      <Badge variant="destructive" className="text-[10px]">
+        active · not approved
+      </Badge>
+    );
+  }
+  if (approved) {
+    return (
+      <Badge variant="outline" className="border-green-600/40 text-green-800 text-[10px]">
+        approved
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="secondary" className="text-[10px]">
+      {status || "pending"}
     </Badge>
   );
 }

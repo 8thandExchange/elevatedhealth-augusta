@@ -3,6 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LEAD_AREA_OPTIONS } from "@/lib/marketingPillars";
 import { ArrowRight, MapPin, Phone, Clock, CheckCircle2, Sparkles, Droplet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { trackCTAClick } from "@/lib/analytics";
@@ -16,7 +24,13 @@ const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
   email: z.string().trim().email("Please enter a valid email"),
   phone: z.string().trim().min(10, "Please enter a valid phone number").max(20),
-  message: z.string().trim().min(10, "Please include a brief message (10+ characters)").max(2000, "Message is too long"),
+  area_of_interest: z.string().min(1, "Please select an area of interest"),
+  message: z
+    .string()
+    .trim()
+    .max(500, "Message is too long")
+    .optional()
+    .transform((v) => v ?? ""),
 });
 
 const formatPhoneNumber = (value: string): string => {
@@ -42,6 +56,7 @@ const Contact = () => {
     name: "",
     email: "",
     phone: "",
+    area_of_interest: "",
     message: "",
   });
   const [honeypot, setHoneypot] = useState("");
@@ -76,8 +91,23 @@ const Contact = () => {
       setSubmitStatus("Sending your message...");
       
       // Send everything to edge function which handles DB insert + email
+      const interestLabel =
+        LEAD_AREA_OPTIONS.find((o) => o.value === validated.area_of_interest)?.label ??
+        validated.area_of_interest;
+      const summary =
+        validated.message.trim().length > 0
+          ? validated.message.trim()
+          : `Lead interest: ${interestLabel}`;
+
       const { data, error } = await supabase.functions.invoke("send-contact-email", {
-        body: { ...validated, _fax: honeypot }
+        body: {
+          name: validated.name,
+          email: validated.email,
+          phone: validated.phone,
+          area_of_interest: validated.area_of_interest,
+          message: summary,
+          _fax: honeypot,
+        },
       });
 
       if (error) {
@@ -94,7 +124,7 @@ const Contact = () => {
       
       setSubmittedName(validated.name.split(" ")[0]);
       setIsSuccess(true);
-      setFormData({ name: "", email: "", phone: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", area_of_interest: "", message: "" });
       trackCTAClick('contact_form_submit', 'contact_section');
       console.log("[Contact Form] Submission complete!");
     } catch (error) {
@@ -167,7 +197,7 @@ const Contact = () => {
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-primary mt-0.5">•</span>
-                          We'll help you schedule a Wellness Assessment
+                          Book your $79 Wellness Assessment online when you are ready
                         </li>
                       </ul>
                     </div>
@@ -203,7 +233,7 @@ const Contact = () => {
                     <button
                       onClick={() => {
                         setIsSuccess(false);
-                        setFormData({ name: "", email: "", phone: "", message: "" });
+                        setFormData({ name: "", email: "", phone: "", area_of_interest: "", message: "" });
                       }}
                       className="font-lato text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
@@ -275,15 +305,36 @@ const Contact = () => {
                       />
                     </div>
                     <div>
+                      <Label htmlFor="contact-interest" className="font-lato text-sm text-foreground/80 mb-2 block">
+                        Area of interest *
+                      </Label>
+                      <Select
+                        value={formData.area_of_interest}
+                        onValueChange={(v) => setFormData({ ...formData, area_of_interest: v })}
+                      >
+                        <SelectTrigger id="contact-interest" className="bg-background border-border/50">
+                          <SelectValue placeholder="Select a service" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {LEAD_AREA_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
                       <Label htmlFor="contact-message" className="font-lato text-sm text-foreground/80 mb-2 block">
-                        How can we help? *
+                        Optional note
                       </Label>
                       <Textarea
                         id="contact-message"
-                        placeholder="Tell us about your health goals..."
+                        placeholder="Best time to call, or how you heard about us (no medical details needed)"
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        rows={4}
+                        rows={3}
+                        maxLength={500}
                         className="bg-background border-border/50 focus:border-primary resize-none"
                       />
                     </div>
