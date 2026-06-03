@@ -1,7 +1,10 @@
 # Launch patient flow — Elevated Health Augusta (LabCorp only)
 
 **Last updated:** 2026-06-03  
+**Full runbook (marketing → Rx):** see [CLINIC_OPERATING_RUNBOOK.md](./CLINIC_OPERATING_RUNBOOK.md)  
 **Legacy:** ZRT saliva kits and `hormone_mapping_payments` are retired from UI. Historical DB rows may remain.
+
+**Consents:** v1 catalog rows must be `legal_review_status = approved` (migration `20260603180000_consent_v1_go_live.sql`). Intake only serves approved + active versions.
 
 ## Lane A — IV (walk-in)
 

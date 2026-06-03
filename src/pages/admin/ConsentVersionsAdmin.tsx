@@ -174,6 +174,7 @@ export default function ConsentVersionsAdmin() {
         .select("*")
         .eq("consent_type", publishType)
         .eq("is_active", true)
+        .eq("legal_review_status", "approved")
         .order("effective_from", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -273,6 +274,7 @@ export default function ConsentVersionsAdmin() {
           effective_from: effectiveFromIso,
           effective_to: null,
           is_active: true,
+          legal_review_status: "approved",
           changelog_notes: changelogNotes.trim() || null,
           force_re_consent_required: false,
         })

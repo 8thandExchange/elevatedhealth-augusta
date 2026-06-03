@@ -9,6 +9,7 @@ import {
   getTier1ResumeStepIndex,
   resolveIntakeSessionId,
 } from "@/lib/consents/intake-status";
+import { SERVABLE_LEGAL_REVIEW_STATUS } from "@/lib/consents/consent-catalog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -66,6 +67,7 @@ export function Tier1IntakeBundle({
         .select("*")
         .eq("consent_type", type)
         .eq("is_active", true)
+        .eq("legal_review_status", SERVABLE_LEGAL_REVIEW_STATUS)
         .order("effective_from", { ascending: false })
         .limit(1)
         .maybeSingle();

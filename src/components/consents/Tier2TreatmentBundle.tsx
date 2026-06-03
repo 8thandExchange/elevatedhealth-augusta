@@ -82,6 +82,7 @@ export function Tier2TreatmentBundle({
           .select("*")
           .eq("consent_type", type)
           .eq("is_active", true)
+          .eq("legal_review_status", "approved")
           .order("effective_from", { ascending: false })
           .limit(1)
           .maybeSingle();

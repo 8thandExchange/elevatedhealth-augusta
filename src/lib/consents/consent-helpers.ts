@@ -3,6 +3,7 @@
 // Supabase types. Skip type-checking here until the migration is applied.
 import { supabase } from "@/integrations/supabase/client";
 import type { ConsentType } from "@/data/consents/types";
+import { SERVABLE_LEGAL_REVIEW_STATUS } from "@/lib/consents/consent-catalog";
 
 const sb = supabase as any;
 
@@ -87,6 +88,7 @@ export async function getActiveConsentVersion(consentType: ConsentType) {
     .select("*")
     .eq("consent_type", consentType)
     .eq("is_active", true)
+    .eq("legal_review_status", SERVABLE_LEGAL_REVIEW_STATUS)
     .order("effective_from", { ascending: false })
     .limit(1)
     .maybeSingle();

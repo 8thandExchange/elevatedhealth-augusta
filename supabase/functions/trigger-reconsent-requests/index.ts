@@ -68,7 +68,7 @@ serve(async (req) => {
 
     const { data: nextV, error: nextErr } = await supabase
       .from("consent_versions")
-      .select("id, is_active, consent_type")
+      .select("id, is_active, consent_type, legal_review_status")
       .eq("id", new_version_id)
       .maybeSingle();
 
@@ -77,6 +77,16 @@ serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    if (nextV.legal_review_status !== "approved") {
+      return new Response(
+        JSON.stringify({ error: "new version must have legal_review_status = approved" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     if (prior.consent_type !== nextV.consent_type) {
