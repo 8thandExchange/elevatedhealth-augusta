@@ -12,6 +12,7 @@ export const INTERPRETATION_KEY_TO_PROTOCOL_SLUGS: Record<string, string[]> = {
     "compounded-semaglutide-initiation",
     "compounded-tirzepatide-initiation",
   ],
+  thyroid_evaluation: ["thyroid-hypothyroid-management"],
 };
 
 export function protocolSlugsForInterpretationKey(key: string): string[] {

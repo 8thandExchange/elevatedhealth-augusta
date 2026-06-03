@@ -85,6 +85,16 @@ export function generateLabcorpMedicationRecommendations(
         "Metabolic pattern supports GLP-1 discussion — order via Rx portal / FCC after glp1 consent (not in cream formulary dropdown)",
       priority: 1,
     });
+    if (values.a1c != null && values.a1c >= 7) {
+      recs.push({
+        formularyId: "compounded_tirzepatide",
+        name: "Compounded Tirzepatide (monthly program)",
+        strength: "Titrate per weight-loss protocol",
+        rationale:
+          "HbA1c ≥7% — discuss tirzepatide pathway after glp1 consent; order via Rx portal / FCC (not in cream dropdown)",
+        priority: 2,
+      });
+    }
   }
 
   recs.sort((a, b) => a.priority - b.priority);

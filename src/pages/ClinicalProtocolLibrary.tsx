@@ -128,7 +128,7 @@ export default function ClinicalProtocolLibrary() {
             Clinical protocols
           </h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-2xl font-jost">
-            Physician-signed SOPs for Caroline and the care team. Drafts and pending reviews are visible to admins only.
+            Physician-signed SOPs for Caroline and the care team. Signed versions are available for execution and chart reference.
           </p>
         </div>
         <Button variant="outline" size="sm" asChild>

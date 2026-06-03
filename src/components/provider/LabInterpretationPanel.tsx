@@ -324,11 +324,6 @@ export function LabInterpretationPanel({
                         })}
                       </ul>
                     )}
-                    {p.key === "thyroid_evaluation" && slugs.length === 0 && (
-                      <p className="text-muted-foreground mt-1 italic">
-                        No seeded thyroid protocol yet — use clinical judgment and lab follow-up.
-                      </p>
-                    )}
                   </div>
                 </div>
               );
