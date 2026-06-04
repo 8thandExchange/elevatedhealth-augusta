@@ -4,7 +4,7 @@ Drop JPG/WebP files into `public/images/` using these exact names. They appear o
 
 | Filename | Used on |
 |----------|---------|
-| `hero-poster.jpg` | Homepage hero background |
+| `hero-poster.jpg` | Homepage hero background + social link preview (`og:image`, 1200×630 recommended) |
 | `hero-video.mp4` | Homepage hero loop (optional; poster used as fallback) |
 | `physician.jpg` | Homepage clinical leadership |
 | `clinic-exterior.jpg` | Homepage gallery |

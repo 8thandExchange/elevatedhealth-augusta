@@ -61,15 +61,11 @@ const Index = () => {
         <section className="py-12 bg-background">
           <div className="container mx-auto px-6">
             <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-xs font-jost font-medium tracking-[2.5px] uppercase text-center">
-              <span>Board-Certified Physician Direction</span>
+              <span>Physician-owned · Evans, GA</span>
               <span className="text-accent/40">·</span>
-              <span>Evans Town Center</span>
+              <span>Cash-pay · Superbills available</span>
               <span className="text-accent/40">·</span>
-              <span>BCBS</span>
-              <span className="text-accent/40">·</span>
-              <span>TRICARE</span>
-              <span className="text-accent/40">·</span>
-              <span>VA Accepted</span>
+              <span>HSA / FSA welcome</span>
             </div>
           </div>
         </section>

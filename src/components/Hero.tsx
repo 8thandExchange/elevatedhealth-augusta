@@ -18,7 +18,9 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/85" aria-hidden />
 
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-36 pb-24 md:pt-40 md:pb-28">
-        <p className="section-label mb-8 md:mb-10 text-accent animate-fade-in-up">Physician-Owned · Evans, GA</p>
+        <p className="section-label mb-8 md:mb-10 text-accent animate-fade-in-up">
+          Evans&apos; physician-owned wellness clinic
+        </p>
         <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.5rem] text-background leading-[1.06] mb-10 md:mb-12 animate-fade-in-up">
           You remember what it felt like
           <br />
@@ -31,8 +33,8 @@ const Hero = () => {
           className="text-lg sm:text-xl md:text-2xl text-background/80 font-jost font-light leading-relaxed mb-14 max-w-2xl mx-auto animate-fade-in-up"
           style={{ animationDelay: "0.2s" }}
         >
-          Physician-owned wellness for hormone optimization, peptide therapy, and IV care.
-          One place for everything that helps you feel like yourself again.
+          Board-certified physician direction for hormone optimization, peptide therapy, IV care, and
+          medical weight loss — cash-pay, transparent pricing, in-person in Evans.
         </p>
 
         <div
