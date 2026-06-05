@@ -245,3 +245,7 @@ verify_jwt = true
 [functions.export-patient-records]
 verify_jwt = true
 
+# staff-help-ai — internal employee help panel; JWT required.
+[functions.staff-help-ai]
+verify_jwt = true
+

@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { HelpCircle, Search, ExternalLink, BookOpen, CalendarDays, Clock, ClipboardList, Boxes } from "lucide-react";
+import { HelpCircle, Search, ExternalLink, BookOpen, CalendarDays, Clock, ClipboardList, Boxes, Loader2, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 type HelpArticle = {
   id: string;
@@ -91,6 +92,10 @@ function scoreArticle(article: HelpArticle, query: string) {
 export function StaffHelpWidget() {
   const { pathname } = useLocation();
   const [query, setQuery] = useState("");
+  const [aiQuestion, setAiQuestion] = useState("");
+  const [aiAnswer, setAiAnswer] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   const results = useMemo(() => {
     const scored = ARTICLES.map((a) => ({ a, s: scoreArticle(a, query) }))
@@ -109,6 +114,26 @@ export function StaffHelpWidget() {
     ],
     [],
   );
+
+  const askAi = async () => {
+    const q = aiQuestion.trim();
+    if (!q) return;
+    setAiLoading(true);
+    setAiError(null);
+    setAiAnswer(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("staff-help-ai", {
+        body: { question: q, pathname },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(String(data.error));
+      setAiAnswer(String(data?.answer || ""));
+    } catch (e: any) {
+      setAiError(e?.message || "Could not reach the help assistant. Try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   return (
     <div className="fixed bottom-5 right-5 z-40">
@@ -134,6 +159,39 @@ export function StaffHelpWidget() {
           </SheetHeader>
 
           <div className="mt-5 space-y-4">
+            <div className="rounded-lg border border-border/60 bg-card p-4">
+              <div className="flex items-center gap-2 text-sm font-jost font-medium text-foreground">
+                <Sparkles className="h-4 w-4 text-accent" />
+                Ask the Help Assistant
+              </div>
+              <p className="mt-1 text-xs font-jost text-muted-foreground">
+                Keep questions portal-focused. Don’t include patient names, emails, or phone numbers.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <Input
+                  value={aiQuestion}
+                  onChange={(e) => setAiQuestion(e.target.value)}
+                  placeholder='Example: "How do I block lunch on my schedule?"'
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") void askAi();
+                  }}
+                />
+                <Button type="button" onClick={askAi} disabled={aiLoading || !aiQuestion.trim()}>
+                  {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ask"}
+                </Button>
+              </div>
+              {aiError && (
+                <div className="mt-3 text-xs font-jost text-destructive">
+                  {aiError}
+                </div>
+              )}
+              {aiAnswer && (
+                <div className="mt-3 whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-sm font-jost text-foreground">
+                  {aiAnswer}
+                </div>
+              )}
+            </div>
+
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
