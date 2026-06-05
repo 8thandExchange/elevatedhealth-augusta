@@ -1,0 +1,215 @@
+import { useMemo, useState } from "react";
+import { useLocation, Link } from "react-router-dom";
+import { HelpCircle, Search, ExternalLink, BookOpen, CalendarDays, Clock, ClipboardList, Boxes } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+
+type HelpArticle = {
+  id: string;
+  title: string;
+  keywords: string[];
+  steps: string[];
+  links?: Array<{ label: string; to: string }>;
+};
+
+const ARTICLES: HelpArticle[] = [
+  {
+    id: "schedule-edit",
+    title: "Update your schedule (your recurring availability)",
+    keywords: ["schedule", "availability", "hours", "recurring", "provider schedule", "my schedule"],
+    steps: [
+      "Open My Schedule.",
+      "Use the week view to confirm you are editing the right week.",
+      "Click and drag on the calendar grid to create availability blocks.",
+      "Use Time Off to block out PTO, meetings, or a one-off absence.",
+      "If a patient says they can't find a time, verify your availability blocks exist for that day and time.",
+    ],
+    links: [
+      { label: "Open My Schedule", to: "/provider/schedule" },
+      { label: "Office-wide Schedule (front desk view)", to: "/office/schedule" },
+    ],
+  },
+  {
+    id: "schedule-timeoff",
+    title: "Block time off (PTO, lunch, meetings)",
+    keywords: ["time off", "pto", "block", "meeting", "lunch", "unavailable"],
+    steps: [
+      "Open My Schedule.",
+      "Click Time Off (or the block tool) and select the start and end time.",
+      "Add a short reason (optional) and save.",
+      "If you still appear available, refresh and verify the block covers the full time window.",
+    ],
+    links: [{ label: "Open My Schedule", to: "/provider/schedule" }],
+  },
+  {
+    id: "book-patient",
+    title: "Book a patient who already paid (or needs help booking)",
+    keywords: ["book", "booking", "paid", "consult", "wellness assessment", "schedule consult"],
+    steps: [
+      "For hormones/peptides/weight loss: patients start with the $79 Wellness Assessment and then pick a time.",
+      "If a patient is stuck, you can book them from the Office-wide Schedule or guide them to the booking link.",
+      "If payment is confirmed but they can't see times, verify provider availability exists for that service line and duration.",
+    ],
+    links: [
+      { label: "Office-wide Schedule", to: "/office/schedule" },
+      { label: "Provider Dashboard", to: "/provider/dashboard" },
+    ],
+  },
+  {
+    id: "inventory-formulary",
+    title: "Where to find inventory and formulary",
+    keywords: ["inventory", "stock", "lots", "formulary", "pricing", "sku"],
+    steps: [
+      "Use Inventory for lot tracking, expirations, and quantities.",
+      "Use Formulary for standardized pricing, suppliers, and dose references.",
+    ],
+    links: [
+      { label: "Inventory", to: "/inventory" },
+      { label: "Formulary", to: "/formulary" },
+    ],
+  },
+];
+
+function scoreArticle(article: HelpArticle, query: string) {
+  const q = query.trim().toLowerCase();
+  if (!q) return 0;
+  const hay = [article.title, ...article.keywords].join(" ").toLowerCase();
+  if (hay.includes(q)) return 100;
+  const tokens = q.split(/\s+/).filter(Boolean);
+  let score = 0;
+  for (const t of tokens) {
+    if (t.length < 2) continue;
+    if (hay.includes(t)) score += 10;
+  }
+  return score;
+}
+
+export function StaffHelpWidget() {
+  const { pathname } = useLocation();
+  const [query, setQuery] = useState("");
+
+  const results = useMemo(() => {
+    const scored = ARTICLES.map((a) => ({ a, s: scoreArticle(a, query) }))
+      .filter((x) => (query.trim() ? x.s > 0 : true))
+      .sort((x, y) => y.s - x.s);
+    return scored.map((x) => x.a);
+  }, [query]);
+
+  const quickLinks = useMemo(
+    () => [
+      { label: "My Schedule", to: "/provider/schedule", icon: Clock },
+      { label: "Office Schedule", to: "/office/schedule", icon: CalendarDays },
+      { label: "Dashboard", to: "/provider/dashboard", icon: BookOpen },
+      { label: "Inventory", to: "/inventory", icon: Boxes },
+      { label: "Formulary", to: "/formulary", icon: ClipboardList },
+    ],
+    [],
+  );
+
+  return (
+    <div className="fixed bottom-5 right-5 z-40">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            type="button"
+            variant="secondary"
+            className="shadow-lg"
+            aria-label="Open staff help"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Help
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="right" className="w-[92vw] sm:max-w-lg">
+          <SheetHeader>
+            <SheetTitle className="font-playfair">Staff Help</SheetTitle>
+            <SheetDescription className="font-jost">
+              Ask “how do I…” and get step-by-step guidance. You’re on{" "}
+              <span className="font-medium text-foreground">{pathname}</span>.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="mt-5 space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder='Try: "block time off", "update my schedule", "book a patient"'
+                className="pl-9"
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {quickLinks.map((l) => {
+                const Icon = l.icon;
+                return (
+                  <Button key={l.to} asChild variant="outline" size="sm" className="normal-case tracking-normal">
+                    <Link to={l.to}>
+                      <Icon className="h-4 w-4" />
+                      {l.label}
+                    </Link>
+                  </Button>
+                );
+              })}
+            </div>
+
+            <div className="space-y-3 overflow-auto max-h-[60vh] pr-1">
+              {results.map((a) => (
+                <div key={a.id} className="rounded-lg border border-border/60 bg-card p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="font-playfair text-base text-foreground">{a.title}</div>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {a.keywords.slice(0, 5).map((k) => (
+                          <Badge
+                            key={k}
+                            variant="secondary"
+                            className={cn("text-[10px] font-jost font-medium", query ? "opacity-100" : "opacity-70")}
+                          >
+                            {k}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <ol className="mt-3 space-y-2 list-decimal ml-5 font-jost text-sm text-muted-foreground">
+                    {a.steps.map((s, idx) => (
+                      <li key={idx}>{s}</li>
+                    ))}
+                  </ol>
+
+                  {a.links && a.links.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {a.links.map((l) => (
+                        <Button key={l.to} asChild variant="ghost" size="sm" className="normal-case tracking-normal">
+                          <Link to={l.to}>
+                            <ExternalLink className="h-4 w-4" />
+                            {l.label}
+                          </Link>
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {results.length === 0 && (
+                <div className="rounded-lg border border-dashed border-border/70 p-4 text-sm text-muted-foreground font-jost">
+                  No matches yet. Try different words (example: “schedule”, “time off”, “book”).
+                  If you’re still stuck, call (706) 760-3470.
+                </div>
+              )}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+}
+

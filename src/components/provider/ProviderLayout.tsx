@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import AdminNavbar from "@/components/admin/AdminNavbar";
+import { StaffHelpWidget } from "@/components/provider/StaffHelpWidget";
 
 interface ProviderLayoutProps {
   children: ReactNode;
@@ -112,6 +113,7 @@ const ProviderLayout = ({
         />
       )}
       {children}
+      <StaffHelpWidget />
     </div>
   );
 };
