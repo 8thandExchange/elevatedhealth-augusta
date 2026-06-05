@@ -229,7 +229,7 @@ Logic: `src/lib/labcorpInterpretation.ts`, `src/lib/labcorpMedicationRecommendat
 ## Known gaps (honest)
 
 - Lab requisition auto-email: only male hormone template; other panels need PDF upload.
-- AI evidence layer (OpenEvidence / BAA LLM + PubMed citations) not wired — deterministic rules only.
+- AI evidence layer (OpenEvidence / BAA LLM + PubMed citations) not wired — deterministic LabCorp rules only. Staff help uses OpenAI (`staff-help-ai`). See `docs/CLINICAL_AI_ROADMAP.md` for Phase B1–B3.
 - Patient portal services card: hormones + weight visible; peptides/IV upsell mainly via public site.
 - Meta/GA analytics disabled in `index.html` until real IDs + PHI-safe allowlist.
 - Stripe **test vs live** must be confirmed before first real charge.

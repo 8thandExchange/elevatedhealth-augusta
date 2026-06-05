@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { openaiChat } from "../_shared/openai-chat.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -84,35 +85,6 @@ If booking questions:
 In staff portal, use Office Schedule to coordinate when someone is stuck.
 `;
 
-async function callLovableChat(apiKey: string, messages: Array<{ role: string; content: string }>) {
-  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
-      messages,
-      temperature: 0.2,
-      max_tokens: 500,
-    }),
-  });
-
-  if (!resp.ok) {
-    const text = await resp.text();
-    console.error("staff-help-ai: LLM error", resp.status, text);
-    if (resp.status === 429) return { ok: false, status: 429, error: "Rate limit. Try again in a moment." };
-    if (resp.status === 402) return { ok: false, status: 402, error: "AI credits exhausted. Contact admin." };
-    return { ok: false, status: 500, error: "AI service error." };
-  }
-
-  const json = await resp.json();
-  const content = json?.choices?.[0]?.message?.content;
-  if (!content) return { ok: false, status: 500, error: "No AI response." };
-  return { ok: true, content };
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -125,9 +97,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
     const body = await req.json();
     const questionRaw = String(body?.question || "").trim();
     const pathname = String(body?.pathname || "").trim();
@@ -141,19 +110,21 @@ Deno.serve(async (req) => {
 
     const question = redactLikelyPII(questionRaw);
 
-    const messages = [
-      { role: "system", content: KNOWLEDGE_BASE },
-      {
-        role: "user",
-        content:
-          `User role(s): ${auth.roles.join(", ")}\n` +
-          `Current page: ${pathname || "(unknown)"}\n\n` +
-          `Question: ${question}\n\n` +
-          "Answer with short steps and (when relevant) the exact portal route to click next.",
-      },
-    ];
+    const ai = await openaiChat(
+      [
+        { role: "system", content: KNOWLEDGE_BASE },
+        {
+          role: "user",
+          content:
+            `User role(s): ${auth.roles.join(", ")}\n` +
+            `Current page: ${pathname || "(unknown)"}\n\n` +
+            `Question: ${question}\n\n` +
+            "Answer with short steps and (when relevant) the exact portal route to click next.",
+        },
+      ],
+      { temperature: 0.2, max_tokens: 500 },
+    );
 
-    const ai = await callLovableChat(LOVABLE_API_KEY, messages);
     if (!ai.ok) {
       return new Response(JSON.stringify({ error: ai.error }), {
         status: ai.status,
@@ -173,4 +144,3 @@ Deno.serve(async (req) => {
     });
   }
 });
-
