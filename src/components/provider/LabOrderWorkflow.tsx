@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { LAB_ORDER_STATUS_LABELS, LAB_PANEL_REQUISITION_KEY } from "@/lib/labPanelMapping";
+import { markLabsReviewedForPatient } from "@/lib/labsWorkflow";
 import { Loader2, Mail, FlaskConical } from "lucide-react";
 import { toast } from "sonner";
 
@@ -147,6 +148,9 @@ export default function LabOrderWorkflow({
     const { error } = await supabase.from("lab_orders").update({ status }).eq("id", order.id);
     if (error) toast.error(error.message);
     else {
+      if (status === "results_pending") {
+        await supabase.from("patients").update({ onboarding_status: "labs_in_progress" }).eq("id", patient.id);
+      }
       if (status === "results_received") {
         await supabase.from("patients").update({ onboarding_status: "results_ready" }).eq("id", patient.id);
       }
@@ -156,6 +160,7 @@ export default function LabOrderWorkflow({
           .from("lab_orders")
           .update({ reviewed_at: new Date().toISOString(), reviewed_by: user?.id ?? null })
           .eq("id", order.id);
+        await markLabsReviewedForPatient(patient.id);
       }
       void load();
       onOrderUpdated?.();

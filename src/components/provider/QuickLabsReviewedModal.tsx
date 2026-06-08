@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { markLabsReviewedForPatient } from "@/lib/labsWorkflow";
 import { Loader2, CheckCircle, TestTube, User } from "lucide-react";
 
 interface PendingLabPatient {
@@ -60,12 +61,8 @@ const QuickLabsReviewedModal = ({ open, onOpenChange, onSuccess }: QuickLabsRevi
     setMarkingId(patient.id);
     try {
       // Update onboarding status
-      const { error: updateError } = await supabase
-        .from("patients")
-        .update({ onboarding_status: "protocol_review" })
-        .eq("id", patient.id);
-
-      if (updateError) throw updateError;
+      const { error: updateError } = await markLabsReviewedForPatient(patient.id);
+      if (updateError) throw new Error(updateError);
 
       // Send notification if email exists
       if (patient.email) {

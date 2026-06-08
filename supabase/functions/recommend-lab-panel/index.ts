@@ -1,7 +1,7 @@
 /**
  * recommend-lab-panel
  *
- * AI lab panel recommender — uses Lovable AI Gateway (Gemini) to suggest a
+ * AI lab panel recommender — uses OpenAI to suggest a
  * LabCorp panel based on patient intake, gender, age, symptoms, and meds.
  *
  * AUTH POSTURE (security audit R-5, 2026-05-08):
@@ -15,9 +15,10 @@
  * row. It is for provider use, not patient self-service. Previously
  * anyone could submit any patient_id and get the AI's panel recommendation
  * for that patient, which both leaks PHI to the AI provider and lets a
- * caller exhaust the LOVABLE_API_KEY budget.
+ * caller exhaust the OPENAI_API_KEY budget.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { openaiChatWithTools } from "../_shared/openai-chat.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,11 +49,11 @@ async function requireStaffOrAdmin(req: Request): Promise<
     .from("user_roles")
     .select("role")
     .eq("user_id", userData.user.id);
-  const isStaffOrAdmin = (roles || []).some(
-    (r) => r.role === "staff" || r.role === "admin",
+  const isAllowed = (roles || []).some(
+    (r) => r.role === "staff" || r.role === "admin" || r.role === "provider",
   );
-  if (!isStaffOrAdmin) {
-    return { ok: false, status: 403, error: "Staff or admin role required" };
+  if (!isAllowed) {
+    return { ok: false, status: 403, error: "Staff, admin, or provider role required" };
   }
   return { ok: true, user_id: userData.user.id };
 }
@@ -158,114 +159,61 @@ Deno.serve(async (req) => {
 
 Recommend the appropriate baseline / monitoring lab panel.`;
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
-
-    const aiResp = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: SYSTEM },
-            { role: "user", content: userPrompt },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "recommend_panel",
-                description: "Return the recommended lab panel.",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    panel_name: { type: "string" },
-                    rationale: { type: "string" },
-                    urgency: {
-                      type: "string",
-                      enum: ["routine", "soon", "urgent"],
-                    },
-                    fasting_required: { type: "boolean" },
-                    icd10_codes: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          code: { type: "string" },
-                          description: { type: "string" },
-                        },
-                        required: ["code", "description"],
-                      },
-                    },
-                    tests: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          code: { type: "string" },
-                          name: { type: "string" },
-                          reason: { type: "string" },
-                        },
-                        required: ["code", "name", "reason"],
-                      },
-                    },
-                  },
-                  required: [
-                    "panel_name",
-                    "rationale",
-                    "urgency",
-                    "fasting_required",
-                    "icd10_codes",
-                    "tests",
-                  ],
+    const tools = [{
+      type: "function",
+      function: {
+        name: "recommend_panel",
+        description: "Return the recommended lab panel.",
+        parameters: {
+          type: "object",
+          properties: {
+            panel_name: { type: "string" },
+            rationale: { type: "string" },
+            urgency: { type: "string", enum: ["routine", "soon", "urgent"] },
+            fasting_required: { type: "boolean" },
+            icd10_codes: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  code: { type: "string" },
+                  description: { type: "string" },
                 },
+                required: ["code", "description"],
               },
             },
-          ],
-          tool_choice: {
-            type: "function",
-            function: { name: "recommend_panel" },
+            tests: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  code: { type: "string" },
+                  name: { type: "string" },
+                  reason: { type: "string" },
+                },
+                required: ["code", "name", "reason"],
+              },
+            },
           },
-        }),
+          required: ["panel_name", "rationale", "urgency", "fasting_required", "icd10_codes", "tests"],
+        },
       },
+    }];
+
+    const ai = await openaiChatWithTools(
+      [{ role: "system", content: SYSTEM }, { role: "user", content: userPrompt }],
+      tools,
+      { type: "function", function: { name: "recommend_panel" } },
     );
 
-    if (aiResp.status === 429) {
-      return new Response(
-        JSON.stringify({ error: "Rate limit — try again in a minute." }),
-        {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
-    if (aiResp.status === 402) {
-      return new Response(
-        JSON.stringify({
-          error: "AI credits exhausted. Add credits in workspace settings.",
-        }),
-        {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
-    if (!aiResp.ok) {
-      const errText = await aiResp.text();
-      console.error("AI gateway error:", aiResp.status, errText);
-      throw new Error(`AI gateway ${aiResp.status}`);
+    if (!ai.ok) {
+      return new Response(JSON.stringify({ error: ai.error }), {
+        status: ai.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const aiJson = await aiResp.json();
-    const toolCall = aiJson.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall) throw new Error("No tool call returned by AI");
-
-    const recommendation = JSON.parse(toolCall.function.arguments);
+    const recommendation = JSON.parse(ai.arguments);
 
     // Save to patients.lab_panel_recommendation for one-click approval later
     await supabase

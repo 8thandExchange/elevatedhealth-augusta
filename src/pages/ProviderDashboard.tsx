@@ -1,6 +1,7 @@
 import { type KeyboardEvent, useCallback, useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { approvePatientProtocol } from "@/lib/approvePatientProtocol";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -2353,9 +2354,11 @@ const ProviderDashboard = () => {
                 }}
                 onApproveProtocol={async () => {
                   try {
-                    await supabase.from("patients").update({ 
-                      onboarding_status: "protocol_approved" 
-                    }).eq("id", selectedPatient.patient.id);
+                    const { error: approveErr } = await approvePatientProtocol(
+                      selectedPatient.patient.id,
+                      selectedPatient.patient.current_protocol,
+                    );
+                    if (approveErr) throw new Error(approveErr);
                     // Update local state immediately
                     setSelectedPatient({
                       ...selectedPatient,

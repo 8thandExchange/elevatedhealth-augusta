@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { markLabsReviewedForPatient } from "@/lib/labsWorkflow";
 import { TestTube, CheckCircle, Loader2, User, Eye, Clock, Upload, AlertTriangle } from "lucide-react";
 
 interface PendingResult {
@@ -96,12 +97,8 @@ const LabResultsQueue = ({ onSelectPatient }: LabResultsQueueProps) => {
   const handleMarkReviewed = async (result: PendingResult) => {
     setMarkingId(result.patient_id);
     try {
-      const { error } = await supabase
-        .from("patients")
-        .update({ onboarding_status: "protocol_review" })
-        .eq("id", result.patient_id);
-
-      if (error) throw error;
+      const { error } = await markLabsReviewedForPatient(result.patient_id);
+      if (error) throw new Error(error);
 
       // Send notification
       if (result.patient_email) {

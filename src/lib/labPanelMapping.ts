@@ -3,6 +3,10 @@ export type LabcorpRequisitionKey = "mens_safety" | "thyroid" | "safety_cmp";
 
 export const LAB_PANEL_REQUISITION_KEY: Record<string, LabcorpRequisitionKey> = {
   "hormone-male": "mens_safety",
+  "hormone-female": "thyroid",
+  "foundation-wellness": "safety_cmp",
+  "weight-optimization": "safety_cmp",
+  "sexual-wellness": "safety_cmp",
 };
 
 export const LAB_ORDER_STATUS_LABELS: Record<string, string> = {

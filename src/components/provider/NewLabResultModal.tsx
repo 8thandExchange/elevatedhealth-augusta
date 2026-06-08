@@ -15,6 +15,7 @@ import { Loader2, Beaker, AlertCircle } from "lucide-react";
 import { MedicationRecommendation } from "@/lib/medicationMapping";
 import LabPdfUploader, { type ParsedLabData } from "./LabPdfUploader";
 import { autoPersistLabcorpInterpretationAfterSave } from "@/lib/persistLabcorpInterpretation";
+import { linkLabResultToOpenOrder } from "@/lib/labsWorkflow";
 
 interface ExistingLabResult {
   id: string;
@@ -281,6 +282,10 @@ const NewLabResultModal = ({
       }
 
       if (error) throw error;
+
+      if (labResultId && !isEditMode) {
+        await linkLabResultToOpenOrder(patientId, labResultId);
+      }
 
       let interpretationSaved = false;
       if (labResultId) {
