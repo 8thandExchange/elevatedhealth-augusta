@@ -249,3 +249,16 @@ verify_jwt = true
 [functions.staff-help-ai]
 verify_jwt = true
 
+# Twilio webhooks — auth via X-Twilio-Signature inside function.
+[functions.twilio-inbound-sms]
+verify_jwt = false
+
+[functions.twilio-status-callback]
+verify_jwt = false
+
+[functions.twilio-voice]
+verify_jwt = false
+
+[functions.send-sms-reply]
+verify_jwt = true
+

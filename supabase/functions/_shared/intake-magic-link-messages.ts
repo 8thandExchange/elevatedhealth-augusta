@@ -304,7 +304,7 @@ function textToHtml(text: string, linkUrl: string): string {
 }
 
 export async function sendIntakeSms(to: string, body: string): Promise<{ ok: boolean; error?: string }> {
-  const { sendSmsViaGhl } = await import("./ghl-sms.ts");
-  const r = await sendSmsViaGhl(to, body);
+  const { sendSms } = await import("./sms.ts");
+  const r = await sendSms(to, body);
   return { ok: r.success, error: r.error };
 }

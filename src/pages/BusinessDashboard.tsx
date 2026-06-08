@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -8,7 +9,7 @@ import { toast } from "sonner";
 import { 
   Loader2, DollarSign, TrendingUp, Users, Package, 
   AlertTriangle, Clock, RefreshCw, ArrowRight, CreditCard,
-  CheckCircle, XCircle, BarChart3
+  CheckCircle, XCircle, BarChart3, CalendarDays
 } from "lucide-react";
 import AdminNavbar from "@/components/admin/AdminNavbar";
 
@@ -227,6 +228,21 @@ const BusinessDashboard = () => {
       />
 
       <main className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20">
+          <div>
+            <h2 className="text-base font-semibold">Patient Schedule</h2>
+            <p className="text-xs text-muted-foreground">
+              View and manage all clinic appointments — same calendar Kristen and Caroline use.
+            </p>
+          </div>
+          <Button asChild className="gap-2">
+            <Link to="/office/schedule">
+              <CalendarDays className="w-4 h-4" />
+              Open Schedule
+            </Link>
+          </Button>
+        </div>
+
         {/* Revenue Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">

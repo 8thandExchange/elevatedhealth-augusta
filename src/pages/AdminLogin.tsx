@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft, CheckCircle, Mail, AlertCircle } from "lucide-react";
-import { getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
+import { getSafeStaffRedirect, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectAfterLogin = getSafeStaffRedirect(searchParams.get("next"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +44,7 @@ const AdminLogin = () => {
             r.role === "provider",
         );
         if (hasAccess) {
-          navigate(getStaffPortalLoginPath(session.user.email), { replace: true });
+          navigate(redirectAfterLogin ?? getStaffPortalLoginPath(session.user.email), { replace: true });
           return;
         }
       }
@@ -120,7 +122,10 @@ const AdminLogin = () => {
         toast.success("Logged in successfully");
 
         // Small delay to ensure session is propagated
-        setTimeout(() => navigate(getStaffPortalLoginPath(data.user.email)), 100);
+        setTimeout(
+          () => navigate(redirectAfterLogin ?? getStaffPortalLoginPath(data.user.email), { replace: true }),
+          100,
+        );
       }
     } catch (error: any) {
       setLoginError(error.message || "An unexpected error occurred. Please try again.");

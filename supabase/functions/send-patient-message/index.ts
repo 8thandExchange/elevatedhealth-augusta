@@ -54,8 +54,8 @@ async function requireStaffOrAdmin(req: Request): Promise<
 }
 
 async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
-  return sendSmsViaGhl(to, message);
+  const { sendSms } = await import("../_shared/sms.ts");
+  return sendSms(to, message);
 }
 
 serve(async (req) => {

@@ -269,6 +269,59 @@ export type Database = {
         }
         Relationships: []
       }
+      sms_messages: {
+        Row: {
+          body: string
+          created_at: string
+          delivery_status: string | null
+          direction: string
+          from_number: string
+          id: string
+          is_read: boolean
+          patient_id: string | null
+          sent_by: string | null
+          source_function: string | null
+          to_number: string
+          twilio_sid: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          delivery_status?: string | null
+          direction: string
+          from_number: string
+          id?: string
+          is_read?: boolean
+          patient_id?: string | null
+          sent_by?: string | null
+          source_function?: string | null
+          to_number: string
+          twilio_sid?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          delivery_status?: string | null
+          direction?: string
+          from_number?: string
+          id?: string
+          is_read?: boolean
+          patient_id?: string | null
+          sent_by?: string | null
+          source_function?: string | null
+          to_number?: string
+          twilio_sid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_messages_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clinic_settings: {
         Row: {
           description: string | null

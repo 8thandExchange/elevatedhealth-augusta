@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import MyScheduleManager from "@/components/provider/MyScheduleManager";
+import { getStaffHomeLabel, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
 import { addDays, format, isSameDay, isToday, startOfDay, startOfWeek } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,7 +16,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import {
   Loader2, ChevronLeft, ChevronRight, Search, Printer, Plus, MoreVertical,
-  CalendarIcon, X, Phone, FileText, AlertTriangle, RefreshCw,
+  CalendarIcon, X, Phone, FileText, AlertTriangle, RefreshCw, ArrowLeft,
 } from "lucide-react";
 import {
   Provider, ProviderSchedule, ScheduleBlock, ScheduleException, Appointment,
@@ -39,9 +41,21 @@ const STATUS_OPTIONS = [
   { v: "cancelled", label: "Cancelled" },
 ];
 
+type ScheduleTab = "calendar" | "hours";
+
 export default function OfficeSchedule() {
   const { user, isProvider, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab: ScheduleTab = searchParams.get("tab") === "hours" ? "hours" : "calendar";
+  const setActiveTab = (tab: ScheduleTab) => {
+    if (tab === "calendar") {
+      searchParams.delete("tab");
+      setSearchParams(searchParams, { replace: true });
+    } else {
+      setSearchParams({ tab }, { replace: true });
+    }
+  };
   const [view, setView] = useState<ViewMode>("day");
   const [date, setDate] = useState<Date>(startOfDay(new Date()));
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -62,6 +76,7 @@ export default function OfficeSchedule() {
   // UI state
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
   const [newApptCtx, setNewApptCtx] = useState<{ providerId: string; date: Date; startMin: number } | null>(null);
+  const [staffEmail, setStaffEmail] = useState<string | undefined>();
   const [walkInOpen, setWalkInOpen] = useState(false);
   const [rescheduleConfirm, setRescheduleConfirm] = useState<{
     appt: Appointment;
@@ -70,10 +85,14 @@ export default function OfficeSchedule() {
     conflict: Appointment | null;
   } | null>(null);
 
+  const staffHomePath = getStaffPortalLoginPath(staffEmail);
+  const staffHomeLabel = getStaffHomeLabel(staffEmail);
+
   // Role gate
   useEffect(() => {
     if (authLoading) return;
-    if (!user) { navigate("/admin/login"); return; }
+    if (!user) { navigate("/admin/login?next=/office/schedule"); return; }
+    setStaffEmail(user.email ?? undefined);
     // isProvider in AuthContext = admin/staff/provider
     if (!isProvider) { navigate("/patient/dashboard"); return; }
   }, [user, isProvider, authLoading, navigate]);
@@ -223,11 +242,39 @@ export default function OfficeSchedule() {
     return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   }
 
+  if (activeTab === "hours") {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="sticky top-0 z-30 bg-background border-b border-border">
+          <div className="px-4 py-3 flex flex-wrap items-center gap-3">
+            <Button variant="outline" size="sm" asChild className="gap-1.5">
+              <Link to={staffHomePath}>
+                <ArrowLeft className="h-4 w-4" />
+                {staffHomeLabel}
+              </Link>
+            </Button>
+            <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-6">
+          <MyScheduleManager />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background print:bg-white">
       {/* Toolbar */}
       <div className="sticky top-0 z-30 bg-background border-b border-border print:hidden">
         <div className="px-4 py-3 flex flex-wrap items-center gap-3">
+          <Button variant="outline" size="sm" asChild className="gap-1.5 shrink-0">
+            <Link to={staffHomePath}>
+              <ArrowLeft className="h-4 w-4" />
+              {staffHomeLabel}
+            </Link>
+          </Button>
+          <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} />
           {/* View toggle */}
           <div className="flex rounded-lg border border-border overflow-hidden">
             {(["day","week","print"] as ViewMode[]).map((v) => (
@@ -441,6 +488,33 @@ export default function OfficeSchedule() {
       </Dialog>
 
       <PrintStyles />
+    </div>
+  );
+}
+
+function ScheduleTabBar({
+  activeTab,
+  onTabChange,
+}: {
+  activeTab: ScheduleTab;
+  onTabChange: (tab: ScheduleTab) => void;
+}) {
+  return (
+    <div className="flex rounded-lg border border-border overflow-hidden mr-1">
+      <button
+        type="button"
+        onClick={() => onTabChange("calendar")}
+        className={`px-3 py-1.5 text-sm transition ${activeTab === "calendar" ? "bg-primary text-primary-foreground" : "hover:bg-accent/30"}`}
+      >
+        Office calendar
+      </button>
+      <button
+        type="button"
+        onClick={() => onTabChange("hours")}
+        className={`px-3 py-1.5 text-sm transition ${activeTab === "hours" ? "bg-primary text-primary-foreground" : "hover:bg-accent/30"}`}
+      >
+        My hours
+      </button>
     </div>
   );
 }

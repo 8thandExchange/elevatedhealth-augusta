@@ -1,99 +1,79 @@
+/**
+ * capture-website-lead (legacy name: send-to-gohighlevel)
+ *
+ * Stores website chat / voice agent leads in Supabase chat_leads.
+ * GHL webhook removed — leads appear in Office Manager Dashboard.
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const GOHIGHLEVEL_WEBHOOK_URL = "https://services.leadconnectorhq.com/hooks/wqGyQyVn4INUQXzYRwuv/webhook-trigger/p8bD223V4h9DSSogCliJ";
-
 serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const body = await req.json();
-    
+
     const {
       name,
       email,
       phone,
       interest,
       chat_summary,
-      source = 'website_chat',
-      lead_id
+      source = "website_chat",
     } = body;
 
-    console.log('Sending lead to GoHighLevel:', { name, email, phone, interest, source });
+    console.log("Capturing website lead:", { name, email, phone, interest, source });
 
-    // Send to GoHighLevel webhook
-    const ghlPayload = {
-      // Standard contact fields
-      name: name || '',
-      firstName: name?.split(' ')[0] || '',
-      lastName: name?.split(' ').slice(1).join(' ') || '',
-      email: email || '',
-      phone: phone || '',
-      
-      // Custom fields for your GHL setup
-      source: source,
-      interest: interest || 'General Inquiry',
-      chatSummary: chat_summary || '',
-      leadId: lead_id || '',
-      
-      // Timestamp
-      createdAt: new Date().toISOString(),
-      
-      // Tags for segmentation
-      tags: [
-        'website_lead',
-        source === 'voice_agent' ? 'ai_voice_call' : 'ai_chat',
-        interest ? `interest_${interest.toLowerCase().replace(/\s+/g, '_')}` : 'general'
-      ].filter(Boolean)
-    };
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
 
-    const ghlResponse = await fetch(GOHIGHLEVEL_WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(ghlPayload),
-    });
+    const { data: lead, error } = await supabase
+      .from("chat_leads")
+      .insert({
+        name: name || null,
+        email: email || null,
+        phone: phone || null,
+        interest: interest || "General Inquiry",
+        source: source === "voice_agent" ? "voice" : source,
+        chat_summary: chat_summary || null,
+        status: "new",
+      })
+      .select("id")
+      .single();
 
-    const responseText = await ghlResponse.text();
-    console.log('GoHighLevel response status:', ghlResponse.status);
-    console.log('GoHighLevel response:', responseText);
-
-    if (!ghlResponse.ok) {
-      throw new Error(`GoHighLevel webhook failed: ${ghlResponse.status} - ${responseText}`);
+    if (error) {
+      throw new Error(`Failed to save lead: ${error.message}`);
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'Lead sent to GoHighLevel successfully',
-        ghlStatus: ghlResponse.status
+      JSON.stringify({
+        success: true,
+        message: "Lead captured successfully",
+        lead_id: lead.id,
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      },
     );
-
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error sending to GoHighLevel:', errorMessage);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error capturing lead:", errorMessage);
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: errorMessage 
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
-      }
+      JSON.stringify({ success: false, error: errorMessage }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      },
     );
   }
 });

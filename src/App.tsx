@@ -354,8 +354,16 @@ const App = () => {
           <Route path="/office/schedule" element={
             <ProviderLayout
               title="Schedule"
-              subtitle="Office-wide schedule"
-              showNavbar={false}
+              subtitle="Office-wide calendar"
+              allowedRoles={["admin", "staff", "business_admin", "provider"]}
+            >
+              <OfficeSchedule />
+            </ProviderLayout>
+          } />
+          <Route path="/schedule" element={
+            <ProviderLayout
+              title="Schedule"
+              subtitle="Office-wide calendar"
               allowedRoles={["admin", "staff", "business_admin", "provider"]}
             >
               <OfficeSchedule />

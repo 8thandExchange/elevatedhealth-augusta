@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +14,7 @@ import {
 import StaffBookingModal from "@/components/booking/StaffBookingModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import AdminNavbar from "@/components/admin/AdminNavbar";
+import SmsInbox from "@/components/office/SmsInbox";
 
 interface Patient {
   id: string;
@@ -267,12 +268,10 @@ const OfficeManagerDashboard = () => {
             >
               <CalendarPlus className="w-4 h-4" /> Book Appointment
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => window.location.assign("/office/schedule")}
-              className="gap-2"
-            >
-              <Calendar className="w-4 h-4" /> Open Schedule
+            <Button variant="outline" asChild className="gap-2">
+              <Link to="/office/schedule">
+                <Calendar className="w-4 h-4" /> Open Schedule
+              </Link>
             </Button>
           </div>
         </div>
@@ -360,11 +359,16 @@ const OfficeManagerDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             <TabsTrigger value="patients" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span className="hidden sm:inline">All Patients</span>
               <span className="sm:hidden">Patients</span>
+            </TabsTrigger>
+            <TabsTrigger value="sms" className="flex items-center gap-2">
+              <Phone className="w-4 h-4" />
+              <span className="hidden sm:inline">SMS Inbox</span>
+              <span className="sm:hidden">SMS</span>
             </TabsTrigger>
             <TabsTrigger value="leads" className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
@@ -575,6 +579,11 @@ const OfficeManagerDashboard = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* SMS Inbox Tab */}
+          <TabsContent value="sms">
+            <SmsInbox />
           </TabsContent>
 
           {/* Leads Tab */}

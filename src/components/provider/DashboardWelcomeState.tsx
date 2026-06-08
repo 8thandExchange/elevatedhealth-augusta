@@ -7,7 +7,7 @@ import { CORE_SERVICES } from "@/lib/stripeConfig";
 
 interface DashboardWelcomeStateProps {
   providerName: string;
-  onPatientSelect?: (email: string) => void;
+  onPatientSelect?: (patientId: string) => void;
   onRefresh?: () => void;
   stats?: {
     pendingReview: number;

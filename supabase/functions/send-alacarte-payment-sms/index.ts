@@ -20,8 +20,8 @@ interface PaymentSMSRequest {
 
 
 async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
-  return sendSmsViaGhl(to, message);
+  const { sendSms } = await import("../_shared/sms.ts");
+  return sendSms(to, message);
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -59,11 +59,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     logStep("SMS message created", { length: smsMessage.length });
 
-    const smsResult = await sendSMS(formattedPhone, message);
+    const smsResult = await sendSMS(cleanPhone, smsMessage);
     if (!smsResult.success) {
       throw new Error(smsResult.error || "SMS send failed");
     }
-    logStep("GHL SMS sent");
+    logStep("Twilio SMS sent");
     return new Response(JSON.stringify({
       success: true,
       message_id: smsResult.messageId,

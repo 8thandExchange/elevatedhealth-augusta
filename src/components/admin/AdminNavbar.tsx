@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical, ClipboardList } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical, ClipboardList, ArrowLeft, LayoutDashboard, Users } from "lucide-react";
+import { getStaffHomeLabel, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,10 +31,18 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
   const [inventoryAlertCount, setInventoryAlertCount] = useState(0);
   const [isBusinessAdmin, setIsBusinessAdmin] = useState(false);
   const [canSeeIntakeFollowUps, setCanSeeIntakeFollowUps] = useState(false);
+  const [staffEmail, setStaffEmail] = useState<string | undefined>();
+
+  const staffHomePath = getStaffPortalLoginPath(staffEmail);
+  const staffHomeLabel = getStaffHomeLabel(staffEmail);
+  const isOnStaffHome = location.pathname === staffHomePath;
 
   const isOnProviderDashboard = location.pathname === "/provider/dashboard";
+  const isOnBusinessDashboard = location.pathname === "/admin/business";
+  const isOnOfficeDashboard = location.pathname === "/office/dashboard";
+  const isOnOfficeSchedule = location.pathname === "/office/schedule" || location.pathname === "/schedule";
   const isOnProviderSchedule = location.pathname === "/provider/schedule";
-  const isOnOfficeSchedule = location.pathname === "/office/schedule";
+  const isOnSchedule = isOnOfficeSchedule || isOnProviderSchedule;
   const isOnSettings = location.pathname === "/admin/settings";
 
   useEffect(() => {
@@ -43,6 +52,7 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
         data: { user },
       } = await supabase.auth.getUser();
       if (!user || cancelled) return;
+      setStaffEmail(user.email ?? undefined);
       const { data: myRoles } = await supabase
         .from("user_roles")
         .select("role")
@@ -193,18 +203,27 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
             />
           )}
           
-          {!isOnProviderDashboard && (
+          {!isOnStaffHome && (
             <Button variant="outline" size="sm" asChild>
-              <Link to="/provider/dashboard">
-                <Stethoscope className="w-4 h-4 mr-2" />
-                Provider Dashboard
+              <Link to={staffHomePath}>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {staffHomeLabel}
               </Link>
             </Button>
           )}
 
-          {!isOnProviderSchedule && (
-            <Button variant={isOnOfficeSchedule ? "default" : "outline"} size="sm" asChild title="My Schedule">
-              <Link to="/provider/schedule">
+          {!isOnProviderDashboard && !isBusinessAdmin && staffHomePath !== "/provider/dashboard" && (
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/provider/dashboard">
+                <Stethoscope className="w-4 h-4 mr-2" />
+                Clinical
+              </Link>
+            </Button>
+          )}
+
+          {!isOnSchedule && (
+            <Button variant="outline" size="sm" asChild title="Office calendar — all patients & providers">
+              <Link to="/office/schedule">
                 <CalendarDays className="w-4 h-4 mr-2" />
                 Schedule
               </Link>
@@ -387,19 +406,35 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg z-[100]">
-              {!isOnProviderDashboard && (
+              {!isOnStaffHome && (
                 <DropdownMenuItem asChild>
-                  <Link to="/provider/dashboard" className="cursor-pointer gap-2">
-                    <Stethoscope className="w-4 h-4" />
-                    Dashboard
+                  <Link to={staffHomePath} className="cursor-pointer gap-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    {staffHomeLabel}
                   </Link>
                 </DropdownMenuItem>
               )}
-              {!isOnProviderSchedule && (
+              {!isOnOfficeDashboard && (
                 <DropdownMenuItem asChild>
-                  <Link to="/provider/schedule" className="cursor-pointer gap-2">
+                  <Link to="/office/dashboard" className="cursor-pointer gap-2">
+                    <Users className="w-4 h-4" />
+                    Office Dashboard
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              {!isOnBusinessDashboard && isBusinessAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/business" className="cursor-pointer gap-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    Business Dashboard
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              {!isOnSchedule && (
+                <DropdownMenuItem asChild>
+                  <Link to="/office/schedule" className="cursor-pointer gap-2">
                     <CalendarDays className="w-4 h-4" />
-                    Schedule
+                    Office Schedule
                   </Link>
                 </DropdownMenuItem>
               )}

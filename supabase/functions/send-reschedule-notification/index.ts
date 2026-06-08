@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { sendSmsViaGhl } from "../_shared/ghl-sms.ts";
+import { sendSms } from "../_shared/sms.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,7 +27,7 @@ serve(async (req) => {
     });
     const message = `Hi ${String(patientName).split(" ")[0]}, your Elevated Health appointment has been rescheduled to ${when} ET with ${providerName}. Reply HELP or call us with questions.`;
 
-    const result = await sendSmsViaGhl(phone, message, patientName);
+    const result = await sendSms(phone, message, { contactName: patientName });
     return new Response(JSON.stringify({ ok: result.success, ...result }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: result.success ? 200 : 500,

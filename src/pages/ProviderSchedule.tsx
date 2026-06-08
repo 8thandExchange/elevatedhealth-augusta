@@ -1,10 +1,8 @@
-import MyScheduleManager from "@/components/provider/MyScheduleManager";
+import { Navigate } from "react-router-dom";
 
-/** Full-page Caroline scheduler — bookmark at /provider/schedule */
+/** Legacy URL — unified office calendar lives at /office/schedule */
 const ProviderSchedule = () => (
-  <div className="container mx-auto px-4 py-6">
-    <MyScheduleManager />
-  </div>
+  <Navigate to="/office/schedule?tab=hours" replace />
 );
 
 export default ProviderSchedule;

@@ -95,8 +95,8 @@ async function recognizeConsultationProduct(
 }
 
 async function sendSMS(to: string, message: string): Promise<boolean> {
-  const { sendSmsViaGhl } = await import("../_shared/ghl-sms.ts");
-  const r = await sendSmsViaGhl(to, message);
+  const { sendSms } = await import("../_shared/sms.ts");
+  const r = await sendSms(to, message);
   return r.success;
 }
 
