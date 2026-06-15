@@ -11,11 +11,11 @@ import { isServiceActive } from "@/lib/serviceConfig";
 import {
   CORE_SERVICES,
   ELEVATED_PROGRAMS,
-  MEMBER_DISCOUNT_PERCENT,
   PEPTIDE_PRODUCTS,
   SEXUAL_WELLNESS_PRODUCTS,
   WEIGHT_LOSS_PRICES,
 } from "@/lib/stripeConfig";
+import { CATALOG, fmtUsd, memberPriceCents, nonMemberPriceCents } from "@/lib/pricing";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
@@ -32,15 +32,21 @@ const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
 const PRICE_PROGRAM_WELLNESS = ELEVATED_PROGRAMS.wellness.displayPrice;
 
-const fmt = (cents: number) => `$${(cents / 100).toFixed(0)}`;
-const memberCents = (cents: number) => Math.round((cents * (100 - MEMBER_DISCOUNT_PERCENT)) / 100);
-const pairNonMember = (a: number, b: number) => `${fmt(a + b)}/mo`;
-const pairMember = (a: number, b: number) => `${fmt(memberCents(a) + memberCents(b))}/mo`;
+const pairNonMember = (keyA: string, keyB: string) =>
+  `${fmtUsd(nonMemberPriceCents(CATALOG[keyA]) + nonMemberPriceCents(CATALOG[keyB]))}/mo`;
+const pairMember = (keyA: string, keyB: string) =>
+  `${fmtUsd(memberPriceCents(CATALOG[keyA]) + memberPriceCents(CATALOG[keyB]))}/mo`;
 
 const TB500_AVAILABLE = isServiceActive("peptideTB500");
 
-/** IV Lounge walk-in reference until NAD infusion SKU is exported here (SOT IV menu). */
-const NAD_250_IV_LOUNGE_CENTS = 45000;
+const vitalityBaseNon =
+  nonMemberPriceCents(CATALOG.sermorelin) + nonMemberPriceCents(CATALOG.nadInjection);
+const vitalityBaseMember =
+  memberPriceCents(CATALOG.sermorelin) + memberPriceCents(CATALOG.nadInjection);
+const vitalityIvNon =
+  nonMemberPriceCents(CATALOG.sermorelin) + nonMemberPriceCents(CATALOG.nadIv250Lounge);
+const vitalityIvMember =
+  memberPriceCents(CATALOG.sermorelin) + memberPriceCents(CATALOG.nadIv250Lounge);
 
 type Stack = {
   name: string;
@@ -53,11 +59,6 @@ type Stack = {
   note: string;
 };
 
-const vitalityBaseNon = PEPTIDE_PRODUCTS.sermorelin.amount + PEPTIDE_PRODUCTS.nadInjection.amount;
-const vitalityBaseMember = memberCents(PEPTIDE_PRODUCTS.sermorelin.amount) + memberCents(PEPTIDE_PRODUCTS.nadInjection.amount);
-const vitalityIvNon = PEPTIDE_PRODUCTS.sermorelin.amount + NAD_250_IV_LOUNGE_CENTS;
-const vitalityIvMember = memberCents(PEPTIDE_PRODUCTS.sermorelin.amount) + memberCents(NAD_250_IV_LOUNGE_CENTS);
-
 const stacks: Stack[] = [
   {
     name: "The Restore Protocol",
@@ -67,7 +68,7 @@ const stacks: Stack[] = [
       "Optional: PT-141 / Oxytocin nasal spray for couples",
     ],
     bestFor: ["Low libido", "Arousal challenges", "Intimacy disconnect"],
-    priceMember: `${fmt(memberCents(SEXUAL_WELLNESS_PRODUCTS.pt141.amount))} + ${fmt(memberCents(SEXUAL_WELLNESS_PRODUCTS.oxytocin.amount))}/mo`,
+    priceMember: `${fmtUsd(memberPriceCents(CATALOG.pt141))} + ${fmtUsd(memberPriceCents(CATALOG.oxytocin))}/mo`,
     priceNonMember: `${SEXUAL_WELLNESS_PRODUCTS.pt141.displayPrice} + ${SEXUAL_WELLNESS_PRODUCTS.oxytocin.displayPrice}/mo`,
     note: "PT-141 is FDA-approved as Vyleesi. Compounded alternative dosing available.",
   },
@@ -82,11 +83,11 @@ const stacks: Stack[] = [
       : ["Pentadeca Arginate (PDA) oral capsules, daily"],
     bestFor: ["Post-injury recovery", "Tendon & ligament healing", "Chronic inflammation", "Gut barrier integrity"],
     priceMember: TB500_AVAILABLE
-      ? pairMember(PEPTIDE_PRODUCTS.cjc1295Ipamorelin.amount, PEPTIDE_PRODUCTS.nadInjection.amount)
-      : pairMember(PEPTIDE_PRODUCTS.ghkCuSublingual.amount, PEPTIDE_PRODUCTS.nadTroches.amount),
+      ? pairMember("cjc1295Ipamorelin", "nadInjection")
+      : pairMember("ghkCuSublingual", "nadTroches"),
     priceNonMember: TB500_AVAILABLE
-      ? pairNonMember(PEPTIDE_PRODUCTS.cjc1295Ipamorelin.amount, PEPTIDE_PRODUCTS.nadInjection.amount)
-      : pairNonMember(PEPTIDE_PRODUCTS.ghkCuSublingual.amount, PEPTIDE_PRODUCTS.nadTroches.amount),
+      ? pairNonMember("cjc1295Ipamorelin", "nadInjection")
+      : pairNonMember("ghkCuSublingual", "nadTroches"),
     note: TB500_AVAILABLE
       ? "PDA is the successor to BPC-157, available through legal compounding channels. Posted totals use representative pharmacy-line items; your physician may substitute equivalents."
       : "PDA is the successor to BPC-157. TB-500 temporarily unavailable pending pharmacy compliance review. Posted totals use representative pharmacy-line items.",
@@ -99,12 +100,12 @@ const stacks: Stack[] = [
       "NAD+ subcutaneous take-home OR IV at the IV Lounge",
     ],
     bestFor: ["Low energy", "Cognitive dulling", "Poor sleep quality", "Age-related decline"],
-    priceMember: `${fmt(vitalityBaseMember)}/mo`,
-    priceNonMember: `${fmt(vitalityBaseNon)}/mo`,
+    priceMember: `${fmtUsd(vitalityBaseMember)}/mo`,
+    priceNonMember: `${fmtUsd(vitalityBaseNon)}/mo`,
     priceVariant: {
       label: "With monthly NAD+ IV at the lounge",
-      member: `${fmt(vitalityIvMember)}/mo`,
-      nonMember: `${fmt(vitalityIvNon)}/mo`,
+      member: `${fmtUsd(vitalityIvMember)}/mo`,
+      nonMember: `${fmtUsd(vitalityIvNon)}/mo`,
     },
     note: "Sermorelin and NAD+ are well-established peptides with clear regulatory standing. IV add-on uses IV Lounge walk-in pricing reference.",
   },
@@ -169,7 +170,7 @@ const alacarte: AlaCarte[] = [
       name: p.name,
       desc,
       bestFor,
-      priceMember: `${fmt(memberCents(p.amount))}/mo`,
+      priceMember: `${fmtUsd(memberPriceCents(CATALOG[key]))}/mo`,
       priceNonMember: p.displayPrice,
     };
   }),
@@ -189,28 +190,28 @@ const alacarte: AlaCarte[] = [
     name: SEXUAL_WELLNESS_PRODUCTS.tadalafil.name,
     desc: "Sexual wellness — men.",
     bestFor: "Performance · confidence",
-    priceMember: `${fmt(memberCents(SEXUAL_WELLNESS_PRODUCTS.tadalafil.amount))}/mo`,
+    priceMember: `${fmtUsd(memberPriceCents(CATALOG.tadalafil))}/mo`,
     priceNonMember: SEXUAL_WELLNESS_PRODUCTS.tadalafil.displayPrice,
   },
   {
     name: SEXUAL_WELLNESS_PRODUCTS.sildenafil.name,
     desc: "Sexual wellness — men.",
     bestFor: "Performance · confidence",
-    priceMember: `${fmt(memberCents(SEXUAL_WELLNESS_PRODUCTS.sildenafil.amount))}/mo`,
+    priceMember: `${fmtUsd(memberPriceCents(CATALOG.sildenafil))}/mo`,
     priceNonMember: SEXUAL_WELLNESS_PRODUCTS.sildenafil.displayPrice,
   },
   {
     name: SEXUAL_WELLNESS_PRODUCTS.pt141.name,
     desc: "Sexual wellness — for men and women.",
     bestFor: "Libido · desire",
-    priceMember: fmt(memberCents(SEXUAL_WELLNESS_PRODUCTS.pt141.amount)),
+    priceMember: fmtUsd(memberPriceCents(CATALOG.pt141)),
     priceNonMember: SEXUAL_WELLNESS_PRODUCTS.pt141.displayPrice,
   },
   {
     name: SEXUAL_WELLNESS_PRODUCTS.oxytocin.name,
     desc: "Bonding and intimacy support.",
     bestFor: "Couples · connection",
-    priceMember: `${fmt(memberCents(SEXUAL_WELLNESS_PRODUCTS.oxytocin.amount))}/mo`,
+    priceMember: `${fmtUsd(memberPriceCents(CATALOG.oxytocin))}/mo`,
     priceNonMember: SEXUAL_WELLNESS_PRODUCTS.oxytocin.displayPrice,
   },
 ];

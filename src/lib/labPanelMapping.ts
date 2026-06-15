@@ -1,4 +1,6 @@
 /** Maps lab_panels.slug → send-labcorp-requisition panelType keys. */
+import { labMemberCents } from "./pricing";
+
 export type LabcorpRequisitionKey = "mens_safety" | "thyroid" | "safety_cmp";
 
 export const LAB_PANEL_REQUISITION_KEY: Record<string, LabcorpRequisitionKey> = {
@@ -20,8 +22,8 @@ export const LAB_ORDER_STATUS_LABELS: Record<string, string> = {
   cancelled: "Cancelled",
 };
 
-export function formatLabPanelPrice(cents: number | null, memberCents: number | null, isMember: boolean): string {
-  const c = isMember && memberCents != null ? memberCents : cents;
-  if (c == null) return "—";
+export function formatLabPanelPrice(cents: number | null, _memberCents: number | null, isMember: boolean): string {
+  if (cents == null) return "—";
+  const c = isMember ? labMemberCents(cents) : cents;
   return `$${(c / 100).toFixed(0)}`;
 }

@@ -2,6 +2,11 @@ import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
+import { assertPricingInvariants } from "./lib/pricing";
+
+if (import.meta.env.DEV) {
+  assertPricingInvariants();
+}
 
 // Remove legacy PWA caches that pinned old Lovable UI bundles (IV menu icons, etc.).
 if (import.meta.env.PROD && typeof window !== "undefined") {

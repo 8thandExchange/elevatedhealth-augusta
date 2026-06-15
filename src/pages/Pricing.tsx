@@ -15,7 +15,8 @@ import {
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { useBooking } from "@/contexts/BookingContext";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
-import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS, MEMBER_DISCOUNT_PERCENT } from "@/lib/stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripeConfig";
+import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import {
   Check,
   Star,

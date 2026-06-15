@@ -269,22 +269,6 @@ export const IV_WALKIN_EXAMPLES = {
   myersCocktailCents: 18500,
 } as const;
 
-/**
- * Non-member steady-state monthly estimates (cents) for MembershipComparison
- * annual math (Phase 2B sweep plan). Not Stripe line items.
- */
-export const MEMBERSHIP_COMPARISON_ESTIMATES = {
-  nonMemberSteadyMonthlyCents: {
-    trt: 22500,
-    hrt: 25400,
-    glp1Semaglutide: 47800,
-    glp1Tirzepatide: 57800,
-  },
-} as const;
-
-// Member discount applied to à la carte products
-export const MEMBER_DISCOUNT_PERCENT = 20;
-
 // Aggregate helpers
 export const ALL_LIVE_PRICE_IDS = [
   ...Object.values(ELEVATED_PROGRAMS).map((p) => p.priceId),

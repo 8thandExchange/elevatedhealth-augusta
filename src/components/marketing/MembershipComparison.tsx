@@ -4,12 +4,16 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
+  fmtUsd,
+  MEMBER_DISCOUNT_PERCENT,
+  nonMemberSteadyMonthlyCents,
+  nonMemberSteadyMonthlyCentsGlp1,
+} from "@/lib/pricing";
+import {
   CORE_SERVICES,
   ELEVATED_PROGRAMS,
   IV_WALKIN_EXAMPLES,
   MEDICATION_FILLS,
-  MEMBER_DISCOUNT_PERCENT,
-  MEMBERSHIP_COMPARISON_ESTIMATES,
 } from "@/lib/stripeConfig";
 
 export type Program = "trt" | "hrt" | "glp1" | "wellness";
@@ -22,8 +26,6 @@ export interface MembershipComparisonProps {
   drug?: "semaglutide" | "tirzepatide";
 }
 
-const fmt = (cents: number) => `$${(cents / 100).toFixed(0)}`;
-
 const INCLUDED = "Included";
 
 const DEFAULT_HREF: Record<Program, string> = {
@@ -35,22 +37,58 @@ const DEFAULT_HREF: Record<Program, string> = {
 
 type Row = { service: string; nonMember: ReactNode; member: ReactNode };
 
-function buildTrtRows(): Row[] {
-  const nmSteady = MEMBERSHIP_COMPARISON_ESTIMATES.nonMemberSteadyMonthlyCents.trt;
-  const nmM1 =
-    CORE_SERVICES.wellnessAssessment.amount +
-    CORE_SERVICES.comprehensivePanel.amount +
-    MEDICATION_FILLS.testosterone.amount;
-  const mM1 =
-    CORE_SERVICES.wellnessAssessment.amount +
-    CORE_SERVICES.comprehensivePanel.amount +
-    ELEVATED_PROGRAMS.trt.amount;
-  const nmY1 = nmM1 + nmSteady * 11;
-  const mY1 = mM1 + ELEVATED_PROGRAMS.trt.amount * 11;
-  const nmY2 = nmSteady * 12;
-  const mY2 = ELEVATED_PROGRAMS.trt.amount * 12;
+function oneTimeStartCents(program: Program, drug: "semaglutide" | "tirzepatide"): number {
+  const panel =
+    program === "glp1"
+      ? CORE_SERVICES.expandedPanel.amount
+      : CORE_SERVICES.comprehensivePanel.amount;
+  return CORE_SERVICES.wellnessAssessment.amount + panel;
+}
 
-  return [
+function buildProgramCostRows(
+  program: "trt" | "hrt" | "glp1",
+  drug: "semaglutide" | "tirzepatide",
+  serviceRows: Row[],
+): Row[] {
+  const oneTime = oneTimeStartCents(program, drug);
+  const nmSteady =
+    program === "glp1" ? nonMemberSteadyMonthlyCentsGlp1(drug) : nonMemberSteadyMonthlyCents(program);
+  const memberMonthly = ELEVATED_PROGRAMS[program].amount;
+  const nmY1 = oneTime + nmSteady * 12;
+  const mY1 = oneTime + memberMonthly * 12;
+  const savingsY1 = nmY1 - mY1;
+
+  const costRows: Row[] = [
+    {
+      service: "One-time start (same for both)",
+      nonMember: fmtUsd(oneTime),
+      member: fmtUsd(oneTime),
+    },
+    {
+      service: "Then every month",
+      nonMember: `~${fmtUsd(nmSteady)} (med + amortized labs + check-in)`,
+      member: ELEVATED_PROGRAMS[program].displayPrice,
+    },
+    {
+      service: "Year 1 total",
+      nonMember: `~${fmtUsd(nmY1)} estimate`,
+      member: fmtUsd(mY1),
+    },
+  ];
+
+  if (savingsY1 > 0) {
+    costRows.push({
+      service: "Member savings (Year 1)",
+      nonMember: "—",
+      member: fmtUsd(savingsY1),
+    });
+  }
+
+  return [...serviceRows, ...costRows];
+}
+
+function buildTrtRows(): Row[] {
+  return buildProgramCostRows("trt", "semaglutide", [
     {
       service: "Monthly medication (testosterone)",
       nonMember: `${MEDICATION_FILLS.testosterone.displayPrice}/fill`,
@@ -76,50 +114,11 @@ function buildTrtRows(): Row[] {
       nonMember: "Not available à la carte",
       member: INCLUDED,
     },
-    {
-      service: "Month 1 total",
-      nonMember: fmt(nmM1),
-      member: fmt(mM1),
-    },
-    {
-      service: "Monthly after Month 1",
-      nonMember: `~${fmt(nmSteady)} (med + amortized labs + check-in)`,
-      member: ELEVATED_PROGRAMS.trt.displayPrice,
-    },
-    {
-      service: "Year 1 total",
-      nonMember: `~${fmt(nmY1)} estimate`,
-      member: fmt(mY1),
-    },
-    {
-      service: "Year 2 total",
-      nonMember: `~${fmt(nmY2)} estimate`,
-      member: fmt(mY2),
-    },
-    {
-      service: "Member savings (steady state Year 2)",
-      nonMember: "—",
-      member: "Saves ~$1,500+ in clinical care included that à la carte buyers skip",
-    },
-  ];
+  ]);
 }
 
 function buildHrtRows(): Row[] {
-  const nmSteady = MEMBERSHIP_COMPARISON_ESTIMATES.nonMemberSteadyMonthlyCents.hrt;
-  const nmM1 =
-    CORE_SERVICES.wellnessAssessment.amount +
-    CORE_SERVICES.comprehensivePanel.amount +
-    MEDICATION_FILLS.biEst.amount +
-    MEDICATION_FILLS.progesterone.amount;
-  const mM1 =
-    CORE_SERVICES.wellnessAssessment.amount +
-    CORE_SERVICES.comprehensivePanel.amount +
-    ELEVATED_PROGRAMS.hrt.amount;
-  const nmY1 = nmM1 + nmSteady * 11;
-  const mY1 = mM1 + ELEVATED_PROGRAMS.hrt.amount * 11;
-  const savingsY1 = nmY1 - mY1;
-
-  return [
+  return buildProgramCostRows("hrt", "semaglutide", [
     {
       service: "Monthly Bi-Est cream",
       nonMember: `${MEDICATION_FILLS.biEst.displayPrice}/fill`,
@@ -150,47 +149,15 @@ function buildHrtRows(): Row[] {
       nonMember: "Not available à la carte",
       member: INCLUDED,
     },
-    {
-      service: "Month 1 total",
-      nonMember: fmt(nmM1),
-      member: fmt(mM1),
-    },
-    {
-      service: "Monthly after Month 1",
-      nonMember: `~${fmt(nmSteady)}`,
-      member: ELEVATED_PROGRAMS.hrt.displayPrice,
-    },
-    {
-      service: "Year 1 total",
-      nonMember: `~${fmt(nmY1)}`,
-      member: fmt(mY1),
-    },
-    {
-      service: "Member savings (Year 1)",
-      nonMember: "—",
-      member: fmt(savingsY1),
-    },
-  ];
+  ]);
 }
 
 function buildGlp1Rows(drug: "semaglutide" | "tirzepatide"): Row[] {
   const fill = drug === "semaglutide" ? MEDICATION_FILLS.semaglutide : MEDICATION_FILLS.tirzepatide;
-  const steadyKey = drug === "semaglutide" ? "glp1Semaglutide" : "glp1Tirzepatide";
-  const nmSteady = MEMBERSHIP_COMPARISON_ESTIMATES.nonMemberSteadyMonthlyCents[steadyKey];
-  const nmM1 =
-    CORE_SERVICES.wellnessAssessment.amount + CORE_SERVICES.expandedPanel.amount + fill.amount;
-  const mM1 =
-    CORE_SERVICES.wellnessAssessment.amount +
-    CORE_SERVICES.expandedPanel.amount +
-    ELEVATED_PROGRAMS.glp1.amount;
-  const nmY1 = nmM1 + nmSteady * 11;
-  const mY1 = mM1 + ELEVATED_PROGRAMS.glp1.amount * 11;
-  const savingsY1 = nmY1 - mY1;
-
   const medLabel =
     drug === "semaglutide" ? "Monthly compounded semaglutide" : "Monthly compounded tirzepatide";
 
-  return [
+  return buildProgramCostRows("glp1", drug, [
     {
       service: medLabel,
       nonMember: `${fill.displayPrice}/fill`,
@@ -221,39 +188,19 @@ function buildGlp1Rows(drug: "semaglutide" | "tirzepatide"): Row[] {
       nonMember: "Not available à la carte",
       member: INCLUDED,
     },
-    {
-      service: "Month 1 total",
-      nonMember: fmt(nmM1),
-      member: fmt(mM1),
-    },
-    {
-      service: "Monthly after Month 1",
-      nonMember: `~${fmt(nmSteady)}`,
-      member: ELEVATED_PROGRAMS.glp1.displayPrice,
-    },
-    {
-      service: "Year 1 total",
-      nonMember: `~${fmt(nmY1)}`,
-      member: fmt(mY1),
-    },
-    {
-      service: "Member savings (Year 1)",
-      nonMember: "—",
-      member: fmt(savingsY1),
-    },
-  ];
+  ]);
 }
 
 function buildWellnessRows(): Row[] {
   const ivPair = IV_WALKIN_EXAMPLES.myersCocktailCents * 2;
-  const nonMemberMonthly = ivPair + CORE_SERVICES.wellnessAssessment.amount;
+  const nonMemberMonthly = nonMemberSteadyMonthlyCents("wellness");
   const memberMonthly = ELEVATED_PROGRAMS.wellness.amount;
   const savings = nonMemberMonthly - memberMonthly;
 
-  return [
+  const rows: Row[] = [
     {
       service: "IV drips (avg 2/month)",
-      nonMember: `${fmt(IV_WALKIN_EXAMPLES.myersCocktailCents)} × 2 = ${fmt(ivPair)}/mo`,
+      nonMember: `${fmtUsd(IV_WALKIN_EXAMPLES.myersCocktailCents)} × 2 = ${fmtUsd(ivPair)}/mo`,
       member: "2 included free",
     },
     {
@@ -278,15 +225,20 @@ function buildWellnessRows(): Row[] {
     },
     {
       service: "Monthly value",
-      nonMember: `${fmt(nonMemberMonthly)}+/mo`,
-      member: `${fmt(memberMonthly)}/mo`,
-    },
-    {
-      service: "Member savings (steady state)",
-      nonMember: "—",
-      member: `${fmt(savings)}+/mo`,
+      nonMember: `${fmtUsd(nonMemberMonthly)}+/mo`,
+      member: `${fmtUsd(memberMonthly)}/mo`,
     },
   ];
+
+  if (savings > 0) {
+    rows.push({
+      service: "Member savings (steady state)",
+      nonMember: "—",
+      member: `${fmtUsd(savings)}+/mo`,
+    });
+  }
+
+  return rows;
 }
 
 function rowsForProgram(program: Program, drug: "semaglutide" | "tirzepatide"): Row[] {
@@ -307,9 +259,11 @@ function footnoteFor(program: Program): string | null {
     return "Non-member estimates assume monthly fills + quarterly labs only. Members receive full clinical oversight, lab review, and unlimited messaging — services not sold à la carte.";
   }
   if (program === "wellness") {
-    return "Member savings vary based on usage. IV drip pricing example uses Myers Cocktail at " +
-      fmt(IV_WALKIN_EXAMPLES.myersCocktailCents) +
-      "; actual pricing varies by drip type.";
+    return (
+      "Member savings vary based on usage. IV drip pricing example uses Myers Cocktail at " +
+      fmtUsd(IV_WALKIN_EXAMPLES.myersCocktailCents) +
+      "; actual pricing varies by drip type."
+    );
   }
   return null;
 }

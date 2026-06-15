@@ -8,10 +8,10 @@ import {
   ELEVATED_PROGRAMS,
   HAIR_RESTORATION_PRODUCTS,
   MEDICATION_FILLS,
-  MEMBER_DISCOUNT_PERCENT,
   PEPTIDE_PRODUCTS,
   SEXUAL_WELLNESS_PRODUCTS,
 } from "@/lib/stripeConfig";
+import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 
 const fmtMember = (displayNonMember: string) => `${displayNonMember} → ${MEMBER_DISCOUNT_PERCENT}% off for ELEVATED members`;
 

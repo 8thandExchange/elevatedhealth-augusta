@@ -11,7 +11,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Check, Clock, Droplet, Plus, ShieldCheck, Star, X } from "lucide-react";
-import { ELEVATED_PROGRAMS, MEMBER_DISCOUNT_PERCENT } from "@/lib/stripeConfig";
+import { ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { IV_THERAPIES_CATALOG } from "@/lib/ivTherapiesCatalog";
 import { IV_ADDONS_CATALOG } from "@/lib/ivAddonsCatalog";
 

@@ -2,7 +2,8 @@ import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Printer } from "lucide-react";
-import { CORE_SERVICES, ELEVATED_PROGRAMS, MEMBER_DISCOUNT_PERCENT } from "@/lib/stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 
 const StaffQuickCard = () => {
   const handlePrint = () => {
