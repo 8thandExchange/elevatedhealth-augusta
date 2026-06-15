@@ -128,8 +128,10 @@ I understand that these substances are NOT being prescribed to treat or cure any
 ---
 ## SECTION 5 — SOURCING AND COMPOUNDING (ATTESTATION REQUIRED)
 ### 5.1 — 503A Compounding Pharmacy Sourcing
-I understand that all substances I receive under this consent will be compounded by a state-licensed 503A compounding pharmacy under prescription from the Practice. The Practice has identified the following primary partner pharmacy:
-- **Formulation Compounding Center (FCC)** — Lewisville, Texas
+I understand that all substances I receive under this consent will be compounded by a state-licensed 503A compounding pharmacy under prescription from the Practice. The Practice has identified the following partner pharmacies:
+- **GC Scientific partner network (503A)** — primary for metabolic recomposition stack and advanced peptides routed through our GC account
+- **Formulation Compounding Center (FCC)** — Lewisville, Texas — IV compounds, core peptide menu, and backup fulfillment
+- **Custom Pharmacy of Evans** — Evans, Georgia — hormone preparations (not research peptides)
 The Practice may use other state-licensed 503A compounding pharmacies as clinically appropriate or as availability requires.
 I understand that:
 - 503A compounding pharmacies are state-licensed and subject to state board of pharmacy oversight

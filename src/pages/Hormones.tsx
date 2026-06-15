@@ -161,7 +161,7 @@ const Hormones = () => {
               </div>
               <div className="grid md:grid-cols-3 gap-12">
                 {[
-                  { n: "01", t: "Compounded transdermal", d: "Our default delivery is compounded transdermal cream from a state-licensed 503A compounding pharmacy in Texas. Custom-dosed to your labs. Shipped to your door. Insulated from FDA-patch shortages." },
+                  { n: "01", t: "Local compounding", d: "Women's BHRT defaults to Bi-Est cream + progesterone capsules from Custom Pharmacy of Evans — same city as our clinic. Men's TRT defaults to weekly testosterone cypionate injections. Custom-dosed to your labs; insulated from FDA patch shortages." },
                   { n: "02", t: "Physician-led", d: "Every protocol is built and monitored by a physician. Quarterly labs. Real adjustments. No template, no auto-renew." },
                   { n: "03", t: "ELEVATED programs", d: `${ELEVATED_PROGRAMS.hrt.name} (${ELEVATED_PROGRAMS.hrt.displayPrice}) and ${ELEVATED_PROGRAMS.trt.name} (${ELEVATED_PROGRAMS.trt.displayPrice}) bundle medication where prescribed, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
                 ].map((p) => (

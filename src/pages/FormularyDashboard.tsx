@@ -42,7 +42,11 @@ import { FCC_PORTAL_URL } from "@/lib/fccFormulary";
 import { Loader2, Search, RefreshCw, Download, Upload, Boxes, History, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
-type FormularyRow = Tables<"clinic_formulary">;
+type FormularyRow = Tables<"clinic_formulary"> & {
+  alternate_supplier?: string | null;
+  alternate_supplier_cost_cents?: number | null;
+  fulfillment_pharmacy_slug?: string | null;
+};
 type ChangeLogRow = Tables<"formulary_change_log">;
 type InventorySku = Tables<"inventory_skus">;
 type Lot = Tables<"inventory_lots">;
@@ -359,6 +363,12 @@ export default function FormularyDashboard() {
             Refresh
           </Button>
           <Button variant="outline" size="sm" asChild>
+            <Link to="/formulary-economics">Economics</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/staff/vendor-guide">Vendor guide</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
             <a href={FCC_PORTAL_URL} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-4 w-4 mr-1" />
               FCC portal
@@ -451,6 +461,7 @@ export default function FormularyDashboard() {
                 <TableHead>Dose</TableHead>
                 <TableHead>Supplier</TableHead>
                 <TableHead className="text-right">Our cost</TableHead>
+                <TableHead className="text-right">Alt cost</TableHead>
                 <TableHead className="text-right">Client</TableHead>
                 <TableHead className="text-right">Member</TableHead>
                 <TableHead className="text-right">Margin</TableHead>
@@ -461,7 +472,7 @@ export default function FormularyDashboard() {
             <TableBody>
               {filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
                     No items match. Run the clinic_formulary migration if this list is empty.
                   </TableCell>
                 </TableRow>
@@ -482,6 +493,18 @@ export default function FormularyDashboard() {
                       {formatCents(r.supplier_cost_cents)}
                       {r.supplier_cost_unit && (
                         <span className="text-xs text-muted-foreground block">/{r.supplier_cost_unit}</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right text-sm text-muted-foreground">
+                      {r.alternate_supplier_cost_cents != null ? (
+                        <>
+                          {formatCents(r.alternate_supplier_cost_cents)}
+                          {r.alternate_supplier && (
+                            <span className="text-xs block uppercase">{r.alternate_supplier}</span>
+                          )}
+                        </>
+                      ) : (
+                        "—"
                       )}
                     </TableCell>
                     <TableCell className="text-right text-sm font-medium">

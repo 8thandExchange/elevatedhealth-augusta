@@ -15,7 +15,10 @@ export const FORMULARY_CATEGORIES = [
 
 export const FORMULARY_SUPPLIERS = [
   { value: "all", label: "All suppliers" },
+  { value: "gc", label: "GC Scientific" },
   { value: "fcc", label: "FCC" },
+  { value: "custom_pharmacy_evans", label: "Custom Pharmacy of Evans" },
+  { value: "drfirst", label: "DrFirst (retail)" },
   { value: "henry_schein", label: "Henry Schein" },
   { value: "empower", label: "Empower" },
   { value: "stericycle", label: "Stericycle" },

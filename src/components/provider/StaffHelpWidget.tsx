@@ -71,7 +71,20 @@ const ARTICLES: HelpArticle[] = [
     links: [
       { label: "Inventory", to: "/inventory" },
       { label: "Formulary", to: "/formulary" },
+      { label: "Vendor guide", to: "/staff/vendor-guide" },
+      { label: "Formulary economics", to: "/formulary-economics" },
     ],
+  },
+  {
+    id: "vendor-routing",
+    title: "GC vs FCC vs Custom Pharmacy",
+    keywords: ["gc", "fcc", "vendor", "pharmacy", "routing", "cogs", "margin"],
+    steps: [
+      "Metabolic stack and advanced peptides → GC Scientific partner network.",
+      "IV, sermorelin, NAD+, healing stack → FCC FormuConnect.",
+      "All hormones → Custom Pharmacy of Evans (fax).",
+    ],
+    links: [{ label: "Vendor guide", to: "/staff/vendor-guide" }],
   },
 ];
 
@@ -111,6 +124,7 @@ export function StaffHelpWidget() {
       { label: "Dashboard", to: "/provider/dashboard", icon: BookOpen },
       { label: "Inventory", to: "/inventory", icon: Boxes },
       { label: "Formulary", to: "/formulary", icon: ClipboardList },
+      { label: "Vendor guide", to: "/staff/vendor-guide", icon: ClipboardList },
     ],
     [],
   );

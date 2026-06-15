@@ -4,6 +4,8 @@
  */
 
 import { MEDICATION_FILLS } from "./stripeConfig";
+import { GC_WHOLESALE_CENTS } from "./vendorRouting";
+import { metabolicStackEconomics } from "./formularyEconomics";
 
 export type StackTier = "S" | "A" | "B" | "F";
 
@@ -43,10 +45,8 @@ export const STACK_ALACARTE_CATALOG_KEYS = [
   "fiveAmino1mq",
 ] as const;
 
-const FULL_STACK_KEYS = STACK_ALACARTE_CATALOG_KEYS;
-
-const NAD_INJECTION_WHOLESALE_CENTS = 6000;
-const CJC_WHOLESALE_CENTS = 9000;
+const NAD_INJECTION_WHOLESALE_CENTS = 7000;
+const CJC_WHOLESALE_CENTS = GC_WHOLESALE_CENTS.cjcIpamorelinBlend5_5;
 
 export const METABOLIC_STACK_COMPOUNDS: StackCompound[] = [
   {
@@ -55,7 +55,7 @@ export const METABOLIC_STACK_COMPOUNDS: StackCompound[] = [
     tier: "S",
     mechanism: "Triple GLP-1 / GIP / glucagon agonist — appetite, insulin sensitivity, active fat oxidation",
     fccSku: "2484",
-    supplierCostCents: 35000,
+    supplierCostCents: GC_WHOLESALE_CENTS.retatrutide20mg,
     catalogKey: "retatrutide",
     dosingSummary: "Start 0.5 mg subQ weekly; titrate slowly to 3–4 mg over 6–8 weeks per tolerance",
   },
@@ -65,7 +65,7 @@ export const METABOLIC_STACK_COMPOUNDS: StackCompound[] = [
     tier: "S",
     mechanism: "GHRH analog — visceral fat targeting, lean mass support",
     fccSku: "2897",
-    supplierCostCents: 32500,
+    supplierCostCents: GC_WHOLESALE_CENTS.tesamorelin10mg,
     catalogKey: "tesamorelin",
     dosingSummary: "0.5–1 mg subQ, 5 nights/week before bed",
   },
@@ -83,7 +83,7 @@ export const METABOLIC_STACK_COMPOUNDS: StackCompound[] = [
     tier: "A",
     mechanism: "Mitochondrial membrane support — metabolic efficiency under GLP demand",
     fccSku: "3811",
-    supplierCostCents: 18500,
+    supplierCostCents: GC_WHOLESALE_CENTS.ss3150mg,
     catalogKey: "ss31",
     dosingSummary: "5–10 mg subQ daily (taper to maintenance per protocol)",
   },
@@ -189,13 +189,11 @@ export const METABOLIC_STACK_LABS = [
 ];
 
 export function metabolicStackWholesaleCentsFull(): number {
-  return METABOLIC_STACK_COMPOUNDS.filter((c) =>
-    (FULL_STACK_KEYS as readonly string[]).includes(c.catalogKey ?? c.key),
-  ).reduce((sum, c) => {
-    if (c.key === "nadInjection") return sum + NAD_INJECTION_WHOLESALE_CENTS;
-    if (c.key === "cjc1295Ipamorelin") return sum + CJC_WHOLESALE_CENTS;
-    return sum + (c.supplierCostCents ?? 0);
-  }, 0);
+  return metabolicStackEconomics().gcModeledCogsCents;
+}
+
+export function metabolicStackWholesaleCentsFcc(): number {
+  return metabolicStackEconomics().fccModeledCogsCents;
 }
 
 export function metabolicStackMarginPct(): number {

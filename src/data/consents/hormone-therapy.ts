@@ -41,8 +41,9 @@ I understand that:
 - The Practice and I will discuss which form (commercial vs. compounded) is appropriate based on my clinical needs, insurance status (the Practice does not bill insurance, but I may have separate coverage for FDA-approved products), and personal preference
 ### 1.3 — Compounding Pharmacy Partners
 The Practice works with the following 503A compounding pharmacies for hormone preparations:
-- **Custom Pharmacy of Evans** — bio-identical hormone creams (Bi-Est, estradiol cream, testosterone cream for female patients, progesterone cream, and related topical preparations)
-- **Formulation Compounding Center (FCC)** — Lewisville, Texas — injectable hormone preparations (testosterone cypionate, testosterone propionate, HCG, and related injectables) and other compounded preparations not available as creams
+- **Custom Pharmacy of Evans** — Evans, Georgia — primary for all hormone therapy: Bi-Est transdermal cream, oral micronized progesterone, women's low-dose testosterone cream, men's testosterone cypionate injections, pellets, and related preparations
+- **Formulation Compounding Center (FCC)** — Lewisville, Texas — backup injectable and alternate formulations (troches, capsules) when clinically indicated
+- **DrFirst Rcopia** — FDA-approved retail patches, gels, and brand testosterone when patient prefers commercial products
 The Practice may use other state-licensed 503A compounding pharmacies as clinically appropriate or as availability requires.
 ### 1.4 — Administration Methods
 Hormones may be administered by various routes including, but not limited to:

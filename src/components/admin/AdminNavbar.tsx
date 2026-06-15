@@ -330,6 +330,16 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                   </Link>
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem asChild>
+                <Link to="/staff/vendor-guide" target="_blank" className="cursor-pointer gap-2">
+                  Vendor guide (GC / FCC)
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/formulary-economics" target="_blank" className="cursor-pointer gap-2">
+                  Formulary economics
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/staff-pricing-cheatsheet" target="_blank" className="cursor-pointer">
@@ -500,6 +510,18 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 </DropdownMenuItem>
               )}
               
+              <DropdownMenuItem asChild>
+                <Link to="/staff/vendor-guide" target="_blank" className="cursor-pointer gap-2">
+                  <FileText className="w-4 h-4" />
+                  Vendor guide
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/formulary-economics" target="_blank" className="cursor-pointer gap-2">
+                  <FileText className="w-4 h-4" />
+                  Formulary economics
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/staff-pricing-cheatsheet" target="_blank" className="cursor-pointer gap-2">
                   <FileText className="w-4 h-4" />

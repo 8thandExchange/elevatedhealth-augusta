@@ -136,8 +136,27 @@ const StaffPricingCheatsheet = () => {
 
           <Card className="border-accent/40">
             <CardHeader>
-              <CardTitle className="font-playfair text-xl">Metabolic Recomposition Stack</CardTitle>
+              <CardTitle className="font-playfair text-xl">Vendor routing (GC + FCC)</CardTitle>
             </CardHeader>
+            <CardContent className="font-jost text-sm space-y-2">
+              <p>
+                <strong>GC Scientific</strong> — metabolic stack, retatrutide, SS-31, tesamorelin, CJC/Ipamorelin (GC
+                network 503A).
+              </p>
+              <p>
+                <strong>FCC</strong> — IV Lounge, sermorelin, NAD+, healing stack, AOD, SLU, 5-amino, GLP-1 backup.
+              </p>
+              <p>
+                <strong>Custom Pharmacy of Evans</strong> — all hormones (Bi-Est cream + prog caps women; test cyp men).
+              </p>
+              <p className="text-xs text-muted-foreground pt-2">
+                Full guide: <Link to="/staff/vendor-guide" className="text-accent underline">/staff/vendor-guide</Link> ·
+                Margins: <Link to="/formulary-economics" className="text-accent underline">/formulary-economics</Link>
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-accent/40">
             <CardContent className="font-jost text-sm space-y-3">
               <p>
                 <span className="font-medium text-foreground">Program (recommended):</span>{" "}

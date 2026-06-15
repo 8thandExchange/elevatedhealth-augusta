@@ -70,6 +70,8 @@ import ClinicalProtocolDetail from "./pages/ClinicalProtocolDetail";
 import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor";
 import InventoryDashboard from "./pages/InventoryDashboard";
 import FormularyDashboard from "./pages/FormularyDashboard";
+import FormularyEconomicsDashboard from "./pages/FormularyEconomicsDashboard";
+import StaffVendorGuide from "./pages/StaffVendorGuide";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import ProviderSchedules from "./pages/admin/ProviderSchedules";
@@ -211,6 +213,16 @@ const App = () => {
           <Route path="/staff-quick-card" element={
             <ProviderLayout title="Quick Reference Card" subtitle="Internal Use Only" showNavbar={false}>
               <StaffQuickCard />
+            </ProviderLayout>
+          } />
+          <Route path="/staff/vendor-guide" element={
+            <ProviderLayout title="Vendor Guide" subtitle="GC · FCC · Custom Pharmacy" showNavbar={false}>
+              <StaffVendorGuide />
+            </ProviderLayout>
+          } />
+          <Route path="/formulary-economics" element={
+            <ProviderLayout title="Formulary Economics" subtitle="COGS · margin · GC vs FCC" showNavbar={false}>
+              <FormularyEconomicsDashboard />
             </ProviderLayout>
           } />
           <Route path="/patient/create-account" element={<CreateAccount />} />
