@@ -7,6 +7,7 @@ import {
   nonMemberSteadyMonthlyCents,
   nonMemberSteadyMonthlyCentsGlp1,
 } from "./pricing";
+import { metabolicStackAlacarteNonMemberCents } from "./metabolicStackPricing";
 import { ELEVATED_PROGRAMS } from "./stripeConfig";
 
 describe("pricing catalog", () => {
@@ -30,5 +31,17 @@ describe("program membership vs à la carte steady cost", () => {
 
   it("GLP-1 tirzepatide steady baseline exceeds membership", () => {
     expect(ELEVATED_PROGRAMS.glp1.amount).toBeLessThan(nonMemberSteadyMonthlyCentsGlp1("tirzepatide"));
+  });
+
+  it("metabolic stack à la carte catalog keys resolve", () => {
+    expect(metabolicStackAlacarteNonMemberCents()).toBe(
+      44900 + 24900 + 19900 + 17900 + 39900 + 12900 + 9900 + 11900,
+    );
+  });
+
+  it("metabolic recomposition stack is cheaper than à la carte bundle estimate", () => {
+    expect(ELEVATED_PROGRAMS.metabolicRecomposition.amount).toBeLessThan(
+      metabolicStackAlacarteNonMemberCents(),
+    );
   });
 });

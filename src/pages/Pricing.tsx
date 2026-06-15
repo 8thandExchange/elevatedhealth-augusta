@@ -929,7 +929,7 @@ const Pricing = () => {
                     <Badge className="mb-2 bg-green-500/10 text-green-600 border-green-500/30" variant="outline">New</Badge>
                     <h4 className="font-cormorant text-lg text-foreground">5-Amino-1MQ</h4>
                     <p className="text-xs text-muted-foreground mb-2">Metabolic Enhancer</p>
-                    <span className="text-xl font-cormorant text-foreground">$279/mo</span>
+                    <span className="text-xl font-cormorant text-foreground">$119/mo</span>
                   </CardContent>
                 </Card>
 

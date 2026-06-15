@@ -7,10 +7,12 @@ import {
   CORE_SERVICES,
   IV_WALKIN_EXAMPLES,
   MEDICATION_FILLS,
+  METABOLIC_STACK_ALACARTE,
   PEPTIDE_PRODUCTS,
   SEXUAL_WELLNESS_PRODUCTS,
   HAIR_RESTORATION_PRODUCTS,
 } from "./stripeConfig";
+import { metabolicStackAlacarteNonMemberCents } from "./metabolicStackPricing";
 
 export const MEMBER_DISCOUNT_PERCENT = 20;
 const factor = (100 - MEMBER_DISCOUNT_PERCENT) / 100;
@@ -48,6 +50,7 @@ export const CATALOG: Record<string, CatalogItem> = {
   ...fromGroup(PEPTIDE_PRODUCTS, () => ({ kind: "discount" }), "month"),
   ...fromGroup(SEXUAL_WELLNESS_PRODUCTS, () => ({ kind: "discount" }), "month"),
   ...fromGroup(HAIR_RESTORATION_PRODUCTS, () => ({ kind: "discount" }), "month"),
+  ...fromGroup(METABOLIC_STACK_ALACARTE, () => ({ kind: "discount" }), "month"),
   // Single medication fills: included for the matching program's members.
   ...fromGroup(
     MEDICATION_FILLS,
@@ -58,6 +61,7 @@ export const CATALOG: Record<string, CatalogItem> = {
         progesterone: "hrt",
         semaglutide: "glp1",
         tirzepatide: "glp1",
+        retatrutide: "metabolicRecomposition",
       };
       return { kind: "included", program: map[key] };
     },
@@ -148,8 +152,12 @@ export function assertPricingInvariants(): void {
       throw new Error(`Pricing invariant: member > non-member for ${item.key}`);
     }
   }
-  (["trt", "hrt", "glp1", "wellness"] as const).forEach((p) => {
-    if (ELEVATED_PROGRAMS[p].amount >= nonMemberSteadyMonthlyCents(p)) {
+  (["trt", "hrt", "glp1", "wellness", "metabolicRecomposition"] as const).forEach((p) => {
+    const steady =
+      p === "metabolicRecomposition"
+        ? metabolicStackAlacarteNonMemberCents()
+        : nonMemberSteadyMonthlyCents(p);
+    if (ELEVATED_PROGRAMS[p].amount >= steady) {
       throw new Error(
         `Pricing invariant: ${p} membership is not cheaper than à la carte steady cost`,
       );

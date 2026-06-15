@@ -24,6 +24,7 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 | ELEVATED TRT (men) | $249/month | Testosterone cypionate from Custom Pharmacy of Evans, self-injection supplies, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, anastrozole/HCG when clinically indicated, all Caroline-initiated physician oversight. |
 | ELEVATED HRT (women) | $229/month | Bi-Est cream/troches, progesterone, testosterone cream when prescribed, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. |
 | ELEVATED GLP-1 | $349/month | Compounded semaglutide OR tirzepatide from FCC, monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. |
+| ELEVATED METABOLIC RECOMPOSITION | $1,199/month | 90-day phased stack: retatrutide anchor, SS-31/NAD+ mitochondrial layer, CJC/Tesamorelin GH phase, optional B-tier add-ons, physician oversight, monitoring labs per protocol. Policy override 2026-06-14 (Dr. Akers). |
 | ELEVATED WELLNESS (non-Rx) | $199/month | 2 free IV drips per month, 20% off à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. |
 ### What Every Membership Includes
 - Your monthly medication is included (where applicable to the program)
@@ -96,7 +97,7 @@ Clinic phone: (706) 760-3470
 Note: This number must appear consistently on every patient-facing surface. Any other phone number found in the codebase (e.g. 706-973-3866 on /affordability) is incorrect and must be corrected to (706) 760-3470.
 ## Live Stripe Price IDs (Production)
 **Stripe Account:** acct_1SQrM7CXbCBPFEeI (live mode)  
-**Last verified:** 2026-05-13
+**Last verified:** 2026-06-14
 All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy codebase (those prefixed with `…EOtKRY99pu…`) are deprecated and must not be referenced in any patient-facing code path.
 ### Program Memberships (Recurring Monthly)
 | Product | Price | Stripe Product ID | Stripe Price ID |
@@ -104,6 +105,7 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | ELEVATED TRT | $249/mo | prod_UVdgaw0SyMI2jz | price_1TWcPICXbCBPFEeInMGSsjDN |
 | ELEVATED HRT | $229/mo | prod_UVdgH1SlumTl5O | price_1TWcPKCXbCBPFEeIJKBf62b9 |
 | ELEVATED GLP-1 | $349/mo | prod_UVdgUmNtkHxr3V | price_1TWcPLCXbCBPFEeIK7tkeIAM |
+| ELEVATED METABOLIC RECOMPOSITION | $1,199/mo | prod_UhqS2sWj7JenEp | price_1TiQlECXbCBPFEeI4vKTyIq4 |
 | ELEVATED WELLNESS | $199/mo | prod_UVdg37MnW1puuK | price_1TWcPNCXbCBPFEeIXo6IDpPf |
 ### Core Services (One-Time)
 | Product | Price | Stripe Product ID | Stripe Price ID |
@@ -122,6 +124,7 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | Progesterone Fill | $99 | prod_UVe8jVlaypTCLy | price_1TWcq1CXbCBPFEeI35J50U0I |
 | Semaglutide Single Fill | $299 | prod_UVe8LmywoayLOE | price_1TWcqTCXbCBPFEeIP1U1HSld |
 | Tirzepatide Single Fill | $399 | prod_UVeAmnWt8FMQCf | price_1TWcsCCXbCBPFEeI8iA8kbrx |
+| Retatrutide Single Fill | $449 | prod_UhqSeeHiiHdqHr | price_1TiQlECXbCBPFEeIzhCHuRhj |
 ### À La Carte Peptide Therapy (Recurring Monthly)
 | Product | Price | Stripe Product ID | Stripe Price ID |
 |---|---|---|---|
@@ -133,6 +136,13 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | NAD+ Nasal Spray | $99/mo | prod_UVeDO4N214JNkQ | price_1TWcvUCXbCBPFEeILsUFp0tq |
 | GHK-Cu Sublingual | $99/mo | prod_UVeEjWP5nRaa3z | price_1TWcvrCXbCBPFEeIJYVzAjXS |
 | GHK-Cu Topical | $149/mo | prod_UVeEx971R0NYhK | price_1TWcwJCXbCBPFEeIL3UgXgTu |
+### Metabolic Recomposition Stack — À La Carte (Recurring Monthly)
+| Product | Price | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|
+| SS-31 (Elamipretide) | $249/mo | prod_UhqS0eCjYBvB17 | price_1TiQlFCXbCBPFEeIPKdKzUiU |
+| AOD-9604 | $129/mo | prod_UhqSyrc4RGtLoX | price_1TiQlGCXbCBPFEeIsx9Dk0z1 |
+| SLU-PP-332 | $99/mo | prod_UhqSXKYcScueXq | price_1TiQlGCXbCBPFEeIA3NVzqXV |
+| 5-Amino-1MQ | $119/mo | prod_UhqSgJgtKNDVAF | price_1TiQlHCXbCBPFEeIDNFp83oo |
 ### À La Carte Sexual Wellness
 | Product | Price | Type | Stripe Product ID | Stripe Price ID |
 |---|---|---|---|---|
@@ -189,4 +199,4 @@ The following test-mode price IDs are deprecated. They appear in legacy code tha
 - `price_1SgcM9EOtKRY99puXlVr5s6o` (GLP-1 starter) → DELETE; rolled into ELEVATED GLP-1
 - `price_1Sd8ChEOtKRY99pu7iaAF3Jd` (GLP-1 continuation) → DELETE; rolled into ELEVATED GLP-1
 ---
-End of Pricing Source of Truth. Last updated 2026-05-13.
+End of Pricing Source of Truth. Last updated 2026-06-14.

@@ -8,8 +8,7 @@
 // To update: replace the JSON file and regenerate this module (or edit in place if a small change).
 // Do NOT hand-edit the FCC_FORMULARY array — it's machine-derived from the JSON.
 //
-// Hidden SKUs are filtered from UI selection. Currently hidden:
-// Retatrutide SKUs (FDA compounding prohibition, May 2026).
+// Hidden SKUs filtered from UI except retatrutide (policy override 2026-06-14, Dr. Akers).
 
 import catalogData from "../../docs/pharmacy/fcc_formuconnect_q2_2026.json";
 
@@ -70,7 +69,9 @@ export const FCC_CATEGORY_LABELS: Record<FCCCategory, string> = {
 export const FCC_FORMULARY: FCCItem[] = (catalogData as any).items as FCCItem[];
 
 // Convenience: visible items only (UI-ready)
-export const FCC_FORMULARY_VISIBLE: FCCItem[] = FCC_FORMULARY.filter((item) => !item.hidden);
+export const FCC_FORMULARY_VISIBLE: FCCItem[] = FCC_FORMULARY.filter(
+  (item) => !item.hidden || /Retatrutide/i.test(item.name),
+);
 
 // Convenience: lookup by SKU
 export const FCC_SKU_LOOKUP: Record<string, FCCItem> = Object.fromEntries(

@@ -8,10 +8,13 @@ import {
   ELEVATED_PROGRAMS,
   HAIR_RESTORATION_PRODUCTS,
   MEDICATION_FILLS,
+  METABOLIC_STACK_ALACARTE,
   PEPTIDE_PRODUCTS,
   SEXUAL_WELLNESS_PRODUCTS,
 } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
+import { metabolicStackAlacarteNonMemberCents, stackAlacarteLineItems } from "@/lib/metabolicStackPricing";
+import { METABOLIC_STACK_DISPLAY } from "@/lib/metabolicStackConfig";
 
 const fmtMember = (displayNonMember: string) => `${displayNonMember} → ${MEMBER_DISCOUNT_PERCENT}% off for ELEVATED members`;
 
@@ -128,6 +131,39 @@ const StaffPricingCheatsheet = () => {
                   <span className="font-medium whitespace-nowrap">{fmtMember(p.displayPrice)}</span>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-accent/40">
+            <CardHeader>
+              <CardTitle className="font-playfair text-xl">Metabolic Recomposition Stack</CardTitle>
+            </CardHeader>
+            <CardContent className="font-jost text-sm space-y-3">
+              <p>
+                <span className="font-medium text-foreground">Program (recommended):</span>{" "}
+                {ELEVATED_PROGRAMS.metabolicRecomposition.name} — {METABOLIC_STACK_DISPLAY} all-in (phased Rx +
+                monitoring). Protocol slug: <code className="text-xs">metabolic-recomposition-stack-90d</code> (draft —
+                Akers sign-off).
+              </p>
+              <p className="text-muted-foreground">
+                À la carte if patient declines program (sum at full stack ≈ $
+                {(metabolicStackAlacarteNonMemberCents() / 100).toFixed(0)}/mo eq.):
+              </p>
+              <ul className="space-y-1 text-xs">
+                {stackAlacarteLineItems().map((line) => (
+                  <li key={line.key} className="flex justify-between gap-2">
+                    <span>{line.name}</span>
+                    <span className="whitespace-nowrap">
+                      ${(line.nonMemberCents / 100).toFixed(0)}
+                      {line.interval === "one_time" ? "/fill" : "/mo"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs text-muted-foreground">
+                Stack-only à la carte SKUs: {Object.values(METABOLIC_STACK_ALACARTE).map((p) => p.name).join(", ")}.
+                Retatrutide fill {MEDICATION_FILLS.retatrutide.displayPrice} — included on program.
+              </p>
             </CardContent>
           </Card>
 

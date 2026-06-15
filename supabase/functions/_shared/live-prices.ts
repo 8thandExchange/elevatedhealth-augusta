@@ -8,6 +8,7 @@ export const LIVE_ELEVATED_PROGRAMS = {
   hrt: "price_1TWcPKCXbCBPFEeIJKBf62b9",
   glp1: "price_1TWcPLCXbCBPFEeIK7tkeIAM",
   wellness: "price_1TWcPNCXbCBPFEeIXo6IDpPf",
+  metabolicRecomposition: "price_1TiQlECXbCBPFEeI4vKTyIq4",
 } as const;
 
 export type LiveElevatedProgramKey = keyof typeof LIVE_ELEVATED_PROGRAMS;
@@ -30,6 +31,7 @@ export const LIVE_MEDICATION_FILLS = {
   progesterone: "price_1TWcq1CXbCBPFEeI35J50U0I",
   semaglutide: "price_1TWcqTCXbCBPFEeIP1U1HSld",
   tirzepatide: "price_1TWcsCCXbCBPFEeI8iA8kbrx",
+  retatrutide: "price_1TiQlECXbCBPFEeIzhCHuRhj",
 } as const;
 
 export type LiveMedicationFillKey = keyof typeof LIVE_MEDICATION_FILLS;

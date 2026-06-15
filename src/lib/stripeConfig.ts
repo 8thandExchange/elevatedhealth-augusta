@@ -46,6 +46,14 @@ export const ELEVATED_PROGRAMS = {
     displayPrice: "$199/mo",
     interval: "month",
   },
+  metabolicRecomposition: {
+    name: "ELEVATED METABOLIC RECOMPOSITION",
+    priceId: "price_1TiQlECXbCBPFEeI4vKTyIq4",
+    productId: "prod_UhqS2sWj7JenEp",
+    amount: 119900,
+    displayPrice: "$1,199/mo",
+    interval: "month",
+  },
 } as const;
 
 export type ElevatedProgramKey = keyof typeof ELEVATED_PROGRAMS;
@@ -138,6 +146,14 @@ export const MEDICATION_FILLS = {
     displayPrice: "$399",
     memberAlternative: "glp1" satisfies ElevatedProgramKey,
   },
+  retatrutide: {
+    name: "Retatrutide Single Fill",
+    priceId: "price_1TiQlECXbCBPFEeIzhCHuRhj",
+    productId: "prod_UhqSeeHiiHdqHr",
+    amount: 44900,
+    displayPrice: "$449",
+    memberAlternative: "metabolicRecomposition" satisfies ElevatedProgramKey,
+  },
 } as const;
 
 // Peptide therapy (recurring monthly)
@@ -197,6 +213,38 @@ export const PEPTIDE_PRODUCTS = {
     productId: "prod_UVeEx971R0NYhK",
     amount: 14900,
     displayPrice: "$149/mo",
+  },
+} as const;
+
+/** Metabolic recomposition stack — à la carte monthly (when not on STACK-METABOLIC-FULL program). */
+export const METABOLIC_STACK_ALACARTE = {
+  ss31: {
+    name: "SS-31 (Elamipretide)",
+    priceId: "price_1TiQlFCXbCBPFEeIPKdKzUiU",
+    productId: "prod_UhqS0eCjYBvB17",
+    amount: 24900,
+    displayPrice: "$249/mo",
+  },
+  aod9604: {
+    name: "AOD-9604",
+    priceId: "price_1TiQlGCXbCBPFEeIsx9Dk0z1",
+    productId: "prod_UhqSyrc4RGtLoX",
+    amount: 12900,
+    displayPrice: "$129/mo",
+  },
+  sluPp332: {
+    name: "SLU-PP-332",
+    priceId: "price_1TiQlGCXbCBPFEeIA3NVzqXV",
+    productId: "prod_UhqSXKYcScueXq",
+    amount: 9900,
+    displayPrice: "$99/mo",
+  },
+  fiveAmino1mq: {
+    name: "5-Amino-1MQ",
+    priceId: "price_1TiQlHCXbCBPFEeIDNFp83oo",
+    productId: "prod_UhqSgJgtKNDVAF",
+    amount: 11900,
+    displayPrice: "$119/mo",
   },
 } as const;
 

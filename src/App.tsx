@@ -16,6 +16,7 @@ import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
 import { ServiceWorkerUpdater } from "@/components/ServiceWorkerUpdater";
 import { CACHE_VERSION } from "@/lib/cacheVersion";
 import Index from "./pages/Index";
+import MetabolicRecomposition from "./pages/MetabolicRecomposition";
 import WeightLoss from "./pages/WeightLoss";
 import Hormones from "./pages/Hormones";
 import HormonesWomen from "./pages/HormonesWomen";
@@ -146,6 +147,7 @@ const App = () => {
           <Route path="/reset-password" element={<SetNewPassword />} />
           <Route path="/weightloss" element={<WeightLoss />} />
           <Route path="/weight-loss" element={<WeightLoss />} />
+          <Route path="/metabolic-recomposition" element={<MetabolicRecomposition />} />
           <Route path="/hormones" element={<Hormones />} />
           <Route path="/hormones-women" element={<HormonesWomen />} />
           <Route path="/hormones-men" element={<HormonesMen />} />

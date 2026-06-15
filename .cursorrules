@@ -181,13 +181,12 @@ PEPTIDE STACKS:
 - Growth/Recovery stack: CJC-1295 / Ipamorelin nightly
 - Cognitive stack: as clinically indicated (Selank, etc. — verify formulary before recommending)
 
-RETATRUTIDE — DO NOT OFFER. Not FDA-approved, FDA explicitly
-  prohibits compounding under federal law, Eli Lilly patent
-  protection. Multiple FDA warning letters issued Sept 2025
-  to compounders selling it. We are building a "Retatrutide
-  Early Access Registry" instead — email capture, day-one
-  prescribing when approved (estimated 2027). Do not add
-  retatrutide to any storefront menu.
+RETATRUTIDE — OFFERED (policy override 2026-06-14, Dr. Troy Akers).
+  Compounded retatrutide anchors the ELEVATED METABOLIC RECOMPOSITION stack.
+  FCC SKUs 2478–2485; Stripe program price via STRIPE_METABOLIC_STACK_PRICE_ID.
+  Prior FDA compounding prohibition note superseded by physician-approved clinic policy.
+  Market only with GLP-1 class consent + physician oversight. Do not compare to
+  research-peptide Cat 2 consent pathway unless formulation changes.
 
 KETAMINE — NOT OFFERED. Legacy artifact only.
 

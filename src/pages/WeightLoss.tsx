@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { trackEvent } from "@/lib/analytics";
 import { useState } from "react";
@@ -206,6 +207,13 @@ const WeightLoss = () => {
         <Navbar />
         
         <main>
+          <div className="bg-accent/10 border-b border-accent/30 px-6 py-3 text-center text-sm">
+            New:{" "}
+            <Link to="/metabolic-recomposition" className="font-medium text-accent-foreground underline-offset-4 hover:underline">
+              ELEVATED Metabolic Recomposition Stack
+            </Link>{" "}
+            — phased retatrutide protocol with SS-31, NAD+, and GH optimization.
+          </div>
           {/* Hero Section - Warm Alabaster with Golden Balance */}
           <section className="min-h-[88vh] md:min-h-[90vh] flex items-center pt-32 pb-20 md:pb-28 relative overflow-hidden">
             {/* Warm Alabaster/Cream Background */}

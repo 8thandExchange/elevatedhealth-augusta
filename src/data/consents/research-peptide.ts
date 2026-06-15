@@ -47,7 +47,7 @@ I understand that this consent does NOT cover:
 - Anabolic-androgenic steroids
 - Selective Androgen Receptor Modulators (SARMs)
 - Substances on the FDA Difficult to Compound list
-- Substances explicitly prohibited from compounding by the FDA (including Retatrutide, as of the date of this consent)
+- Substances explicitly prohibited from compounding by the FDA (excluding retatrutide when prescribed under the ELEVATED Metabolic Recomposition program per clinic policy override dated 2026-06-14)
 - Any peptide or substance used for performance enhancement in athletic competition
 ---
 ## SECTION 2 — REGULATORY STATUS (ATTESTATION REQUIRED)

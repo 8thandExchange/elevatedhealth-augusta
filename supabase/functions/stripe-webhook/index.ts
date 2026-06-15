@@ -15,6 +15,7 @@ type ProductRecognition =
   | "elevated_hrt"
   | "elevated_glp1"
   | "elevated_wellness"
+  | "elevated_metabolic_recomposition"
   | "legacy_elevated_membership"
   | "alacarte_fill"
   | "consultation"
@@ -27,6 +28,7 @@ const ELEVATED_PROGRAM_PRICE_MAP: Record<string, ElevatedProgramKey> = {
   [LIVE_ELEVATED_PROGRAMS.hrt]: "hrt",
   [LIVE_ELEVATED_PROGRAMS.glp1]: "glp1",
   [LIVE_ELEVATED_PROGRAMS.wellness]: "wellness",
+  [LIVE_ELEVATED_PROGRAMS.metabolicRecomposition]: "metabolicRecomposition",
 };
 
 /** Legacy compatibility — remove legacy ID recognition after 2026-08-11 (sunset). */
@@ -44,6 +46,7 @@ function recognitionForProgram(p: ElevatedProgramKey | null, legacy: boolean): P
   if (p === "trt") return "elevated_trt";
   if (p === "hrt") return "elevated_hrt";
   if (p === "glp1") return "elevated_glp1";
+  if (p === "metabolicRecomposition") return "elevated_metabolic_recomposition";
   return "elevated_wellness";
 }
 

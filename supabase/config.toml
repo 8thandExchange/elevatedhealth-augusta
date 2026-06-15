@@ -175,6 +175,12 @@ verify_jwt = false
 [functions.create-tirzepatide-checkout]
 verify_jwt = false
 
+[functions.create-metabolic-stack-checkout]
+verify_jwt = false
+
+[functions.bootstrap-metabolic-stripe-prices]
+verify_jwt = false
+
 [functions.send-welcome-sms]
 verify_jwt = false
 
