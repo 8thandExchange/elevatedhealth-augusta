@@ -72,6 +72,7 @@ import InventoryDashboard from "./pages/InventoryDashboard";
 import FormularyDashboard from "./pages/FormularyDashboard";
 import FormularyEconomicsDashboard from "./pages/FormularyEconomicsDashboard";
 import StaffVendorGuide from "./pages/StaffVendorGuide";
+import StaffSOPManual from "./pages/StaffSOPManual";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import ProviderSchedules from "./pages/admin/ProviderSchedules";
@@ -223,6 +224,11 @@ const App = () => {
           <Route path="/formulary-economics" element={
             <ProviderLayout title="Formulary Economics" subtitle="COGS · margin · GC vs FCC" showNavbar={false}>
               <FormularyEconomicsDashboard />
+            </ProviderLayout>
+          } />
+          <Route path="/staff/sop-manual" element={
+            <ProviderLayout title="SOP Manual" subtitle="Algorithms · financials · workflows" showNavbar={false}>
+              <StaffSOPManual />
             </ProviderLayout>
           } />
           <Route path="/patient/create-account" element={<CreateAccount />} />

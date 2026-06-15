@@ -72,6 +72,7 @@ const ARTICLES: HelpArticle[] = [
       { label: "Inventory", to: "/inventory" },
       { label: "Formulary", to: "/formulary" },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
+      { label: "SOP Manual", to: "/staff/sop-manual" },
       { label: "Formulary economics", to: "/formulary-economics" },
     ],
   },
@@ -124,7 +125,8 @@ export function StaffHelpWidget() {
       { label: "Dashboard", to: "/provider/dashboard", icon: BookOpen },
       { label: "Inventory", to: "/inventory", icon: Boxes },
       { label: "Formulary", to: "/formulary", icon: ClipboardList },
-      { label: "Vendor guide", to: "/staff/vendor-guide", icon: ClipboardList },
+      { label: "Vendor guide", to: "/staff/vendor-guide" },
+      { label: "SOP Manual", to: "/staff/sop-manual", icon: ClipboardList },
     ],
     [],
   );
