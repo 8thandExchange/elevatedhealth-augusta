@@ -82,6 +82,7 @@ import TodayScheduleWidget from "@/components/provider/TodayScheduleWidget";
 import PatientNotesCard from "@/components/provider/PatientNotesCard";
 import SOAPNotesPanel from "@/components/provider/SOAPNotesPanel";
 import TreatmentPlanPanel from "@/components/provider/TreatmentPlanPanel";
+import CdsAssessmentPanel from "@/components/provider/CdsAssessmentPanel";
 import MedicationPanel from "@/components/provider/MedicationPanel";
 import AppointmentPanel from "@/components/provider/AppointmentPanel";
 import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
@@ -2285,6 +2286,17 @@ const ProviderDashboard = () => {
                   selectedPatient.patient.treatment_request?.includes("weight") || selectedPatient.patient.treatment_request === "glp1" ? "weight_loss" :
                   "hormone"
                 }
+              />
+
+              <CdsAssessmentPanel
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientDob={selectedPatient.patient.dob}
+                patientEmail={selectedPatient.patient.email}
+                patientStreet={selectedPatient.patient.street_address}
+                patientCity={selectedPatient.patient.city}
+                patientState={selectedPatient.patient.state}
+                patientZip={selectedPatient.patient.zip_code}
               />
 
               {/* Medication Management */}

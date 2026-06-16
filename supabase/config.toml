@@ -255,6 +255,10 @@ verify_jwt = true
 [functions.staff-help-ai]
 verify_jwt = true
 
+# run-cds-assessment — deterministic CDS engine; clinic staff JWT required.
+[functions.run-cds-assessment]
+verify_jwt = true
+
 # Twilio webhooks — auth via X-Twilio-Signature inside function.
 [functions.twilio-inbound-sms]
 verify_jwt = false
