@@ -37,6 +37,8 @@ export interface CanOfferTherapyInput {
   protocolSigned?: boolean;
   /** CDS pathway row is active with prescriber sign-off */
   pathwayActive?: boolean;
+  /** CDS candidate row is active with prescriber sign-off */
+  candidateActive?: boolean;
   /** Provider has approved cds_provider_review for current assessment */
   providerReviewApproved?: boolean;
 }
@@ -156,6 +158,12 @@ export function canOfferTherapy(input: CanOfferTherapyInput): GateResult {
       reason: "CDS pathway config is not active / prescriber-signed.",
       patientExplanation: null,
     };
+  } else if (input.candidateActive === false) {
+    protocol = {
+      status: "pending",
+      reason: "CDS candidate config is not active / prescriber-signed.",
+      patientExplanation: null,
+    };
   } else if (input.protocolSigned === false) {
     protocol = {
       status: "pending",
@@ -247,6 +255,7 @@ export function gateResultFromAssessmentCandidate(
     patientContraindications?: string[];
     protocolSigned?: boolean;
     pathwayActive?: boolean;
+    candidateActive?: boolean;
     providerReviewApproved?: boolean;
   },
 ): GateResult {
@@ -256,6 +265,8 @@ export function gateResultFromAssessmentCandidate(
   const contraindicationTags = Array.isArray(row.metadata?.contraindication_tags)
     ? (row.metadata.contraindication_tags as string[])
     : [];
+  const candidateActive =
+    ctx.candidateActive ?? row.metadata?.candidate_active === true;
 
   return canOfferTherapy({
     therapyKey: row.candidate_key,
@@ -270,6 +281,7 @@ export function gateResultFromAssessmentCandidate(
     substanceAcknowledgmentIds: ctx.substanceAcknowledgmentIds,
     protocolSigned: ctx.protocolSigned,
     pathwayActive: ctx.pathwayActive,
+    candidateActive,
     providerReviewApproved: ctx.providerReviewApproved,
   });
 }

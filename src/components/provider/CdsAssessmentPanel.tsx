@@ -573,7 +573,8 @@ export default function CdsAssessmentPanel({
                         engineContext &&
                         gateResultFromAssessmentCandidate(row, {
                           ...engineContext,
-                          pathwayActive: pathwaySummary?.active !== false,
+                          pathwayActive: pathwaySummary?.active === true,
+                          candidateActive: row.metadata?.candidate_active === true,
                           protocolSigned: pathwaySummary?.active === true,
                           providerReviewApproved:
                             review?.decision === "approved" || review?.decision === "modified",
@@ -696,7 +697,7 @@ export default function CdsAssessmentPanel({
 
                 {assessment && results.length === 0 && assessment.status !== "draft" && (
                   <p className="font-jost text-sm text-muted-foreground">
-                    No active catalog candidates matched this pathway. Seed production rows in CDS config (prescriber-only).
+                    No catalog candidates matched this pathway. Run migration 20260616200000 or activate prescriber-signed rows in <code className="text-xs">cds_candidates</code>.
                   </p>
                 )}
 

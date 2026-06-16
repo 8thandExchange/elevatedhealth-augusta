@@ -54,6 +54,8 @@ export interface CdsCandidateInput {
   required_consent_types: string[];
   rank_weight: number;
   is_sample: boolean;
+  active?: boolean;
+  contraindication_tags?: string[];
 }
 
 export interface CdsEngineContext {
@@ -154,6 +156,8 @@ export function evaluateCandidate(
       pathway_id: candidate.pathway_id,
       required_lab_slugs: candidate.required_lab_slugs,
       required_consent_types: candidate.required_consent_types,
+      contraindication_tags: candidate.contraindication_tags ?? [],
+      candidate_active: candidate.active === true,
     },
   };
 

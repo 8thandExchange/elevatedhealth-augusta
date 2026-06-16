@@ -157,6 +157,18 @@ describe("cdsEngine pathway selection", () => {
     expect(selected).toHaveLength(1);
     expect(selected[0]?.id).toBe("real");
   });
+
+  it("includes contraindication_tags and candidate_active in result metadata", () => {
+    const result = evaluateCandidate(
+      candidate({
+        contraindication_tags: ["pregnancy"],
+        active: false,
+      }),
+      baseCtx,
+    );
+    expect(result.metadata.contraindication_tags).toEqual(["pregnancy"]);
+    expect(result.metadata.candidate_active).toBe(false);
+  });
 });
 
 describe("deriveAssessmentStatus", () => {

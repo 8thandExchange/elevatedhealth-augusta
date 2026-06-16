@@ -13,6 +13,7 @@ describe("canOfferTherapy", () => {
     substanceAcknowledgmentIds: [] as string[],
     protocolSigned: true,
     pathwayActive: true,
+    candidateActive: true,
     providerReviewApproved: true,
   };
 
@@ -68,6 +69,16 @@ describe("canOfferTherapy", () => {
     const result = canOfferTherapy({
       ...base,
       protocolSigned: false,
+    });
+    expect(result.canOffer).toBe(false);
+    expect(result.protocol.status).toBe("pending");
+    expect(result.missingActions).toContain("sign_protocol");
+  });
+
+  it("requires active candidate config when candidateActive is false", () => {
+    const result = canOfferTherapy({
+      ...base,
+      candidateActive: false,
     });
     expect(result.canOffer).toBe(false);
     expect(result.protocol.status).toBe("pending");

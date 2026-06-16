@@ -215,9 +215,8 @@ Deno.serve(async (req) => {
         supabaseAdmin
           .from("cds_candidates")
           .select(
-            "id, pathway_id, candidate_key, display_name, regulatory_status, requires_labs, required_lab_slugs, required_consent_types, rank_weight, is_sample, active",
+            "id, pathway_id, candidate_key, display_name, regulatory_status, requires_labs, required_lab_slugs, required_consent_types, rank_weight, is_sample, active, contraindication_tags",
           )
-          .eq("active", true)
           .eq("is_sample", false),
       ]);
 
@@ -249,6 +248,8 @@ Deno.serve(async (req) => {
         required_consent_types: (c.required_consent_types ?? []) as string[],
         rank_weight: Number(c.rank_weight),
         is_sample: c.is_sample as boolean,
+        active: c.active as boolean,
+        contraindication_tags: (c.contraindication_tags ?? []) as string[],
       })),
       pathwayIds,
     );
