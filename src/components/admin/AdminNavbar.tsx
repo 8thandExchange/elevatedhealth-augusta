@@ -331,6 +331,11 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem asChild>
+                <Link to="/staff/clinical-pathway" target="_blank" className="cursor-pointer gap-2">
+                  Clinical Pathway Engine
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to="/staff/sop-manual" target="_blank" className="cursor-pointer gap-2">
                   SOP Manual (PDF)
                 </Link>

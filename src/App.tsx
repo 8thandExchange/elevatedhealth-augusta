@@ -73,6 +73,7 @@ import FormularyDashboard from "./pages/FormularyDashboard";
 import FormularyEconomicsDashboard from "./pages/FormularyEconomicsDashboard";
 import StaffVendorGuide from "./pages/StaffVendorGuide";
 import StaffSOPManual from "./pages/StaffSOPManual";
+import StaffClinicalPathway from "./pages/StaffClinicalPathway";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import ProviderSchedules from "./pages/admin/ProviderSchedules";
@@ -229,6 +230,11 @@ const App = () => {
           <Route path="/staff/sop-manual" element={
             <ProviderLayout title="SOP Manual" subtitle="Algorithms · financials · workflows" showNavbar={false}>
               <StaffSOPManual />
+            </ProviderLayout>
+          } />
+          <Route path="/staff/clinical-pathway" element={
+            <ProviderLayout title="Clinical Pathway" subtitle="Goal → labs → dosing" showNavbar={false}>
+              <StaffClinicalPathway />
             </ProviderLayout>
           } />
           <Route path="/patient/create-account" element={<CreateAccount />} />
