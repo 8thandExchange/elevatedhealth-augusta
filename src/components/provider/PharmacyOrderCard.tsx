@@ -1,13 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Pill, Sparkles } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Pill, Sparkles, AlertTriangle } from "lucide-react";
 import PrescriptionPortalModal from "./PrescriptionPortalModal";
 import { MedicationRecommendation } from "@/lib/medicationMapping";
+import {
+  defaultPharmacyCategory,
+  findFormularyItem,
+  formularyItemsForCategory,
+  resolveFormularyId,
+  visiblePharmacyCategories,
+  portalRoutingCategory,
+  type PharmacyCategoryId,
+  type PharmacyFormularyItem,
+} from "@/lib/pharmacyOrderFormulary";
 
 interface PatientData {
   id: string;
@@ -20,7 +33,7 @@ interface PatientData {
   state?: string | null;
   zip_code?: string | null;
   allergies?: string | null;
-  medical_history?: Record<string, any> | null;
+  medical_history?: Record<string, unknown> | null;
   gender?: string | null;
 }
 
@@ -28,90 +41,29 @@ interface PharmacyOrderCardProps {
   patient: PatientData;
   onOrderCreated?: () => void;
   recommendedMedications?: MedicationRecommendation[];
+  /** When false, hide escalation-only SKUs */
+  showEscalationItems?: boolean;
 }
-
-// Clinic Approved Formulary - Compounding Pharmacy Creams Only
-const FORMULARY = [
-  // === MALE TESTOSTERONE PROTOCOLS (No 50mg - "doesn't work" per Dr. Holgate) ===
-  {
-    id: "male_test_100",
-    name: "Testosterone Cream - Male 100mg",
-    strength: "100mg/g (Liposomal Base)",
-    sig: "Apply to large hairless muscle area (shoulder/thigh) every morning. Wash hands after use.",
-    category: "male_hormone",
-    defaultCadence: "30",
-  },
-  {
-    id: "male_test_150",
-    name: "Testosterone Cream - Male 150mg",
-    strength: "150mg/g (Liposomal Base)",
-    sig: "Apply to large hairless muscle area (shoulder/thigh) every morning. Wash hands after use.",
-    category: "male_hormone",
-    defaultCadence: "30",
-  },
-  {
-    id: "male_test_200",
-    name: "Testosterone Cream - Male 200mg",
-    strength: "200mg/g (Liposomal Base)",
-    sig: "Apply to large hairless muscle area (shoulder/thigh) every morning. Wash hands after use.",
-    category: "male_hormone",
-    defaultCadence: "30",
-  },
-  
-  // === FEMALE TESTOSTERONE ===
-  {
-    id: "female_testosterone",
-    name: "Testosterone Cream - Female (Vitality)",
-    strength: "10mg/g (Topiclick)",
-    sig: "Apply 1 click to clitoral area each morning. Wash hands immediately after use.",
-    category: "female_hormone",
-    defaultCadence: "30",
-  },
-  
-  // === SLEEP STACK (Progesterone) ===
-  {
-    id: "progesterone_sleep",
-    name: "Progesterone Cream (Sleep Stack)",
-    strength: "40mg/click (Topiclick)",
-    sig: "Apply 1 click to neck at bedtime for sleep support.",
-    category: "female_hormone",
-    defaultCadence: "30",
-  },
-  
-  // === BI-EST (Estrogen) ===
-  {
-    id: "biest",
-    name: "Bi-Est Cream (Menopause)",
-    strength: "80/20 E3/E2 2.5mg/g (Topiclick)",
-    sig: "Apply 1-2 clicks to inner thigh each morning.",
-    category: "female_hormone",
-    defaultCadence: "30",
-  },
-
-  // === SEXUAL WELLNESS CREAM ===
-  {
-    id: "barfield_cream",
-    name: "Barfield Cream (Female Arousal)",
-    strength: "Sildenafil 2% / Nifedipine 1% / Arginine 6%",
-    sig: "Apply 1cc to clitoris 15-30 minutes before intimacy.",
-    category: "female_hormone",
-    defaultCadence: "30",
-  },
-];
-
-const CATEGORIES = [
-  { id: "all", label: "All Creams" },
-  { id: "male_hormone", label: "Male Hormone" },
-  { id: "female_hormone", label: "Female Hormone" },
-];
 
 const CADENCE_OPTIONS = [
   { value: "30", label: "30 Day Supply (New Patient)" },
   { value: "90", label: "90 Day Supply (Renewal)" },
 ];
 
-const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: PharmacyOrderCardProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+const PharmacyOrderCard = ({
+  patient,
+  onOrderCreated,
+  recommendedMedications,
+  showEscalationItems = false,
+}: PharmacyOrderCardProps) => {
+  const categories = useMemo(
+    () => visiblePharmacyCategories(patient.gender),
+    [patient.gender],
+  );
+
+  const [activeCategory, setActiveCategory] = useState<PharmacyCategoryId>(
+    defaultPharmacyCategory(patient.gender),
+  );
   const [selectedMed, setSelectedMed] = useState<string>("");
   const [cadence, setCadence] = useState<string>("30");
   const [quantity, setQuantity] = useState("1");
@@ -119,120 +71,142 @@ const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRecommended, setIsRecommended] = useState(false);
 
-  // Auto-select category based on patient gender
-  const defaultCategory =
-    patient.gender === "male" ? "male_hormone" : patient.gender === "female" ? "female_hormone" : "all";
-  
-  // Auto-apply recommended medication when passed
+  const filteredMedications = useMemo(
+    () =>
+      formularyItemsForCategory(activeCategory, {
+        patientGender: patient.gender,
+        includeEscalation: showEscalationItems,
+      }),
+    [activeCategory, patient.gender, showEscalationItems],
+  );
+
+  const selectedMedication = findFormularyItem(selectedMed);
+
   useEffect(() => {
     if (recommendedMedications && recommendedMedications.length > 0) {
       const primaryRec = recommendedMedications[0];
-      // Find the medication in formulary
-      const formularyMed = FORMULARY.find(m => m.id === primaryRec.formularyId);
+      const resolvedId = resolveFormularyId(primaryRec.formularyId);
+      const formularyMed = findFormularyItem(resolvedId);
       if (formularyMed) {
-        setSelectedMed(primaryRec.formularyId);
-        setSelectedCategory(formularyMed.category);
+        setSelectedMed(resolvedId);
+        setActiveCategory(formularyMed.category);
         setCadence(formularyMed.defaultCadence);
         setIsRecommended(true);
       }
     }
   }, [recommendedMedications]);
-  
-  // Filter medications by category
-  const filteredMedications = selectedCategory === "all" 
-    ? FORMULARY 
-    : FORMULARY.filter(med => med.category === selectedCategory);
 
-  const selectedMedication = FORMULARY.find((m) => m.id === selectedMed);
-
-  const orderCategory =
-    selectedMedication?.category ??
-    (defaultCategory === "all" ? "female_hormone" : defaultCategory);
-
-  // Update cadence when medication changes
   const handleMedicationChange = (medId: string) => {
     setSelectedMed(medId);
-    const med = FORMULARY.find(m => m.id === medId);
-    if (med?.defaultCadence) {
-      setCadence(med.defaultCadence);
-    }
+    const med = findFormularyItem(medId);
+    if (med?.defaultCadence) setCadence(med.defaultCadence);
   };
 
-  const handlePrepareOrder = () => {
-    if (!selectedMedication) return;
-    setIsModalOpen(true);
-  };
+  const orderCategory = portalRoutingCategory(
+    selectedMedication?.category ?? defaultPharmacyCategory(patient.gender),
+  );
 
   const buildRxString = () => {
     if (!selectedMedication) return "";
     const qtyText = cadence === "90" ? "Qty: 90 day supply." : "Qty: 30 day supply.";
-    return `${selectedMedication.name.split(" - ")[0]} ${selectedMedication.strength}. Sig: ${selectedMedication.sig} ${qtyText}`;
+    return `${selectedMedication.name} ${selectedMedication.strength}. Sig: ${selectedMedication.sig} ${qtyText}`;
   };
+
+  const mapToModalMedication = (med: PharmacyFormularyItem) => ({
+    id: med.id,
+    name: med.name,
+    strength: med.strength,
+    sig: med.sig,
+    category: med.category,
+    defaultCadence: med.defaultCadence,
+  });
 
   return (
     <>
-      <Card className={isRecommended ? "border-green-400 border-2" : "border-gold/30"}>
+      <Card className={isRecommended ? "border-green-400 border-2" : "border-accent/30"}>
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Pill className="w-5 h-5 text-gold" />
-              Pharmacy Order
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <CardTitle className="text-lg flex items-center gap-2 font-playfair">
+              <Pill className="w-5 h-5 text-accent" />
+              Pharmacy order
             </CardTitle>
             {isRecommended && (
-              <Badge className="bg-green-100 text-green-800 border border-green-300 gap-1">
+              <Badge className="bg-green-100 text-green-800 border border-green-300 gap-1 font-jost">
                 <Sparkles className="h-3 w-3" />
-                Holgate Recommended
+                Lab-recommended
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">
-            {isRecommended ? "Protocol auto-selected from lab analysis" : "Clinic approved protocols"}
+          <p className="text-sm text-muted-foreground font-jost">
+            Category tabs per clinic policy — injectable TRT default for men.{" "}
+            <Link to="/clinical-policy" className="text-accent underline text-xs">
+              Policy catalog
+            </Link>
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((cat) => (
-              <Badge
-                key={cat.id}
-                variant={selectedCategory === cat.id ? "default" : "outline"}
-                className={`cursor-pointer transition-colors ${
-                  selectedCategory === cat.id 
-                    ? "bg-gold text-white hover:bg-gold-dark" 
-                    : "hover:bg-muted"
-                }`}
-                onClick={() => {
-                  setSelectedCategory(cat.id);
-                  setSelectedMed(""); // Reset selection when category changes
-                }}
-              >
-                {cat.label}
-              </Badge>
+          <Tabs
+            value={activeCategory}
+            onValueChange={(v) => {
+              setActiveCategory(v as PharmacyCategoryId);
+              setSelectedMed("");
+            }}
+          >
+            <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1">
+              {categories.map((cat) => (
+                <TabsTrigger key={cat.id} value={cat.id} className="font-jost text-xs">
+                  {cat.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {categories.map((cat) => (
+              <TabsContent key={cat.id} value={cat.id} className="mt-3 space-y-1">
+                <p className="text-xs text-muted-foreground font-jost">{cat.description}</p>
+              </TabsContent>
             ))}
-          </div>
+          </Tabs>
 
-          {/* Medication Dropdown */}
+          {selectedMedication?.programOnly && (
+            <Alert className="border-amber-500/40 bg-amber-500/5 py-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-xs font-jost ml-2">
+                Program-only path — enroll via metabolic program workflow, not standalone Rx fax.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Medication</Label>
+            <Label className="text-sm font-medium font-jost">Medication</Label>
             <Select value={selectedMed} onValueChange={handleMedicationChange}>
-              <SelectTrigger className="bg-background">
+              <SelectTrigger className="bg-background font-jost">
                 <SelectValue placeholder="Select medication..." />
               </SelectTrigger>
               <SelectContent className="bg-background border max-h-[300px]">
                 {filteredMedications.map((med) => (
                   <SelectItem key={med.id} value={med.id}>
-                    {med.name}
+                    {med.publicDefault ? med.name : `${med.name} (escalation)`}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {selectedMedication && (
+              <p className="text-[11px] text-muted-foreground font-jost">
+                Vendor: {selectedMedication.vendor}
+                {selectedMedication.policyKey && (
+                  <>
+                    {" "}
+                    · Policy:{" "}
+                    <code className="text-xs">{selectedMedication.policyKey}</code>
+                  </>
+                )}
+              </p>
+            )}
           </div>
 
-          {/* Supply Duration */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Supply Duration</Label>
+            <Label className="text-sm font-medium font-jost">Supply duration</Label>
             <Select value={cadence} onValueChange={setCadence}>
-              <SelectTrigger className="bg-background">
+              <SelectTrigger className="bg-background font-jost">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-background border">
@@ -245,46 +219,43 @@ const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: 
             </Select>
           </div>
 
-          {/* Quantity & Refills */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Quantity</Label>
+              <Label className="text-sm font-medium font-jost">Quantity</Label>
               <Input
                 type="number"
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="bg-background"
+                className="bg-background font-jost"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Refills</Label>
+              <Label className="text-sm font-medium font-jost">Refills</Label>
               <Input
                 type="number"
                 min="0"
                 value={refills}
                 onChange={(e) => setRefills(e.target.value)}
-                className="bg-background"
+                className="bg-background font-jost"
               />
             </div>
           </div>
 
-          {/* Preview */}
           {selectedMedication && (
-            <div className="bg-secondary/50 rounded-lg p-3 text-sm">
-              <p className="font-medium text-foreground mb-1">Rx Preview:</p>
+            <div className="bg-muted/40 rounded-lg p-3 text-sm font-jost">
+              <p className="font-medium text-foreground mb-1">Rx preview</p>
               <p className="text-muted-foreground">{buildRxString()}</p>
             </div>
           )}
 
-          {/* Prepare Order Button */}
           <Button
-            onClick={handlePrepareOrder}
-            disabled={!selectedMed}
-            className="w-full bg-gold hover:bg-gold-dark text-white"
+            onClick={() => setIsModalOpen(true)}
+            disabled={!selectedMed || selectedMedication?.programOnly}
+            className="w-full font-jost"
           >
             <Pill className="w-4 h-4 mr-2" />
-            Prepare Portal Order
+            Prepare portal order
           </Button>
         </CardContent>
       </Card>
@@ -293,11 +264,13 @@ const PharmacyOrderCard = ({ patient, onOrderCreated, recommendedMedications }: 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         patient={patient}
-        medication={selectedMedication ? { ...selectedMedication, category: selectedMedication.category } : undefined}
+        medication={
+          selectedMedication ? mapToModalMedication(selectedMedication) : undefined
+        }
         rxString={buildRxString()}
-        quantity={parseInt(quantity) || 1}
-        refills={parseInt(refills) || 0}
-        supplyDays={parseInt(cadence) || 30}
+        quantity={parseInt(quantity, 10) || 1}
+        refills={parseInt(refills, 10) || 0}
+        supplyDays={parseInt(cadence, 10) || 30}
         category={orderCategory}
         onOrderCreated={onOrderCreated}
       />

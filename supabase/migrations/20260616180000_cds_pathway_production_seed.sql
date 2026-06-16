@@ -149,13 +149,13 @@ INSERT INTO public.cds_pathway_lab_triggers (
 SELECT p.id, v.analyte_key, v.comparator, v.threshold_low, v.threshold_high, v.unit, false
 FROM public.cds_pathways p
 JOIN (VALUES
-  ('low-testosterone-trt', 'prolactin', 'gt', 20, NULL, 'ng/mL'),
-  ('low-testosterone-trt', 'hematocrit', 'gt', 54, NULL, '%'),
-  ('low-testosterone-trt', 'psa', 'gt', 4, NULL, 'ng/mL'),
-  ('weight-loss-glp1', 'hba1c', 'gt', 6.4, NULL, '%'),
-  ('metabolic-recomposition', 'hba1c', 'gt', 6.4, NULL, '%'),
-  ('energy-fatigue-wellness', 'tsh', 'gt', 4.5, NULL, 'mIU/L'),
-  ('libido-sexual-wellness', 'prolactin', 'gt', 20, NULL, 'ng/mL')
+  ('low-testosterone-trt', 'prolactin', 'gt', 20::numeric, NULL::numeric, 'ng/mL'),
+  ('low-testosterone-trt', 'hematocrit', 'gt', 54::numeric, NULL::numeric, '%'),
+  ('low-testosterone-trt', 'psa', 'gt', 4::numeric, NULL::numeric, 'ng/mL'),
+  ('weight-loss-glp1', 'hba1c', 'gt', 6.4::numeric, NULL::numeric, '%'),
+  ('metabolic-recomposition', 'hba1c', 'gt', 6.4::numeric, NULL::numeric, '%'),
+  ('energy-fatigue-wellness', 'tsh', 'gt', 4.5::numeric, NULL::numeric, 'mIU/L'),
+  ('libido-sexual-wellness', 'prolactin', 'gt', 20::numeric, NULL::numeric, 'ng/mL')
 ) AS v(pathway_slug, analyte_key, comparator, threshold_low, threshold_high, unit)
   ON p.slug = v.pathway_slug
 ON CONFLICT (pathway_id, analyte_key) DO NOTHING;
