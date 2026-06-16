@@ -50,11 +50,20 @@ const Hero = () => {
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
 
-          <button
+          <Button
+            size="lg"
+            variant="outline"
             onClick={() => navigate("/iv-lounge")}
-            className="text-background/80 font-jost text-sm underline-offset-4 hover:text-accent transition-colors"
+            className="border-background/40 text-background font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm hover:bg-background/10"
           >
-            Or book an IV walk-in →
+            Book IV Lounge
+          </Button>
+
+          <button
+            onClick={() => navigate("/how-it-works")}
+            className="text-background/70 font-jost text-sm underline-offset-4 hover:text-accent transition-colors"
+          >
+            How the clinic works →
           </button>
         </div>
       </div>

@@ -203,6 +203,7 @@ const ProviderDashboard = () => {
   const [pendingPharmacy, setPendingPharmacy] = useState<PendingPharmacyPatient[]>([]);
   const [completingPharmacyId, setCompletingPharmacyId] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<PatientWithLog | null>(null);
+  const [cdsRecommendedLabSlug, setCdsRecommendedLabSlug] = useState<string | null>(null);
   const [patientLogs, setPatientLogs] = useState<SymptomLog[]>([]);
   const [protocols, setProtocols] = useState<Protocol[]>([]);
   const [recommendedProtocol, setRecommendedProtocol] = useState<Protocol | null>(null);
@@ -590,6 +591,7 @@ const ProviderDashboard = () => {
 
   const selectPatient = async (patientWithLog: PatientWithLog) => {
     setSelectedPatient(patientWithLog);
+    setCdsRecommendedLabSlug(null);
     setIsPanelOpen(true);
     
     // Initialize contact info editing state
@@ -2297,6 +2299,7 @@ const ProviderDashboard = () => {
                 patientCity={selectedPatient.patient.city}
                 patientState={selectedPatient.patient.state}
                 patientZip={selectedPatient.patient.zip_code}
+                onRecommendedLabChange={setCdsRecommendedLabSlug}
               />
 
               {/* Medication Management */}
@@ -2483,6 +2486,7 @@ const ProviderDashboard = () => {
                   }}
                   providerName={providerInfo.name}
                   providerCredentials={providerInfo.credentials}
+                  recommendedPanelSlug={cdsRecommendedLabSlug}
                   onOrderUpdated={() => void selectPatient(selectedPatient)}
                 />
               )}

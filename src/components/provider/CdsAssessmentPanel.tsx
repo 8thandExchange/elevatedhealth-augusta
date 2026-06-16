@@ -87,6 +87,7 @@ export interface CdsAssessmentPanelProps {
   patientCity?: string | null;
   patientState?: string | null;
   patientZip?: string | null;
+  onRecommendedLabChange?: (slug: string | null) => void;
 }
 
 export default function CdsAssessmentPanel({
@@ -98,6 +99,7 @@ export default function CdsAssessmentPanel({
   patientCity,
   patientState,
   patientZip,
+  onRecommendedLabChange,
 }: CdsAssessmentPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -116,6 +118,10 @@ export default function CdsAssessmentPanel({
     validConsentTypes: string[];
     substanceAcknowledgmentIds: string[];
   } | null>(null);
+
+  useEffect(() => {
+    onRecommendedLabChange?.(pathwaySummary?.recommended_lab_slug ?? null);
+  }, [pathwaySummary, onRecommendedLabChange]);
 
   const [goalKey, setGoalKey] = useState<PatientGoal>("recovery_injury");
   const [symptoms, setSymptoms] = useState<string[]>([]);

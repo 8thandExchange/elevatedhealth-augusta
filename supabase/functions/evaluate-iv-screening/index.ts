@@ -1,34 +1,23 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  evaluateIvScreening,
+  type IvScreeningIntake,
+} from "../_shared/iv-screening-engine.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-type EvaluateRequest = {
+type EvaluateRequest = IvScreeningIntake & {
   email?: string;
   phone?: string;
   first_name?: string;
   last_name?: string;
   date_of_birth?: string;
   selected_therapy_id?: string;
-  selected_service_id?: string; // legacy alias
-
-  has_chf?: boolean;
-  has_esrd?: boolean;
-  is_pregnant?: boolean;
-  has_anaphylaxis_history?: boolean;
-  has_g6pd_deficiency?: boolean;
-  has_ckd?: boolean;
-  on_anticoagulants?: boolean;
-  has_hypertension_uncontrolled?: boolean;
-  has_diabetes?: boolean;
-  has_thyroid_disorder?: boolean;
-  currently_breastfeeding?: boolean;
-  has_sesame_allergy?: boolean;
-  has_iv_allergies?: boolean;
-
+  selected_service_id?: string;
   iv_allergies_text?: string;
   current_medications?: string;
   known_allergies?: string;
@@ -139,62 +128,17 @@ serve(async (req) => {
       );
     }
 
-    const blockReasons: string[] = [];
-    const warnReasons: string[] = [];
+    const evaluation = evaluateIvScreening(body, {
+      id: therapy.id,
+      name: therapy.name,
+      requires_g6pd_clearance: therapy.requires_g6pd_clearance,
+      contraindicates_sesame_allergy: therapy.contraindicates_sesame_allergy,
+    });
 
-    if (body.has_chf) {
-      blockReasons.push("Active CHF is a contraindication for IV hydration therapy.");
-    }
-    if (body.has_esrd) {
-      blockReasons.push("End-stage renal disease is a contraindication.");
-    }
-    if (body.is_pregnant) {
-      blockReasons.push("We do not provide IV therapy during pregnancy at this clinic.");
-    }
-    if (body.has_anaphylaxis_history) {
-      blockReasons.push(
-        "History of anaphylaxis requires in-person physician consultation prior to any IV therapy.",
-      );
-    }
-    if (therapy.requires_g6pd_clearance && body.has_g6pd_deficiency) {
-      blockReasons.push("G6PD deficiency contraindicates the selected service.");
-    }
-    if (therapy.contraindicates_sesame_allergy && body.has_sesame_allergy) {
-      blockReasons.push(
-        "Selected service is formulated in sesame oil and you reported a sesame allergy.",
-      );
-    }
-
-    if (body.has_ckd) {
-      warnReasons.push("Chronic kidney disease - reduced fluid volume recommended.");
-    }
-    if (body.on_anticoagulants) {
-      warnReasons.push("Anticoagulant use - careful venipuncture required.");
-    }
-    if (body.has_hypertension_uncontrolled) {
-      warnReasons.push("Uncontrolled HTN - vitals must be checked before infusion.");
-    }
-    if (body.has_diabetes) {
-      warnReasons.push("Diabetes - monitor blood glucose if dextrose-containing service.");
-    }
-    if (body.has_thyroid_disorder) {
-      warnReasons.push("Thyroid disorder noted.");
-    }
-    if (body.currently_breastfeeding) {
-      warnReasons.push("Breastfeeding - some ingredients pass into breast milk.");
-    }
-    if (body.has_iv_allergies) {
-      warnReasons.push("Reported IV allergies require staff review pre-infusion.");
-    }
-
-    const screeningResult =
-      blockReasons.length > 0 ? "blocked" : warnReasons.length > 0 ? "warned" : "cleared";
-    const blockSeverity =
-      screeningResult === "blocked"
-        ? (body.has_chf || body.has_esrd || body.is_pregnant || body.has_anaphylaxis_history
-          ? "hard"
-          : "service_specific")
-        : null;
+    const screeningResult = evaluation.screening_result;
+    const blockReasons = evaluation.block_reasons;
+    const warnReasons = evaluation.warn_reasons;
+    const blockSeverity = evaluation.block_severity;
 
     const sixtyMinutesAgoIso = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const { data: existingIntake, error: existingIntakeErr } = await supabase
@@ -223,6 +167,7 @@ serve(async (req) => {
           block_reasons: existingIntake.block_reasons ?? [],
           warn_reasons: existingIntake.warn_reasons ?? [],
           block_severity: existingIntake.block_severity,
+          staff_actions: evaluation.staff_actions,
         }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
@@ -274,7 +219,6 @@ serve(async (req) => {
     }
 
     if (screeningResult === "blocked") {
-      // Fire-and-forget follow-up notifications. Do not block patient flow.
       try {
         await supabase.functions.invoke("send-blocked-intake-notifications", {
           body: { intake_id: intake.id },
@@ -291,6 +235,7 @@ serve(async (req) => {
         block_reasons: intake.block_reasons ?? [],
         warn_reasons: intake.warn_reasons ?? [],
         block_severity: intake.block_severity,
+        staff_actions: evaluation.staff_actions,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

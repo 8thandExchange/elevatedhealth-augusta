@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,7 +15,9 @@ import MarketingPixel from "@/components/MarketingPixel";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
 import { ServiceWorkerUpdater } from "@/components/ServiceWorkerUpdater";
 import { CACHE_VERSION } from "@/lib/cacheVersion";
+import { Loader2 } from "lucide-react";
 import Index from "./pages/Index";
+import HowClinicWorks from "./pages/HowClinicWorks";
 import MetabolicRecomposition from "./pages/MetabolicRecomposition";
 import WeightLoss from "./pages/WeightLoss";
 import Hormones from "./pages/Hormones";
@@ -41,10 +43,7 @@ import PatientLogin from "./pages/PatientLogin";
 import PatientDashboard from "./pages/PatientDashboard";
 import PatientIntake from "./pages/PatientIntake";
 import SymptomCheckIn from "./pages/SymptomCheckIn";
-import ProviderDashboard from "./pages/ProviderDashboard";
 import ProviderSchedule from "./pages/ProviderSchedule";
-import OfficeManagerDashboard from "./pages/OfficeManagerDashboard";
-import BusinessDashboard from "./pages/BusinessDashboard";
 import ClinicSettings from "./pages/ClinicSettings";
 import SymptomChecker from "./pages/SymptomChecker";
 import MedicationConfirmed from "./pages/MedicationConfirmed";
@@ -65,18 +64,6 @@ import StaffQuickCard from "./pages/StaffQuickCard";
 import EmailTemplates from "./pages/EmailTemplates";
 import PublicIntake from "./pages/PublicIntake";
 import OfficeSchedule from "./pages/OfficeSchedule";
-import ClinicalProtocolLibrary from "./pages/ClinicalProtocolLibrary";
-import ClinicalProtocolDetail from "./pages/ClinicalProtocolDetail";
-import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor";
-import InventoryDashboard from "./pages/InventoryDashboard";
-import FormularyDashboard from "./pages/FormularyDashboard";
-import FormularyEconomicsDashboard from "./pages/FormularyEconomicsDashboard";
-import LabCatalogAdmin from "./pages/LabCatalogAdmin";
-import StaffVendorGuide from "./pages/StaffVendorGuide";
-import StaffSOPManual from "./pages/StaffSOPManual";
-import StaffSystemGuide from "./pages/StaffSystemGuide";
-import ClinicalPolicyAdmin from "./pages/ClinicalPolicyAdmin";
-import StaffClinicalPathway from "./pages/StaffClinicalPathway";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import ProviderSchedules from "./pages/admin/ProviderSchedules";
@@ -98,6 +85,29 @@ import IVScreeningWarnings from "./pages/IVScreeningWarnings";
 import IVScreeningBlocked from "./pages/IVScreeningBlocked";
 import IVSlotSelection from "./pages/IVSlotSelection";
 import SafetyConsultRequest from "./pages/SafetyConsultRequest";
+
+const ProviderDashboard = lazy(() => import("./pages/ProviderDashboard"));
+const BusinessDashboard = lazy(() => import("./pages/BusinessDashboard"));
+const OfficeManagerDashboard = lazy(() => import("./pages/OfficeManagerDashboard"));
+const FormularyEconomicsDashboard = lazy(() => import("./pages/FormularyEconomicsDashboard"));
+const FormularyDashboard = lazy(() => import("./pages/FormularyDashboard"));
+const InventoryDashboard = lazy(() => import("./pages/InventoryDashboard"));
+const LabCatalogAdmin = lazy(() => import("./pages/LabCatalogAdmin"));
+const ClinicalPolicyAdmin = lazy(() => import("./pages/ClinicalPolicyAdmin"));
+const ClinicalProtocolLibrary = lazy(() => import("./pages/ClinicalProtocolLibrary"));
+const ClinicalProtocolDetail = lazy(() => import("./pages/ClinicalProtocolDetail"));
+const ClinicalProtocolEditor = lazy(() => import("./components/provider/ClinicalProtocolEditor"));
+const StaffSOPManual = lazy(() => import("./pages/StaffSOPManual"));
+const StaffSystemGuide = lazy(() => import("./pages/StaffSystemGuide"));
+const StaffClinicalPathway = lazy(() => import("./pages/StaffClinicalPathway"));
+const StaffVendorGuide = lazy(() => import("./pages/StaffVendorGuide"));
+const StaffIVScreeningGuide = lazy(() => import("./pages/StaffIVScreeningGuide"));
+
+const RouteFallback = () => (
+  <div className="flex min-h-[40vh] items-center justify-center">
+    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" aria-label="Loading" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -187,7 +197,7 @@ const App = () => {
           <Route path="/insurance-reimbursement" element={<Navigate to="/pricing" replace />} />
           <Route path="/services" element={<Services />} />
           <Route path="/book" element={<Navigate to="/" replace />} />
-          <Route path="/how-it-works" element={<Navigate to="/membership" replace />} />
+          <Route path="/how-it-works" element={<HowClinicWorks />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/hipaa-notice" element={<HipaaNotice />} />
@@ -222,22 +232,37 @@ const App = () => {
           } />
           <Route path="/staff/vendor-guide" element={
             <ProviderLayout title="Vendor Guide" subtitle="GC · FCC · Custom Pharmacy" showNavbar={false}>
-              <StaffVendorGuide />
+              <Suspense fallback={<RouteFallback />}>
+                <StaffVendorGuide />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/formulary-economics" element={
             <ProviderLayout title="Formulary Economics" subtitle="COGS · margin · GC vs FCC" showNavbar={false}>
-              <FormularyEconomicsDashboard />
+              <Suspense fallback={<RouteFallback />}>
+                <FormularyEconomicsDashboard />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/staff/sop-manual" element={
             <ProviderLayout title="SOP Manual" subtitle="Algorithms · financials · workflows" showNavbar={false}>
-              <StaffSOPManual />
+              <Suspense fallback={<RouteFallback />}>
+                <StaffSOPManual />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/staff/system-guide" element={
             <ProviderLayout title="System Guide" subtitle="Journey · lanes · labs · vendors" showNavbar={false}>
-              <StaffSystemGuide />
+              <Suspense fallback={<RouteFallback />}>
+                <StaffSystemGuide />
+              </Suspense>
+            </ProviderLayout>
+          } />
+          <Route path="/staff/iv-safety" element={
+            <ProviderLayout title="IV Safety" subtitle="Screening rules · ingredients" showNavbar={false}>
+              <Suspense fallback={<RouteFallback />}>
+                <StaffIVScreeningGuide />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route
@@ -249,13 +274,17 @@ const App = () => {
                 showNavbar={false}
                 allowedRoles={["admin", "staff", "business_admin", "provider"]}
               >
-                <ClinicalPolicyAdmin />
+                <Suspense fallback={<RouteFallback />}>
+                  <ClinicalPolicyAdmin />
+                </Suspense>
               </ProviderLayout>
             }
           />
           <Route path="/staff/clinical-pathway" element={
             <ProviderLayout title="Clinical Pathway" subtitle="Goal → labs → dosing" showNavbar={false}>
-              <StaffClinicalPathway />
+              <Suspense fallback={<RouteFallback />}>
+                <StaffClinicalPathway />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route
@@ -267,7 +296,9 @@ const App = () => {
                 showNavbar={false}
                 allowedRoles={["admin", "staff", "business_admin", "provider"]}
               >
-                <LabCatalogAdmin />
+                <Suspense fallback={<RouteFallback />}>
+                  <LabCatalogAdmin />
+                </Suspense>
               </ProviderLayout>
             }
           />
@@ -344,7 +375,9 @@ const App = () => {
               showNavbar={false}
               allowedRoles={["admin", "staff", "business_admin", "provider"]}
             >
-              <ProviderDashboard />
+              <Suspense fallback={<RouteFallback />}>
+                <ProviderDashboard />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/provider/schedule" element={
@@ -408,7 +441,9 @@ const App = () => {
               showNavbar={false}
               allowedRoles={["admin", "staff", "business_admin", "provider"]}
             >
-              <OfficeManagerDashboard />
+              <Suspense fallback={<RouteFallback />}>
+                <OfficeManagerDashboard />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/office/schedule" element={
@@ -436,7 +471,9 @@ const App = () => {
           } />
           <Route path="/admin/business" element={
             <ProviderLayout title="Business Dashboard" subtitle="Revenue & Operations" showNavbar={false}>
-              <BusinessDashboard />
+              <Suspense fallback={<RouteFallback />}>
+                <BusinessDashboard />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/admin/email-templates" element={
@@ -448,22 +485,30 @@ const App = () => {
           <Route path="/admin/substance-acknowledgments" element={<SubstanceAcknowledgmentsAdmin />} />
           <Route path="/clinical-protocols" element={
             <ProviderLayout title="Clinical Protocols" subtitle="Standing orders & SOPs" showNavbar={true}>
-              <ClinicalProtocolLibrary />
+              <Suspense fallback={<RouteFallback />}>
+                <ClinicalProtocolLibrary />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/clinical-protocols/:slug/edit" element={
             <ProviderLayout title="Edit clinical protocol" subtitle="Admin only" showNavbar={true}>
-              <ClinicalProtocolEditor />
+              <Suspense fallback={<RouteFallback />}>
+                <ClinicalProtocolEditor />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/clinical-protocols/:slug" element={
             <ProviderLayout title="Clinical protocol" subtitle="Standing order" showNavbar={true}>
-              <ClinicalProtocolDetail />
+              <Suspense fallback={<RouteFallback />}>
+                <ClinicalProtocolDetail />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route path="/inventory" element={
             <ProviderLayout title="Inventory" subtitle="Lot tracking · FEFO" showNavbar={true}>
-              <InventoryDashboard />
+              <Suspense fallback={<RouteFallback />}>
+                <InventoryDashboard />
+              </Suspense>
             </ProviderLayout>
           } />
           <Route
@@ -475,7 +520,9 @@ const App = () => {
                 showNavbar={true}
                 allowedRoles={["admin", "staff", "business_admin", "provider"]}
               >
-                <FormularyDashboard />
+                <Suspense fallback={<RouteFallback />}>
+                  <FormularyDashboard />
+                </Suspense>
               </ProviderLayout>
             }
           />

@@ -85,7 +85,7 @@ const ARTICLES: HelpArticle[] = [
       "IV, sermorelin, NAD+, healing stack → FCC FormuConnect.",
       "All hormones → Custom Pharmacy of Evans (fax).",
     ],
-    links: [{ label: "Vendor guide", to: "/staff/vendor-guide" }, { label: "System guide", to: "/staff/system-guide" }],
+    links: [{ label: "Vendor guide", to: "/staff/vendor-guide" }, { label: "System guide", to: "/staff/system-guide" }, { label: "IV safety", to: "/staff/iv-safety" }],
   },
 ];
 
@@ -127,6 +127,7 @@ export function StaffHelpWidget() {
       { label: "Formulary", to: "/formulary", icon: ClipboardList },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
       { label: "System guide", to: "/staff/system-guide" },
+      { label: "IV safety", to: "/staff/iv-safety" },
       { label: "Clinical policy", to: "/clinical-policy" },
       { label: "SOP Manual", to: "/staff/sop-manual", icon: ClipboardList },
     ],

@@ -49,6 +49,9 @@ const StaffSystemGuide = () => {
             </Button>
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" size="sm" className="font-jost">
+                <Link to="/staff/iv-safety">IV safety catalog</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="font-jost">
                 <Link to="/clinical-policy">Clinical policy</Link>
               </Button>
               <Button asChild variant="outline" size="sm" className="font-jost">
