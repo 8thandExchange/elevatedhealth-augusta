@@ -10,6 +10,7 @@ import { Loader2, Eye, EyeOff, Mail, Calendar } from "lucide-react";
 import SafetyGate from "@/components/patient/SafetyGate";
 import ConsultationModal from "@/components/ConsultationModal";
 import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
+import { requestPasswordReset } from "@/lib/requestPasswordReset";
 
 type PrimaryProgram = string;
 
@@ -205,17 +206,18 @@ const PatientLogin = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) throw error;
+      const result = await requestPasswordReset(resetEmail, "patient");
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
 
       toast.success("Password reset email sent! Check your inbox.");
       setShowForgotPassword(false);
       setResetEmail("");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to send reset email");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to send reset email";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

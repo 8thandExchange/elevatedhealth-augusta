@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft, CheckCircle, Mail, AlertCircle } from "lucide-react";
 import { getSafeStaffRedirect, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
+import { requestPasswordReset } from "@/lib/requestPasswordReset";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -145,16 +146,17 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) throw error;
+      const result = await requestPasswordReset(resetEmail, "staff");
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
 
       setResetEmailSent(true);
       setResendCountdown(60);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to send reset email. Please try again.");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to send reset email. Please try again.";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -165,15 +167,15 @@ const AdminLogin = () => {
     
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
+      const result = await requestPasswordReset(resetEmail, "staff");
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
 
-      if (error) throw error;
-      
       setResendCountdown(60);
       toast.success("Reset email sent again!");
-    } catch (error: any) {
+    } catch {
       toast.error("Failed to resend email. Please try again.");
     } finally {
       setIsLoading(false);
@@ -218,6 +220,14 @@ const AdminLogin = () => {
                   We sent a password reset link to
                 </p>
                 <p className="font-medium text-foreground">{resetEmail}</p>
+                <p className="font-jost text-xs text-muted-foreground">
+                  Use the staff email tied to your clinical team account. If nothing arrives in 5
+                  minutes, check spam or contact{" "}
+                  <a href="mailto:admin@elevatedhealthaugusta.com" className="text-primary underline">
+                    admin@elevatedhealthaugusta.com
+                  </a>
+                  .
+                </p>
               </div>
 
               {/* Help Box */}

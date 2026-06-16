@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,9 @@ const ERROR_TEXT =
 
 const SetNewPassword = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const portal = searchParams.get("portal") === "staff" ? "staff" : "patient";
+  const loginPath = portal === "staff" ? "/admin/login" : "/patient/login";
   const [isCheckingRecovery, setIsCheckingRecovery] = useState(true);
   const [isRecoveryValid, setIsRecoveryValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -113,7 +116,7 @@ const SetNewPassword = () => {
 
       toast.success("Password updated. Please log in with your new password.");
       setTimeout(() => {
-        navigate("/admin/login", { replace: true });
+        navigate(loginPath, { replace: true });
       }, 2000);
     } finally {
       setIsSubmitting(false);
@@ -138,7 +141,7 @@ const SetNewPassword = () => {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link to="/admin/login">Return to Login</Link>
+              <Link to={loginPath}>Return to Login</Link>
             </Button>
           </CardContent>
         </Card>
