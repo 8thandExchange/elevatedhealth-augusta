@@ -60,3 +60,13 @@ export function gateBadgeClassName(gateState: CdsGateState): string {
   if (gateState === "blocked_excluded") return "bg-destructive text-destructive-foreground";
   return "border-amber-600/50 text-amber-900 bg-amber-50";
 }
+
+export const MISSING_ACTION_LABELS: Record<string, string> = {
+  order_labs: "Order baseline labs",
+  capture_consent_or_substance_ack: "Complete consent / substance acknowledgment",
+  provider_contra_review: "Provider contraindication review",
+  therapy_excluded: "Therapy excluded — do not offer",
+  sign_protocol: "Activate signed protocol version",
+  provider_review: "Physician CDS review required",
+  resolve_contraindication: "Resolve contraindication",
+};

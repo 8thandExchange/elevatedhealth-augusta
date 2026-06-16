@@ -53,11 +53,13 @@ import {
   gateBadgeClassName,
   GATE_STATE_LABELS,
   isRegulatoryBadgeStatus,
+  MISSING_ACTION_LABELS,
   regulatoryBadgeClassName,
   REGULATORY_STATUS_LABELS,
   requiresSubstanceAcknowledgment,
   shouldRouteToOrderLabs,
 } from "@/lib/cdsUiHelpers";
+import { gateResultFromAssessmentCandidate } from "@/lib/canOfferTherapy";
 import LabcorpOrderModal from "@/components/provider/LabcorpOrderModal";
 import { SubstanceAcknowledgmentCapture } from "@/components/consents/SubstanceAcknowledgmentCapture";
 
@@ -102,6 +104,11 @@ export default function CdsAssessmentPanel({
   const [results, setResults] = useState<CdsAssessmentResult[]>([]);
   const [review, setReview] = useState<CdsProviderReview | null>(null);
   const [pathwaySummary, setPathwaySummary] = useState<CdsPathwaySummary | null>(null);
+  const [engineContext, setEngineContext] = useState<{
+    hasResultedLabs: boolean;
+    validConsentTypes: string[];
+    substanceAcknowledgmentIds: string[];
+  } | null>(null);
 
   const [goalKey, setGoalKey] = useState<PatientGoal>("recovery_injury");
   const [symptoms, setSymptoms] = useState<string[]>([]);
@@ -153,7 +160,7 @@ export default function CdsAssessmentPanel({
         const { data: pathwayRow } = await supabase
           .from("cds_pathways" as "patients")
           .select(
-            "id, slug, name, goal_key, recommended_lab_slug, elevated_program_key, staff_redirect_notes",
+            "id, slug, name, goal_key, recommended_lab_slug, elevated_program_key, staff_redirect_notes, active",
           )
           .eq("id", row.pathway_id)
           .maybeSingle();
@@ -209,7 +216,7 @@ export default function CdsAssessmentPanel({
       const { data } = await supabase
         .from("cds_pathways" as "patients")
         .select(
-          "id, slug, name, goal_key, recommended_lab_slug, elevated_program_key, staff_redirect_notes",
+          "id, slug, name, goal_key, recommended_lab_slug, elevated_program_key, staff_redirect_notes, active",
         )
         .eq("goal_key", goalKey)
         .eq("is_sample", false)
@@ -303,6 +310,13 @@ export default function CdsAssessmentPanel({
 
       if (data?.primary_pathway) {
         setPathwaySummary(data.primary_pathway as CdsPathwaySummary);
+      }
+      if (data?.context) {
+        setEngineContext({
+          hasResultedLabs: Boolean(data.context.has_resulted_labs),
+          validConsentTypes: (data.context.valid_consent_types ?? []) as string[],
+          substanceAcknowledgmentIds: (data.context.substance_acknowledgment_ids ?? []) as string[],
+        });
       }
 
       toast.success("CDS engine run complete");
@@ -554,7 +568,18 @@ export default function CdsAssessmentPanel({
                 {results.length > 0 && (
                   <div className="space-y-3">
                     <h3 className="font-jost text-sm font-medium">Surfaced candidates</h3>
-                    {results.map((row) => (
+                    {results.map((row) => {
+                      const gate =
+                        engineContext &&
+                        gateResultFromAssessmentCandidate(row, {
+                          ...engineContext,
+                          pathwayActive: pathwaySummary?.active !== false,
+                          protocolSigned: pathwaySummary?.active === true,
+                          providerReviewApproved:
+                            review?.decision === "approved" || review?.decision === "modified",
+                        });
+
+                      return (
                       <div
                         key={row.id}
                         className="rounded-lg border border-border p-4 space-y-3 font-jost text-sm"
@@ -578,6 +603,50 @@ export default function CdsAssessmentPanel({
 
                         {row.blocked_reason && (
                           <p className="text-xs text-muted-foreground">{row.blocked_reason}</p>
+                        )}
+
+                        {gate && (
+                          <div className="rounded border border-border/80 bg-background p-3 space-y-2 text-xs">
+                            <p className="font-medium text-foreground">Four-gate check</p>
+                            <ul className="grid gap-1 sm:grid-cols-2">
+                              {(
+                                [
+                                  ["Contraindication", gate.contraindication.status],
+                                  ["Labs", gate.labs.status],
+                                  ["Regulatory", gate.regulatory.status],
+                                  ["Protocol", gate.protocol.status],
+                                ] as const
+                              ).map(([label, status]) => (
+                                <li key={label}>
+                                  <span className="text-muted-foreground">{label}: </span>
+                                  <span
+                                    className={
+                                      status === "pass"
+                                        ? "text-emerald-700"
+                                        : status === "block"
+                                          ? "text-destructive"
+                                          : "text-amber-800"
+                                    }
+                                  >
+                                    {status}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                            {gate.missingActions.length > 0 && (
+                              <p className="text-muted-foreground">
+                                Next:{" "}
+                                {gate.missingActions
+                                  .map((a) => MISSING_ACTION_LABELS[a] ?? a)
+                                  .join(" · ")}
+                              </p>
+                            )}
+                            {gate.canOffer && (
+                              <p className="text-emerald-800 font-medium">
+                                All gates pass — eligible after physician review.
+                              </p>
+                            )}
+                          </div>
                         )}
 
                         <div className="flex flex-wrap gap-2">
@@ -620,7 +689,8 @@ export default function CdsAssessmentPanel({
                           )}
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 
