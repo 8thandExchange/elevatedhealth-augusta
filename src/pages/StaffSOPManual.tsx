@@ -564,7 +564,7 @@ const StaffSOPManual = () => {
               {SOP_MANUAL_META.title} · v{SOP_MANUAL_META.version} · {SOP_MANUAL_META.effectiveDate}
             </p>
             <p className="mt-1">
-              /staff/sop-manual · /formulary-economics · /staff/vendor-guide
+              /staff/sop-manual · /staff/system-guide · /formulary-economics · /staff/vendor-guide
             </p>
           </footer>
         </div>

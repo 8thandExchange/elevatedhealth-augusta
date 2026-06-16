@@ -31,6 +31,9 @@ const StaffVendorGuide = () => {
             </Button>
             <div className="flex gap-2">
               <Button asChild variant="outline" size="sm" className="font-jost">
+                <Link to="/staff/system-guide">System guide</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="font-jost">
                 <Link to="/formulary-economics">Economics dashboard</Link>
               </Button>
               <Button type="button" variant="outline" size="sm" className="font-jost" onClick={() => window.print()}>

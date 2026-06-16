@@ -74,6 +74,7 @@ import FormularyEconomicsDashboard from "./pages/FormularyEconomicsDashboard";
 import LabCatalogAdmin from "./pages/LabCatalogAdmin";
 import StaffVendorGuide from "./pages/StaffVendorGuide";
 import StaffSOPManual from "./pages/StaffSOPManual";
+import StaffSystemGuide from "./pages/StaffSystemGuide";
 import StaffClinicalPathway from "./pages/StaffClinicalPathway";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
@@ -231,6 +232,11 @@ const App = () => {
           <Route path="/staff/sop-manual" element={
             <ProviderLayout title="SOP Manual" subtitle="Algorithms · financials · workflows" showNavbar={false}>
               <StaffSOPManual />
+            </ProviderLayout>
+          } />
+          <Route path="/staff/system-guide" element={
+            <ProviderLayout title="System Guide" subtitle="Journey · lanes · labs · vendors" showNavbar={false}>
+              <StaffSystemGuide />
             </ProviderLayout>
           } />
           <Route path="/staff/clinical-pathway" element={

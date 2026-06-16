@@ -71,6 +71,9 @@ const StaffClinicalPathway = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="font-jost">
+              <Link to="/staff/system-guide">System guide</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="font-jost">
               <Link to="/lab-catalog">Lab catalog</Link>
             </Button>
             <Badge variant="outline" className="font-jost text-xs">
