@@ -35,7 +35,7 @@ export const LAB_PANEL_CHECKOUT: Record<string, LabPanelCheckoutMeta> = {
   },
   "weight-optimization": {
     tier: "expanded",
-    testCount: 13,
+    testCount: 19,
     programs: ["glp1", "metabolic"],
   },
   "sexual-wellness": {

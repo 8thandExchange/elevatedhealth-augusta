@@ -3,6 +3,7 @@
  */
 import { GOAL_LABELS, type PatientGoal } from "./clinicalPathwayEngine";
 import { labPanelDisplayPrice, labPanelNonMemberCents } from "./labPanelCheckout";
+import { LAB_PANEL_DISPLAY_NAMES, type LabPanelSlug } from "./labPanelRecommendations";
 import { ELEVATED_PROGRAMS, type ElevatedProgramKey } from "./stripeConfig";
 
 export interface CdsPathwaySummary {
@@ -25,7 +26,7 @@ export function formatRecommendedLabPanel(
     return { label: "No default panel (IV screening or workup first)", displayPrice: null, cents: null };
   }
   return {
-    label: labSlug,
+    label: LAB_PANEL_DISPLAY_NAMES[labSlug as LabPanelSlug] ?? labSlug,
     displayPrice: labPanelDisplayPrice(labSlug, isMember),
     cents: labPanelNonMemberCents(labSlug),
   };

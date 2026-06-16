@@ -70,6 +70,9 @@ const StaffClinicalPathway = () => {
                 SOP Manual
               </Link>
             </Button>
+            <Button asChild variant="outline" size="sm" className="font-jost">
+              <Link to="/lab-catalog">Lab catalog</Link>
+            </Button>
             <Badge variant="outline" className="font-jost text-xs">
               Physician signs all Rx
             </Badge>

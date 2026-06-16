@@ -71,6 +71,7 @@ import ClinicalProtocolEditor from "./components/provider/ClinicalProtocolEditor
 import InventoryDashboard from "./pages/InventoryDashboard";
 import FormularyDashboard from "./pages/FormularyDashboard";
 import FormularyEconomicsDashboard from "./pages/FormularyEconomicsDashboard";
+import LabCatalogAdmin from "./pages/LabCatalogAdmin";
 import StaffVendorGuide from "./pages/StaffVendorGuide";
 import StaffSOPManual from "./pages/StaffSOPManual";
 import StaffClinicalPathway from "./pages/StaffClinicalPathway";
@@ -237,6 +238,19 @@ const App = () => {
               <StaffClinicalPathway />
             </ProviderLayout>
           } />
+          <Route
+            path="/lab-catalog"
+            element={
+              <ProviderLayout
+                title="Lab Catalog"
+                subtitle="Panels · COGS · LabCorp codes"
+                showNavbar={false}
+                allowedRoles={["admin", "staff", "business_admin", "provider"]}
+              >
+                <LabCatalogAdmin />
+              </ProviderLayout>
+            }
+          />
           <Route path="/patient/create-account" element={<CreateAccount />} />
           
           {/* Protected Patient Routes */}

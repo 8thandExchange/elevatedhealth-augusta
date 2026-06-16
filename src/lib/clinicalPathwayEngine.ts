@@ -4,6 +4,11 @@
  */
 import { CORE_SERVICES, ELEVATED_PROGRAMS, type ElevatedProgramKey } from "./stripeConfig";
 import { PROGRAM_DEFAULT_LAB_SLUG, labCheckoutTierForSlug, labPanelNonMemberCents } from "./labPanelCheckout";
+import {
+  LAB_PANEL_DISPLAY_NAMES,
+  type LabPanelSlug,
+  recommendLabPanelSlug,
+} from "./labPanelRecommendations";
 import { DOSING_PROTOCOLS, type DosingProtocol } from "./dosingProtocols";
 import { fmtUsd, labMemberCents } from "./pricing";
 
@@ -79,9 +84,14 @@ export const EXCLUDED_COMPOUNDS = [
 function labMeta(slug: string) {
   const tier = labCheckoutTierForSlug(slug);
   const cents = labPanelNonMemberCents(slug);
-  const name =
-    tier === "expanded" ? CORE_SERVICES.expandedPanel.name : CORE_SERVICES.comprehensivePanel.name;
+  const name = LAB_PANEL_DISPLAY_NAMES[slug as LabPanelSlug] ?? slug;
   return { slug, name, cents, display: fmtUsd(cents), tier };
+}
+
+function labMetaForGoal(goal: PatientGoal, programKey?: ElevatedProgramKey) {
+  const fromProgram = programKey ? PROGRAM_DEFAULT_LAB_SLUG[programKey] : undefined;
+  const slug = fromProgram ?? recommendLabPanelSlug(goal) ?? "foundation-wellness";
+  return labMeta(slug);
 }
 
 function buildSteps(
@@ -271,7 +281,7 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
     };
   },
   libido: () => {
-    const lab = labMeta("foundation-wellness");
+    const lab = labMetaForGoal("libido");
     return {
       goal: "libido",
       goalLabel: GOAL_LABELS.libido,

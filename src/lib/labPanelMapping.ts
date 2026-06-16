@@ -10,6 +10,16 @@ export {
   stripePriceIdForLabSlug,
 } from "./labPanelCheckout";
 
+export {
+  recommendLabPanelSlug,
+  recommendLabPanelSlugFromSymptoms,
+  GOAL_TO_LAB_PANEL_SLUG,
+  LAB_PANEL_SLUGS,
+  LAB_PANEL_DISPLAY_NAMES,
+} from "./labPanelRecommendations";
+
+export type { LabPanelSlug } from "./labPanelRecommendations";
+
 export type LabcorpRequisitionKey = "mens_safety" | "thyroid" | "safety_cmp";
 
 export const LAB_PANEL_REQUISITION_KEY: Record<string, LabcorpRequisitionKey> = {
