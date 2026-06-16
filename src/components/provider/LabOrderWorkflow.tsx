@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -20,13 +22,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LAB_PANEL_REQUISITION_KEY, labPanelNonMemberCents, labCheckoutTierForSlug } from "@/lib/labPanelMapping";
+import {
+  LAB_ORDER_STATUS_LABELS,
+  LAB_PANEL_REQUISITION_KEY,
+  labPanelNonMemberCents,
+  labCheckoutTierForSlug,
+} from "@/lib/labPanelMapping";
 import { labMemberCents } from "@/lib/pricing";
 import { markLabsReviewedForPatient } from "@/lib/labsWorkflow";
-import { Loader2, Mail, FlaskConical } from "lucide-react";
+import type { LabTestRow } from "@/lib/labCatalogTypes";
+import {
+  buildPanelEconomicsForOrder,
+  economicsSummaryLines,
+  panelBillingContext,
+} from "@/lib/labOrderEconomics";
+import { formatCentsUsd } from "@/lib/labCatalogEconomics";
+import { Loader2, Mail, FlaskConical, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
-type LabPanel = Tables<"lab_panels">;
+type LabPanel = Tables<"lab_panels"> & {
+  included_in_program?: boolean;
+  initial_paid_at_intake?: boolean;
+  validity_days?: number;
+};
 type LabOrder = Tables<"lab_orders">;
 
 type PatientLabContext = {
@@ -42,6 +60,8 @@ interface LabOrderWorkflowProps {
   patient: PatientLabContext;
   providerName?: string;
   providerCredentials?: string;
+  /** CDS / pathway suggested panel — pre-selects when staff has not chosen yet */
+  recommendedPanelSlug?: string | null;
   onOrderUpdated?: () => void;
 }
 
@@ -49,10 +69,13 @@ export default function LabOrderWorkflow({
   patient,
   providerName = "Elevated Health Provider",
   providerCredentials = "MD",
+  recommendedPanelSlug,
   onOrderUpdated,
 }: LabOrderWorkflowProps) {
   const [panels, setPanels] = useState<LabPanel[]>([]);
   const [orders, setOrders] = useState<LabOrder[]>([]);
+  const [panelTests, setPanelTests] = useState<LabTestRow[]>([]);
+  const [loadingTests, setLoadingTests] = useState(false);
   const [loading, setLoading] = useState(true);
   const [panelSlug, setPanelSlug] = useState("");
   const [reason, setReason] = useState("");
@@ -65,16 +88,81 @@ export default function LabOrderWorkflow({
       supabase.from("lab_panels").select("*").eq("is_active", true).order("display_order"),
       supabase.from("lab_orders").select("*").eq("patient_id", patient.id).order("ordered_at", { ascending: false }),
     ]);
-    setPanels((panelRows ?? []) as LabPanel[]);
+    const panelList = (panelRows ?? []) as LabPanel[];
+    setPanels(panelList);
     setOrders((orderRows ?? []) as LabOrder[]);
+    if (
+      recommendedPanelSlug &&
+      panelList.some((p) => p.slug === recommendedPanelSlug)
+    ) {
+      setPanelSlug((prev) => prev || recommendedPanelSlug);
+    }
     setLoading(false);
-  }, [patient.id]);
+  }, [patient.id, recommendedPanelSlug]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const selectedPanel = panels.find((p) => p.slug === panelSlug);
+
+  const loadPanelTests = useCallback(async (panel: LabPanel | undefined) => {
+    if (!panel) {
+      setPanelTests([]);
+      return;
+    }
+    setLoadingTests(true);
+    try {
+      const { data: joins, error: joinErr } = await supabase
+        .from("panel_tests")
+        .select("test_id")
+        .eq("panel_id", panel.id);
+      if (joinErr) throw joinErr;
+      const testIds = (joins ?? []).map((j) => j.test_id);
+      if (testIds.length === 0) {
+        setPanelTests([]);
+        return;
+      }
+      const { data: tests, error: testErr } = await supabase
+        .from("lab_tests")
+        .select("id, code, name, eha_cost_cents, non_member_price_cents")
+        .in("id", testIds);
+      if (testErr) throw testErr;
+      setPanelTests((tests ?? []) as LabTestRow[]);
+    } catch (e) {
+      console.warn("panel test economics load:", e);
+      setPanelTests([]);
+    } finally {
+      setLoadingTests(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadPanelTests(selectedPanel);
+  }, [selectedPanel, loadPanelTests]);
+
+  const panelEconomics = useMemo(() => {
+    if (!selectedPanel || panelTests.length === 0) return null;
+    return buildPanelEconomicsForOrder(
+      selectedPanel.slug,
+      selectedPanel.name,
+      panelTests.map((t) => ({
+        id: t.id,
+        code: t.code,
+        name: t.name,
+        eha_cost_cents: t.eha_cost_cents ?? null,
+        non_member_price_cents: t.non_member_price_cents,
+      })),
+    );
+  }, [selectedPanel, panelTests]);
+
+  const billingContext = selectedPanel
+    ? panelBillingContext({
+        included_in_program: selectedPanel.included_in_program ?? true,
+        initial_paid_at_intake: selectedPanel.initial_paid_at_intake ?? true,
+        validity_days: selectedPanel.validity_days ?? 90,
+      })
+    : null;
   const requisitionKey: string | null =
     selectedPanel?.labcorp_requisition_key ??
     LAB_PANEL_REQUISITION_KEY[panelSlug] ??
@@ -213,6 +301,60 @@ export default function LabOrderWorkflow({
       </div>
       {selectedPanel && (
         <p className="text-xs text-muted-foreground">{selectedPanel.description}</p>
+      )}
+
+      {selectedPanel && billingContext && (
+        <div className="rounded-md border border-border bg-muted/30 p-3 space-y-2 text-xs font-jost">
+          <p className="font-medium text-foreground">Billing context (staff)</p>
+          <ul className="text-muted-foreground space-y-1 list-disc list-inside">
+            <li>{billingContext.intakeLabel}</li>
+            <li>{billingContext.programLabel}</li>
+            <li>{billingContext.validityLabel}</li>
+          </ul>
+        </div>
+      )}
+
+      {selectedPanel && panelEconomics && (
+        <div className="rounded-md border border-border p-3 space-y-2 text-xs font-jost">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-medium text-foreground">Panel economics (internal)</p>
+            <Link to="/lab-catalog" className="text-accent underline text-[11px]">
+              Lab catalog
+            </Link>
+          </div>
+          {loadingTests ? (
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          ) : (
+            <ul className="text-muted-foreground space-y-1">
+              {economicsSummaryLines(panelEconomics).map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+              <li className="text-[11px] pt-1">
+                {panelTests.length} analytes · member charge{" "}
+                {formatCentsUsd(labMemberCents(panelEconomics.patientChargeCents))}
+              </li>
+            </ul>
+          )}
+          {!panelEconomics.marginIsFinal && (
+            <Alert className="py-2 border-amber-500/40 bg-amber-500/5">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-xs ml-2">
+                {panelEconomics.missingPriceCount} analyte(s) missing EHA cost — margin is not
+                final. Update costs in{" "}
+                <Link to="/lab-catalog" className="text-accent underline">
+                  Lab catalog
+                </Link>
+                .
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      )}
+
+      {recommendedPanelSlug && panelSlug === recommendedPanelSlug && (
+        <p className="text-xs text-accent">
+          Pre-selected from clinical pathway / CDS recommendation ({recommendedPanelSlug}).
+        </p>
       )}
       {requisitionKey ? (
         <p className="text-xs text-green-700 dark:text-green-400">Auto-email requisition available ({requisitionKey}).</p>
