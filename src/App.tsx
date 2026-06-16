@@ -75,6 +75,7 @@ import LabCatalogAdmin from "./pages/LabCatalogAdmin";
 import StaffVendorGuide from "./pages/StaffVendorGuide";
 import StaffSOPManual from "./pages/StaffSOPManual";
 import StaffSystemGuide from "./pages/StaffSystemGuide";
+import ClinicalPolicyAdmin from "./pages/ClinicalPolicyAdmin";
 import StaffClinicalPathway from "./pages/StaffClinicalPathway";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
@@ -239,6 +240,19 @@ const App = () => {
               <StaffSystemGuide />
             </ProviderLayout>
           } />
+          <Route
+            path="/clinical-policy"
+            element={
+              <ProviderLayout
+                title="Clinical Policy"
+                subtitle="Regulatory tier · EHA status · consents"
+                showNavbar={false}
+                allowedRoles={["admin", "staff", "business_admin", "provider"]}
+              >
+                <ClinicalPolicyAdmin />
+              </ProviderLayout>
+            }
+          />
           <Route path="/staff/clinical-pathway" element={
             <ProviderLayout title="Clinical Pathway" subtitle="Goal → labs → dosing" showNavbar={false}>
               <StaffClinicalPathway />

@@ -11,6 +11,11 @@ import {
   type GateState,
   type RegulatoryStatus,
 } from "./cdsEngine";
+import {
+  policyRequiresProgramEnrollment,
+  policyStatusBlocksOffer,
+  type EhaPolicyStatus,
+} from "./clinicalPolicy";
 
 export type GateStatus = "pass" | "block" | "pending";
 
@@ -39,6 +44,10 @@ export interface CanOfferTherapyInput {
   pathwayActive?: boolean;
   /** CDS candidate row is active with prescriber sign-off */
   candidateActive?: boolean;
+  /** Canonical policy eha_status from clinical_policy_items */
+  policyEhaStatus?: EhaPolicyStatus;
+  /** Patient enrolled in parent program (for program_only policies) */
+  programEnrolled?: boolean;
   /** Provider has approved cds_provider_review for current assessment */
   providerReviewApproved?: boolean;
 }
@@ -124,7 +133,27 @@ export function canOfferTherapy(input: CanOfferTherapyInput): GateResult {
   };
 
   const engine = evaluateCandidate(candidate, ctx);
-  const regulatory = gateFromEngineState(engine.gate_state);
+  let regulatory = gateFromEngineState(engine.gate_state);
+
+  if (input.policyEhaStatus && policyStatusBlocksOffer(input.policyEhaStatus)) {
+    regulatory = {
+      status: "block",
+      reason: `Clinic policy marks this therapy as ${input.policyEhaStatus.replace("_", " ")}.`,
+      patientExplanation:
+        "This option is not available through our clinic at this time. Your provider will discuss alternatives.",
+    };
+  } else if (
+    input.policyEhaStatus &&
+    policyRequiresProgramEnrollment(input.policyEhaStatus) &&
+    !input.programEnrolled
+  ) {
+    regulatory = {
+      status: "pending",
+      reason: "Therapy is program-only — enroll in the supervised program path first.",
+      patientExplanation:
+        "This therapy is offered only as part of a supervised program, not as a standalone prescription.",
+    };
+  }
 
   const contraTags = input.contraindicationTags ?? [];
   const patientContras = input.patientContraindications ?? [];
@@ -184,6 +213,9 @@ export function canOfferTherapy(input: CanOfferTherapyInput): GateResult {
     }
   }
   if (regulatory.status === "block") missingActions.push("therapy_excluded");
+  if (regulatory.status === "pending" && input.policyEhaStatus === "program_only") {
+    missingActions.push("enroll_program");
+  }
   if (protocol.status === "pending") missingActions.push("sign_protocol");
   if (input.providerReviewApproved === false) missingActions.push("provider_review");
 
@@ -256,6 +288,10 @@ export function gateResultFromAssessmentCandidate(
     protocolSigned?: boolean;
     pathwayActive?: boolean;
     candidateActive?: boolean;
+    policyEhaStatus?: EhaPolicyStatus;
+    programEnrolled?: boolean;
+    policyContraindicationTags?: string[];
+    policyRequiredConsents?: string[];
     providerReviewApproved?: boolean;
   },
 ): GateResult {
@@ -264,7 +300,9 @@ export function gateResultFromAssessmentCandidate(
     : [];
   const contraindicationTags = Array.isArray(row.metadata?.contraindication_tags)
     ? (row.metadata.contraindication_tags as string[])
-    : [];
+    : Array.isArray(ctx.policyContraindicationTags)
+      ? ctx.policyContraindicationTags
+      : [];
   const candidateActive =
     ctx.candidateActive ?? row.metadata?.candidate_active === true;
 
@@ -273,7 +311,10 @@ export function gateResultFromAssessmentCandidate(
     displayName: row.display_name,
     regulatoryStatus: row.regulatory_status,
     requiresLabs: row.requires_labs,
-    requiredConsentTypes,
+    requiredConsentTypes:
+      requiredConsentTypes.length > 0
+        ? requiredConsentTypes
+        : (ctx.policyRequiredConsents ?? []),
     contraindicationTags,
     patientContraindications: ctx.patientContraindications,
     hasResultedLabs: ctx.hasResultedLabs,
@@ -282,6 +323,8 @@ export function gateResultFromAssessmentCandidate(
     protocolSigned: ctx.protocolSigned,
     pathwayActive: ctx.pathwayActive,
     candidateActive,
+    policyEhaStatus: ctx.policyEhaStatus,
+    programEnrolled: ctx.programEnrolled,
     providerReviewApproved: ctx.providerReviewApproved,
   });
 }

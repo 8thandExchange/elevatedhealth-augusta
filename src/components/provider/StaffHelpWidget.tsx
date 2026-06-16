@@ -127,6 +127,7 @@ export function StaffHelpWidget() {
       { label: "Formulary", to: "/formulary", icon: ClipboardList },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
       { label: "System guide", to: "/staff/system-guide" },
+      { label: "Clinical policy", to: "/clinical-policy" },
       { label: "SOP Manual", to: "/staff/sop-manual", icon: ClipboardList },
     ],
     [],

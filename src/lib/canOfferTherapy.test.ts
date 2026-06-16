@@ -85,6 +85,25 @@ describe("canOfferTherapy", () => {
     expect(result.missingActions).toContain("sign_protocol");
   });
 
+  it("blocks hidden policy status even when engine would pass", () => {
+    const result = canOfferTherapy({
+      ...base,
+      policyEhaStatus: "hidden",
+    });
+    expect(result.canOffer).toBe(false);
+    expect(result.regulatory.status).toBe("block");
+  });
+
+  it("requires program enrollment for program_only policy", () => {
+    const result = canOfferTherapy({
+      ...base,
+      policyEhaStatus: "program_only",
+      programEnrolled: false,
+    });
+    expect(result.canOffer).toBe(false);
+    expect(result.missingActions).toContain("enroll_program");
+  });
+
   it("maps assessment candidate rows through gateResultFromAssessmentCandidate", () => {
     const result = gateResultFromAssessmentCandidate(
       {

@@ -68,5 +68,6 @@ export const MISSING_ACTION_LABELS: Record<string, string> = {
   therapy_excluded: "Therapy excluded — do not offer",
   sign_protocol: "Activate signed protocol version",
   provider_review: "Physician CDS review required",
+  enroll_program: "Enroll supervised program path",
   resolve_contraindication: "Resolve contraindication",
 };

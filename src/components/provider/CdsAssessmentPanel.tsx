@@ -60,6 +60,12 @@ import {
   shouldRouteToOrderLabs,
 } from "@/lib/cdsUiHelpers";
 import { gateResultFromAssessmentCandidate } from "@/lib/canOfferTherapy";
+import {
+  indexPoliciesByKey,
+  lookupPolicyForCandidate,
+  EHA_STATUS_LABELS,
+  type ClinicalPolicyItem,
+} from "@/lib/clinicalPolicy";
 import LabcorpOrderModal from "@/components/provider/LabcorpOrderModal";
 import { SubstanceAcknowledgmentCapture } from "@/components/consents/SubstanceAcknowledgmentCapture";
 
@@ -104,6 +110,7 @@ export default function CdsAssessmentPanel({
   const [results, setResults] = useState<CdsAssessmentResult[]>([]);
   const [review, setReview] = useState<CdsProviderReview | null>(null);
   const [pathwaySummary, setPathwaySummary] = useState<CdsPathwaySummary | null>(null);
+  const [policyByKey, setPolicyByKey] = useState<Map<string, ClinicalPolicyItem>>(new Map());
   const [engineContext, setEngineContext] = useState<{
     hasResultedLabs: boolean;
     validConsentTypes: string[];
@@ -132,6 +139,20 @@ export default function CdsAssessmentPanel({
       .select("role")
       .eq("user_id", user.id);
     setIsPrescriber((roles ?? []).some((r) => r.role === "provider"));
+  }, []);
+
+  const loadPolicies = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("clinical_policy_items" as "patients")
+      .select("*")
+      .eq("is_sample", false)
+      .order("category")
+      .order("display_name");
+    if (error) {
+      console.warn("clinical_policy_items load:", error.message);
+      return;
+    }
+    setPolicyByKey(indexPoliciesByKey((data ?? []) as unknown as ClinicalPolicyItem[]));
   }, []);
 
   const loadAssessmentBundle = useCallback(async () => {
@@ -208,7 +229,8 @@ export default function CdsAssessmentPanel({
 
   useEffect(() => {
     void loadRoles();
-  }, [loadRoles]);
+    void loadPolicies();
+  }, [loadRoles, loadPolicies]);
 
   useEffect(() => {
     if (!patientId || assessment?.pathway_id) return;
@@ -569,6 +591,7 @@ export default function CdsAssessmentPanel({
                   <div className="space-y-3">
                     <h3 className="font-jost text-sm font-medium">Surfaced candidates</h3>
                     {results.map((row) => {
+                      const policy = lookupPolicyForCandidate(policyByKey, row.candidate_key);
                       const gate =
                         engineContext &&
                         gateResultFromAssessmentCandidate(row, {
@@ -576,6 +599,12 @@ export default function CdsAssessmentPanel({
                           pathwayActive: pathwaySummary?.active === true,
                           candidateActive: row.metadata?.candidate_active === true,
                           protocolSigned: pathwaySummary?.active === true,
+                          policyEhaStatus: policy?.eha_status,
+                          policyContraindicationTags: policy?.contraindication_tags,
+                          policyRequiredConsents: policy?.required_consents,
+                          programEnrolled:
+                            pathwaySummary?.elevated_program_key != null &&
+                            (review?.decision === "approved" || review?.decision === "modified"),
                           providerReviewApproved:
                             review?.decision === "approved" || review?.decision === "modified",
                         });
@@ -599,6 +628,11 @@ export default function CdsAssessmentPanel({
                             <Badge variant="outline" className={gateBadgeClassName(row.gate_state)}>
                               {GATE_STATE_LABELS[row.gate_state]}
                             </Badge>
+                            {policy && (
+                              <Badge variant="secondary" className="font-jost text-xs">
+                                Policy: {EHA_STATUS_LABELS[policy.eha_status]}
+                              </Badge>
+                            )}
                           </div>
                         </div>
 
