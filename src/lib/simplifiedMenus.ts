@@ -33,7 +33,7 @@ export const PUBLIC_MENU: MenuTier[] = [
     items: [
       { id: "trt", label: "ELEVATED TRT", priceDisplay: "$249/mo", vendor: "custom_pharmacy_evans" },
       { id: "hrt", label: "ELEVATED HRT", priceDisplay: "$229/mo", vendor: "custom_pharmacy_evans" },
-      { id: "glp1", label: "ELEVATED GLP-1", priceDisplay: "$349/mo", vendor: "fcc" },
+      { id: "glp1", label: "ELEVATED GLP-1", priceDisplay: "$349/mo", vendor: "gc" },
       { id: "metabolic", label: "ELEVATED Metabolic Recomposition", priceDisplay: "$1,199/mo", vendor: "gc" },
       { id: "wellness", label: "ELEVATED Wellness", priceDisplay: "$199/mo", vendor: "mixed" },
     ],
@@ -53,9 +53,9 @@ export const PUBLIC_MENU: MenuTier[] = [
     title: "Named peptide stacks (not à la carte catalog)",
     description: "Three stacks + metabolic program. Do not recite full peptide list to prospects.",
     items: [
-      { id: "restore", label: "Restore (PT-141 weekly)", priceDisplay: "$129–179/mo", vendor: "fcc" },
-      { id: "healing", label: "Healing / Wolverine (BPC + TB-500)", priceDisplay: "$249–329/mo", vendor: "fcc" },
-      { id: "vitality", label: "Vitality (Sermorelin + NAD+)", priceDisplay: "$299–399/mo", vendor: "fcc" },
+      { id: "restore", label: "Restore (PT-141 weekly)", priceDisplay: "$129–179/mo", vendor: "gc" },
+      { id: "healing", label: "Healing / Wolverine (BPC + TB-500)", priceDisplay: "$249–329/mo", vendor: "gc" },
+      { id: "vitality", label: "Vitality (Sermorelin + NAD+)", priceDisplay: "$299–399/mo", vendor: "gc" },
       { id: "metabolic-stack", label: "Metabolic Recomposition (phased)", priceDisplay: "$1,199/mo", vendor: "gc" },
     ],
   },
@@ -95,7 +95,7 @@ export const STAFF_ESCALATION_MENU: PublicMenuItem[] = [
 export const MENU_SIMPLIFICATION_RATIONALE = [
   "Prospects convert on programs, not SKUs — lead with ELEVATED tiers.",
   "One default hormone route per sex reduces 'which cream vs shot vs pellet?' at intake.",
-  "GC handles advanced/metabolic peptides; FCC handles everything else — staff uses vendor guide, not patient choice.",
+  "GC handles advanced/metabolic peptides and GLP-1 via PATH/STLKS network; FCC remains IV premix backup; Custom Pharmacy Evans for local hormone fax.",
   "Full FCC catalog (~780 SKUs) stays in Formulary for ops — never print it for front desk.",
 ];
 

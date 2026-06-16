@@ -32,9 +32,7 @@ import {
 } from "@/lib/storefrontHero";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
-const PRICE_BASELINE_LABS = fmtUsd(
-  CORE_SERVICES.expandedPanel.amount + 34500,
-); // Weight Optimization $345 + Expanded $299
+const PRICE_BASELINE_LABS = CORE_SERVICES.expandedPanel.displayPrice;
 const PRICE_STACK = ELEVATED_PROGRAMS.metabolicRecomposition.displayPrice;
 
 const tierColor: Record<string, string> = {
@@ -53,7 +51,7 @@ const steps = [
   {
     n: "02",
     t: "Baseline labs",
-    d: `Weight Optimization + Expanded Panel (${PRICE_BASELINE_LABS} one-time). Drawn in-office, LabCorp processed.`,
+    d: `${CORE_SERVICES.expandedPanel.name} (${PRICE_BASELINE_LABS} one-time). Weight/metabolic markers drawn in-office, LabCorp processed.`,
   },
   {
     n: "03",
@@ -82,7 +80,7 @@ const faqs = [
   },
   {
     q: "What labs are required?",
-    a: "Baseline Weight Optimization + Expanded panels before starting. CMP safety check around week 4 at provider discretion. Quarterly Expanded panels are included while enrolled.",
+    a: `Baseline ${CORE_SERVICES.expandedPanel.name} (${PRICE_BASELINE_LABS}) before starting. CMP safety check around week 4 at provider discretion. Quarterly Expanded panels are included while enrolled.`,
   },
   {
     q: "Will I lose muscle?",

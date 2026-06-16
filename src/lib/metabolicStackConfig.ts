@@ -46,7 +46,7 @@ export const STACK_ALACARTE_CATALOG_KEYS = [
 ] as const;
 
 const NAD_INJECTION_WHOLESALE_CENTS = 7000;
-const CJC_WHOLESALE_CENTS = GC_WHOLESALE_CENTS.cjcIpamorelinBlend5_5;
+const CJC_WHOLESALE_CENTS = GC_WHOLESALE_CENTS.cjcIpamorelinBlend10_10;
 
 export const METABOLIC_STACK_COMPOUNDS: StackCompound[] = [
   {
@@ -83,7 +83,7 @@ export const METABOLIC_STACK_COMPOUNDS: StackCompound[] = [
     tier: "A",
     mechanism: "Mitochondrial membrane support — metabolic efficiency under GLP demand",
     fccSku: "3811",
-    supplierCostCents: GC_WHOLESALE_CENTS.ss3150mg,
+    supplierCostCents: GC_WHOLESALE_CENTS.ss3110mg,
     catalogKey: "ss31",
     dosingSummary: "5–10 mg subQ daily (taper to maintenance per protocol)",
   },
@@ -182,10 +182,14 @@ export const METABOLIC_STACK_PHASES: StackPhase[] = [
 ];
 
 export const METABOLIC_STACK_LABS = [
-  { when: "Baseline (before Phase 1)", panel: "Weight Optimization + Expanded Panel", slug: "weight-optimization" },
+  {
+    when: "Baseline (before Phase 1)",
+    panel: "Expanded Panel ($299 — weight/metabolic markers)",
+    slug: "weight-optimization",
+  },
   { when: "Week 4", panel: "CMP safety check (provider discretion)", slug: null },
-  { when: "Quarterly", panel: "Expanded Panel (included in program)", slug: "expanded" },
-  { when: "Week 12", panel: "Weight Optimization repeat + body comp review", slug: "weight-optimization" },
+  { when: "Quarterly", panel: "Expanded Panel (included in program)", slug: "weight-optimization" },
+  { when: "Week 12", panel: "Expanded Panel repeat + body comp review", slug: "weight-optimization" },
 ];
 
 export function metabolicStackWholesaleCentsFull(): number {

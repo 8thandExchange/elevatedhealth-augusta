@@ -21,9 +21,9 @@ describe("formularyEconomics", () => {
     expect(row?.primaryCostCents).toBeLessThan(row?.alternateCostCents ?? Infinity);
   });
 
-  it("NAD+ stays FCC-primary (cheaper than GC)", () => {
+  it("NAD+ is GC-primary per May 2026 catalog (STLKS injectable)", () => {
     const row = allEconomicsRows().find((r) => r.itemCode === "PEPTIDE-NAD-INJ");
-    expect(row?.primarySupplier).toBe("fcc");
+    expect(row?.primarySupplier).toBe("gc");
     expect(row?.primaryCostCents).toBeLessThan(row?.alternateCostCents ?? Infinity);
   });
 

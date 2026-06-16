@@ -15,7 +15,17 @@ This document is the single canonical reference for all pricing at Elevated Heal
 | Product | Price | What's included |
 |---|---|---|
 | Comprehensive Wellness Panel | $199 | Standard hormone panel + CBC + CMP + lipid panel + thyroid + A1C. Blood drawn in-office by Caroline. Sent to LabCorp. Results back within 5-7 business days. |
-| Expanded Panel | $299 | All of the above + advanced lipids (ApoB, Lp(a)), inflammatory markers (hs-CRP, homocysteine), iron studies, vitamin D, B12, folate. For weight loss baselines, fertility workups, comprehensive optimization. |
+| Expanded Panel | $299 | Comprehensive markers plus fasting insulin, leptin, AM cortisol, full thyroid (Free T3/T4), ApoB, Lp(a), homocysteine, iron studies, B12, folate. For GLP-1, metabolic, and weight-loss baselines. |
+### Lab panel checkout mapping (clinical slug → Stripe SKU)
+Staff order clinical panels by slug in `lab_panels`; patients pay via **two Stripe checkouts only**:
+| Clinical panel (`lab_panels.slug`) | Stripe checkout | Patient charge | Default program |
+|---|---|---|---|
+| `hormone-male` | Comprehensive | $199 | ELEVATED TRT |
+| `hormone-female` | Comprehensive | $199 | ELEVATED HRT |
+| `foundation-wellness` | Comprehensive | $199 | General / Wellness |
+| `weight-optimization` | Expanded | $299 | ELEVATED GLP-1, Metabolic Recomposition |
+| `sexual-wellness` | Comprehensive | $199 | Launch-hidden (inactive in staff UI) |
+Quarterly in-program labs use the same clinical panel but **$0 patient charge** (included in membership).
 Labs are billed separately from visits. Lab fees include the in-office blood draw, LabCorp processing, and posting of results to the patient portal. Lab fees do NOT include physician review — review of abnormal results requiring Medical Review is billed separately for non-members; included for members.
 ## Program Memberships (All-Inclusive Monthly)
 These are the flagship offerings. Each bundles medication + monitoring + check-ins into one monthly price. Modeled on the Tactus Health "no hidden fees" structure.
@@ -23,7 +33,7 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 |---|---|---|
 | ELEVATED TRT (men) | $249/month | Testosterone cypionate from Custom Pharmacy of Evans, self-injection supplies, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, anastrozole/HCG when clinically indicated, all Caroline-initiated physician oversight. |
 | ELEVATED HRT (women) | $229/month | Bi-Est cream/troches, progesterone, testosterone cream when prescribed, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. |
-| ELEVATED GLP-1 | $349/month | Compounded semaglutide OR tirzepatide from FCC, monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. |
+| ELEVATED GLP-1 | $349/month | Compounded semaglutide OR tirzepatide from GC/STLKS network (FCC backup), monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. |
 | ELEVATED METABOLIC RECOMPOSITION | $1,199/month | 90-day phased stack: retatrutide anchor, SS-31/NAD+ mitochondrial layer, CJC/Tesamorelin GH phase, optional B-tier add-ons, physician oversight, monitoring labs per protocol. Policy override 2026-06-14 (Dr. Akers). |
 | ELEVATED WELLNESS (non-Rx) | $199/month | 2 free IV drips per month, 20% off à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. |
 ### What Every Membership Includes

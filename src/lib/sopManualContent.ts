@@ -322,7 +322,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         step: "3.3",
         phase: "Labs",
         if: "Metabolic Recomposition candidacy",
-        then: "Order Expanded Panel ($299) + document Research Peptide + GLP consents signed.",
+        then: "Order Expanded Panel ($299). LabCorp requisition — weight-optimization slug.",
         charge: "C-02: $299 Expanded",
       },
       {
@@ -656,7 +656,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
     owner: "Provider MD + Kristen",
     steps: [
       { step: "1", action: "Confirm Research Peptide + GLP consents signed in portal." },
-      { step: "2", action: "Baseline Weight Optimization + Expanded Panel drawn in-office." },
+      { step: "2", action: "Baseline Expanded Panel ($299) drawn in-office — weight-optimization slug." },
       { step: "3", action: "Charge ELEVATED METABOLIC RECOMPOSITION ($1,199/mo) via Stripe." },
       { step: "4", action: "Phase 1 (wk 1–8): Retatrutide anchor — titrate from 0.5 mg/wk." },
       { step: "5", action: "Phase 2 (wk 2–8): Add SS-31 + NAD+ when retatrutide tolerated." },

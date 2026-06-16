@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LAB_ORDER_STATUS_LABELS, LAB_PANEL_REQUISITION_KEY } from "@/lib/labPanelMapping";
+import { LAB_PANEL_REQUISITION_KEY, labPanelNonMemberCents, labCheckoutTierForSlug } from "@/lib/labPanelMapping";
 import { labMemberCents } from "@/lib/pricing";
 import { markLabsReviewedForPatient } from "@/lib/labsWorkflow";
 import { Loader2, Mail, FlaskConical } from "lucide-react";
@@ -200,7 +200,7 @@ export default function LabOrderWorkflow({
             <SelectContent>
               {panels.map((p) => (
                 <SelectItem key={p.slug} value={p.slug}>
-                  {p.name} — ${(p.non_member_price_cents / 100).toFixed(0)} / ${(labMemberCents(p.non_member_price_cents) / 100).toFixed(0)} member
+                  {p.name} — ${(labPanelNonMemberCents(p.slug) / 100).toFixed(0)} ({labCheckoutTierForSlug(p.slug)}) / ${(labMemberCents(labPanelNonMemberCents(p.slug)) / 100).toFixed(0)} member
                 </SelectItem>
               ))}
             </SelectContent>

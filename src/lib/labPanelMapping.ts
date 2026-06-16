@@ -1,6 +1,15 @@
 /** Maps lab_panels.slug → send-labcorp-requisition panelType keys. */
 import { labMemberCents } from "./pricing";
 
+export {
+  labCheckoutTierForSlug,
+  labPanelDisplayPrice,
+  labPanelMemberCents,
+  labPanelNonMemberCents,
+  PROGRAM_DEFAULT_LAB_SLUG,
+  stripePriceIdForLabSlug,
+} from "./labPanelCheckout";
+
 export type LabcorpRequisitionKey = "mens_safety" | "thyroid" | "safety_cmp";
 
 export const LAB_PANEL_REQUISITION_KEY: Record<string, LabcorpRequisitionKey> = {
