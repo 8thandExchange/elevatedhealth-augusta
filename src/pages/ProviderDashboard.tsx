@@ -84,6 +84,7 @@ import PatientNotesCard from "@/components/provider/PatientNotesCard";
 import SOAPNotesPanel from "@/components/provider/SOAPNotesPanel";
 import TreatmentPlanPanel from "@/components/provider/TreatmentPlanPanel";
 import CdsAssessmentPanel from "@/components/provider/CdsAssessmentPanel";
+import CdsPathwayActivationPanel from "@/components/provider/CdsPathwayActivationPanel";
 import MedicationPanel from "@/components/provider/MedicationPanel";
 import AppointmentPanel from "@/components/provider/AppointmentPanel";
 import IntakeSummaryCard from "@/components/provider/IntakeSummaryCard";
@@ -216,6 +217,7 @@ const ProviderDashboard = () => {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(() => searchParams.get("tab") || "triage");
   const [canManageTeam, setCanManageTeam] = useState(false);
+  const [isPrescriber, setIsPrescriber] = useState(false);
   const [renewingPatientId, setRenewingPatientId] = useState<string | null>(null);
   const [resendingActivationId, setResendingActivationId] = useState<string | null>(null);
   const [deletingActivationId, setDeletingActivationId] = useState<string | null>(null);
@@ -381,6 +383,7 @@ const ProviderDashboard = () => {
           (row) => row.role === "admin" || row.role === "staff" || row.role === "business_admin",
         );
         setCanManageTeam(!!hasPrivilegedRole);
+        setIsPrescriber(roleRows?.some((row) => row.role === "provider") ?? false);
       }
 
       await loadData();
@@ -1303,6 +1306,15 @@ const ProviderDashboard = () => {
                   <FileText className="w-4 h-4 flex-shrink-0" />
                   <span>Resources</span>
                 </TabsTrigger>
+                {isPrescriber && (
+                  <TabsTrigger
+                    value="cdspathways"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
+                  >
+                    <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+                    <span>CDS Pathways</span>
+                  </TabsTrigger>
+                )}
                 <TabsTrigger 
                   value="fax" 
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm whitespace-nowrap text-sm"
@@ -2092,6 +2104,13 @@ const ProviderDashboard = () => {
           <TabsContent value="schedule">
             <MyScheduleManager />
           </TabsContent>
+
+          {/* CDS pathway prescriber activation */}
+          {isPrescriber && (
+            <TabsContent value="cdspathways">
+              <CdsPathwayActivationPanel />
+            </TabsContent>
+          )}
 
           {/* Fax History Tab */}
           <TabsContent value="fax">

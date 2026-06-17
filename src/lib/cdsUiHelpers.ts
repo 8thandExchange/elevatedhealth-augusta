@@ -11,7 +11,7 @@ export const REGULATORY_STATUS_LABELS: Record<CdsRegulatoryStatus, string> = {
 export const GATE_STATE_LABELS: Record<CdsGateState, string> = {
   ready: "Ready for provider review",
   blocked_excluded: "Clinic excluded",
-  blocked_ruo: "RUO — acknowledgment required",
+  blocked_ruo: "Research use only — blocked",
   needs_labs: "Order labs first",
   needs_ack: "Consent / acknowledgment required",
   needs_contra_review: "Contraindication review",
@@ -27,7 +27,7 @@ export function shouldRouteToOrderLabs(gateState: CdsGateState): boolean {
 }
 
 export function requiresSubstanceAcknowledgment(gateState: CdsGateState): boolean {
-  return gateState === "needs_ack" || gateState === "blocked_ruo";
+  return gateState === "needs_ack";
 }
 
 export function isRegulatoryBadgeStatus(

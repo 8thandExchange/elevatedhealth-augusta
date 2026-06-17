@@ -19,7 +19,8 @@ describe("cdsUiHelpers", () => {
 
   it("flags substance acknowledgment gates", () => {
     expect(requiresSubstanceAcknowledgment("needs_ack")).toBe(true);
-    expect(requiresSubstanceAcknowledgment("blocked_ruo")).toBe(true);
+    expect(requiresSubstanceAcknowledgment("blocked_ruo")).toBe(false);
+    expect(requiresSubstanceAcknowledgment("blocked_excluded")).toBe(false);
     expect(requiresSubstanceAcknowledgment("ready")).toBe(false);
   });
 });

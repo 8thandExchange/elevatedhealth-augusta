@@ -88,10 +88,10 @@ function gateFromEngineState(gateState: GateState): SingleGateResult {
       };
     case "blocked_ruo":
       return {
-        status: "pending",
-        reason: "Research-use substance acknowledgment required.",
+        status: "block",
+        reason: "Research-use-only — cannot offer or ePrescribe.",
         patientExplanation:
-          "This therapy requires an additional substance-specific acknowledgment after your parent consent is on file.",
+          "This option is not offered at Elevated Health Augusta. Your provider will discuss alternatives.",
       };
     case "blocked_excluded":
       return {
@@ -206,7 +206,7 @@ export function canOfferTherapy(input: CanOfferTherapyInput): GateResult {
   if (contraindication.status !== "pass") missingActions.push("resolve_contraindication");
   if (labs.status === "pending") missingActions.push("order_labs");
   if (regulatory.status === "pending") {
-    if (engine.gate_state === "needs_ack" || engine.gate_state === "blocked_ruo") {
+    if (engine.gate_state === "needs_ack") {
       missingActions.push("capture_consent_or_substance_ack");
     } else if (engine.gate_state === "needs_contra_review") {
       missingActions.push("provider_contra_review");

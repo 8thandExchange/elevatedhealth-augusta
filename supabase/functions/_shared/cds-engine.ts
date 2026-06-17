@@ -193,7 +193,18 @@ export function evaluateCandidate(
 
   const regulatoryStatus = candidate.regulatory_status;
 
-  if (regulatoryStatus === "GRAY_ZONE" || regulatoryStatus === "RESEARCH_USE_ONLY") {
+  if (regulatoryStatus === "RESEARCH_USE_ONLY") {
+    return {
+      ...base,
+      regulatory_status: "RESEARCH_USE_ONLY",
+      gate_state: "blocked_excluded",
+      blocked_reason:
+        "Research-use-only — hard clinic block. Cannot proceed to ePrescribe; prescriber override required if policy ever allows.",
+      rank_score: 0,
+    };
+  }
+
+  if (regulatoryStatus === "GRAY_ZONE") {
     if (!hasRequiredConsents(candidate, ctx)) {
       return {
         ...base,
@@ -208,7 +219,7 @@ export function evaluateCandidate(
       return {
         ...base,
         regulatory_status: regulatoryStatus,
-        gate_state: regulatoryStatus === "RESEARCH_USE_ONLY" ? "blocked_ruo" : "needs_ack",
+        gate_state: "needs_ack",
         blocked_reason: "Substance-specific acknowledgment required before ePrescribe handoff.",
         rank_score: 0,
       };

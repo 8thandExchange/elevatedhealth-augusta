@@ -80,8 +80,8 @@ describe("cdsEngine lab gate", () => {
 });
 
 describe("cdsEngine consent gates", () => {
-  it("requires substance acknowledgment for RESEARCH_USE_ONLY", () => {
-    const result = evaluateCandidate(
+  it("hard-blocks RESEARCH_USE_ONLY — never clears on substance acknowledgment", () => {
+    const withoutAck = evaluateCandidate(
       candidate({
         candidate_key: "tb_500",
         regulatory_status: "RESEARCH_USE_ONLY",
@@ -89,7 +89,19 @@ describe("cdsEngine consent gates", () => {
       }),
       { ...baseCtx, substanceAcknowledgmentIds: [] },
     );
-    expect(result.gate_state).toBe("blocked_ruo");
+    expect(withoutAck.gate_state).toBe("blocked_excluded");
+    expect(withoutAck.blocked_reason).toMatch(/ePrescribe|Research-use-only/i);
+
+    const withAck = evaluateCandidate(
+      candidate({
+        candidate_key: "sample_bpc_157",
+        regulatory_status: "RESEARCH_USE_ONLY",
+        required_consent_types: ["research_peptide"],
+      }),
+      baseCtx,
+    );
+    expect(withAck.gate_state).toBe("blocked_excluded");
+    expect(withAck.gate_state).not.toBe("ready");
   });
 
   it("surfaces needs_ack when parent consent types are missing for GRAY_ZONE", () => {
@@ -103,10 +115,10 @@ describe("cdsEngine consent gates", () => {
     expect(result.gate_state).toBe("needs_ack");
   });
 
-  it("returns ready when labs, consents, and substance ack are satisfied", () => {
+  it("returns ready when labs, consents, and substance ack are satisfied for GRAY_ZONE", () => {
     const result = evaluateCandidate(
       candidate({
-        regulatory_status: "RESEARCH_USE_ONLY",
+        regulatory_status: "GRAY_ZONE",
         required_consent_types: ["research_peptide"],
         candidate_key: "sample_bpc_157",
       }),

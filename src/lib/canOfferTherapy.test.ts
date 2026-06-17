@@ -104,6 +104,20 @@ describe("canOfferTherapy", () => {
     expect(result.missingActions).toContain("enroll_program");
   });
 
+  it("blocks RESEARCH_USE_ONLY as hard regulatory block even with consents on file", () => {
+    const result = canOfferTherapy({
+      ...base,
+      regulatoryStatus: "RESEARCH_USE_ONLY",
+      requiredConsentTypes: ["research_peptide"],
+      validConsentTypes: ["research_peptide"],
+      substanceAcknowledgmentIds: ["bpc_157"],
+    });
+    expect(result.canOffer).toBe(false);
+    expect(result.regulatory.status).toBe("block");
+    expect(result.missingActions).toContain("therapy_excluded");
+    expect(result.engineGateState).toBe("blocked_excluded");
+  });
+
   it("maps assessment candidate rows through gateResultFromAssessmentCandidate", () => {
     const result = gateResultFromAssessmentCandidate(
       {
