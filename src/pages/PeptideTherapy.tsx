@@ -65,7 +65,7 @@ const symptoms = [
 const faqs = [
   {
     q: "Are BPC-157 and TB-500 available?",
-    a: "Yes — when clinically appropriate and after provider review, safety screening, consent, and pharmacy availability. They are not walk-in or self-selected products. Pentadeca Arginate (PDA) may be selected as an alternate recovery option by your physician.",
+    a: "Yes — when clinically appropriate and after provider review, safety screening, consent, and pharmacy availability. They are not walk-in or self-selected products. Pentadeca Arginate (PDA) is an optional oral alternate your physician may discuss.",
   },
   {
     q: "Are peptides FDA-approved?",
@@ -257,8 +257,8 @@ const PeptideTherapy = () => {
                   <p>
                     BPC-157, TB-500, and our recovery stack are available when your provider determines
                     they are clinically appropriate — after safety screening, consent, and pharmacy
-                    confirmation. Pentadeca Arginate (PDA) remains an alternate recovery option your
-                    physician may select.
+                    confirmation. Pentadeca Arginate (PDA) is an optional oral alternate your
+                    physician may select when appropriate.
                   </p>
                 </div>
               </div>

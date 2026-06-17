@@ -196,9 +196,9 @@ export const PROVIDER_PROTOCOL_ALGORITHMS: ProviderProtocolAlgorithm[] = [
   },
   {
     slug: "recovery-pda",
-    displayName: "PDA (Pentadeca Arginate) — alternate pathway",
+    displayName: "PDA (Pentadeca Arginate) — optional oral alternate",
     candidateGoals: [
-      "Oral recovery support when physician prefers PDA",
+      "Oral recovery support when physician selects PDA",
       "Patient preference for non-injectable recovery support",
     ],
     contraindications: ["Pregnancy", "Active malignancy without clearance"],
@@ -211,9 +211,9 @@ export const PROVIDER_PROTOCOL_ALGORITHMS: ProviderProtocolAlgorithm[] = [
     stopRules: ["Athlete WADA disclosure if TB-500 used"],
     monitoringLabs: ["Foundational panel", "CRP if indicated"],
     adverseEffectMonitoring: ["GI tolerance oral PDA", "Injection site TB-500"],
-    refillRules: "30-day supply; BPC-157 not default pathway",
+    refillRules: "30-day supply per signed protocol",
     followUpInterval: "4–6 week review",
-    documentationRequired: ["Research peptide consent", "PDA vs BPC policy note"],
+    documentationRequired: ["Research peptide consent", "Recovery Peptide Review complete"],
   },
   {
     slug: "male-trt-initiation-compounded-cypionate",

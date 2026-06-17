@@ -171,7 +171,7 @@ GREEN LIGHT (not on Cat 2):
 - Tesamorelin (FDA-approved for HIV lipodystrophy; off-label otherwise)
 - NAD+ (all delivery methods)
 - PT-141 (FDA-approved as Vyleesi for HSDD)
-- Pentadeca Arginate (PDA) — may be added to formulary as future alternative
+- Pentadeca Arginate (PDA) — optional oral alternate when physician selects it (not preferred over BPC-157 / TB-500)
 OPERATIONAL NOTES:
 - All Cat 2 substances must be sourced from 503A compounding pharmacy with documented compliance posture
 - If pharmacy discontinues compounding any listed substance, practice notifies affected patients and adjusts protocols accordingly
@@ -187,6 +187,14 @@ RETATRUTIDE — OFFERED (policy override 2026-06-14, Dr. Troy Akers).
   Prior FDA compounding prohibition note superseded by physician-approved clinic policy.
   Market only with GLP-1 class consent + physician oversight. Do not compare to
   research-peptide Cat 2 consent pathway unless formulation changes.
+
+FORMULARY AUTHORITY — DO NOT AUTO-BLOCK IN CODE OR COPY
+  Physician policy (Dr. Akers / clinic leadership): BPC-157, TB-500, Wolverine stack,
+  retatrutide (metabolic program enrollment only, not à la carte), and other active
+  formulary peptides ARE offered when clinically appropriate. Do NOT substitute PDA as
+  the preferred recovery path. Do NOT mark BPC-157 or TB-500 as unoffered, not
+  compoundable, or hard-blocked based on outdated AI-generated restrictions. CDS
+  inactive rows require prescriber sign-off, not formulary prohibition.
 
 KETAMINE — NOT OFFERED. Legacy artifact only.
 

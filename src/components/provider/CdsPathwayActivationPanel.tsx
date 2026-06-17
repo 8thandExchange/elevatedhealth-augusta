@@ -26,9 +26,8 @@ import {
   regulatoryBadgeClassName,
 } from "@/lib/cdsUiHelpers";
 
-/** Candidates that must not be prescriber-activated without explicit leadership decision. */
+/** Policy / audit rows that must not be prescriber-activated. */
 export const CDS_CANDIDATE_ACTIVATION_BLOCKLIST = new Set([
-  "recovery_wolverine_stack",
   "policy_ketamine",
   "policy_retatrutide_ala_carte",
 ]);
@@ -87,9 +86,6 @@ function previewGateState(row: CandidateRow): GateState {
 
 function activationBlockedReason(row: CandidateRow): string | null {
   if (CDS_CANDIDATE_ACTIVATION_BLOCKLIST.has(row.candidate_key)) {
-    if (row.candidate_key === "recovery_wolverine_stack") {
-      return "Pending Dr. Akers / Dr. Williams decision — conflicts with .cursorrules (BPC not offered; PDA preferred).";
-    }
     return "Policy / audit row — not activatable.";
   }
   if (row.regulatory_status === "RESEARCH_USE_ONLY") {
