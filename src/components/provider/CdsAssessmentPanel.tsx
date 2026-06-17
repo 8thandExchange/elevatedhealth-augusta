@@ -76,6 +76,12 @@ const SYMPTOM_OPTIONS = [
   { key: "weight_gain", label: "Weight gain" },
   { key: "brain_fog", label: "Brain fog" },
   { key: "poor_recovery", label: "Poor recovery" },
+  { key: "erectile_dysfunction", label: "Erectile dysfunction" },
+  { key: "insulin_resistance", label: "Insulin resistance" },
+  { key: "cold_intolerance", label: "Cold intolerance" },
+  { key: "shortness_of_breath", label: "Shortness of breath" },
+  { key: "dehydration", label: "Dehydration" },
+  { key: "nad_interest", label: "NAD+ interest" },
 ] as const;
 
 export interface CdsAssessmentPanelProps {
@@ -478,6 +484,74 @@ export default function CdsAssessmentPanel({
                   <Alert>
                     <AlertDescription className="font-jost text-sm">
                       No CDS assessment on file for this patient. Create a draft, run the engine, then route labs or consent gaps before physician sign-off.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {assessment?.intake_metadata?.from_intake && (
+                  <Alert className="border-amber-500/40 bg-amber-50/50">
+                    <AlertDescription className="font-jost text-sm space-y-3">
+                      <p className="font-medium text-foreground">From intake — confirm before proceeding</p>
+                      {assessment.intake_metadata.symptomsSelected &&
+                        assessment.intake_metadata.symptomsSelected.length > 0 && (
+                          <div>
+                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                              Pre-selected symptoms
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {assessment.intake_metadata.symptomsSelected.map((s) => (
+                                <Badge key={s} variant="secondary" className="font-jost text-xs">
+                                  {s.replace(/_/g, " ")}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      {assessment.intake_metadata.preFlaggedContraindications &&
+                        assessment.intake_metadata.preFlaggedContraindications.length > 0 && (
+                          <div>
+                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                              Pre-flagged contraindications
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {assessment.intake_metadata.preFlaggedContraindications.map((t) => (
+                                <Badge key={t} variant="destructive" className="font-jost text-xs">
+                                  {t.replace(/_/g, " ")}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      {assessment.intake_metadata.labNeeds &&
+                        assessment.intake_metadata.labNeeds.length > 0 && (
+                          <div>
+                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                              Lab needs from intake
+                            </p>
+                            <p className="text-sm">{assessment.intake_metadata.labNeeds.join(", ")}</p>
+                          </div>
+                        )}
+                      {assessment.intake_metadata.universalSafety &&
+                        !assessment.intake_metadata.universalSafety.passed && (
+                          <div>
+                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                              Universal safety screen
+                            </p>
+                            <p className="text-sm text-destructive">
+                              Positive items require provider review before candidate evaluation.
+                            </p>
+                          </div>
+                        )}
+                      {assessment.intake_metadata.ivScreeningFlags?.blocked && (
+                          <div>
+                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                              IV screening
+                            </p>
+                            <p className="text-sm text-destructive">
+                              Hard block from IV screening engine. Do not proceed with infusion.
+                            </p>
+                          </div>
+                        )}
                     </AlertDescription>
                   </Alert>
                 )}

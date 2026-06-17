@@ -1,6 +1,7 @@
 export {
   CDS_ENGINE_VERSION,
   ENGINE_EXCLUDED_CANDIDATE_KEYS,
+  applyUniversalSafetyToResults,
   deriveAssessmentStatus,
   evaluateCandidate,
   hasRecommendableCandidate,

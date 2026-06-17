@@ -22,7 +22,13 @@ export type PatientGoal =
   | "libido"
   | "longevity"
   | "iv_only"
-  | "general_wellness";
+  | "general_wellness"
+  | "prediabetes_insulin_resistance"
+  | "male_sexual_function"
+  | "female_sexual_function"
+  | "thyroid_optimization"
+  | "anemia_iron"
+  | "aesthetics";
 
 export type OfferTier = "public" | "program" | "stack" | "escalation" | "excluded";
 
@@ -68,6 +74,12 @@ export const GOAL_LABELS: Record<PatientGoal, string> = {
   longevity: "Longevity / anti-aging",
   iv_only: "IV hydration only",
   general_wellness: "General optimization",
+  prediabetes_insulin_resistance: "Pre-diabetes / insulin resistance",
+  male_sexual_function: "Erectile / male sexual function",
+  female_sexual_function: "Female libido / testosterone",
+  thyroid_optimization: "Thyroid optimization",
+  anemia_iron: "Anemia / iron",
+  aesthetics: "Aesthetics",
 };
 
 /** Compounds we do NOT offer despite GC catalog availability. */
@@ -361,6 +373,128 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       algorithmSteps: buildSteps("general_wellness", "wellness", []),
     };
   },
+  prediabetes_insulin_resistance: () => {
+    const lab = labMetaForGoal("prediabetes_insulin_resistance");
+    return {
+      goal: "prediabetes_insulin_resistance",
+      goalLabel: GOAL_LABELS.prediabetes_insulin_resistance,
+      offerTier: "program",
+      programKey: "glp1",
+      programName: ELEVATED_PROGRAMS.glp1.name,
+      programPriceDisplay: ELEVATED_PROGRAMS.glp1.displayPrice,
+      labSlug: lab.slug,
+      labPanelName: lab.name,
+      labChargeCents: lab.cents,
+      labChargeDisplay: lab.display,
+      compoundKeys: [],
+      dosing: [],
+      consents: ["GLP-1 Consent"],
+      patientExplanation:
+        "We start with expanded metabolic labs and a Wellness Assessment. Metformin or GLP-1 paths depend on your labs and history.",
+      staffScript: "A1c over 6.4 routes to diabetes referral. eGFR under 60 metformin caution. Confirm pregnancy status.",
+      algorithmSteps: buildSteps("prediabetes_insulin_resistance", "glp1", []),
+    };
+  },
+  male_sexual_function: () => {
+    const lab = labMetaForGoal("male_sexual_function");
+    return {
+      goal: "male_sexual_function",
+      goalLabel: GOAL_LABELS.male_sexual_function,
+      offerTier: "stack",
+      labSlug: lab.slug,
+      labPanelName: lab.name,
+      labChargeCents: lab.cents,
+      labChargeDisplay: lab.display,
+      compoundKeys: [],
+      dosing: [],
+      consents: ["General Medical Treatment Consent"],
+      patientExplanation:
+        "Sexual wellness labs and history review first. PDE5 options or PT-141 only after contraindication screen. Low testosterone routes to TRT.",
+      staffScript: "Nitrates absolute stop. Recent cardiac event or uncontrolled BP defer to physician.",
+      algorithmSteps: buildSteps("male_sexual_function", undefined, []),
+    };
+  },
+  female_sexual_function: () => {
+    const lab = labMetaForGoal("female_sexual_function");
+    return {
+      goal: "female_sexual_function",
+      goalLabel: GOAL_LABELS.female_sexual_function,
+      offerTier: "stack",
+      labSlug: lab.slug,
+      labPanelName: lab.name,
+      labChargeCents: lab.cents,
+      labChargeDisplay: lab.display,
+      compoundKeys: [],
+      dosing: [],
+      consents: ["Hormone Therapy Consent"],
+      patientExplanation:
+        "Female hormone and libido workup with labs. Testosterone or DHEA only when clinically appropriate after gynecologic red flags are cleared.",
+      staffScript: "Unexplained bleeding to gyn. Estrogen-sensitive cancer history requires oncology clearance.",
+      algorithmSteps: buildSteps("female_sexual_function", undefined, []),
+    };
+  },
+  thyroid_optimization: () => {
+    const lab = labMetaForGoal("thyroid_optimization");
+    return {
+      goal: "thyroid_optimization",
+      goalLabel: GOAL_LABELS.thyroid_optimization,
+      offerTier: "program",
+      programKey: "wellness",
+      programName: ELEVATED_PROGRAMS.wellness.name,
+      programPriceDisplay: ELEVATED_PROGRAMS.wellness.displayPrice,
+      labSlug: lab.slug,
+      labPanelName: lab.name,
+      labChargeCents: lab.cents,
+      labChargeDisplay: lab.display,
+      compoundKeys: [],
+      dosing: [],
+      consents: ["General Medical Treatment Consent"],
+      patientExplanation:
+        "Foundational labs include thyroid markers. Therapy options follow provider review of TSH, free T4, and symptoms.",
+      staffScript: "Palpitations or AF urgent. Thyroid nodule to endocrine. Pregnancy requires specialized care.",
+      algorithmSteps: buildSteps("thyroid_optimization", "wellness", []),
+    };
+  },
+  anemia_iron: () => {
+    const lab = labMetaForGoal("anemia_iron");
+    return {
+      goal: "anemia_iron",
+      goalLabel: GOAL_LABELS.anemia_iron,
+      offerTier: "program",
+      programKey: "wellness",
+      programName: ELEVATED_PROGRAMS.wellness.name,
+      programPriceDisplay: ELEVATED_PROGRAMS.wellness.displayPrice,
+      labSlug: lab.slug,
+      labPanelName: lab.name,
+      labChargeCents: lab.cents,
+      labChargeDisplay: lab.display,
+      compoundKeys: [],
+      dosing: [],
+      consents: ["General Medical Treatment Consent"],
+      patientExplanation:
+        "CBC, ferritin, and iron studies on foundational panel. Oral or IV iron only after source workup when appropriate.",
+      staffScript: "GI bleed signs to workup. Severe anemia to ED. Hemochromatosis no iron repletion.",
+      algorithmSteps: buildSteps("anemia_iron", "wellness", []),
+    };
+  },
+  aesthetics: () => ({
+    goal: "aesthetics",
+    goalLabel: GOAL_LABELS.aesthetics,
+    offerTier: "public",
+    labSlug: "",
+    labPanelName: "None required",
+    labChargeCents: 0,
+    labChargeDisplay: "$0",
+    compoundKeys: [],
+    dosing: [],
+    consents: ["General Medical Treatment Consent"],
+    patientExplanation: "Cosmetic neuromodulator and filler services when contractor prerequisites and procedure consent are on file.",
+    staffScript: "Procedural lane. Do not schedule until aesthetics vendor prerequisites documented.",
+    algorithmSteps: [
+      { order: 1, phase: "Screen", action: "Confirm procedure consent, allergies, pregnancy status, and active infection screen." },
+      { order: 2, phase: "Consult", action: "Physician or contracted injector assessment before treatment." },
+    ],
+  }),
 };
 
 export function recommendPathway(goal: PatientGoal): PathwayRecommendation {
@@ -374,7 +508,23 @@ export function recommendPathwayFromSymptoms(symptoms: string[]): PathwayRecomme
       ? recommendPathway("metabolic_recomposition")
       : recommendPathway("weight_loss");
   }
-  if (/testosterone|low t|libido men|erectile|ed\b/.test(s)) return recommendPathway("low_testosterone");
+  if (/testosterone|low t|libido men/.test(s) && !/erectile|ed\b|male sexual/.test(s)) {
+    return recommendPathway("low_testosterone");
+  }
+  if (/erectile|ed\b|male sexual|performance/.test(s)) return recommendPathway("male_sexual_function");
+  if (/female libido|libido.*women|women.*libido|low libido.*female/.test(s)) {
+    return recommendPathway("female_sexual_function");
+  }
+  if (/prediabetes|insulin resistance|a1c|blood sugar/.test(s)) {
+    return recommendPathway("prediabetes_insulin_resistance");
+  }
+  if (/thyroid|tsh|hypothyroid|hyperthyroid|cold intolerance/.test(s)) {
+    return recommendPathway("thyroid_optimization");
+  }
+  if (/anemia|iron deficiency|low iron|ferritin|shortness of breath.*fatigue/.test(s)) {
+    return recommendPathway("anemia_iron");
+  }
+  if (/aesthetic|botox|filler|wrinkle|neuromodulator/.test(s)) return recommendPathway("aesthetics");
   if (/menopause|perimenopause|hot flash|hrt|estrogen|progesterone/.test(s)) return recommendPathway("hormone_women");
   if (/injury|tendon|recovery|surgery|bpc|wolverine/.test(s)) return recommendPathway("recovery_injury");
   if (/libido|pt-141|bremelanotide|sexual/.test(s)) return recommendPathway("libido");

@@ -230,6 +230,71 @@ serve(async (req) => {
 
     logStep("Patient record updated", { patientId: patient.id, riskStatus });
 
+    // CDS intake draft — pre-fill symptoms and safety flags for staff (no auto-prescribing).
+    try {
+      const { mapPublicIntakeFormToAnswers, mapIntakeToAssessment, PATHWAY_SLUG_TO_GOAL } =
+        await import("../_shared/intake-to-assessment.ts");
+      const { INTAKE_QUESTION_BANK } = await import("../_shared/intake-question-bank.ts");
+      const { runUniversalSafetyScreen } = await import("../_shared/universal-safety-screen.ts");
+
+      const intakeAnswers = mapPublicIntakeFormToAnswers({
+        safety_screening: formData.safety_screening,
+        intake_interests: (formData as { intake_interests?: string[] }).intake_interests,
+        treatment_goals: formData.treatment_goals,
+      });
+
+      const draft = mapIntakeToAssessment(intakeAnswers, INTAKE_QUESTION_BANK);
+      const safety = runUniversalSafetyScreen({
+        affirmativeAnswers: Object.fromEntries(
+          draft.universalSafetyPositive.map((id: string) => [id, true]),
+        ),
+      });
+
+      const intakeMetadata = {
+        ...draft,
+        universalSafety: safety,
+        from_intake: true,
+      };
+
+      const status =
+        draft.hardStops.length > 0 || safety.forceProviderReview
+          ? "awaiting_provider"
+          : "draft";
+
+      const goalKey = draft.goalKey ?? PATHWAY_SLUG_TO_GOAL["general-wellness"] ?? "general_wellness";
+
+      let pathwayId: string | null = null;
+      const topSlug = draft.inferredPathwaySlugs[0] ?? "general-wellness";
+      const { data: pathwayRow } = await supabaseAdmin
+        .from("cds_pathways")
+        .select("id")
+        .eq("slug", topSlug)
+        .maybeSingle();
+      pathwayId = pathwayRow?.id ?? null;
+
+      const { error: cdsError } = await supabaseAdmin.from("cds_assessments").insert({
+        patient_id: patient.id,
+        created_by: null,
+        source: "intake",
+        status,
+        goal_key: goalKey,
+        pathway_id: pathwayId,
+        symptoms_selected: draft.symptomsSelected,
+        intake_metadata: intakeMetadata,
+        notes: "Auto-draft from public intake. Confirm symptoms and flags before running CDS engine.",
+      });
+
+      if (cdsError) {
+        logStep("CDS intake draft insert failed (non-fatal)", { error: cdsError.message });
+      } else {
+        logStep("CDS intake draft created", { goalKey, status });
+      }
+    } catch (cdsErr: unknown) {
+      logStep("CDS intake mapping failed (non-fatal)", {
+        error: cdsErr instanceof Error ? cdsErr.message : String(cdsErr),
+      });
+    }
+
     // Create symptom log if scores provided
     if (formData.symptom_scores) {
       const { error: symptomError } = await supabaseAdmin

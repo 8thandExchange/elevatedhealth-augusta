@@ -24,4 +24,12 @@ describe("labPanelRecommendations", () => {
   it("symptom routing prefers expanded for weight language", () => {
     expect(recommendLabPanelSlugFromSymptoms(["weight gain"])).toBe("weight-optimization");
   });
+
+  it("symptom routing recognizes new clinical families", () => {
+    expect(recommendLabPanelSlugFromSymptoms(["erectile dysfunction"])).toBe("sexual-wellness");
+    expect(recommendLabPanelSlugFromSymptoms(["female libido"])).toBe("hormone-female");
+    expect(recommendLabPanelSlugFromSymptoms(["insulin resistance"])).toBe("weight-optimization");
+    expect(recommendLabPanelSlugFromSymptoms(["hypothyroid symptoms"])).toBe("foundation-wellness");
+    expect(recommendLabPanelSlugFromSymptoms(["low iron / anemia"])).toBe("foundation-wellness");
+  });
 });

@@ -28,13 +28,32 @@ export interface CdsAssessment {
   patient_id: string;
   encounter_id: string | null;
   pathway_id: string | null;
-  created_by: string;
+  created_by: string | null;
+  source?: "staff" | "intake";
   status: CdsAssessmentStatus;
   goal_key: string | null;
   symptoms_selected: string[];
+  intake_metadata?: IntakeAssessmentMetadata;
   notes: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface IntakeAssessmentMetadata {
+  goalKey?: string | null;
+  symptomsSelected?: string[];
+  preFlaggedContraindications?: string[];
+  labNeeds?: string[];
+  hardStops?: string[];
+  inferredPathwaySlugs?: string[];
+  universalSafetyPositive?: string[];
+  universalSafety?: { passed: boolean; positiveItems: string[]; forceProviderReview: boolean };
+  ivScreeningFlags?: {
+    blocked: boolean;
+    blockReasons: string[];
+    warnReasons: string[];
+  };
+  from_intake?: boolean;
 }
 
 export interface CdsAssessmentResult {

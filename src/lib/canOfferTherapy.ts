@@ -11,6 +11,7 @@ import {
   type GateState,
   type RegulatoryStatus,
 } from "./cdsEngine";
+import { hasSharedLabRedirect } from "./labRedirectRules";
 import {
   policyRequiresProgramEnrollment,
   policyStatusBlocksOffer,
@@ -35,6 +36,8 @@ export interface CanOfferTherapyInput {
   contraindicationTags?: string[];
   /** Active patient contraindication flags from chart/intake */
   patientContraindications?: string[];
+  /** Optional resulted lab values for shared redirect rules */
+  labValues?: { analyteKey: string; value: number }[];
   hasResultedLabs: boolean;
   validConsentTypes: string[];
   substanceAcknowledgmentIds: string[];
@@ -178,7 +181,14 @@ export function canOfferTherapy(input: CanOfferTherapyInput): GateResult {
           patientExplanation:
             "Baseline labs are required so your provider can review your results before recommending treatment.",
         }
-      : { status: "pass", reason: null, patientExplanation: null };
+      : input.labValues && hasSharedLabRedirect(input.labValues)
+        ? {
+            status: "block",
+            reason: "Lab value crosses a shared safety redirect threshold.",
+            patientExplanation:
+              "Your lab results require additional clinical review before we can recommend this therapy.",
+          }
+        : { status: "pass", reason: null, patientExplanation: null };
 
   let protocol: SingleGateResult = { status: "pass", reason: null, patientExplanation: null };
   if (input.pathwayActive === false) {

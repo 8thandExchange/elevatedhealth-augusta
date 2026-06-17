@@ -279,3 +279,23 @@ export function deriveAssessmentStatus(
 export function hasRecommendableCandidate(results: CdsEngineResultRow[]): boolean {
   return results.some((r) => r.gate_state === "ready");
 }
+
+/** When universal safety screen is positive, elevate all candidates to needs_contra_review. */
+export function applyUniversalSafetyToResults(
+  results: CdsEngineResultRow[],
+  forceProviderReview: boolean,
+): CdsEngineResultRow[] {
+  if (!forceProviderReview) return results;
+  return results.map((row) => {
+    if (row.gate_state === "blocked_excluded" || row.gate_state === "blocked_ruo") {
+      return row;
+    }
+    return {
+      ...row,
+      gate_state: "needs_contra_review" as GateState,
+      blocked_reason:
+        row.blocked_reason ??
+        "Universal safety screen positive. Provider must confirm before therapy recommendation.",
+    };
+  });
+}
