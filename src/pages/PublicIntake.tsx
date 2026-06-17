@@ -11,6 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Loader2, CheckCircle2, AlertCircle, Shield, Heart, User, MapPin, Pill, Target } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import {
+  INTAKE_INTEREST_OPTIONS,
+  routeIntakeCare,
+  type IntakeInterest,
+} from "@/lib/intakeCareRouting";
 
 interface PatientInfo {
   id: string;
@@ -75,6 +80,8 @@ export default function PublicIntake() {
       weight_concern: 5,
     },
     treatment_goals: "",
+    secondary_goals: "",
+    intake_interests: [] as IntakeInterest[],
     hipaa_acknowledged: false,
     consent_acknowledged: false,
     consent_signature: "",
@@ -579,27 +586,88 @@ export default function PublicIntake() {
             {currentStep === "goals" && (
               <>
                 <div className="space-y-2">
+                  <Label>What are you most interested in? (select all that apply)</Label>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {INTAKE_INTEREST_OPTIONS.map((opt) => (
+                      <div key={opt.id} className="flex items-start space-x-2">
+                        <Checkbox
+                          id={`interest-${opt.id}`}
+                          checked={formData.intake_interests.includes(opt.id)}
+                          onCheckedChange={(checked) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              intake_interests: checked
+                                ? [...prev.intake_interests, opt.id]
+                                : prev.intake_interests.filter((x) => x !== opt.id),
+                            }));
+                          }}
+                        />
+                        <Label htmlFor={`interest-${opt.id}`} className="font-normal cursor-pointer text-sm">
+                          {opt.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="treatment_goals">
-                    What are your primary health goals? What brought you to Elevated Health Augusta?
+                    Primary health goals — what brought you to Elevated Health Augusta?
                   </Label>
                   <Textarea
                     id="treatment_goals"
                     value={formData.treatment_goals}
                     onChange={(e) => handleInputChange("treatment_goals", e.target.value)}
-                    placeholder="Tell us about your health goals, concerns, and what you hope to achieve with treatment..."
-                    rows={6}
+                    placeholder="Energy, weight, hormones, recovery, libido, general optimization..."
+                    rows={4}
                   />
                 </div>
 
-                <div className="bg-primary/10 p-4 rounded-lg">
-                  <p className="text-sm text-primary">
-                    <strong>Your interests:</strong>{" "}
-                    {Array.isArray(patient?.service_interests) 
-                      ? (patient.service_interests as string[]).map(s => 
+                <div className="space-y-2">
+                  <Label htmlFor="secondary_goals">Secondary goals (optional)</Label>
+                  <Textarea
+                    id="secondary_goals"
+                    value={formData.secondary_goals}
+                    onChange={(e) => handleInputChange("secondary_goals", e.target.value)}
+                    placeholder="Any additional goals or concerns..."
+                    rows={2}
+                  />
+                </div>
+
+                {(() => {
+                  const routing = routeIntakeCare({
+                    primaryGoal: "general_wellness",
+                    interests: formData.intake_interests.length
+                      ? formData.intake_interests
+                      : ["general_optimization"],
+                    patientSex:
+                      formData.gender === "male" || formData.gender === "female"
+                        ? formData.gender
+                        : null,
+                    isPregnant: formData.safety_screening.pregnant_or_nursing,
+                  });
+                  return (
+                    <div className="bg-primary/10 p-4 rounded-lg space-y-2">
+                      <p className="text-sm font-semibold text-primary">{routing.patientHeadline}</p>
+                      <p className="text-sm text-primary/90">{routing.patientBody}</p>
+                      {routing.labPanelLabel && (
+                        <p className="text-xs text-muted-foreground">
+                          Your provider may order: {routing.labPanelLabel}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Booking interests on file:</strong>{" "}
+                    {Array.isArray(patient?.service_interests)
+                      ? (patient.service_interests as string[]).map(s =>
                           s === "ketamine" ? "General Wellness" :
                           s === "hormone" ? "Hormone Optimization" :
                           s === "weight_loss" ? "Weight Loss" : s
-                        ).join(", ") 
+                        ).join(", ")
                       : (patient?.primary_program || "General Wellness")}
                   </p>
                 </div>

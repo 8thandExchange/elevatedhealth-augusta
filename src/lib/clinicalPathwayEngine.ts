@@ -275,8 +275,8 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       labChargeCents: lab.cents,
       labChargeDisplay: lab.display,
       patientExplanation:
-        "Healing stack: daily BPC-157 + TB-500 (Wolverine blend) for tissue repair — 6–12 week course with RN teaching.",
-      staffScript: "Quote Healing stack $249/mo non-member / $199 member. Cat 2 consent required.",
+        "Recovery stack: combined BPC-157 and TB-500 protocol for tissue recovery support — 6–12 week course with RN teaching when your provider determines it is appropriate.",
+      staffScript: "Recovery Peptide Review required. Quote recovery stack per membership tier. Cat 2 consent required.",
       algorithmSteps: buildSteps("recovery_injury", undefined, ["wolverine"]),
     };
   },

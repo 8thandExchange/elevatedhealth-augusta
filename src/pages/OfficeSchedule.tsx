@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import MyScheduleManager from "@/components/provider/MyScheduleManager";
 import { getStaffHomeLabel, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
+import { getSchedulePortalHome, mainSiteUrl } from "@/lib/schedulePortalHost";
 import { addDays, format, isSameDay, isToday, startOfDay, startOfWeek } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,7 +44,13 @@ const STATUS_OPTIONS = [
 
 type ScheduleTab = "calendar" | "hours";
 
-export default function OfficeSchedule() {
+export interface OfficeScheduleProps {
+  /** Standalone calendar portal — no clinical dashboard chrome */
+  portalMode?: boolean;
+  loginPath?: string;
+}
+
+export default function OfficeSchedule({ portalMode = false, loginPath = "/admin/login" }: OfficeScheduleProps) {
   const { user, isProvider, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -91,11 +98,14 @@ export default function OfficeSchedule() {
   // Role gate
   useEffect(() => {
     if (authLoading) return;
-    if (!user) { navigate("/admin/login?next=/office/schedule"); return; }
+    const nextPath = portalMode ? getSchedulePortalHome() : "/office/schedule";
+    if (!user) {
+      navigate(`${loginPath}?next=${encodeURIComponent(nextPath)}`, { replace: portalMode });
+      return;
+    }
     setStaffEmail(user.email ?? undefined);
-    // isProvider in AuthContext = admin/staff/provider
     if (!isProvider) { navigate("/patient/dashboard"); return; }
-  }, [user, isProvider, authLoading, navigate]);
+  }, [user, isProvider, authLoading, navigate, portalMode, loginPath]);
 
   // Date range to fetch
   const range = useMemo(() => {
@@ -244,19 +254,21 @@ export default function OfficeSchedule() {
 
   if (activeTab === "hours") {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="sticky top-0 z-30 bg-background border-b border-border">
+      <div className={`${portalMode ? "h-full flex flex-col min-h-0" : "min-h-screen"} bg-background`}>
+        <div className="sticky top-0 z-30 bg-background border-b border-border shrink-0">
           <div className="px-4 py-3 flex flex-wrap items-center gap-3">
-            <Button variant="outline" size="sm" asChild className="gap-1.5">
-              <Link to={staffHomePath}>
-                <ArrowLeft className="h-4 w-4" />
-                {staffHomeLabel}
-              </Link>
-            </Button>
-            <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+            {!portalMode && (
+              <Button variant="outline" size="sm" asChild className="gap-1.5">
+                <Link to={staffHomePath}>
+                  <ArrowLeft className="h-4 w-4" />
+                  {staffHomeLabel}
+                </Link>
+              </Button>
+            )}
+            <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} portalMode={portalMode} />
           </div>
         </div>
-        <div className="container mx-auto px-4 py-6">
+        <div className={`${portalMode ? "flex-1 overflow-auto" : ""} container mx-auto px-4 py-6`}>
           <MyScheduleManager />
         </div>
       </div>
@@ -264,17 +276,19 @@ export default function OfficeSchedule() {
   }
 
   return (
-    <div className="min-h-screen bg-background print:bg-white">
+    <div className={`${portalMode ? "h-full flex flex-col min-h-0" : "min-h-screen"} bg-background print:bg-white`}>
       {/* Toolbar */}
-      <div className="sticky top-0 z-30 bg-background border-b border-border print:hidden">
+      <div className="sticky top-0 z-30 bg-background border-b border-border print:hidden shrink-0">
         <div className="px-4 py-3 flex flex-wrap items-center gap-3">
-          <Button variant="outline" size="sm" asChild className="gap-1.5 shrink-0">
-            <Link to={staffHomePath}>
-              <ArrowLeft className="h-4 w-4" />
-              {staffHomeLabel}
-            </Link>
-          </Button>
-          <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+          {!portalMode && (
+            <Button variant="outline" size="sm" asChild className="gap-1.5 shrink-0">
+              <Link to={staffHomePath}>
+                <ArrowLeft className="h-4 w-4" />
+                {staffHomeLabel}
+              </Link>
+            </Button>
+          )}
+          <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} portalMode={portalMode} />
           {/* View toggle */}
           <div className="flex rounded-lg border border-border overflow-hidden">
             {(["day","week","print"] as ViewMode[]).map((v) => (
@@ -392,7 +406,7 @@ export default function OfficeSchedule() {
       )}
 
       {/* Grid */}
-      <div className="p-4 print:p-0">
+      <div className={`p-4 print:p-0 ${portalMode ? "flex-1 overflow-auto min-h-0" : ""}`}>
         {loading ? (
           <div className="flex justify-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : view === "day" ? (
@@ -435,7 +449,14 @@ export default function OfficeSchedule() {
         onClose={() => setSelectedAppt(null)}
         onUpdateStatus={updateStatus}
         onSendReminder={sendReminder}
-        onViewPatient={(pid) => navigate(`/provider/dashboard?patient=${pid}`)}
+        onViewPatient={(pid) => {
+          const url = `/provider/dashboard?patient=${pid}`;
+          if (portalMode) {
+            window.open(mainSiteUrl(url), "_blank", "noopener,noreferrer");
+          } else {
+            navigate(url);
+          }
+        }}
       />
 
       {/* New appointment / walk-in modal */}
@@ -495,9 +516,11 @@ export default function OfficeSchedule() {
 function ScheduleTabBar({
   activeTab,
   onTabChange,
+  portalMode = false,
 }: {
   activeTab: ScheduleTab;
   onTabChange: (tab: ScheduleTab) => void;
+  portalMode?: boolean;
 }) {
   return (
     <div className="flex rounded-lg border border-border overflow-hidden mr-1">
@@ -506,7 +529,7 @@ function ScheduleTabBar({
         onClick={() => onTabChange("calendar")}
         className={`px-3 py-1.5 text-sm transition ${activeTab === "calendar" ? "bg-primary text-primary-foreground" : "hover:bg-accent/30"}`}
       >
-        Office calendar
+        {portalMode ? "Calendar" : "Office calendar"}
       </button>
       <button
         type="button"

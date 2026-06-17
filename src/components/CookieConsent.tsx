@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
+import { isCalendarSubdomain } from "@/lib/schedulePortalHost";
 import { X } from "lucide-react";
 import { MARKETING_CONSENT_EVENT } from "@/lib/marketingPixel";
 
@@ -25,8 +27,15 @@ export function getMarketingCookieConsent(): boolean {
 const CookieConsent = () => {
   const [showBanner, setShowBanner] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const location = useLocation();
+  const isStaffPortal = isCalendarSubdomain()
+    || location.pathname.startsWith("/calendar")
+    || location.pathname.startsWith("/admin")
+    || location.pathname.startsWith("/provider")
+    || location.pathname.startsWith("/office");
 
   useEffect(() => {
+    if (isStaffPortal) return;
     const consent = localStorage.getItem(CONSENT_KEY);
     if (!consent) {
       // Longer delay - let users see the page first
@@ -36,7 +45,7 @@ const CookieConsent = () => {
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isStaffPortal]);
 
   const handleConsent = useCallback((status: ConsentStatus) => {
     const expiryDate = new Date();
@@ -60,7 +69,7 @@ const CookieConsent = () => {
     setTimeout(() => setShowBanner(false), 200);
   }, []);
 
-  if (!showBanner) return null;
+  if (isStaffPortal || !showBanner) return null;
 
   return (
     <div 

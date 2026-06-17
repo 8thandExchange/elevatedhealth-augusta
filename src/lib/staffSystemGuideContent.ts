@@ -130,7 +130,7 @@ export const LAB_REDIRECT_EXAMPLES = [
 export const VENDOR_LANE_ROWS: Array<{ lane: string; laneKey: ServiceLane; note: string }> = [
   { lane: "IV Lounge + FCC peptide backup", laneKey: "iv_lounge", note: "Myers premix, NAD+ backup vials" },
   { lane: "Metabolic / GC peptides + GLP-1", laneKey: "peptides_gc", note: "PATH lyophilized + STLKS injectables" },
-  { lane: "Sermorelin, NAD+, healing stack", laneKey: "peptides_fcc", note: "FCC when not on GC catalog line" },
+  { lane: "Sermorelin, NAD+, BPC/TB recovery stack", laneKey: "peptides_fcc", note: "FCC when not on GC catalog line" },
   { lane: "GLP-1 sema/tirz fills", laneKey: "weight_glp1", note: "GC primary; FCC backup" },
   { lane: "All hormones (TRT/BHRT)", laneKey: "hormones", note: "Custom Pharmacy of Evans fax default" },
   { lane: "Lab draws", laneKey: "labs", note: "LabCorp client billing" },
@@ -186,7 +186,7 @@ export const CONSENT_CHECKLIST = [
   { consent: "Hormone Therapy Consent", when: "TRT, BHRT, any hormone protocol" },
   { consent: "GLP-1 Consent", when: "Semaglutide, tirzepatide, metabolic program GLP class" },
   { consent: "Off-label / compounded disclosure", when: "503A compounded therapies" },
-  { consent: "Research Peptide Consent", when: "Cat 2 peptides, Wolverine stack, PT-141 pathway" },
+  { consent: "Research Peptide Consent", when: "Cat 2 peptides, BPC/TB recovery stack, PT-141 pathway" },
   { consent: "Substance acknowledgment (CDS)", when: "RUO / gray-zone candidates before ePrescribe handoff" },
   { consent: "Physician CDS review", when: "Prescriber-only final approval in provider chart" },
 ] as const;

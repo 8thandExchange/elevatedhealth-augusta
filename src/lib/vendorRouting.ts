@@ -185,7 +185,7 @@ export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
   },
   {
     itemCode: "PEPTIDE-HEALING-STACK",
-    label: "Healing / Wolverine stack (BPC + TB-500)",
+    label: "BPC-157 / TB-500 recovery stack",
     category: "peptide_stack",
     primarySupplier: "gc",
     primaryCostCents: GC_WHOLESALE_CENTS.wolverineBlend10_10,
@@ -196,7 +196,7 @@ export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
     fulfillmentPharmacySlug: VENDOR_SLUGS.gc,
     gcSku: "PATH-Wolverine-10x10",
     publicMenu: true,
-    notes: "PATH pre-blended Wolverine. Member $199/mo via 20% discount on $249.",
+    notes: "PATH pre-blended recovery stack. Member $199/mo via 20% discount on $249.",
   },
   {
     itemCode: "PEPTIDE-RETATRUTIDE",

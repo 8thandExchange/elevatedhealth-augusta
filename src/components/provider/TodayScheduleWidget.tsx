@@ -118,7 +118,7 @@ const TodayScheduleWidget = ({ onPatientSelect, compact = false }: TodaySchedule
                 {todayCount} appointment{todayCount !== 1 ? "s" : ""}
               </Badge>
               <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
-                <Link to="/office/schedule">Open calendar</Link>
+                <Link to="/calendar">Open calendar</Link>
               </Button>
             </div>
           </div>
@@ -153,7 +153,7 @@ const TodayScheduleWidget = ({ onPatientSelect, compact = false }: TodaySchedule
                 ))}
               {todayCount > 3 && (
                 <p className="text-xs text-muted-foreground text-center">
-                  +{todayCount - 3} more — <Link to="/office/schedule" className="text-primary hover:underline">view all</Link>
+                  +{todayCount - 3} more — <Link to="/calendar" className="text-primary hover:underline">view all</Link>
                 </p>
               )}
             </div>
@@ -187,7 +187,7 @@ const TodayScheduleWidget = ({ onPatientSelect, compact = false }: TodaySchedule
               Week
             </Button>
             <Button variant="outline" size="sm" asChild>
-              <Link to="/office/schedule">Full calendar</Link>
+              <Link to="/calendar">Full calendar</Link>
             </Button>
           </div>
         </div>

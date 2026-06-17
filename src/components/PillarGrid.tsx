@@ -40,7 +40,7 @@ const PillarGrid = ({ onOpenBooking }: PillarGridProps) => {
     {
       icon: LotusIcon,
       title: "Peptide Protocols",
-      description: "Physician-prescribed peptide protocols for recovery, cognition, and longevity",
+      description: "Physician-supervised Recovery Peptide Review and focused peptide categories — assessment-first, never a catalog.",
       route: SITE_CONFIG.routes.peptides,
       features: ["Growth hormone support", "Tissue repair", "Physician-supervised"]
     },

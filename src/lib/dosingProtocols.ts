@@ -102,7 +102,7 @@ export const DOSING_PROTOCOLS: Record<string, DosingProtocol> = {
   },
   wolverine: {
     compoundKey: "wolverine",
-    displayName: "Healing Stack (BPC-157 + TB-500)",
+    displayName: "BPC-157 / TB-500 Recovery Stack",
     gcSku: "BLND-WOLVERINE-BPC157TB500-10X10MG-03ML",
     vialLabel: "BPC 10mg + TB-500 10mg / 3ml",
     reconstitutionMl: 2,
@@ -116,8 +116,8 @@ export const DOSING_PROTOCOLS: Record<string, DosingProtocol> = {
     maintenanceDose: "500 mcg BPC + 500 mcg TB-500 daily",
     cycleWeeks: "6–12 weeks on, 4–6 weeks off",
     patientExplanation:
-      "A recovery-focused daily injection that supports tissue repair after injury or intense training. We use a pre-blended Wolverine stack so dosing stays simple.",
-    staffNotes: ["Cat 2 research peptide consent.", "Named stack Restore/Healing/Vitality — quote Healing tier."],
+      "A recovery-focused protocol that supports tissue recovery after injury or intense training when your provider selects the combined stack.",
+    staffNotes: ["Cat 2 research peptide consent.", "Recovery Peptide Review lane — quote per membership tier."],
     consents: ["research_peptide"],
   },
   pt141: {

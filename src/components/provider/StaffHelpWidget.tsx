@@ -30,8 +30,8 @@ const ARTICLES: HelpArticle[] = [
       "If a patient says they can't find a time, verify your availability blocks exist for that day and time.",
     ],
     links: [
-      { label: "Open My Schedule", to: "/provider/schedule" },
-      { label: "Office-wide Schedule (front desk view)", to: "/office/schedule" },
+      { label: "Open My Schedule", to: "/calendar?tab=hours" },
+      { label: "Office-wide Schedule (front desk view)", to: "/calendar" },
     ],
   },
   {
@@ -44,7 +44,7 @@ const ARTICLES: HelpArticle[] = [
       "Add a short reason (optional) and save.",
       "If you still appear available, refresh and verify the block covers the full time window.",
     ],
-    links: [{ label: "Open My Schedule", to: "/provider/schedule" }],
+    links: [{ label: "Open My Schedule", to: "/calendar?tab=hours" }],
   },
   {
     id: "book-patient",
@@ -56,7 +56,7 @@ const ARTICLES: HelpArticle[] = [
       "If payment is confirmed but they can't see times, verify provider availability exists for that service line and duration.",
     ],
     links: [
-      { label: "Office-wide Schedule", to: "/office/schedule" },
+      { label: "Office-wide Schedule", to: "/calendar" },
       { label: "Provider Dashboard", to: "/provider/dashboard" },
     ],
   },
@@ -120,15 +120,17 @@ export function StaffHelpWidget() {
 
   const quickLinks = useMemo(
     () => [
-      { label: "My Schedule", to: "/provider/schedule", icon: Clock },
-      { label: "Office Schedule", to: "/office/schedule", icon: CalendarDays },
+      { label: "My Schedule", to: "/calendar?tab=hours", icon: Clock },
+      { label: "Office Schedule", to: "/calendar", icon: CalendarDays },
       { label: "Dashboard", to: "/provider/dashboard", icon: BookOpen },
       { label: "Inventory", to: "/inventory", icon: Boxes },
       { label: "Formulary", to: "/formulary", icon: ClipboardList },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
       { label: "System guide", to: "/staff/system-guide" },
       { label: "IV safety", to: "/staff/iv-safety" },
+      { label: "Pricing readiness", to: "/admin/pricing-readiness" },
       { label: "Clinical policy", to: "/clinical-policy" },
+      { label: "Formulary economics", to: "/formulary-economics" },
       { label: "SOP Manual", to: "/staff/sop-manual", icon: ClipboardList },
     ],
     [],

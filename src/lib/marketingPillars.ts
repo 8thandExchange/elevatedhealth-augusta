@@ -31,7 +31,7 @@ export const SERVICE_PILLARS = [
   {
     title: "Peptide Therapy",
     description:
-      "Consult-gated peptide protocols — Restore, Healing, and Vitality stacks plus à la carte options, prescribed and monitored in clinic.",
+      "Consult-gated peptide care — Recovery Peptide Review, metabolic, longevity, and transformation support under physician oversight.",
     href: "/peptides",
     cta: "Peptide therapy",
   },

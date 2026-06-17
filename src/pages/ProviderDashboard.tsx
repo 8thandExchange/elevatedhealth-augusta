@@ -33,6 +33,7 @@ import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
 import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
+import RecoveryPeptideReviewPanel from "@/components/provider/RecoveryPeptideReviewPanel";
 import HairRestorationAddonSelector from "@/components/provider/HairRestorationAddonSelector";
 import SexualWellnessAddonSelector from "@/components/provider/SexualWellnessAddonSelector";
 import AlaCartePaymentCard from "@/components/provider/AlaCartePaymentCard";
@@ -2594,6 +2595,15 @@ const ProviderDashboard = () => {
                 patientPhone={selectedPatient.patient.phone}
                 currentHasAddon={!!(selectedPatient.patient.medical_history as Record<string, any>)?.has_hormone_addon}
                 baseMembership="semaglutide"
+              />
+
+              <RecoveryPeptideReviewPanel
+                patientName={selectedPatient.patient.full_name}
+                patientInterestNote={
+                  (selectedPatient.patient.medical_history as Record<string, unknown>)?.recovery_peptide_interest
+                    ? "Recovery peptide interest documented"
+                    : undefined
+                }
               />
 
               {/* SUNSETTED ADD-ON SELECTORS - Hidden but code preserved for future reactivation

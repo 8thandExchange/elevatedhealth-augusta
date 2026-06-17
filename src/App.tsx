@@ -43,7 +43,6 @@ import PatientLogin from "./pages/PatientLogin";
 import PatientDashboard from "./pages/PatientDashboard";
 import PatientIntake from "./pages/PatientIntake";
 import SymptomCheckIn from "./pages/SymptomCheckIn";
-import ProviderSchedule from "./pages/ProviderSchedule";
 import ClinicSettings from "./pages/ClinicSettings";
 import SymptomChecker from "./pages/SymptomChecker";
 import MedicationConfirmed from "./pages/MedicationConfirmed";
@@ -63,7 +62,11 @@ import StaffPricingCheatsheet from "./pages/StaffPricingCheatsheet";
 import StaffQuickCard from "./pages/StaffQuickCard";
 import EmailTemplates from "./pages/EmailTemplates";
 import PublicIntake from "./pages/PublicIntake";
-import OfficeSchedule from "./pages/OfficeSchedule";
+import SchedulePortalLogin from "./pages/schedule-portal/SchedulePortalLogin";
+import SchedulePortalGate from "./pages/schedule-portal/SchedulePortalGate";
+import CalendarSubdomainRoutes from "./pages/schedule-portal/CalendarSubdomainRoutes";
+import RedirectToCalendar from "./components/schedule-portal/RedirectToCalendar";
+import { isCalendarSubdomain } from "@/lib/schedulePortalHost";
 import EligibilityReviewQueue from "./pages/EligibilityReviewQueue";
 import SchedulingSettings from "./pages/admin/SchedulingSettings";
 import ProviderSchedules from "./pages/admin/ProviderSchedules";
@@ -102,6 +105,7 @@ const StaffSystemGuide = lazy(() => import("./pages/StaffSystemGuide"));
 const StaffClinicalPathway = lazy(() => import("./pages/StaffClinicalPathway"));
 const StaffVendorGuide = lazy(() => import("./pages/StaffVendorGuide"));
 const StaffIVScreeningGuide = lazy(() => import("./pages/StaffIVScreeningGuide"));
+const PricingReadinessAdmin = lazy(() => import("./pages/PricingReadinessAdmin"));
 
 const RouteFallback = () => (
   <div className="flex min-h-[40vh] items-center justify-center">
@@ -129,6 +133,8 @@ const clearOutdatedCaches = async () => {
 };
 
 const App = () => {
+  const calendarHost = isCalendarSubdomain();
+
   // Version check on app load
   useEffect(() => {
     const storedVersion = localStorage.getItem('app-cache-version');
@@ -149,14 +155,19 @@ const App = () => {
         <Sonner />
         <ServiceWorkerUpdater />
         <BrowserRouter>
-          <ScrollToTop />
-          <a href="#main-content" className="skip-to-main">
-            Skip to main content
-          </a>
-          <CookieConsent />
-          <MarketingPixel />
-          <FloatingFinancingBanner />
-          <GlobalBookingModal />
+          {!calendarHost && <ScrollToTop />}
+          {!calendarHost && (
+            <a href="#main-content" className="skip-to-main">
+              Skip to main content
+            </a>
+          )}
+          {!calendarHost && <CookieConsent />}
+          {!calendarHost && <MarketingPixel />}
+          {!calendarHost && <FloatingFinancingBanner />}
+          {!calendarHost && <GlobalBookingModal />}
+        {calendarHost ? (
+          <CalendarSubdomainRoutes />
+        ) : (
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
@@ -241,6 +252,13 @@ const App = () => {
             <ProviderLayout title="Formulary Economics" subtitle="COGS · margin · GC vs FCC" showNavbar={false}>
               <Suspense fallback={<RouteFallback />}>
                 <FormularyEconomicsDashboard />
+              </Suspense>
+            </ProviderLayout>
+          } />
+          <Route path="/admin/pricing-readiness" element={
+            <ProviderLayout title="Pricing Readiness" subtitle="COGS · margin · quote gates" showNavbar={false}>
+              <Suspense fallback={<RouteFallback />}>
+                <PricingReadinessAdmin />
               </Suspense>
             </ProviderLayout>
           } />
@@ -368,6 +386,10 @@ const App = () => {
           
           {/* Admin/Provider Routes - Wrapped with ProviderLayout */}
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/calendar/login" element={<SchedulePortalLogin />} />
+          <Route path="/calendar" element={<SchedulePortalGate />} />
+          <Route path="/schedule" element={<RedirectToCalendar />} />
+          <Route path="/office/schedule" element={<RedirectToCalendar />} />
           <Route path="/provider/dashboard" element={
             <ProviderLayout
               title="Provider Dashboard"
@@ -380,15 +402,7 @@ const App = () => {
               </Suspense>
             </ProviderLayout>
           } />
-          <Route path="/provider/schedule" element={
-            <ProviderLayout
-              title="My Schedule"
-              subtitle="Clinical scheduling"
-              allowedRoles={["admin", "staff", "business_admin", "provider"]}
-            >
-              <ProviderSchedule />
-            </ProviderLayout>
-          } />
+          <Route path="/provider/schedule" element={<Navigate to="/calendar?tab=hours" replace />} />
           <Route path="/provider/appointments/:appointmentId" element={
             <ProviderLayout
               title="Appointment"
@@ -444,24 +458,6 @@ const App = () => {
               <Suspense fallback={<RouteFallback />}>
                 <OfficeManagerDashboard />
               </Suspense>
-            </ProviderLayout>
-          } />
-          <Route path="/office/schedule" element={
-            <ProviderLayout
-              title="Schedule"
-              subtitle="Office-wide calendar"
-              allowedRoles={["admin", "staff", "business_admin", "provider"]}
-            >
-              <OfficeSchedule />
-            </ProviderLayout>
-          } />
-          <Route path="/schedule" element={
-            <ProviderLayout
-              title="Schedule"
-              subtitle="Office-wide calendar"
-              allowedRoles={["admin", "staff", "business_admin", "provider"]}
-            >
-              <OfficeSchedule />
             </ProviderLayout>
           } />
           <Route path="/kiosk/intake" element={
@@ -538,6 +534,7 @@ const App = () => {
           
           <Route path="*" element={<NotFound />} />
         </Routes>
+        )}
         </BrowserRouter>
       </BookingProvider>
       </AuthProvider>

@@ -40,7 +40,7 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
   const isOnProviderDashboard = location.pathname === "/provider/dashboard";
   const isOnBusinessDashboard = location.pathname === "/admin/business";
   const isOnOfficeDashboard = location.pathname === "/office/dashboard";
-  const isOnOfficeSchedule = location.pathname === "/office/schedule" || location.pathname === "/schedule";
+  const isOnOfficeSchedule = location.pathname === "/calendar" || location.pathname.startsWith("/calendar/");
   const isOnProviderSchedule = location.pathname === "/provider/schedule";
   const isOnSchedule = isOnOfficeSchedule || isOnProviderSchedule;
   const isOnSettings = location.pathname === "/admin/settings";
@@ -223,7 +223,7 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
 
           {!isOnSchedule && (
             <Button variant="outline" size="sm" asChild title="Office calendar — all patients & providers">
-              <Link to="/office/schedule">
+              <Link to="/calendar">
                 <CalendarDays className="w-4 h-4 mr-2" />
                 Schedule
               </Link>
@@ -452,7 +452,7 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
               )}
               {!isOnSchedule && (
                 <DropdownMenuItem asChild>
-                  <Link to="/office/schedule" className="cursor-pointer gap-2">
+                  <Link to="/calendar" className="cursor-pointer gap-2">
                     <CalendarDays className="w-4 h-4" />
                     Office Schedule
                   </Link>

@@ -15,7 +15,7 @@ const steps = [
   {
     n: "03",
     title: "Personalized Protocol",
-    body: "A treatment plan built around your biology — transdermal hormones, peptides, IV therapy, or weight loss medicine.",
+        body: "A treatment plan built around your biology — hormones, peptides, GLP-1 care, or IV therapy — only after your provider reviews labs.",
   },
   {
     n: "04",

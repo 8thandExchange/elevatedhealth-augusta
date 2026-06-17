@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import NotReadyToBook from "@/components/NotReadyToBook";
 import HowGLP1Works from "@/components/HowGLP1Works";
 import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripeConfig";
+import { PUBLIC_GLP1_CARE_FLOW } from "@/lib/clinicalOptimizationCatalog";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -392,6 +393,27 @@ const WeightLoss = () => {
                   ctaText="Understand Your Metabolism"
                 />
               </div>
+            </div>
+          </section>
+
+          <section className="py-12 bg-muted/30 border-y border-border">
+            <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+              <p className="section-label text-center mb-4">Care pathway</p>
+              <ol className="flex flex-col md:flex-row md:flex-wrap justify-center gap-4 md:gap-2 font-jost text-sm text-center">
+                {PUBLIC_GLP1_CARE_FLOW.map((step, i) => (
+                  <li key={step} className="flex items-center gap-2">
+                    <span className="font-playfair italic text-accent">{String(i + 1).padStart(2, "0")}</span>
+                    <span>{step}</span>
+                    {i < PUBLIC_GLP1_CARE_FLOW.length - 1 && (
+                      <span className="hidden md:inline text-muted-foreground">→</span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+              <p className="font-jost text-xs text-muted-foreground text-center mt-6 max-w-xl mx-auto">
+                ELEVATED METABOLIC RECOMPOSITION is advanced provider-directed care only — not a casual add-on.
+                Retatrutide appears only within that structured program when clinically appropriate.
+              </p>
             </div>
           </section>
 

@@ -12,6 +12,7 @@ const SAFE_REDIRECT_PREFIXES = [
   "/admin/",
   "/provider/",
   "/schedule",
+  "/calendar",
   "/inventory",
   "/formulary",
   "/clinical-protocols",
@@ -28,7 +29,15 @@ export function getStaffPortalLoginPath(email: string | undefined): string {
   const normalized = email?.toLowerCase() || "";
   if (BUSINESS_ADMIN_EMAILS.includes(normalized)) return "/admin/business";
   if (OFFICE_MANAGER_EMAILS.includes(normalized)) return "/office/dashboard";
-  if (SCHEDULE_FIRST_EMAILS.includes(normalized)) return "/office/schedule";
+  if (SCHEDULE_FIRST_EMAILS.includes(normalized)) return "/calendar";
+  return "/provider/dashboard";
+}
+
+/** Primary clinical app home (from calendar portal — not back to calendar). */
+export function getStaffClinicalHomePath(email: string | undefined): string {
+  const normalized = email?.toLowerCase() || "";
+  if (BUSINESS_ADMIN_EMAILS.includes(normalized)) return "/admin/business";
+  if (OFFICE_MANAGER_EMAILS.includes(normalized)) return "/office/dashboard";
   return "/provider/dashboard";
 }
 

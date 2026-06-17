@@ -1,28 +1,39 @@
 # Elevated Health Augusta
 
-> Physician-owned wellness clinic in Evans, GA offering hormone optimization, medical weight loss, IV therapy, and peptide protocols. BCBS, TRICARE, and VA accepted.
+> Physician-owned optimization clinic in Evans, GA — IV hydration, GLP-1 medical weight loss, peptide therapy, bioidentical hormone replacement, sexual wellness support, and lab-guided health optimization.
 
-Elevated Health Augusta is a small, physician-led practice serving the Augusta / CSRA region. Care starts with a $79 in-person Wellness Assessment and progresses to personalized treatment plans across four service lines. Memberships are tiered at $199, $399, and $699 per month.
+Elevated Health Augusta is a cash-pay wellness clinic. Care starts with a $79 in-person Wellness Assessment (Lane B) or direct IV Lounge booking (Lane A). Treatment is lab-guided, provider-reviewed, and individualized. Ketamine and Spravato are not offered.
+
+## Programs (monthly, medication included where applicable)
+
+- ELEVATED TRT: $249/mo
+- ELEVATED HRT: $229/mo
+- ELEVATED GLP-1: $349/mo (semaglutide or tirzepatide when appropriate)
+- ELEVATED METABOLIC RECOMPOSITION: $1,199/mo (advanced provider-directed program only)
+- ELEVATED WELLNESS: $199/mo
+
+## Labs
+
+- Comprehensive Wellness Panel: $199
+- Expanded Panel: $299
 
 ## Pages
 
-- [Home](/): Clinic overview, services, and booking entry points.
-- [About](/about): Clinical team, philosophy, and location details.
-- [Hormone Therapy](/hormones): BHRT for women and TRT for men, transdermal compounded.
-- [Hormone Therapy for Women](/hormones-women): Compounded transdermal BHRT details.
-- [Hormone Therapy for Men](/hormones-men): Physician-led TRT details.
-- [Medical Weight Loss](/weight-loss): GLP-1 program with semaglutide or tirzepatide.
-- [IV Therapy](/iv-lounge): RN-administered Myers, NAD+, Immunity, Recovery, and Beauty drips. Bookable online.
-- [Peptide Therapy](/peptides): Pharmacy-compounded protocols (PDA, PT-141, Sermorelin, NAD+, GHK-Cu).
-- [Pricing](/pricing): Transparent cash-pay pricing for assessments, programs, labs, and medications.
-- [Membership](/membership): $199 / $399 / $699 monthly tiers and included benefits.
-- [Affordability](/affordability): Insurance, financing, and BNPL options.
-- [Consult](/consult): Schedule the Wellness Assessment.
-- [FAQ](/faq): Common questions on services, pricing, and care model.
+- [Home](/): Physician-owned clinic overview and booking
+- [How the Clinic Works](/how-it-works): Lane A IV vs Lane B consult-gated programs
+- [Hormone Therapy](/hormones): Lab-guided TRT and BHRT
+- [Medical Weight Loss](/weight-loss): ELEVATED GLP-1 program
+- [Metabolic Recomposition](/metabolic-recomposition): Advanced program (provider-directed)
+- [IV Therapy](/iv-lounge): Walk-in IV hydration and NAD+
+- [Peptide Therapy](/peptides): Recovery Peptide Review and physician-supervised peptide categories (BPC-157/TB-500 when clinically appropriate — no public dosing)
+- [Pricing](/pricing): Transparent cash-pay pricing
+- [Membership](/membership): ELEVATED program memberships
+- [Consult](/consult): Book Wellness Assessment
+
+Phone: (706) 760-3470
 
 ## Optional
 
+- [FAQ](/faq)
 - [Privacy Policy](/privacy-policy)
 - [Terms of Service](/terms-of-service)
-- [HIPAA Notice](/hipaa-notice)
-- [Accessibility](/accessibility)

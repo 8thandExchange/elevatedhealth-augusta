@@ -269,7 +269,7 @@ const OfficeManagerDashboard = () => {
               <CalendarPlus className="w-4 h-4" /> Book Appointment
             </Button>
             <Button variant="outline" asChild className="gap-2">
-              <Link to="/office/schedule">
+              <Link to="/calendar">
                 <Calendar className="w-4 h-4" /> Open Schedule
               </Link>
             </Button>

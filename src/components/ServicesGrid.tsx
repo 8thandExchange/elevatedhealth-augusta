@@ -17,7 +17,7 @@ const services = [
   },
   {
     title: "Peptide Protocols",
-    description: "The first physician-supervised peptide program in the Augusta area.",
+    description: "Physician-supervised Recovery Peptide Review and focused peptide care — not a public catalog.",
     route: "/peptides",
     note: "Starts with $79 Wellness Assessment",
   },

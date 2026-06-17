@@ -76,7 +76,7 @@ const HowClinicWorks = () => {
                   Lane B — Programs
                 </CardTitle>
                 <p className="font-jost text-sm text-muted-foreground">
-                  Hormones, GLP-1 weight loss, peptides, and optimization.
+                  Hormones, GLP-1 weight loss, Recovery Peptide Review, and peptide optimization.
                 </p>
               </CardHeader>
               <CardContent>

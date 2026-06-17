@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,18 +8,15 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import { isServiceActive } from "@/lib/serviceConfig";
-import {
-  CORE_SERVICES,
-  ELEVATED_PROGRAMS,
-  PEPTIDE_PRODUCTS,
-  SEXUAL_WELLNESS_PRODUCTS,
-  WEIGHT_LOSS_PRICES,
-} from "@/lib/stripeConfig";
-import { CATALOG, fmtUsd, memberPriceCents, nonMemberPriceCents } from "@/lib/pricing";
+import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
+import {
+  PUBLIC_AVAILABILITY_DISCLAIMER,
+  PUBLIC_PEPTIDE_CATEGORIES,
+} from "@/lib/clinicalOptimizationCatalog";
+import { RECOVERY_PEPTIDE_PUBLIC_LANGUAGE } from "@/lib/recoveryPeptideCareLane";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import {
   storefrontHeroInner,
@@ -32,297 +30,201 @@ const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
 const PRICE_PROGRAM_WELLNESS = ELEVATED_PROGRAMS.wellness.displayPrice;
 
-const pairNonMember = (keyA: string, keyB: string) =>
-  `${fmtUsd(nonMemberPriceCents(CATALOG[keyA]) + nonMemberPriceCents(CATALOG[keyB]))}/mo`;
-const pairMember = (keyA: string, keyB: string) =>
-  `${fmtUsd(memberPriceCents(CATALOG[keyA]) + memberPriceCents(CATALOG[keyB]))}/mo`;
-
-const TB500_AVAILABLE = isServiceActive("peptideTB500");
-
-const vitalityBaseNon =
-  nonMemberPriceCents(CATALOG.sermorelin) + nonMemberPriceCents(CATALOG.nadInjection);
-const vitalityBaseMember =
-  memberPriceCents(CATALOG.sermorelin) + memberPriceCents(CATALOG.nadInjection);
-const vitalityIvNon =
-  nonMemberPriceCents(CATALOG.sermorelin) + nonMemberPriceCents(CATALOG.nadIv250Lounge);
-const vitalityIvMember =
-  memberPriceCents(CATALOG.sermorelin) + memberPriceCents(CATALOG.nadIv250Lounge);
-
-type Stack = {
-  name: string;
-  tagline: string;
-  includes: string[];
-  bestFor: string[];
-  priceMember: string;
-  priceNonMember: string;
-  priceVariant?: { label: string; member: string; nonMember: string };
-  note: string;
-};
-
-const stacks: Stack[] = [
+const steps = [
   {
-    name: "The Restore Protocol",
-    tagline: "Sexual wellness, redefined. Works on the brain — not just the body.",
-    includes: [
-      "PT-141 (Bremelanotide) injectable, weekly",
-      "Optional: PT-141 / Oxytocin nasal spray for couples",
-    ],
-    bestFor: ["Low libido", "Arousal challenges", "Intimacy disconnect"],
-    priceMember: `${fmtUsd(memberPriceCents(CATALOG.pt141))} + ${fmtUsd(memberPriceCents(CATALOG.oxytocin))}/mo`,
-    priceNonMember: `${SEXUAL_WELLNESS_PRODUCTS.pt141.displayPrice} + ${SEXUAL_WELLNESS_PRODUCTS.oxytocin.displayPrice}/mo`,
-    note: "PT-141 is FDA-approved as Vyleesi. Compounded alternative dosing available.",
+    n: "01",
+    t: `Wellness Assessment (${PRICE_CONSULT})`,
+    d: "In-person visit — goals, history, medications, and whether peptide therapy fits your situation.",
   },
   {
-    name: "The Healing Protocol",
-    tagline: "Soft tissue, joints, gut, inflammation — accelerated recovery.",
-    includes: TB500_AVAILABLE
-      ? [
-          "Pentadeca Arginate (PDA) oral capsules, daily",
-          "TB-500 (Thymosin Beta-4) subcutaneous injection, weekly",
-        ]
-      : ["Pentadeca Arginate (PDA) oral capsules, daily"],
-    bestFor: ["Post-injury recovery", "Tendon & ligament healing", "Chronic inflammation", "Gut barrier integrity"],
-    priceMember: TB500_AVAILABLE
-      ? pairMember("cjc1295Ipamorelin", "nadInjection")
-      : pairMember("ghkCuSublingual", "nadTroches"),
-    priceNonMember: TB500_AVAILABLE
-      ? pairNonMember("cjc1295Ipamorelin", "nadInjection")
-      : pairNonMember("ghkCuSublingual", "nadTroches"),
-    note: TB500_AVAILABLE
-      ? "PDA is the successor to BPC-157, available through legal compounding channels. Posted totals use representative pharmacy-line items; your physician may substitute equivalents."
-      : "PDA is the successor to BPC-157. TB-500 temporarily unavailable pending pharmacy compliance review. Posted totals use representative pharmacy-line items.",
+    n: "02",
+    t: "Labs when indicated",
+    d: `In-office LabCorp draw (${CORE_SERVICES.comprehensivePanel.displayPrice} or ${CORE_SERVICES.expandedPanel.displayPrice} when expanded markers are ordered).`,
   },
   {
-    name: "The Vitality Protocol",
-    tagline: "Energy, cognition, sleep, body composition — the longevity foundation.",
-    includes: [
-      "Sermorelin subcutaneous injection, nightly",
-      "NAD+ subcutaneous take-home OR IV at the IV Lounge",
-    ],
-    bestFor: ["Low energy", "Cognitive dulling", "Poor sleep quality", "Age-related decline"],
-    priceMember: `${fmtUsd(vitalityBaseMember)}/mo`,
-    priceNonMember: `${fmtUsd(vitalityBaseNon)}/mo`,
-    priceVariant: {
-      label: "With monthly NAD+ IV at the lounge",
-      member: `${fmtUsd(vitalityIvMember)}/mo`,
-      nonMember: `${fmtUsd(vitalityIvNon)}/mo`,
-    },
-    note: "Sermorelin and NAD+ are well-established peptides with clear regulatory standing. IV add-on uses IV Lounge walk-in pricing reference.",
-  },
-];
-
-type WeightLossMed = {
-  name: string;
-  tagline: string;
-  includes: string[];
-  bestFor: string[];
-  priceMember: string;
-  priceNonMember: string;
-  note: string;
-};
-
-const weightLoss: WeightLossMed[] = [
-  {
-    name: "Compounded Semaglutide",
-    tagline: "The GLP-1 that reset the category — appetite, cravings, and steady metabolic control.",
-    includes: [
-      "Compounded semaglutide, shipped monthly",
-      "Physician dose titration & lab monitoring",
-      "Weekly subcutaneous self-injection",
-    ],
-    bestFor: ["Sustained weight loss", "Appetite regulation", "Metabolic health"],
-    priceMember: WEIGHT_LOSS_PRICES.semaglutide.memberDisplayPrice,
-    priceNonMember: WEIGHT_LOSS_PRICES.semaglutide.displayPrice,
-    note: "Compounded under 503A pharmacy authority, physician-prescribed. Begins after your Wellness Assessment and labs.",
+    n: "03",
+    t: "Provider review",
+    d: "Recovery peptides (BPC-157, TB-500, combined stack) require a dedicated clinical review before any plan is discussed.",
   },
   {
-    name: "Compounded Tirzepatide",
-    tagline: "Dual GLP-1/GIP action — the most significant appetite and weight response available.",
-    includes: [
-      "Compounded tirzepatide, shipped monthly",
-      "Physician dose titration & lab monitoring",
-      "Weekly subcutaneous self-injection",
-    ],
-    bestFor: ["Maximal weight loss", "Dual-pathway support", "Plateau breakthrough"],
-    priceMember: WEIGHT_LOSS_PRICES.tirzepatide.memberDisplayPrice,
-    priceNonMember: WEIGHT_LOSS_PRICES.tirzepatide.displayPrice,
-    note: "Compounded under 503A pharmacy authority, physician-prescribed. Begins after your Wellness Assessment and labs.",
-  },
-];
-
-type AlaCarte = { name: string; desc: string; bestFor: string; priceMember: string; priceNonMember: string; note?: string };
-
-const alacarte: AlaCarte[] = [
-  ...(
-    [
-      ["sermorelin", "GH support, sleep, recovery.", "Sleep · energy · body comp"],
-      ["cjc1295Ipamorelin", "Recovery-focused peptide support.", "Recovery · performance"],
-      ["tesamorelin", "Metabolic and body-composition support.", "Visceral fat · metabolic health"],
-      ["nadTroches", "Cellular energy support.", "Longevity · convenience"],
-      ["nadInjection", "Cellular energy, longevity.", "Longevity · home protocol"],
-      ["nadNasal", "Cellular energy, nasal delivery.", "Longevity · travel-friendly"],
-      ["ghkCuSublingual", "Skin, hair, collagen support.", "Skin · hair · collagen"],
-      ["ghkCuTopical", "Skin, hair, collagen support.", "Skin · hair · topical"],
-    ] as const
-  ).map(([key, desc, bestFor]) => {
-    const p = PEPTIDE_PRODUCTS[key];
-    return {
-      name: p.name,
-      desc,
-      bestFor,
-      priceMember: `${fmtUsd(memberPriceCents(CATALOG[key]))}/mo`,
-      priceNonMember: p.displayPrice,
-    };
-  }),
-  ...(TB500_AVAILABLE
-    ? ([
-        {
-          name: "TB-500 (Thymosin Beta-4)",
-          desc: "Tissue repair and recovery.",
-          bestFor: "Tendon · ligament · muscle",
-          priceMember: "—",
-          priceNonMember: "—",
-          note: "Subject to 503A pharmacy compliance verification; priced at enrollment.",
-        },
-      ] as AlaCarte[])
-    : []),
-  {
-    name: SEXUAL_WELLNESS_PRODUCTS.tadalafil.name,
-    desc: "Sexual wellness — men.",
-    bestFor: "Performance · confidence",
-    priceMember: `${fmtUsd(memberPriceCents(CATALOG.tadalafil))}/mo`,
-    priceNonMember: SEXUAL_WELLNESS_PRODUCTS.tadalafil.displayPrice,
-  },
-  {
-    name: SEXUAL_WELLNESS_PRODUCTS.sildenafil.name,
-    desc: "Sexual wellness — men.",
-    bestFor: "Performance · confidence",
-    priceMember: `${fmtUsd(memberPriceCents(CATALOG.sildenafil))}/mo`,
-    priceNonMember: SEXUAL_WELLNESS_PRODUCTS.sildenafil.displayPrice,
-  },
-  {
-    name: SEXUAL_WELLNESS_PRODUCTS.pt141.name,
-    desc: "Sexual wellness — for men and women.",
-    bestFor: "Libido · desire",
-    priceMember: fmtUsd(memberPriceCents(CATALOG.pt141)),
-    priceNonMember: SEXUAL_WELLNESS_PRODUCTS.pt141.displayPrice,
-  },
-  {
-    name: SEXUAL_WELLNESS_PRODUCTS.oxytocin.name,
-    desc: "Bonding and intimacy support.",
-    bestFor: "Couples · connection",
-    priceMember: `${fmtUsd(memberPriceCents(CATALOG.oxytocin))}/mo`,
-    priceNonMember: SEXUAL_WELLNESS_PRODUCTS.oxytocin.displayPrice,
+    n: "04",
+    t: "Your plan",
+    d: "If appropriate, your physician selects compounds and routes — instructions are provided at your visit, not published online.",
   },
 ];
 
 const symptoms = [
-  "Slow recovery from training", "Age-related decline", "Sleep disruption",
-  "Stubborn body composition", "Libido changes", "Post-injury rehab",
-  "Chronic inflammation", "Cognitive dulling", "Skin, hair & connective tissue concerns",
-];
-
-const steps = [
-  { n: "01", t: `Wellness Assessment (${PRICE_CONSULT})`, d: "Meet your physician. Walk through goals, current protocol/medications, history. About 45 minutes." },
-  {
-    n: "02",
-    t: "Targeted Lab Panel",
-    d: `Foundation labs plus IGF-1 (for GH peptides) and hormone markers if relevant. Common panels include ${CORE_SERVICES.comprehensivePanel.name} (${CORE_SERVICES.comprehensivePanel.displayPrice}) or ${CORE_SERVICES.expandedPanel.name} (${CORE_SERVICES.expandedPanel.displayPrice}) when ordered.`,
-  },
-  { n: "03", t: "Custom Protocol", d: "Physician selects your stack or à la carte peptides, designs dosing, sends Rx to our compounding pharmacy. Compounded for you and shipped refrigerated (5-day fulfillment)." },
-  { n: "04", t: "Self-Administer or In-Clinic", d: "Most peptides are subcutaneous self-injection at home — our clinical team trains you in 15 minutes. Or come in weekly with your ELEVATED program for in-clinic administration." },
+  "Slow recovery from training or competition",
+  "Tendon, ligament, or joint support goals",
+  "Post-injury or soft-tissue recovery",
+  "Active lifestyle / performance recovery",
+  "Longevity and cellular energy interest",
+  "Skin, hair, or post–weight-loss transformation support",
 ];
 
 const faqs = [
-  { q: "Why don't you offer BPC-157?", a: "BPC-157 is currently on the FDA's Category 2 list, meaning licensed compounding pharmacies cannot legally produce it. We use Pentadeca Arginate (PDA) instead — it's the regulatory-cleared successor with similar mechanism. Some online vendors still sell BPC-157 as 'research grade' — that's outside the legal pharmacy framework, and we don't participate in that market." },
-  { q: "Are peptides FDA-approved?", a: "Some are — PT-141 is FDA-approved as Vyleesi. Most peptides we prescribe are compounded under 503A authority for specific patients, which is a different legal framework than FDA approval but still regulated. It's not the same as 'research grade' or 'physician use only' branded products." },
-  { q: "Can I get peptides cheaper online?", a: "Yes, you can find research-grade peptide kits cheaper. Those are sold for 'research use only' and aren't intended for human medical use — selling them for human use is outside the legal framework. We're not competing on price; we're offering pharmacy-grade compounding with physician oversight and lab monitoring." },
-  { q: "How are peptides administered?", a: "Most are subcutaneous self-injection at home — our clinical team trains you. Some are sublingual or topical. NAD+ can be IV at our IV Lounge or subcutaneous take-home depending on preference." },
-  { q: "How long until I might notice changes?", a: "Timelines vary by individual and protocol. Your physician sets expectations at the visit — we avoid guaranteed timelines because response depends on labs, adherence, and overall health." },
-  { q: "Do peptides have side effects?", a: "Generally well-tolerated. Specific peptides have specific considerations — PT-141 can cause facial flushing, NAD+ can cause flushing during IV. Your physician will review the profile before starting." },
-  { q: "Will more peptides become available later?", a: "Likely yes. The FDA announced in early 2026 the intent to reclassify several peptides currently restricted — including CJC/Ipamorelin and Thymosin Alpha-1 — back to available status. We monitor this and will add new options as they become legally compoundable." },
+  {
+    q: "Are BPC-157 and TB-500 available?",
+    a: "Yes — when clinically appropriate and after provider review, safety screening, consent, and pharmacy availability. They are not walk-in or self-selected products. Pentadeca Arginate (PDA) may be selected as an alternate recovery option by your physician.",
+  },
+  {
+    q: "Are peptides FDA-approved?",
+    a: "Some therapies have FDA-approved forms (for example PT-141 as Vyleesi). Many recovery and optimization peptides are compounded under 503A pharmacy authority for specific patients under physician oversight and informed consent.",
+  },
+  {
+    q: "Can I buy peptides cheaper online?",
+    a: "Research-grade kits are not pharmacy-compounded medicine. We work only with licensed 503A pharmacies, physician prescriptions, and monitoring when indicated.",
+  },
+  {
+    q: "How are peptides given?",
+    a: "Depends on the protocol — subcutaneous injection, sublingual, topical, or IV (NAD+ at our IV Lounge). Your clinical team trains you on home injection when applicable.",
+  },
+  {
+    q: "How long until I notice a difference?",
+    a: "Timelines vary. Your physician sets realistic expectations — we do not guarantee specific healing or performance outcomes.",
+  },
+  {
+    q: "What about retatrutide?",
+    a: "Retatrutide is offered only within the advanced ELEVATED Metabolic Recomposition program — physician-directed, not casual à la carte.",
+  },
 ];
 
 const PeptideTherapy = () => {
   const { openBooking } = useBooking();
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>
       <Helmet>
-        <title>Peptide Therapy Augusta GA — Elevated Health</title>
-        <meta name="description" content="Physician-supervised peptide therapy in Evans, GA. Consult-gated protocols including Restore, Healing, and Vitality stacks. Pharmacy-compounded, lab-monitored care." />
+        <title>Recovery Peptide Review & Peptide Therapy | Elevated Health Augusta</title>
+        <meta
+          name="description"
+          content="Physician-supervised Recovery Peptide Review and focused peptide care in Evans, GA. BPC-157 and TB-500 when clinically appropriate — assessment, labs, consent, and provider review required."
+        />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/peptides" />
         <meta property="og:title" content="Peptide Therapy Augusta GA — Elevated Health" />
-        <meta property="og:description" content="Pharmacy-sourced peptide protocols. Lab-monitored, physician-prescribed. Shipped to your door." />
+        <meta
+          property="og:description"
+          content="A focused peptide menu — recovery, metabolic, hormone, sexual wellness, and longevity. Assessment-first, pharmacy-compounded."
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/peptides" />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "MedicalProcedure",
-          "name": "Peptide Therapy",
-          "description": "Pharmacy-compounded peptide protocols including PDA, PT-141, Sermorelin, NAD+, and GHK-Cu, prescribed and lab-monitored by a physician.",
-          "procedureType": "https://schema.org/TherapeuticProcedure",
-          "url": "https://elevatedhealthaugusta.com/peptides",
-          "provider": { "@type": "MedicalClinic", "name": "Elevated Health Augusta", "url": "https://elevatedhealthaugusta.com" }
-        })}</script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "MedicalProcedure",
+            name: "Peptide Therapy",
+            description:
+              "Physician-supervised peptide categories including recovery (BPC-157, TB-500), GLP-1 metabolic care, hormone optimization, sexual wellness, and longevity support.",
+            procedureType: "https://schema.org/TherapeuticProcedure",
+            url: "https://elevatedhealthaugusta.com/peptides",
+            provider: {
+              "@type": "MedicalClinic",
+              name: "Elevated Health Augusta",
+              url: "https://elevatedhealthaugusta.com",
+            },
+          })}
+        </script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
         <Navbar />
 
         <main>
-          {/* 1. Hero (Pattern A) */}
           <section className={storefrontHeroSection}>
             <div className={storefrontHeroInner}>
-              <p className={storefrontHeroLabel}>Peptide Protocols</p>
+              <p className={storefrontHeroLabel}>Peptide Therapy</p>
               <h1 className={storefrontHeroTitle}>
-                Targeted regeneration.<br /><span className="italic">Pharmacy-sourced. Physician-led.</span>
+                Recovery Peptide Review.
+                <br />
+                <span className="italic">Provider-led. Safety-gated.</span>
               </h1>
               <p className={`${storefrontHeroLead} mb-6`}>
-                Physician-supervised peptide therapy at Elevated Health Augusta. We do not sell peptides direct to consumer.
-                Care begins with a {PRICE_CONSULT} consultation and, where indicated, lab work — then personalized protocols
-                compounded by a licensed 503A pharmacy when prescribed.
-              </p>
-              <p className="font-jost text-sm text-muted-foreground leading-relaxed mb-10 max-w-2xl border-l-2 border-accent/40 pl-4">
-                Certain research peptides are prescribed under our Research Peptide Consent and are not FDA-approved.
-                In April 2026 the FDA removed several peptides from its 503A Category 2 list, which reduced compounding
-                restrictions. This is not FDA approval, and FDA advisory-committee review is ongoing. Your physician
-                discusses status and the research nature of these therapies before prescribing.
+                {RECOVERY_PEPTIDE_PUBLIC_LANGUAGE} Care begins with a {PRICE_CONSULT} Wellness
+                Assessment — not a walk-in peptide menu. Your physician selects options only after
+                review, labs, consent, and pharmacy availability.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
-                  Book a {PRICE_CONSULT} consultation <ArrowRight className="ml-2 h-4 w-4" />
+                  Start Recovery Peptide Review <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button asChild variant="outline" size="lg" className="font-jost tracking-wide">
-                  <a href="/membership">Elevated Membership ({PRICE_PROGRAM_WELLNESS})</a>
+                  <Link to="/membership">Book Wellness Assessment ({PRICE_CONSULT})</Link>
                 </Button>
+              </div>
+            </div>
+          </section>
+
+          <section id="peptide-categories" className="py-16 md:py-20 bg-background">
+            <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-8">
+              <div className="text-center max-w-2xl mx-auto">
+                <p className="section-label mb-3">Care areas</p>
+                <h2 className="font-playfair text-3xl text-foreground">
+                  What we <span className="italic">focus on</span>
+                </h2>
+                <p className="font-jost text-sm text-muted-foreground mt-4">
+                  Education only — not a self-serve menu. {PUBLIC_AVAILABILITY_DISCLAIMER}
+                </p>
+              </div>
+
+              <div className="rounded-sm border border-accent/30 bg-muted/20 p-6 md:p-8">
+                <h3 className="font-playfair text-xl mb-3">Recovery Peptide Review</h3>
+                <p className="font-jost text-xs text-accent mb-3">
+                  BPC-157 · TB-500 · BPC-157/TB-500 recovery stack · PDA (provider-selected alternate)
+                </p>
+                <p className="font-jost text-sm text-muted-foreground leading-relaxed mb-4">
+                  {RECOVERY_PEPTIDE_PUBLIC_LANGUAGE}
+                </p>
+                <p className="font-jost text-xs text-muted-foreground">
+                  Requires assessment, provider review, informed consent, and current pharmacy
+                  availability. We do not publish dosing or guarantee healing outcomes.
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-6">
+                {PUBLIC_PEPTIDE_CATEGORIES.filter((c) => c.id !== "recovery").map((cat) => (
+                  <div
+                    key={cat.id}
+                    id={cat.id === "sexual" ? "sexual-wellness" : undefined}
+                    className="border border-border rounded-sm p-6 bg-card/40"
+                  >
+                    <h3 className="font-playfair text-lg mb-2">{cat.title}</h3>
+                    <p className="font-jost text-xs text-accent mb-2">{cat.examples.join(" · ")}</p>
+                    <p className="font-jost text-sm text-muted-foreground">{cat.note}</p>
+                    {cat.id === "glp1_metabolic" && (
+                      <Button asChild variant="link" className="font-jost text-accent px-0 mt-2 h-auto">
+                        <Link to="/weight-loss">GLP-1 program detail →</Link>
+                      </Button>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </section>
 
           <section className="py-16 md:py-24 bg-muted/20 border-y border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-10">
-              <EverythingIncludedPillars intro="Pair peptide therapy with ELEVATED WELLNESS for 20% off eligible à la carte items and bundled clinical access." />
+              <EverythingIncludedPillars intro="ELEVATED WELLNESS members receive 20% off eligible à la carte services when clinically appropriate." />
               <MembershipComparison program="wellness" />
             </div>
           </section>
 
-          {/* 2. Pricing Strip (Pattern B) */}
           <section className="py-16 md:py-20 bg-background border-y border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
               <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
                 {[
-                  { l: "Wellness Assessment", p: PRICE_CONSULT, sub: "RN intake, in-person at Evans" },
+                  { l: "Wellness Assessment", p: PRICE_CONSULT, sub: "Required front door for peptide care" },
                   {
                     l: CORE_SERVICES.comprehensivePanel.name,
                     p: PRICE_PANEL,
-                    sub: `or ${CORE_SERVICES.expandedPanel.name} (${CORE_SERVICES.expandedPanel.displayPrice}) when expanded markers are ordered`,
+                    sub: `or ${CORE_SERVICES.expandedPanel.displayPrice} expanded when ordered`,
                   },
                   {
                     l: ELEVATED_PROGRAMS.wellness.name,
                     p: PRICE_PROGRAM_WELLNESS,
-                    sub: "20% off eligible à la carte IV, peptide, and injectable services",
+                    sub: "Member discount on eligible services",
                   },
                 ].map((c) => (
                   <div key={c.l} className="px-6 py-8 md:py-4 text-center">
@@ -335,193 +237,65 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          {/* 3. Responsibly Sourced — Regulatory transparency */}
           <section className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="grid md:grid-cols-12 gap-12">
                 <div className="md:col-span-5">
-                  <p className="section-label mb-4">Responsibly Sourced</p>
+                  <p className="section-label mb-4">Responsibly sourced</p>
                   <h2 className="font-playfair italic text-4xl md:text-5xl text-foreground leading-tight">
-                    Pharmacy-grade.<br />By design.
+                    Pharmacy-grade.
+                    <br />
+                    By design.
                   </h2>
                 </div>
                 <div className="md:col-span-7 space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
-                  <p>Most online peptide vendors operate outside the FDA's compounding framework. Their peptides are sold under labels like "research use only" or "physician-use only" — language that gives an appearance of legitimacy without the legal protection of pharmacy compounding. We don't work with those vendors.</p>
-                  <p>Every peptide we prescribe is compounded by a licensed 503A compounding pharmacy. Each prescription is written for a specific patient, dispensed under pharmacy oversight, and shipped refrigerated directly to your door.</p>
-                  <p>Some peptides commonly discussed online — including BPC-157 — are not currently legal to compound under FDA guidance. We use the regulatory-cleared alternatives where they exist (Pentadeca Arginate is the modern BPC-157 successor) and are transparent when a popular peptide isn't available through legal channels. You'll never get an unapproved gray-market substance from us.</p>
+                  <p>
+                    We do not sell research-grade or gray-market peptide kits. Every prescription is
+                    compounded by a licensed 503A pharmacy for a specific patient under physician
+                    oversight.
+                  </p>
+                  <p>
+                    BPC-157, TB-500, and our recovery stack are available when your provider determines
+                    they are clinically appropriate — after safety screening, consent, and pharmacy
+                    confirmation. Pentadeca Arginate (PDA) remains an alternate recovery option your
+                    physician may select.
+                  </p>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* 4. What it is (Pattern C) */}
           <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <PatternCSplit
                 imageSrc={MARKETING_IMAGES.editorialPeptides}
-                imageAlt="Peptide therapy protocols at Elevated Health Augusta"
+                imageAlt="Peptide therapy at Elevated Health Augusta"
               >
-                  <p className="section-label mb-4">What it is</p>
-                  <h2 className="font-playfair italic text-4xl md:text-5xl lg:text-6xl text-foreground mb-8">
-                    Compounded peptides, custom-dosed.
-                  </h2>
-                  <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
-                    <p>Peptides aren't generic pharmaceuticals — they're compounded for the individual patient by a 503A pharmacy based on a physician's prescription.</p>
-                    <p>Your protocol is built from your labs and your goals. Custom doses, custom delivery — subcutaneous injection, sublingual, topical, or IV depending on the peptide.</p>
-                    <p>This is meaningfully different from the off-the-shelf "stack kits" sold by online vendors. Every dose is tied to your physician's clinical judgment, your bloodwork, and your monitoring schedule.</p>
-                  </div>
+                <p className="section-label mb-4">What it is</p>
+                <h2 className="font-playfair italic text-4xl md:text-5xl lg:text-6xl text-foreground mb-8">
+                  Individualized — not off-the-shelf.
+                </h2>
+                <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
+                  <p>
+                    Your protocol is built from your history, labs, and goals. We publish categories —
+                    not dosing schedules or a full product catalog.
+                  </p>
+                  <p>
+                    Recovery peptides require a structured clinical review before any compound is
+                    discussed or ordered.
+                  </p>
+                </div>
               </PatternCSplit>
             </div>
           </section>
 
-          {/* 5. The Three Protocols — Stacks */}
-          <section id="stacks" className="py-20 md:py-28 bg-background scroll-mt-24">
-            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <div className="mb-16 max-w-2xl">
-                <p className="section-label mb-4">The Three Protocols</p>
-                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">
-                  Built around <span className="italic">outcomes</span>, not compounds.
-                </h2>
-              </div>
-              <div className="grid md:grid-cols-3 gap-8">
-                {stacks.map((s) => (
-                  <div key={s.name} className="border border-border p-8 flex flex-col bg-background">
-                    <h3 className="font-playfair italic text-2xl md:text-3xl text-foreground mb-3">{s.name}</h3>
-                    <p className="font-jost font-light text-muted-foreground mb-6 leading-relaxed">{s.tagline}</p>
-
-                    <p className="section-label mb-3">What's included</p>
-                    <ul className="space-y-2 mb-6">
-                      {s.includes.map((i) => (
-                        <li key={i} className="font-jost font-light text-sm text-foreground flex items-start gap-2">
-                          <span className="text-accent mt-1.5 text-xs">—</span>{i}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <p className="section-label mb-3">Best for</p>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {s.bestFor.map((b) => (
-                        <span key={b} className="font-jost text-xs uppercase tracking-widest text-muted-foreground border border-border px-2 py-1">{b}</span>
-                      ))}
-                    </div>
-
-                    <div className="mt-auto pt-6 border-t border-border">
-                      <div className="flex justify-between font-jost text-sm mb-1">
-                        <span className="text-muted-foreground">Member</span>
-                        <span className="font-medium text-foreground">{s.priceMember}</span>
-                      </div>
-                      <div className="flex justify-between font-jost text-sm">
-                        <span className="text-muted-foreground">Non-member</span>
-                        <span className="font-medium text-foreground">{s.priceNonMember}</span>
-                      </div>
-                      {s.priceVariant && (
-                        <div className="mt-3 pt-3 border-t border-border/60">
-                          <p className="font-jost text-xs text-muted-foreground mb-1">{s.priceVariant.label}</p>
-                          <div className="flex justify-between font-jost text-sm">
-                            <span className="text-muted-foreground">Member / Non-member</span>
-                            <span className="font-medium text-foreground">{s.priceVariant.member} / {s.priceVariant.nonMember}</span>
-                          </div>
-                        </div>
-                      )}
-                      <p className="font-jost text-xs italic text-muted-foreground mt-4 leading-relaxed">{s.note}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* 5b. Medical Weight Loss — GLP-1 */}
-          <section id="weight-loss" className="py-20 md:py-28 bg-background border-t border-border scroll-mt-24">
-            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <div className="mb-16 max-w-2xl">
-                <p className="section-label mb-4">Medical Weight Loss</p>
-                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">
-                  GLP-1 therapy, <span className="italic">physician-guided</span>.
-                </h2>
-                <p className="font-jost font-light text-lg text-muted-foreground leading-relaxed mt-6">
-                  GLP-1 medications are peptides too. Ours are compounded by a licensed 503A pharmacy,
-                  prescribed and titrated by your physician, and monitored with labs — never gray-market.
-                </p>
-              </div>
-              <div className="grid md:grid-cols-2 gap-8 max-w-4xl">
-                {weightLoss.map((m) => (
-                  <div key={m.name} className="border border-border p-8 flex flex-col bg-background">
-                    <h3 className="font-playfair italic text-2xl md:text-3xl text-foreground mb-3">{m.name}</h3>
-                    <p className="font-jost font-light text-muted-foreground mb-6 leading-relaxed">{m.tagline}</p>
-
-                    <p className="section-label mb-3">What's included</p>
-                    <ul className="space-y-2 mb-6">
-                      {m.includes.map((i) => (
-                        <li key={i} className="font-jost font-light text-sm text-foreground flex items-start gap-2">
-                          <span className="text-accent mt-1.5 text-xs">—</span>{i}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <p className="section-label mb-3">Best for</p>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {m.bestFor.map((b) => (
-                        <span key={b} className="font-jost text-xs uppercase tracking-widest text-muted-foreground border border-border px-2 py-1">{b}</span>
-                      ))}
-                    </div>
-
-                    <div className="mt-auto pt-6 border-t border-border">
-                      <div className="flex justify-between font-jost text-sm mb-1">
-                        <span className="text-muted-foreground">Member</span>
-                        <span className="font-medium text-foreground">{m.priceMember}</span>
-                      </div>
-                      <div className="flex justify-between font-jost text-sm">
-                        <span className="text-muted-foreground">Non-member</span>
-                        <span className="font-medium text-foreground">{m.priceNonMember}</span>
-                      </div>
-                      <p className="font-jost text-xs italic text-muted-foreground mt-4 leading-relaxed">{m.note}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-12 flex flex-col sm:flex-row gap-4">
-                <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
-                  Book your {PRICE_CONSULT} Wellness Assessment <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button asChild variant="outline" size="lg" className="font-jost tracking-wide">
-                  <a href="/weight-loss">See the full weight-loss program →</a>
-                </Button>
-              </div>
-            </div>
-          </section>
-
-          {/* 6. À la carte */}
-          <section className="py-20 md:py-28 bg-muted/30">
-            <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
-              <p className="section-label mb-4">Or build your own</p>
-              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-12">
-                Individual peptides, <span className="italic">à la carte</span>.
-              </h2>
-              <div className="grid md:grid-cols-2 gap-x-12">
-                {alacarte.map((p) => (
-                  <div key={p.name} className="py-6 border-b border-border/60">
-                    <div className="flex justify-between items-start mb-2 gap-4">
-                      <h3 className="font-playfair italic text-xl text-foreground">{p.name}</h3>
-                      <span className="font-jost font-medium text-accent text-sm shrink-0 text-right">
-                        {p.priceMember}<br /><span className="font-light text-muted-foreground text-xs">non-mbr {p.priceNonMember}</span>
-                      </span>
-                    </div>
-                    <p className="font-jost font-light text-muted-foreground text-sm leading-relaxed mb-2">{p.desc}</p>
-                    <p className="font-jost text-xs uppercase tracking-widest text-muted-foreground/70">{p.bestFor}</p>
-                    {p.note && <p className="font-jost text-xs italic text-muted-foreground/80 mt-1">{p.note}</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* 7. How it works (Pattern D) */}
           <section className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="text-center mb-16">
-                <p className="section-label mb-4">How It Works</p>
-                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">Four steps. <span className="italic">No surprises.</span></h2>
+                <p className="section-label mb-4">How it works</p>
+                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">
+                  Four steps. <span className="italic">No surprises.</span>
+                </h2>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
                 {steps.map((s) => (
@@ -535,86 +309,84 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          {/* 8. Who it's for */}
           <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
-              <p className="section-label mb-4">Who It's For</p>
+              <p className="section-label mb-4">Who it&apos;s for</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">
-                If you're experiencing<span className="italic">…</span>
+                If you&apos;re exploring<span className="italic">…</span>
               </h2>
               <ul className="grid sm:grid-cols-2 gap-4">
                 {symptoms.map((s) => (
                   <li key={s} className="font-jost font-light text-foreground text-lg flex items-start gap-3">
-                    <span className="text-accent mt-1.5 text-sm">—</span>{s}
+                    <span className="text-accent mt-1.5 text-sm">—</span>
+                    {s}
                   </li>
                 ))}
               </ul>
             </div>
           </section>
 
-          {/* 9. Pricing transparency (Pattern E) */}
           <section className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">Pricing</p>
-              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">Transparent <span className="italic">all the way through</span>.</h2>
-
-              <div className="space-y-10">
-                <div>
-                  <p className="section-label mb-4">One-time</p>
-                  <div className="space-y-3 font-jost text-foreground">
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Initial Wellness Assessment</span><span className="font-medium">{PRICE_CONSULT}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Peptide Lab Panel<br /><span className="font-light text-sm text-muted-foreground">depends on which markers your physician orders</span></span><span className="font-medium whitespace-nowrap text-right">{CORE_SERVICES.comprehensivePanel.displayPrice} or {CORE_SERVICES.expandedPanel.displayPrice}</span></div>
-                  </div>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">
+                Transparent <span className="italic">starting points</span>
+              </h2>
+              <div className="space-y-3 font-jost text-foreground">
+                <div className="flex justify-between border-b border-border/60 pb-3">
+                  <span>Wellness Assessment</span>
+                  <span className="font-medium">{PRICE_CONSULT}</span>
                 </div>
-
-                <div>
-                  <p className="section-label mb-4">Ongoing (depends on protocol)</p>
-                  <div className="space-y-3 font-jost text-foreground">
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>{ELEVATED_PROGRAMS.wellness.name}<br /><span className="font-light text-sm text-muted-foreground">preferred pathway for peptide patients needing bundled access</span></span><span className="font-medium whitespace-nowrap">{PRICE_PROGRAM_WELLNESS}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Restore Protocol</span><span className="font-medium whitespace-nowrap">{stacks[0].priceNonMember}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Healing Protocol</span><span className="font-medium whitespace-nowrap">{stacks[1].priceNonMember}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Vitality Protocol<br /><span className="font-light text-sm text-muted-foreground">depending on NAD+ delivery</span></span><span className="font-medium whitespace-nowrap">{stacks[2].priceNonMember}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Compounded Semaglutide (GLP-1)<br /><span className="font-light text-sm text-muted-foreground">{weightLoss[0].priceMember} with ELEVATED membership</span></span><span className="font-medium whitespace-nowrap">{weightLoss[0].priceNonMember}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Compounded Tirzepatide (GLP-1)<br /><span className="font-light text-sm text-muted-foreground">{weightLoss[1].priceMember} with ELEVATED membership</span></span><span className="font-medium whitespace-nowrap">{weightLoss[1].priceNonMember}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Individual peptides (à la carte)</span><span className="font-medium whitespace-nowrap">See catalog below</span></div>
-                  </div>
+                <div className="flex justify-between border-b border-border/60 pb-3">
+                  <span>Lab panels (when ordered)</span>
+                  <span className="font-medium text-right">
+                    {CORE_SERVICES.comprehensivePanel.displayPrice} / {CORE_SERVICES.expandedPanel.displayPrice}
+                  </span>
                 </div>
-
-                <div className="bg-muted/30 border border-border p-6 space-y-2 font-jost text-sm">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Typical first month (assessment + labs + first month protocol + program)</span><span className="font-medium text-foreground whitespace-nowrap text-right">Varies by protocol — priced at checkout</span></div>
+                <div className="flex justify-between border-b border-border/60 pb-3">
+                  <span>{ELEVATED_PROGRAMS.wellness.name}</span>
+                  <span className="font-medium">{PRICE_PROGRAM_WELLNESS}</span>
                 </div>
               </div>
+              <p className="font-jost text-sm text-muted-foreground mt-6">
+                Ongoing peptide program pricing is quoted after your provider review — not listed as a public
+                catalog. See <Link to="/pricing" className="text-accent underline-offset-4 hover:underline">full pricing</Link> for program memberships.
+              </p>
             </div>
           </section>
 
-          {/* 10. FAQ (Pattern F) */}
           <section className="py-20 md:py-28 bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">FAQ</p>
-              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">Questions, <span className="italic">answered</span>.</h2>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">
+                Questions, <span className="italic">answered</span>.
+              </h2>
               <Accordion type="single" collapsible className="w-full">
                 {faqs.map((f, i) => (
                   <AccordionItem key={i} value={`item-${i}`}>
-                    <AccordionTrigger className="text-left font-playfair text-lg text-foreground">{f.q}</AccordionTrigger>
-                    <AccordionContent className="font-jost font-light text-muted-foreground text-base leading-relaxed">{f.a}</AccordionContent>
+                    <AccordionTrigger className="text-left font-playfair text-lg text-foreground">
+                      {f.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="font-jost font-light text-muted-foreground text-base leading-relaxed">
+                      {f.a}
+                    </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
             </div>
           </section>
 
-          {/* 11. Closing CTA (Pattern G) */}
           <section className="py-24 md:py-32 bg-background text-center">
             <div className="container mx-auto px-6 max-w-2xl">
               <h2 className="font-playfair text-4xl md:text-5xl text-foreground mb-8">
-                Build the protocol your <span className="italic">body deserves</span>.
+                Start your <span className="italic">Recovery Peptide Review</span>.
               </h2>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
-                  Book your {PRICE_CONSULT} Wellness Assessment
+                  Book Wellness Assessment ({PRICE_CONSULT})
                 </Button>
                 <Button asChild variant="outline" size="lg" className="font-jost tracking-wide">
-                  <a href={`tel:${SITE_CONFIG.phoneRaw}`}>Or call {SITE_CONFIG.phone}</a>
+                  <a href={`tel:${SITE_CONFIG.phoneRaw}`}>Call {SITE_CONFIG.phone}</a>
                 </Button>
               </div>
             </div>

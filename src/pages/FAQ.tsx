@@ -144,8 +144,8 @@ const FAQ = () => {
       a: "Because benefits and risks, regulatory status, and monitoring expectations must be clear before therapy begins. You will review and sign consent documents specific to your protocol.",
     },
     {
-      q: "Do you still use BPC-157 or TB-500?",
-      a: "Our menu follows current compounding policy and partner availability. Some legacy peptides are discontinued or replaced. Ask your provider during the Wellness Assessment — we do not give dosing or suitability advice over email.",
+      q: "Do you offer BPC-157 or TB-500?",
+      a: "Yes — when clinically appropriate and after provider review, safety screening, consent, and pharmacy availability. They are not walk-in products. Recovery options including PDA may also be discussed at your Wellness Assessment.",
     },
   ];
 

@@ -236,7 +236,7 @@ const BusinessDashboard = () => {
             </p>
           </div>
           <Button asChild className="gap-2">
-            <Link to="/office/schedule">
+            <Link to="/calendar">
               <CalendarDays className="w-4 h-4" />
               Open Schedule
             </Link>

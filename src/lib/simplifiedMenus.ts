@@ -54,7 +54,7 @@ export const PUBLIC_MENU: MenuTier[] = [
     description: "Three stacks + metabolic program. Do not recite full peptide list to prospects.",
     items: [
       { id: "restore", label: "Restore (PT-141 weekly)", priceDisplay: "$129–179/mo", vendor: "gc" },
-      { id: "healing", label: "Healing / Wolverine (BPC + TB-500)", priceDisplay: "$249–329/mo", vendor: "gc" },
+      { id: "healing", label: "BPC-157 / TB-500 recovery stack", priceDisplay: "$249–329/mo", vendor: "gc" },
       { id: "vitality", label: "Vitality (Sermorelin + NAD+)", priceDisplay: "$299–399/mo", vendor: "gc" },
       { id: "metabolic-stack", label: "Metabolic Recomposition (phased)", priceDisplay: "$1,199/mo", vendor: "gc" },
     ],

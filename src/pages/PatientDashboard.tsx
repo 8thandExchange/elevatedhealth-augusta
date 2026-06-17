@@ -22,6 +22,7 @@ import AnimatedCard from "@/components/patient/AnimatedCard";
 import MembershipSummary from "@/components/patient/MembershipSummary";
 import OAuthOnboarding from "@/components/patient/OAuthOnboarding";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
+import { RECOVERY_PEPTIDE_PATIENT_PORTAL_MESSAGE } from "@/lib/recoveryPeptideCareLane";
 
 import { 
   usePatient, 
@@ -334,7 +335,11 @@ const PatientDashboard = () => {
                       <div className="flex-1">
                         <h3 className="font-playfair font-semibold text-foreground">Provider Review in Progress</h3>
                         <p className="text-sm text-muted-foreground font-inter mt-1">
-                          A provider is reviewing your results and designing your personalized treatment plan.
+                          {(patient.primary_program?.includes("peptide") ||
+                            patient.primary_program?.includes("recovery") ||
+                            String(patient.service_interests ?? "").includes("recovery"))
+                            ? RECOVERY_PEPTIDE_PATIENT_PORTAL_MESSAGE
+                            : "A provider is reviewing your results and designing your personalized treatment plan."}
                         </p>
                         <div className="bg-gold/10 rounded-xl p-3 mt-3">
                           <p className="text-sm font-inter font-medium text-foreground">⏱️ Estimated: 24-48 hours</p>

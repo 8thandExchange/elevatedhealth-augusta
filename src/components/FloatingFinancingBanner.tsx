@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { CreditCard, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { isCalendarSubdomain } from "@/lib/schedulePortalHost";
 
 const FloatingFinancingBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,13 +14,13 @@ const FloatingFinancingBanner = () => {
     "/provider",
     "/admin",
     "/office",
+    "/calendar",
     "/auth",
     "/login"
   ];
 
-  const shouldShowOnPage = !excludedPaths.some(path => 
-    location.pathname.startsWith(path)
-  );
+  const shouldShowOnPage = !isCalendarSubdomain()
+    && !excludedPaths.some(path => location.pathname.startsWith(path));
 
   useEffect(() => {
     // Check if user dismissed in this session

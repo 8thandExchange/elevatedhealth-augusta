@@ -185,7 +185,7 @@ export const PHARMACY_FORMULARY: PharmacyFormularyItem[] = [
   },
   {
     id: "peptide_wolverine",
-    name: "Wolverine stack (BPC-157 + TB-500)",
+    name: "BPC-157 + TB-500 recovery stack",
     strength: "Per healing protocol",
     sig: "Research peptide consent required. 6–12 week course.",
     category: "peptides",
