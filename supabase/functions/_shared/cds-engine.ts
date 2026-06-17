@@ -197,7 +197,7 @@ export function evaluateCandidate(
     return {
       ...base,
       regulatory_status: "RESEARCH_USE_ONLY",
-      gate_state: "blocked_excluded",
+      gate_state: "blocked_ruo",
       blocked_reason:
         "Research-use-only — hard clinic block. Cannot proceed to ePrescribe; prescriber override required if policy ever allows.",
       rank_score: 0,

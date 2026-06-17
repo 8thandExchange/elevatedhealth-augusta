@@ -89,7 +89,7 @@ describe("cdsEngine consent gates", () => {
       }),
       { ...baseCtx, substanceAcknowledgmentIds: [] },
     );
-    expect(withoutAck.gate_state).toBe("blocked_excluded");
+    expect(withoutAck.gate_state).toBe("blocked_ruo");
     expect(withoutAck.blocked_reason).toMatch(/ePrescribe|Research-use-only/i);
 
     const withAck = evaluateCandidate(
@@ -100,7 +100,7 @@ describe("cdsEngine consent gates", () => {
       }),
       baseCtx,
     );
-    expect(withAck.gate_state).toBe("blocked_excluded");
+    expect(withAck.gate_state).toBe("blocked_ruo");
     expect(withAck.gate_state).not.toBe("ready");
   });
 

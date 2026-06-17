@@ -187,7 +187,7 @@ export const CONSENT_CHECKLIST = [
   { consent: "GLP-1 Consent", when: "Semaglutide, tirzepatide, metabolic program GLP class" },
   { consent: "Off-label / compounded disclosure", when: "503A compounded therapies" },
   { consent: "Research Peptide Consent", when: "Gray-zone research peptides when clinic policy allows (not PT-141; not BPC/TB stack until explicit leadership sign-off)" },
-  { consent: "Substance acknowledgment (CDS)", when: "RUO / gray-zone candidates before ePrescribe handoff" },
+  { consent: "Substance acknowledgment (CDS)", when: "Gray-zone candidates before ePrescribe handoff (RUO is hard-blocked)" },
   { consent: "Physician CDS review", when: "Prescriber-only final approval in provider chart" },
 ] as const;
 

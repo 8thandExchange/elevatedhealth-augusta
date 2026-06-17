@@ -115,7 +115,7 @@ describe("canOfferTherapy", () => {
     expect(result.canOffer).toBe(false);
     expect(result.regulatory.status).toBe("block");
     expect(result.missingActions).toContain("therapy_excluded");
-    expect(result.engineGateState).toBe("blocked_excluded");
+    expect(result.engineGateState).toBe("blocked_ruo");
   });
 
   it("maps assessment candidate rows through gateResultFromAssessmentCandidate", () => {
