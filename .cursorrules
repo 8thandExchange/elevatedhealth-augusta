@@ -474,5 +474,15 @@ Remaining work:
   - Photography (real, not placeholder)
 
 ═══════════════════════════════════════════════════════════════════
+SECURITY
+═══════════════════════════════════════════════════════════════════
+
+Never commit plaintext passwords, API keys, or tokens in migrations,
+code, comments, or UI copy. Staff and kiosk credentials are set by
+the clinic owner via Supabase invite, dashboard, or Forgot password
+only. Migration password columns must use gen_random_uuid() placeholders
+on fresh apply, never a shared or guessable secret.
+
+═══════════════════════════════════════════════════════════════════
 
 End of context. Make good decisions.

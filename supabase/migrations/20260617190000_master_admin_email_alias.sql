@@ -1,5 +1,5 @@
+-- Password randomized for repo safety. Real credentials are set by the clinic owner via Supabase invite or dashboard and are never committed.
 -- Master admin login email is admin@elevatedhealthaugusta.com (was troy@elevatedhealthaugusta.com).
--- Password remains Elevated2026! (re-applied here for certainty).
 
 BEGIN;
 
@@ -24,7 +24,7 @@ BEGIN
   UPDATE auth.users
   SET
     email = _email,
-    encrypted_password = extensions.crypt('Elevated2026!', extensions.gen_salt('bf')),
+    encrypted_password = extensions.crypt(gen_random_uuid()::text, extensions.gen_salt('bf')),
     email_confirmed_at = COALESCE(email_confirmed_at, timezone('utc', now())),
     updated_at = timezone('utc', now())
   WHERE id = _uid;

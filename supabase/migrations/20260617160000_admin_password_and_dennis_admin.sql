@@ -1,5 +1,5 @@
--- Master admin password + confirm Dennis Williams full admin access.
--- Password set per clinic owner request (rotate after first login if desired).
+-- Password randomized for repo safety. Real credentials are set by the clinic owner via Supabase invite or dashboard and are never committed.
+-- Master admin password bootstrap + confirm Dennis Williams full admin access.
 
 BEGIN;
 
@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- admin@elevatedhealthaugusta.com (master admin UUID from 20251210233224)
 UPDATE auth.users
 SET
-  encrypted_password = extensions.crypt('Elevated2026!', extensions.gen_salt('bf')),
+  encrypted_password = extensions.crypt(gen_random_uuid()::text, extensions.gen_salt('bf')),
   email_confirmed_at = COALESCE(email_confirmed_at, timezone('utc', now())),
   updated_at = timezone('utc', now())
 WHERE lower(email) = 'admin@elevatedhealthaugusta.com'

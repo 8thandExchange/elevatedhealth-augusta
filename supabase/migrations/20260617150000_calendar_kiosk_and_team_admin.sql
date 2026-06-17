@@ -1,4 +1,5 @@
--- Front-desk calendar kiosk (calendar / calendar) + full admin for clinic leadership.
+-- Password randomized for repo safety. Real credentials are set by the clinic owner via Supabase invite or dashboard and are never committed.
+-- Front-desk calendar kiosk + full admin for clinic leadership.
 -- Kiosk auth email: calendar@elevatedhealthaugusta.com (username "calendar" in UI).
 
 BEGIN;
@@ -169,8 +170,7 @@ END;
 $$;
 
 -- ---------------------------------------------------------------------------
--- Shared front-desk calendar kiosk — username/password: calendar / calendar
--- Staff role is sufficient for schedule RLS (not full admin on this account).
+-- Shared front-desk calendar kiosk account (staff role for schedule RLS).
 -- ---------------------------------------------------------------------------
 DO $$
 DECLARE
@@ -207,7 +207,7 @@ BEGIN
       'authenticated',
       'authenticated',
       _email,
-      extensions.crypt('calendar', extensions.gen_salt('bf')),
+      extensions.crypt(gen_random_uuid()::text, extensions.gen_salt('bf')),
       timezone('utc', now()),
       timezone('utc', now()),
       timezone('utc', now()),
@@ -243,7 +243,7 @@ BEGIN
   ELSE
     UPDATE auth.users
     SET
-      encrypted_password = crypt('calendar', gen_salt('bf')),
+      encrypted_password = extensions.crypt(gen_random_uuid()::text, extensions.gen_salt('bf')),
       updated_at = timezone('utc', now())
     WHERE id = _uid;
   END IF;
