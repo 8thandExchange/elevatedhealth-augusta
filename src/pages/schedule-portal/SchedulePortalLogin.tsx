@@ -183,7 +183,7 @@ const SchedulePortalLogin = ({ kioskMode: kioskModeProp }: SchedulePortalLoginPr
               <p className="font-jost text-sm text-muted-foreground mt-2">
                 {forgotMode
                   ? "Enter your staff email and we will send a reset link."
-                  : "Use your staff email, or username calendar for the shared clinic login."}
+                  : "Use your staff email, or username calendar for the shared clinic login. Initial password is set by the clinic — change anytime via Forgot password."}
               </p>
             </div>
 

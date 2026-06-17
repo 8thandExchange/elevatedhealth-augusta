@@ -30,3 +30,4 @@ dist-ssr
 
 # Supabase CLI local cache (should not be tracked)
 supabase/.temp/
+.vercel
