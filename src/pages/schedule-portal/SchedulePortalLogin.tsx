@@ -79,9 +79,19 @@ const SchedulePortalLogin = ({ kioskMode: kioskModeProp }: SchedulePortalLoginPr
     e.preventDefault();
     setIsLoading(true);
     try {
-      const email = resolveCalendarLoginEmail(username);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      const email = resolveCalendarLoginEmail(username.trim());
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: password.trim(),
+      });
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          throw new Error(
+            "Invalid email or password. Use your staff email exactly as issued (e.g. admin@elevatedhealthaugusta.com or drdwmd@pmrehab.net).",
+          );
+        }
+        throw error;
+      }
       if (!data.user) throw new Error("Sign-in failed");
 
       const { data: roles, error: roleError } = await supabase
@@ -229,27 +239,37 @@ const SchedulePortalLogin = ({ kioskMode: kioskModeProp }: SchedulePortalLoginPr
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="font-jost">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="current-password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      disabled={isLoading}
-                      className="h-11 bg-background pr-10"
-                    />
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="font-jost">Password</Label>
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      className="font-jost text-xs text-[#B8956A] hover:text-[#2A2826] flex items-center gap-1.5"
                       onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-pressed={showPassword}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? (
+                        <>
+                          <EyeOff className="h-3.5 w-3.5" aria-hidden />
+                          Hide password
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="h-3.5 w-3.5" aria-hidden />
+                          Show password
+                        </>
+                      )}
                     </button>
                   </div>
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    className="h-11 bg-background"
+                  />
                 </div>
                 <Button
                   type="submit"
