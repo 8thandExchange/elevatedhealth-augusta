@@ -3,6 +3,7 @@ import {
   type CustomPharmacyPreparation,
   type CustomPharmacyCategory,
   getCustomPharmacyPreparationsForCategory,
+  getCustomPharmacyCreamPreparationsForCategory,
 } from "@/lib/customPharmacyFormulary";
 import {
   Select,
@@ -27,11 +28,25 @@ interface Props {
   category: CustomPharmacyCategory;
   selection: CustomPharmacyRxSelection | null;
   onChange: (selection: CustomPharmacyRxSelection | null) => void;
+  /** When true, only transdermal creams (Provider Dashboard pharmacy orders). */
+  creamsOnly?: boolean;
+  /** Pre-select preparation when opening from formulary line item */
+  initialPreparationId?: string | null;
 }
 
-export function CustomPharmacyPreparationPicker({ category, selection, onChange }: Props) {
-  const preparations = getCustomPharmacyPreparationsForCategory(category);
-  const [prepId, setPrepId] = useState<string | null>(selection?.preparation.id ?? null);
+export function CustomPharmacyPreparationPicker({
+  category,
+  selection,
+  onChange,
+  creamsOnly = false,
+  initialPreparationId = null,
+}: Props) {
+  const preparations = creamsOnly
+    ? getCustomPharmacyCreamPreparationsForCategory(category)
+    : getCustomPharmacyPreparationsForCategory(category);
+  const [prepId, setPrepId] = useState<string | null>(
+    selection?.preparation.id ?? initialPreparationId ?? null,
+  );
   const [strength, setStrength] = useState<string>(selection?.strength ?? "");
   const [sig, setSig] = useState<string>(selection?.sig ?? "");
   const [quantity, setQuantity] = useState<string>(selection?.quantity ?? "");
@@ -48,6 +63,13 @@ export function CustomPharmacyPreparationPicker({ category, selection, onChange 
       setQuantity(p.default_quantity);
     }
   };
+
+  useEffect(() => {
+    if (initialPreparationId && !selection?.preparation.id) {
+      handlePrepChange(initialPreparationId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPreparationId]);
 
   useEffect(() => {
     if (!selected) {

@@ -13,6 +13,7 @@ import {
   Calendar, TrendingUp, AlertCircle, Pencil, Trash2
 } from "lucide-react";
 import { format } from "date-fns";
+import { SOAP_SERVICE_LINES } from "@/lib/soapServiceLines";
 
 interface Goal {
   id: string;
@@ -213,8 +214,15 @@ const TreatmentPlanPanel = ({ patientId, patientName, serviceLine = "hormone" }:
       setEditingPlan(null);
       resetForm();
       loadPlans();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to save treatment plan");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to save treatment plan";
+      if (message.toLowerCase().includes("row-level security") || message.includes("42501")) {
+        toast.error(
+          "Could not save — your account may not have charting access. Contact the clinic admin.",
+        );
+      } else {
+        toast.error(message);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -272,8 +280,11 @@ const TreatmentPlanPanel = ({ patientId, patientName, serviceLine = "hormone" }:
               <Select value={selectedServiceLine} onValueChange={setSelectedServiceLine}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="hormone">HRT</SelectItem>
-                  <SelectItem value="weight_loss">Weight Loss</SelectItem>
+                  {SOAP_SERVICE_LINES.map((line) => (
+                    <SelectItem key={line.value} value={line.value}>
+                      {line.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

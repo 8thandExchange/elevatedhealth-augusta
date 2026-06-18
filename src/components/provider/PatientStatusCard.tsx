@@ -147,7 +147,7 @@ export const PatientStatusCard = ({
         return {
           step: 3,
           label: "Pending Pharmacy",
-          description: "Place pharmacy order via FCC Portal.",
+          description: "Place pharmacy order via Custom Pharmacy fax.",
           icon: <AlertTriangle className="w-5 h-5" />,
           color: "amber",
           action: null, // FCC Portal handled separately

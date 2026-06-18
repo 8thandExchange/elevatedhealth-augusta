@@ -5,7 +5,7 @@
 // Phone: (706) 760-7956 | Fax: (706) 993-3772
 //
 // This is a curated list of BHRT preparations our practice routinely orders.
-// Unlike FCC (which has a structured SKU catalog), Custom Pharmacy fills
+// Custom Pharmacy fills
 // patient-specific compounded prescriptions — the provider picks a preparation
 // and a strength, fills the sig, and faxes the order.
 //
@@ -191,6 +191,15 @@ export function getCustomPharmacyPreparationsForCategory(
   category: CustomPharmacyCategory,
 ): CustomPharmacyPreparation[] {
   return CUSTOM_PHARMACY_PREPARATIONS.filter((p) => p.category === category);
+}
+
+/** Creams only — used by Provider Dashboard pharmacy order flow. */
+export function getCustomPharmacyCreamPreparationsForCategory(
+  category: CustomPharmacyCategory,
+): CustomPharmacyPreparation[] {
+  return CUSTOM_PHARMACY_PREPARATIONS.filter(
+    (p) => p.category === category && p.preparation_type === "cream",
+  );
 }
 export const CUSTOM_PHARMACY_CATEGORY_LABELS: Record<CustomPharmacyCategory, string> = {
   male_hormone: "Men's BHRT",

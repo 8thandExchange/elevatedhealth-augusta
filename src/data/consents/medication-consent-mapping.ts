@@ -252,6 +252,11 @@ export function getMedicationConsentRule(medicationId: string): MedicationConsen
 
 /** PharmacyOrderCard `FORMULARY[].id` → canonical medication_id */
 export const FORMULARY_LINE_ID_TO_CANONICAL: Record<string, string> = {
+  male_testosterone_cream: "testosterone_cream",
+  male_testosterone_cream_escalation: "testosterone_cream",
+  hrt_bi_est: "bi_est_cream",
+  hrt_progesterone_cream: "progesterone",
+  female_testosterone_cream: "testosterone_female_low_dose",
   male_test_100: "testosterone_cream",
   male_test_150: "testosterone_cream",
   male_test_200: "testosterone_cream",

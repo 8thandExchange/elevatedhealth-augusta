@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Pill, Sparkles, AlertTriangle } from "lucide-react";
+import { Pill, Sparkles } from "lucide-react";
 import PrescriptionPortalModal from "./PrescriptionPortalModal";
 import { MedicationRecommendation } from "@/lib/medicationMapping";
 import {
@@ -18,6 +17,7 @@ import {
   resolveFormularyId,
   visiblePharmacyCategories,
   portalRoutingCategory,
+  CUSTOM_PHARMACY_VENDOR,
   type PharmacyCategoryId,
   type PharmacyFormularyItem,
 } from "@/lib/pharmacyOrderFormulary";
@@ -138,7 +138,8 @@ const PharmacyOrderCard = ({
             )}
           </div>
           <p className="text-sm text-muted-foreground font-jost">
-            Category tabs per clinic policy — injectable TRT default for men.{" "}
+            Transdermal hormone creams only — faxed to {CUSTOM_PHARMACY_VENDOR}. Select the Elevated
+            Health prescribing provider in the order modal.{" "}
             <Link to="/clinical-policy" className="text-accent underline text-xs">
               Policy catalog
             </Link>
@@ -166,14 +167,11 @@ const PharmacyOrderCard = ({
             ))}
           </Tabs>
 
-          {selectedMedication?.programOnly && (
-            <Alert className="border-amber-500/40 bg-amber-500/5 py-2">
-              <AlertTriangle className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-xs font-jost ml-2">
-                Program-only path — enroll via metabolic program workflow, not standalone Rx fax.
-              </AlertDescription>
-            </Alert>
-          )}
+          <div className="rounded-md border border-accent/20 bg-muted/30 px-3 py-2 text-xs font-jost text-muted-foreground">
+            Pharmacy: <span className="font-medium text-foreground">{CUSTOM_PHARMACY_VENDOR}</span>
+            {" · "}
+            Fax: (706) 993-3772
+          </div>
 
           <div className="space-y-2">
             <Label className="text-sm font-medium font-jost">Medication</Label>
@@ -191,12 +189,13 @@ const PharmacyOrderCard = ({
             </Select>
             {selectedMedication && (
               <p className="text-[11px] text-muted-foreground font-jost">
-                Vendor: {selectedMedication.vendor}
+                À la carte fill: {selectedMedication.fillDisplayPrice}
+                {" · "}
+                {selectedMedication.programLabel} members: {selectedMedication.programDisplayPrice}/mo (medication included)
                 {selectedMedication.policyKey && (
                   <>
                     {" "}
-                    · Policy:{" "}
-                    <code className="text-xs">{selectedMedication.policyKey}</code>
+                    · Policy: <code className="text-xs">{selectedMedication.policyKey}</code>
                   </>
                 )}
               </p>
@@ -251,11 +250,11 @@ const PharmacyOrderCard = ({
 
           <Button
             onClick={() => setIsModalOpen(true)}
-            disabled={!selectedMed || selectedMedication?.programOnly}
+            disabled={!selectedMed}
             className="w-full font-jost"
           >
             <Pill className="w-4 h-4 mr-2" />
-            Prepare portal order
+            Fax cream Rx to Custom Pharmacy
           </Button>
         </CardContent>
       </Card>
@@ -267,6 +266,7 @@ const PharmacyOrderCard = ({
         medication={
           selectedMedication ? mapToModalMedication(selectedMedication) : undefined
         }
+        customPreparationId={selectedMedication?.customPreparationId}
         rxString={buildRxString()}
         quantity={parseInt(quantity, 10) || 1}
         refills={parseInt(refills, 10) || 0}

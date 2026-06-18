@@ -10,6 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Save, FileCheck, X, Loader2, Stethoscope, Brain, ClipboardList, Pill } from "lucide-react";
+import {
+  SOAP_SERVICE_LINES,
+  defaultSoapTemplateFields,
+} from "@/lib/soapServiceLines";
 
 interface SOAPNoteEditorProps {
   patientId: string;
@@ -59,13 +63,13 @@ const SOAPNoteEditor = ({
 
   // Auto-load template when service line or encounter type changes (only for new notes)
   useEffect(() => {
-    if (!existingNote && templates.length > 0) {
-      const match = templates.find(
-        t => t.service_line === selectedServiceLine && t.encounter_type === encounterType
-      );
-      if (match) applyTemplate(match);
-    }
-  }, [selectedServiceLine, encounterType, templates]);
+    if (existingNote || templates.length === 0) return;
+    const match = templates.find(
+      (t) => t.service_line === selectedServiceLine && t.encounter_type === encounterType,
+    );
+    if (match) applyTemplate(match);
+    else applyDefaultTemplate();
+  }, [selectedServiceLine, encounterType, templates, existingNote]);
 
   const loadTemplates = async () => {
     const { data } = await supabase.from("soap_templates").select("*");
@@ -74,10 +78,18 @@ const SOAPNoteEditor = ({
 
   const applyTemplate = (template: Template) => {
     const td = template.template_data;
-    if (td.subjective && Object.keys(subjective).length === 0) setSubjective(td.subjective);
-    if (td.objective && Object.keys(objective).length === 0) setObjective(td.objective);
-    if (td.assessment && Object.keys(assessment).length === 0) setAssessment(td.assessment);
-    if (td.plan && Object.keys(plan).length === 0) setPlan(td.plan);
+    if (td.subjective) setSubjective(td.subjective);
+    if (td.objective) setObjective(td.objective);
+    if (td.assessment) setAssessment(td.assessment);
+    if (td.plan) setPlan(td.plan);
+  };
+
+  const applyDefaultTemplate = () => {
+    const td = defaultSoapTemplateFields();
+    setSubjective(td.subjective);
+    setObjective(td.objective);
+    setAssessment(td.assessment);
+    setPlan(td.plan);
   };
 
   const updateField = (section: string, key: string, value: any) => {
@@ -131,9 +143,17 @@ const SOAPNoteEditor = ({
 
       toast.success(signAfterSave ? "Note signed & locked" : "Draft saved");
       onSaved();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error saving SOAP note:", error);
-      toast.error(error.message || "Failed to save note");
+      const message =
+        error instanceof Error ? error.message : "Failed to save note";
+      if (message.toLowerCase().includes("row-level security") || message.includes("42501")) {
+        toast.error(
+          "Could not save — your account may not have charting access for this patient. Contact the clinic admin.",
+        );
+      } else {
+        toast.error(message);
+      }
     } finally {
       setIsSaving(false);
       setIsSigning(false);
@@ -238,8 +258,11 @@ const SOAPNoteEditor = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hormone">HRT</SelectItem>
-                <SelectItem value="weight_loss">Weight Loss</SelectItem>
+                {SOAP_SERVICE_LINES.map((line) => (
+                  <SelectItem key={line.value} value={line.value}>
+                    {line.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

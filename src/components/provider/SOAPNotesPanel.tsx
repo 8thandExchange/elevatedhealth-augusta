@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { FileText, Plus, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import SOAPNoteEditor from "./SOAPNoteEditor";
+import { soapServiceLineLabel } from "@/lib/soapServiceLines";
 
 interface SOAPNote {
   id: string;
@@ -115,12 +116,16 @@ const SOAPNotesPanel = ({ patientId, patientName, serviceLine = "hormone", provi
   };
 
   const getServiceLineBadge = (line: string) => {
-    const lines: Record<string, { label: string; className: string }> = {
-      hormone: { label: "HRT", className: "bg-blue-100 text-blue-700" },
-      weight_loss: { label: "Weight Loss", className: "bg-emerald-100 text-emerald-700" },
-      peptide: { label: "Peptide", className: "bg-amber-100 text-amber-800" },
+    const label = soapServiceLineLabel(line);
+    const classByLine: Record<string, string> = {
+      hormone: "bg-blue-100 text-blue-700",
+      weight_loss: "bg-emerald-100 text-emerald-700",
+      peptide: "bg-amber-100 text-amber-800",
+      iv_therapy: "bg-violet-100 text-violet-800",
+      metabolic: "bg-rose-100 text-rose-800",
+      general: "bg-slate-100 text-slate-700",
     };
-    return lines[line] || { label: line, className: "bg-gray-100 text-gray-700" };
+    return { label, className: classByLine[line] ?? "bg-gray-100 text-gray-700" };
   };
 
   // If creating/editing, show the editor

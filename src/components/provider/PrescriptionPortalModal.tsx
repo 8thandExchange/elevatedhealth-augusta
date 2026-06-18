@@ -8,14 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Copy, Check, ExternalLink, CheckCircle, Loader2, Send, AlertCircle, Search } from "lucide-react";
+import { Copy, Check, CheckCircle, Loader2, Send, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
-import type { FCCItem } from "@/lib/fccFormulary";
-import FCCFormularyLookup from "./FCCFormularyLookup";
-import { PharmacySelector, type Pharmacy } from "./PharmacySelector";
-import { AddPharmacyDialog } from "./AddPharmacyDialog";
 import {
   PharmacyFaxOverride,
   resolveOutboundFaxNumber,
@@ -26,9 +21,26 @@ import {
   type CustomPharmacyRxSelection,
 } from "./CustomPharmacyPreparationPicker";
 import type { CustomPharmacyCategory } from "@/lib/customPharmacyFormulary";
+import { CUSTOM_PHARMACY_VENDOR } from "@/lib/pharmacyOrderFormulary";
 import type { RxConsentResolutionInput } from "@/data/consents/medication-consent-mapping";
 import { checkConsentGateForRxContexts, type ConsentGateResult } from "@/lib/consents/consent-gate";
 import { ConsentGatePanel } from "@/components/consents/ConsentGatePanel";
+
+const CUSTOM_PHARMACY_SLUG = "custom-pharmacy-evans";
+
+/** Minimal pharmacy row for fax-only Custom Pharmacy orders */
+interface CustomPharmacyRecord {
+  id: string;
+  slug: string;
+  display_name: string;
+  fulfillment_method: "fax";
+  fax_number: string | null;
+  phone_number: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+}
 
 const DIAGNOSIS_MAP: Record<string, { code: string; description: string }[]> = {
   male_hormone: [
@@ -115,8 +127,10 @@ export interface PrescriptionPortalModalProps {
   quantity: number;
   refills: number;
   supplyDays?: number;
-  /** Routing key for pharmacy auto-default (e.g. male_hormone, peptide, weight_loss). */
+  /** Routing key for diagnosis defaults (male_hormone / female_hormone). */
   category: string;
+  /** Pre-select cream preparation from PharmacyOrderCard formulary line */
+  customPreparationId?: string | null;
   onOrderCreated?: () => void;
 }
 
@@ -221,10 +235,10 @@ const PrescriptionPortalModal = ({
   refills,
   supplyDays = 30,
   category,
+  customPreparationId = null,
   onOrderCreated,
 }: PrescriptionPortalModalProps) => {
   const [isMarking, setIsMarking] = useState(false);
-  const [showFormulary, setShowFormulary] = useState(false);
   const [faxStatus, setFaxStatus] = useState<FaxStatus>("idle");
   const [faxTimestamp, setFaxTimestamp] = useState<string | null>(null);
   const [faxError, setFaxError] = useState<string | null>(null);
@@ -233,16 +247,10 @@ const PrescriptionPortalModal = ({
   const [matchedProvider, setMatchedProvider] = useState<ProviderData | null>(null);
   const [availableProviders, setAvailableProviders] = useState<ProviderData[]>([]);
   const [isLoadingProviders, setIsLoadingProviders] = useState(true);
-  const [pharmacy, setPharmacy] = useState<Pharmacy | null>(null);
-  const [pharmacyRefreshToken, setPharmacyRefreshToken] = useState(0);
-  const [addPharmacyOpen, setAddPharmacyOpen] = useState(false);
+  const [pharmacy, setPharmacy] = useState<CustomPharmacyRecord | null>(null);
   const [useFaxOverride, setUseFaxOverride] = useState(false);
   const [faxOverrideValue, setFaxOverrideValue] = useState("");
   const [customSelection, setCustomSelection] = useState<CustomPharmacyRxSelection | null>(null);
-  const [portalFccItem, setPortalFccItem] = useState<FCCItem | null>(null);
-  const [submittedOrderId, setSubmittedOrderId] = useState<string | null>(null);
-  const [portalSubmitting, setPortalSubmitting] = useState(false);
-  const [markingPortal, setMarkingPortal] = useState(false);
   const [consentGateOpen, setConsentGateOpen] = useState(false);
   const [consentGateResult, setConsentGateResult] = useState<ConsentGateResult | null>(null);
   const [staffUserId, setStaffUserId] = useState<string | null>(null);
@@ -276,6 +284,17 @@ const PrescriptionPortalModal = ({
         const userEmail = user?.email || "";
         setProviderEmail(userEmail);
 
+        let isPrescriber = false;
+        if (user?.id) {
+          const { data: roles } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", user.id);
+          isPrescriber = (roles ?? []).some(
+            (r) => r.role === "provider" || r.role === "admin",
+          );
+        }
+
         const { data: settings, error } = await supabase
           .from("clinic_settings")
           .select("key, value")
@@ -305,15 +324,16 @@ const PrescriptionPortalModal = ({
 
         setAvailableProviders(providersList);
 
-        const matched = providersList.find(
-          (p) => p.email && userEmail.toLowerCase() === p.email.toLowerCase(),
-        );
+        const primary = providersList.find((p) => p.isPrimary) ?? providersList[0] ?? null;
 
-        if (matched) {
-          setMatchedProvider(matched);
+        if (isPrescriber) {
+          const matched = providersList.find(
+            (p) => p.email && userEmail.toLowerCase() === p.email.toLowerCase(),
+          );
+          setMatchedProvider(matched ?? primary);
         } else {
-          const primary = providersList.find((p) => p.isPrimary);
-          setMatchedProvider(primary || providersList[0] || null);
+          // RN/staff: default to clinic prescriber (Caroline selects Elevated Health MD)
+          setMatchedProvider(primary);
         }
       } catch (err) {
         console.error("Error loading providers:", err);
@@ -332,15 +352,24 @@ const PrescriptionPortalModal = ({
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      setFaxStatus("idle");
-      setFaxTimestamp(null);
-      setFaxError(null);
-      setPharmacy(null);
-      setCustomSelection(null);
-      setPortalFccItem(null);
-      setSubmittedOrderId(null);
-    }
+    if (!isOpen) return;
+    setFaxStatus("idle");
+    setFaxTimestamp(null);
+    setFaxError(null);
+    setCustomSelection(null);
+    void (async () => {
+      const { data, error } = await supabase
+        .from("pharmacies")
+        .select("id, slug, display_name, fulfillment_method, fax_number, phone_number, address, city, state, zip")
+        .eq("slug", CUSTOM_PHARMACY_SLUG)
+        .eq("is_active", true)
+        .maybeSingle();
+      if (error) {
+        console.error("Custom Pharmacy load failed:", error);
+        return;
+      }
+      if (data) setPharmacy(data as CustomPharmacyRecord);
+    })();
   }, [isOpen]);
 
   const formatDOB = (dob?: string | null) => {
@@ -380,7 +409,7 @@ const PrescriptionPortalModal = ({
   };
 
   const effectiveMedication = useMemo((): MedicationData | undefined => {
-    if (pharmacy?.fulfillment_method === "fax" && customSelection) {
+    if (customSelection) {
       return {
         id: customSelection.preparation.id,
         name: customSelection.preparation.name,
@@ -390,26 +419,14 @@ const PrescriptionPortalModal = ({
       };
     }
     return medication;
-  }, [pharmacy?.fulfillment_method, customSelection, medication, category]);
+  }, [customSelection, medication, category]);
 
-  const rxConsentContexts = useMemo((): RxConsentResolutionInput[] => {
-    if (pharmacy?.fulfillment_method === "online_portal" && portalFccItem) {
-      return [
-        {
-          fccSku: portalFccItem.sku,
-          fccName: portalFccItem.name,
-          fccCategory: portalFccItem.category,
-          routingCategory: category,
-        },
-      ];
-    }
-    return [
-      {
-        medicationLineId: effectiveMedication?.id ?? null,
-        routingCategory: category,
-      },
-    ];
-  }, [pharmacy?.fulfillment_method, portalFccItem, effectiveMedication?.id, category]);
+  const rxConsentContexts = useMemo((): RxConsentResolutionInput[] => [
+    {
+      medicationLineId: effectiveMedication?.id ?? null,
+      routingCategory: category,
+    },
+  ], [effectiveMedication?.id, category]);
 
   const runPrescriptionActionWithConsentGate = async (action: () => Promise<void>) => {
     try {
@@ -426,9 +443,7 @@ const PrescriptionPortalModal = ({
     }
   };
 
-  const effectiveRefills = pharmacy?.fulfillment_method === "fax" && customSelection
-    ? customSelection.refills
-    : refills;
+  const effectiveRefills = customSelection ? customSelection.refills : refills;
 
   const copyFieldValue = async (value: string, toastLabel: string) => {
     try {
@@ -445,12 +460,10 @@ const PrescriptionPortalModal = ({
     const [firstName, ...lastParts] = patient.full_name.split(" ");
     const lastName = lastParts.join(" ") || "";
     const formattedName = `${firstName} ${lastName}`.trim();
-    const medName = portalFccItem?.name ?? effectiveMedication?.name ?? "";
-    const medStrength = portalFccItem?.strength ?? effectiveMedication?.strength ?? "";
-    const sigText = portalFccItem ? rxString : effectiveMedication?.sig ?? rxString;
-    const quantityLabel = portalFccItem
-      ? portalFccItem.quantity
-      : `${supplyDays}-day supply (${quantity} units)`;
+    const medName = effectiveMedication?.name ?? "";
+    const medStrength = effectiveMedication?.strength ?? "";
+    const sigText = effectiveMedication?.sig ?? rxString;
+    const quantityLabel = customSelection?.quantity ?? `${supplyDays}-day supply (${quantity} units)`;
     return {
       patient,
       provider: matchedProvider,
@@ -462,8 +475,7 @@ const PrescriptionPortalModal = ({
       medicationStrength: medStrength,
       sig: sigText,
       quantityLabel,
-      refills: portalFccItem ? refills : effectiveRefills,
-      sku: portalFccItem?.sku,
+      refills: effectiveRefills,
       diagnosisCode: diagnosisCode || "",
       diagnosisDescription: diagnosisDescription || "",
     };
@@ -479,13 +491,18 @@ const PrescriptionPortalModal = ({
       toast.error("Please select a prescribing provider");
       return;
     }
+    if (!customSelection && hormoneCustomCategory) {
+      toast.error("Select the compounded cream preparation before faxing");
+      return;
+    }
+
     if (!pharmacy) {
-      toast.error("Select a pharmacy");
+      toast.error("Custom Pharmacy is not configured");
       return;
     }
 
     const { e164: faxDestination, error: faxError } = resolveOutboundFaxNumber(
-      pharmacy,
+      pharmacy as Parameters<typeof resolveOutboundFaxNumber>[0],
       useFaxOverride,
       faxOverrideValue,
     );
@@ -545,124 +562,31 @@ const PrescriptionPortalModal = ({
     });
   };
 
-  const handleLaunchPortal = () => {
-    const url = pharmacy?.portal_url || "https://portal.formuconnect.com/login";
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
-
-  const handlePortalSubmit = async () => {
-    if (!pharmacy || pharmacy.fulfillment_method !== "online_portal") return;
-    if (!matchedProvider) {
-      toast.error("Please select a prescribing provider");
-      return;
-    }
-    if (!portalFccItem) {
-      toast.error("Choose an FCC SKU from the formulary lookup before continuing");
-      return;
-    }
-    if (!selectedDiagnosis) {
-      toast.error("Please select a diagnosis code");
-      return;
-    }
-
-    const rxData = buildRxClipboardData();
-    if (!rxData) return;
-
-    const formatted = formatPrescriptionForClipboard(rxData);
-
-    await runPrescriptionActionWithConsentGate(async () => {
-      setPortalSubmitting(true);
-      try {
-        await navigator.clipboard.writeText(formatted);
-        toast.success("Prescription copied to clipboard");
-
-        const protocol_snapshot = {
-          ...rxData,
-          rx_string: rxString,
-          quantity_units: quantity,
-          refills,
-          supply_days: supplyDays,
-          portal_fcc_sku: portalFccItem.sku,
-          submission_method: "portal",
-        };
-
-        const { data: order, error } = await supabase
-          .from("orders")
-          .insert([{
-            patient_id: patient.id,
-            pharmacy_id: pharmacy.id,
-            submission_method: "portal",
-            status: "sent_to_pharmacy",
-            protocol_snapshot: protocol_snapshot as unknown as Json,
-            portal_opened_at: new Date().toISOString(),
-          }])
-          .select()
-          .single();
-
-        if (error) {
-          toast.error(`Failed to log submission: ${error.message}`);
-          return;
-        }
-
-        setSubmittedOrderId(order.id);
-        const portalUrl = pharmacy.portal_url || "https://portal.formuconnect.com/login";
-        window.open(portalUrl, "_blank", "noopener,noreferrer");
-      } catch (e: unknown) {
-        console.error(e);
-        toast.error(e instanceof Error ? e.message : "Portal submission failed");
-      } finally {
-        setPortalSubmitting(false);
-      }
-    });
-  };
-
-  const handleMarkPortalSubmitted = async () => {
-    if (!submittedOrderId) return;
-    setMarkingPortal(true);
-    try {
-      const { error } = await supabase
-        .from("orders")
-        .update({
-          portal_submitted_at: new Date().toISOString(),
-          status: "completed",
-        } as Record<string, unknown>)
-        .eq("id", submittedOrderId);
-
-      if (error) throw error;
-
-      toast.success("Marked as submitted to FormuConnect");
-      onOrderCreated?.();
-      onClose();
-    } catch (e: any) {
-      toast.error(e?.message || "Update failed");
-    } finally {
-      setMarkingPortal(false);
-    }
-  };
-
   const handleMarkAsOrdered = async () => {
     await runPrescriptionActionWithConsentGate(async () => {
       setIsMarking(true);
       try {
         const { error } = await supabase.from("orders").insert({
           patient_id: patient.id,
+          pharmacy_id: pharmacy?.id ?? null,
           status: "sent_to_pharmacy",
+          submission_method: "fax",
           protocol_snapshot: {
-            medication: medication?.name,
-            medication_id: medication?.id,
-            strength: medication?.strength,
-            sig: medication?.sig,
+            medication: effectiveMedication?.name ?? medication?.name,
+            medication_id: effectiveMedication?.id ?? medication?.id,
+            strength: effectiveMedication?.strength ?? medication?.strength,
+            sig: effectiveMedication?.sig ?? medication?.sig,
             rx_string: rxString,
             quantity,
-            refills,
-            ordered_via: "FCC Portal (Manual)",
+            refills: effectiveRefills,
+            ordered_via: `${CUSTOM_PHARMACY_VENDOR} (manual)`,
             ordered_at: new Date().toISOString(),
           },
         });
 
         if (error) throw error;
 
-        toast.success("Order marked as sent to pharmacy");
+        toast.success("Order marked as sent to Custom Pharmacy");
         onOrderCreated?.();
         onClose();
       } catch (error: unknown) {
@@ -682,25 +606,20 @@ const PrescriptionPortalModal = ({
   const lastName = lastParts.join(" ") || "";
   const formattedName = `${firstName} ${lastName}`.trim();
 
-  const resolvedFax = pharmacy?.fulfillment_method === "fax"
+  const resolvedFax = pharmacy
     ? resolveOutboundFaxNumber(pharmacy, useFaxOverride, faxOverrideValue)
     : null;
 
   const submitLabel =
-    pharmacy?.fulfillment_method === "online_portal"
-      ? `Open ${pharmacy.display_name} & Copy Prescription`
-      : pharmacy && resolvedFax?.e164
-        ? useFaxOverride
-          ? `Fax to ${formatFaxDisplay(resolvedFax.e164)}`
-          : `Fax to ${pharmacy.display_name}`
-        : pharmacy
-          ? `Fax to ${pharmacy.display_name}`
-          : "Send Prescription";
+    pharmacy && resolvedFax?.e164
+      ? useFaxOverride
+        ? `Fax to ${formatFaxDisplay(resolvedFax.e164)}`
+        : `Fax to ${pharmacy.display_name}`
+      : pharmacy
+        ? `Fax to ${pharmacy.display_name}`
+        : "Send Prescription";
 
-  const showCustomPicker =
-    pharmacy?.fulfillment_method === "fax" && hormoneCustomCategory !== null;
-
-  const showPortalFccFlow = pharmacy?.fulfillment_method === "online_portal";
+  const showCustomPicker = hormoneCustomCategory !== null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -713,7 +632,7 @@ const PrescriptionPortalModal = ({
                 <path d="M9 12h6M9 16h6" />
               </svg>
             </span>
-            Send Prescription
+            Send cream prescription
           </DialogTitle>
         </DialogHeader>
 
@@ -734,7 +653,7 @@ const PrescriptionPortalModal = ({
           ) : availableProviders.length === 0 ? (
             <div className="flex items-center gap-2 text-amber-600 text-sm bg-amber-50 dark:bg-amber-950/30 p-2 rounded-lg border border-amber-200 dark:border-amber-800">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span>No providers configured. Add providers in Clinic Settings.</span>
+              <span>No prescribing providers configured. Add Dr. Akers in Clinic Settings → Provider NPI.</span>
             </div>
           ) : (
             <Select
@@ -745,14 +664,14 @@ const PrescriptionPortalModal = ({
               }}
             >
               <SelectTrigger className="bg-background border-gold/30">
-                <SelectValue placeholder="Select provider..." />
+                <SelectValue placeholder="Select Elevated Health prescriber..." />
               </SelectTrigger>
               <SelectContent className="bg-background border">
                 {availableProviders.map((provider) => (
                   <SelectItem key={provider.id} value={provider.id}>
                     {provider.name}
                     {provider.credentials ? `, ${provider.credentials}` : ""}
-                    {provider.isPrimary && " (Primary)"}
+                    {provider.isPrimary ? " (Clinic default)" : ""}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -782,19 +701,21 @@ const PrescriptionPortalModal = ({
 
         <div className="space-y-2 mt-4">
           <Label className="text-sm font-medium text-foreground">Pharmacy</Label>
-          <PharmacySelector
-            key={`${patient.id}-${category}-${isOpen ? "open" : "closed"}`}
-            category={category}
-            selectedPharmacyId={pharmacy?.id ?? null}
-            refreshToken={pharmacyRefreshToken}
-            onAddPharmacyClick={() => setAddPharmacyOpen(true)}
-            onChange={(_id, p) => {
-              setPharmacy(p);
-              setUseFaxOverride(false);
-              setFaxOverrideValue("");
-            }}
-          />
-          {pharmacy?.fulfillment_method === "fax" && (
+          {pharmacy ? (
+            <div className="rounded-lg border border-gold/30 bg-muted/30 p-3 text-sm">
+              <p className="font-medium text-foreground">{pharmacy.display_name}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {CUSTOM_PHARMACY_VENDOR} · Fax {pharmacy.fax_number ? formatFaxDisplay(pharmacy.fax_number) : "(706) 993-3772"}
+                {pharmacy.phone_number ? ` · ${pharmacy.phone_number}` : ""}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {[pharmacy.address, pharmacy.city, pharmacy.state, pharmacy.zip].filter(Boolean).join(", ")}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-destructive">Custom Pharmacy not configured — contact admin.</p>
+          )}
+          {pharmacy && (
             <PharmacyFaxOverride
               pharmacy={pharmacy}
               useOverride={useFaxOverride}
@@ -804,45 +725,18 @@ const PrescriptionPortalModal = ({
               disabled={faxStatus === "transmitting"}
             />
           )}
-          {pharmacy?.fulfillment_method === "fax" && useFaxOverride && faxOverrideValue.trim() && (
-            <Button
-              type="button"
-              variant="link"
-              className="h-auto p-0 text-xs text-gold"
-              onClick={() => setAddPharmacyOpen(true)}
-            >
-              Save this number as a new pharmacy for next time
-            </Button>
-          )}
         </div>
 
         {showCustomPicker && hormoneCustomCategory && (
           <div className="mt-4 space-y-2">
-            <Label className="text-sm font-medium text-foreground">Compounded preparation</Label>
+            <Label className="text-sm font-medium text-foreground">Compounded cream</Label>
             <CustomPharmacyPreparationPicker
               category={hormoneCustomCategory}
               selection={customSelection}
               onChange={handleCustomSelectionChange}
+              creamsOnly
+              initialPreparationId={customPreparationId}
             />
-          </div>
-        )}
-
-        {showPortalFccFlow && (
-          <div className="rounded-md border border-gold/30 bg-muted/30 p-3 text-sm mt-4 space-y-2">
-            <p className="font-medium text-foreground">FCC FormuConnect catalog</p>
-            <p className="text-xs text-muted-foreground">
-              Open SKU Lookup and select the exact FormuConnect line item. The selected SKU is used for the
-              portal clipboard summary.
-            </p>
-            {portalFccItem && (
-              <p className="text-xs text-foreground">
-                Selected: <span className="font-mono">{portalFccItem.sku}</span> — {portalFccItem.name}
-              </p>
-            )}
-            <Button type="button" variant="outline" size="sm" onClick={() => setShowFormulary(true)} className="border-gold/30">
-              <Search className="w-4 h-4 mr-2" />
-              SKU Lookup
-            </Button>
           </div>
         )}
 
@@ -868,53 +762,6 @@ const PrescriptionPortalModal = ({
               <Copy className="w-4 h-4 text-gold" />
             </Button>
           </div>
-
-          {showPortalFccFlow && portalFccItem && matchedProvider && selectedDiagnosis && (
-            <div className="mt-4 border-t border-gold/20 pt-3 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                Copy for FormuConnect
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="ghost" type="button" onClick={() => copyFieldValue(portalFccItem.sku, "SKU")}>
-                  Copy SKU
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  type="button"
-                  onClick={() => copyFieldValue(portalFccItem.name, "medication name")}
-                >
-                  Copy medication
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  type="button"
-                  onClick={() => copyFieldValue(portalFccItem.strength, "strength")}
-                >
-                  Copy strength
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  type="button"
-                  onClick={() => copyFieldValue(portalFccItem.quantity, "quantity")}
-                >
-                  Copy quantity
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  type="button"
-                  onClick={() =>
-                    copyFieldValue(portalFccItem ? rxString : effectiveMedication?.sig ?? rxString, "sig")
-                  }
-                >
-                  Copy sig
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="space-y-2 mt-4">
@@ -957,29 +804,7 @@ const PrescriptionPortalModal = ({
         )}
 
         <div className="flex flex-col gap-3 mt-6">
-          {submittedOrderId && pharmacy?.fulfillment_method === "online_portal" && (
-            <>
-              <div className="rounded-md border border-accent/30 bg-muted/40 p-3 text-sm">
-                <p className="font-medium">Prescription copied. Continue in FormuConnect:</p>
-                <ol className="mt-2 list-decimal pl-5 space-y-1 text-muted-foreground">
-                  <li>Paste the prescription details into FormuConnect</li>
-                  <li>Submit the order in their portal</li>
-                  <li>Return here and click &quot;Mark as Submitted&quot; below</li>
-                </ol>
-              </div>
-              <Button
-                type="button"
-                onClick={handleMarkPortalSubmitted}
-                disabled={markingPortal}
-                className="w-full bg-gold hover:bg-gold-dark text-white"
-              >
-                {markingPortal ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                Mark as Submitted
-              </Button>
-            </>
-          )}
-
-          {faxStatus !== "sent" && !submittedOrderId && (
+          {faxStatus !== "sent" && (
             <>
               {!selectedDiagnosis && (
                 <div className="flex items-center gap-2 text-amber-600 text-sm bg-amber-50 dark:bg-amber-950/30 p-2 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -988,95 +813,50 @@ const PrescriptionPortalModal = ({
                 </div>
               )}
 
-              {pharmacy?.fulfillment_method === "online_portal" ? (
-                <Button
-                  type="button"
-                  onClick={handlePortalSubmit}
-                  disabled={
-                    portalSubmitting ||
-                    !matchedProvider ||
-                    !selectedDiagnosis ||
-                    !portalFccItem ||
-                    !pharmacy
-                  }
-                  className="w-full bg-gold hover:bg-gold-dark text-white disabled:opacity-50"
-                >
-                  {portalSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Working…
-                    </>
-                  ) : (
-                    submitLabel
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={handleFaxToPharmacy}
-                  disabled={
-                    faxStatus === "transmitting" || !effectiveMedication || !selectedDiagnosis || !pharmacy
-                  }
-                  className="w-full bg-gold hover:bg-gold-dark text-white disabled:opacity-50"
-                >
-                  {faxStatus === "transmitting" ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Transmitting...
-                    </>
-                  ) : faxStatus === "failed" ? (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Try Fax Again
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      {submitLabel}
-                    </>
-                  )}
-                </Button>
-              )}
+              <Button
+                type="button"
+                onClick={handleFaxToPharmacy}
+                disabled={
+                  faxStatus === "transmitting" ||
+                  !effectiveMedication ||
+                  !customSelection ||
+                  !selectedDiagnosis ||
+                  !pharmacy ||
+                  !matchedProvider
+                }
+                className="w-full bg-gold hover:bg-gold-dark text-white disabled:opacity-50"
+              >
+                {faxStatus === "transmitting" ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Transmitting...
+                  </>
+                ) : faxStatus === "failed" ? (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Try Fax Again
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    {submitLabel}
+                  </>
+                )}
+              </Button>
             </>
           )}
 
-          <div className="flex gap-2 flex-wrap">
-            {(!pharmacy || pharmacy.fulfillment_method === "online_portal") && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setShowFormulary(true)}
-                className="flex-1 border-foreground/20 hover:bg-secondary min-w-[140px]"
-                title="Search FCC FormuConnect 2026 SKUs"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                SKU Lookup
-              </Button>
-            )}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleLaunchPortal}
-              className="flex-1 border-foreground/20 hover:bg-secondary min-w-[140px]"
-              title="Open pharmacy portal"
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              {pharmacy?.fulfillment_method === "online_portal" ? "FormuConnect" : "Pharmacy portal"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleMarkAsOrdered}
-              disabled={isMarking}
-              className="flex-1 border-foreground/20 hover:bg-secondary min-w-[140px]"
-            >
-              {isMarking ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />}
-              Mark Manual
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleMarkAsOrdered}
+            disabled={isMarking}
+            className="w-full border-foreground/20 hover:bg-secondary"
+          >
+            {isMarking ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />}
+            Mark manual fax placed
+          </Button>
         </div>
 
         {consentGateResult && (
@@ -1111,28 +891,6 @@ const PrescriptionPortalModal = ({
           />
         )}
 
-        <FCCFormularyLookup
-          isOpen={showFormulary}
-          onClose={() => setShowFormulary(false)}
-          initialQuery={medication?.name || portalFccItem?.name || ""}
-          onSelect={(item) => {
-            setPortalFccItem(item);
-            setShowFormulary(false);
-            toast.success(`Using SKU ${item.sku}`);
-          }}
-        />
-
-        <AddPharmacyDialog
-          open={addPharmacyOpen}
-          onOpenChange={setAddPharmacyOpen}
-          initialFaxNumber={useFaxOverride ? faxOverrideValue : ""}
-          onSaved={(p) => {
-            setPharmacyRefreshToken((n) => n + 1);
-            setPharmacy(p);
-            setUseFaxOverride(false);
-            setFaxOverrideValue("");
-          }}
-        />
       </DialogContent>
     </Dialog>
   );
