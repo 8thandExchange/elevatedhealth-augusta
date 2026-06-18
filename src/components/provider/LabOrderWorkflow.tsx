@@ -37,6 +37,8 @@ import {
   panelBillingContext,
 } from "@/lib/labOrderEconomics";
 import { formatCentsUsd } from "@/lib/labCatalogEconomics";
+import { LABCORP_FLOW_HINT } from "@/lib/labcorpPortal";
+import LabCorpPortalLink from "@/components/provider/LabCorpPortalLink";
 import { Loader2, Mail, FlaskConical, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -266,16 +268,20 @@ export default function LabOrderWorkflow({
 
   return (
     <div className="space-y-4 rounded-lg border border-border p-4">
-      <div className="flex items-center gap-2">
-        <FlaskConical className="h-5 w-5 text-primary" />
-        <h3 className="font-playfair text-lg">Lab orders (LabCorp)</h3>
-        {patient.lab_path === "labcorp" && (
-          <Badge variant="destructive" className="text-xs">LabCorp path</Badge>
-        )}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-center gap-2">
+          <FlaskConical className="h-5 w-5 text-primary" />
+          <h3 className="font-playfair text-lg">Lab orders (LabCorp)</h3>
+          {patient.lab_path === "labcorp" && (
+            <Badge variant="destructive" className="text-xs">LabCorp path</Badge>
+          )}
+        </div>
+        <LabCorpPortalLink className="self-start" />
       </div>
+      <p className="text-xs text-muted-foreground">{LABCORP_FLOW_HINT}</p>
       <p className="text-xs text-muted-foreground">
         Order from the catalog, email requisition when a template exists, then advance status through draw → results → review.
-        Panels without a template: use PDF upload in the patient chart.
+        Panels without a template: use PDF upload in the patient chart or LabCorp Link.
       </p>
 
       <div className="grid gap-3 md:grid-cols-2">

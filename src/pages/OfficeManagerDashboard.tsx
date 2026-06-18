@@ -16,6 +16,8 @@ import StaffBookingModal from "@/components/booking/StaffBookingModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SmsInbox from "@/components/office/SmsInbox";
+import LabCorpPortalLink from "@/components/provider/LabCorpPortalLink";
+import { LABCORP_FLOW_HINT } from "@/lib/labcorpPortal";
 
 interface Patient {
   id: string;
@@ -742,13 +744,19 @@ const OfficeManagerDashboard = () => {
           <TabsContent value="labs">
             <Card className="bg-card border-border/50">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TestTube className="w-5 h-5" />
-                  LabCorp pipeline
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Patients awaiting draw, in progress, or results ready for provider review.
-                </p>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <TestTube className="w-5 h-5" />
+                      LabCorp pipeline
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Patients awaiting draw, in progress, or results ready for provider review.
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2 max-w-2xl">{LABCORP_FLOW_HINT}</p>
+                  </div>
+                  <LabCorpPortalLink className="self-start shrink-0" />
+                </div>
               </CardHeader>
               <CardContent>
                 {labPendingPatients.length === 0 ? (

@@ -14,10 +14,10 @@ import { toast } from "sonner";
 import { Loader2, ArrowRight, ArrowLeft, Shield, FileText, CreditCard, Phone } from "lucide-react";
 import { filterVisibleVisitReasons } from "@/lib/serviceConfig";
 import { TIER_1_CONSENTS, ALL_CONSENTS } from "@/data/consents";
-import { SERVABLE_LEGAL_REVIEW_STATUS } from "@/lib/consents/consent-catalog";
 import { consultScreeningBlockMessage } from "@/lib/consultPrequalScreening";
 import { CONSULT_JOURNEY_STAGES } from "@/lib/consultJourney";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { getActiveConsentVersion } from "@/lib/consents/consent-helpers";
 
 const VISIT_REASONS = filterVisibleVisitReasons([
   { id: "hormone", label: "Hormone optimization (HRT/TRT)" },
@@ -64,6 +64,8 @@ export default function ConsultPrequal() {
   });
 
   const [consentVersions, setConsentVersions] = useState<Record<string, { id: string; title: string }>>({});
+  const [consentsLoading, setConsentsLoading] = useState(true);
+  const [consentsLoadFailed, setConsentsLoadFailed] = useState(false);
   const [consentsAccepted, setConsentsAccepted] = useState<Record<string, boolean>>({});
   const [signatureName, setSignatureName] = useState("");
 
@@ -76,20 +78,23 @@ export default function ConsultPrequal() {
 
   useEffect(() => {
     (async () => {
-      const map: Record<string, { id: string; title: string }> = {};
-      for (const type of TIER_1_CONSENTS) {
-        const { data } = await supabase
-          .from("consent_versions")
-          .select("id, title")
-          .eq("consent_type", type)
-          .eq("is_active", true)
-          .eq("legal_review_status", SERVABLE_LEGAL_REVIEW_STATUS)
-          .order("effective_from", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (data) map[type] = { id: data.id, title: data.title };
+      setConsentsLoading(true);
+      setConsentsLoadFailed(false);
+      try {
+        const map: Record<string, { id: string; title: string }> = {};
+        for (const type of TIER_1_CONSENTS) {
+          const data = await getActiveConsentVersion(type);
+          if (data) map[type] = { id: data.id, title: data.title };
+        }
+        setConsentVersions(map);
+        if (TIER_1_CONSENTS.some((t) => !map[t])) {
+          setConsentsLoadFailed(true);
+        }
+      } catch {
+        setConsentsLoadFailed(true);
+      } finally {
+        setConsentsLoading(false);
       }
-      setConsentVersions(map);
     })();
   }, []);
 
@@ -132,6 +137,10 @@ export default function ConsultPrequal() {
       if (error) throw error;
       if (data?.screening_result === "blocked") {
         setBlocked(data.block_reasons ?? []);
+        return;
+      }
+      if (consentsLoadFailed || TIER_1_CONSENTS.some((t) => !consentVersions[t]?.id)) {
+        toast.error("Consent forms are temporarily unavailable. Please call the clinic.");
         return;
       }
       setSessionId(data.session_id);
@@ -392,6 +401,27 @@ export default function ConsultPrequal() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {consentsLoading ? (
+                <div className="flex items-center justify-center gap-2 py-8 text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Loading consent forms…
+                </div>
+              ) : consentsLoadFailed ? (
+                <div className="space-y-4">
+                  <Alert variant="destructive">
+                    <AlertDescription>
+                      Consent forms are temporarily unavailable. Please call the clinic at{" "}
+                      <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="underline">
+                        {SITE_CONFIG.phone}
+                      </a>
+                      .
+                    </AlertDescription>
+                  </Alert>
+                  <Button type="button" variant="outline" onClick={() => setStep("screening")}>
+                    Back
+                  </Button>
+                </div>
+              ) : (
               <form onSubmit={submitConsents} className="space-y-4">
                 {TIER_1_CONSENTS.map((type) => {
                   const doc = ALL_CONSENTS[type];
@@ -430,6 +460,7 @@ export default function ConsultPrequal() {
                   </Button>
                 </div>
               </form>
+              )}
             </CardContent>
           </Card>
         )}

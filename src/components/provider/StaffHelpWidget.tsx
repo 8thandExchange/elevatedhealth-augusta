@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { HelpCircle, Search, ExternalLink, BookOpen, CalendarDays, Clock, ClipboardList, Boxes, Loader2, Sparkles } from "lucide-react";
+import { HelpCircle, Search, ExternalLink, BookOpen, CalendarDays, Clock, ClipboardList, Boxes, Loader2, Sparkles, TestTube2 } from "lucide-react";
+import { LABCORP_PROVIDER_PORTAL_URL } from "@/lib/labcorpPortal";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,6 +124,7 @@ export function StaffHelpWidget() {
       { label: "My Schedule", to: "/calendar?tab=hours", icon: Clock },
       { label: "Office Schedule", to: "/calendar", icon: CalendarDays },
       { label: "Dashboard", to: "/provider/dashboard", icon: BookOpen },
+      { label: "LabCorp Portal", href: LABCORP_PROVIDER_PORTAL_URL, icon: TestTube2, external: true },
       { label: "Inventory", to: "/inventory", icon: Boxes },
       { label: "Formulary", to: "/formulary", icon: ClipboardList },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
@@ -226,12 +228,31 @@ export function StaffHelpWidget() {
             <div className="flex flex-wrap gap-2">
               {quickLinks.map((l) => {
                 const Icon = l.icon;
+                const label = (
+                  <>
+                    {Icon ? <Icon className="h-4 w-4" /> : null}
+                    {l.label}
+                  </>
+                );
+                if ("href" in l && l.href) {
+                  return (
+                    <Button
+                      key={l.label}
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="normal-case tracking-normal border-blue-600/30 bg-blue-50/70 dark:bg-blue-950/25"
+                    >
+                      <a href={l.href} target="_blank" rel="noopener noreferrer">
+                        {label}
+                        <ExternalLink className="h-3 w-3 opacity-60" />
+                      </a>
+                    </Button>
+                  );
+                }
                 return (
                   <Button key={l.to} asChild variant="outline" size="sm" className="normal-case tracking-normal">
-                    <Link to={l.to}>
-                      <Icon className="h-4 w-4" />
-                      {l.label}
-                    </Link>
+                    <Link to={l.to!}>{label}</Link>
                   </Button>
                 );
               })}

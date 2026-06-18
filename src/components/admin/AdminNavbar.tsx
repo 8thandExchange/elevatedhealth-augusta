@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical, ClipboardList, ArrowLeft, LayoutDashboard, Users } from "lucide-react";
+import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical, ClipboardList, ArrowLeft, LayoutDashboard, Users, TestTube2 } from "lucide-react";
 import { getStaffHomeLabel, getStaffPortalLoginPath, hasClinicAdminRole } from "@/lib/staffPortalRouting";
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import AddPatientModal from "@/components/provider/AddPatientModal";
+import LabCorpPortalLink from "@/components/provider/LabCorpPortalLink";
 
 interface AdminNavbarProps {
   title: string;
@@ -230,6 +231,8 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
             </Button>
           )}
 
+          <LabCorpPortalLink variant="icon" />
+
           {/* Inventory Button with Badge */}
           <Button variant="ghost" size="icon" className="relative" asChild title="Inventory">
             <Link to="/inventory">
@@ -270,6 +273,17 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg z-[100]">
+              <DropdownMenuItem asChild>
+                <a
+                  href="https://link.labcorp.com/landing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer gap-2"
+                >
+                  <TestTube2 className="w-4 h-4 text-blue-700" />
+                  LabCorp Link portal
+                </a>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/clinical-protocols" className="cursor-pointer gap-2">
                   <BookOpen className="w-4 h-4" />
@@ -459,6 +473,17 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
                 </DropdownMenuItem>
               )}
               
+              <DropdownMenuItem asChild>
+                <a
+                  href="https://link.labcorp.com/landing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer gap-2"
+                >
+                  <TestTube2 className="w-4 h-4 text-blue-700" />
+                  LabCorp Link portal
+                </a>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/clinical-protocols" className="cursor-pointer gap-2">
                   <BookOpen className="w-4 h-4" />

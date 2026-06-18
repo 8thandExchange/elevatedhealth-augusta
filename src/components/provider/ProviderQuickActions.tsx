@@ -9,6 +9,7 @@ import QuickEmailModal from "./QuickEmailModal";
 import EncounterFormModal from "./EncounterFormModal";
 import AddPatientModal from "./AddPatientModal";
 import StaffBookingModal from "@/components/booking/StaffBookingModal";
+import LabCorpPortalLink from "@/components/provider/LabCorpPortalLink";
 import { supabase } from "@/integrations/supabase/client";
 import { hasClinicAdminRole } from "@/lib/staffPortalRouting";
 
@@ -94,6 +95,8 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
             <CreditCard className="w-4 h-4 mr-2" />
             Payment
           </Button>
+
+          <LabCorpPortalLink />
           
           <Button
             variant="outline"
@@ -102,7 +105,7 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
             className="whitespace-nowrap"
           >
             <CheckCircle className="w-4 h-4 mr-2" />
-            Labs
+            Mark labs reviewed
           </Button>
           
           <Button

@@ -37,6 +37,7 @@ import {
   coverageForDate, blocksForDate, isSlotCovered, isSlotBlocked,
   formatHourLabel, initials, snap30, minutesToHHMM,
 } from "@/components/scheduling/timeMath";
+import LabCorpPortalLink from "@/components/provider/LabCorpPortalLink";
 
 type ViewMode = "day" | "week" | "print";
 
@@ -277,6 +278,8 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
               </Button>
             )}
             <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} portalMode={portalMode} />
+            <div className="flex-1" />
+            <LabCorpPortalLink variant="icon" />
           </div>
         </div>
         <div className={`${portalMode ? "flex-1 overflow-auto" : ""} container mx-auto px-4 py-6`}>
@@ -349,6 +352,7 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
               className="pl-8 w-56 h-9"
             />
           </div>
+          <LabCorpPortalLink variant="icon" />
           <Button variant="ghost" size="icon" onClick={() => fetchAll()} title="Refresh">
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </Button>
