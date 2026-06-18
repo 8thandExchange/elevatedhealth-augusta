@@ -78,7 +78,35 @@ export async function serveOnetimePriceCheckoutFromBody(
       sessionParams.discounts = discount.discounts;
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create(sessionParams);
+    } catch (stripeErr) {
+      const stripeMessage = stripeErr instanceof Error ? stripeErr.message : String(stripeErr);
+      if (!sessionParams.discounts?.length) {
+        throw stripeErr;
+      }
+
+      edgeStructuredLog(functionName, {
+        event_type: "coupon_retry",
+        success: false,
+        action_taken: "retry_without_member_coupon",
+        error_message: stripeMessage,
+      });
+
+      const retryParams: Stripe.Checkout.SessionCreateParams = { ...sessionParams };
+      delete retryParams.discounts;
+      retryParams.metadata = {
+        ...(sessionParams.metadata ?? {}),
+        applied_discount: "none",
+        coupon_retry_reason: stripeMessage.slice(0, 120),
+      };
+      session = await stripe.checkout.sessions.create(retryParams);
+    }
+
+    if (!session.url) {
+      throw new Error("Stripe did not return a checkout URL");
+    }
 
     edgeStructuredLog(functionName, {
       event_type: "checkout_created",

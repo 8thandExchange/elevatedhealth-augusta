@@ -1,8 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -37,6 +35,12 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Patient email and payment URL are required");
     }
 
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendKey) {
+      throw new Error("Email service is not configured (RESEND_API_KEY missing)");
+    }
+
+    const resend = new Resend(resendKey);
     const firstName = patient_name?.split(" ")[0] || "there";
 
     const emailResponse = await resend.emails.send({
@@ -141,6 +145,10 @@ const handler = async (req: Request): Promise<Response> => {
         </html>
       `,
     });
+
+    if (emailResponse.error) {
+      throw new Error(emailResponse.error.message ?? "Email delivery failed");
+    }
 
     logStep("Email sent successfully", emailResponse);
 

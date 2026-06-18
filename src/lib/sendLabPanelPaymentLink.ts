@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { readEdgeFunctionError } from "@/lib/edgeFunctionError";
 import {
   labPanelAlacarteProductKey,
   labPanelDisplayPrice,
@@ -15,6 +16,24 @@ export interface SendLabPanelPaymentLinkInput {
   patientPhone?: string | null;
   isMember?: boolean;
   method: LabPaymentDelivery;
+}
+
+async function invokeFunction<T extends Record<string, unknown>>(
+  functionName: string,
+  body: Record<string, unknown>,
+  fallbackMessage: string,
+): Promise<T> {
+  const { data, error } = await supabase.functions.invoke(functionName, { body });
+
+  if (error) {
+    throw new Error(await readEdgeFunctionError(error, fallbackMessage));
+  }
+
+  if (data && typeof data === "object" && "error" in data && data.error) {
+    throw new Error(String(data.error));
+  }
+
+  return (data ?? {}) as T;
 }
 
 export async function sendLabPanelPaymentLink(
@@ -44,20 +63,22 @@ export async function sendLabPanelPaymentLink(
   const amount = labPanelDisplayPrice(panelSlug, isMember);
   const product_key = labPanelAlacarteProductKey(panelSlug);
 
-  const { data, error } = await supabase.functions.invoke("create-alacarte-checkout", {
-    body: {
+  const checkout = await invokeFunction<{ url?: string }>(
+    "create-alacarte-checkout",
+    {
       product_key,
       patient_email: patientEmail.trim(),
       patient_name: patientName,
       patient_id: patientId,
       panel_slug: panelSlug,
     },
-  });
+    "Could not create lab payment link",
+  );
 
-  if (error) throw error;
-  if (!data?.url) throw new Error("Could not create payment link");
-
-  const url = data.url as string;
+  const url = checkout.url;
+  if (!url) {
+    throw new Error("Stripe did not return a checkout URL. Try again or call the clinic.");
+  }
 
   if (method === "copy") {
     await navigator.clipboard.writeText(url);
@@ -65,29 +86,31 @@ export async function sendLabPanelPaymentLink(
   }
 
   if (method === "email") {
-    const { error: emailError } = await supabase.functions.invoke("send-alacarte-payment-link", {
-      body: {
-        patient_email: patientEmail,
+    await invokeFunction(
+      "send-alacarte-payment-link",
+      {
+        patient_email: patientEmail.trim(),
         patient_name: patientName,
         payment_url: url,
         product_name: panelName,
         amount,
       },
-    });
-    if (emailError) throw emailError;
+      "Could not email the payment link",
+    );
     return { url };
   }
 
-  const { error: smsError } = await supabase.functions.invoke("send-alacarte-payment-sms", {
-    body: {
+  await invokeFunction(
+    "send-alacarte-payment-sms",
+    {
       patient_phone: patientPhone,
       patient_name: patientName,
       payment_url: url,
       product_name: panelName,
       amount,
     },
-  });
-  if (smsError) throw smsError;
+    "Could not text the payment link",
+  );
 
   return { url };
 }
