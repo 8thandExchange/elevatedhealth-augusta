@@ -84,8 +84,8 @@ const faqs = [
     a: "Timelines vary. Your physician sets realistic expectations — we do not guarantee specific healing or performance outcomes.",
   },
   {
-    q: "What about retatrutide?",
-    a: "Retatrutide is offered only within the advanced ELEVATED Metabolic Recomposition program — physician-directed, not casual à la carte.",
+    q: "What if standard weight loss isn't enough?",
+    a: "Some patients plateau or need fat loss without losing lean tissue. Advanced body recomposition protocols are physician-directed, phased, and discussed in person after your Wellness Assessment and labs — not offered as a walk-in or online catalog item.",
   },
 ];
 

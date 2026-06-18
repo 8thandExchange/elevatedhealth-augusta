@@ -64,7 +64,6 @@ const Navbar = () => {
     { label: "IV Therapy", action: () => navigate("/iv-lounge") },
     { label: "Peptides", action: () => navigate("/peptides") },
     { label: "Weight Loss", action: () => navigate("/weight-loss") },
-    { label: "Metabolic Stack", action: () => navigate("/metabolic-recomposition") },
     { label: "Membership", action: () => navigate("/membership") },
     { label: "About", action: () => navigate("/about") },
   ];

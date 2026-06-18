@@ -9,8 +9,9 @@ Elevated Health Augusta is a cash-pay wellness clinic. Care starts with a $79 in
 - ELEVATED TRT: $249/mo
 - ELEVATED HRT: $229/mo
 - ELEVATED GLP-1: $349/mo (semaglutide or tirzepatide when appropriate)
-- ELEVATED METABOLIC RECOMPOSITION: $1,199/mo (advanced provider-directed program only)
 - ELEVATED WELLNESS: $199/mo
+
+Advanced body recomposition programs exist for qualified patients — candidacy and pricing discussed in clinic after Wellness Assessment; not listed as a self-serve online product.
 
 ## Labs
 
@@ -22,8 +23,7 @@ Elevated Health Augusta is a cash-pay wellness clinic. Care starts with a $79 in
 - [Home](/): Physician-owned clinic overview and booking
 - [How the Clinic Works](/how-it-works): Lane A IV vs Lane B consult-gated programs
 - [Hormone Therapy](/hormones): Lab-guided TRT and BHRT
-- [Medical Weight Loss](/weight-loss): ELEVATED GLP-1 program
-- [Metabolic Recomposition](/metabolic-recomposition): Advanced program (provider-directed)
+- [Medical Weight Loss](/weight-loss): ELEVATED GLP-1 program; advanced recomposition discussed in clinic
 - [IV Therapy](/iv-lounge): Walk-in IV hydration and NAD+
 - [Peptide Therapy](/peptides): Recovery Peptide Review and physician-supervised peptide categories (BPC-157/TB-500 when clinically appropriate — no public dosing)
 - [Pricing](/pricing): Transparent cash-pay pricing

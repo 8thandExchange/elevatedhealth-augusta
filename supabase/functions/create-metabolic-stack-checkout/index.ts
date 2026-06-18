@@ -57,9 +57,9 @@ serve(async (req) => {
               unit_amount: STACK_AMOUNT_CENTS,
               recurring: { interval: "month" },
               product_data: {
-                name: "ELEVATED Metabolic Recomposition Stack",
+                name: "ELEVATED Body Recomposition Program",
                 description:
-                  "90-day phased protocol: retatrutide anchor, SS-31/NAD+, CJC/Tesamorelin, physician oversight",
+                  "Physician-supervised phased metabolic protocol — enrolled after in-clinic assessment and labs",
               },
             },
             quantity: 1,
@@ -72,7 +72,7 @@ serve(async (req) => {
       line_items: lineItems,
       mode: "subscription",
       success_url: `${origin}/medication-confirmed?med=metabolic-stack`,
-      cancel_url: `${origin}/metabolic-recomposition`,
+      cancel_url: `${origin}/weight-loss#body-recomposition`,
       metadata: {
         service_type: "metabolic_recomposition_stack",
         patient_name: name || "",

@@ -9,10 +9,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { trackEvent } from "@/lib/analytics";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import NotReadyToBook from "@/components/NotReadyToBook";
@@ -21,6 +21,7 @@ import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripe
 import { PUBLIC_GLP1_CARE_FLOW } from "@/lib/clinicalOptimizationCatalog";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
+import { BodyRecompositionTeaser } from "@/components/marketing/BodyRecompositionTeaser";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 // Display values — actual charges flow through Stripe
@@ -34,6 +35,14 @@ const WeightLoss = () => {
   const [isSemaglutideLoading, setIsSemaglutideLoading] = useState(false);
   const [isTirzepatideLoading, setIsTirzepatideLoading] = useState(false);
   const [glpComparisonDrug, setGlpComparisonDrug] = useState<"semaglutide" | "tirzepatide">("semaglutide");
+
+  useEffect(() => {
+    if (window.location.hash === "#body-recomposition") {
+      window.requestAnimationFrame(() => {
+        document.getElementById("body-recomposition")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, []);
 
   const handleConsultationCheckout = () => {
     trackEvent("cta_click", { cta_name: "weight_loss_consultation", destination: "consult_start" });
@@ -190,13 +199,7 @@ const WeightLoss = () => {
         <Navbar />
         
         <main>
-          <div className="bg-accent/10 border-b border-accent/30 px-6 py-3 text-center text-sm">
-            New:{" "}
-            <Link to="/metabolic-recomposition" className="font-medium text-accent-foreground underline-offset-4 hover:underline">
-              ELEVATED Metabolic Recomposition Stack
-            </Link>{" "}
-            — phased retatrutide protocol with SS-31, NAD+, and GH optimization.
-          </div>
+          <BodyRecompositionTeaser variant="banner" />
           {/* Hero Section - Warm Alabaster with Golden Balance */}
           <section className="min-h-[88vh] md:min-h-[90vh] flex items-center pt-32 pb-20 md:pb-28 relative overflow-hidden">
             {/* Warm Alabaster/Cream Background */}
@@ -388,11 +391,13 @@ const WeightLoss = () => {
                 ))}
               </ol>
               <p className="font-jost text-xs text-muted-foreground text-center mt-6 max-w-xl mx-auto">
-                ELEVATED METABOLIC RECOMPOSITION is advanced provider-directed care only — not a casual add-on.
-                Retatrutide appears only within that structured program when clinically appropriate.
+                Advanced body recomposition programs are physician-directed and discussed after your Wellness
+                Assessment when clinically appropriate — not self-serve online.
               </p>
             </div>
           </section>
+
+          <BodyRecompositionTeaser />
 
           {/* How It Works - 3-Step Concierge Workflow */}
           <section className="py-16 md:py-24 bg-background">

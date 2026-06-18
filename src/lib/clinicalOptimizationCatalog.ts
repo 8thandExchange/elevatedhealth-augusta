@@ -170,8 +170,8 @@ export const PUBLIC_PEPTIDE_CATEGORIES = [
   {
     id: "glp1_metabolic",
     title: "GLP-1 / Metabolic Optimization",
-    examples: ["Semaglutide", "Tirzepatide", "Retatrutide — advanced metabolic recomposition only"],
-    note: "Medical weight loss and advanced metabolic programs are lab-guided. Retatrutide is provider-directed within ELEVATED Metabolic Recomposition — not casual à la carte.",
+    examples: ["Semaglutide", "Tirzepatide", "Advanced body recomposition (consult-gated)"],
+    note: "Medical weight loss and advanced metabolic programs are lab-guided. Multi-layer recomposition protocols are reviewed in clinic after assessment — not self-selected online.",
   },
   {
     id: "longevity",
