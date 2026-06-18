@@ -50,6 +50,11 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import LogFreeConsultationModal from "./LogFreeConsultationModal";
+import {
+  formatConsultationAmount,
+  isAwaitingConsultPayment,
+  isPaidConsultation,
+} from "@/lib/consultationBookingDisplay";
 
 interface ConsultationBooking {
   id: string;
@@ -64,6 +69,7 @@ interface ConsultationBooking {
   notes: string | null;
   service_type: string | null;
   created_at: string;
+  stripe_session_id: string | null;
   booked_for: string | null;
 }
 
@@ -80,6 +86,7 @@ const ConsultationTracker = () => {
   const [showArchived, setShowArchived] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [syncingSessionId, setSyncingSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     loadConsultations();
@@ -100,6 +107,34 @@ const ConsultationTracker = () => {
       toast.error("Failed to load consultations");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const syncStripePayment = async (consult: ConsultationBooking) => {
+    if (!consult.stripe_session_id) {
+      toast.error("No Stripe session on this row — resend the payment invite");
+      return;
+    }
+    setSyncingSessionId(consult.stripe_session_id);
+    try {
+      const { data, error } = await supabase.functions.invoke("verify-consultation-payment", {
+        body: { session_id: consult.stripe_session_id },
+      });
+      if (error) throw error;
+      if (!data?.success) {
+        throw new Error(data?.error || "Stripe reports payment not completed");
+      }
+      toast.success(
+        data.already_recorded
+          ? "Payment already recorded — refreshed list"
+          : `Payment synced · code ${data.credit_code}`,
+      );
+      await loadConsultations();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Could not sync payment from Stripe";
+      toast.error(msg);
+    } finally {
+      setSyncingSessionId(null);
     }
   };
 
@@ -302,7 +337,10 @@ const ConsultationTracker = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="outline" className="text-yellow-600 border-yellow-400">Pending Booking</Badge>;
+      case "pending_payment":
+        return <Badge variant="outline" className="text-amber-700 border-amber-400">Awaiting payment</Badge>;
+      case "paid":
+        return <Badge className="bg-emerald-600">Paid — schedule visit</Badge>;
       case "scheduled":
         return <Badge variant="outline" className="text-blue-600 border-blue-400">Scheduled</Badge>;
       case "completed":
@@ -339,13 +377,19 @@ const ConsultationTracker = () => {
   // Filter logic: when showArchived, show only archived; otherwise exclude archived
   const filteredConsultations = showArchived
     ? consultations.filter(c => c.status === "archived")
-    : filterStatus === "all" 
+    : filterStatus === "all"
       ? consultations.filter(c => c.status !== "archived")
-      : consultations.filter(c => c.status === filterStatus && c.status !== "archived");
+      : filterStatus === "awaiting_payment"
+        ? consultations.filter(c => isAwaitingConsultPayment(c.status) && c.status !== "archived")
+        : filterStatus === "paid_unscheduled"
+          ? consultations.filter(c => isPaidConsultation(c.status) && !c.booked_for && c.status !== "archived")
+          : consultations.filter(c => c.status === filterStatus && c.status !== "archived");
 
   const stats = {
     total: consultations.filter(c => c.status !== "archived").length,
-    pending: consultations.filter(c => c.status === "pending").length,
+    awaitingPayment: consultations.filter(c => isAwaitingConsultPayment(c.status)).length,
+    paid: consultations.filter(c => isPaidConsultation(c.status)).length,
+    paidUnscheduled: consultations.filter(c => isPaidConsultation(c.status) && !c.booked_for).length,
     scheduled: consultations.filter(c => c.status === "scheduled").length,
     completed: consultations.filter(c => c.status === "completed").length,
     converted: consultations.filter(c =>
@@ -383,8 +427,14 @@ const ConsultationTracker = () => {
         </Card>
         <Card className="bg-yellow-50 border-yellow-200">
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-yellow-700">{stats.pending}</p>
-            <p className="text-xs text-yellow-600">Pending</p>
+            <p className="text-2xl font-bold text-yellow-700">{stats.awaitingPayment}</p>
+            <p className="text-xs text-yellow-600">Awaiting payment</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-emerald-50 border-emerald-200">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-emerald-700">{stats.paidUnscheduled}</p>
+            <p className="text-xs text-emerald-600">Paid — needs time</p>
           </CardContent>
         </Card>
         <Card className="bg-blue-50 border-blue-200">
@@ -419,9 +469,11 @@ const ConsultationTracker = () => {
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
               <p className="text-sm">
-                <strong>Pending Consults</strong> are leads who paid for a consultation but haven't been converted yet.
+                <strong>Awaiting payment</strong> — invite sent, Stripe not completed yet. Use <strong>Sync Stripe</strong> if they say they paid.
                 <br /><br />
-                <strong>All Patients</strong> are people formally added to the system after clicking "Convert to Patient".
+                <strong>Paid — schedule visit</strong> — card captured; patient needs a time on the calendar.
+                <br /><br />
+                <strong>All Patients</strong> — full chart records (Add Patient or auto-created after payment).
               </p>
             </TooltipContent>
           </Tooltip>
@@ -434,7 +486,9 @@ const ConsultationTracker = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Active</SelectItem>
-            <SelectItem value="pending">Pending Booking</SelectItem>
+            <SelectItem value="awaiting_payment">Awaiting payment</SelectItem>
+            <SelectItem value="paid_unscheduled">Paid — needs time</SelectItem>
+            <SelectItem value="paid">Paid (all)</SelectItem>
             <SelectItem value="scheduled">Scheduled</SelectItem>
             <SelectItem value="completed">Completed</SelectItem>
             <SelectItem value="converted_to_hormone">Converted (Hormone)</SelectItem>
@@ -538,12 +592,27 @@ const ConsultationTracker = () => {
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <p className="font-semibold">
-                          ${consult.amount_paid ? (consult.amount_paid / 100).toFixed(0) : "99"}
+                          {formatConsultationAmount(consult.amount_paid)}
                         </p>
                         <p className="text-xs text-muted-foreground">{consult.service_type}</p>
                       </div>
                       {/* Inline action icons */}
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        {isAwaitingConsultPayment(consult.status) && consult.stripe_session_id && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-xs"
+                            disabled={syncingSessionId === consult.stripe_session_id}
+                            onClick={() => void syncStripePayment(consult)}
+                          >
+                            {syncingSessionId === consult.stripe_session_id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              "Sync Stripe"
+                            )}
+                          </Button>
+                        )}
                         {consult.status === "archived" ? (
                           <TooltipProvider>
                             <Tooltip>

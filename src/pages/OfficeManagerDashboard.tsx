@@ -229,8 +229,8 @@ const OfficeManagerDashboard = () => {
   const stats = {
     total: patients.filter(p => !p.is_archived).length,
     active: patients.filter(p => p.onboarding_status === "treatment_active" && !p.is_archived).length,
-    pending: patients.filter(p => 
-      ["pending_review", "intake_pending", "pending_pharmacy_order"].includes(p.onboarding_status || "") && !p.is_archived
+    pending: patients.filter(p =>
+      ["pending_review", "intake_pending", "pending_pharmacy_order", "consultation_paid", "consultation_pending"].includes(p.onboarding_status || "") && !p.is_archived
     ).length,
     pendingActivations: pendingActivations.length,
     totalLeads: leads.length,

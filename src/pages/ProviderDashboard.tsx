@@ -441,6 +441,15 @@ const ProviderDashboard = () => {
         throw ordersError;
       }
 
+      const { data: consultPipelinePatients, error: consultPipelineError } = await supabase
+        .from("patients")
+        .select("*")
+        .in("onboarding_status", ["consultation_paid", "consultation_pending"]);
+
+      if (consultPipelineError) {
+        console.error("[ProviderDashboard] Consult pipeline patients failed:", consultPipelineError);
+      }
+
       // Combine unique patients
       const allPatients: Patient[] = [];
       const patientIds = new Set<string>();
@@ -453,6 +462,13 @@ const ProviderDashboard = () => {
       });
 
       intakePatients?.forEach(p => {
+        if (!patientIds.has(p.id)) {
+          patientIds.add(p.id);
+          allPatients.push(p as Patient);
+        }
+      });
+
+      consultPipelinePatients?.forEach(p => {
         if (!patientIds.has(p.id)) {
           patientIds.add(p.id);
           allPatients.push(p as Patient);

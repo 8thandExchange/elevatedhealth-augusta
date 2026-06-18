@@ -173,7 +173,7 @@ serve(async (req) => {
     // Check if patient already exists with this email
     const { data: existingPatient, error: checkError } = await supabaseAdmin
       .from("patients")
-      .select("id, full_name, email")
+      .select("id, full_name, email, onboarding_status")
       .eq("email", patient_email.toLowerCase())
       .maybeSingle();
 
@@ -182,13 +182,69 @@ serve(async (req) => {
     }
 
     if (existingPatient) {
+      const stubStatuses = new Set([
+        "consultation_pending",
+        "pending_invite",
+        "consultation_paid",
+        "account_created",
+      ]);
+      if (stubStatuses.has(existingPatient.onboarding_status ?? "")) {
+        logStep("Merging into existing stub patient", { patientId: existingPatient.id });
+        const onboardingStatus = (() => {
+          switch (patient_status) {
+            case "results_ready": return "results_ready";
+            case "protocol_approved": return "protocol_approved";
+            case "consultation_completed": return "consultation_completed";
+            default: return "treatment_active";
+          }
+        })();
+
+        const intakeToken = crypto.randomUUID();
+        const intakeTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+        const { data: updated, error: updateError } = await supabaseAdmin
+          .from("patients")
+          .update({
+            full_name: patient_name,
+            phone: patient_phone || null,
+            primary_program: finalServiceInterests[0],
+            service_interests: finalServiceInterests,
+            onboarding_status: onboardingStatus,
+            invited_by: user.id,
+            invited_at: new Date().toISOString(),
+            intake_token: intakeToken,
+            intake_token_expires_at: intakeTokenExpiresAt,
+            medical_history: { is_migrated_patient: true, migrated_at: new Date().toISOString() },
+          })
+          .eq("id", existingPatient.id)
+          .select()
+          .single();
+
+        if (updateError) {
+          return new Response(
+            JSON.stringify({ success: false, error: updateError.message }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            patient_id: updated.id,
+            merged_existing: true,
+            message: "Updated existing patient record from consult invite stub",
+          }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+
       logStep("Patient already exists", { patientId: existingPatient.id });
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: `Patient with email ${patient_email} already exists: ${existingPatient.full_name}` 
+        JSON.stringify({
+          success: false,
+          error: `Patient with email ${patient_email} already exists: ${existingPatient.full_name}`,
         }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 

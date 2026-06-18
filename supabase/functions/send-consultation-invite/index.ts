@@ -121,10 +121,13 @@ serve(async (req) => {
       .insert({
         customer_email: patient_email,
         customer_name: patient_name,
-        service_type: "hormone_therapy",
-        status: invite_type === "already_booked" ? "pending_payment" : "pending",
+        service_type: service_type || "hormone",
+        status: invite_type === "already_booked" ? "pending_payment" : "pending_payment",
         stripe_session_id: session.id,
+        amount_paid: null,
         booked_for: scheduled_date || null,
+        booking_source: "staff_phone",
+        booked_by_user_id: userData.user.id,
       });
 
     if (bookingError) {

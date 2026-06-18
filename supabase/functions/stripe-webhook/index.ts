@@ -7,6 +7,10 @@ import {
   LIVE_ELEVATED_PROGRAMS,
   type LiveElevatedProgramKey,
 } from "../_shared/live-prices.ts";
+import {
+  fulfillConsultationPayment,
+  isConsultationCheckoutSession,
+} from "../_shared/fulfill-consultation-payment.ts";
 
 /** Legacy single-tier Elevated price IDs — stop recognizing after 2026-08-11 (PR12 sunset). */
 
@@ -420,6 +424,37 @@ serve(async (req) => {
 
       if (session.mode === "payment") {
         const paymentType = metadata.payment_type as string | undefined;
+
+        if (isConsultationCheckoutSession(session)) {
+          try {
+            const result = await fulfillConsultationPayment(supabaseClient, stripe, session);
+            webhookLog({
+              event_type: event.type,
+              event_id: event.id,
+              price_id: null,
+              product_recognition: "consultation",
+              patient_id: result.patient_id ?? null,
+              stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+              stripe_subscription_id: null,
+              action_taken: result.success
+                ? (result.already_recorded ? "consultation_already_fulfilled" : "consultation_fulfilled")
+                : `consultation_fulfill_failed: ${result.error ?? "unknown"}`,
+              success: result.success,
+              error_message: result.error ?? null,
+            });
+          } catch (fulfillErr) {
+            const msg = fulfillErr instanceof Error ? fulfillErr.message : String(fulfillErr);
+            webhookLog({
+              event_type: event.type,
+              event_id: event.id,
+              product_recognition: "consultation",
+              action_taken: "consultation_fulfill_exception",
+              success: false,
+              error_message: msg,
+            });
+          }
+        }
+
         webhookLog({
           event_type: event.type,
           event_id: event.id,
@@ -433,26 +468,6 @@ serve(async (req) => {
         });
 
         if (customerEmail) {
-          if (paymentType === "consultation") {
-            const { error } = await supabaseClient
-              .from("patients")
-              .update({ onboarding_status: "consultation_paid" })
-              .eq("email", customerEmail);
-            webhookLog({
-              event_type: event.type,
-              event_id: event.id,
-              product_recognition: "consultation",
-              patient_id: null,
-              stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
-              stripe_subscription_id: null,
-              action_taken: error
-                ? `consultation_paid_update_failed: ${error.message}`
-                : "consultation_paid_updated",
-              success: !error,
-              error_message: error?.message ?? null,
-            });
-          }
-
           if (paymentType === "hormone_mapping" || paymentType === "lab_kit") {
             const { error } = await supabaseClient
               .from("patients")
