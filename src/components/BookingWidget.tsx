@@ -2,14 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Phone, MessageCircle, CreditCard } from "lucide-react";
 import { trackCTAClick } from "@/lib/analytics";
 import { useBooking } from "@/contexts/BookingContext";
+import { openAssistantChat } from "@/lib/openAssistantChat";
 
 const BookingWidget = () => {
   const { openBooking } = useBooking();
   
-  const openAssistant = () => {
-    const chatButton = document.querySelector('[aria-label="Open assistant"]');
-    if (chatButton) (chatButton as HTMLButtonElement).click();
-  };
+  const openAssistant = () => openAssistantChat();
 
   return (
     <section id="booking" className="py-16 md:py-20 bg-gradient-to-br from-accent/10 via-primary/5 to-accent/5 scroll-mt-20">

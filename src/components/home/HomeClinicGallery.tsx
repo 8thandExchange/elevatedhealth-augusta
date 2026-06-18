@@ -34,7 +34,7 @@ const HomeClinicGallery = () => {
     <section ref={ref} className="py-20 md:py-28 bg-foreground text-background overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8">
         <div className={`max-w-2xl mb-12 md:mb-16 ${revealClasses.fadeUp(isVisible)}`}>
-          <p className="section-label mb-4 text-accent">The Space</p>
+          <p className="section-label section-label-on-dark mb-4">The Space</p>
           <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl leading-tight">
             Designed for calm, <span className="italic">not crowds.</span>
           </h2>

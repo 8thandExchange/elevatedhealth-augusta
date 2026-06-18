@@ -2,46 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Elevated Health Augusta — Bone, Charcoal, Camel */
+/* Elevated Health Augusta — Navy, Gray, White (official logo palette) */
 
 @layer base {
   :root {
-    --background: 36 47% 90%;
-    --foreground: 24 7% 16%;
+    --background: 0 0% 100%;
+    --foreground: 207 100% 25%;
     --card: 0 0% 100%;
-    --card-foreground: 24 7% 16%;
+    --card-foreground: 207 100% 25%;
     --popover: 0 0% 100%;
-    --popover-foreground: 24 7% 16%;
-    --primary: 24 7% 16%;
-    --primary-foreground: 36 47% 90%;
-    --primary-light: 24 7% 24%;
-    --primary-dark: 30 9% 10%;
-    --secondary: 24 7% 24%;
-    --secondary-foreground: 36 47% 90%;
-    --secondary-light: 24 7% 32%;
-    --secondary-dark: 24 7% 18%;
-    --accent: 32 36% 56%;
-    --accent-foreground: 24 7% 16%;
-    --accent-light: 32 36% 70%;
-    --gold: 32 36% 56%;
-    --gold-foreground: 24 7% 16%;
-    --gold-light: 32 36% 70%;
-    --gold-dark: 32 36% 42%;
-    --soft-gold: 32 30% 76%;
-    --muted: 36 30% 87%;
-    --muted-foreground: 30 5% 40%;
+    --popover-foreground: 207 100% 25%;
+    --primary: 207 100% 25%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 207 85% 32%;
+    --primary-dark: 207 100% 18%;
+    --secondary: 220 3% 66%;
+    --secondary-foreground: 207 100% 25%;
+    --secondary-light: 220 3% 78%;
+    --secondary-dark: 220 3% 52%;
+    --accent: 207 100% 25%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 207 85% 32%;
+    --gold: 207 100% 25%;
+    --gold-foreground: 0 0% 100%;
+    --gold-light: 207 85% 32%;
+    --gold-dark: 207 100% 18%;
+    --soft-gold: 220 3% 88%;
+    --muted: 220 8% 96%;
+    --muted-foreground: 220 3% 46%;
     --destructive: 0 55% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 36 20% 82%;
-    --input: 36 20% 87%;
-    --ring: 32 36% 56%;
+    --border: 220 8% 90%;
+    --input: 220 8% 94%;
+    --ring: 207 100% 25%;
     --radius: 0.1875rem;
     /* EHA brand raw values — for .btn-* utility classes */
-    --color-ink: #2A2826;
-    --color-paper: #F2EBDC;
-    --color-accent: #B8956A;
-    --color-accent-on: #2A2826;
-    --rule: 1px solid var(--color-accent);
+    --color-ink: #00477E;
+    --color-paper: #FFFFFF;
+    --color-tagline: #A7A9AC;
+    --color-accent: #00477E;
+    --color-accent-on: #FFFFFF;
+    --rule: 1px solid var(--color-tagline);
     --shadow-sm: none;
     --shadow-md: none;
     --shadow-lg: none;
@@ -51,25 +52,25 @@
   }
 
   .dark {
-    --background: 30 9% 10%;
-    --foreground: 36 47% 90%;
-    --card: 24 7% 16%;
-    --card-foreground: 36 47% 90%;
-    --popover: 24 7% 16%;
-    --popover-foreground: 36 47% 90%;
-    --primary: 32 36% 56%;
-    --primary-foreground: 24 7% 16%;
-    --secondary: 24 7% 24%;
-    --secondary-foreground: 36 47% 90%;
-    --accent: 32 36% 56%;
-    --accent-foreground: 24 7% 16%;
-    --muted: 24 7% 22%;
-    --muted-foreground: 36 30% 70%;
+    --background: 207 100% 12%;
+    --foreground: 0 0% 98%;
+    --card: 207 100% 16%;
+    --card-foreground: 0 0% 98%;
+    --popover: 207 100% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 207 85% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 3% 52%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 207 85% 38%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 207 50% 20%;
+    --muted-foreground: 220 3% 72%;
     --destructive: 0 55% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 24 7% 26%;
-    --input: 24 7% 22%;
-    --ring: 32 36% 56%;
+    --border: 207 40% 24%;
+    --input: 207 40% 22%;
+    --ring: 207 85% 38%;
   }
 }
 
@@ -117,14 +118,18 @@
     letter-spacing: 0.01em;
   }
 
-  /* Section labels — Jost 500, all caps, tracked, gold */
+  /* Section labels — Jost 500, all caps, tracked (logo tagline gray) */
   .section-label {
     font-family: 'Jost', sans-serif;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 2.5px;
-    color: hsl(var(--accent));
+    color: var(--color-tagline);
     font-size: 0.8125rem;
+  }
+
+  .section-label-on-dark {
+    color: hsl(0 0% 100% / 0.72);
   }
 }
 
@@ -153,12 +158,12 @@
   }
   .btn-primary:hover { opacity: 0.9; }
   .btn-secondary {
-    background: var(--color-accent);
-    color: var(--color-accent-on); /* NEVER white */
-    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-ink);
     padding: 14px 28px;
   }
-  .btn-secondary:hover { filter: brightness(0.95); }
+  .btn-secondary:hover { background: hsl(207 100% 25% / 0.06); }
   .btn-ghost {
     background: transparent;
     color: var(--color-ink);
@@ -169,36 +174,11 @@
   .btn-ghost:hover { color: var(--color-accent); }
 }
 
-/* Section divider — 1px gold at 40% opacity */
+/* Section divider — 1px brand gray */
 .section-divider {
   height: 1px;
-  background: hsla(40, 56%, 58%, 0.4);
+  background: hsl(220 3% 66% / 0.45);
   width: 100%;
-}
-
-/* Hero + editorial panels — depth without photography */
-.hero-mesh {
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, hsla(32, 36%, 56%, 0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 85% 70%, hsla(32, 36%, 56%, 0.12) 0%, transparent 50%),
-    linear-gradient(165deg, hsl(24 7% 12%) 0%, hsl(24 7% 16%) 45%, hsl(30 9% 10%) 100%);
-}
-
-.editorial-fallback-light {
-  background: linear-gradient(145deg, hsl(36 47% 92%) 0%, hsl(36 30% 87%) 50%, hsl(32 36% 56% / 0.12) 100%);
-}
-
-.editorial-fallback-warm {
-  background: linear-gradient(160deg, hsl(36 40% 88%) 0%, hsl(36 47% 90%) 40%, hsl(32 36% 56% / 0.18) 100%);
-}
-
-.editorial-fallback-dark {
-  background: linear-gradient(155deg, hsl(24 7% 14%) 0%, hsl(24 7% 18%) 50%, hsl(32 36% 56% / 0.15) 100%);
-}
-
-.editorial-fallback-grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
 }
 
 /* Luxury section spacing utility */
@@ -299,7 +279,7 @@ label {
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
-  background-color: hsl(37, 33%, 95%) !important;
+  background-color: hsl(0, 0%, 100%) !important;
   z-index: 60 !important;
   overflow-y: auto !important;
   padding-top: 6rem !important;
@@ -310,7 +290,7 @@ label {
   font-family: 'Jost', sans-serif !important;
   font-weight: 500 !important;
   font-size: 1.25rem !important;
-  color: hsl(217, 61%, 15%) !important;
+  color: hsl(207, 100%, 25%) !important;
   padding: 0.75rem 0 !important;
   text-align: left !important;
   background: transparent !important;
@@ -320,16 +300,16 @@ label {
 }
 
 .mobile-menu-link:hover {
-  color: hsl(40, 56%, 58%) !important;
+  color: hsl(207, 85%, 32%) !important;
 }
 
 .mobile-menu-close {
-  color: hsl(217, 61%, 15%) !important;
+  color: hsl(207, 100%, 25%) !important;
   background: transparent !important;
 }
 
 .mobile-menu-overlay button {
-  color: hsl(217, 61%, 15%) !important;
+  color: hsl(207, 100%, 25%) !important;
 }
 
 .mobile-menu-overlay p {
@@ -352,7 +332,7 @@ label {
 
 .dashboard-tab-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #b8956a rgba(42, 40, 38, 0.2);
+  scrollbar-color: #00477E rgba(0, 71, 126, 0.15);
 }
 
 .dashboard-tab-scroll::-webkit-scrollbar {
@@ -360,17 +340,17 @@ label {
 }
 
 .dashboard-tab-scroll::-webkit-scrollbar-track {
-  background: rgba(42, 40, 38, 0.15);
+  background: rgba(0, 71, 126, 0.12);
   border-radius: 9999px;
 }
 
 .dashboard-tab-scroll::-webkit-scrollbar-thumb {
-  background: #b8956a;
+  background: #00477E;
   border-radius: 9999px;
 }
 
 .dashboard-tab-scroll::-webkit-scrollbar-thumb:hover {
-  background: #a6865f;
+  background: #003660;
 }
 
 /* Touch feedback */

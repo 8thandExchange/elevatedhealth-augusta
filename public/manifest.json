@@ -4,8 +4,8 @@
   "description": "Physician-owned longevity clinic: hormone optimization, IV therapy, peptide medicine & medical weight loss in Evans, GA",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f4ef",
-  "theme_color": "#0f1f3d",
+  "background_color": "#ffffff",
+  "theme_color": "#00477E",
   "orientation": "portrait-primary",
   "icons": [
     {

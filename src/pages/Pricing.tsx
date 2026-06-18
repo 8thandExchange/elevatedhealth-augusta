@@ -17,6 +17,7 @@ import { useBooking } from "@/contexts/BookingContext";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
+import { openAssistantChat } from "@/lib/openAssistantChat";
 import {
   Check,
   Star,
@@ -1595,10 +1596,7 @@ const Pricing = () => {
               <Button 
                 size="lg" 
                 className="bg-accent hover:bg-accent/90 text-accent-foreground"
-                onClick={() => {
-                  const chatButton = document.querySelector('[aria-label="Open assistant"]');
-                  if (chatButton) (chatButton as HTMLButtonElement).click();
-                }}
+                onClick={() => openAssistantChat()}
               >
                 <span className="inline-flex items-center gap-2 bg-green-500/20 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full mr-2">
                   FREE

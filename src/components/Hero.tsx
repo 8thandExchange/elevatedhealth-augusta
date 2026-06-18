@@ -18,7 +18,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/85" aria-hidden />
 
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-36 pb-24 md:pt-40 md:pb-28">
-        <p className="section-label mb-8 md:mb-10 text-accent animate-fade-in-up">
+        <p className="section-label section-label-on-dark mb-8 md:mb-10 animate-fade-in-up">
           Evans&apos; physician-owned wellness clinic
         </p>
         <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.5rem] text-background leading-[1.06] mb-10 md:mb-12 animate-fade-in-up">
@@ -61,7 +61,7 @@ const Hero = () => {
 
           <button
             onClick={() => navigate("/how-it-works")}
-            className="text-background/70 font-jost text-sm underline-offset-4 hover:text-accent transition-colors"
+            className="text-background/70 font-jost text-sm underline-offset-4 hover:text-background transition-colors"
           >
             How the clinic works →
           </button>

@@ -14,6 +14,7 @@ import { Phone, MessageCircle, CreditCard } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { cn } from "@/lib/utils";
 import { filterVisibleVisitReasons } from "@/lib/serviceConfig";
+import { openAssistantChat } from "@/lib/openAssistantChat";
 
 interface ConsultationModalProps {
   isOpen: boolean;
@@ -127,12 +128,9 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
               type="button"
               onClick={() => {
                 onClose();
-                setTimeout(() => {
-                  const chatButton = document.querySelector('[aria-label="Open assistant"]');
-                  if (chatButton) (chatButton as HTMLButtonElement).click();
-                }, 300);
+                setTimeout(() => openAssistantChat(), 300);
               }}
-              className="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium transition-colors font-jost"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors font-jost"
             >
               <MessageCircle className="h-4 w-4" />
               <span>Chat with Virtual Care Team</span>

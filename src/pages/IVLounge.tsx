@@ -15,6 +15,7 @@ import { ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { IV_THERAPIES_CATALOG } from "@/lib/ivTherapiesCatalog";
 import { IV_ADDONS_CATALOG } from "@/lib/ivAddonsCatalog";
+import { openAssistantChat } from "@/lib/openAssistantChat";
 
 interface Therapy {
   id: string;
@@ -220,7 +221,7 @@ const IVLounge = () => {
                 size="lg"
                 variant="outline"
                 className="rounded-full"
-                onClick={() => document.dispatchEvent(new CustomEvent("open-assistant-chat"))}
+                onClick={() => openAssistantChat()}
               >
                 Not sure? Chat with us
               </Button>

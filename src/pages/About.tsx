@@ -6,27 +6,18 @@ import { useEffect } from "react";
 const TEAM = [
   {
     id: "akers",
-    initials: "TA",
     name: "Dr. Troy Akers, DO",
     role: "Owner / Medical Director",
-    bioPlaceholder:
-      "Placeholder bio — clinical biography and portrait to be added when final copy and photography are available.",
   },
   {
     id: "williams",
-    initials: "DW",
     name: "Dr. Dennis A. Williams, MD",
     role: "Supervising Physician",
-    bioPlaceholder:
-      "Placeholder bio — clinical biography and portrait to be added when final copy and photography are available.",
   },
   {
     id: "marshall",
-    initials: "CM",
     name: "Caroline Marshall, RN BSN",
     role: "Clinical Lead",
-    bioPlaceholder:
-      "Placeholder bio — clinical biography and portrait to be added when final copy and photography are available.",
   },
 ] as const;
 
@@ -96,7 +87,7 @@ const About = () => {
 
         <div className="section-divider max-w-3xl mx-auto" />
 
-        {/* Our Team — names and credentials retained on About per brand policy; swap placeholder divs for <img> when assets exist */}
+        {/* Our Team — photography and bios added when assets are delivered */}
         <section className="py-16 md:py-24 bg-muted/20">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <div className="text-center mb-12">
@@ -110,24 +101,11 @@ const About = () => {
             </div>
             <div className="grid md:grid-cols-3 gap-10 md:gap-8">
               {TEAM.map((member) => (
-                <article key={member.id} className="flex flex-col items-center text-center space-y-4">
-                  <div
-                    className="h-32 w-32 rounded-full bg-muted border border-border flex items-center justify-center font-playfair text-2xl text-muted-foreground select-none shadow-inner"
-                    aria-hidden
-                  >
-                    {member.initials}
-                  </div>
-                  {/* Photo: replace the initials div above with e.g.
-                      <img src="/team/troy-akers.jpg" alt={member.name} className="h-32 w-32 rounded-full object-cover border border-border shadow-sm" />
-                      when photography is delivered. */}
+                <article key={member.id} className="flex flex-col items-center text-center space-y-3">
                   <div>
                     <h3 className="font-playfair text-xl text-foreground">{member.name}</h3>
-                    <p className="text-xs font-jost tracking-[0.2em] uppercase text-accent mt-2">{member.role}</p>
+                    <p className="text-xs font-jost tracking-[0.2em] uppercase text-muted-foreground mt-2">{member.role}</p>
                   </div>
-                  {/* TODO: Bio for {member.name} — replace placeholder when approved copy is provided */}
-                  <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed">
-                    {member.bioPlaceholder}
-                  </p>
                 </article>
               ))}
             </div>

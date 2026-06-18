@@ -13,6 +13,7 @@ import SecurePatientRoute from "@/components/auth/SecurePatientRoute";
 import CookieConsent from "@/components/CookieConsent";
 import MarketingPixel from "@/components/MarketingPixel";
 import FloatingFinancingBanner from "@/components/FloatingFinancingBanner";
+import AssistantChatListener from "@/components/AssistantChatListener";
 import { ServiceWorkerUpdater } from "@/components/ServiceWorkerUpdater";
 import { CACHE_VERSION } from "@/lib/cacheVersion";
 import { Loader2 } from "lucide-react";
@@ -171,6 +172,7 @@ const App = () => {
           {!calendarHost && <MarketingPixel />}
           {!calendarHost && <FloatingFinancingBanner />}
           {!calendarHost && <GlobalBookingModal />}
+          {!calendarHost && <AssistantChatListener />}
         {calendarHost ? (
           <CalendarSubdomainRoutes />
         ) : (

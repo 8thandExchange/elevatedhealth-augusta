@@ -54,5 +54,5 @@ export function HeroMedia() {
     );
   }
 
-  return <div className="hero-mesh absolute inset-0" aria-hidden />;
+  return null;
 }

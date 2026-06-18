@@ -19,11 +19,13 @@ const Footer = () => {
         <div className="max-w-5xl mx-auto">
           {/* Centered Wordmark & Tagline */}
           <div className="text-center mb-16">
-            <h3 className="font-playfair italic text-3xl text-primary-foreground mb-2">
-              elevated
-            </h3>
-            <p className="font-jost text-xs font-medium uppercase tracking-[3px] text-primary-foreground/80">
-              Health · Augusta · Georgia
+            <img
+              src="/images/logo.png"
+              alt="Elevated Health"
+              className="h-14 md:h-16 w-auto mx-auto mb-4 brightness-0 invert opacity-95"
+            />
+            <p className="font-jost text-xs font-medium uppercase tracking-[3px] text-primary-foreground/70">
+              Restore · Repair · Renew · Evans, Georgia
             </p>
           </div>
 
@@ -31,7 +33,7 @@ const Footer = () => {
           <div className="grid md:grid-cols-3 gap-12 mb-16 text-center md:text-left">
             {/* Services */}
             <div>
-              <h4 className="font-jost font-medium text-sm uppercase tracking-[2.5px] text-accent mb-6">Services</h4>
+              <h4 className="font-jost font-medium text-sm uppercase tracking-[2.5px] text-primary-foreground/60 mb-6">Services</h4>
               <ul className="space-y-3 font-jost text-sm text-primary-foreground/80 font-light">
                 {[
                   { label: "Women's Hormones", path: "/hormones-women" },
@@ -42,7 +44,7 @@ const Footer = () => {
                   { label: "Membership", path: "/membership" },
                 ].map(item => (
                   <li key={item.label}>
-                    <button onClick={() => navigate(item.path)} className="hover:text-accent transition-colors">
+                    <button onClick={() => navigate(item.path)} className="hover:text-primary-foreground transition-colors">
                       {item.label}
                     </button>
                   </li>
@@ -52,20 +54,20 @@ const Footer = () => {
 
             {/* Contact */}
             <div>
-              <h4 className="font-jost font-medium text-sm uppercase tracking-[2.5px] text-accent mb-6">Contact</h4>
+              <h4 className="font-jost font-medium text-sm uppercase tracking-[2.5px] text-primary-foreground/60 mb-6">Contact</h4>
               <div className="space-y-4 font-jost text-sm text-primary-foreground/80 font-light">
                 <div className="flex gap-3 justify-center md:justify-start">
-                  <MapPin className="h-4 w-4 flex-shrink-0 mt-1 text-accent" />
+                  <MapPin className="h-4 w-4 flex-shrink-0 mt-1 text-primary-foreground/60" />
                   <div>
                     <p>{SITE_CONFIG.address.line1}</p>
                     <p>{SITE_CONFIG.address.cityStateZip}</p>
                   </div>
                 </div>
                 <div className="flex gap-3 justify-center md:justify-start">
-                  <Phone className="h-4 w-4 flex-shrink-0 text-accent" />
+                  <Phone className="h-4 w-4 flex-shrink-0 text-primary-foreground/60" />
                   <a 
                     href={`tel:${SITE_CONFIG.phoneRaw}`} 
-                    className="hover:text-accent transition-colors"
+                    className="hover:text-primary-foreground transition-colors"
                     onClick={() => trackCTAClick('footer_call', `tel:${SITE_CONFIG.phoneRaw}`)}
                   >
                     {SITE_CONFIG.phone}
@@ -77,7 +79,7 @@ const Footer = () => {
 
             {/* Links */}
             <div>
-              <h4 className="font-jost font-medium text-sm uppercase tracking-[2.5px] text-accent mb-6">Quick Links</h4>
+              <h4 className="font-jost font-medium text-sm uppercase tracking-[2.5px] text-primary-foreground/60 mb-6">Quick Links</h4>
               <ul className="space-y-3 font-jost text-sm text-primary-foreground/80 font-light">
                 {[
                   { label: "About", path: "/about" },
@@ -88,7 +90,7 @@ const Footer = () => {
                   { label: "Accessibility", path: "/accessibility" },
                 ].map(item => (
                   <li key={item.label}>
-                    <button onClick={() => navigate(item.path)} className="hover:text-accent transition-colors">
+                    <button onClick={() => navigate(item.path)} className="hover:text-primary-foreground transition-colors">
                       {item.label}
                     </button>
                   </li>
@@ -107,17 +109,17 @@ const Footer = () => {
               </p>
               <button
                 onClick={() => navigate("/patient/login?redirect=consult")}
-                className="text-primary-foreground/70 hover:text-accent transition-colors"
+                className="text-primary-foreground/70 hover:text-primary-foreground transition-colors"
               >
                 Returning Patient? → Patient Portal
               </button>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-primary-foreground/40 font-jost">
-              <button onClick={handleClearCache} className="hover:text-accent transition-colors flex items-center gap-1">
+              <button onClick={handleClearCache} className="hover:text-primary-foreground transition-colors flex items-center gap-1">
                 <RefreshCw className="h-3 w-3" />
                 Clear Cache
               </button>
-              <button onClick={() => navigate("/admin/login")} className="hover:text-accent transition-colors">
+              <button onClick={() => navigate("/admin/login")} className="hover:text-primary-foreground transition-colors">
                 Staff Sign-In
               </button>
             </div>

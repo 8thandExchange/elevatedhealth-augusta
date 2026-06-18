@@ -65,15 +65,17 @@ const Navbar = () => {
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${navBg}`}>
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            {/* Wordmark */}
+            {/* Logo */}
             <button 
               onClick={() => { navigate("/"); scrollToSection("hero"); }}
-              className="flex flex-col items-start"
+              className="flex items-center"
+              aria-label="Elevated Health Augusta home"
             >
-              <span className="font-playfair italic text-2xl text-foreground tracking-tight leading-none">elevated</span>
-              <span className="font-jost text-[9px] font-medium uppercase tracking-[3px] text-foreground hidden sm:block mt-0.5">
-                Health · Augusta
-              </span>
+              <img
+                src="/images/logo.png"
+                alt="Elevated Health — Restore, Repair, Renew"
+                className="h-10 md:h-11 w-auto object-contain"
+              />
             </button>
 
             {/* Desktop Navigation */}
@@ -135,7 +137,7 @@ const Navbar = () => {
                 </button>
               )}
               <Button 
-                className="font-jost font-medium text-sm tracking-wide px-6 py-2 bg-primary text-accent rounded-sm hover:bg-primary-light"
+                className="font-jost font-medium text-sm tracking-wide px-6 py-2 rounded-sm"
                 onClick={openBooking}
               >
                 Book Now
@@ -170,7 +172,7 @@ const Navbar = () => {
 
               <div className="mt-auto pt-8 space-y-3 border-t border-border">
                 <Button 
-                  className="w-full font-jost font-medium text-sm tracking-wide py-6 bg-primary text-accent rounded-sm hover:bg-primary-light"
+                  className="w-full font-jost font-medium text-sm tracking-wide py-6 rounded-sm"
                   onClick={() => { openBooking(); setIsMobileMenuOpen(false); }}
                 >
                   Book Now
