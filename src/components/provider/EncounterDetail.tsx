@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import type { EncounterAuditLogEntry, PatientEncounter } from "@/data/encounters/types";
@@ -72,8 +72,8 @@ export function EncounterDetail({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-          <DialogHeader>
+        <DialogContent layout="pinned" className="max-h-[90vh] max-w-4xl">
+          <DialogHeader className="border-b px-6 py-4 pr-12 pt-10 text-left">
             <DialogTitle className="font-playfair text-xl">
               {ENCOUNTER_TYPE_LABELS[encounter.encounter_type as keyof typeof ENCOUNTER_TYPE_LABELS] ?? encounter.encounter_type}{" "}
               <Badge variant="outline" className="ml-2 align-middle">
@@ -84,10 +84,10 @@ export function EncounterDetail({
               {format(new Date(encounter.encounter_date), "MMM d, yyyy h:mm a")}
             </p>
           </DialogHeader>
-          <ScrollArea className="flex-1 max-h-[70vh] pr-3">
+          <DialogBody className="py-2">
             <EncounterForm patientId={patientId} encounterId={encounter.id} mode="view" />
-          </ScrollArea>
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-border/60">
+          </DialogBody>
+          <div className="flex shrink-0 flex-wrap gap-2 border-t border-border/60 px-6 py-4">
             {encounter.status === "signed" && (
               <Button type="button" onClick={() => void handleAmend()}>
                 Create Amendment

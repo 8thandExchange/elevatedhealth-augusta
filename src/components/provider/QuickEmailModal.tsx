@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -394,16 +395,17 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
 
   return (
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o) resetForm(); }}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent layout="pinned" className="max-h-[85vh] max-w-2xl">
+        <DialogHeader className="border-b px-6 py-4 pr-12 pt-10 text-left">
           <DialogTitle className="flex items-center gap-2">
             {getDeliveryIcon()}
             {step === "select" ? "Send Notification" : "Preview & Send"}
           </DialogTitle>
         </DialogHeader>
 
+        <DialogBody>
         {step === "select" ? (
-          <div className="space-y-4 overflow-y-auto">
+          <div className="space-y-4">
             {/* Patient Search */}
             <div className="space-y-2">
               <Label>Search Patient</Label>
@@ -547,7 +549,7 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
             )}
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto space-y-4">
+          <div className="space-y-4">
             {/* Back Button */}
             <Button variant="ghost" size="sm" onClick={handleBackToSelect}>
               <ChevronLeft className="w-4 h-4 mr-1" />
@@ -707,6 +709,7 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
             )}
           </div>
         )}
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );

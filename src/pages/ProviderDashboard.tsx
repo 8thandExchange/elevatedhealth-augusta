@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -2188,8 +2189,8 @@ const ProviderDashboard = () => {
       {/* Patient Profile Modal */}
       <Dialog open={isPanelOpen && !!selectedPatient} onOpenChange={setIsPanelOpen}>
         {selectedPatient && (
-          <DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl">
-            <DialogHeader className="static mx-0 shrink-0 border-b border-border px-6 py-4 pr-12 text-left">
+          <DialogContent layout="pinned" className="max-h-[90vh] max-w-4xl sm:max-w-4xl">
+            <DialogHeader className="border-b border-border px-6 py-4 pr-12 pt-10 text-left">
               <div>
                 <p className="text-xs text-muted-foreground">Patient Profile</p>
                 <DialogTitle className="font-playfair text-2xl text-foreground">
@@ -2198,7 +2199,7 @@ const ProviderDashboard = () => {
               </div>
             </DialogHeader>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 space-y-6">
+            <DialogBody className="space-y-6">
               {/* Contact Info Card */}
               <Card className="border-border/50">
                 <CardHeader className="pb-3">
@@ -3048,9 +3049,9 @@ const ProviderDashboard = () => {
                   </CardContent>
                 </Card>
               )}
-            </div>
+            </DialogBody>
 
-          <DialogFooter className="!static mx-0 mb-0 mt-0 shrink-0 border-t border-border bg-background px-6 py-4">
+          <DialogFooter className="border-border px-6 py-4">
             <Button
               type="button"
               variant="default"

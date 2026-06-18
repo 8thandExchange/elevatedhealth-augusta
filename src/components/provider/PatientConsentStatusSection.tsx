@@ -25,6 +25,7 @@ import {
 } from "@/lib/consents/patient-consent-status";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -339,11 +340,11 @@ export function PatientConsentStatusSection({
       </Card>
 
       <Dialog open={!!previewDoc} onOpenChange={(o) => !o && setPreviewDoc(null)}>
-        <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl">
-          <DialogHeader className="static mx-0 shrink-0 border-b border-border px-6 py-4 pr-12 text-left">
+        <DialogContent layout="pinned" className="max-h-[85vh] max-w-3xl sm:max-w-3xl">
+          <DialogHeader className="border-b border-border px-6 py-4 pr-12 pt-10 text-left">
             <DialogTitle className="font-playfair">{previewDoc?.title}</DialogTitle>
           </DialogHeader>
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+          <DialogBody>
             {previewDoc && (
               <ConsentDocumentDisplay
                 bodyMarkdown={previewDoc.body}
@@ -351,7 +352,7 @@ export function PatientConsentStatusSection({
                 className="max-h-none border-0 px-0 py-0"
               />
             )}
-          </div>
+          </DialogBody>
           <div className="shrink-0 border-t border-border bg-background px-6 py-4">
             <Button type="button" variant="default" className="w-full sm:w-auto" onClick={() => setPreviewDoc(null)}>
               Close

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -58,19 +58,20 @@ const FCCFormularyLookup = ({ isOpen, onClose, initialQuery = "", onSelect }: FC
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col bg-card border border-gold/30 rounded-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-cormorant">
-            <Pill className="w-5 h-5 text-gold" />
+      <DialogContent layout="pinned" className="max-h-[85vh] max-w-3xl rounded-2xl border border-gold/30 bg-card">
+        <DialogHeader className="border-b border-border/50 px-6 py-4 pr-12 pt-10 text-left">
+          <DialogTitle className="flex items-center gap-2 font-cormorant text-xl">
+            <Pill className="h-5 w-5 text-gold" />
             FCC FormuConnect 2026 Formulary
           </DialogTitle>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="mt-1 text-xs text-muted-foreground">
             Search by SKU, drug name, or strength. Prices are wholesale FCC cost (not patient-facing).
           </p>
         </DialogHeader>
 
+        <DialogBody className="space-y-3">
         {/* Search */}
-        <div className="relative mt-2">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             autoFocus
@@ -99,7 +100,7 @@ const FCCFormularyLookup = ({ isOpen, onClose, initialQuery = "", onSelect }: FC
         </div>
 
         {/* Results */}
-        <div className="flex-1 overflow-y-auto mt-3 space-y-1.5 pr-1">
+        <div className="space-y-1.5 pr-1">
           {filtered.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
               No matches. Try a partial drug name or SKU number.
@@ -143,9 +144,10 @@ const FCCFormularyLookup = ({ isOpen, onClose, initialQuery = "", onSelect }: FC
             ))
           )}
         </div>
+        </DialogBody>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-border/50 mt-2">
+        <div className="mt-2 flex shrink-0 items-center justify-between border-t border-border/50 px-6 py-4">
           <p className="text-xs text-muted-foreground">
             Showing {filtered.length} of {FCC_FORMULARY.length} items
           </p>
