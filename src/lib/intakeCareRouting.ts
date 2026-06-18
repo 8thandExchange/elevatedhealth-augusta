@@ -9,6 +9,7 @@ import {
   RECOVERY_PEPTIDE_PATIENT_PORTAL_MESSAGE,
   shouldRouteToRecoveryPeptideReview,
 } from "./recoveryPeptideCareLane";
+import { filterVisibleVisitReasons } from "./serviceConfig";
 
 export type IntakeInterest =
   | "iv"
@@ -132,3 +133,7 @@ export const INTAKE_INTEREST_OPTIONS: { id: IntakeInterest; label: string }[] = 
   { id: "sexual_wellness", label: "Sexual wellness" },
   { id: "general_optimization", label: "General health optimization" },
 ];
+
+export function getIntakeInterestOptions() {
+  return filterVisibleVisitReasons(INTAKE_INTEREST_OPTIONS);
+}

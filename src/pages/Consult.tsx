@@ -11,8 +11,9 @@ import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { filterVisibleVisitReasons } from "@/lib/serviceConfig";
 
-const VISIT_REASONS: { id: string; label: string }[] = [
+const ALL_VISIT_REASONS: { id: string; label: string }[] = [
   { id: "hormone", label: "Hormone optimization (HRT/TRT)" },
   { id: "weight_loss", label: "Weight loss (GLP-1 therapy)" },
   { id: "peptide", label: "Peptide therapy" },
@@ -24,6 +25,7 @@ const VISIT_REASONS: { id: string; label: string }[] = [
 ];
 
 const Consult = () => {
+  const visitReasons = filterVisibleVisitReasons(ALL_VISIT_REASONS);
   const [selectedReasons, setSelectedReasons] = useState<Set<string>>(new Set());
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
@@ -109,7 +111,7 @@ const Consult = () => {
                 "grid-cols-1 sm:grid-cols-2",
               )}
             >
-              {VISIT_REASONS.map(({ id, label }) => (
+              {visitReasons.map(({ id, label }) => (
                 <div
                   key={id}
                   className="flex items-start gap-3 rounded-lg border border-border/50 bg-muted/15 px-3 py-3"

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canStaffQuote, catalogBySlug, publicCatalogItems } from "./clinicalOptimizationCatalog";
+import { canStaffQuote, catalogBySlug, getPublicHomepageServices, publicCatalogItems } from "./clinicalOptimizationCatalog";
 import { fullPricingReadinessAudit, readinessSummary } from "./pricingReadiness";
 import { routeIntakeCare } from "./intakeCareRouting";
 
@@ -13,6 +13,10 @@ describe("clinicalOptimizationCatalog", () => {
     const r = catalogBySlug("retatrutide-provider-directed");
     expect(r?.public_status).toBe("provider_only");
     expect(r?.elevated_program_key).toBe("metabolicRecomposition");
+  });
+
+  it("omits launch-hidden sexual wellness from homepage cards", () => {
+    expect(getPublicHomepageServices().some((s) => s.title === "Sexual Wellness")).toBe(false);
   });
 
   it("blocks staff quote when cost missing for pathway-only row", () => {

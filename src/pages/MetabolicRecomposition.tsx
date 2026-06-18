@@ -214,9 +214,12 @@ const MetabolicRecomposition = () => {
         {/* Tier list */}
         <section className="py-16 container max-w-4xl">
           <p className="section-label mb-2">Mechanism-ranked compounds</p>
-          <h2 className="font-playfair text-3xl mb-8">
+          <h2 className="font-playfair text-3xl mb-3">
             What goes into a <span className="italic">serious</span> fat-loss stack
           </h2>
+          <p className="text-sm text-muted-foreground mb-8">
+            Specific dosing schedules are determined at your visit and are not published online.
+          </p>
           <div className="space-y-3">
             {METABOLIC_STACK_COMPOUNDS.map((c) => (
               <div
@@ -229,7 +232,6 @@ const MetabolicRecomposition = () => {
                 <div className="flex-1 min-w-0">
                   <p className="font-medium">{c.name}</p>
                   <p className="text-sm text-muted-foreground">{c.mechanism}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{c.dosingSummary}</p>
                 </div>
               </div>
             ))}

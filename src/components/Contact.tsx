@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useBooking } from "@/contexts/BookingContext";
+import { consultGatedServicesCopy } from "@/lib/serviceConfig";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -44,6 +45,7 @@ const formatPhoneNumber = (value: string): string => {
 const Contact = () => {
   const { openBooking } = useBooking();
   const navigate = useNavigate();
+  const consultServicesLine = consultGatedServicesCopy();
 
   const goToIV = () => {
     trackCTAClick('cta_iv_lounge', 'contact_section');
@@ -212,7 +214,7 @@ const Contact = () => {
                           Book a $79 Wellness Assessment
                         </Button>
                         <p className="text-xs font-jost text-muted-foreground leading-snug">
-                          For hormone therapy, peptides, weight loss, or sexual wellness.
+                          For {consultServicesLine}.
                         </p>
                       </div>
                       <div className="space-y-2">
@@ -363,7 +365,7 @@ const Contact = () => {
                           Book a $79 Wellness Assessment
                         </Button>
                         <p className="text-xs font-jost text-muted-foreground leading-snug">
-                          For hormone therapy, peptides, weight loss, or sexual wellness.
+                          For {consultServicesLine}.
                         </p>
                       </div>
                       <div className="space-y-2">
@@ -442,7 +444,7 @@ const Contact = () => {
               {/* Google Map Embed */}
               <div className="rounded-2xl overflow-hidden border border-border/50 shadow-sm">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3321.0!2d-82.1334!3d33.5234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88f9d1f1f1f1f1f1%3A0x1234567890abcdef!2s7013%20Evans%20Town%20Center%20Blvd%2C%20Evans%2C%20GA%2030809!5e0!3m2!1sen!2sus!4v1234567890"
+                  src="https://maps.google.com/maps?q=7013+Evans+Town+Center+Blvd,+Suite+203,+Evans,+GA+30809&t=&z=15&ie=UTF8&iwloc=&output=embed"
                   width="100%"
                   height="280"
                   style={{ border: 0 }}
@@ -465,7 +467,7 @@ const Contact = () => {
                     Book a $79 Wellness Assessment
                   </Button>
                   <p className="text-xs font-jost text-muted-foreground leading-snug text-center">
-                    Hormones, peptides, weight loss, sexual wellness.
+                    {consultServicesLine.charAt(0).toUpperCase() + consultServicesLine.slice(1)}.
                   </p>
                 </div>
                 <div className="space-y-2">

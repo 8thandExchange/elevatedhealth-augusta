@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { MarketingImage } from "@/components/marketing/MarketingImage";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
-import { PUBLIC_HOMEPAGE_SERVICES } from "@/lib/clinicalOptimizationCatalog";
+import { getPublicHomepageServices } from "@/lib/clinicalOptimizationCatalog";
 
 const imageMap = {
   serviceHormones: MARKETING_IMAGES.serviceHormones,
@@ -33,7 +33,7 @@ const WhatWeDoSection = () => {
         </p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border max-w-6xl mx-auto border border-border">
-          {PUBLIC_HOMEPAGE_SERVICES.map((s, i) => {
+          {getPublicHomepageServices().map((s, i) => {
             const image = imageMap[s.imageKey];
             return (
               <button

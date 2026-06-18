@@ -39,3 +39,25 @@ export const getActiveServices = (): ServiceKey[] =>
 // Get all sunsetted service keys
 export const getSunsettedServices = (): ServiceKey[] =>
   (Object.keys(ACTIVE_SERVICES) as ServiceKey[]).filter(key => !ACTIVE_SERVICES[key]);
+
+/** Maps booking/intake reason IDs to ACTIVE_SERVICES flags (null = always visible). */
+const VISIT_REASON_SERVICE: Partial<Record<string, ServiceKey>> = {
+  sexual_wellness: "sexualWellness",
+  hair_restoration: "hairRestoration",
+};
+
+export function isVisitReasonVisible(reasonId: string): boolean {
+  const service = VISIT_REASON_SERVICE[reasonId];
+  return service ? isServiceActive(service) : true;
+}
+
+export function filterVisibleVisitReasons<T extends { id: string }>(reasons: T[]): T[] {
+  return reasons.filter((r) => isVisitReasonVisible(r.id));
+}
+
+/** Public marketing copy for consult-gated services (respects launch flags). */
+export function consultGatedServicesCopy(): string {
+  const parts = ["hormone therapy", "peptides", "weight loss"];
+  if (isServiceActive("sexualWellness")) parts.push("sexual wellness");
+  return parts.join(", ");
+}

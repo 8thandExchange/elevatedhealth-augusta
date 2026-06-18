@@ -5,6 +5,7 @@
  */
 import { CATALOG, memberPriceCents, nonMemberPriceCents } from "./pricing";
 import { LAB_PANEL_DISPLAY_NAMES, LAB_PANEL_SLUGS } from "./labPanelRecommendations";
+import { isServiceActive } from "./serviceConfig";
 import {
   CORE_SERVICES,
   ELEVATED_PROGRAMS,
@@ -137,13 +138,6 @@ export const PUBLIC_HOMEPAGE_SERVICES = [
     imageKey: "serviceHormones" as const,
   },
   {
-    title: "Sexual Wellness",
-    tagline: "Discreet, physician-led",
-    body: "Libido and intimacy support when clinically appropriate — assessment and labs first.",
-    route: "/peptides#sexual-wellness",
-    imageKey: "servicePeptides" as const,
-  },
-  {
     title: "Lab-Guided Optimization",
     tagline: "Data before decisions",
     body: "In-office LabCorp draws and expanded panels to confirm the right path — or redirect safely.",
@@ -151,6 +145,13 @@ export const PUBLIC_HOMEPAGE_SERVICES = [
     imageKey: "serviceHormones" as const,
   },
 ] as const;
+
+/** Homepage cards — omits launch-hidden services (e.g. sexual wellness storefront). */
+export function getPublicHomepageServices() {
+  return PUBLIC_HOMEPAGE_SERVICES.filter(
+    (s) => s.title !== "Sexual Wellness" || isServiceActive("sexualWellness"),
+  );
+}
 
 export const PUBLIC_PEPTIDE_CATEGORIES = [
   {

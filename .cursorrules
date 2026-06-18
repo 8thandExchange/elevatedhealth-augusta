@@ -71,19 +71,24 @@ ONE-TIME / À LA CARTE
   Initial Consultation: $79 (credited toward protocol if patient
     enrolls in a program)
 
-LAB PANELS (Non-Member / Member)
-  Foundation Wellness: $295 / $245
-  Hormone — Female: $395 / $345
-  Hormone — Male: $395 / $345
-  Weight Optimization: $345 / $295
-  Sexual Wellness: $245 / $195
+LAB PANELS (clinical slug → Stripe checkout tier)
+  Patient-facing checkout uses TWO Stripe SKUs only:
+  Comprehensive Wellness Panel: $199 (non-member)
+  Expanded Panel: $299 (non-member)
+  Clinical slugs map via src/lib/labPanelCheckout.ts:
+  foundation-wellness, hormone-male, hormone-female, sexual-wellness
+    → Comprehensive ($199)
+  weight-optimization → Expanded ($299)
+  Member lab pricing: 20% off à la carte per pricing.ts labMemberCents().
+  Authoritative detail: docs/pricing/pricing_source_of_truth.md
 
-MEMBERSHIP
-  Elevated Membership: $199/month, single tier, recurring via
-    Stripe subscription. NO multi-tier system. References to
-    "Care Membership," "Founding Member," "Wellness Pass,"
-    "Longevity Protocol," "Executive Concierge," "Vitality" or
-    "Concierge" tiers are LEGACY and should be cleaned up.
+ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
+  ELEVATED TRT: $249/mo | ELEVATED HRT: $229/mo
+  ELEVATED GLP-1: $349/mo | ELEVATED METABOLIC RECOMPOSITION: $1,199/mo
+  ELEVATED WELLNESS (non-Rx): $199/mo
+  Legacy single-tier "Elevated Membership $199" references and
+  "Care Membership," "Founding Member," "Wellness Pass," etc. are
+  LEGACY — use program-specific ELEVATED tiers from stripeConfig.ts.
 
 PEPTIDE STACKS (Member / Non-Member, monthly)
   Restore (PT-141 weekly): $129 / $179

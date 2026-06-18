@@ -18,6 +18,7 @@ export interface StackCompound {
   supplierCostCents?: number;
   /** Catalog key in pricing.ts CATALOG (when sold à la carte). */
   catalogKey?: string;
+  /** Staff/internal titration reference — not rendered on public storefronts. */
   dosingSummary: string;
 }
 

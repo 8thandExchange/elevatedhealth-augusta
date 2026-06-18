@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { Loader2, CheckCircle2, AlertCircle, Shield, Heart, User, MapPin, Pill, Target } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import {
-  INTAKE_INTEREST_OPTIONS,
+  getIntakeInterestOptions,
   routeIntakeCare,
   type IntakeInterest,
 } from "@/lib/intakeCareRouting";
@@ -588,7 +588,7 @@ export default function PublicIntake() {
                 <div className="space-y-2">
                   <Label>What are you most interested in? (select all that apply)</Label>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    {INTAKE_INTEREST_OPTIONS.map((opt) => (
+                    {getIntakeInterestOptions().map((opt) => (
                       <div key={opt.id} className="flex items-start space-x-2">
                         <Checkbox
                           id={`interest-${opt.id}`}

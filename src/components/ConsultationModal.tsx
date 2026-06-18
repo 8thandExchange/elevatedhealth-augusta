@@ -14,13 +14,14 @@ import { useState } from "react";
 import { Loader2, Phone, MessageCircle, CreditCard } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { cn } from "@/lib/utils";
+import { filterVisibleVisitReasons } from "@/lib/serviceConfig";
 
 interface ConsultationModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const VISIT_REASONS: { id: string; label: string }[] = [
+const ALL_VISIT_REASONS: { id: string; label: string }[] = [
   { id: "hormone", label: "Hormone optimization (HRT/TRT)" },
   { id: "weight_loss", label: "Weight loss (GLP-1 therapy)" },
   { id: "peptide", label: "Peptide therapy" },
@@ -32,6 +33,7 @@ const VISIT_REASONS: { id: string; label: string }[] = [
 ];
 
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
+  const visitReasons = filterVisibleVisitReasons(ALL_VISIT_REASONS);
   const [selectedReasons, setSelectedReasons] = useState<Set<string>>(new Set());
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
@@ -97,7 +99,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
               "grid-cols-1 sm:grid-cols-2",
             )}
           >
-            {VISIT_REASONS.map(({ id, label }) => (
+            {visitReasons.map(({ id, label }) => (
               <div
                 key={id}
                 className="flex items-start gap-3 rounded-lg border border-border/50 bg-muted/20 px-3 py-2.5"

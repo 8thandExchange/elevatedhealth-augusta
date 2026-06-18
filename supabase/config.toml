@@ -262,6 +262,10 @@ verify_jwt = true
 [functions.run-cds-assessment]
 verify_jwt = true
 
+# submit-public-intake — anon JWT + intake_token body credential (see function header).
+[functions.submit-public-intake]
+verify_jwt = true
+
 # Twilio webhooks — auth via X-Twilio-Signature inside function.
 [functions.twilio-inbound-sms]
 verify_jwt = false
