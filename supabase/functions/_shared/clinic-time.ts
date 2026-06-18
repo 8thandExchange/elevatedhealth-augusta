@@ -68,3 +68,29 @@ export function clinicDateKeysFrom(now: Date, count: number): string[] {
   }
   return keys;
 }
+
+export interface MinuteWindow {
+  startMin: number;
+  endMin: number;
+  step: number;
+}
+
+/** Merge overlapping or touching availability windows before emitting bookable slots. */
+export function mergeMinuteWindows(windows: MinuteWindow[]): MinuteWindow[] {
+  if (windows.length === 0) return [];
+  const sorted = [...windows].sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin);
+  const out: MinuteWindow[] = [];
+  let cur = { ...sorted[0] };
+  for (let i = 1; i < sorted.length; i++) {
+    const w = sorted[i];
+    if (w.startMin <= cur.endMin) {
+      cur.endMin = Math.max(cur.endMin, w.endMin);
+      cur.step = Math.min(cur.step, w.step);
+    } else {
+      out.push(cur);
+      cur = { ...w };
+    }
+  }
+  out.push(cur);
+  return out;
+}

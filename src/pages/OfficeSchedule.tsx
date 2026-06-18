@@ -8,6 +8,7 @@ import {
   addClinicDays,
   clinicLocalToUtc,
   clinicMinutesFromMidnight,
+  formatClinicDate,
   formatClinicDateKey,
   formatClinicTime,
 } from "@/lib/clinicTime";
@@ -489,8 +490,8 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
             <div className="space-y-3 text-sm">
               <p>
                 Move <strong>{rescheduleConfirm.appt.patient_name ?? "patient"}</strong> from{" "}
-                <strong>{format(new Date(rescheduleConfirm.appt.scheduled_at), "EEE MMM d, h:mm a")}</strong>{" "}
-                to <strong>{format(rescheduleConfirm.newScheduledAt, "EEE MMM d, h:mm a")}</strong>
+                <strong>{formatClinicDate(rescheduleConfirm.appt.scheduled_at)} {formatClinicTime(rescheduleConfirm.appt.scheduled_at)}</strong>{" "}
+                to <strong>{formatClinicDate(rescheduleConfirm.newScheduledAt)} {formatClinicTime(rescheduleConfirm.newScheduledAt)}</strong>
                 {rescheduleConfirm.appt.provider_id !== rescheduleConfirm.newProviderId && (
                   <> with <strong>{getProviderName(rescheduleConfirm.newProviderId)}</strong></>
                 )}?
@@ -500,7 +501,7 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
                   <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                   <div>
                     Overlaps with <strong>{rescheduleConfirm.conflict.patient_name}</strong> at{" "}
-                    {format(new Date(rescheduleConfirm.conflict.scheduled_at), "h:mm a")}.
+                    {formatClinicTime(rescheduleConfirm.conflict.scheduled_at)}.
                   </div>
                 </div>
               )}
@@ -626,9 +627,7 @@ function DayView(props: {
                 const yInCol = e.clientY - rect.top - drag.offsetY;
                 const minutesIn = snap30(Math.max(0, (yInCol / ROW_PX) * SLOT_MINUTES));
                 const totalMin = HOUR_START * 60 + minutesIn;
-                const newDate = new Date(date);
-                newDate.setHours(0, 0, 0, 0);
-                newDate.setMinutes(totalMin);
+                const newDate = clinicLocalToUtc(formatClinicDateKey(date), totalMin);
                 const appt = appts.find((a) => a.id === drag.apptId);
                 if (appt) onApptDrop(appt, p.user_id, newDate);
                 setDrag(null);
@@ -716,9 +715,9 @@ function WeekView(props: {
 
   const apptsByDay = useMemo(() => {
     const m = new Map<string, typeof appts>();
-    days.forEach((d) => m.set(format(d, "yyyy-MM-dd"), []));
+    days.forEach((d) => m.set(formatClinicDateKey(d), []));
     appts.forEach((a) => {
-      const k = format(new Date(a.scheduled_at), "yyyy-MM-dd");
+      const k = formatClinicDateKey(a.scheduled_at);
       if (m.has(k)) m.get(k)!.push(a);
     });
     return m;
@@ -734,7 +733,7 @@ function WeekView(props: {
           </div>
         ))}
         {days.map((d) => {
-          const list = (apptsByDay.get(format(d, "yyyy-MM-dd")) || []).sort(
+          const list = (apptsByDay.get(formatClinicDateKey(d)) || []).sort(
             (a, b) => +new Date(a.scheduled_at) - +new Date(b.scheduled_at)
           );
           return (
@@ -747,9 +746,8 @@ function WeekView(props: {
                 e.preventDefault();
                 const appt = appts.find((a) => a.id === drag);
                 if (!appt) return;
-                const old = new Date(appt.scheduled_at);
-                const newDate = new Date(d);
-                newDate.setHours(old.getHours(), old.getMinutes(), 0, 0);
+                const oldMin = clinicMinutesFromMidnight(appt.scheduled_at);
+                const newDate = clinicLocalToUtc(formatClinicDateKey(d), oldMin);
                 onApptDrop(appt, newDate);
                 setDrag(null);
               }}
@@ -768,7 +766,7 @@ function WeekView(props: {
                     title={`${a.patient_name} — ${SERVICE_FULL[a.service_line]}`}
                   >
                     <div className="font-medium truncate">
-                      {format(new Date(a.scheduled_at), "h:mm a")} {a.patient_name?.split(" ").slice(-1)[0] ?? "?"}
+                      {formatClinicTime(a.scheduled_at)} {a.patient_name?.split(" ").slice(-1)[0] ?? "?"}
                     </div>
                     <div className="text-[10px] opacity-80 truncate">{SERVICE_LABEL[a.service_line]}</div>
                   </div>
@@ -821,7 +819,7 @@ function PrintView({ date, providers, appts }: { date: Date; providers: Provider
                 <tbody>
                   {list.map((a) => (
                     <tr key={a.id} className="border-b border-gray-200">
-                      <td className="py-1.5 font-mono">{format(new Date(a.scheduled_at), "h:mm a")}</td>
+                      <td className="py-1.5 font-mono">{formatClinicTime(a.scheduled_at)}</td>
                       <td>{a.patient_name ?? "Unknown"}</td>
                       <td>{SERVICE_FULL[a.service_line] ?? a.service_line}</td>
                       <td>{a.duration_minutes}</td>
@@ -980,7 +978,7 @@ function NewAppointmentModal(props: {
     const final = clinicLocalToUtc(dayKey, hh * 60 + mm);
     const conflict = findConflict(providerId, final, duration, "");
     if (conflict) {
-      const ok = window.confirm(`Conflict with ${conflict.patient_name} at ${format(new Date(conflict.scheduled_at), "h:mm a")}. Override?`);
+      const ok = window.confirm(`Conflict with ${conflict.patient_name} at ${formatClinicTime(conflict.scheduled_at)}. Override?`);
       if (!ok) { setSaving(false); return; }
     }
     const { error } = await supabase.from("appointments").insert({

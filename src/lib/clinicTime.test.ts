@@ -8,6 +8,7 @@ import {
   formatClinicDateKey,
   formatClinicDateTime,
   isConsentActive,
+  mergeMinuteWindows,
 } from "./clinicTime";
 
 describe("clinicTime", () => {
@@ -44,5 +45,17 @@ describe("clinicTime", () => {
 
   it("addClinicDays steps calendar dates in Eastern", () => {
     expect(addClinicDays("2026-06-25", 1)).toBe("2026-06-26");
+  });
+
+  it("mergeMinuteWindows joins touching fragments for slot generation", () => {
+    const merged = mergeMinuteWindows([
+      { startMin: 540, endMin: 570, step: 30 },
+      { startMin: 570, endMin: 600, step: 30 },
+      { startMin: 630, endMin: 660, step: 30 },
+    ]);
+    expect(merged).toEqual([
+      { startMin: 540, endMin: 600, step: 30 },
+      { startMin: 630, endMin: 660, step: 30 },
+    ]);
   });
 });

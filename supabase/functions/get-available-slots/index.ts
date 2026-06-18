@@ -31,6 +31,7 @@ import {
   clinicDayOfWeek,
   clinicLocalToUtc,
   clinicMinutesFromMidnight,
+  mergeMinuteWindows,
 } from "../_shared/clinic-time.ts";
 
 const corsHeaders = {
@@ -376,7 +377,7 @@ serve(async (req) => {
 
       for (const [providerIdForDay, windows] of windowsByProvider.entries()) {
         const removals = removalsByProvider.get(providerIdForDay) || [];
-        for (const w of windows) {
+        for (const w of mergeMinuteWindows(windows)) {
           for (let m = w.startMin; m + duration_minutes <= w.endMin; m += w.step) {
             const slotStart = clinicLocalToUtc(dayKeyStr, m);
             const slotEnd = new Date(slotStart.getTime() + duration_minutes * 60_000);

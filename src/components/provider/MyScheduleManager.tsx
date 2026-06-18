@@ -15,11 +15,14 @@ import {
 } from "lucide-react";
 import {
   addClinicDays,
+  clinicDayOfWeek,
   clinicLocalToUtc,
   clinicMinutesFromMidnight,
   formatClinicDateKey,
+  formatClinicDatetimeLocal,
   formatClinicTime,
   isSameClinicDay,
+  parseClinicDatetimeLocal,
 } from "@/lib/clinicTime";
 import {
   addDays, startOfWeek, endOfWeek, format, isSameDay, isBefore, addWeeks, subWeeks,
@@ -172,8 +175,13 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
     const dow = colToJsDow(col);
     // Merge: if there's overlap, expand existing
     const overlapping = schedules.find(
-      (s) => s.day_of_week === dow && s.is_active &&
-        Math.max(minutesFromMidnight(s.start_time), startMin) < Math.min(minutesFromMidnight(s.end_time), endMin)
+      (s) =>
+        s.day_of_week === dow &&
+        s.is_active &&
+        (Math.max(minutesFromMidnight(s.start_time), startMin) <
+          Math.min(minutesFromMidnight(s.end_time), endMin) ||
+          minutesFromMidnight(s.end_time) === startMin ||
+          minutesFromMidnight(s.start_time) === endMin),
     );
     if (overlapping) {
       const newStart = Math.min(minutesFromMidnight(overlapping.start_time), startMin);
@@ -381,7 +389,7 @@ interface WeekGridProps {
 
 function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClickSchedule, onClickBlock }: WeekGridProps) {
   const today = new Date();
-  const nowMin = today.getHours() * 60 + today.getMinutes();
+  const nowMin = clinicMinutesFromMidnight(new Date());
 
   // Drag state
   const dragRef = useRef<{ col: number; startRow: number; endRow: number } | null>(null);
@@ -447,12 +455,14 @@ function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClic
         {days.map((day, col) => {
           const isToday = isSameDay(day, today);
           const isPastDay = isBefore(day, today) && !isToday;
-          const jsDow = day.getDay();
+          const jsDow = clinicDayOfWeek(day);
+          const dayKey = formatClinicDateKey(day);
           const daySchedules = schedules.filter((s) => s.day_of_week === jsDow && s.is_active);
-          const dayBlocks = blocks.filter((b) =>
-            isSameDay(parseISO(b.start_at), day) || isSameDay(parseISO(b.end_at), day) ||
-            (parseISO(b.start_at) < day && parseISO(b.end_at) > addDays(day, 1))
-          );
+          const dayBlocks = blocks.filter((b) => {
+            const bStartKey = formatClinicDateKey(b.start_at);
+            const bEndKey = formatClinicDateKey(b.end_at);
+            return bStartKey <= dayKey && bEndKey >= dayKey;
+          });
           const dayAppts = appts.filter((a) => isSameClinicDay(a.scheduled_at, day));
 
           return (
@@ -529,14 +539,17 @@ function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClic
 
               {/* Time-off blocks */}
               {dayBlocks.map((b) => {
-                const dayStart = new Date(day); dayStart.setHours(0, 0, 0, 0);
-                const dayEnd = addDays(dayStart, 1);
+                const dayStart = clinicLocalToUtc(dayKey, 0);
+                const dayEnd = clinicLocalToUtc(addClinicDays(dayKey, 1), 0);
                 const bStart = parseISO(b.start_at);
                 const bEnd = parseISO(b.end_at);
                 const segStart = bStart < dayStart ? dayStart : bStart;
                 const segEnd = bEnd > dayEnd ? dayEnd : bEnd;
-                const startMin = segStart.getHours() * 60 + segStart.getMinutes();
-                const endMin = segEnd.getHours() * 60 + segEnd.getMinutes() || HOUR_END * 60;
+                const startMin = clinicMinutesFromMidnight(segStart);
+                const endMin =
+                  segEnd.getTime() === dayEnd.getTime()
+                    ? HOUR_END * 60
+                    : clinicMinutesFromMidnight(segEnd);
                 const top = ((startMin - HOUR_START * 60) / SLOT_MINUTES) * ROW_PX;
                 const height = ((endMin - startMin) / SLOT_MINUTES) * ROW_PX;
                 if (top + height < 0 || top > ROWS * ROW_PX) return null;
@@ -799,9 +812,9 @@ function TimeOffModal({ open, onOpenChange, onCreate }: {
 
   useEffect(() => {
     if (open) {
-      setStart(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
-      const e = new Date(); e.setHours(23, 59, 0, 0);
-      setEnd(format(e, "yyyy-MM-dd'T'HH:mm"));
+      const now = new Date();
+      setStart(formatClinicDatetimeLocal(now));
+      setEnd(formatClinicDatetimeLocal(clinicLocalToUtc(formatClinicDateKey(now), 23 * 60 + 59)));
       setReason("");
     }
   }, [open]);
@@ -819,7 +832,7 @@ function TimeOffModal({ open, onOpenChange, onCreate }: {
           <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={() => {
             if (!start || !end) return toast.error("Pick start and end");
-            onCreate(new Date(start).toISOString(), new Date(end).toISOString(), reason || null);
+            onCreate(parseClinicDatetimeLocal(start).toISOString(), parseClinicDatetimeLocal(end).toISOString(), reason || null);
           }}>Add</Button>
         </DialogFooter>
       </DialogContent>

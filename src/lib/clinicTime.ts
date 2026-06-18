@@ -135,3 +135,45 @@ export function clinicDayUtcRange(dateKey: string): { start: Date; end: Date } {
 export function isSameClinicDay(a: string | Date, b: string | Date): boolean {
   return formatClinicDateKey(a) === formatClinicDateKey(b);
 }
+
+export interface MinuteWindow {
+  startMin: number;
+  endMin: number;
+  step: number;
+}
+
+/** Merge overlapping or touching availability windows (for slot generation). */
+export function mergeMinuteWindows(windows: MinuteWindow[]): MinuteWindow[] {
+  if (windows.length === 0) return [];
+  const sorted = [...windows].sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin);
+  const out: MinuteWindow[] = [];
+  let cur = { ...sorted[0] };
+  for (let i = 1; i < sorted.length; i++) {
+    const w = sorted[i];
+    if (w.startMin <= cur.endMin) {
+      cur.endMin = Math.max(cur.endMin, w.endMin);
+      cur.step = Math.min(cur.step, w.step);
+    } else {
+      out.push(cur);
+      cur = { ...w };
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
+/** Value for `<input type="datetime-local">` in clinic timezone. */
+export function formatClinicDatetimeLocal(value: string | Date): string {
+  const dk = formatClinicDateKey(value);
+  const m = clinicMinutesFromMidnight(value);
+  return `${dk}T${pad2(Math.floor(m / 60))}:${pad2(m % 60)}`;
+}
+
+/** Parse datetime-local string as clinic wall-clock → UTC instant. */
+export function parseClinicDatetimeLocal(value: string): Date {
+  const [datePart, timePart] = value.split("T");
+  const [hh, mm] = timePart.split(":").map(Number);
+  return clinicLocalToUtc(datePart, hh * 60 + mm);
+}
