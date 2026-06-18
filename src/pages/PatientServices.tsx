@@ -3,13 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Brain, Scale, Sparkles, Droplets, Syringe, Check, ArrowRight, Scissors, Heart, Calendar } from "lucide-react";
+import { Loader2, Sparkles, Scale, Check, ArrowRight, Calendar } from "lucide-react";
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import EditProfileModal from "@/components/patient/EditProfileModal";
 import WelcomeIntake from "@/components/patient/WelcomeIntake";
 import SafetyGate from "@/components/patient/SafetyGate";
 import OAuthOnboarding from "@/components/patient/OAuthOnboarding";
+import PatientCareStatusPanel from "@/components/patient/PatientCareStatusPanel";
 import { usePatient, useInvalidatePatientData } from "@/hooks/usePatient";
+import { useAuth } from "@/contexts/AuthContext";
+import { linkPatientAccount } from "@/lib/patientAccountLink";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { hasCompletedTier1Intake } from "@/lib/consents/intake-status";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -100,12 +103,27 @@ const SERVICES: Service[] = [
 
 const PatientServices = () => {
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useAuth();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [linkAttempted, setLinkAttempted] = useState(false);
+  const [linking, setLinking] = useState(false);
   
   // Use React Query hook for patient data
   const { data: patient, isLoading, error } = usePatient();
-  const { invalidateAll, invalidatePatient } = useInvalidatePatientData();
+  const { invalidatePatient } = useInvalidatePatientData();
   const [tier1IntakeComplete, setTier1IntakeComplete] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!isLoggedIn || !user?.email || patient || isLoading || linkAttempted) return;
+    setLinkAttempted(true);
+    setLinking(true);
+    linkPatientAccount({ email: user.email })
+      .then((linked) => {
+        if (linked) return invalidatePatient();
+      })
+      .catch((err) => console.warn("[PatientServices] auto-link failed", err))
+      .finally(() => setLinking(false));
+  }, [isLoggedIn, user?.email, patient, isLoading, linkAttempted, invalidatePatient]);
 
   useEffect(() => {
     if (!patient?.id) return;
@@ -152,7 +170,7 @@ const PatientServices = () => {
   };
 
   // Loading state
-  if (isLoading) {
+  if (isLoading || linking || (!patient && !linkAttempted)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -177,9 +195,35 @@ const PatientServices = () => {
     );
   }
 
-  // No patient found - redirect to login
+  // No patient after auto-link — guide to account setup (avoid login redirect loop)
+  if (!patient && linkAttempted) {
+    const createUrl = user?.email
+      ? `/patient/create-account?email=${encodeURIComponent(user.email)}`
+      : "/patient/create-account";
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader>
+            <CardTitle className="font-playfair italic text-xl">Finish setting up your portal</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              You&apos;re signed in, but we couldn&apos;t find a patient profile linked to your account.
+              If you recently paid or completed intake, finish account setup to connect your records.
+            </p>
+            <Button className="w-full" onClick={() => navigate(createUrl)}>
+              Complete account setup
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => navigate("/consult")}>
+              Book a consultation
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (!patient) {
-    navigate("/patient/login");
     return null;
   }
 
@@ -255,6 +299,8 @@ const PatientServices = () => {
             Your personalized health journey
           </p>
         </div>
+
+        <PatientCareStatusPanel patientId={patient.id} />
 
         {/* Active Services - Prominent Cards */}
         {activeServices.length > 0 ? (

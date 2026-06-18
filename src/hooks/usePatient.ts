@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
 
 export interface Patient {
   id: string;
@@ -245,45 +244,6 @@ export function useUpdatePatient() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.patient });
-    },
-  });
-}
-
-/**
- * Hook to create a new order for protocol review
- */
-export function useCreateOrder() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ patientId, symptomLog }: { patientId: string; symptomLog: SymptomLog }) => {
-      const { data, error } = await supabase
-        .from("orders")
-        .insert({
-          patient_id: patientId,
-          status: "pending_review",
-          protocol_snapshot: {
-            symptom_scores: {
-              estrogen: symptomLog.estrogen_score,
-              progesterone: symptomLog.progesterone_score,
-              androgen: symptomLog.androgen_score,
-              cortisol: symptomLog.cortisol_score,
-            },
-            date_requested: new Date().toISOString(),
-          },
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.latestOrder(variables.patientId) });
-      toast.success("Review request submitted! A provider will contact you soon.");
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to submit review request");
     },
   });
 }

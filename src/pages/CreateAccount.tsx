@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { Loader2, CheckCircle, Lock, Mail, User, Eye, EyeOff, Phone } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { getPatientSignupPrefill, linkPatientAccount } from "@/lib/patientAccountLink";
 
 const formatPhoneNumber = (value: string) => {
   const digits = value.replace(/\D/g, "");
@@ -59,17 +60,13 @@ const CreateAccount = () => {
         return;
       }
       try {
-        const { data: patient } = await supabase
-          .from("patients")
-          .select("phone, full_name")
-          .eq("email", emailParam)
-          .maybeSingle();
+        const prefill = await getPatientSignupPrefill(emailParam);
         if (cancelled) return;
-        if (patient?.phone) {
-          setExistingPhone(patient.phone);
-          setPhone(formatPhoneNumber(patient.phone.replace(/\D/g, "")));
+        if (prefill?.phone) {
+          setExistingPhone(prefill.phone);
+          setPhone(formatPhoneNumber(prefill.phone.replace(/\D/g, "")));
         }
-        if (patient?.full_name && !nameParam) setName(patient.full_name);
+        if (prefill?.full_name && !nameParam) setName(prefill.full_name);
       } catch (e) {
         console.warn("CreateAccount hydrate error", e);
       } finally {
@@ -113,29 +110,34 @@ const CreateAccount = () => {
         const firstName = nameParts[0] || "Patient";
         const lastName = nameParts.slice(1).join(" ");
 
+        await supabase.auth.signInWithPassword({ email, password });
+
         let resolvedPatientId: string | null = null;
         let primaryProgram: string | null | undefined;
+        let patientPhone = formattedPhoneForStorage;
 
-        const { data: patientData, error: updateError } = await supabase
-          .from("patients")
-          .update({
-            user_id: signUpData.user.id,
-            onboarding_status: "account_created",
-            full_name: displayName,
-            ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
-          })
-          .eq("email", email)
-          .select("id, primary_program, phone")
-          .single();
-
-        primaryProgram = patientData?.primary_program;
-        let patientPhone = formattedPhoneForStorage || patientData?.phone || null;
-
-        if (!updateError && patientData?.id) {
-          resolvedPatientId = patientData.id;
+        try {
+          const linked = await linkPatientAccount({
+            email,
+            fullName: displayName,
+            phone: formattedPhoneForStorage,
+          });
+          if (linked) {
+            resolvedPatientId = linked.patient_id;
+            primaryProgram = linked.primary_program;
+            patientPhone = formattedPhoneForStorage || linked.phone;
+          }
+        } catch (linkErr: unknown) {
+          const linkMsg = linkErr instanceof Error ? linkErr.message : String(linkErr);
+          if (linkMsg.includes("email_already_linked")) {
+            toast.error("This email is linked to another account. Please log in or contact the clinic.");
+            navigate("/patient/login");
+            return;
+          }
+          throw linkErr;
         }
 
-        if (updateError) {
+        if (!resolvedPatientId) {
           const { data: insertedPatient, error: insertError } = await supabase
             .from("patients")
             .insert({
@@ -147,14 +149,13 @@ const CreateAccount = () => {
             })
             .select("id, primary_program")
             .single();
-          if (!insertError && insertedPatient?.id) {
-            resolvedPatientId = insertedPatient.id;
-            primaryProgram = insertedPatient.primary_program;
-            patientPhone = formattedPhoneForStorage;
-          }
+          if (insertError) throw insertError;
+          resolvedPatientId = insertedPatient.id;
+          primaryProgram = insertedPatient.primary_program;
         }
 
-        const accessToken = signUpData.session?.access_token;
+        const { data: sessionData } = await supabase.auth.getSession();
+        const accessToken = sessionData.session?.access_token;
         if (accessToken) {
           supabase.functions.invoke("send-welcome-email", {
             body: {
@@ -181,7 +182,6 @@ const CreateAccount = () => {
         }
 
         toast.success("Account created! Let's finish your intake.");
-        await supabase.auth.signInWithPassword({ email, password });
         navigate("/patient/intake");
       }
     } catch (err: unknown) {

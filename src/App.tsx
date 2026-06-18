@@ -40,7 +40,6 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AdminLogin from "./pages/AdminLogin";
 import PatientLogin from "./pages/PatientLogin";
-import PatientDashboard from "./pages/PatientDashboard";
 import PatientIntake from "./pages/PatientIntake";
 import SymptomCheckIn from "./pages/SymptomCheckIn";
 import ClinicSettings from "./pages/ClinicSettings";

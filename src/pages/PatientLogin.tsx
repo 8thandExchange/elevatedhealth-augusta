@@ -11,6 +11,7 @@ import SafetyGate from "@/components/patient/SafetyGate";
 import ConsultationModal from "@/components/ConsultationModal";
 import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
 import { requestPasswordReset } from "@/lib/requestPasswordReset";
+import { linkPatientAccount } from "@/lib/patientAccountLink";
 
 type PrimaryProgram = string;
 
@@ -142,19 +143,44 @@ const PatientLogin = () => {
                 
                 if (Object.keys(updates).length > 0) {
                   await supabase
-                    .from('patients')
+                    .from("patients")
                     .update(updates)
-                    .eq('id', existingPatient.id);
+                    .eq("id", existingPatient.id);
                 }
                 
                 console.log("[PatientLogin] Existing Google user - going to dashboard");
                 navigate(getRedirectPath(), { replace: true });
+              } else if (user.email) {
+                try {
+                  const linked = await linkPatientAccount({
+                    email: user.email,
+                    fullName: fullName ?? undefined,
+                  });
+                  if (linked) {
+                    console.log("[PatientLogin] Linked Google user to existing patient row");
+                    navigate(getRedirectPath(), { replace: true });
+                    return;
+                  }
+                } catch (linkErr: unknown) {
+                  const linkMsg = linkErr instanceof Error ? linkErr.message : String(linkErr);
+                  if (linkMsg.includes("email_already_linked")) {
+                    toast.error("This email is linked to another account. Contact the clinic for help.");
+                    await supabase.auth.signOut();
+                    hasNavigatedRef.current = false;
+                    return;
+                  }
+                  console.error("Google patient link error:", linkErr);
+                }
+
+                console.log("[PatientLogin] Google user without patient record");
+                toast.error("No patient account found. Use the link from your welcome email or book a consultation.", {
+                  duration: 5000,
+                });
+                await supabase.auth.signOut();
+                hasNavigatedRef.current = false;
               } else {
-                // NEW Google user without patient record - they need to go through proper onboarding
-                // Show error and redirect to booking
-                console.log("[PatientLogin] New Google user without patient record - need consultation first");
-                toast.error("No patient account found. Please book a consultation first.", {
-                  duration: 5000
+                toast.error("No patient account found. Use the link from your welcome email or book a consultation.", {
+                  duration: 5000,
                 });
                 await supabase.auth.signOut();
                 hasNavigatedRef.current = false;
@@ -183,13 +209,35 @@ const PatientLogin = () => {
 
       if (error) throw error;
       
-      // Check if user has high_risk_review status
+      // Check if user has high_risk_review status (link orphan patient rows first)
       if (data.user) {
-        const { data: patient } = await supabase
+        let { data: patient } = await supabase
           .from("patients")
           .select("risk_status, full_name, primary_program")
           .eq("user_id", data.user.id)
           .maybeSingle();
+
+        if (!patient && data.user.email) {
+          try {
+            const linked = await linkPatientAccount({ email: data.user.email });
+            if (linked) {
+              const { data: linkedPatient } = await supabase
+                .from("patients")
+                .select("risk_status, full_name, primary_program")
+                .eq("user_id", data.user.id)
+                .maybeSingle();
+              patient = linkedPatient;
+            }
+          } catch (linkErr: unknown) {
+            const linkMsg = linkErr instanceof Error ? linkErr.message : String(linkErr);
+            if (linkMsg.includes("email_already_linked")) {
+              toast.error("This email is linked to another account. Contact the clinic for help.");
+              await supabase.auth.signOut();
+              return;
+            }
+            throw linkErr;
+          }
+        }
 
         if (patient?.risk_status === "high_risk_review") {
           setCreatedPatientName(patient.full_name);
