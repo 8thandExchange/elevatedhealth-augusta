@@ -10,6 +10,8 @@ import WelcomeIntake from "@/components/patient/WelcomeIntake";
 import SafetyGate from "@/components/patient/SafetyGate";
 import OAuthOnboarding from "@/components/patient/OAuthOnboarding";
 import PatientCareStatusPanel from "@/components/patient/PatientCareStatusPanel";
+import ConsultJourneyProgress from "@/components/patient/ConsultJourneyProgress";
+import { getConsultJourneyPatientAction } from "@/lib/consultJourney";
 import { usePatient, useInvalidatePatientData } from "@/hooks/usePatient";
 import { useAuth } from "@/contexts/AuthContext";
 import { linkPatientAccount } from "@/lib/patientAccountLink";
@@ -264,6 +266,10 @@ const PatientServices = () => {
 
   // Get active services for display
   const activeServices = SERVICES.filter(s => hasService(s.treatmentKey));
+  const journeyAction = getConsultJourneyPatientAction({
+    onboardingStatus: patient.onboarding_status,
+    intakeCompleted: !!patient.intake_completed,
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -299,6 +305,26 @@ const PatientServices = () => {
             Your personalized health journey
           </p>
         </div>
+
+        <ConsultJourneyProgress
+          patientId={patient.id}
+          context={{
+            onboardingStatus: patient.onboarding_status,
+            intakeCompleted: !!patient.intake_completed,
+          }}
+        />
+
+        {(journeyAction.ctaLabel || patient.onboarding_status === "gfe_pending" || patient.onboarding_status === "consultation_paid") && (
+          <Card className="mb-8 border-accent/30 bg-accent/5">
+            <CardContent className="pt-6">
+              <h3 className="font-semibold mb-1">{journeyAction.title}</h3>
+              <p className="text-sm text-muted-foreground mb-4">{journeyAction.description}</p>
+              {journeyAction.ctaLabel && journeyAction.ctaPath && (
+                <Button onClick={() => navigate(journeyAction.ctaPath!)}>{journeyAction.ctaLabel}</Button>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         <PatientCareStatusPanel patientId={patient.id} />
 

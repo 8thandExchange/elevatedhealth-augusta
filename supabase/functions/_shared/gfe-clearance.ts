@@ -4,6 +4,9 @@ export const GFE_VALIDITY_MONTHS = 12;
 
 export const POST_CONSULT_PAYMENT_STATUSES = new Set([
   "consultation_paid",
+  "gfe_pending",
+  "gfe_cleared",
+  "consultation_scheduled",
   "consultation_complete",
   "intake_complete",
   "awaiting_blood_work",

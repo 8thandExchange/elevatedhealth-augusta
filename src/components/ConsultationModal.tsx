@@ -8,10 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { useState } from "react";
-import { Loader2, Phone, MessageCircle, CreditCard } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Phone, MessageCircle, CreditCard } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { cn } from "@/lib/utils";
 import { filterVisibleVisitReasons } from "@/lib/serviceConfig";
@@ -33,9 +32,9 @@ const ALL_VISIT_REASONS: { id: string; label: string }[] = [
 ];
 
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
+  const navigate = useNavigate();
   const visitReasons = filterVisibleVisitReasons(ALL_VISIT_REASONS);
   const [selectedReasons, setSelectedReasons] = useState<Set<string>>(new Set());
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const toggleReason = (id: string, checked: boolean) => {
     setSelectedReasons((prev) => {
@@ -46,28 +45,11 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
     });
   };
 
-  const handleContinueToCheckout = async () => {
-    const reasons = [...selectedReasons];
-    setCheckoutLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-consultation-checkout", {
-        body: { serviceType: "wellness_assessment", reasons },
-      });
-
-      if (error) throw error;
-
-      if (data?.url) {
-        window.open(data.url, "_blank");
-        onClose();
-      } else {
-        throw new Error("No checkout URL returned");
-      }
-    } catch (err) {
-      console.error("Consultation checkout error:", err);
-      toast.error("Failed to start checkout. Please try again or call us.");
-    } finally {
-      setCheckoutLoading(false);
-    }
+  const handleContinue = () => {
+    const params = new URLSearchParams();
+    if (selectedReasons.size) params.set("reasons", [...selectedReasons].join(","));
+    onClose();
+    navigate(`/consult/start${params.toString() ? `?${params}` : ""}`);
   };
 
   return (
@@ -75,11 +57,10 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border border-border rounded-2xl shadow-2xl">
         <DialogHeader className="pb-2 text-left sm:text-center">
           <DialogTitle className="text-2xl sm:text-3xl font-playfair font-normal text-foreground tracking-wide">
-            Book Your $79 Wellness Assessment
+            Start your $79 Wellness Assessment
           </DialogTitle>
           <DialogDescription className="text-left sm:text-center text-muted-foreground font-jost text-sm sm:text-base mt-2 leading-relaxed">
-            30-minute in-person visit at Elevated Health Augusta (Evans, GA) to review your goals,
-            health history, and labs, and design your personalized treatment plan.
+            Screening and consents first — then payment, your Good Faith Exam, and scheduling your in-person visit.
           </DialogDescription>
         </DialogHeader>
 
@@ -124,21 +105,13 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
         <div className="mt-6 space-y-3">
           <Button
             type="button"
-            disabled={checkoutLoading}
             className="w-full bg-primary text-primary-foreground font-jost font-medium rounded-md py-6 text-base"
-            onClick={handleContinueToCheckout}
+            onClick={handleContinue}
           >
-            {checkoutLoading ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin mr-2 inline" />
-                Starting checkout…
-              </>
-            ) : (
-              "Continue to Checkout — $79"
-            )}
+            Continue enrollment
           </Button>
           <p className="text-[10px] sm:text-xs text-muted-foreground font-jost text-center leading-snug px-1">
-            Paid upfront. Not a deposit or credit. Refund policy: full refund if canceled 24+ hours in advance.
+            Safety screening → clinic consents → $79 payment → remote GFE → book your visit.
           </p>
         </div>
 

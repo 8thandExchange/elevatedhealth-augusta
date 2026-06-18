@@ -91,6 +91,12 @@ const ITEMS_PER_PAGE = 25;
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   consultation_pending: { label: "Pending Consult", variant: "outline" },
+  consultation_paid: { label: "Paid — GFE next", variant: "secondary" },
+  gfe_pending: { label: "GFE sent", variant: "secondary" },
+  gfe_cleared: { label: "GFE cleared — schedule", variant: "default" },
+  consultation_scheduled: { label: "Visit scheduled", variant: "default" },
+  prequal_screening_passed: { label: "Screening passed", variant: "outline" },
+  prequal_consents_complete: { label: "Consents signed", variant: "outline" },
   consultation_complete: { label: "Consult Complete", variant: "secondary" },
   pending_invite: { label: "Pending Invite", variant: "outline" },
   invited: { label: "Invited", variant: "outline" },

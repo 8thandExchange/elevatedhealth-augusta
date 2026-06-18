@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { triggerIntakeMagicLinkDelivery } from "../_shared/trigger-intake-magic-link.ts";
+import { hasValidGfeClearance } from "../_shared/gfe-clearance.ts";
 import {
   getSlotSigningKey,
   redeemSlotTokenJtiOnce,
@@ -479,6 +480,18 @@ serve(async (req) => {
       });
     }
 
+    const gfeOk = await hasValidGfeClearance(supabase, patientId);
+    if (!gfeOk) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "Complete your Good Faith Exam (remote medical clearance) before scheduling your in-person visit. Check your email or patient portal for the Qualiphy link.",
+          error_code: "gfe_required",
+        }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const serviceLabel =
       SERVICE_LABEL[booking.service_type as string] || "Wellness Assessment";
     const resolvedServiceLine =
@@ -514,6 +527,12 @@ serve(async (req) => {
       booking_source: bookingSource,
       booked_by_user_id: bookedByUserId,
     }).eq("id", booking.id);
+
+    await supabase
+      .from("patients")
+      .update({ onboarding_status: "consultation_scheduled" })
+      .eq("id", patientId)
+      .in("onboarding_status", ["gfe_cleared", "consultation_paid", "gfe_pending"]);
 
     try {
       await supabase.functions.invoke("send-booking-confirmation", {

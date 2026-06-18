@@ -197,7 +197,7 @@ const PatientPipeline = () => {
         },
         {
           id: "consultation_paid",
-          name: "Needs Kit Link",
+          name: "Paid — GFE / schedule",
           icon: <UserPlus className="h-4 w-4" />,
           color: "bg-amber-500",
           count: paidConsults.length + consultationPaidPatients.length,

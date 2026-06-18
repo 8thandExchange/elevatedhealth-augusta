@@ -36,6 +36,7 @@ import HipaaNotice from "./pages/HipaaNotice";
 import TermsOfService from "./pages/TermsOfService";
 import Accessibility from "./pages/Accessibility";
 import Consult from "./pages/Consult";
+import ConsultPrequal from "./pages/ConsultPrequal";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AdminLogin from "./pages/AdminLogin";
@@ -224,6 +225,7 @@ const App = () => {
           <Route path="/mental-wellness" element={<Navigate to="/" replace />} />
           <Route path="/mental-wellness-page" element={<Navigate to="/" replace />} />
           <Route path="/consult" element={<Consult />} />
+          <Route path="/consult/start" element={<ConsultPrequal />} />
           {/* Per-flow medication confirmation (replaces legacy /payment-success which served 6 flows) */}
           <Route path="/medication-confirmed" element={<MedicationConfirmed />} />
           {/* Legacy /payment-success — preserved as redirect so old emails / bookmarks don't 404 */}

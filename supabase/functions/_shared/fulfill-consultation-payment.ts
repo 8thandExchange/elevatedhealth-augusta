@@ -1,6 +1,8 @@
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_CORE_SERVICES } from "./live-prices.ts";
+import { applyPrequalSessionToPatient } from "./apply-prequal-session.ts";
+import { sendQualiphyGfeInvite } from "./send-qualiphy-gfe-invite-core.ts";
 
 export const CONSULT_FEE_USD = 79;
 const LEGACY_DISCOVERY_AMOUNT_CENTS = 9900;
@@ -112,6 +114,43 @@ async function upsertPatientConsultPaid(
   return existing.id;
 }
 
+async function finalizeConsultPatient(
+  supabase: SupabaseClient,
+  session: Stripe.Checkout.Session,
+  customerEmail: string,
+  customerName: string | null | undefined,
+  serviceType: string,
+  bookingId?: string,
+): Promise<string | null> {
+  const prequalId =
+    typeof session.metadata?.prequal_session_id === "string"
+      ? session.metadata.prequal_session_id
+      : null;
+
+  if (prequalId) {
+    const fromPrequal = await applyPrequalSessionToPatient(
+      supabase,
+      prequalId,
+      customerEmail,
+      customerName,
+      serviceType,
+      bookingId,
+    );
+    if (fromPrequal) {
+      const gfe = await sendQualiphyGfeInvite(supabase, {
+        patientId: fromPrequal,
+        channels: ["email", "sms"],
+      });
+      if (!gfe.ok && !gfe.skipped) {
+        console.warn("[fulfillConsultationPayment] auto GFE failed:", gfe.error);
+      }
+      return fromPrequal;
+    }
+  }
+
+  return upsertPatientConsultPaid(supabase, customerEmail, customerName, serviceType);
+}
+
 export type FulfillConsultationResult = {
   success: boolean;
   credit_code?: string;
@@ -160,7 +199,14 @@ export async function fulfillConsultationPayment(
     .maybeSingle();
 
   if (existing?.credit_code) {
-    const patientId = await upsertPatientConsultPaid(supabase, customerEmail, customerName, serviceType);
+    const patientId = await finalizeConsultPatient(
+      supabase,
+      session,
+      customerEmail,
+      customerName,
+      serviceType,
+      existing.id,
+    );
     return {
       success: true,
       already_recorded: true,
@@ -203,7 +249,14 @@ export async function fulfillConsultationPayment(
         .eq("stripe_session_id", sessionId)
         .maybeSingle();
       if (peer?.credit_code) {
-        const patientId = await upsertPatientConsultPaid(supabase, customerEmail, customerName, serviceType);
+        const patientId = await finalizeConsultPatient(
+          supabase,
+          session,
+          customerEmail,
+          customerName,
+          serviceType,
+          peer.id,
+        );
         return {
           success: true,
           already_recorded: true,
@@ -241,7 +294,14 @@ export async function fulfillConsultationPayment(
           .eq("stripe_session_id", sessionId)
           .maybeSingle();
         if (peer?.credit_code) {
-          const patientId = await upsertPatientConsultPaid(supabase, customerEmail, customerName, serviceType);
+          const patientId = await finalizeConsultPatient(
+            supabase,
+            session,
+            customerEmail,
+            customerName,
+            serviceType,
+            peer.id,
+          );
           return {
             success: true,
             already_recorded: true,
@@ -265,7 +325,14 @@ export async function fulfillConsultationPayment(
     return { success: false, error: "Consultation booking was not recorded after successful payment" };
   }
 
-  const patientId = await upsertPatientConsultPaid(supabase, customerEmail, customerName, serviceType);
+  const patientId = await finalizeConsultPatient(
+    supabase,
+    session,
+    customerEmail,
+    customerName,
+    serviceType,
+    bookingId,
+  );
 
   return {
     success: true,

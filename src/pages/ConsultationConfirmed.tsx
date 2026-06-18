@@ -1,71 +1,22 @@
-import { useEffect, useState, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
-import { CheckCircle2, Loader2, Mail, Phone } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import { CheckCircle2, Loader2, Mail, ClipboardCheck, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
-import ProviderChooser from "@/components/booking/ProviderChooser";
-import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
-
-const SERVICE_LABELS: Record<
-  string,
-  {
-    title: string;
-    serviceLine: string;
-    preVisitInstructions: string[];
-  }
-> = {
-  hormone: {
-    title: "Hormone Optimization Consultation",
-    serviceLine: "consult",
-    preVisitInstructions: [
-      "Bring photo ID and a list of any current medications",
-      "Plan to be on-site about 45 minutes (consult + lab draw)",
-      "Eat normally beforehand — no fasting required",
-    ],
-  },
-  weight_loss: {
-    title: "Medical Weight Loss Consultation",
-    serviceLine: "consult",
-    preVisitInstructions: [
-      "Bring photo ID and a list of any current medications",
-      "Plan to be on-site about 45 minutes (consult + lab draw)",
-      "Bring recent labs if you have them",
-    ],
-  },
-  peptide: {
-    title: "Peptide Protocols Consultation",
-    serviceLine: "consult",
-    preVisitInstructions: [
-      "Bring photo ID and a list of any current medications",
-      "Plan to be on-site about 45 minutes",
-      "Bring any recent bloodwork or sleep-study results",
-    ],
-  },
-};
-
-interface ConfirmedAppointment {
-  id: string;
-  scheduled_at: string;
-  duration_minutes: number;
-}
 
 const ConsultationConfirmed = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const serviceType = searchParams.get("service") || "hormone";
-  const serviceInfo = SERVICE_LABELS[serviceType] || SERVICE_LABELS.hormone;
 
   const [isVerifying, setIsVerifying] = useState(true);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
-  const [bookingId, setBookingId] = useState<string | null>(null);
-  const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
-  const [providerId, setProviderId] = useState<string | null>(null);
-  const slotPickerRef = useRef<SlotPickerHandle>(null);
+  const [customerEmail, setCustomerEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -75,39 +26,20 @@ const ConsultationConfirmed = () => {
       }
 
       try {
-        const { data, error } = await supabase.functions.invoke(
-          "verify-consultation-payment",
-          {
-            body: { session_id: sessionId },
-          },
-        );
+        const { data, error } = await supabase.functions.invoke("verify-consultation-payment", {
+          body: { session_id: sessionId },
+        });
 
         if (error) throw error;
 
         if (data?.success) {
           setVerificationSuccess(true);
-          // Find the consultation_bookings row that verify-consultation-payment
-          // just created/updated, so we can pass its id to book-consult-appointment.
           const { data: row } = await supabase
             .from("consultation_bookings")
-            .select("id, booked_for")
+            .select("customer_email")
             .eq("stripe_session_id", sessionId)
             .maybeSingle();
-          if (row) {
-            setBookingId(row.id);
-            // If verify-consultation-payment runs after the patient previously
-            // refreshed and already booked, keep them on the confirmed view.
-            if (row.booked_for) {
-              const { data: appt } = await supabase
-                .from("appointments")
-                .select("id, scheduled_at, duration_minutes")
-                .eq("consultation_booking_id", row.id)
-                .order("created_at", { ascending: false })
-                .limit(1)
-                .maybeSingle();
-              if (appt) setConfirmed(appt as ConfirmedAppointment);
-            }
-          }
+          if (row?.customer_email) setCustomerEmail(row.customer_email);
         }
       } catch (err) {
         console.error("Verification error:", err);
@@ -120,166 +52,92 @@ const ConsultationConfirmed = () => {
     verifyPayment();
   }, [sessionId]);
 
-  const handleConfirm = async ({
-    slot,
-  }: {
-    slot: { slot_token: string; start: string };
-  }) => {
-    if (!bookingId) {
-      toast.error("Booking record missing. Please call us at " + SITE_CONFIG.phone);
-      return;
-    }
-    const { data, error } = await supabase.functions.invoke(
-      "book-consult-appointment",
-      {
-        body: {
-          booking_id: bookingId,
-          slot_token: slot.slot_token,
-        },
-      },
-    );
-    const code = (data as { error_code?: string } | null)?.error_code;
-    if (
-      code === "room_unavailable" ||
-      code === "limit_exceeded" ||
-      code === "room_blackout" ||
-      code === "slot_taken"
-    ) {
-      toast.error(
-        (data as { error?: string })?.error ||
-          "That slot is no longer available. Please pick another.",
-      );
-      await slotPickerRef.current?.reload();
-      return;
-    }
-    if (error || data?.error) {
-      toast.error(data?.error || "Could not book that slot. Please pick another.");
-      return;
-    }
-    if (data?.appointment) {
-      setConfirmed({
-        id: data.appointment.id,
-        scheduled_at: data.appointment.scheduled_at,
-        duration_minutes: data.appointment.duration_minutes || 30,
-      });
-    }
-  };
+  const createAccountUrl = customerEmail
+    ? `/patient/create-account?email=${encodeURIComponent(customerEmail)}`
+    : "/patient/create-account";
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
       <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container mx-auto px-4 max-w-2xl">
           {isVerifying ? (
             <div className="text-center py-16">
               <Loader2 className="w-12 h-12 animate-spin text-accent mx-auto mb-4" />
-              <p className="text-muted-foreground font-jost">
-                Confirming your payment...
-              </p>
+              <p className="text-muted-foreground font-jost">Confirming your payment...</p>
             </div>
           ) : !verificationSuccess ? (
             <Card>
               <CardContent className="p-8 text-center space-y-4">
-                <p className="font-playfair text-2xl text-foreground">
-                  We couldn't verify that payment
-                </p>
+                <p className="font-playfair text-2xl text-foreground">We couldn&apos;t verify that payment</p>
                 <p className="text-muted-foreground font-jost">
-                  If your card was charged, please call us at{" "}
-                  <a
-                    href={`tel:${SITE_CONFIG.phoneRaw}`}
-                    className="text-accent hover:underline"
-                  >
+                  If your card was charged, call{" "}
+                  <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="text-accent hover:underline">
                     {SITE_CONFIG.phone}
-                  </a>{" "}
-                  and we'll get you scheduled.
+                  </a>
+                  .
                 </p>
               </CardContent>
             </Card>
-          ) : confirmed ? (
+          ) : (
             <div className="space-y-6">
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/15 mb-6">
                   <CheckCircle2 className="h-10 w-10 text-accent" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-2">
-                  Payment confirmed.
-                </h1>
-                <p className="font-jost text-muted-foreground">
-                  Your {serviceInfo.title} is on the calendar.
-                </p>
-              </div>
-              <BookingConfirmedCard
-                appointmentId={confirmed.id}
-                serviceLabel={serviceInfo.title}
-                scheduledAt={confirmed.scheduled_at}
-                durationMinutes={confirmed.duration_minutes}
-                preVisitInstructions={serviceInfo.preVisitInstructions}
-              />
-            </div>
-          ) : (
-            <div className="space-y-8">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/15 mb-6">
-                  <CheckCircle2 className="h-10 w-10 text-accent" />
-                </div>
-                <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-3">
-                  Payment confirmed.
-                </h1>
+                <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-3">Payment confirmed</h1>
                 <p className="font-jost text-lg text-muted-foreground max-w-xl mx-auto">
-                  Pick a time below for your {serviceInfo.title}. You'll meet
-                  your provider in person at our Evans clinic.
+                  Next up: complete your Good Faith Exam (remote medical clearance). After that, you&apos;ll schedule
+                  your in-person wellness assessment.
                 </p>
               </div>
 
               <Card>
                 <CardContent className="p-6 md:p-8 space-y-6">
-                  <ProviderChooser
-                    serviceLine={serviceInfo.serviceLine}
-                    selectedProviderId={providerId}
-                    onChange={setProviderId}
-                  />
-                  <SlotPicker
-                    ref={slotPickerRef}
-                    serviceLine="consult"
-                    durationMinutes={30}
-                    providerId={providerId || undefined}
-                    onConfirm={handleConfirm}
-                    confirmLabel="Book this time"
-                  />
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-jost pt-2 border-t border-border">
-                    <Phone className="h-4 w-4" />
-                    <span>
-                      Need help? Call us at{" "}
-                      <a
-                        href={`tel:${SITE_CONFIG.phoneRaw}`}
-                        className="text-accent hover:underline"
-                      >
-                        {SITE_CONFIG.phone}
-                      </a>
-                    </span>
+                  <div className="flex gap-4">
+                    <div className="p-2 rounded-full bg-accent/15 h-fit">
+                      <ClipboardCheck className="h-6 w-6 text-accent" />
+                    </div>
+                    <div>
+                      <h2 className="font-playfair text-xl mb-2">Step 1 — Good Faith Exam</h2>
+                      <p className="text-sm text-muted-foreground font-jost">
+                        We&apos;re sending a Qualiphy link to your email and phone. Complete the remote exam (about
+                        10–15 minutes). You must finish this before booking your clinic visit.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="p-2 rounded-full bg-muted h-fit">
+                      <Calendar className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <h2 className="font-playfair text-xl mb-2">Step 2 — Book your visit</h2>
+                      <p className="text-sm text-muted-foreground font-jost">
+                        Once cleared, sign in to your patient portal or use the scheduling link in your confirmation
+                        email to pick an in-person time in Evans.
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button asChild className="flex-1">
+                  <Link to={createAccountUrl}>Create portal account</Link>
+                </Button>
+                <Button asChild variant="outline" className="flex-1">
+                  <Link to="/patient/login">Sign in</Link>
+                </Button>
+              </div>
+
               <Card className="bg-muted/30">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-full bg-accent/15">
-                      <Mail className="h-5 w-5 text-accent" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-playfair text-lg text-foreground mb-1">
-                        Receipt is in your inbox
-                      </h3>
-                      <p className="font-jost text-sm text-muted-foreground">
-                        We've emailed your payment receipt and your $79
-                        consultation credit code. The full booking confirmation
-                        — with calendar invite and pre-visit instructions —
-                        will land as soon as you pick a time above.
-                      </p>
-                    </div>
-                  </div>
+                <CardContent className="p-6 flex gap-4">
+                  <Mail className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                  <p className="text-sm text-muted-foreground font-jost">
+                    Receipt and GFE instructions are on the way to{" "}
+                    {customerEmail ? <strong>{customerEmail}</strong> : "your email"}. Program interest: {serviceType.replace(/_/g, " ")}.
+                  </p>
                 </CardContent>
               </Card>
             </div>

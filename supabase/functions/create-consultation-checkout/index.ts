@@ -64,7 +64,42 @@ serve(async (req) => {
     let serviceTypeIn = typeof body.serviceType === "string"
       ? body.serviceType
       : CANONICAL_SERVICE_TYPE;
-    const reasons = normalizeReasons(body.reasons);
+    const reasons = normalizeReasons(body.reasons ?? body.visit_reasons);
+    const checkoutToken = typeof body.checkout_token === "string" ? body.checkout_token.trim() : "";
+
+    if (!checkoutToken) {
+      return new Response(
+        JSON.stringify({
+          error: "Complete screening and consents at /consult/start before checkout.",
+          error_code: "prequal_required",
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
+
+    const { data: prequalRows, error: prequalError } = await supabaseAdmin.rpc(
+      "validate_consult_checkout_token",
+      { p_token: checkoutToken },
+    );
+    if (prequalError) throw prequalError;
+    const prequal = Array.isArray(prequalRows) ? prequalRows[0] : prequalRows;
+    if (!prequal?.session_id) {
+      return new Response(
+        JSON.stringify({
+          error: "Checkout session expired or invalid. Please restart at /consult/start.",
+          error_code: "invalid_prequal_token",
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    const prequalEmail = String(prequal.email ?? "").toLowerCase().trim();
+    const prequalReasons = Array.isArray(prequal.visit_reasons) ? prequal.visit_reasons : reasons;
 
     let serviceTypeLegacy: string | undefined;
     if (isLegacyServiceType(serviceTypeIn)) {
@@ -86,8 +121,10 @@ serve(async (req) => {
       throw new Error(`Invalid service type: ${serviceTypeIn}`);
     }
 
-    const derivedLane = deriveBookingLane(reasons, serviceTypeLegacy);
-    const reasonsMetadata = reasons.length > 0 ? reasons.join(",") : "unspecified";
+    const derivedLane = deriveBookingLane(prequalReasons.length ? prequalReasons : reasons, serviceTypeLegacy);
+    const reasonsMetadata = (prequalReasons.length ? prequalReasons : reasons).length > 0
+      ? (prequalReasons.length ? prequalReasons : reasons).join(",")
+      : "unspecified";
 
     edgeStructuredLog("create-consultation-checkout", {
       event_type: "request",
@@ -119,11 +156,13 @@ serve(async (req) => {
       }
     }
 
+    const checkoutEmail = prequalEmail || userEmail;
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
     let customerId: string | undefined;
-    if (userEmail) {
-      const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
+    if (checkoutEmail) {
+      const customers = await stripe.customers.list({ email: checkoutEmail, limit: 1 });
       if (customers.data.length > 0) customerId = customers.data[0].id;
     }
 
@@ -139,6 +178,9 @@ serve(async (req) => {
       reasons: reasonsMetadata,
       credit_code: creditCode,
       product_display_lane: "Wellness Assessment",
+      prequal_session_id: prequal.session_id,
+      patient_email: prequalEmail,
+      patient_name: prequal.full_name ?? "",
     };
     if (serviceTypeLegacy) {
       metadata.service_type_legacy = serviceTypeLegacy;
@@ -146,7 +188,7 @@ serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : userEmail,
+      customer_email: customerId ? undefined : checkoutEmail,
       line_items: [
         {
           price: LIVE_CORE_SERVICES.wellnessAssessment,
@@ -159,6 +201,11 @@ serve(async (req) => {
       cancel_url: `${origin}/pricing`,
       metadata,
     });
+
+    await supabaseAdmin
+      .from("consult_prequal_sessions")
+      .update({ stripe_session_id: session.id })
+      .eq("id", prequal.session_id);
 
     edgeStructuredLog("create-consultation-checkout", {
       event_type: "checkout_created",

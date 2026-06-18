@@ -103,6 +103,12 @@ verify_jwt = false
 [functions.create-consultation-checkout]
 verify_jwt = false
 
+[functions.evaluate-consult-prequal]
+verify_jwt = false
+
+[functions.complete-consult-prequal-consents]
+verify_jwt = false
+
 [functions.verify-consultation-payment]
 verify_jwt = false
 

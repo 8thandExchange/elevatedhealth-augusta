@@ -95,20 +95,32 @@ export const NextActionCard = ({
     if (status === "account_created") {
       return {
         icon: <Calendar className="w-6 h-6" />,
-        title: "Book Your Wellness Assessment",
-        description: "Schedule your in-office visit to discuss your health goals and create a personalized plan.",
-        buttonText: "Book Now",
-        buttonAction: onBookConsultation,
-        timeEstimate: "15-30 minute session",
+        title: "Continue enrollment",
+        description: "Complete screening and consents, then pay the $79 wellness assessment.",
+        buttonText: "Continue",
+        buttonAction: () => { window.location.href = "/consult/start"; },
+        timeEstimate: "About 5 minutes",
         accentColor: "amber",
       };
     }
 
-    if (status === "consultation_paid") {
+    if (status === "consultation_paid" || status === "gfe_pending") {
+      return {
+        icon: <Calendar className="w-6 h-6" />,
+        title: "Complete your Good Faith Exam",
+        description: "Finish the remote Qualiphy exam we sent to your email and phone. Scheduling opens after clearance.",
+        buttonText: null,
+        buttonAction: null,
+        timeEstimate: "Usually 10–15 minutes",
+        accentColor: "amber",
+      };
+    }
+
+    if (status === "gfe_cleared") {
       return {
         icon: <Calendar className="w-6 h-6" />,
         title: "Schedule Your Session",
-        description: "You've paid for your consultation. Now pick a time that works for you.",
+        description: "Your medical clearance is complete. Pick a time for your in-person wellness assessment.",
         buttonText: "Choose Time",
         buttonAction: onBookConsultation,
         timeEstimate: "Book within 48 hours",

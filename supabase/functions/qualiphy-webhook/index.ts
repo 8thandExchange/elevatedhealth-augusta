@@ -195,6 +195,14 @@ serve(async (req) => {
 
     if (updateError) throw updateError;
 
+    if (mappedStatus === "approved") {
+      await supabase
+        .from("patients")
+        .update({ onboarding_status: "gfe_cleared" })
+        .eq("id", clearance.patient_id)
+        .in("onboarding_status", ["consultation_paid", "gfe_pending"]);
+    }
+
     edgeStructuredLog(functionName, {
       success: true,
       clearance_id: clearance.id,

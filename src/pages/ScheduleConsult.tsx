@@ -72,6 +72,7 @@ const ScheduleConsult = () => {
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
   const [providerId, setProviderId] = useState<string | null>(null);
   const [processingRebooking, setProcessingRebooking] = useState(false);
+  const [gfeGate, setGfeGate] = useState<"unknown" | "cleared" | "pending">("unknown");
   const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   useEffect(() => {
@@ -98,6 +99,25 @@ const ScheduleConsult = () => {
           .select("id, email, onboarding_status")
           .eq("user_id", user.id)
           .maybeSingle();
+
+        if (patient?.id) {
+          const { data: gfeRows } = await supabase
+            .from("gfe_clearances")
+            .select("status, expires_at")
+            .eq("patient_id", patient.id)
+            .order("created_at", { ascending: false })
+            .limit(5);
+          const now = Date.now();
+          const hasApproved = (gfeRows ?? []).some(
+            (r) => r.status === "approved" && r.expires_at && new Date(r.expires_at).getTime() > now,
+          );
+          const hasPending = (gfeRows ?? []).some((r) => r.status === "pending");
+          if (hasApproved || patient.onboarding_status === "gfe_cleared") {
+            setGfeGate("cleared");
+          } else {
+            setGfeGate("pending");
+          }
+        }
 
         if (patient?.onboarding_status === "rebooking_fee_required") {
           setNeedsRebookingFee(true);
@@ -177,8 +197,17 @@ const ScheduleConsult = () => {
       code === "room_unavailable" ||
       code === "limit_exceeded" ||
       code === "room_blackout" ||
-      code === "slot_taken"
+      code === "slot_taken" ||
+      code === "gfe_required"
     ) {
+      if (code === "gfe_required") {
+        toast.error(
+          (data as { error?: string })?.error ||
+            "Complete your Good Faith Exam before scheduling.",
+        );
+        setGfeGate("pending");
+        return;
+      }
       toast.error(
         (data as { error?: string })?.error ||
           "That slot is no longer available. Please pick another.",
@@ -344,14 +373,8 @@ const ScheduleConsult = () => {
                 scheduled right after payment.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <Button onClick={() => navigate("/hormones")}>
-                  Hormone Optimization
-                </Button>
-                <Button onClick={() => navigate("/weightloss")} variant="outline">
-                  Medical Weight Loss
-                </Button>
-                <Button onClick={() => navigate("/peptides")} variant="outline">
-                  Peptide Protocols
+                <Button onClick={() => navigate("/consult/start")}>
+                  Start enrollment
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground font-jost pt-4">
@@ -364,6 +387,18 @@ const ScheduleConsult = () => {
                 </a>
               </p>
             </div>
+          ) : gfeGate !== "cleared" ? (
+            <div className="text-center py-12 space-y-6">
+              <div className="w-20 h-20 rounded-full bg-accent/15 flex items-center justify-center mx-auto">
+                <Lock className="w-10 h-10 text-accent" />
+              </div>
+              <h1 className="text-3xl font-playfair text-foreground">Complete your Good Faith Exam first</h1>
+              <p className="font-jost text-muted-foreground max-w-lg mx-auto">
+                Your $79 wellness assessment is paid. Finish the remote Qualiphy medical clearance sent to your email
+                and phone — then return here to book your in-person visit.
+              </p>
+              <Button onClick={() => navigate("/patient/dashboard")}>Go to patient portal</Button>
+            </div>
           ) : (
             <div className="space-y-8">
               <div className="text-center">
@@ -374,8 +409,7 @@ const ScheduleConsult = () => {
                   Pick a time for your visit
                 </h1>
                 <p className="font-jost text-lg text-muted-foreground max-w-xl mx-auto">
-                  Your {serviceLabel} is paid and ready. Choose any open slot
-                  below.
+                  Your Good Faith Exam is complete. Choose an open slot for your {serviceLabel}.
                 </p>
               </div>
 

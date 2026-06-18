@@ -39,6 +39,9 @@ export interface GfeClearanceRow {
 /** Patient onboarding statuses that indicate $79 wellness assessment was paid. */
 export const POST_CONSULT_PAYMENT_STATUSES = new Set([
   "consultation_paid",
+  "gfe_pending",
+  "gfe_cleared",
+  "consultation_scheduled",
   "consultation_complete",
   "intake_complete",
   "awaiting_blood_work",
