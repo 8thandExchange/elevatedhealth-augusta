@@ -43,7 +43,7 @@ export function ConsultJourneyProgress({ context, patientId, className, compact 
   };
   const currentIdx = getConsultJourneyStageIndex(mergedContext);
   const visibleStages = CONSULT_JOURNEY_STAGES.filter((s) =>
-    ["screening", "consents", "payment", "gfe", "schedule", "visit"].includes(s.id),
+    ["screening", "consents", "payment", "gfe", "schedule", "visit", "labs", "treatment"].includes(s.id),
   );
 
   return (
@@ -61,7 +61,7 @@ export function ConsultJourneyProgress({ context, patientId, className, compact 
           Your enrollment progress
         </h2>
       )}
-      <ol className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {visibleStages.map((stage) => {
           const stageIdx = CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === stage.id);
           const done = currentIdx > stageIdx;

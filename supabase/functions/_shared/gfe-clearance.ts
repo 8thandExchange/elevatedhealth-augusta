@@ -74,7 +74,7 @@ export async function assertConsultPaidForGfe(
   return {
     ok: false,
     message:
-      "Patient must complete the $79 wellness assessment payment before a remote GFE link can be sent.",
+      "Patient must complete the $79 wellness assessment payment before a remote GFE link can be sent or in-clinic clearance recorded. Confirm payment in consultation bookings or update onboarding status.",
   };
 }
 

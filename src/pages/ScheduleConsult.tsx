@@ -126,7 +126,7 @@ const ScheduleConsult = () => {
           return;
         }
 
-        const email = patient?.email || user.email;
+        const email = (patient?.email || user.email || "").toLowerCase().trim();
         if (!email) {
           toast.error("We couldn't find your account email.");
           navigate("/patient/dashboard");

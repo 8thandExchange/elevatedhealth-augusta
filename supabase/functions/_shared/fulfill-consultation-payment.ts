@@ -83,7 +83,10 @@ async function upsertPatientConsultPaid(
     null,
     "consultation_pending",
     "pending_invite",
+    "invited",
     "account_created",
+    "prequal_screening_passed",
+    "prequal_consents_complete",
   ]);
 
   if (!existing) {

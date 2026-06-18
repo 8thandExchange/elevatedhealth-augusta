@@ -11,13 +11,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, ArrowRight, ArrowLeft, Shield, FileText, CreditCard, Phone } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, Shield, FileText, CreditCard, Phone, CheckCircle2 } from "lucide-react";
 import { filterVisibleVisitReasons } from "@/lib/serviceConfig";
 import { TIER_1_CONSENTS, ALL_CONSENTS } from "@/data/consents";
 import { consultScreeningBlockMessage } from "@/lib/consultPrequalScreening";
 import { CONSULT_JOURNEY_STAGES } from "@/lib/consultJourney";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { getActiveConsentVersion } from "@/lib/consents/consent-helpers";
+import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
+import { readEdgeFunctionError } from "@/lib/edgeFunctionError";
 
 const VISIT_REASONS = filterVisibleVisitReasons([
   { id: "hormone", label: "Hormone optimization (HRT/TRT)" },
@@ -68,6 +70,45 @@ export default function ConsultPrequal() {
   const [consentsLoadFailed, setConsentsLoadFailed] = useState(false);
   const [consentsAccepted, setConsentsAccepted] = useState<Record<string, boolean>>({});
   const [signatureName, setSignatureName] = useState("");
+  const [alreadyPaid, setAlreadyPaid] = useState(false);
+  const [checkingPaid, setCheckingPaid] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setCheckingPaid(true);
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const checkEmail = (user?.email ?? email).toLowerCase().trim();
+        if (!checkEmail) return;
+
+        const [{ data: patient }, { data: booking }] = await Promise.all([
+          supabase
+            .from("patients")
+            .select("onboarding_status, elevated_membership_status")
+            .eq("email", checkEmail)
+            .maybeSingle(),
+          supabase
+            .from("consultation_bookings")
+            .select("id")
+            .eq("customer_email", checkEmail)
+            .eq("status", "paid")
+            .limit(1)
+            .maybeSingle(),
+        ]);
+
+        const paid = hasWellnessAssessmentPaid({
+          onboardingStatus: patient?.onboarding_status,
+          hasPaidConsultBooking: !!booking?.id,
+          elevatedMembershipStatus: patient?.elevated_membership_status,
+        });
+        setAlreadyPaid(paid);
+      } finally {
+        setCheckingPaid(false);
+      }
+    })();
+  }, [email]);
 
   useEffect(() => {
     const raw = searchParams.get("reasons");
@@ -199,7 +240,15 @@ export default function ConsultPrequal() {
           checkout_token: checkoutToken,
         },
       });
-      if (error) throw error;
+      if (error) {
+        toast.error(await readEdgeFunctionError(error, "Checkout failed"));
+        return;
+      }
+      if (data?.error_code === "already_paid") {
+        toast.info(data.error ?? "You have already paid the wellness assessment.");
+        navigate("/patient/dashboard");
+        return;
+      }
       if (data?.error_code === "prequal_required" || data?.error_code === "invalid_prequal_token") {
         toast.error(data.error ?? "Please restart enrollment.");
         setStep("profile");
@@ -230,6 +279,43 @@ export default function ConsultPrequal() {
               <Phone className="mr-2 h-4 w-4" /> Call {SITE_CONFIG.phone}
             </a>
           </Button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (checkingPaid) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto max-w-lg px-4 pt-32 pb-20 text-center">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-accent" />
+          <p className="mt-4 font-jost text-muted-foreground">Checking your enrollment status…</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (alreadyPaid) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto max-w-lg px-4 pt-32 pb-20">
+          <Card>
+            <CardContent className="space-y-4 pt-8 text-center">
+              <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
+              <h1 className="font-playfair text-2xl">Wellness assessment already paid</h1>
+              <p className="font-jost text-sm text-muted-foreground">
+                Your one-time $79 fee is on file. Continue in the patient portal for GFE clearance, scheduling, and
+                membership enrollment — no duplicate payment needed.
+              </p>
+              <Button className="w-full" onClick={() => navigate("/patient/dashboard")}>
+                Go to patient portal
+              </Button>
+            </CardContent>
+          </Card>
         </main>
         <Footer />
       </div>

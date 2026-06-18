@@ -101,6 +101,25 @@ serve(async (req) => {
     const prequalEmail = String(prequal.email ?? "").toLowerCase().trim();
     const prequalReasons = Array.isArray(prequal.visit_reasons) ? prequal.visit_reasons : reasons;
 
+    const { data: existingPaidBooking } = await supabaseAdmin
+      .from("consultation_bookings")
+      .select("id")
+      .eq("customer_email", prequalEmail)
+      .eq("status", "paid")
+      .limit(1)
+      .maybeSingle();
+
+    if (existingPaidBooking?.id) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "You have already paid the $79 wellness assessment. Sign in to your patient portal to continue — no duplicate charge.",
+          error_code: "already_paid",
+        }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     let serviceTypeLegacy: string | undefined;
     if (isLegacyServiceType(serviceTypeIn)) {
       serviceTypeLegacy = serviceTypeIn;

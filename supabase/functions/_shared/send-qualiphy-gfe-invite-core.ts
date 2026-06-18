@@ -15,9 +15,20 @@ import {
 const FROM_EMAIL = "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>";
 const DEFAULT_PATIENT_STATE = "GA";
 
+export type GfeInviteErrorCode =
+  | "qualiphy_not_configured"
+  | "patient_not_found"
+  | "email_required"
+  | "dob_required"
+  | "consult_not_paid"
+  | "gfe_already_valid"
+  | "phone_required"
+  | "clearance_insert_failed"
+  | "delivery_failed";
+
 export type SendGfeInviteResult =
   | { ok: true; clearance_id: string; meeting_url: string | null; delivered: string[] }
-  | { ok: false; error: string; skipped?: boolean };
+  | { ok: false; error: string; error_code: GfeInviteErrorCode; skipped?: boolean };
 
 /** Send Qualiphy remote GFE invite (service-role only). */
 export async function sendQualiphyGfeInvite(
@@ -33,7 +44,13 @@ export async function sendQualiphyGfeInvite(
   const apiKey = Deno.env.get("QUALIPHY_API_KEY");
   const examIds = getQualiphyExamIds();
   if (!apiKey || examIds.length === 0) {
-    return { ok: false, error: "Qualiphy not configured", skipped: true };
+    return {
+      ok: false,
+      error:
+        "Qualiphy is not configured. Set QUALIPHY_API_KEY and QUALIPHY_GFE_EXAM_ID(S) in Supabase secrets.",
+      error_code: "qualiphy_not_configured",
+      skipped: true,
+    };
   }
 
   const patientId = args.patientId;
@@ -48,13 +65,22 @@ export async function sendQualiphyGfeInvite(
     .maybeSingle();
 
   if (patientError || !patient) {
-    return { ok: false, error: "Patient not found" };
+    return { ok: false, error: "Patient not found", error_code: "patient_not_found" };
   }
-  if (!patient.email && !patient.phone) {
-    return { ok: false, error: "Patient email or phone required" };
+  if (!patient.email) {
+    return {
+      ok: false,
+      error: "Patient email is required for Qualiphy GFE",
+      error_code: "email_required",
+    };
   }
   if (!patient.dob) {
-    return { ok: false, error: "Patient DOB required before GFE", skipped: true };
+    return {
+      ok: false,
+      error: "Patient date of birth is required before sending a remote GFE link.",
+      error_code: "dob_required",
+      skipped: true,
+    };
   }
 
   const paidCheck = await assertConsultPaidForGfe(
@@ -64,16 +90,25 @@ export async function sendQualiphyGfeInvite(
     patient.onboarding_status,
   );
   if (!paidCheck.ok) {
-    return { ok: false, error: paidCheck.message };
+    return { ok: false, error: paidCheck.message, error_code: "consult_not_paid" };
   }
 
   if (await hasValidGfeClearance(supabase, patientId)) {
-    return { ok: false, error: "Valid GFE already on file", skipped: true };
+    return {
+      ok: false,
+      error: "Patient already has a valid GFE clearance on file (valid for 12 months).",
+      error_code: "gfe_already_valid",
+      skipped: true,
+    };
   }
 
   const phone = formatPhoneE164(patient.phone);
   if (channels.includes("sms") && !phone) {
-    return { ok: false, error: "Valid phone required for SMS" };
+    return {
+      ok: false,
+      error: "Valid patient phone required for SMS delivery",
+      error_code: "phone_required",
+    };
   }
 
   await supabase
@@ -96,7 +131,11 @@ export async function sendQualiphyGfeInvite(
     .single();
 
   if (insertError || !clearanceRow) {
-    return { ok: false, error: insertError?.message ?? "Failed to create clearance row" };
+    return {
+      ok: false,
+      error: insertError?.message ?? "Failed to create clearance row",
+      error_code: "clearance_insert_failed",
+    };
   }
 
   const { first_name, last_name } = splitFullName(patient.full_name);
@@ -155,7 +194,11 @@ export async function sendQualiphyGfeInvite(
       text: messages.emailText,
     });
     if (emailError) {
-      return { ok: false, error: emailError.message ?? "Email delivery failed" };
+      return {
+        ok: false,
+        error: emailError.message ?? "Email delivery failed",
+        error_code: "delivery_failed",
+      };
     }
     delivered.push("email");
   }
@@ -164,7 +207,11 @@ export async function sendQualiphyGfeInvite(
     const { sendSms } = await import("./sms.ts");
     const smsResult = await sendSms(phone, messages.smsBody);
     if (!smsResult.success) {
-      return { ok: false, error: smsResult.error ?? "SMS delivery failed" };
+      return {
+        ok: false,
+        error: smsResult.error ?? "SMS delivery failed",
+        error_code: "delivery_failed",
+      };
     }
     delivered.push("sms");
   }

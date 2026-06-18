@@ -61,17 +61,34 @@ serve(async (req) => {
       patient.onboarding_status,
     );
     if (!paidCheck.ok) {
-      return new Response(JSON.stringify({ error: paidCheck.message }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: paidCheck.message,
+          error_code: "consult_not_paid",
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     if (await hasValidGfeClearance(supabase, patientId)) {
       return new Response(
-        JSON.stringify({ error: "Patient already has a valid in-clinic or remote GFE on file." }),
+        JSON.stringify({
+          error: "Patient already has a valid in-clinic or remote GFE on file.",
+          error_code: "gfe_already_valid",
+        }),
         { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
+    }
+
+    let resolvedProviderName = providerName?.trim() || null;
+    if (!resolvedProviderName && auth.userId) {
+      const { data: staffUser } = await supabase.auth.admin.getUserById(auth.userId);
+      const meta = staffUser?.user?.user_metadata;
+      resolvedProviderName =
+        (typeof meta?.full_name === "string" && meta.full_name.trim()) ||
+        (typeof meta?.name === "string" && meta.name.trim()) ||
+        staffUser?.user?.email?.split("@")[0] ||
+        null;
     }
 
     await supabase
@@ -90,7 +107,7 @@ serve(async (req) => {
         status: "approved",
         approved_at: approvedAt.toISOString(),
         expires_at: computeGfeExpiresAtIso(approvedAt),
-        provider_name: providerName,
+        provider_name: resolvedProviderName,
         notes,
         consultation_booking_id: paidCheck.consultation_booking_id ?? null,
         sent_by: auth.userId ?? null,
@@ -100,6 +117,18 @@ serve(async (req) => {
       .single();
 
     if (insertError) throw insertError;
+
+    await supabase
+      .from("patients")
+      .update({ onboarding_status: "gfe_cleared" })
+      .eq("id", patientId)
+      .in("onboarding_status", [
+        "consultation_paid",
+        "gfe_pending",
+        "account_created",
+        "invited",
+        "pending_invite",
+      ]);
 
     edgeStructuredLog(functionName, { patient_id: patientId, clearance_id: row?.id, success: true });
 

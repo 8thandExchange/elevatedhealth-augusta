@@ -43,6 +43,7 @@ import {
   shouldPromptForGfe,
   type GfeClearanceRow,
 } from "@/lib/gfeClearance";
+import { readEdgeFunctionError } from "@/lib/edgeFunctionError";
 import { PatientOutboundPreview } from "@/components/provider/PatientOutboundPreview";
 import { buildGfeLinkMessages, GFE_LINK_PLACEHOLDER } from "@/lib/gfeLinkMessages";
 import { firstNameFromFullName } from "@/lib/intakeLinkMessages";
@@ -140,8 +141,14 @@ export function GfeClearanceCard({
       const { data, error } = await supabase.functions.invoke("qualiphy-send-gfe-invite", {
         body: { patient_id: patientId, channels },
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (error) {
+        toast.error(await readEdgeFunctionError(error, "Failed to send GFE link"));
+        return;
+      }
+      if (data?.error) {
+        toast.error(String(data.error));
+        return;
+      }
 
       toast.success(
         `Remote GFE link sent to ${patientName} via ${(data.delivered_channels as string[])?.join(" and ") ?? "email"}`,
@@ -149,7 +156,7 @@ export function GfeClearanceCard({
       handleSendOpenChange(false);
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to send GFE link");
+      toast.error(await readEdgeFunctionError(e, "Failed to send GFE link"));
     } finally {
       setSending(false);
     }
@@ -161,15 +168,21 @@ export function GfeClearanceCard({
       const { data, error } = await supabase.functions.invoke("record-in-clinic-gfe", {
         body: { patient_id: patientId, notes: inClinicNotes.trim() || null },
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (error) {
+        toast.error(await readEdgeFunctionError(error, "Failed to record in-clinic GFE"));
+        return;
+      }
+      if (data?.error) {
+        toast.error(String(data.error));
+        return;
+      }
 
       toast.success(`${patientName} marked as cleared in-clinic (valid 12 months).`);
       setInClinicOpen(false);
       setInClinicNotes("");
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to record in-clinic GFE");
+      toast.error(await readEdgeFunctionError(e, "Failed to record in-clinic GFE"));
     } finally {
       setRecording(false);
     }
