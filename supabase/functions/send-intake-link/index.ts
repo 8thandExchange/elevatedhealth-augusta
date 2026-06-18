@@ -132,6 +132,10 @@ serve(async (req) => {
               <div class="cta-container">
                 <a href="${intakeLink}" class="cta-button">Complete Your Intake Form →</a>
               </div>
+              <p style="margin-top: 12px; font-size: 13px; color: #4a5568; text-align: center;">
+                If the button does not appear, use this direct link:<br/>
+                <a href="${intakeLink}" style="color: #0f766e; text-decoration: underline; word-break: break-all;">${intakeLink}</a>
+              </p>
               
               <div class="info-box">
                 <p class="info-title">📋 What to Expect</p>

@@ -410,12 +410,19 @@ const ProviderDashboard = () => {
 
       if (ordersError) throw ordersError;
 
-      // Also load patients with intake complete, account_created, or pending_invite but no order yet
-      // This ensures newly signed up patients appear in triage
+      // Also load patients likely to need manual review visibility even if they do
+      // not yet have an order row (including staff-added records).
       const { data: intakePatients, error: intakeError } = await supabase
         .from("patients")
         .select("*")
-        .in("onboarding_status", ["intake_complete", "account_created", "pending_invite"])
+        .in("onboarding_status", [
+          "intake_complete",
+          "account_created",
+          "pending_invite",
+          "consultation_paid",
+          "consultation_completed",
+          "treatment_active",
+        ])
         .is("current_protocol", null);
 
       console.log("[ProviderDashboard] Intake patients query result:", { intakePatients, intakeError });

@@ -350,6 +350,10 @@ serve(async (req) => {
                 <p style="margin-top: 10px; font-size: 13px; color: #666;">
                   This link expires in 7 days
                 </p>
+                <p style="margin-top: 12px; font-size: 13px; color: #4a5568;">
+                  If the button does not appear, use this direct link:<br />
+                  <a href="${intakeUrl}" style="color: #0f766e; text-decoration: underline; word-break: break-all;">${intakeUrl}</a>
+                </p>
               </div>
               
               <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
