@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { requestMagicLink } from "@/lib/requestMagicLink";
 import { Loader2, Mail, ArrowLeft, Shield } from "lucide-react";
 
 type AuthMode = "patient" | "provider";
@@ -62,20 +63,17 @@ const Auth = () => {
 
     try {
       const redirectUrl = `${window.location.origin}/patient/dashboard`;
-      
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: redirectUrl,
-        },
-      });
-
-      if (error) throw error;
+      const result = await requestMagicLink(email, "patient", redirectUrl);
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
 
       setMagicLinkSent(true);
       toast.success("Check your email for the login link!");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to send magic link");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to send magic link";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

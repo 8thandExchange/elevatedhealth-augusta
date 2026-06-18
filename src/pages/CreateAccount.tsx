@@ -16,6 +16,7 @@ import { useEffect, useState, FormEvent } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { supabase } from "@/integrations/supabase/client";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,98 +93,127 @@ const CreateAccount = () => {
 
     setIsCreating(true);
     try {
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/patient/dashboard`,
-        },
-      });
+      const displayName = (name || email.split("@")[0]).trim();
+      const nameParts = displayName.split(/\s+/).filter(Boolean);
+      const firstName = nameParts[0] || "Patient";
+      const lastName = nameParts.slice(1).join(" ");
 
-      if (signUpError) throw signUpError;
-
-      if (signUpData.user) {
-        const cleanPhone = phone.replace(/\D/g, "");
-        const formattedPhoneForStorage = cleanPhone.length === 10 ? cleanPhone : null;
-        const displayName = (name || email.split("@")[0]).trim();
-        const nameParts = displayName.split(/\s+/).filter(Boolean);
-        const firstName = nameParts[0] || "Patient";
-        const lastName = nameParts.slice(1).join(" ");
-
-        await supabase.auth.signInWithPassword({ email, password });
-
-        let resolvedPatientId: string | null = null;
-        let primaryProgram: string | null | undefined;
-        let patientPhone = formattedPhoneForStorage;
-
-        try {
-          const linked = await linkPatientAccount({
+      const { data: authData, error: authError } = await supabase.functions.invoke(
+        "create-patient-auth-account",
+        {
+          body: {
             email,
-            fullName: displayName,
-            phone: formattedPhoneForStorage,
-          });
-          if (linked) {
-            resolvedPatientId = linked.patient_id;
-            primaryProgram = linked.primary_program;
-            patientPhone = formattedPhoneForStorage || linked.phone;
+            password,
+            full_name: displayName,
+          },
+        },
+      );
+
+      if (authError) {
+        if (authError instanceof FunctionsHttpError) {
+          try {
+            const body = await authError.context.json();
+            if (body?.error_code === "already_registered") {
+              toast.error("An account with this email already exists. Please log in.");
+              navigate("/patient/login");
+              return;
+            }
+            if (body?.error) throw new Error(String(body.error));
+          } catch (parseErr) {
+            if (parseErr instanceof Error && parseErr.message !== authError.message) throw parseErr;
           }
-        } catch (linkErr: unknown) {
-          const linkMsg = linkErr instanceof Error ? linkErr.message : String(linkErr);
-          if (linkMsg.includes("email_already_linked")) {
-            toast.error("This email is linked to another account. Please log in or contact the clinic.");
-            navigate("/patient/login");
-            return;
-          }
-          throw linkErr;
         }
-
-        if (!resolvedPatientId) {
-          const { data: insertedPatient, error: insertError } = await supabase
-            .from("patients")
-            .insert({
-              user_id: signUpData.user.id,
-              email,
-              full_name: displayName,
-              onboarding_status: "account_created",
-              ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
-            })
-            .select("id, primary_program")
-            .single();
-          if (insertError) throw insertError;
-          resolvedPatientId = insertedPatient.id;
-          primaryProgram = insertedPatient.primary_program;
-        }
-
-        const { data: sessionData } = await supabase.auth.getSession();
-        const accessToken = sessionData.session?.access_token;
-        if (accessToken) {
-          supabase.functions.invoke("send-welcome-email", {
-            body: {
-              user_id: signUpData.user.id,
-              email,
-              first_name: firstName,
-              last_name: lastName,
-              primary_program: primaryProgram,
-              ...(resolvedPatientId ? { patient_id: resolvedPatientId } : {}),
-            },
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }).catch((err) => console.error("Welcome email error", err));
-        }
-
-        if (patientPhone) {
-          supabase.functions.invoke("send-welcome-sms", {
-            body: {
-              patient_id: resolvedPatientId,
-              phone: patientPhone,
-              first_name: firstName,
-              primary_program: primaryProgram,
-            },
-          }).catch((err) => console.error("Welcome SMS error", err));
-        }
-
-        toast.success("Account created! Let's finish your intake.");
-        navigate("/patient/intake");
+        throw authError;
       }
+
+      if (authData?.error_code === "already_registered") {
+        toast.error("An account with this email already exists. Please log in.");
+        navigate("/patient/login");
+        return;
+      }
+
+      const userId = authData?.user_id as string | undefined;
+      if (!userId) {
+        throw new Error("Account created but user id missing");
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw signInError;
+
+      const cleanPhone = phone.replace(/\D/g, "");
+      const formattedPhoneForStorage = cleanPhone.length === 10 ? cleanPhone : null;
+
+      let resolvedPatientId: string | null = null;
+      let primaryProgram: string | null | undefined;
+      let patientPhone = formattedPhoneForStorage;
+
+      try {
+        const linked = await linkPatientAccount({
+          email,
+          fullName: displayName,
+          phone: formattedPhoneForStorage,
+        });
+        if (linked) {
+          resolvedPatientId = linked.patient_id;
+          primaryProgram = linked.primary_program;
+          patientPhone = formattedPhoneForStorage || linked.phone;
+        }
+      } catch (linkErr: unknown) {
+        const linkMsg = linkErr instanceof Error ? linkErr.message : String(linkErr);
+        if (linkMsg.includes("email_already_linked")) {
+          toast.error("This email is linked to another account. Please log in or contact the clinic.");
+          navigate("/patient/login");
+          return;
+        }
+        throw linkErr;
+      }
+
+      if (!resolvedPatientId) {
+        const { data: insertedPatient, error: insertError } = await supabase
+          .from("patients")
+          .insert({
+            user_id: userId,
+            email,
+            full_name: displayName,
+            onboarding_status: "account_created",
+            ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
+          })
+          .select("id, primary_program")
+          .single();
+        if (insertError) throw insertError;
+        resolvedPatientId = insertedPatient.id;
+        primaryProgram = insertedPatient.primary_program;
+      }
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (accessToken) {
+        supabase.functions.invoke("send-welcome-email", {
+          body: {
+            user_id: userId,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+            primary_program: primaryProgram,
+            ...(resolvedPatientId ? { patient_id: resolvedPatientId } : {}),
+          },
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }).catch((err) => console.error("Welcome email error", err));
+      }
+
+      if (patientPhone) {
+        supabase.functions.invoke("send-welcome-sms", {
+          body: {
+            patient_id: resolvedPatientId,
+            phone: patientPhone,
+            first_name: firstName,
+            primary_program: primaryProgram,
+          },
+        }).catch((err) => console.error("Welcome SMS error", err));
+      }
+
+      toast.success("Account created! Let's finish your intake.");
+      navigate("/patient/intake");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to create account";
       console.error("Account creation error:", err);

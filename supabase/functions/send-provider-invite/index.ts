@@ -1,5 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.0";
+import { Resend } from "https://esm.sh/resend@2.0.0";
+import {
+  AUTH_EMAIL_FROM,
+  brandedAuthEmailHtml,
+  buildAuthActionLink,
+  escapeHtml,
+} from "../_shared/auth-email-delivery.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -124,20 +131,59 @@ serve(async (req: Request) => {
       }
       createdUserId = createdData?.user?.id;
     } else {
-      // Send invite email (new users only)
-      const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
-        data: {
-          full_name,
-          invited_roles: roles,
+      const redirectTo = `${req.headers.get("origin") || "https://elevatedhealthaugusta.com"}/admin/login`;
+      const { data: inviteData, error: inviteError } = await adminClient.auth.admin.generateLink({
+        type: "invite",
+        email,
+        options: {
+          redirectTo,
+          data: {
+            full_name,
+            invited_roles: roles,
+          },
         },
-        redirectTo: `${req.headers.get("origin") || "https://elevatedhealthaugusta.com"}/admin/login`,
       });
 
       if (inviteError) {
-        console.error("Invite error:", inviteError);
+        console.error("Invite link error:", inviteError);
         throw new Error(inviteError.message);
       }
+
       createdUserId = inviteData?.user?.id;
+
+      const inviteLink = buildAuthActionLink(
+        supabaseUrl,
+        inviteData?.properties as Record<string, unknown> | undefined,
+        redirectTo,
+        "invite",
+      );
+
+      const resendKey = Deno.env.get("RESEND_API_KEY");
+      if (!inviteLink) {
+        throw new Error("Could not generate invite link");
+      }
+      if (!resendKey) {
+        throw new Error("Email service is not configured");
+      }
+
+      const resend = new Resend(resendKey);
+      const roleLabels = roles.join(", ");
+      const emailResponse = await resend.emails.send({
+        from: AUTH_EMAIL_FROM,
+        to: [email],
+        subject: "You're invited to Elevated Health Augusta",
+        html: brandedAuthEmailHtml({
+          headline: "Clinical team invitation",
+          bodyHtml: `<p>Hi ${escapeHtml(full_name)},</p><p>You've been invited to the Elevated Health Augusta clinical portal as <strong>${escapeHtml(roleLabels)}</strong>.</p><p>Click below to set your password and sign in.</p>`,
+          ctaLabel: "Accept invitation",
+          actionLink: inviteLink,
+        }),
+      });
+
+      if (emailResponse.error) {
+        console.error("Resend invite error:", emailResponse.error);
+        throw new Error(emailResponse.error.message || "Failed to send invite email");
+      }
     }
 
     // Add all selected roles to user_roles table

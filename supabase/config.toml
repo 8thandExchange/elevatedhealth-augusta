@@ -15,6 +15,12 @@ verify_jwt = false
 [functions.send-password-reset-email]
 verify_jwt = false
 
+[functions.send-magic-link-email]
+verify_jwt = false
+
+[functions.create-patient-auth-account]
+verify_jwt = false
+
 [functions.send-patient-invite]
 verify_jwt = false
 

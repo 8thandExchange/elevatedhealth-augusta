@@ -11,6 +11,7 @@ import SafetyGate from "@/components/patient/SafetyGate";
 import ConsultationModal from "@/components/ConsultationModal";
 import { clearAuthStorage, isSessionValid } from "@/lib/authUtils";
 import { requestPasswordReset } from "@/lib/requestPasswordReset";
+import { requestMagicLink } from "@/lib/requestMagicLink";
 import { linkPatientAccount } from "@/lib/patientAccountLink";
 
 type PrimaryProgram = string;
@@ -283,19 +284,21 @@ const PatientLogin = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: magicLinkEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}${getRedirectPath()}`,
-        }
-      });
-
-      if (error) throw error;
+      const result = await requestMagicLink(
+        magicLinkEmail,
+        "patient",
+        `${window.location.origin}${getRedirectPath()}`,
+      );
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
 
       setMagicLinkSent(true);
       toast.success("Magic link sent! Check your email.");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to send magic link");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to send magic link";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
