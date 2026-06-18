@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, User } from "lucide-react";
+import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 
 export interface ProviderOption {
   provider_id: string;
@@ -19,6 +20,8 @@ interface ProviderChooserProps {
   // (auto-selects it and renders nothing). Used by IV where provider
   // assignment is invisible to the patient.
   hideWhenSingle?: boolean;
+  /** Patient portal / website booking — pin intake calendar, no provider name */
+  patientFacing?: boolean;
 }
 
 // Patient-facing chooser for which provider will see them. Today we have a
@@ -32,11 +35,21 @@ const ProviderChooser = ({
   selectedProviderId,
   onChange,
   hideWhenSingle = false,
+  patientFacing = false,
 }: ProviderChooserProps) => {
   const [providers, setProviders] = useState<ProviderOption[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (patientFacing) {
+      if (selectedProviderId !== PATIENT_SELF_SERVICE_PROVIDER_ID) {
+        onChange(PATIENT_SELF_SERVICE_PROVIDER_ID);
+      }
+      setProviders([]);
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
     (async () => {
       setLoading(true);
@@ -85,7 +98,11 @@ const ProviderChooser = ({
     return () => {
       cancelled = true;
     };
-  }, [serviceLine, onChange, selectedProviderId]);
+  }, [serviceLine, onChange, selectedProviderId, patientFacing]);
+
+  if (patientFacing) {
+    return null;
+  }
 
   if (loading) {
     return <Skeleton className="h-24 w-full rounded-lg" />;

@@ -46,6 +46,7 @@ import { toast } from "sonner";
 import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
+import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 
 type ProductKey = "testosterone" | "biEst" | "progesterone" | "followUp" | "labPanel";
 
@@ -129,7 +130,7 @@ const AlaCartePaymentSuccess = () => {
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
   const [bookingId, setBookingId] = useState<string | null>(null);
-  const [providerId, setProviderId] = useState<string | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(PATIENT_SELF_SERVICE_PROVIDER_ID);
   const [verificationError, setVerificationError] = useState<string | null>(null);
 
   const [existingAppointment, setExistingAppointment] = useState<BookedAppointment | null>(null);
@@ -305,19 +306,17 @@ const AlaCartePaymentSuccess = () => {
           serviceLine={productInfo.serviceLine}
           selectedProviderId={providerId}
           onChange={setProviderId}
-          hideWhenSingle
+          patientFacing
         />
 
-        {providerId && (
-          <SlotPicker
-            ref={slotPickerRef}
-            serviceLine={productInfo.serviceLine === "follow_up" ? "follow_up" : "consult"}
-            durationMinutes={productInfo.durationMinutes}
-            providerId={providerId}
-            onConfirm={handleConfirmSlot}
-            confirmLabel="Confirm appointment"
-          />
-        )}
+        <SlotPicker
+          ref={slotPickerRef}
+          serviceLine={productInfo.serviceLine === "follow_up" ? "follow_up" : "consult"}
+          durationMinutes={productInfo.durationMinutes}
+          providerId={providerId || PATIENT_SELF_SERVICE_PROVIDER_ID}
+          onConfirm={handleConfirmSlot}
+          confirmLabel="Confirm appointment"
+        />
       </div>
     );
   };

@@ -20,6 +20,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
+import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 
 interface PaidBooking {
   id: string;
@@ -70,7 +71,7 @@ const ScheduleConsult = () => {
   const [paidBooking, setPaidBooking] = useState<PaidBooking | null>(null);
   const [needsRebookingFee, setNeedsRebookingFee] = useState(false);
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
-  const [providerId, setProviderId] = useState<string | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(PATIENT_SELF_SERVICE_PROVIDER_ID);
   const [processingRebooking, setProcessingRebooking] = useState(false);
   const [gfeGate, setGfeGate] = useState<"unknown" | "cleared" | "pending">("unknown");
   const slotPickerRef = useRef<SlotPickerHandle>(null);
@@ -419,12 +420,13 @@ const ScheduleConsult = () => {
                     serviceLine="consult"
                     selectedProviderId={providerId}
                     onChange={setProviderId}
+                    patientFacing
                   />
                   <SlotPicker
                     ref={slotPickerRef}
                     serviceLine="consult"
                     durationMinutes={30}
-                    providerId={providerId || undefined}
+                    providerId={providerId || PATIENT_SELF_SERVICE_PROVIDER_ID}
                     onConfirm={handleConfirm}
                     confirmLabel="Book this time"
                   />

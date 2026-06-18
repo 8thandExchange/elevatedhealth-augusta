@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 
 const ALLOWED_RESULTS = new Set(["cleared", "warned_acknowledged", "overridden"]);
 
@@ -109,6 +110,7 @@ const IVSlotSelection = () => {
                 ref={slotPickerRef}
                 serviceLine="iv"
                 durationMinutes={60}
+                providerId={PATIENT_SELF_SERVICE_PROVIDER_ID}
                 onConfirm={handleConfirm}
                 confirmLabel={checkingOut ? "Redirecting to payment..." : "Confirm slot & continue to payment"}
               />

@@ -10,6 +10,7 @@ import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPick
 import ProviderChooser from "@/components/booking/ProviderChooser";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 
 interface ConfirmedAppointment {
   id: string;
@@ -40,7 +41,7 @@ const IVPaymentSuccess = () => {
   const intakeIdFromQuery = searchParams.get("intake_id") || "";
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
   const [phase, setPhase] = useState<BookingPhase | null>(null);
-  const [providerId, setProviderId] = useState<string | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(PATIENT_SELF_SERVICE_PROVIDER_ID);
   const slotPickerRef = useRef<SlotPickerHandle>(null);
   const autoBookStartedRef = useRef(false);
 
@@ -159,12 +160,13 @@ const IVPaymentSuccess = () => {
                     serviceLine="iv"
                     selectedProviderId={providerId}
                     onChange={setProviderId}
+                    patientFacing
                   />
                   <SlotPicker
                     ref={slotPickerRef}
                     serviceLine="iv"
                     durationMinutes={60}
-                    providerId={providerId || undefined}
+                    providerId={providerId || PATIENT_SELF_SERVICE_PROVIDER_ID}
                     onConfirm={handleConfirm}
                     confirmLabel="Book this time"
                   />
