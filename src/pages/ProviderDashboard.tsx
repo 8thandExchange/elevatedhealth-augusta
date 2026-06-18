@@ -187,6 +187,14 @@ interface PendingPharmacyPatient {
   full_name: string;
   email: string | null;
   phone: string | null;
+  dob?: string | null;
+  gender?: string | null;
+  street_address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  allergies?: string | null;
+  medical_history?: Record<string, unknown> | null;
   onboarding_status: string;
   lab_path: string | null;
   updated_at: string | null;
@@ -259,7 +267,6 @@ const ProviderDashboard = () => {
   const [pharmacyOrderPatient, setPharmacyOrderPatient] = useState<PendingPharmacyPatient | null>(null);
   const [isPharmacyModalOpen, setIsPharmacyModalOpen] = useState(false);
   // Recommended medications from lab analysis
-  const [recommendedMedications, setRecommendedMedications] = useState<import("@/lib/medicationMapping").MedicationRecommendation[]>([]);
   const tabsScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollTabsLeft, setCanScrollTabsLeft] = useState(false);
   const [canScrollTabsRight, setCanScrollTabsRight] = useState(false);
@@ -268,17 +275,14 @@ const ProviderDashboard = () => {
   const pharmacyCardRef = useRef<HTMLDivElement>(null);
 
   // Handler for applying medications from Health Report
-  const handleApplyFromHealthReport = (meds: import("@/lib/medicationMapping").MedicationRecommendation[]) => {
-    setRecommendedMedications(meds);
-    toast.success("Medications applied to Rx card");
-    
-    // Scroll to pharmacy card
+  const handleApplyFromHealthReport = (_meds?: import("@/lib/medicationMapping").MedicationRecommendation[]) => {
+    toast.success("Review the Custom Pharmacy order card — cream is auto-selected from labs + symptoms");
     setTimeout(() => {
-      pharmacyCardRef.current?.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
+      pharmacyCardRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
       });
-    }, 100);
+    }, 200);
   };
 
   // Provider lookup based on email - expand this as you add more providers
@@ -620,7 +624,9 @@ const ProviderDashboard = () => {
       // GAP 2: Load patients pending pharmacy order (payment complete, awaiting meds)
       const { data: pharmacyData } = await supabase
         .from("patients")
-        .select("id, full_name, email, phone, onboarding_status, lab_path, updated_at")
+        .select(
+          "id, full_name, email, phone, dob, gender, street_address, city, state, zip_code, allergies, medical_history, onboarding_status, lab_path, updated_at",
+        )
         .eq("onboarding_status", "pending_pharmacy_order")
         .order("updated_at", { ascending: false });
       
@@ -1697,7 +1703,7 @@ const ProviderDashboard = () => {
                   Patients Awaiting Pharmacy Order
                 </CardTitle>
                 <p className="text-xs text-muted-foreground mt-1">
-                  These patients have paid but need medications ordered via Portal Assistant or Fax
+                  These patients have paid but need compounded hormone creams faxed to Custom Pharmacy of Evans
                 </p>
               </CardHeader>
               <CardContent>
@@ -1877,8 +1883,16 @@ const ProviderDashboard = () => {
                       patient={{
                         id: pharmacyOrderPatient.id,
                         full_name: pharmacyOrderPatient.full_name,
+                        dob: pharmacyOrderPatient.dob,
                         email: pharmacyOrderPatient.email,
                         phone: pharmacyOrderPatient.phone,
+                        street_address: pharmacyOrderPatient.street_address,
+                        city: pharmacyOrderPatient.city,
+                        state: pharmacyOrderPatient.state,
+                        zip_code: pharmacyOrderPatient.zip_code,
+                        allergies: pharmacyOrderPatient.allergies,
+                        medical_history: pharmacyOrderPatient.medical_history,
+                        gender: pharmacyOrderPatient.gender,
                       }}
                       onOrderCreated={() => {
                         setIsPharmacyModalOpen(false);
@@ -2734,7 +2748,6 @@ const ProviderDashboard = () => {
                     gender: selectedPatient.patient.gender,
                   }}
                   onOrderCreated={() => loadData()}
-                  recommendedMedications={recommendedMedications}
                 />
               </div>
 

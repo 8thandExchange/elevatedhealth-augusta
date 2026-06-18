@@ -14,7 +14,8 @@ import {
   persistLabcorpInterpretation,
   valuesChangedSinceSnapshot,
 } from "@/lib/persistLabcorpInterpretation";
-import { generateLabcorpMedicationRecommendations } from "@/lib/labcorpMedicationRecommendations";
+import { generateLabcorpHormoneCreamRecommendations } from "@/lib/labcorpMedicationRecommendations";
+import { isCustomPharmacyHormoneCream } from "@/lib/pharmacyOrderFormulary";
 import type { MedicationRecommendation } from "@/lib/medicationMapping";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -86,7 +87,7 @@ export function LabInterpretationPanel({
       setInterpretation(saved.interpretation);
       setSavedAt(saved.interpreted_at);
       setMedicationRecs(
-        generateLabcorpMedicationRecommendations(saved.interpretation, values, patientGender),
+        generateLabcorpHormoneCreamRecommendations(saved.interpretation, values, patientGender),
       );
       return;
     }
@@ -94,7 +95,7 @@ export function LabInterpretationPanel({
     const result = analyzeLabcorpResults(values, patientGender, primaryProgram);
     setInterpretation(result);
     setSavedAt(null);
-    setMedicationRecs(generateLabcorpMedicationRecommendations(result, values, patientGender));
+    setMedicationRecs(generateLabcorpHormoneCreamRecommendations(result, values, patientGender));
   }, [labRow.treatment_plan, values, patientGender, primaryProgram]);
 
   useEffect(() => {
@@ -126,7 +127,7 @@ export function LabInterpretationPanel({
     const result = analyzeLabcorpResults(values, patientGender, primaryProgram);
     setInterpretation(result);
     setSavedAt(null);
-    setMedicationRecs(generateLabcorpMedicationRecommendations(result, values, patientGender));
+    setMedicationRecs(generateLabcorpHormoneCreamRecommendations(result, values, patientGender));
     toast.message("Re-ran analysis from current lab values");
   };
 
@@ -181,18 +182,15 @@ export function LabInterpretationPanel({
   };
 
   const handleApplyToRx = () => {
-    if (medicationRecs.length === 0) {
-      toast.error("No formulary-linked recommendations for this panel");
+    const creamRecs = medicationRecs.filter((m) => isCustomPharmacyHormoneCream(m.formularyId));
+    if (creamRecs.length === 0) {
+      toast.message(
+        "No Custom Pharmacy hormone cream recommendation for this panel — GLP-1 and peptides use their program lanes.",
+      );
       return;
     }
-    const creamRecs = medicationRecs.filter((m) => m.formularyId.startsWith("male_") || m.formularyId.startsWith("female_") || m.formularyId === "biest" || m.formularyId === "progesterone_sleep");
-    if (creamRecs.length > 0) {
-      onApplyToRx?.(creamRecs);
-      toast.success("Applied hormone cream recommendations to order card");
-    } else {
-      onApplyToRx?.(medicationRecs);
-      toast.message("GLP-1 suggestion noted — use Rx portal / FCC for semaglutide orders");
-    }
+    onApplyToRx?.(creamRecs);
+    toast.success("Scroll to Custom Pharmacy order card — recommendation will auto-populate from labs + symptoms");
   };
 
   const copyStory = async () => {
@@ -337,7 +335,7 @@ export function LabInterpretationPanel({
           <Separator />
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Suggested therapies
+              Custom Pharmacy hormone creams
             </p>
             {medicationRecs.map((m) => (
               <div key={m.formularyId} className="text-xs border border-border/50 rounded-lg p-3">
@@ -351,7 +349,7 @@ export function LabInterpretationPanel({
               {onApplyToRx && (
                 <Button type="button" size="sm" onClick={handleApplyToRx}>
                   <Pill className="w-3.5 h-3.5 mr-1" />
-                  Apply to order card
+                  Apply to Custom Pharmacy order
                 </Button>
               )}
               <Button type="button" size="sm" variant="secondary" onClick={handleSave} disabled={isSaving}>

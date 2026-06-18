@@ -22,6 +22,7 @@ import {
 } from "./CustomPharmacyPreparationPicker";
 import type { CustomPharmacyCategory } from "@/lib/customPharmacyFormulary";
 import { CUSTOM_PHARMACY_VENDOR } from "@/lib/pharmacyOrderFormulary";
+import { buildCustomPharmacySelection } from "@/lib/creamPrescriptionAlgorithm";
 import type { RxConsentResolutionInput } from "@/data/consents/medication-consent-mapping";
 import { checkConsentGateForRxContexts, type ConsentGateResult } from "@/lib/consents/consent-gate";
 import { ConsentGatePanel } from "@/components/consents/ConsentGatePanel";
@@ -131,6 +132,12 @@ export interface PrescriptionPortalModalProps {
   category: string;
   /** Pre-select cream preparation from PharmacyOrderCard formulary line */
   customPreparationId?: string | null;
+  /** Lab algorithm overrides for strength/sig/refills when auto-selecting cream */
+  algorithmCreamSelection?: {
+    strength: string;
+    sig: string;
+    refills?: number;
+  };
   onOrderCreated?: () => void;
 }
 
@@ -236,10 +243,14 @@ const PrescriptionPortalModal = ({
   supplyDays = 30,
   category,
   customPreparationId = null,
+  algorithmCreamSelection,
   onOrderCreated,
 }: PrescriptionPortalModalProps) => {
   const [isMarking, setIsMarking] = useState(false);
   const [faxStatus, setFaxStatus] = useState<FaxStatus>("idle");
+  const [faxId, setFaxId] = useState<string | null>(null);
+  const [faxOrderId, setFaxOrderId] = useState<string | null>(null);
+  const [deliveryStatus, setDeliveryStatus] = useState<string | null>(null);
   const [faxTimestamp, setFaxTimestamp] = useState<string | null>(null);
   const [faxError, setFaxError] = useState<string | null>(null);
   const [providerEmail, setProviderEmail] = useState<string>("");
@@ -356,7 +367,21 @@ const PrescriptionPortalModal = ({
     setFaxStatus("idle");
     setFaxTimestamp(null);
     setFaxError(null);
+    setFaxId(null);
+    setFaxOrderId(null);
+    setDeliveryStatus(null);
     setCustomSelection(null);
+
+    if (customPreparationId && medication?.id) {
+      const built = buildCustomPharmacySelection({
+        formularyId: medication.id,
+        strength: algorithmCreamSelection?.strength,
+        sig: algorithmCreamSelection?.sig,
+        refills: algorithmCreamSelection?.refills ?? refills,
+      });
+      if (built) setCustomSelection(built);
+    }
+
     void (async () => {
       const { data, error } = await supabase
         .from("pharmacies")
@@ -370,7 +395,27 @@ const PrescriptionPortalModal = ({
       }
       if (data) setPharmacy(data as CustomPharmacyRecord);
     })();
-  }, [isOpen]);
+  }, [isOpen, customPreparationId, medication?.id, algorithmCreamSelection, refills]);
+
+  useEffect(() => {
+    if (!faxOrderId || faxStatus !== "sent") return;
+    let cancelled = false;
+    const poll = async () => {
+      const { data } = await supabase
+        .from("orders")
+        .select("fax_status")
+        .eq("id", faxOrderId)
+        .maybeSingle();
+      if (cancelled || !data?.fax_status) return;
+      setDeliveryStatus(data.fax_status);
+    };
+    void poll();
+    const interval = window.setInterval(poll, 4000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [faxOrderId, faxStatus]);
 
   const formatDOB = (dob?: string | null) => {
     if (!dob) return "Not on file";
@@ -545,6 +590,9 @@ const PrescriptionPortalModal = ({
         }
 
         setFaxStatus("sent");
+        setFaxId(data.fax_id ?? null);
+        setFaxOrderId(data.order_id ?? null);
+        setDeliveryStatus(data.status ?? "queued");
         setFaxTimestamp(
           new Date().toLocaleString("en-US", {
             dateStyle: "short",
@@ -785,8 +833,23 @@ const PrescriptionPortalModal = ({
           <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 flex items-center gap-3 mt-4">
             <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
             <div>
-              <p className="text-sm font-medium text-green-700 dark:text-green-400">Fax Sent Successfully</p>
+              <p className="text-sm font-medium text-green-700 dark:text-green-400">
+                Fax transmitted to Custom Pharmacy
+              </p>
               <p className="text-xs text-green-600 dark:text-green-500">{faxTimestamp}</p>
+              {faxId && (
+                <p className="text-xs text-green-600 dark:text-green-500 mt-1">
+                  Fax ID: {faxId}
+                  {deliveryStatus && deliveryStatus !== "queued"
+                    ? ` · Status: ${deliveryStatus}`
+                    : " · Queued — awaiting pharmacy delivery confirmation"}
+                </p>
+              )}
+              {deliveryStatus === "delivered" && (
+                <p className="text-xs font-medium text-green-700 dark:text-green-400 mt-1">
+                  Delivery confirmed — order marked complete.
+                </p>
+              )}
             </div>
           </div>
         )}

@@ -241,7 +241,7 @@ const HealthReportPreview = ({ patientId, patientName, patientGender = 'female',
                     className="w-full bg-primary hover:bg-primary/90"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Apply Recommended Medications
+                    Apply to Custom Pharmacy order
                   </Button>
                 )}
               </div>

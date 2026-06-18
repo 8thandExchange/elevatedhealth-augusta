@@ -178,6 +178,11 @@ export function resolveFormularyId(id: string): string {
   return FORMULARY_ID_ALIASES[id] ?? id;
 }
 
+/** True when a recommendation maps to a Custom Pharmacy hormone cream line. */
+export function isCustomPharmacyHormoneCream(formularyId: string): boolean {
+  return !!findFormularyItem(resolveFormularyId(formularyId));
+}
+
 export function portalRoutingCategory(category: PharmacyCategoryId): string {
   return category === "male_creams" ? "male_hormone" : "female_hormone";
 }

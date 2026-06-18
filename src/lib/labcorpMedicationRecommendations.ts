@@ -2,10 +2,10 @@ import type { MedicationRecommendation } from "@/lib/medicationMapping";
 import type { LabFinding, LabcorpInterpretation, LabcorpLabValues } from "@/lib/labcorpInterpretation";
 
 /**
- * Map LabCorp interpretation patterns → PharmacyOrderCard formulary IDs
- * and consent-relevant medication hints for the Rx portal.
+ * Map LabCorp interpretation patterns → Custom Pharmacy hormone cream formulary IDs only.
+ * GLP-1, peptides, and IV compounds are ordered through their respective program lanes — not pharmacy fax.
  */
-export function generateLabcorpMedicationRecommendations(
+export function generateLabcorpHormoneCreamRecommendations(
   interpretation: LabcorpInterpretation,
   values: LabcorpLabValues,
   gender: string,
@@ -73,32 +73,17 @@ export function generateLabcorpMedicationRecommendations(
     });
   }
 
-  if (
-    patterns.has("Glycemic risk (GLP-1 consideration)") ||
-    patterns.has("Insulin resistance pattern")
-  ) {
-    recs.push({
-      formularyId: "compounded_semaglutide",
-      name: "Compounded Semaglutide (monthly program)",
-      strength: "Titrate per weight-loss protocol",
-      rationale:
-        "Metabolic pattern supports GLP-1 discussion — order via Rx portal / FCC after glp1 consent (not in cream formulary dropdown)",
-      priority: 1,
-    });
-    if (values.a1c != null && values.a1c >= 7) {
-      recs.push({
-        formularyId: "compounded_tirzepatide",
-        name: "Compounded Tirzepatide (monthly program)",
-        strength: "Titrate per weight-loss protocol",
-        rationale:
-          "HbA1c ≥7% — discuss tirzepatide pathway after glp1 consent; order via Rx portal / FCC (not in cream dropdown)",
-        priority: 2,
-      });
-    }
-  }
-
   recs.sort((a, b) => a.priority - b.priority);
   return dedupeByFormularyId(recs);
+}
+
+/** @deprecated Use generateLabcorpHormoneCreamRecommendations — pharmacy fax is hormone creams only. */
+export function generateLabcorpMedicationRecommendations(
+  interpretation: LabcorpInterpretation,
+  values: LabcorpLabValues,
+  gender: string,
+): MedicationRecommendation[] {
+  return generateLabcorpHormoneCreamRecommendations(interpretation, values, gender);
 }
 
 function dedupeByFormularyId(recs: MedicationRecommendation[]): MedicationRecommendation[] {

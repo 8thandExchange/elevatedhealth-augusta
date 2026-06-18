@@ -65,6 +65,16 @@ export function CustomPharmacyPreparationPicker({
   };
 
   useEffect(() => {
+    if (selection) {
+      setPrepId(selection.preparation.id);
+      setStrength(selection.strength);
+      setSig(selection.sig);
+      setQuantity(selection.quantity);
+      setRefills(selection.refills);
+    }
+  }, [selection?.preparation.id, selection?.strength, selection?.sig, selection?.quantity, selection?.refills]);
+
+  useEffect(() => {
     if (initialPreparationId && !selection?.preparation.id) {
       handlePrepChange(initialPreparationId);
     }
