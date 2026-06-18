@@ -2559,6 +2559,9 @@ const ProviderDashboard = () => {
                   patient={{
                     id: selectedPatient.patient.id,
                     full_name: selectedPatient.patient.full_name,
+                    email: selectedPatient.patient.email,
+                    phone: selectedPatient.patient.phone,
+                    isMember: selectedPatient.patient.elevated_membership_status === "active",
                     dob: selectedPatient.patient.dob,
                     gender: selectedPatient.patient.gender,
                     lab_path: selectedPatient.labPath.path,

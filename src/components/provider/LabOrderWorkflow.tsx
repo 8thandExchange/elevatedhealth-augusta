@@ -39,7 +39,9 @@ import {
 import { formatCentsUsd } from "@/lib/labCatalogEconomics";
 import { LABCORP_FLOW_HINT } from "@/lib/labcorpPortal";
 import LabCorpPortalLink from "@/components/provider/LabCorpPortalLink";
-import { Loader2, Mail, FlaskConical, AlertTriangle } from "lucide-react";
+import LabPanelPaymentLinkActions from "@/components/provider/LabPanelPaymentLinkActions";
+import { sendLabPanelPaymentLink } from "@/lib/sendLabPanelPaymentLink";
+import { Loader2, Mail, FlaskConical, AlertTriangle, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
 type LabPanel = Tables<"lab_panels"> & {
@@ -52,6 +54,9 @@ type LabOrder = Tables<"lab_orders">;
 type PatientLabContext = {
   id: string;
   full_name: string;
+  email?: string | null;
+  phone?: string | null;
+  isMember?: boolean;
   dob?: string | null;
   gender?: string | null;
   lab_path?: string | null;
@@ -83,6 +88,7 @@ export default function LabOrderWorkflow({
   const [reason, setReason] = useState("");
   const [creating, setCreating] = useState(false);
   const [emailingId, setEmailingId] = useState<string | null>(null);
+  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -195,6 +201,28 @@ export default function LabOrderWorkflow({
     setReason("");
     void load();
     onOrderUpdated?.();
+  };
+
+  const collectPaymentForOrder = async (order: LabOrder, panelName: string) => {
+    const method = patient.phone ? "sms" : "email";
+    setPayingOrderId(order.id);
+    try {
+      await sendLabPanelPaymentLink({
+        panelSlug: order.panel_slug,
+        panelName,
+        patientId: patient.id,
+        patientName: patient.full_name,
+        patientEmail: patient.email,
+        patientPhone: patient.phone,
+        isMember: patient.isMember,
+        method,
+      });
+      toast.success(method === "sms" ? "Payment link texted to patient" : "Payment link emailed to patient");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not send payment link");
+    } finally {
+      setPayingOrderId(null);
+    }
   };
 
   const emailRequisition = async (order: LabOrder) => {
@@ -367,6 +395,17 @@ export default function LabOrderWorkflow({
       ) : panelSlug ? (
         <p className="text-xs text-amber-700 dark:text-amber-400">No email template — upload PDF requisition after ordering.</p>
       ) : null}
+      {selectedPanel && (
+        <LabPanelPaymentLinkActions
+          panelSlug={selectedPanel.slug}
+          panelName={selectedPanel.name}
+          patientId={patient.id}
+          patientName={patient.full_name}
+          patientEmail={patient.email}
+          patientPhone={patient.phone}
+          isMember={patient.isMember}
+        />
+      )}
       <Button size="sm" onClick={() => void createOrder()} disabled={creating}>
         {creating ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
         Record lab order
@@ -395,6 +434,21 @@ export default function LabOrderWorkflow({
                     {new Date(o.ordered_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right space-x-1">
+                    {!["reviewed", "cancelled"].includes(o.status) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={payingOrderId === o.id || !patient.email}
+                        onClick={() => void collectPaymentForOrder(o, panelName)}
+                      >
+                        {payingOrderId === o.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                        ) : (
+                          <CreditCard className="h-3 w-3 mr-1" />
+                        )}
+                        Collect payment
+                      </Button>
+                    )}
                     {o.requisition_key && o.status === "ordered" && (
                       <Button
                         variant="outline"

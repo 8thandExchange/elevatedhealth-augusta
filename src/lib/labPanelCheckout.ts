@@ -72,6 +72,11 @@ export function stripePriceIdForLabSlug(slug: string): string {
     : CORE_SERVICES.comprehensivePanel.priceId;
 }
 
+/** Stripe à la carte product_key for create-alacarte-checkout. */
+export function labPanelAlacarteProductKey(slug: string): "labPanel" | "labPanelExpanded" {
+  return labCheckoutTierForSlug(slug) === "expanded" ? "labPanelExpanded" : "labPanel";
+}
+
 /** Default clinical panel slug per ELEVATED program at onboarding. */
 export const PROGRAM_DEFAULT_LAB_SLUG: Record<string, string> = {
   trt: "hormone-male",

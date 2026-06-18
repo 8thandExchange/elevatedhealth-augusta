@@ -26,6 +26,7 @@ import { patientGfeIsComplete } from "@/lib/gfeClearance";
 import { resolveSchedulableConsultBooking } from "@/lib/paidConsultBooking";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
+import { wellnessPreVisitForServiceType } from "@/lib/wellnessVisitInstructions";
 
 interface PaidBooking {
   id: string;
@@ -48,18 +49,9 @@ const SERVICE_LABEL: Record<string, string> = {
 };
 
 const PRE_VISIT: Record<string, string[]> = {
-  hormone: [
-    "Bring photo ID and a list of any current medications",
-    "Plan to be on-site about 45 minutes (consult + lab draw)",
-  ],
-  weight_loss: [
-    "Bring photo ID and a list of any current medications",
-    "Bring recent labs if you have them",
-  ],
-  peptide: [
-    "Bring photo ID and a list of any current medications",
-    "Bring any recent bloodwork or sleep-study results",
-  ],
+  hormone: wellnessPreVisitForServiceType("hormone"),
+  weight_loss: wellnessPreVisitForServiceType("weight_loss"),
+  peptide: wellnessPreVisitForServiceType("peptide"),
 };
 
 // /schedule-consult is the post-payment rebooking surface for patients who

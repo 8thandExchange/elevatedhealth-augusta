@@ -54,23 +54,23 @@ const PRE_VISIT_INSTRUCTIONS: Record<string, string[]> = {
   ],
   consult: [
     "Bring photo ID and a list of any current medications",
-    "Plan to be on-site about 45 minutes (consult + lab draw)",
-    "Bring recent labs if you have them",
+    "Plan to be on-site about 45 minutes for your wellness assessment",
+    "Eat normally beforehand unless your care team told you otherwise",
   ],
   hormone: [
     "Bring photo ID and a list of any current medications",
-    "Plan to be on-site about 45 minutes (consult + lab draw)",
-    "Eat normally beforehand — no fasting required",
+    "Plan to be on-site about 45 minutes for your wellness assessment",
+    "Eat normally beforehand unless your care team told you otherwise",
   ],
   weight_loss: [
     "Bring photo ID and a list of any current medications",
-    "Plan to be on-site about 45 minutes (consult + lab draw)",
-    "Bring recent labs if you have them",
+    "Plan to be on-site about 45 minutes for your consultation",
+    "Bring recent labs if you already have them",
   ],
   peptide: [
     "Bring photo ID and a list of any current medications",
-    "Plan to be on-site about 45 minutes",
-    "Bring any recent bloodwork or sleep-study results",
+    "Plan to be on-site about 45 minutes for your consultation",
+    "Bring any recent bloodwork or sleep-study results if you have them",
   ],
 };
 

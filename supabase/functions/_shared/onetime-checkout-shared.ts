@@ -68,6 +68,9 @@ export async function serveOnetimePriceCheckoutFromBody(
         product_key: productKey,
         is_guest_checkout: isGuest ? "true" : "false",
         applied_discount: discount.applied_discount,
+        ...(typeof body.panel_slug === "string" && body.panel_slug
+          ? { lab_panel_slug: body.panel_slug }
+          : {}),
       },
     };
 
