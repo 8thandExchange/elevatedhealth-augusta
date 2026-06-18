@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const PatientServices = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isLoggedIn } = useAuth();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [linkAttempted, setLinkAttempted] = useState(false);
@@ -41,6 +42,12 @@ const PatientServices = () => {
     if (!patient?.id) return;
     hasCompletedTier1Intake(patient.id).then(setTier1IntakeComplete).catch(() => setTier1IntakeComplete(null));
   }, [patient?.id]);
+
+  useEffect(() => {
+    if (!patient?.id || tier1IntakeComplete !== false) return;
+    if (location.pathname.startsWith("/intake/")) return;
+    navigate("/intake/consents", { replace: true });
+  }, [patient?.id, tier1IntakeComplete, location.pathname, navigate]);
 
   useEffect(() => {
     if (!patient?.id) return;

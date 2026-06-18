@@ -76,7 +76,7 @@ export function Tier1IntakeBundle({
     setVersions(versionMap);
 
     if (resumeIdx >= TIER_1_CONSENTS.length) {
-      onAllConsentsComplete(sid, []);
+      setPhase("complete");
       return;
     }
 

@@ -14,8 +14,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import Navbar from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 import { PageLoader } from "@/components/ui/PageLoader";
-import ConsentStep from "@/components/patient/ConsentStep";
 import { formatDobForInput } from "@/lib/consents/dob-utils";
+import { hasCompletedTier1Intake } from "@/lib/consents/intake-status";
 import { useInvalidatePatientData } from "@/hooks/usePatient";
 
 const HORMONE_PATHWAY_IDS = new Set([
@@ -125,7 +125,7 @@ const PatientIntake = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [patientInterests, setPatientInterests] = useState<string[]>([]);
   const [primaryProgram, setPrimaryProgram] = useState<string>("hormone");
-  const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical" | "consent">("profile");
+  const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical">("profile");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fullName, setFullName] = useState<string>("");
   const [dob, setDob] = useState<string>("");
@@ -174,7 +174,8 @@ const PatientIntake = () => {
         if (error) throw error;
 
         if (patient?.intake_completed && patient.dob) {
-          navigate("/patient/dashboard", { replace: true });
+          const tier1Done = await hasCompletedTier1Intake(patient.id);
+          navigate(tier1Done ? "/patient/dashboard" : "/intake/consents", { replace: true });
           return;
         }
 
@@ -227,7 +228,6 @@ const PatientIntake = () => {
       steps.push({ id: "symptoms", label: "Symptoms" });
       steps.push({ id: "safety", label: "Safety" });
       steps.push({ id: "medical", label: "History" });
-      steps.push({ id: "consent", label: "Consent" });
     }
     
     return steps;
@@ -334,7 +334,7 @@ const PatientIntake = () => {
     return { path: "labcorp", panel: null, reason: "Default in-office LabCorp draw per clinic protocol" };
   };
 
-  const handleSubmit = async (consentSignature?: string) => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -443,14 +443,6 @@ const PatientIntake = () => {
         insurance_group_number: insuranceGroupNumber.trim() || null,
       };
 
-      // Add consent data if signature provided (hormone/weight loss patients)
-      if (consentSignature) {
-        updateData.consent_signature = consentSignature;
-        updateData.consent_signature_date = new Date().toISOString();
-        updateData.consent_completed_at = new Date().toISOString();
-        updateData.consent_method = "internal";
-      }
-
       if (highRisk) {
         updateData.risk_status = "high_risk_review";
         updateData.safety_flags = highRiskConditions
@@ -507,8 +499,8 @@ const PatientIntake = () => {
         }
       }
 
-      toast.success("Intake complete! A provider will review your results within 24-48 hours.");
-      navigate("/patient/dashboard");
+      toast.success("Intake saved. Next: review and sign your clinic consents.");
+      navigate("/intake/consents");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to submit intake";
       if (message.toLowerCase().includes("row-level security") || message.toLowerCase().includes("permission denied")) {
@@ -1153,9 +1145,15 @@ const PatientIntake = () => {
                   Back
                 </Button>
                 {hasHormoneInterests ? (
-                  <Button onClick={() => setStep("consent")} className="flex-1">
-                    Continue to Consent
-                    <ChevronRight className="w-4 h-4 ml-2" />
+                  <Button onClick={() => void handleSubmit()} disabled={isSubmitting} className="flex-1">
+                    {isSubmitting ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <>
+                        Continue to consents
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
                   </Button>
                 ) : (
                   <Button onClick={() => handleSubmit()} disabled={isSubmitting} className="flex-1">
@@ -1165,19 +1163,6 @@ const PatientIntake = () => {
                 )}
               </div>
             </>
-          )}
-
-          {/* Consent Step - For Hormone/Weight Loss Patients */}
-          {step === "consent" && (
-            <ConsentStep
-              treatmentType={treatmentRequests.includes("weight_loss") ? "weight_loss" : "hormone"}
-              patientName={fullName}
-              onBack={() => setStep("medical")}
-              onSubmit={async (signature) => {
-                await handleSubmit(signature);
-              }}
-              isSubmitting={isSubmitting}
-            />
           )}
 
         </div>

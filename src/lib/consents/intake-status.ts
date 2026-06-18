@@ -6,8 +6,11 @@ import { isConsentActive } from "@/lib/clinicTime";
 
 const sb = supabase as any;
 
-/** True when all 5 Tier 1 consents are valid or intake_consents_completed_at is set. */
+/** True only when all 5 Tier 1 consents have valid consent_records rows. */
 export async function hasCompletedTier1Intake(patientId: string): Promise<boolean> {
+  const valid = await getValidConsents(patientId);
+  const allSigned = TIER_1_CONSENTS.every((t) => valid[t]);
+
   const { data: patient, error } = await sb
     .from("patients")
     .select("intake_consents_completed_at")
@@ -15,10 +18,23 @@ export async function hasCompletedTier1Intake(patientId: string): Promise<boolea
     .maybeSingle();
 
   if (error) throw error;
-  if (patient?.intake_consents_completed_at) return true;
 
-  const valid = await getValidConsents(patientId);
-  return TIER_1_CONSENTS.every((t) => valid[t]);
+  if (allSigned) {
+    if (!patient?.intake_consents_completed_at) {
+      await markTier1IntakeComplete(patientId);
+    }
+    return true;
+  }
+
+  // Clear stale completion flag when catalog records are missing (legacy intake checkbox, etc.)
+  if (patient?.intake_consents_completed_at) {
+    await sb
+      .from("patients")
+      .update({ intake_consents_completed_at: null })
+      .eq("id", patientId);
+  }
+
+  return false;
 }
 
 export async function markTier1IntakeComplete(patientId: string): Promise<void> {

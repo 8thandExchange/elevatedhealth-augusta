@@ -18,6 +18,7 @@ import { consultScreeningBlockMessage } from "@/lib/consultPrequalScreening";
 import { CONSULT_JOURNEY_STAGES } from "@/lib/consultJourney";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { getActiveConsentVersion } from "@/lib/consents/consent-helpers";
+import { ConsentDocumentDisplay } from "@/components/consents/ConsentDocumentDisplay";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 import { readEdgeFunctionError } from "@/lib/edgeFunctionError";
 
@@ -69,6 +70,7 @@ export default function ConsultPrequal() {
   const [consentsLoading, setConsentsLoading] = useState(true);
   const [consentsLoadFailed, setConsentsLoadFailed] = useState(false);
   const [consentsAccepted, setConsentsAccepted] = useState<Record<string, boolean>>({});
+  const [consentsScrolled, setConsentsScrolled] = useState<Record<string, boolean>>({});
   const [signatureName, setSignatureName] = useState("");
   const [alreadyPaid, setAlreadyPaid] = useState(false);
   const [checkingPaid, setCheckingPaid] = useState(true);
@@ -140,8 +142,9 @@ export default function ConsultPrequal() {
   }, []);
 
   const allConsentsChecked = useMemo(
-    () => TIER_1_CONSENTS.every((t) => consentsAccepted[t]),
-    [consentsAccepted],
+    () =>
+      TIER_1_CONSENTS.every((t) => consentsAccepted[t] && consentsScrolled[t]),
+    [consentsAccepted, consentsScrolled],
   );
 
   const stepIndex = step === "profile" ? 1 : step === "screening" ? 2 : step === "consents" ? 3 : 4;
@@ -196,7 +199,7 @@ export default function ConsultPrequal() {
   const submitConsents = async (e: FormEvent) => {
     e.preventDefault();
     if (!sessionId || !allConsentsChecked || signatureName.trim().length < 2) {
-      toast.error("Sign all consents and type your full legal name.");
+      toast.error("Read each consent, check all boxes, and type your full legal name.");
       return;
     }
     setLoading(true);
@@ -508,23 +511,40 @@ export default function ConsultPrequal() {
                   </Button>
                 </div>
               ) : (
-              <form onSubmit={submitConsents} className="space-y-4">
+              <form onSubmit={submitConsents} className="space-y-6">
+                <p className="text-sm text-muted-foreground">
+                  Read each document in full, then check the box to confirm your agreement.
+                </p>
                 {TIER_1_CONSENTS.map((type) => {
                   const doc = ALL_CONSENTS[type];
                   const version = consentVersions[type];
                   return (
-                    <label key={type} className="flex items-start gap-2 rounded-lg border p-3 text-sm">
-                      <Checkbox
-                        checked={!!consentsAccepted[type]}
-                        onCheckedChange={(v) =>
-                          setConsentsAccepted((c) => ({ ...c, [type]: v === true }))
+                    <div key={type} className="space-y-3 rounded-lg border p-4">
+                      <p className="font-medium text-sm">{version?.title ?? doc.title}</p>
+                      <ConsentDocumentDisplay
+                        bodyMarkdown={doc.body_markdown}
+                        enforceScroll
+                        onScrollComplete={() =>
+                          setConsentsScrolled((prev) => ({ ...prev, [type]: true }))
                         }
                       />
-                      <span>
-                        I have read and agree to the{" "}
-                        <strong>{version?.title ?? doc.title}</strong>
-                      </span>
-                    </label>
+                      {!consentsScrolled[type] && (
+                        <p className="text-xs text-muted-foreground">Scroll to the bottom to enable agreement.</p>
+                      )}
+                      <label className="flex items-start gap-2 text-sm">
+                        <Checkbox
+                          checked={!!consentsAccepted[type]}
+                          disabled={!consentsScrolled[type]}
+                          onCheckedChange={(v) =>
+                            setConsentsAccepted((c) => ({ ...c, [type]: v === true }))
+                          }
+                        />
+                        <span>
+                          I have read and agree to the{" "}
+                          <strong>{version?.title ?? doc.title}</strong>
+                        </span>
+                      </label>
+                    </div>
                   );
                 })}
                 <div>
