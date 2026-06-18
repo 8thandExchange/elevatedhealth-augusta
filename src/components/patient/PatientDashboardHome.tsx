@@ -34,8 +34,10 @@ import {
   type ConsultJourneyContext,
 } from "@/lib/consultJourney";
 import {
-  gfeStatusLabel,
+  patientGfeDisplayLabel,
+  patientGfeIsComplete,
   pickActiveGfeClearance,
+  pickPatientGfeDisplayRow,
 } from "@/lib/gfeClearance";
 import { formatClinicDate, formatClinicDateTime, formatClinicTime, isConsentActive } from "@/lib/clinicTime";
 import { SITE_CONFIG } from "@/lib/siteConfig";
@@ -157,8 +159,11 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
   );
 
   const journeyAction = getConsultJourneyPatientAction(journeyContext);
+  const gfeComplete = patientGfeIsComplete(dash?.gfeRows ?? [], patient.onboarding_status);
   const activeGfe = dash ? pickActiveGfeClearance(dash.gfeRows) : null;
-  const latestGfe = dash?.gfeRows[0] ?? null;
+  const displayGfe = dash
+    ? pickPatientGfeDisplayRow(dash.gfeRows, patient.onboarding_status)
+    : null;
   const hasUpcomingVisit = (dash?.upcomingAppointments.length ?? 0) > 0;
 
   const setupSteps: SetupStep[] = useMemo(
@@ -187,7 +192,7 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
       {
         id: "gfe",
         label: "Good Faith Exam clearance",
-        done: !!activeGfe || patient.onboarding_status === "gfe_cleared",
+        done: gfeComplete,
         actionLabel: undefined,
         actionPath: undefined,
       },
@@ -195,11 +200,11 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
         id: "visit",
         label: "First clinic visit scheduled",
         done: hasUpcomingVisit || patient.onboarding_status === "consultation_scheduled",
-        actionLabel: activeGfe && !hasUpcomingVisit ? "Schedule" : undefined,
-        actionPath: activeGfe && !hasUpcomingVisit ? "/schedule-consult" : undefined,
+        actionLabel: gfeComplete && !hasUpcomingVisit ? "Schedule" : undefined,
+        actionPath: gfeComplete && !hasUpcomingVisit ? "/schedule-consult" : undefined,
       },
     ],
-    [patient, tier1IntakeComplete, activeGfe, hasUpcomingVisit, wellnessPaid],
+    [patient, tier1IntakeComplete, gfeComplete, hasUpcomingVisit, wellnessPaid],
   );
 
   const handleConsentDownload = async (recordId: string, path: string, type: string) => {
@@ -512,21 +517,21 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
                   <Badge
                     variant="outline"
                     className={
-                      activeGfe
+                      gfeComplete
                         ? "border-green-600/40 bg-green-500/10 text-green-800 dark:text-green-200"
                         : undefined
                     }
                   >
-                    {gfeStatusLabel(activeGfe ?? latestGfe)}
+                    {patientGfeDisplayLabel(dash!.gfeRows, patient.onboarding_status)}
                   </Badge>
                   {activeGfe?.expires_at && (
                     <p className="text-xs text-muted-foreground">
                       Valid through {formatClinicDate(activeGfe.expires_at)}
                     </p>
                   )}
-                  {latestGfe?.status === "pending" && latestGfe.meeting_url && (
+                  {displayGfe?.status === "pending" && displayGfe.meeting_url && !gfeComplete && (
                     <Button size="sm" variant="outline" asChild className="w-full font-jost">
-                      <a href={latestGfe.meeting_url} target="_blank" rel="noopener noreferrer">
+                      <a href={displayGfe.meeting_url} target="_blank" rel="noopener noreferrer">
                         Complete remote exam
                       </a>
                     </Button>

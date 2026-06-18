@@ -3,6 +3,7 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import { hasWellnessAssessmentPaid } from "../_shared/wellness-assessment-payment.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -110,6 +111,28 @@ serve(async (req) => {
       .maybeSingle();
 
     if (existingPaidBooking?.id) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "You have already paid the $79 wellness assessment. Sign in to your patient portal to continue — no duplicate charge.",
+          error_code: "already_paid",
+        }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    const { data: patientRow } = await supabaseAdmin
+      .from("patients")
+      .select("onboarding_status")
+      .eq("email", prequalEmail)
+      .maybeSingle();
+
+    if (
+      hasWellnessAssessmentPaid({
+        onboardingStatus: patientRow?.onboarding_status,
+        hasPaidConsultBooking: false,
+      })
+    ) {
       return new Response(
         JSON.stringify({
           error:

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CONSULT_JOURNEY_STAGES, getConsultJourneyStageIndex, type ConsultJourneyContext } from "@/lib/consultJourney";
-import { pickActiveGfeClearance, type GfeClearanceRow } from "@/lib/gfeClearance";
+import { patientGfeIsComplete, type GfeClearanceRow } from "@/lib/gfeClearance";
 import { cn } from "@/lib/utils";
 import { Check, Loader2 } from "lucide-react";
 
@@ -53,7 +53,7 @@ export function ConsultJourneyProgress({ context, patientId, className, compact 
           <Loader2 className="h-3 w-3 animate-spin" /> Updating progress…
         </div>
       )}
-      {!compact && pickActiveGfeClearance(mergedContext.gfeRows ?? []) && (
+      {!compact && patientGfeIsComplete(mergedContext.gfeRows ?? [], mergedContext.onboardingStatus) && (
         <p className="text-xs text-green-700 dark:text-green-300 mb-3">Good Faith Exam cleared — you can schedule your visit.</p>
       )}
       {!compact && (

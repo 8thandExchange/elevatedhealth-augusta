@@ -43,6 +43,9 @@ export const TIER_1_CONSENTS: ConsentType[] = [
   "communication",
 ];
 
+/** Provider + patient Tier 1 gate. NPP receipt is covered by `hipaa_acknowledgment`, not a separate signature. */
+export const TIER_1_REQUIRED_CONSENTS: ConsentType[] = [...TIER_1_CONSENTS];
+
 export const TIER_2_CONSENTS: ConsentType[] = [
   "hormone_therapy",
   "glp1",

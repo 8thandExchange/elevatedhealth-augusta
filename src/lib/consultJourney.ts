@@ -1,5 +1,5 @@
 import type { GfeClearanceRow } from "@/lib/gfeClearance";
-import { isGfeClearanceCurrentlyValid, pickActiveGfeClearance } from "@/lib/gfeClearance";
+import { patientGfeIsComplete } from "@/lib/gfeClearance";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 
 /** Canonical pre-visit funnel stages for Lane B (consult-gated programs). */
@@ -87,8 +87,11 @@ export interface ConsultJourneyContext {
   hasPaidConsultBooking?: boolean;
 }
 
-export function hasApprovedGfe(rows: GfeClearanceRow[] | undefined): boolean {
-  return !!pickActiveGfeClearance(rows ?? []);
+export function hasApprovedGfe(
+  rows: GfeClearanceRow[] | undefined,
+  onboardingStatus?: string | null,
+): boolean {
+  return patientGfeIsComplete(rows ?? [], onboardingStatus);
 }
 
 export function hasPendingGfe(rows: GfeClearanceRow[] | undefined): boolean {
@@ -98,7 +101,7 @@ export function hasPendingGfe(rows: GfeClearanceRow[] | undefined): boolean {
 /** Current stage index 0–8 for progress UI. */
 export function getConsultJourneyStageIndex(ctx: ConsultJourneyContext): number {
   const status = ctx.onboardingStatus ?? "new";
-  const gfeApproved = hasApprovedGfe(ctx.gfeRows);
+  const gfeApproved = hasApprovedGfe(ctx.gfeRows, status);
   const gfePending = hasPendingGfe(ctx.gfeRows);
   const wellnessPaid = hasWellnessAssessmentPaid({
     onboardingStatus: status,
@@ -143,8 +146,7 @@ export function getConsultJourneyStageIndex(ctx: ConsultJourneyContext): number 
 
 export function canBookWellnessVisit(ctx: ConsultJourneyContext): boolean {
   if (ctx.onboardingStatus === "consultation_scheduled") return false;
-  if (hasApprovedGfe(ctx.gfeRows)) return true;
-  return ctx.onboardingStatus === "gfe_cleared";
+  return hasApprovedGfe(ctx.gfeRows, ctx.onboardingStatus);
 }
 
 export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
@@ -169,9 +171,8 @@ export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
   }
 
   if (
-    hasPendingGfe(ctx.gfeRows) ||
-    status === "gfe_pending" ||
-    (wellnessPaid && !hasApprovedGfe(ctx.gfeRows) && status !== "gfe_cleared")
+    !hasApprovedGfe(ctx.gfeRows, status) &&
+    (hasPendingGfe(ctx.gfeRows) || status === "gfe_pending" || wellnessPaid)
   ) {
     return {
       title: "Complete your Good Faith Exam",

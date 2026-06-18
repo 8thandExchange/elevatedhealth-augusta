@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import type { ConsentType } from "@/data/consents/types";
-import { TIER_1_CONSENTS, TIER_2_CONSENTS } from "@/data/consents";
+import { TIER_1_REQUIRED_CONSENTS, TIER_2_CONSENTS } from "@/data/consents";
 import {
   mergeRequiredConsents,
   getRequiredConsentsForRxContext,
@@ -9,11 +9,7 @@ import {
 } from "@/data/consents/medication-consent-mapping";
 import { formatClinicDateKey, isConsentActive } from "@/lib/clinicTime";
 
-/** Tier 1 intake bundle + Notice of Privacy Practices (required on file per clinic policy). */
-export const TIER_1_REQUIRED_CONSENTS: ConsentType[] = [
-  ...TIER_1_CONSENTS,
-  "notice_of_privacy_practices",
-];
+export { TIER_1_REQUIRED_CONSENTS } from "@/data/consents";
 
 const GRACE_MS = 30 * 24 * 60 * 60 * 1000;
 const CALENDAR_WARN_MS = 30 * 24 * 60 * 60 * 1000;

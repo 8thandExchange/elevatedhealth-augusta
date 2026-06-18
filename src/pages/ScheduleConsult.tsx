@@ -22,6 +22,9 @@ import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 import { REBOOKING_FEE_DISPLAY } from "@/lib/cancellationPolicy";
+import { patientGfeIsComplete } from "@/lib/gfeClearance";
+import { resolveSchedulableConsultBooking } from "@/lib/paidConsultBooking";
+import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
 
 interface PaidBooking {
@@ -76,6 +79,7 @@ const ScheduleConsult = () => {
   const [providerId, setProviderId] = useState<string | null>(PATIENT_SELF_SERVICE_PROVIDER_ID);
   const [processingRebooking, setProcessingRebooking] = useState(false);
   const [gfeGate, setGfeGate] = useState<"unknown" | "cleared" | "pending">("unknown");
+  const [wellnessPaidNoBooking, setWellnessPaidNoBooking] = useState(false);
   const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   useEffect(() => {
@@ -106,16 +110,11 @@ const ScheduleConsult = () => {
         if (patient?.id) {
           const { data: gfeRows } = await supabase
             .from("gfe_clearances")
-            .select("status, expires_at")
+            .select("status, expires_at, approved_at, created_at")
             .eq("patient_id", patient.id)
             .order("created_at", { ascending: false })
             .limit(5);
-          const now = Date.now();
-          const hasApproved = (gfeRows ?? []).some(
-            (r) => r.status === "approved" && r.expires_at && new Date(r.expires_at).getTime() > now,
-          );
-          const hasPending = (gfeRows ?? []).some((r) => r.status === "pending");
-          if (hasApproved || patient.onboarding_status === "gfe_cleared") {
+          if (patientGfeIsComplete(gfeRows ?? [], patient.onboarding_status)) {
             setGfeGate("cleared");
           } else {
             setGfeGate("pending");
@@ -135,22 +134,21 @@ const ScheduleConsult = () => {
           return;
         }
 
-        // Most-recent paid consultation_bookings row that hasn't been
-        // scheduled yet (or whose appointment was cancelled).
-        const { data: booking } = await supabase
-          .from("consultation_bookings")
-          .select("id, service_type, customer_email, customer_name, booked_for")
-          .eq("customer_email", email)
-          .eq("status", "paid")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        const booking = await resolveSchedulableConsultBooking({
+          email,
+          onboardingStatus: patient?.onboarding_status,
+        });
 
         if (!booking) {
+          setWellnessPaidNoBooking(
+            hasWellnessAssessmentPaid({ onboardingStatus: patient?.onboarding_status }),
+          );
           setPaidBooking(null);
           setLoading(false);
           return;
         }
+
+        setWellnessPaidNoBooking(false);
 
         // If the booking already has a scheduled appointment, skip straight
         // to the confirmed view so we don't double-book.
@@ -368,17 +366,24 @@ const ScheduleConsult = () => {
                 <Lock className="w-10 h-10 text-amber-600" />
               </div>
               <h1 className="text-3xl md:text-4xl font-playfair text-foreground">
-                No paid consultation found
+                {wellnessPaidNoBooking ? "Scheduling record needs a moment" : "No paid consultation found"}
               </h1>
               <p className="font-jost text-muted-foreground max-w-xl mx-auto">
-                We don't see a paid $79 consultation on your account yet. Pick
-                the service line you want to start with — your visit time gets
-                scheduled right after payment.
+                {wellnessPaidNoBooking
+                  ? "Your $79 wellness assessment is on file, but we couldn't open the scheduler automatically. Call the clinic and we'll link your account — or try again in a moment."
+                  : "We don't see a paid $79 consultation on your account yet. Complete enrollment to pay and continue."}
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <Button onClick={() => navigate("/consult/start")}>
-                  Start enrollment
-                </Button>
+                {wellnessPaidNoBooking ? (
+                  <>
+                    <Button onClick={() => window.location.reload()}>Try again</Button>
+                    <Button variant="outline" onClick={() => navigate("/patient/dashboard")}>
+                      Patient portal
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => navigate("/consult/start")}>Start enrollment</Button>
+                )}
               </div>
               <p className="text-sm text-muted-foreground font-jost pt-4">
                 Already paid and not seeing it?{" "}

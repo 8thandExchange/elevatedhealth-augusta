@@ -3,7 +3,10 @@ import {
   computeGfeExpiresAt,
   GFE_VALIDITY_MONTHS,
   isGfeClearanceCurrentlyValid,
+  patientGfeDisplayLabel,
+  patientGfeIsComplete,
   pickActiveGfeClearance,
+  pickPatientGfeDisplayRow,
   shouldPromptForGfe,
   type GfeClearanceRow,
 } from "./gfeClearance";
@@ -87,5 +90,39 @@ describe("gfeClearance", () => {
       }),
     ];
     expect(pickActiveGfeClearance(rows)?.id).toBe("new");
+  });
+
+  it("treats approved row without expires_at as valid when within 12 months", () => {
+    expect(
+      isGfeClearanceCurrentlyValid(
+        baseRow({ expires_at: null, approved_at: "2026-01-01T00:00:00.000Z" }),
+        new Date("2026-06-01"),
+      ),
+    ).toBe(true);
+  });
+
+  it("patientGfeIsComplete when onboarding is gfe_cleared despite stale pending row", () => {
+    const rows = [
+      baseRow({ id: "pending", status: "pending", expires_at: null, approved_at: null }),
+      baseRow({ id: "approved", status: "approved" }),
+    ];
+    expect(patientGfeIsComplete(rows, "gfe_pending")).toBe(true);
+    expect(patientGfeIsComplete([rows[0]], "gfe_cleared")).toBe(true);
+  });
+
+  it("pickPatientGfeDisplayRow prefers active approved over stale pending", () => {
+    const rows = [
+      baseRow({ id: "pending", status: "pending", expires_at: null, approved_at: null }),
+      baseRow({ id: "approved", status: "approved" }),
+    ];
+    expect(pickPatientGfeDisplayRow(rows)?.id).toBe("approved");
+  });
+
+  it("patientGfeDisplayLabel shows cleared when complete", () => {
+    const rows = [
+      baseRow({ id: "pending", status: "pending", expires_at: null, approved_at: null }),
+      baseRow({ id: "approved", status: "approved" }),
+    ];
+    expect(patientGfeDisplayLabel(rows, "gfe_cleared")).toMatch(/Cleared/i);
   });
 });

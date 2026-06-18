@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, FlaskConical, ExternalLink, Loader2 } from "lucide-react";
 import {
-  gfeStatusLabel,
-  isGfeClearanceCurrentlyValid,
+  patientGfeDisplayLabel,
+  patientGfeIsComplete,
   pickActiveGfeClearance,
+  pickPatientGfeDisplayRow,
   type GfeClearanceRow,
 } from "@/lib/gfeClearance";
 import { formatClinicDate } from "@/lib/clinicTime";
@@ -40,9 +41,10 @@ const PANEL_LABEL: Record<string, string> = {
 
 interface PatientCareStatusPanelProps {
   patientId: string;
+  onboardingStatus?: string | null;
 }
 
-export function PatientCareStatusPanel({ patientId }: PatientCareStatusPanelProps) {
+export function PatientCareStatusPanel({ patientId, onboardingStatus }: PatientCareStatusPanelProps) {
   const [gfeRows, setGfeRows] = useState<GfeClearanceRow[]>([]);
   const [labOrders, setLabOrders] = useState<LabOrderRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,12 +81,14 @@ export function PatientCareStatusPanel({ patientId }: PatientCareStatusPanelProp
   }, [load]);
 
   const activeGfe = pickActiveGfeClearance(gfeRows);
-  const latestGfe = gfeRows[0] ?? null;
-  const gfeLabel = gfeStatusLabel(activeGfe ?? latestGfe);
+  const displayGfe = pickPatientGfeDisplayRow(gfeRows, onboardingStatus);
+  const gfeComplete = patientGfeIsComplete(gfeRows, onboardingStatus);
+  const gfeLabel = patientGfeDisplayLabel(gfeRows, onboardingStatus);
   const pendingRemote =
-    latestGfe?.status === "pending" &&
-    latestGfe.clearance_source === "qualiphy" &&
-    latestGfe.meeting_url;
+    !gfeComplete &&
+    displayGfe?.status === "pending" &&
+    displayGfe.clearance_source === "qualiphy" &&
+    displayGfe.meeting_url;
 
   if (loading) {
     return (
@@ -113,7 +117,7 @@ export function PatientCareStatusPanel({ patientId }: PatientCareStatusPanelProp
             <Badge
               variant="outline"
               className={
-                activeGfe
+                gfeComplete
                   ? "border-green-600/40 bg-green-500/10 text-green-800 dark:text-green-200"
                   : undefined
               }
@@ -125,14 +129,14 @@ export function PatientCareStatusPanel({ patientId }: PatientCareStatusPanelProp
                 Valid through {formatClinicDate(activeGfe.expires_at)}.
               </p>
             )}
-            {!activeGfe && latestGfe && !isGfeClearanceCurrentlyValid(latestGfe) && (
+            {!gfeComplete && displayGfe && (
               <p className="text-xs text-muted-foreground">
                 Contact the clinic at (706) 760-3470 if you need a new clearance exam.
               </p>
             )}
             {pendingRemote && (
               <Button type="button" size="sm" variant="outline" asChild>
-                <a href={latestGfe.meeting_url!} target="_blank" rel="noopener noreferrer">
+                <a href={displayGfe!.meeting_url!} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="mr-2 h-3.5 w-3.5" />
                   Complete remote exam
                 </a>

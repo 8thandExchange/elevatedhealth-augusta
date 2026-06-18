@@ -70,11 +70,17 @@ export function computeGfeExpiresAt(approvedAtIso: string): Date {
 }
 
 export function isGfeClearanceCurrentlyValid(
-  row: Pick<GfeClearanceRow, "status" | "expires_at">,
+  row: Pick<GfeClearanceRow, "status" | "expires_at" | "approved_at">,
   now: Date = new Date(),
 ): boolean {
-  if (row.status !== "approved" || !row.expires_at) return false;
-  return new Date(row.expires_at).getTime() > now.getTime();
+  if (row.status !== "approved") return false;
+  const expiresAt = row.expires_at
+    ? new Date(row.expires_at)
+    : row.approved_at
+      ? computeGfeExpiresAt(row.approved_at)
+      : null;
+  if (!expiresAt) return false;
+  return expiresAt.getTime() > now.getTime();
 }
 
 /** Latest approved clearance wins when multiple rows exist. */
@@ -114,8 +120,17 @@ export function gfeStatusLabel(row: GfeClearanceRow | null): string {
           day: "numeric",
           year: "numeric",
         })
-      : "";
+      : row.approved_at
+        ? computeGfeExpiresAt(row.approved_at).toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+        : "";
     return until ? `Cleared until ${until}` : "Cleared";
+  }
+  if (row.status === "approved") {
+    return "Cleared";
   }
   switch (row.status) {
     case "pending":
@@ -129,4 +144,60 @@ export function gfeStatusLabel(row: GfeClearanceRow | null): string {
     default:
       return "GFE expired or incomplete";
   }
+}
+
+/** True when the patient may schedule their wellness visit (GFE complete). */
+export function patientGfeIsComplete(
+  rows: GfeClearanceRow[],
+  onboardingStatus?: string | null,
+): boolean {
+  if (pickActiveGfeClearance(rows)) return true;
+  if (onboardingStatus === "gfe_cleared") return true;
+  return rows.some((r) => r.status === "approved");
+}
+
+/**
+ * Row to show in patient UI — ignores stale pending invites when clearance is already approved.
+ */
+export function pickPatientGfeDisplayRow(
+  rows: GfeClearanceRow[],
+  onboardingStatus?: string | null,
+): GfeClearanceRow | null {
+  if (!rows.length) return null;
+
+  const active = pickActiveGfeClearance(rows);
+  if (active) return active;
+
+  const approved = rows
+    .filter((r) => r.status === "approved")
+    .sort(
+      (a, b) =>
+        new Date(b.approved_at ?? b.created_at).getTime() -
+        new Date(a.approved_at ?? a.created_at).getTime(),
+    );
+  if (approved[0]) return approved[0];
+
+  if (patientGfeIsComplete(rows, onboardingStatus)) {
+    return null;
+  }
+
+  return (
+    rows.find((r) => r.status !== "cancelled" && r.status !== "na") ?? rows[0] ?? null
+  );
+}
+
+/** Single label for all patient-facing GFE status surfaces. */
+export function patientGfeDisplayLabel(
+  rows: GfeClearanceRow[],
+  onboardingStatus?: string | null,
+): string {
+  if (patientGfeIsComplete(rows, onboardingStatus)) {
+    const row = pickPatientGfeDisplayRow(rows, onboardingStatus);
+    if (row) return gfeStatusLabel(row);
+    if (onboardingStatus === "gfe_cleared") {
+      return "Cleared — schedule your visit";
+    }
+    return "Cleared";
+  }
+  return gfeStatusLabel(pickPatientGfeDisplayRow(rows, onboardingStatus));
 }

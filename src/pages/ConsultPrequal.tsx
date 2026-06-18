@@ -315,12 +315,17 @@ export default function ConsultPrequal() {
                 <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
                 <h1 className="font-playfair text-2xl">Wellness assessment already paid</h1>
                 <p className="font-jost text-sm text-muted-foreground">
-                  Your one-time $79 fee is on file. Continue in the patient portal for GFE clearance, scheduling, and
-                  membership enrollment — no duplicate payment needed.
+                  Your one-time $79 fee is on file. Continue in the patient portal for GFE clearance and scheduling
+                  — no duplicate payment needed.
                 </p>
-                <Button className="w-full" onClick={() => navigate("/patient/dashboard")}>
-                  Go to patient portal
-                </Button>
+                <div className="flex flex-col gap-2">
+                  <Button className="w-full" onClick={() => navigate("/patient/dashboard")}>
+                    Go to patient portal
+                  </Button>
+                  <Button variant="outline" className="w-full" onClick={() => navigate("/schedule-consult")}>
+                    Schedule your visit
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
