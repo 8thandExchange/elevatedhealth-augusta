@@ -56,42 +56,40 @@ export default function IntakeStart() {
         }
 
         const targetPatientId = consumeData.patient_id as string;
+        const authUserId = consumeData.auth_user_id as string | undefined;
         const useExistingAccount = consumeData.use_existing_account === true;
         const tokenHash = consumeData.token_hash as string | undefined;
         const pendingConsentTypes = consumeData.pending_consent_types as string[] | null | undefined;
         const pendingReconsentRequestId = consumeData.pending_reconsent_request_id as string | null | undefined;
         const pendingSubstanceId = consumeData.pending_substance_id as string | null | undefined;
 
+        const intakeReturnPath = pendingReconsentRequestId
+          ? `/intake/reconsent?request_id=${encodeURIComponent(pendingReconsentRequestId)}`
+          : pendingSubstanceId
+            ? `/intake/substance-acknowledgment?substance=${encodeURIComponent(pendingSubstanceId)}`
+            : pendingConsentTypes?.length
+              ? `/intake/treatment-consents?types=${encodeURIComponent(pendingConsentTypes.join(","))}`
+              : "/intake/consents";
+
         const navigateAfterAuth = () => {
-          if (pendingReconsentRequestId) {
-            navigate(`/intake/reconsent?request_id=${encodeURIComponent(pendingReconsentRequestId)}`, {
-              replace: true,
-            });
-          } else if (pendingSubstanceId) {
-            navigate(`/intake/substance-acknowledgment?substance=${encodeURIComponent(pendingSubstanceId)}`, {
-              replace: true,
-            });
-          } else if (pendingConsentTypes?.length) {
-            navigate(
-              `/intake/treatment-consents?types=${encodeURIComponent(pendingConsentTypes.join(","))}`,
-              { replace: true },
-            );
-          } else {
-            navigate("/intake/consents", { replace: true });
-          }
+          navigate(intakeReturnPath, { replace: true });
         };
 
         const { data: sessionData } = await supabase.auth.getSession();
         if (sessionData.session?.user) {
+          const sessionUserId = sessionData.session.user.id;
           const { data: currentPatient } = await supabase
             .from("patients")
             .select("id")
-            .eq("user_id", sessionData.session.user.id)
+            .eq("user_id", sessionUserId)
             .maybeSingle();
 
-          if (currentPatient && currentPatient.id !== targetPatientId) {
+          const sessionMatchesIntake =
+            sessionUserId === authUserId || currentPatient?.id === targetPatientId;
+
+          if (currentPatient && currentPatient.id !== targetPatientId && !sessionMatchesIntake) {
             await supabase.auth.signOut();
-          } else if (currentPatient?.id === targetPatientId) {
+          } else if (sessionMatchesIntake) {
             setState("redirecting");
             navigateAfterAuth();
             return;
@@ -100,14 +98,7 @@ export default function IntakeStart() {
 
         if (useExistingAccount) {
           setState("redirecting");
-          const returnPath = pendingReconsentRequestId
-            ? `/intake/reconsent?request_id=${encodeURIComponent(pendingReconsentRequestId)}`
-            : pendingSubstanceId
-              ? `/intake/substance-acknowledgment?substance=${encodeURIComponent(pendingSubstanceId)}`
-              : pendingConsentTypes?.length
-                ? `/intake/treatment-consents?types=${encodeURIComponent(pendingConsentTypes.join(","))}`
-                : "/intake/consents";
-          navigate(`/login?portal=patient&returnTo=${encodeURIComponent(returnPath)}`, { replace: true });
+          navigate(`/patient/login?returnTo=${encodeURIComponent(intakeReturnPath)}`, { replace: true });
           return;
         }
 

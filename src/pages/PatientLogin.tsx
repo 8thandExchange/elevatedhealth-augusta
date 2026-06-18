@@ -14,10 +14,16 @@ import { requestPasswordReset } from "@/lib/requestPasswordReset";
 
 type PrimaryProgram = string;
 
+function intakeReturnPath(raw: string | null): string | null {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
 const PatientLogin = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirect");
+  const returnTo = intakeReturnPath(searchParams.get("returnTo"));
   const [isLoading, setIsLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -35,8 +41,9 @@ const PatientLogin = () => {
   // Ref to prevent race conditions with navigation
   const hasNavigatedRef = useRef(false);
   
-  // Helper to get redirect path for returning patients
-  const getRedirectPath = () => redirectTo === "consult" ? "/consult" : "/patient/dashboard";
+  // Helper to get redirect path for returning patients (intake links, consult, dashboard)
+  const getRedirectPath = () =>
+    returnTo ?? (redirectTo === "consult" ? "/consult" : "/patient/dashboard");
 
   // Check for existing session on mount with timeout protection
   useEffect(() => {
@@ -89,7 +96,7 @@ const PatientLogin = () => {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      const redirectPath = redirectTo === "consult" ? "/consult" : "/patient/dashboard";
+      const redirectPath = getRedirectPath();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -141,7 +148,7 @@ const PatientLogin = () => {
                 }
                 
                 console.log("[PatientLogin] Existing Google user - going to dashboard");
-                navigate("/patient/dashboard", { replace: true });
+                navigate(getRedirectPath(), { replace: true });
               } else {
                 // NEW Google user without patient record - they need to go through proper onboarding
                 // Show error and redirect to booking
@@ -154,7 +161,7 @@ const PatientLogin = () => {
               }
             } catch (err) {
               console.error("Error checking Google profile:", err);
-              navigate("/patient/dashboard", { replace: true });
+              navigate(getRedirectPath(), { replace: true });
             }
           }, 0);
         }
@@ -231,7 +238,7 @@ const PatientLogin = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email: magicLinkEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/patient/dashboard`,
+          emailRedirectTo: `${window.location.origin}${getRedirectPath()}`,
         }
       });
 

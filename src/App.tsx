@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import ScrollToTop from "@/components/ScrollToTop";
 import { BookingProvider } from "@/contexts/BookingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -132,6 +132,12 @@ const clearOutdatedCaches = async () => {
   }
 };
 
+/** Legacy intake links used /login?portal=patient — forward to patient login. */
+function LegacyLoginRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/patient/login${search}`} replace />;
+}
+
 const App = () => {
   const calendarHost = isCalendarSubdomain();
 
@@ -172,6 +178,7 @@ const App = () => {
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/login" element={<LegacyLoginRedirect />} />
           <Route path="/reset-password" element={<SetNewPassword />} />
           <Route path="/weightloss" element={<WeightLoss />} />
           <Route path="/weight-loss" element={<WeightLoss />} />
