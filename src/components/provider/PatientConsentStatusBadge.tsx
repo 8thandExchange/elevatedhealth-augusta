@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Check, Loader2, TriangleAlert, X } from "lucide-react";
+import { Check, Loader2, TriangleAlert } from "lucide-react";
 import type { PatientConsentStatus } from "@/lib/consents/patient-consent-status";
 
 interface PatientConsentStatusBadgeProps {
@@ -54,17 +54,37 @@ export function PatientConsentStatusBadge({
     );
   }
 
-  return (
-    <Badge
-      variant="destructive"
-      className="gap-1 whitespace-nowrap cursor-pointer"
-      onClick={(e) => {
-        e.stopPropagation();
-        onNavigateConsent?.();
-      }}
-    >
-      <X className="h-3 w-3" />
-      Action needed
-    </Badge>
-  );
+  if (status.state === "no_consents_signed") {
+    return (
+      <Badge
+        variant="outline"
+        className="gap-1 whitespace-nowrap cursor-pointer border-amber-500/50 bg-amber-500/10 text-amber-950 dark:text-amber-100 hover:bg-amber-500/20"
+        onClick={(e) => {
+          e.stopPropagation();
+          onNavigateConsent?.();
+        }}
+      >
+        <TriangleAlert className="h-3 w-3" />
+        Consents pending
+      </Badge>
+    );
+  }
+
+  if (status.state === "missing_or_expired") {
+    return (
+      <Badge
+        variant="outline"
+        className="gap-1 whitespace-nowrap cursor-pointer border-amber-500/50 bg-amber-500/10 text-amber-950 dark:text-amber-100 hover:bg-amber-500/20"
+        onClick={(e) => {
+          e.stopPropagation();
+          onNavigateConsent?.();
+        }}
+      >
+        <TriangleAlert className="h-3 w-3" />
+        Consents needed
+      </Badge>
+    );
+  }
+
+  return null;
 }

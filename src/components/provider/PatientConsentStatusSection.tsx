@@ -134,7 +134,7 @@ export function PatientConsentStatusSection({
       case "expiring_soon":
         return "Consents are valid; one or more renew soon (within ~30 days or grace window).";
       case "missing_or_expired":
-        return `Action needed: ${status.missingConsents.length} missing, ${status.expiredConsents.length} expired past grace.`;
+        return `Consents needed: ${status.missingConsents.length} missing, ${status.expiredConsents.length} expired past grace.`;
       case "no_consents_signed":
         return "No consents on file yet.";
       default:
@@ -252,7 +252,7 @@ export function PatientConsentStatusSection({
 
   return (
     <>
-      <Card id="patient-consent-status" className="border-border/50">
+      <Card id="patient-consent-status" className="scroll-mt-4 scroll-mb-24 border-border/50">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium text-foreground">Consent Status</CardTitle>
           <p className="text-sm text-muted-foreground">{summaryLine}</p>
@@ -339,13 +339,24 @@ export function PatientConsentStatusSection({
       </Card>
 
       <Dialog open={!!previewDoc} onOpenChange={(o) => !o && setPreviewDoc(null)}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl">
+          <DialogHeader className="static mx-0 shrink-0 border-b border-border px-6 py-4 pr-12 text-left">
             <DialogTitle className="font-playfair">{previewDoc?.title}</DialogTitle>
           </DialogHeader>
-          {previewDoc && (
-            <ConsentDocumentDisplay bodyMarkdown={previewDoc.body} enforceScroll={false} />
-          )}
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+            {previewDoc && (
+              <ConsentDocumentDisplay
+                bodyMarkdown={previewDoc.body}
+                enforceScroll={false}
+                className="max-h-none border-0 px-0 py-0"
+              />
+            )}
+          </div>
+          <div className="shrink-0 border-t border-border bg-background px-6 py-4">
+            <Button type="button" variant="default" className="w-full sm:w-auto" onClick={() => setPreviewDoc(null)}>
+              Close
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </>

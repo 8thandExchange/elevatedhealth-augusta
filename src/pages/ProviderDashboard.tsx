@@ -744,7 +744,7 @@ const ProviderDashboard = () => {
     const t = window.setTimeout(() => {
       document.getElementById("patient-consent-status")?.scrollIntoView({
         behavior: "smooth",
-        block: "start",
+        block: "nearest",
       });
       setConsentScrollPatientId(null);
     }, 450);
@@ -2188,19 +2188,17 @@ const ProviderDashboard = () => {
       {/* Patient Profile Modal */}
       <Dialog open={isPanelOpen && !!selectedPatient} onOpenChange={setIsPanelOpen}>
         {selectedPatient && (
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-visible flex flex-col p-0">
-            <DialogHeader className="flex-shrink-0 border-b border-border px-6 py-4 mx-0 mt-0 pb-4 pt-4 sticky top-14 bg-background">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground">Patient Profile</p>
-                  <DialogTitle className="font-cormorant text-2xl text-foreground">
-                    {selectedPatient.patient.full_name}
-                  </DialogTitle>
-                </div>
+          <DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl">
+            <DialogHeader className="static mx-0 shrink-0 border-b border-border px-6 py-4 pr-12 text-left">
+              <div>
+                <p className="text-xs text-muted-foreground">Patient Profile</p>
+                <DialogTitle className="font-playfair text-2xl text-foreground">
+                  {selectedPatient.patient.full_name}
+                </DialogTitle>
               </div>
             </DialogHeader>
 
-            <div className="flex-1 overflow-y-auto overflow-x-visible px-6 py-6 space-y-6" style={{ isolation: 'isolate' }}>
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {/* Contact Info Card */}
               <Card className="border-border/50">
                 <CardHeader className="pb-3">
@@ -3052,9 +3050,11 @@ const ProviderDashboard = () => {
               )}
             </div>
 
-          <DialogFooter className="flex-shrink-0 border-t border-border px-6 py-4 mx-0 mb-0 mt-0 sticky bottom-0 bg-background">
+          <DialogFooter className="!static mx-0 mb-0 mt-0 shrink-0 border-t border-border bg-background px-6 py-4">
             <Button
-              variant="outline"
+              type="button"
+              variant="default"
+              className="w-full sm:w-auto"
               onClick={() => {
                 setIsPanelOpen(false);
                 setSelectedPatient(null);
