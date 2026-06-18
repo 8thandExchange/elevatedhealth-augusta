@@ -28,7 +28,7 @@ const Affordability = () => {
 
       <Navbar />
 
-      <main id="main-content" className="min-h-screen bg-background">
+      <main id="main-content" className="flex-1 public-page-shell">
         {/* Hero Section */}
         <section className="relative py-20 md:py-28 bg-gradient-to-b from-secondary/30 to-background">
           <div className="container mx-auto px-4">
@@ -36,10 +36,10 @@ const Affordability = () => {
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
                 Your Health Shouldn't Wait
               </span>
-              <h1 className="font-cormorant text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
+              <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
                 Affordable Care for Everyone
               </h1>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto font-lato">
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto font-jost">
                 We believe transformative healthcare should be accessible. That's why we offer multiple payment options, 
                 insurance billing, and flexible financing—so cost never stands between you and the care you deserve.
               </p>
@@ -59,10 +59,10 @@ const Affordability = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <CreditCard className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-cormorant text-2xl text-foreground">Pay in 4</CardTitle>
+                  <CardTitle className="font-playfair text-2xl text-foreground">Pay in 4</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-muted-foreground font-lato">
+                  <p className="text-muted-foreground font-jost">
                     Split any treatment into 4 interest-free payments with Klarna or Affirm. 
                     Get care today—pay over time.
                   </p>
@@ -98,10 +98,10 @@ const Affordability = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Shield className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-cormorant text-2xl text-foreground">Insurance Coverage</CardTitle>
+                  <CardTitle className="font-playfair text-2xl text-foreground">Insurance Coverage</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-muted-foreground font-lato">
+                  <p className="text-muted-foreground font-jost">
                     We accept major insurance plans for qualifying services when we participate with your carrier. Coverage varies by plan and service.
                   </p>
                   <ul className="space-y-2">
@@ -136,10 +136,10 @@ const Affordability = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Heart className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-cormorant text-2xl text-foreground">HSA & FSA Eligible</CardTitle>
+                  <CardTitle className="font-playfair text-2xl text-foreground">HSA & FSA Eligible</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-muted-foreground font-lato">
+                  <p className="text-muted-foreground font-jost">
                     Use your pre-tax health savings to pay for treatments—saving you up to 30% on out-of-pocket costs.
                   </p>
                   <ul className="space-y-2">
@@ -174,10 +174,10 @@ const Affordability = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <DollarSign className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-cormorant text-2xl text-foreground">{assessmentPrice} Wellness Assessment</CardTitle>
+                  <CardTitle className="font-playfair text-2xl text-foreground">{assessmentPrice} Wellness Assessment</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-muted-foreground font-lato">
+                  <p className="text-muted-foreground font-jost">
                     Your first in-person visit is a flat {assessmentPrice} Wellness Assessment, paid when you book. Program
                     pricing is quoted separately once your clinician confirms the right ELEVATED plan.
                   </p>
@@ -204,10 +204,10 @@ const Affordability = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Shield className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-cormorant text-2xl text-foreground">Insurance Reimbursement</CardTitle>
+                  <CardTitle className="font-playfair text-2xl text-foreground">Insurance Reimbursement</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-muted-foreground font-lato">
+                  <p className="text-muted-foreground font-jost">
                     Even if we don't bill your insurance directly, we provide superbills for you to submit for potential reimbursement.
                   </p>
                   <ul className="space-y-2">
@@ -242,10 +242,10 @@ const Affordability = () => {
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Heart className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-cormorant text-2xl text-foreground">Low Entry Points</CardTitle>
+                  <CardTitle className="font-playfair text-2xl text-foreground">Low Entry Points</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-muted-foreground font-lato">
+                  <p className="text-muted-foreground font-jost">
                     Start with a low-cost consultation before committing to larger treatments—dip your toe in first.
                   </p>
                   <ul className="space-y-2">
@@ -282,10 +282,10 @@ const Affordability = () => {
         <section className="py-16 bg-secondary/30">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="font-cormorant text-3xl md:text-4xl text-foreground mb-4">
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-4">
                 Questions About Payment Options?
               </h2>
-              <p className="text-muted-foreground mb-8 font-lato">
+              <p className="text-muted-foreground mb-8 font-jost">
                 Our team is happy to discuss financing options, verify your insurance benefits, 
                 or help you find the most affordable path to care.
               </p>

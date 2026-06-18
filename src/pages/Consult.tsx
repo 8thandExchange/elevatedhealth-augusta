@@ -13,9 +13,9 @@ const Consult = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="public-page-shell">
       <Navbar />
-      <main className="flex min-h-[50vh] items-center justify-center">
+      <main className="flex-1 flex min-h-[50vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-accent" />
       </main>
       <Footer />

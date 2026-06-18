@@ -178,13 +178,13 @@ const SymptomChecker = () => {
     const androgenRec = getRecommendation("androgen", results.androgen, 15, results.androgenExcess);
 
     return (
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
-        <main className="pt-24 pb-16">
+        <main className="flex-1 pt-24 pb-16">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="text-center mb-12">
-              <p className="text-xs uppercase tracking-widest text-gold mb-2">Assessment Complete</p>
-              <h1 className="font-cormorant text-4xl md:text-5xl text-foreground mb-4">
+              <p className="text-xs uppercase tracking-widest text-accent mb-2">Assessment Complete</p>
+              <h1 className="font-playfair text-4xl md:text-5xl text-foreground mb-4">
                 Your Hormone Profile
               </h1>
               <p className="text-muted-foreground">
@@ -221,7 +221,7 @@ const SymptomChecker = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 rounded-full bg-pink-500" />
-                      <h3 className="font-cormorant text-xl">Estrogen Deficiency</h3>
+                      <h3 className="font-playfair text-xl">Estrogen Deficiency</h3>
                     </div>
                     <span className={`text-sm font-medium ${estrogenStatus.color}`}>
                       {estrogenStatus.label}
@@ -246,7 +246,7 @@ const SymptomChecker = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 rounded-full bg-purple-500" />
-                      <h3 className="font-cormorant text-xl">Progesterone Deficiency</h3>
+                      <h3 className="font-playfair text-xl">Progesterone Deficiency</h3>
                     </div>
                     <span className={`text-sm font-medium ${progesteroneStatus.color}`}>
                       {progesteroneStatus.label}
@@ -271,7 +271,7 @@ const SymptomChecker = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 rounded-full bg-blue-500" />
-                      <h3 className="font-cormorant text-xl">Testosterone/Vitality</h3>
+                      <h3 className="font-playfair text-xl">Testosterone/Vitality</h3>
                     </div>
                     <span className={`text-sm font-medium ${androgenRec.blocked ? "text-red-500" : androgenStatus.color}`}>
                       {androgenRec.blocked ? "Blocked" : androgenStatus.label}
@@ -301,7 +301,7 @@ const SymptomChecker = () => {
             {/* CTA */}
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <CardContent className="pt-8 pb-8 text-center">
-                <h3 className="font-cormorant text-2xl text-foreground mb-2">
+                <h3 className="font-playfair text-2xl text-foreground mb-2">
                   Ready for Personalized Care?
                 </h3>
                 <p className="text-muted-foreground mb-6 max-w-md mx-auto">
@@ -330,7 +330,7 @@ const SymptomChecker = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="public-page-shell">
       <Navbar />
       
       <main className="flex-1 pt-24 pb-8">
@@ -356,7 +356,7 @@ const SymptomChecker = () => {
           {/* Question Card */}
           <Card className="border-border/50 mb-8">
             <CardContent className="pt-8 pb-8">
-              <h2 className="font-cormorant text-2xl md:text-3xl text-foreground mb-2">
+              <h2 className="font-playfair text-2xl md:text-3xl text-foreground mb-2">
                 {currentQuestion.label}
               </h2>
               <p className="text-muted-foreground text-sm mb-8">

@@ -10,14 +10,13 @@ import {
   LANE_B_CONSULT_STEPS,
   PATIENT_JOURNEY_STEPS,
 } from "@/lib/staffSystemGuideContent";
-import { CORE_SERVICES } from "@/lib/stripeConfig";
-import { ArrowRight, Droplet, Stethoscope } from "lucide-react";
+import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
 
 const HowClinicWorks = () => {
   const { openBooking } = useBooking();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="public-page-shell">
       <Helmet>
         <title>How the Clinic Works | Elevated Health Augusta</title>
         <meta
@@ -26,31 +25,29 @@ const HowClinicWorks = () => {
         />
       </Helmet>
       <Navbar />
-      <main id="main-content" className="pt-24 pb-16">
+      <main id="main-content" className="flex-1 pt-24 pb-16">
         <div className="container mx-auto px-6 max-w-4xl space-y-12">
-          <header className="text-center space-y-4">
-            <p className="section-label">Evans, Georgia</p>
-            <h1 className="font-playfair text-4xl md:text-5xl text-foreground">
-              How our <span className="italic">clinic</span> works
-            </h1>
-            <p className="font-jost text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Physician-owned, cash-pay care with transparent pricing. Two simple paths: walk-in IV
-              hydration, or a consult-gated program for hormones, medical weight loss, and peptides.
-              In-office LabCorp draws when labs are needed.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Button size="lg" onClick={openBooking} className="font-jost gap-2">
-                Book {CORE_SERVICES.wellnessAssessment.displayPrice} Wellness Assessment
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button asChild size="lg" variant="outline" className="font-jost">
-                <Link to="/iv-lounge">Book IV Lounge</Link>
-              </Button>
-            </div>
-          </header>
+          <StorefrontSectionHeader
+            label="Evans, Georgia"
+            title={
+              <>
+                How our <span className="italic">clinic</span> works
+              </>
+            }
+            lead="Physician-owned, cash-pay care with transparent pricing. Two simple paths: walk-in IV hydration, or a consult-gated program for hormones, medical weight loss, and peptides. In-office LabCorp draws when labs are needed."
+          />
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pb-12">
+            <Button size="lg" onClick={openBooking} className="font-jost gap-2">
+              Book {CORE_SERVICES.wellnessAssessment.displayPrice} Wellness Assessment
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button asChild size="lg" variant="outline" className="font-jost">
+              <Link to="/iv-lounge">Book IV Lounge</Link>
+            </Button>
+          </div>
 
-          <section className="grid md:grid-cols-2 gap-6">
-            <Card className="border-accent/30">
+          <section className="grid md:grid-cols-2 gap-5">
+            <Card className="premium-card border-accent/30">
               <CardHeader>
                 <CardTitle className="font-playfair text-xl flex items-center gap-2">
                   <Droplet className="h-5 w-5 text-accent" />
@@ -69,7 +66,7 @@ const HowClinicWorks = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-primary/20">
+            <Card className="premium-card border-primary/20">
               <CardHeader>
                 <CardTitle className="font-playfair text-xl flex items-center gap-2">
                   <Stethoscope className="h-5 w-5 text-primary" />

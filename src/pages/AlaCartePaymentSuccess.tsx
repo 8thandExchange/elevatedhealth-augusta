@@ -328,9 +328,10 @@ const AlaCartePaymentSuccess = () => {
         <meta name="robots" content="noindex" />
       </Helmet>
 
-      <Navbar />
+      <div className="public-page-shell">
 
-      <main className="min-h-screen bg-background pt-24 pb-16">
+        <Navbar />
+      <main className="flex-1 pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-3xl">
           {/* Success Header */}
           <div className="text-center mb-10">
@@ -435,7 +436,9 @@ const AlaCartePaymentSuccess = () => {
         </div>
       </main>
 
-      <Footer />
+        <Footer />
+
+      </div>
     </>
   );
 };

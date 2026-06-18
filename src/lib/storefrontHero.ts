@@ -14,3 +14,9 @@ export const storefrontHeroTitle =
 
 export const storefrontHeroLead =
   "font-jost font-light text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed mb-10 max-w-2xl";
+
+/** Site-wide public page shell (Navbar + main + Footer). */
+export const publicPageShell = "public-page-shell";
+
+export const storefrontSectionWhite = "section-band-white";
+export const storefrontSectionSurface = "section-band-surface";

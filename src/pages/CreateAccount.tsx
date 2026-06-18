@@ -233,9 +233,9 @@ const CreateAccount = () => {
 
   if (hydrating) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
-        <main className="pt-32 pb-20 flex items-center justify-center">
+        <main className="flex-1 pt-32 pb-20 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin text-accent mx-auto mb-4" />
             <p className="font-jost text-muted-foreground">Setting up your portal&hellip;</p>
@@ -247,14 +247,14 @@ const CreateAccount = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="public-page-shell">
       <Helmet>
         <title>Create Your Account | Elevated Health Augusta</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <Navbar />
 
-      <main className="pt-32 pb-20">
+      <main className="flex-1 pt-32 pb-20">
         <div className="container mx-auto px-4 max-w-md">
           <div className="text-center mb-8">
             <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">

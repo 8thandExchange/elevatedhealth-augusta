@@ -185,7 +185,7 @@ const IVLounge = () => {
         })}</script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
 
         {/* HERO — navy band matches homepage; clear CTA hierarchy */}

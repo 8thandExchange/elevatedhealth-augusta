@@ -234,18 +234,18 @@ const Pricing = () => {
 
       <Navbar />
 
-      <main id="main-content" className="min-h-screen bg-background">
+      <main id="main-content" className="flex-1 public-page-shell">
 
         {/* Hero Section - Reduced padding */}
         <section className="relative py-16 lg:py-20 bg-gradient-to-b from-secondary to-background">
           <div className="container mx-auto px-4 text-center">
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 border-gold/30 text-gold font-lato">
+            <Badge variant="outline" className="mb-6 px-4 py-1.5 border-accent/30 text-accent font-jost">
               Transparent Pricing
             </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-cormorant text-foreground mb-6">
-              Investment in Your <span className="text-gold">Wellness</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair text-foreground mb-6">
+              Investment in Your <span className="text-accent">Wellness</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 font-lato">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 font-jost">
               No hidden fees. No surprise bills. Just honest pricing for 
               transformative healthcare that fits your life and budget.
             </p>
@@ -253,19 +253,19 @@ const Pricing = () => {
             {/* Trust Badges */}
             <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-10">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Shield className="w-5 h-5 text-gold" />
+                <Shield className="w-5 h-5 text-accent" />
                 <span>Insurance Options</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="w-5 h-5 text-gold" />
+                <Clock className="w-5 h-5 text-accent" />
                 <span>Cancel Anytime</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <BadgeCheck className="w-5 h-5 text-gold" />
+                <BadgeCheck className="w-5 h-5 text-accent" />
                 <span>Board-Certified Providers</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Sparkles className="w-5 h-5 text-gold" />
+                <Sparkles className="w-5 h-5 text-accent" />
                 <span>Pay in 4 with Klarna/Affirm</span>
               </div>
             </div>
@@ -276,10 +276,10 @@ const Pricing = () => {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-lato transition-all duration-300 ${
+                  className={`px-4 py-2 rounded-full text-sm font-jost transition-all duration-300 ${
                     activeCategory === cat.id
                       ? "bg-primary text-primary-foreground"
-                      : "bg-card border border-border hover:border-gold/50 text-foreground"
+                      : "bg-card border border-border hover:border-accent/50 text-foreground"
                   }`}
                 >
                   {cat.label}
@@ -290,7 +290,7 @@ const Pricing = () => {
             {/* Pricing Comparison CTA */}
             <Link 
               to="/pricing-comparison" 
-              className="inline-flex items-center gap-2 text-sm text-gold hover:text-gold/80 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent/80 transition-colors"
             >
               <span>Compare Membership vs. À La Carte Pricing</span>
               <ArrowRight className="w-4 h-4" />
@@ -353,10 +353,10 @@ const Pricing = () => {
               <div className="w-12 h-12 rounded-full bg-hope/10 flex items-center justify-center mx-auto mb-6">
                 <Brain className="w-6 h-6 text-hope" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-cormorant text-foreground mb-4">
+              <h2 className="text-2xl md:text-3xl font-playfair text-foreground mb-4">
                 Mental wellness
               </h2>
-              <p className="text-muted-foreground font-lato text-sm leading-relaxed">
+              <p className="text-muted-foreground font-jost text-sm leading-relaxed">
                 IV ketamine and SPRAVATO® (esketamine) are not offered at Elevated Health Augusta. If
                 you are working with depression or anxiety, our clinicians can discuss evidence-based
                 options within our active service lines—such as medical weight loss, hormone
@@ -378,12 +378,12 @@ const Pricing = () => {
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 mb-4">
                   <Scale className="w-6 h-6 text-amber-600" />
-                  <span className="text-sm font-lato uppercase tracking-widest text-slate-500">Medical Weight Loss</span>
+                  <span className="text-sm font-jost uppercase tracking-widest text-slate-500">Medical Weight Loss</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-cormorant text-slate-900 mb-3">
+                <h2 className="text-3xl md:text-4xl font-playfair text-slate-900 mb-3">
                   Your Path to Metabolic Reset
                 </h2>
-                <p className="text-slate-600 font-lato max-w-2xl mx-auto">
+                <p className="text-slate-600 font-jost max-w-2xl mx-auto">
                   A medically-supervised journey with clear milestones. Each step unlocks the next.
                 </p>
               </div>
@@ -403,25 +403,25 @@ const Pricing = () => {
                       
                       {/* Content */}
                       <div className="flex-grow">
-                        <Badge className="bg-slate-100 text-slate-700 font-lato text-xs mb-3">
+                        <Badge className="bg-slate-100 text-slate-700 font-jost text-xs mb-3">
                           Step 1: Clinical Intake
                         </Badge>
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>
-                            <h3 className="text-xl font-cormorant text-slate-900 mb-2">
+                            <h3 className="text-xl font-playfair text-slate-900 mb-2">
                               {CORE_SERVICES.wellnessAssessment.name}
                             </h3>
-                            <p className="text-slate-600 font-lato text-sm leading-relaxed">
+                            <p className="text-slate-600 font-jost text-sm leading-relaxed">
                               Meet with our clinical team for an in-office intake. The{" "}
                               {CORE_SERVICES.wellnessAssessment.displayPrice} fee covers your visit;
                               labs and program enrollment are priced separately and shown upfront.
                             </p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">
+                            <span className="text-3xl font-playfair text-slate-900">
                               {CORE_SERVICES.wellnessAssessment.displayPrice}
                             </span>
-                            <span className="block text-xs text-slate-500 font-lato">one-time</span>
+                            <span className="block text-xs text-slate-500 font-jost">one-time</span>
                           </div>
                         </div>
                         <Button 
@@ -452,24 +452,24 @@ const Pricing = () => {
                       
                       {/* Content */}
                       <div className="flex-grow">
-                        <Badge className="bg-green-100 text-green-700 font-lato text-xs mb-3">
+                        <Badge className="bg-green-100 text-green-700 font-jost text-xs mb-3">
                           Step 2: Medical Clearance
                         </Badge>
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>
-                            <h3 className="text-xl font-cormorant text-slate-900 mb-2">
+                            <h3 className="text-xl font-playfair text-slate-900 mb-2">
                               Provider Review
                             </h3>
-                            <p className="text-slate-600 font-lato text-sm leading-relaxed">
+                            <p className="text-slate-600 font-jost text-sm leading-relaxed">
                               Your provider reviews your eligibility and may request recent labs from your PCP if needed. Most patients are cleared to start during their consultation.
                             </p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <span className="text-2xl font-cormorant text-green-600">Included</span>
-                            <span className="block text-xs text-slate-500 font-lato">no extra cost</span>
+                            <span className="text-2xl font-playfair text-green-600">Included</span>
+                            <span className="block text-xs text-slate-500 font-jost">no extra cost</span>
                           </div>
                         </div>
-                        <p className="mt-4 text-xs text-green-600 font-lato flex items-center gap-1">
+                        <p className="mt-4 text-xs text-green-600 font-jost flex items-center gap-1">
                           <Check className="w-3 h-3" />
                           Labs NOT required to start — most patients begin same week
                         </p>
@@ -485,7 +485,7 @@ const Pricing = () => {
                 <div className="relative mt-8">
                   <Card className="bg-white rounded-2xl border-2 border-amber-500 shadow-lg hover:shadow-xl transition-shadow p-8">
                     <div className="absolute -top-3 right-6">
-                      <Badge className="bg-amber-600 text-white font-lato text-xs">
+                      <Badge className="bg-amber-600 text-white font-jost text-xs">
                         Premium Membership
                       </Badge>
                     </div>
@@ -499,15 +499,15 @@ const Pricing = () => {
                       
                       {/* Content */}
                       <div className="flex-grow">
-                        <Badge className="bg-amber-50 text-amber-700 font-lato text-xs mb-3">
+                        <Badge className="bg-amber-50 text-amber-700 font-jost text-xs mb-3">
                           Step 3: Treatment
                         </Badge>
                         <div className="flex flex-col gap-4">
                           <div>
-                            <h3 className="text-xl font-cormorant text-slate-900 mb-2">
+                            <h3 className="text-xl font-playfair text-slate-900 mb-2">
                               Metabolic Reset Membership
                             </h3>
-                            <p className="text-slate-600 font-lato text-sm leading-relaxed">
+                            <p className="text-slate-600 font-jost text-sm leading-relaxed">
                               Once medically cleared, you unlock the all-inclusive membership. Choose your GLP-1 medication with 24/7 provider access.
                             </p>
                           </div>
@@ -516,19 +516,19 @@ const Pricing = () => {
                           <div className="grid sm:grid-cols-2 gap-3 mt-2">
                             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
                               <div className="flex items-center justify-between">
-                                <span className="font-lato font-medium text-slate-800">Semaglutide</span>
+                                <span className="font-jost font-medium text-slate-800">Semaglutide</span>
                                 <div className="text-right">
-                                  <span className="text-xl font-cormorant text-slate-900">$399</span>
-                                  <span className="text-xs text-slate-500 font-lato">/mo</span>
+                                  <span className="text-xl font-playfair text-slate-900">$399</span>
+                                  <span className="text-xs text-slate-500 font-jost">/mo</span>
                                 </div>
                               </div>
                             </div>
                             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
                               <div className="flex items-center justify-between">
-                                <span className="font-lato font-medium text-slate-800">Tirzepatide</span>
+                                <span className="font-jost font-medium text-slate-800">Tirzepatide</span>
                                 <div className="text-right">
-                                  <span className="text-xl font-cormorant text-slate-900">$499</span>
-                                  <span className="text-xs text-slate-500 font-lato">/mo</span>
+                                  <span className="text-xl font-playfair text-slate-900">$499</span>
+                                  <span className="text-xs text-slate-500 font-jost">/mo</span>
                                 </div>
                               </div>
                             </div>
@@ -537,15 +537,15 @@ const Pricing = () => {
                         
                         {/* Membership Benefits */}
                         <ul className="mt-6 space-y-2">
-                          <li className="flex items-center gap-2 text-sm font-lato text-slate-700">
+                          <li className="flex items-center gap-2 text-sm font-jost text-slate-700">
                             <Check className="w-4 h-4 text-amber-600 flex-shrink-0" />
                             <span>GLP-1 medication, supplies & shipping included</span>
                           </li>
-                          <li className="flex items-center gap-2 text-sm font-lato text-slate-700">
+                          <li className="flex items-center gap-2 text-sm font-jost text-slate-700">
                             <Check className="w-4 h-4 text-amber-600 flex-shrink-0" />
                             <span>Unlimited provider messaging</span>
                           </li>
-                          <li className="flex items-center gap-2 text-sm font-lato text-slate-700">
+                          <li className="flex items-center gap-2 text-sm font-jost text-slate-700">
                             <Check className="w-4 h-4 text-amber-600 flex-shrink-0" />
                             <span>Dosing adjustments & ongoing supervision</span>
                           </li>
@@ -553,7 +553,7 @@ const Pricing = () => {
                         
                         <div className="mt-6 p-3 bg-slate-50 rounded-lg flex items-center gap-2">
                           <ShieldAlert className="w-4 h-4 text-slate-500" />
-                          <span className="text-xs text-slate-600 font-lato">
+                          <span className="text-xs text-slate-600 font-jost">
                             Requires Medical Clearance — Complete Steps 1 & 2 first
                           </span>
                         </div>
@@ -567,17 +567,17 @@ const Pricing = () => {
               <div className="max-w-2xl mx-auto mt-12 p-6 bg-white rounded-2xl border border-amber-200 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
-                    <Badge variant="outline" className="mb-2 border-amber-400 text-amber-700 font-lato text-xs">
+                    <Badge variant="outline" className="mb-2 border-amber-400 text-amber-700 font-jost text-xs">
                       Optional Add-on
                     </Badge>
-                    <h4 className="font-cormorant text-lg text-slate-900">Hormone Optimization Bundle</h4>
-                    <p className="text-sm text-slate-600 font-lato">
+                    <h4 className="font-playfair text-lg text-slate-900">Hormone Optimization Bundle</h4>
+                    <p className="text-sm text-slate-600 font-jost">
                       Add bio-identical hormones to accelerate results & preserve muscle
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-cormorant text-slate-900">+$149</span>
-                    <span className="text-slate-500 font-lato">/month</span>
+                    <span className="text-2xl font-playfair text-slate-900">+$149</span>
+                    <span className="text-slate-500 font-jost">/month</span>
                   </div>
                 </div>
               </div>
@@ -594,10 +594,10 @@ const Pricing = () => {
                   <Heart className="w-6 h-6 text-feminine" />
                 </div>
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
+                  <h2 className="text-2xl md:text-3xl font-playfair text-foreground">
                     Hormone Optimization
                   </h2>
-                  <p className="text-muted-foreground font-lato text-sm">
+                  <p className="text-muted-foreground font-jost text-sm">
                     Your path to hormonal balance
                   </p>
                 </div>
@@ -610,34 +610,34 @@ const Pricing = () => {
                   <Card className="relative bg-white rounded-2xl border border-slate-200 p-8 shadow-sm hover:shadow-md transition-all">
                     <div className="flex items-start gap-6">
                       <div className="flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center font-cormorant text-lg">
+                        <div className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center font-playfair text-lg">
                           1
                         </div>
                       </div>
                       <div className="flex-1">
-                        <Badge className="mb-3 bg-slate-100 text-slate-700 hover:bg-slate-100 font-lato text-xs">
+                        <Badge className="mb-3 bg-slate-100 text-slate-700 hover:bg-slate-100 font-jost text-xs">
                           Step 1: Clinical Intake
                         </Badge>
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>
-                            <h3 className="text-xl font-cormorant text-slate-900 mb-1">
+                            <h3 className="text-xl font-playfair text-slate-900 mb-1">
                               {CORE_SERVICES.wellnessAssessment.name}
                             </h3>
-                            <p className="text-sm text-slate-600 font-lato leading-relaxed">
+                            <p className="text-sm text-slate-600 font-jost leading-relaxed">
                               In-office visit with our RN to review symptoms, history, and goals.
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">
+                            <span className="text-3xl font-playfair text-slate-900">
                               {CORE_SERVICES.wellnessAssessment.displayPrice}
                             </span>
-                            <p className="text-xs text-slate-500 font-lato">one-time</p>
+                            <p className="text-xs text-slate-500 font-jost">one-time</p>
                           </div>
                         </div>
                         <div className="mt-6 flex items-center gap-3">
                           <Stethoscope className="w-5 h-5 text-amber-600 stroke-[1.5]" />
                           <Button 
-                            className="bg-amber-600 hover:bg-amber-700 text-white font-lato rounded-full px-6"
+                            className="bg-amber-600 hover:bg-amber-700 text-white font-jost rounded-full px-6"
                             onClick={openBooking}
                           >
                             Book {CORE_SERVICES.wellnessAssessment.displayPrice} Wellness Assessment
@@ -657,29 +657,29 @@ const Pricing = () => {
                   <Card className="relative bg-white rounded-2xl border border-slate-200 p-8 shadow-sm opacity-90">
                     <div className="flex items-start gap-6">
                       <div className="flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-cormorant text-lg">
+                        <div className="w-12 h-12 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-playfair text-lg">
                           2
                         </div>
                       </div>
                       <div className="flex-1">
-                        <Badge variant="outline" className="mb-3 border-slate-300 text-slate-500 font-lato text-xs">
+                        <Badge variant="outline" className="mb-3 border-slate-300 text-slate-500 font-jost text-xs">
                           Step 2: Diagnostics
                         </Badge>
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>
-                            <h3 className="text-xl font-cormorant text-slate-900 mb-1">
+                            <h3 className="text-xl font-playfair text-slate-900 mb-1">
                               {CORE_SERVICES.comprehensivePanel.name}
                             </h3>
-                            <p className="text-sm text-slate-600 font-lato leading-relaxed">
+                            <p className="text-sm text-slate-600 font-jost leading-relaxed">
                               Blood draw in our Evans office; processed through LabCorp. Expanded panels
                               available when clinically indicated ({CORE_SERVICES.expandedPanel.displayPrice}).
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-3xl font-cormorant text-slate-900">
+                            <span className="text-3xl font-playfair text-slate-900">
                               {CORE_SERVICES.comprehensivePanel.displayPrice}
                             </span>
-                            <p className="text-xs text-slate-500 font-lato">typical baseline</p>
+                            <p className="text-xs text-slate-500 font-jost">typical baseline</p>
                           </div>
                         </div>
                       </div>
@@ -695,20 +695,20 @@ const Pricing = () => {
                   <Card className="relative bg-white rounded-2xl border-2 border-amber-500 p-8 shadow-lg">
                     <div className="flex items-start gap-6">
                       <div className="flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center font-cormorant text-lg">
+                        <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center font-playfair text-lg">
                           3
                         </div>
                       </div>
                       <div className="flex-1">
-                        <Badge className="mb-3 bg-amber-100 text-amber-800 hover:bg-amber-100 font-lato text-xs">
+                        <Badge className="mb-3 bg-amber-100 text-amber-800 hover:bg-amber-100 font-jost text-xs">
                           Step 3: ELEVATED membership
                         </Badge>
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>
-                            <h3 className="text-xl font-cormorant text-slate-900 mb-1">
+                            <h3 className="text-xl font-playfair text-slate-900 mb-1">
                               {ELEVATED_PROGRAMS.trt.name} / {ELEVATED_PROGRAMS.hrt.name}
                             </h3>
-                            <p className="text-sm text-slate-600 font-lato leading-relaxed">
+                            <p className="text-sm text-slate-600 font-jost leading-relaxed">
                               Program memberships include hormone therapy where prescribed, monthly check-ins with our clinical team,
                               quarterly labs, clinically appropriate physician review, and
                               unlimited messaging—see men&apos;s and women&apos;s program pages for
@@ -716,10 +716,10 @@ const Pricing = () => {
                             </p>
                           </div>
                           <div className="text-right shrink-0 space-y-1">
-                            <span className="text-3xl font-cormorant text-slate-900 block">
+                            <span className="text-3xl font-playfair text-slate-900 block">
                               {ELEVATED_PROGRAMS.hrt.displayPrice}
                             </span>
-                            <p className="text-xs text-slate-500 font-lato">
+                            <p className="text-xs text-slate-500 font-jost">
                               {ELEVATED_PROGRAMS.trt.displayPrice} men&apos;s TRT
                             </p>
                           </div>
@@ -747,8 +747,8 @@ const Pricing = () => {
                       <Heart className="w-6 h-6 text-feminine" />
                     </div>
                     <div className="flex-grow">
-                      <h4 className="font-cormorant text-lg text-foreground">Elevated+ for Her</h4>
-                      <p className="text-sm text-muted-foreground font-lato">
+                      <h4 className="font-playfair text-lg text-foreground">Elevated+ for Her</h4>
+                      <p className="text-sm text-muted-foreground font-jost">
                         Menopause, perimenopause & women's hormone health
                       </p>
                     </div>
@@ -762,8 +762,8 @@ const Pricing = () => {
                       <Shield className="w-6 h-6 text-masculine" />
                     </div>
                     <div className="flex-grow">
-                      <h4 className="font-cormorant text-lg text-foreground">Elevated+ for Him</h4>
-                      <p className="text-sm text-muted-foreground font-lato">
+                      <h4 className="font-playfair text-lg text-foreground">Elevated+ for Him</h4>
+                      <p className="text-sm text-muted-foreground font-jost">
                         Testosterone therapy, energy & performance
                       </p>
                     </div>
@@ -780,14 +780,14 @@ const Pricing = () => {
           <section className="py-12 lg:py-16 bg-secondary/30">
             <div className="container mx-auto px-4">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
-                  <Syringe className="w-6 h-6 text-gold" />
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+                  <Syringe className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
+                  <h2 className="text-2xl md:text-3xl font-playfair text-foreground">
                     Peptide Therapy
                   </h2>
-                  <p className="text-muted-foreground font-lato text-sm">
+                  <p className="text-muted-foreground font-jost text-sm">
                     5 categories • 15+ protocols • Cellular optimization & longevity
                   </p>
                 </div>
@@ -805,37 +805,37 @@ const Pricing = () => {
               {/* Featured Peptides Grid */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {/* Sermorelin */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <Badge variant="outline" className="w-fit text-blue-600 border-blue-500/30">
                         Growth & Recovery
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-cormorant text-foreground">Sermorelin</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">Sermorelin</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Stimulates natural growth hormone production
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$79</span>
-                      <span className="text-muted-foreground font-lato">/month</span>
+                      <span className="text-3xl font-playfair text-foreground">$79</span>
+                      <span className="text-muted-foreground font-jost">/month</span>
                     </div>
-                    <p className="text-xs text-gold font-lato mb-4">
+                    <p className="text-xs text-accent font-jost mb-4">
                       or 4 payments of $37 with Klarna
                     </p>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Improved sleep quality
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Enhanced recovery
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Reduced body fat
                       </li>
                     </ul>
@@ -846,32 +846,32 @@ const Pricing = () => {
                 </Card>
 
                 {/* NAD+ */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-amber-600 border-amber-500/30">
                       Cellular Energy
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">NAD+</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">NAD+</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Cellular energy & cognitive enhancement
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-4">
-                      <span className="text-xl font-cormorant text-foreground">Troches</span>
-                      <span className="text-3xl font-cormorant text-foreground ml-2">$149</span>
-                      <span className="text-muted-foreground font-lato">/mo</span>
+                      <span className="text-xl font-playfair text-foreground">Troches</span>
+                      <span className="text-3xl font-playfair text-foreground ml-2">$149</span>
+                      <span className="text-muted-foreground font-jost">/mo</span>
                     </div>
                     <div className="mb-4 text-sm text-muted-foreground">
-                      or Injections <span className="font-cormorant text-foreground text-lg">$199</span>/mo
+                      or Injections <span className="font-playfair text-foreground text-lg">$199</span>/mo
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Mental clarity & focus
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Anti-aging benefits
                       </li>
                     </ul>
@@ -882,7 +882,7 @@ const Pricing = () => {
                 </Card>
 
                 {/* PT-141 + Oxytocin */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="w-fit text-pink-600 border-pink-500/30">
@@ -892,27 +892,27 @@ const Pricing = () => {
                         New
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-cormorant text-foreground">PT-141 & Oxytocin</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">PT-141 & Oxytocin</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Restore desire, connection & intimacy
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-xl font-cormorant text-foreground">PT-141</span>
-                      <span className="text-3xl font-cormorant text-foreground ml-2">$225</span>
-                      <span className="text-muted-foreground font-lato">/kit</span>
+                      <span className="text-xl font-playfair text-foreground">PT-141</span>
+                      <span className="text-3xl font-playfair text-foreground ml-2">$225</span>
+                      <span className="text-muted-foreground font-jost">/kit</span>
                     </div>
                     <div className="mb-4 text-sm text-muted-foreground">
-                      Oxytocin from <span className="font-cormorant text-foreground text-lg">$79</span>
+                      Oxytocin from <span className="font-playfair text-foreground text-lg">$79</span>
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Works for men & women
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Anxiety & bonding support
                       </li>
                     </ul>
@@ -928,36 +928,36 @@ const Pricing = () => {
                 <Card className="border border-green-500/30 bg-green-500/5 hover:border-green-500/50 transition-all">
                   <CardContent className="p-4 text-center">
                     <Badge className="mb-2 bg-green-500/10 text-green-600 border-green-500/30" variant="outline">New</Badge>
-                    <h4 className="font-cormorant text-lg text-foreground">5-Amino-1MQ</h4>
+                    <h4 className="font-playfair text-lg text-foreground">5-Amino-1MQ</h4>
                     <p className="text-xs text-muted-foreground mb-2">Metabolic Enhancer</p>
-                    <span className="text-xl font-cormorant text-foreground">$119/mo</span>
+                    <span className="text-xl font-playfair text-foreground">$119/mo</span>
                   </CardContent>
                 </Card>
 
                 <Card className="border border-green-500/30 bg-green-500/5 hover:border-green-500/50 transition-all">
                   <CardContent className="p-4 text-center">
                     <Badge className="mb-2 bg-green-500/10 text-green-600 border-green-500/30" variant="outline">New</Badge>
-                    <h4 className="font-cormorant text-lg text-foreground">GHK-Cu</h4>
+                    <h4 className="font-playfair text-lg text-foreground">GHK-Cu</h4>
                     <p className="text-xs text-muted-foreground mb-2">Regeneration & Repair</p>
-                    <span className="text-xl font-cormorant text-foreground">From $149</span>
+                    <span className="text-xl font-playfair text-foreground">From $149</span>
                   </CardContent>
                 </Card>
 
                 <Card className="border border-green-500/30 bg-green-500/5 hover:border-green-500/50 transition-all">
                   <CardContent className="p-4 text-center">
-                    <Badge className="mb-2 bg-gold/10 text-gold border-gold/30" variant="outline">Premium</Badge>
-                    <h4 className="font-cormorant text-lg text-foreground">Tesamorelin</h4>
+                    <Badge className="mb-2 bg-accent/10 text-accent border-accent/30" variant="outline">Premium</Badge>
+                    <h4 className="font-playfair text-lg text-foreground">Tesamorelin</h4>
                     <p className="text-xs text-muted-foreground mb-2">Advanced GH Release</p>
-                    <span className="text-xl font-cormorant text-foreground">$399/mo</span>
+                    <span className="text-xl font-playfair text-foreground">$399/mo</span>
                   </CardContent>
                 </Card>
 
                 <Card className="border border-purple-500/30 bg-purple-500/5 hover:border-purple-500/50 transition-all">
                   <CardContent className="p-4 text-center">
                     <Badge className="mb-2 bg-purple-500/10 text-purple-600 border-purple-500/30" variant="outline">Advanced</Badge>
-                    <h4 className="font-cormorant text-lg text-foreground">Tesofensine</h4>
+                    <h4 className="font-playfair text-lg text-foreground">Tesofensine</h4>
                     <p className="text-xs text-muted-foreground mb-2">Appetite & Energy</p>
-                    <span className="text-xl font-cormorant text-foreground">$249/mo</span>
+                    <span className="text-xl font-playfair text-foreground">$249/mo</span>
                   </CardContent>
                 </Card>
               </div>
@@ -965,7 +965,7 @@ const Pricing = () => {
               {/* View All CTA */}
               <div className="text-center mt-8">
                 <Button 
-                  className="bg-gold hover:bg-gold-dark text-white rounded-full px-8"
+                  className="bg-primary hover:bg-primary-dark text-white rounded-full px-8"
                   onClick={() => navigate("/peptides")}
                 >
                   View All 15+ Peptide Protocols
@@ -985,10 +985,10 @@ const Pricing = () => {
                   <Droplets className="w-6 h-6 text-hope" />
                 </div>
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
+                  <h2 className="text-2xl md:text-3xl font-playfair text-foreground">
                     IV Hydration Lounge
                   </h2>
-                  <p className="text-muted-foreground font-lato text-sm">
+                  <p className="text-muted-foreground font-jost text-sm">
                     Walk-ins welcome • No membership required
                   </p>
                 </div>
@@ -1004,24 +1004,24 @@ const Pricing = () => {
                 ].map((drip) => (
                   <Card 
                     key={drip.name} 
-                    className="border border-border hover:border-gold/30 transition-all text-center cursor-pointer hover:shadow-lg"
+                    className="border border-border hover:border-accent/30 transition-all text-center cursor-pointer hover:shadow-lg"
                     onClick={() => navigate("/iv-lounge")}
                   >
                     <CardContent className="p-5">
                       <Droplets className="w-8 h-8 text-hope mx-auto mb-3" />
-                      <h4 className="font-cormorant text-lg text-foreground mb-1">{drip.name}</h4>
-                      <p className="text-xs text-muted-foreground font-lato mb-3">{drip.desc}</p>
-                      <span className="text-2xl font-cormorant text-foreground">{drip.price}</span>
+                      <h4 className="font-playfair text-lg text-foreground mb-1">{drip.name}</h4>
+                      <p className="text-xs text-muted-foreground font-jost mb-3">{drip.desc}</p>
+                      <span className="text-2xl font-playfair text-foreground">{drip.price}</span>
                     </CardContent>
                   </Card>
                 ))}
               </div>
 
               <div className="mt-6 text-center">
-                <p className="text-xs text-gold font-lato mb-2">
+                <p className="text-xs text-accent font-jost mb-2">
                   Pay in 4 interest-free payments with Klarna at checkout
                 </p>
-                <p className="text-sm text-muted-foreground font-lato mb-4">
+                <p className="text-sm text-muted-foreground font-jost mb-4">
                   Add-ons: <span className="text-foreground">B12 $25</span> • <span className="text-foreground">Glutathione $35</span> • <span className="text-foreground">NAD+ Booster $50</span>
                 </p>
                 <Button variant="outline" onClick={() => navigate("/iv-lounge")}>
@@ -1037,14 +1037,14 @@ const Pricing = () => {
           <section className="py-12 lg:py-16 bg-secondary/30">
             <div className="container mx-auto px-4">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
-                  <Scissors className="w-6 h-6 text-gold" />
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+                  <Scissors className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
+                  <h2 className="text-2xl md:text-3xl font-playfair text-foreground">
                     Hair Restoration
                   </h2>
-                  <p className="text-muted-foreground font-lato text-sm">
+                  <p className="text-muted-foreground font-jost text-sm">
                     Clinically proven treatments for hair loss & thinning
                   </p>
                 </div>
@@ -1052,35 +1052,35 @@ const Pricing = () => {
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Minoxidil + Finasteride */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
-                    <Badge variant="outline" className="w-fit text-gold border-gold/30">
+                    <Badge variant="outline" className="w-fit text-accent border-accent/30">
                       Most Popular
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">Minoxidil + Finasteride</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">Minoxidil + Finasteride</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Topical combination therapy for hair regrowth
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$129</span>
-                      <span className="text-muted-foreground font-lato">/month</span>
+                      <span className="text-3xl font-playfair text-foreground">$129</span>
+                      <span className="text-muted-foreground font-jost">/month</span>
                     </div>
-                    <p className="text-xs text-gold font-lato mb-4">
+                    <p className="text-xs text-accent font-jost mb-4">
                       or 4 payments of $32 with Klarna
                     </p>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         FDA-approved ingredients
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Blocks DHT & stimulates growth
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Easy topical application
                       </li>
                     </ul>
@@ -1091,35 +1091,35 @@ const Pricing = () => {
                 </Card>
 
                 {/* Dutasteride */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-muted-foreground">
                       Advanced Option
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">Dutasteride</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">Dutasteride</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Stronger DHT blocker for stubborn hair loss
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$149</span>
-                      <span className="text-muted-foreground font-lato">/month</span>
+                      <span className="text-3xl font-playfair text-foreground">$149</span>
+                      <span className="text-muted-foreground font-jost">/month</span>
                     </div>
-                    <p className="text-xs text-gold font-lato mb-4">
+                    <p className="text-xs text-accent font-jost mb-4">
                       or 4 payments of $37 with Klarna
                     </p>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         More potent than Finasteride
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         For advanced hair loss
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Once daily oral medication
                       </li>
                     </ul>
@@ -1130,35 +1130,35 @@ const Pricing = () => {
                 </Card>
 
                 {/* GHK-Cu Scalp Therapy */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-purple-600 border-purple-500/30">
                       Peptide Therapy
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">GHK-Cu Scalp Therapy</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">GHK-Cu Scalp Therapy</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Copper peptide for scalp rejuvenation
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$149</span>
-                      <span className="text-muted-foreground font-lato"> one-time</span>
+                      <span className="text-3xl font-playfair text-foreground">$149</span>
+                      <span className="text-muted-foreground font-jost"> one-time</span>
                     </div>
-                    <p className="text-xs text-gold font-lato mb-4">
+                    <p className="text-xs text-accent font-jost mb-4">
                       or 4 payments of $25 with Klarna
                     </p>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Promotes hair follicle health
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Improves scalp circulation
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Works with other treatments
                       </li>
                     </ul>
@@ -1187,10 +1187,10 @@ const Pricing = () => {
                   <HeartPulse className="w-6 h-6 text-pink-500" />
                 </div>
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-cormorant text-foreground">
+                  <h2 className="text-2xl md:text-3xl font-playfair text-foreground">
                     Sexual Wellness
                   </h2>
-                  <p className="text-muted-foreground font-lato text-sm">
+                  <p className="text-muted-foreground font-jost text-sm">
                     Restore intimacy, desire & confidence
                   </p>
                 </div>
@@ -1198,28 +1198,28 @@ const Pricing = () => {
 
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Tadalafil */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-blue-600 border-blue-500/30">
                       Men's Health
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">Tadalafil</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">Tadalafil</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Generic Cialis for ED treatment
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$149</span>
-                      <span className="text-muted-foreground font-lato">/month</span>
+                      <span className="text-3xl font-playfair text-foreground">$149</span>
+                      <span className="text-muted-foreground font-jost">/month</span>
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Daily or as-needed dosing
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         36-hour effectiveness
                       </li>
                     </ul>
@@ -1230,28 +1230,28 @@ const Pricing = () => {
                 </Card>
 
                 {/* Sildenafil */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-blue-600 border-blue-500/30">
                       Men's Health
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">Sildenafil</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">Sildenafil</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Generic Viagra for ED treatment
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$79</span>
-                      <span className="text-muted-foreground font-lato">/month</span>
+                      <span className="text-3xl font-playfair text-foreground">$79</span>
+                      <span className="text-muted-foreground font-jost">/month</span>
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Fast-acting formula
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         4-6 hour effectiveness
                       </li>
                     </ul>
@@ -1262,29 +1262,29 @@ const Pricing = () => {
                 </Card>
 
                 {/* PT-141 */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-pink-600 border-pink-500/30">
                       For All
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">PT-141</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">PT-141</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Peptide for desire & arousal
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$225</span>
-                      <span className="text-muted-foreground font-lato">/kit</span>
+                      <span className="text-3xl font-playfair text-foreground">$225</span>
+                      <span className="text-muted-foreground font-jost">/kit</span>
                     </div>
                     <p className="text-xs text-muted-foreground mb-2">10-dose kit</p>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Works on brain chemistry
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         For men and women
                       </li>
                     </ul>
@@ -1295,28 +1295,28 @@ const Pricing = () => {
                 </Card>
 
                 {/* Oxytocin */}
-                <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg flex flex-col">
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-pink-600 border-pink-500/30">
                       For All
                     </Badge>
-                    <h3 className="text-xl font-cormorant text-foreground">Oxytocin Nasal Spray</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-xl font-playfair text-foreground">Oxytocin Nasal Spray</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Bonding & connection enhancement
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-cormorant text-foreground">$89</span>
-                      <span className="text-muted-foreground font-lato">/month</span>
+                      <span className="text-3xl font-playfair text-foreground">$89</span>
+                      <span className="text-muted-foreground font-jost">/month</span>
                     </div>
                     <ul className="space-y-2 mb-6 flex-grow">
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Enhances emotional bonding
                       </li>
-                      <li className="flex items-start gap-2 text-sm font-lato text-muted-foreground">
-                        <Check className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
+                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                         Easy nasal administration
                       </li>
                     </ul>
@@ -1340,32 +1340,32 @@ const Pricing = () => {
         <section className="py-12 lg:py-16 bg-secondary/30">
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
-              <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
+              <Badge variant="outline" className="mb-4 px-4 py-1.5 border-accent/30 text-accent font-jost">
                 No Membership Required
               </Badge>
-              <h2 className="text-3xl md:text-4xl font-cormorant text-foreground mb-4">
+              <h2 className="text-3xl md:text-4xl font-playfair text-foreground mb-4">
                 À La Carte Pricing
               </h2>
-              <p className="text-lg text-muted-foreground font-lato max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground font-jost max-w-2xl mx-auto">
                 Need individual medications without a membership? We offer pay-as-you-go options 
                 for patients who prefer flexibility over commitment.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+              <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <Badge variant="outline" className="text-masculine border-masculine/30">
                       Men&apos;s TRT fill
                     </Badge>
                   </div>
-                  <h3 className="text-xl font-cormorant text-foreground mb-1">{MEDICATION_FILLS.testosterone.name}</h3>
-                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                  <h3 className="text-xl font-playfair text-foreground mb-1">{MEDICATION_FILLS.testosterone.name}</h3>
+                  <p className="text-sm text-muted-foreground font-jost mb-4">
                     Non-member single fill (medication included in {ELEVATED_PROGRAMS.trt.name})
                   </p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-cormorant text-foreground">
+                    <span className="text-3xl font-playfair text-foreground">
                       {MEDICATION_FILLS.testosterone.displayPrice}
                     </span>
                     <span className="text-sm text-muted-foreground">one-time</span>
@@ -1373,19 +1373,19 @@ const Pricing = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+              <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <Badge variant="outline" className="text-feminine border-feminine/30">
                       Women&apos;s HRT fill
                     </Badge>
                   </div>
-                  <h3 className="text-xl font-cormorant text-foreground mb-1">{MEDICATION_FILLS.biEst.name}</h3>
-                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                  <h3 className="text-xl font-playfair text-foreground mb-1">{MEDICATION_FILLS.biEst.name}</h3>
+                  <p className="text-sm text-muted-foreground font-jost mb-4">
                     Non-member single fill (included in {ELEVATED_PROGRAMS.hrt.name})
                   </p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-cormorant text-foreground">
+                    <span className="text-3xl font-playfair text-foreground">
                       {MEDICATION_FILLS.biEst.displayPrice}
                     </span>
                     <span className="text-sm text-muted-foreground">one-time</span>
@@ -1393,19 +1393,19 @@ const Pricing = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+              <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <Badge variant="outline" className="text-feminine border-feminine/30">
                       Women&apos;s HRT fill
                     </Badge>
                   </div>
-                  <h3 className="text-xl font-cormorant text-foreground mb-1">{MEDICATION_FILLS.progesterone.name}</h3>
-                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                  <h3 className="text-xl font-playfair text-foreground mb-1">{MEDICATION_FILLS.progesterone.name}</h3>
+                  <p className="text-sm text-muted-foreground font-jost mb-4">
                     Non-member single fill (included in {ELEVATED_PROGRAMS.hrt.name})
                   </p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-cormorant text-foreground">
+                    <span className="text-3xl font-playfair text-foreground">
                       {MEDICATION_FILLS.progesterone.displayPrice}
                     </span>
                     <span className="text-sm text-muted-foreground">one-time</span>
@@ -1413,17 +1413,17 @@ const Pricing = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+              <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg">
                 <CardContent className="p-6">
                   <Badge variant="outline" className="text-muted-foreground mb-4">
                     Physician escalation
                   </Badge>
-                  <h3 className="text-xl font-cormorant text-foreground mb-1">{CORE_SERVICES.medicalReview.name}</h3>
-                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                  <h3 className="text-xl font-playfair text-foreground mb-1">{CORE_SERVICES.medicalReview.name}</h3>
+                  <p className="text-sm text-muted-foreground font-jost mb-4">
                     Patient-requested extended consults beyond standard program care.
                   </p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-cormorant text-foreground">
+                    <span className="text-3xl font-playfair text-foreground">
                       {CORE_SERVICES.medicalReview.displayPrice}
                     </span>
                     <span className="text-sm text-muted-foreground">one-time</span>
@@ -1431,17 +1431,17 @@ const Pricing = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border border-border hover:border-gold/30 transition-all hover:shadow-lg">
+              <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg">
                 <CardContent className="p-6">
                   <Badge variant="outline" className="text-muted-foreground mb-4">
                     Diagnostics
                   </Badge>
-                  <h3 className="text-xl font-cormorant text-foreground mb-1">{CORE_SERVICES.comprehensivePanel.name}</h3>
-                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                  <h3 className="text-xl font-playfair text-foreground mb-1">{CORE_SERVICES.comprehensivePanel.name}</h3>
+                  <p className="text-sm text-muted-foreground font-jost mb-4">
                     In-office LabCorp draw; quarterly panels included in active ELEVATED memberships.
                   </p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-cormorant text-foreground">
+                    <span className="text-3xl font-playfair text-foreground">
                       {CORE_SERVICES.comprehensivePanel.displayPrice}
                     </span>
                     <span className="text-sm text-muted-foreground">one-time</span>
@@ -1449,15 +1449,15 @@ const Pricing = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-gold bg-gold/5 hover:bg-gold/10 transition-all">
+              <Card className="border-2 border-accent bg-accent/5 hover:bg-primary/10 transition-all">
                 <CardContent className="p-6 flex flex-col h-full justify-center text-center">
-                  <Sparkles className="w-8 h-8 text-gold mx-auto mb-4" />
-                  <h3 className="text-xl font-cormorant text-foreground mb-2">Compare programs</h3>
-                  <p className="text-sm text-muted-foreground font-lato mb-4">
+                  <Sparkles className="w-8 h-8 text-accent mx-auto mb-4" />
+                  <h3 className="text-xl font-playfair text-foreground mb-2">Compare programs</h3>
+                  <p className="text-sm text-muted-foreground font-jost mb-4">
                     See non-member vs. ELEVATED member economics for TRT, HRT, GLP-1, and Wellness.
                   </p>
                   <Button 
-                    className="bg-gold hover:bg-gold-dark text-gold-foreground w-full"
+                    className="bg-primary hover:bg-primary-dark text-primary-foreground w-full"
                     onClick={() => navigate("/pricing-comparison")}
                   >
                     Open pricing comparison
@@ -1468,7 +1468,7 @@ const Pricing = () => {
             </div>
 
             <div className="mt-10 max-w-4xl mx-auto bg-card rounded-xl border border-border p-6 text-center">
-              <p className="font-lato text-sm text-muted-foreground">
+              <p className="font-jost text-sm text-muted-foreground">
                 ELEVATED members receive {MEMBER_DISCOUNT_PERCENT}% off eligible à la carte IV, peptide, and injectable
                 services where checkout supports the discount. Program medications are included in TRT, HRT, and GLP-1
                 memberships—not billed separately.
@@ -1482,13 +1482,13 @@ const Pricing = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-10">
-                <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
+                <Badge variant="outline" className="mb-4 px-4 py-1.5 border-accent/30 text-accent font-jost">
                   Flexible Financing
                 </Badge>
-                <h2 className="text-3xl md:text-4xl font-cormorant text-foreground mb-4">
+                <h2 className="text-3xl md:text-4xl font-playfair text-foreground mb-4">
                   Don't Let Cost Be a Barrier
                 </h2>
-                <p className="text-lg text-muted-foreground font-lato max-w-2xl mx-auto">
+                <p className="text-lg text-muted-foreground font-jost max-w-2xl mx-auto">
                   We've partnered with trusted financing providers to make your wellness journey accessible.
                 </p>
               </div>
@@ -1503,21 +1503,21 @@ const Pricing = () => {
                       </div>
                       <Badge variant="outline" className="text-xs">Interest-Free</Badge>
                     </div>
-                    <h3 className="font-cormorant text-xl text-foreground mb-2">Pay in 4</h3>
-                    <p className="text-muted-foreground font-lato text-sm mb-4">
+                    <h3 className="font-playfair text-xl text-foreground mb-2">Pay in 4</h3>
+                    <p className="text-muted-foreground font-jost text-sm mb-4">
                       Split your purchase into 4 interest-free payments, paid every 2 weeks. No impact on credit score.
                     </p>
                     <ul className="space-y-2">
-                      <li className="flex items-center gap-2 text-sm font-lato text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                      <li className="flex items-center gap-2 text-sm font-jost text-foreground">
+                        <Check className="w-4 h-4 text-accent" />
                         Approved in seconds at checkout
                       </li>
-                      <li className="flex items-center gap-2 text-sm font-lato text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                      <li className="flex items-center gap-2 text-sm font-jost text-foreground">
+                        <Check className="w-4 h-4 text-accent" />
                         0% interest, no fees if paid on time
                       </li>
-                      <li className="flex items-center gap-2 text-sm font-lato text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                      <li className="flex items-center gap-2 text-sm font-jost text-foreground">
+                        <Check className="w-4 h-4 text-accent" />
                         Soft credit check only
                       </li>
                     </ul>
@@ -1533,21 +1533,21 @@ const Pricing = () => {
                       </div>
                       <Badge variant="outline" className="text-xs">Monthly Plans</Badge>
                     </div>
-                    <h3 className="font-cormorant text-xl text-foreground mb-2">Pay Over Time</h3>
-                    <p className="text-muted-foreground font-lato text-sm mb-4">
+                    <h3 className="font-playfair text-xl text-foreground mb-2">Pay Over Time</h3>
+                    <p className="text-muted-foreground font-jost text-sm mb-4">
                       Choose monthly payments from 3-36 months. Know your rate upfront—no hidden fees, ever.
                     </p>
                     <ul className="space-y-2">
-                      <li className="flex items-center gap-2 text-sm font-lato text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                      <li className="flex items-center gap-2 text-sm font-jost text-foreground">
+                        <Check className="w-4 h-4 text-accent" />
                         Plans from 3 to 36 months
                       </li>
-                      <li className="flex items-center gap-2 text-sm font-lato text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                      <li className="flex items-center gap-2 text-sm font-jost text-foreground">
+                        <Check className="w-4 h-4 text-accent" />
                         Rates as low as 0% APR
                       </li>
-                      <li className="flex items-center gap-2 text-sm font-lato text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                      <li className="flex items-center gap-2 text-sm font-jost text-foreground">
+                        <Check className="w-4 h-4 text-accent" />
                         No prepayment penalties
                       </li>
                     </ul>
@@ -1558,17 +1558,17 @@ const Pricing = () => {
               <div className="bg-secondary/50 rounded-xl p-6 border border-border">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
-                      <BadgeCheck className="w-6 h-6 text-gold" />
+                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+                      <BadgeCheck className="w-6 h-6 text-accent" />
                     </div>
                     <div>
-                      <h4 className="font-cormorant text-lg text-foreground">HSA/FSA Accepted</h4>
-                      <p className="text-sm text-muted-foreground font-lato">
+                      <h4 className="font-playfair text-lg text-foreground">HSA/FSA Accepted</h4>
+                      <p className="text-sm text-muted-foreground font-jost">
                         Use your pre-tax health savings for most of our services
                       </p>
                     </div>
                   </div>
-                  <Link to="/affordability" className="text-gold hover:text-gold-dark font-lato text-sm flex items-center gap-1">
+                  <Link to="/affordability" className="text-accent hover:text-accent-dark font-jost text-sm flex items-center gap-1">
                     View all payment options <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -1580,14 +1580,14 @@ const Pricing = () => {
         {/* CTA Section - Reduced padding */}
         <section className="py-16 lg:py-20 bg-gradient-to-b from-secondary to-background">
           <div className="container mx-auto px-4 text-center">
-            <Sparkles className="w-10 h-10 text-gold mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-cormorant text-foreground mb-4">
+            <Sparkles className="w-10 h-10 text-accent mx-auto mb-6" />
+            <h2 className="text-3xl md:text-4xl font-playfair text-foreground mb-4">
               Not Sure Where to Start?
             </h2>
-            <p className="text-lg text-muted-foreground font-lato max-w-2xl mx-auto mb-4">
+            <p className="text-lg text-muted-foreground font-jost max-w-2xl mx-auto mb-4">
               Chat with our <span className="font-semibold text-foreground">Virtual Care Team</span> for instant answers about pricing, insurance, and logistics—24/7.
             </p>
-            <p className="text-sm text-muted-foreground font-lato max-w-xl mx-auto mb-8 italic">
+            <p className="text-sm text-muted-foreground font-jost max-w-xl mx-auto mb-8 italic">
               When you&apos;re ready for personalized medical guidance, book a{" "}
               {CORE_SERVICES.wellnessAssessment.displayPrice} {CORE_SERVICES.wellnessAssessment.name}. Optional{" "}
               {CORE_SERVICES.medicalReview.displayPrice} medical review visits are available when clinically appropriate.
@@ -1606,7 +1606,7 @@ const Pricing = () => {
               </Button>
               <Button 
                 size="lg" 
-                className="bg-gold hover:bg-gold-dark text-gold-foreground"
+                className="bg-primary hover:bg-primary-dark text-primary-foreground"
                 onClick={openBooking}
               >
                 <Calendar className="w-5 h-5 mr-2" />
@@ -1619,15 +1619,15 @@ const Pricing = () => {
         {/* FAQ Section - Reduced padding + improved accordion spacing */}
         <section className="py-12 lg:py-16 bg-background">
           <div className="container mx-auto px-4 max-w-3xl">
-            <h2 className="text-2xl md:text-3xl font-cormorant text-foreground text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-playfair text-foreground text-center mb-10">
               Frequently Asked Questions
             </h2>
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-border rounded-lg px-6 py-1">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
+                <AccordionTrigger className="text-left font-playfair text-lg hover:no-underline py-4">
                   Can I switch between programs?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato pb-4">
+                <AccordionContent className="text-muted-foreground font-jost pb-4">
                   Absolutely! Your health journey may evolve, and we're here to adapt with you. 
                   You can upgrade, downgrade, or switch programs at any time. Just message your 
                   provider and we'll adjust your plan.
@@ -1635,10 +1635,10 @@ const Pricing = () => {
               </AccordionItem>
 
               <AccordionItem value="item-2" className="border border-border rounded-lg px-6 py-1">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
+                <AccordionTrigger className="text-left font-playfair text-lg hover:no-underline py-4">
                   What if I need to pause my membership?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato pb-4">
+                <AccordionContent className="text-muted-foreground font-jost pb-4">
                   Life happens! You can pause your membership for up to 3 months without 
                   losing your spot. Just let us know at least 5 days before your next 
                   billing date.
@@ -1646,30 +1646,30 @@ const Pricing = () => {
               </AccordionItem>
 
               <AccordionItem value="item-3" className="border border-border rounded-lg px-6 py-1">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
+                <AccordionTrigger className="text-left font-playfair text-lg hover:no-underline py-4">
                   Do you offer payment plans?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato pb-4">
+                <AccordionContent className="text-muted-foreground font-jost pb-4">
                   Yes. Larger packages may qualify for installment plans at checkout through Klarna or Affirm. Ask
                   the front office if you need help choosing an option.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-4" className="border border-border rounded-lg px-6 py-1">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
+                <AccordionTrigger className="text-left font-playfair text-lg hover:no-underline py-4">
                   Is any of this covered by insurance?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato pb-4">
+                <AccordionContent className="text-muted-foreground font-jost pb-4">
                   Elevated Health Augusta is cash-pay. We provide superbills for potential out-of-network reimbursement
                   and accept many HSA/FSA cards. Coverage varies by plan.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-5" className="border border-border rounded-lg px-6 py-1">
-                <AccordionTrigger className="text-left font-cormorant text-lg hover:no-underline py-4">
+                <AccordionTrigger className="text-left font-playfair text-lg hover:no-underline py-4">
                   What's included in the à la carte consultations?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground font-lato pb-4">
+                <AccordionContent className="text-muted-foreground font-jost pb-4">
                   {CORE_SERVICES.wellnessAssessment.displayPrice} visits include history, goals, vitals, and a written
                   plan recommendation. Labs and program fees are quoted separately before you commit—no hidden bundles.
                 </AccordionContent>
@@ -1683,15 +1683,15 @@ const Pricing = () => {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Shield className="w-5 h-5 text-gold" />
+                <Shield className="w-5 h-5 text-accent" />
                 <span>HIPAA Compliant</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <BadgeCheck className="w-5 h-5 text-gold" />
+                <BadgeCheck className="w-5 h-5 text-accent" />
                 <span>Board-Certified Providers</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Star className="w-5 h-5 text-gold" />
+                <Star className="w-5 h-5 text-accent" />
                 <span>LabCorp in-office diagnostics</span>
               </div>
             </div>
@@ -1705,7 +1705,7 @@ const Pricing = () => {
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gold text-gold-foreground shadow-lg hover:bg-gold-dark transition-all duration-300 flex items-center justify-center"
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary-dark transition-all duration-300 flex items-center justify-center"
           aria-label="Back to top"
         >
           <ChevronUp className="w-6 h-6" />

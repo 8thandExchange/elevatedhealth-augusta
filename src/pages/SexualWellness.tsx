@@ -118,34 +118,34 @@ const SexualWellness = () => {
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
 
-        <main id="main-content">
+        <main className="flex-1" id="main-content">
           {/* Hero Section */}
           <section className="relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-gold/5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
             <div className="absolute inset-0 opacity-10">
-              <FlameIcon className="absolute top-20 right-10 w-48 h-48 text-gold" />
+              <FlameIcon className="absolute top-20 right-10 w-48 h-48 text-accent" />
               <VitalityIcon className="absolute bottom-20 left-10 w-32 h-32 text-primary" />
             </div>
             
             <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
-                <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
+                <Badge variant="outline" className="mb-4 px-4 py-1.5 border-accent/30 text-accent font-jost">
                   Discreet & Confidential
                 </Badge>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cormorant mb-6 animate-fade-in-up text-foreground">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair mb-6 animate-fade-in-up text-foreground">
                   Sexual Wellness<br />for Men
                 </h1>
-                <p className="text-lg md:text-xl lg:text-2xl font-cormorant text-muted-foreground leading-relaxed mb-10 animate-fade-in-up max-w-2xl mx-auto" style={{ animationDelay: "0.1s" }}>
+                <p className="text-lg md:text-xl lg:text-2xl font-playfair text-muted-foreground leading-relaxed mb-10 animate-fade-in-up max-w-2xl mx-auto" style={{ animationDelay: "0.1s" }}>
                   Restore confidence with FDA-approved treatments. Private consultations, personalized dosing, and discreet monthly delivery.
                 </p>
                 <div className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
                   <Button
                     onClick={() => setIsConsultOpen(true)}
                     size="lg"
-                    className="bg-transparent border border-foreground text-foreground hover:bg-gold hover:text-white hover:border-gold px-10 py-6 text-base md:text-lg transition-all duration-300"
+                    className="bg-transparent border border-foreground text-foreground hover:bg-primary hover:text-white hover:border-accent px-10 py-6 text-base md:text-lg transition-all duration-300"
                   >
                     Start Your Wellness Assessment
                   </Button>
@@ -155,43 +155,43 @@ const SexualWellness = () => {
           </section>
 
           {/* Trust Indicators */}
-          <section className="py-12 md:py-16 bg-secondary/30 border-y border-gold/20">
+          <section className="py-12 md:py-16 bg-secondary/30 border-y border-accent/20">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
                   <div>
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                      <Shield className="w-6 h-6 text-gold" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                      <Shield className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">FDA-Approved</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">FDA-Approved</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Genuine medications from licensed pharmacies
                     </p>
                   </div>
                   <div>
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                      <Package className="w-6 h-6 text-gold" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                      <Package className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Discreet Delivery</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Discreet Delivery</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Unmarked packaging shipped to your door
                     </p>
                   </div>
                   <div>
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                      <Heart className="w-6 h-6 text-gold" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                      <Heart className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Provider Support</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Provider Support</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Ongoing care and dose adjustments
                     </p>
                   </div>
                   <div>
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                      <Clock className="w-6 h-6 text-gold" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                      <Clock className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Quick Start</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Quick Start</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Same-day prescriptions available
                     </p>
                   </div>
@@ -219,38 +219,38 @@ const SexualWellness = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     Private & Confidential
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground">
+                  <p className="text-lg font-playfair text-muted-foreground">
                     Your consultation is completely private. We will discuss your health history, goals, and determine the best treatment option for you.
                   </p>
                 </div>
 
-                <Card className="bg-card border-2 border-gold/50 rounded-2xl shadow-lg p-8">
+                <Card className="bg-card border-2 border-accent/50 rounded-2xl shadow-lg p-8">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-                        <VitalityIcon className="w-7 h-7 text-gold" />
+                      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                        <VitalityIcon className="w-7 h-7 text-accent" />
                       </div>
                       <div>
-                        <span className="inline-block mb-2 px-3 py-1 bg-gold/10 text-gold rounded-full text-xs font-lato">
+                        <span className="inline-block mb-2 px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-jost">
                           Step 1: Consultation
                         </span>
-                        <h3 className="text-xl font-cormorant text-foreground mb-1">
+                        <h3 className="text-xl font-playfair text-foreground mb-1">
                           Private Health Assessment
                         </h3>
-                        <p className="text-sm text-muted-foreground font-lato">
+                        <p className="text-sm text-muted-foreground font-jost">
                           A confidential conversation with our provider to review your health, discuss options, and create your personalized treatment plan. {CORE_SERVICES.wellnessAssessment.displayPrice} paid at booking.
                         </p>
                       </div>
                     </div>
                     <div className="text-center md:text-right shrink-0">
-                      <span className="text-3xl font-cormorant text-foreground">{CORE_SERVICES.wellnessAssessment.displayPrice}</span>
+                      <span className="text-3xl font-playfair text-foreground">{CORE_SERVICES.wellnessAssessment.displayPrice}</span>
                       <p className="text-xs text-muted-foreground">in-person at Evans</p>
                       <Button
                         onClick={() => setIsConsultOpen(true)}
-                        className="mt-4 bg-gold hover:bg-gold-dark text-white rounded-full px-6"
+                        className="mt-4 bg-primary hover:bg-primary-dark text-white rounded-full px-6"
                       >
                         Book Wellness Assessment
                       </Button>
@@ -266,10 +266,10 @@ const SexualWellness = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-5xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     Treatment Options
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground max-w-2xl mx-auto">
+                  <p className="text-lg font-playfair text-muted-foreground max-w-2xl mx-auto">
                     Two proven medications with different profiles. Your provider will help you choose the best fit.
                   </p>
                 </div>
@@ -279,7 +279,7 @@ const SexualWellness = () => {
                     <Card 
                       key={treatment.name} 
                       className={`bg-card border rounded-2xl p-8 flex flex-col ${
-                        treatment.badge === "Most Popular" ? "border-2 border-gold/50 shadow-lg" : "border-border/50"
+                        treatment.badge === "Most Popular" ? "border-2 border-accent/50 shadow-lg" : "border-border/50"
                       }`}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -287,13 +287,13 @@ const SexualWellness = () => {
                           {treatment.badge && (
                             <Badge 
                               variant="outline" 
-                              className="mb-2 text-xs border-gold/50 text-gold bg-gold/10"
+                              className="mb-2 text-xs border-accent/50 text-accent bg-accent/10"
                             >
                               {treatment.badge}
                             </Badge>
                           )}
-                          <h3 className="text-2xl font-cormorant text-foreground">{treatment.name}</h3>
-                          <p className="text-sm text-gold font-lato">{treatment.subtitle}</p>
+                          <h3 className="text-2xl font-playfair text-foreground">{treatment.name}</h3>
+                          <p className="text-sm text-accent font-jost">{treatment.subtitle}</p>
                         </div>
                         <div className="text-right">
                           <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5">
@@ -302,22 +302,22 @@ const SexualWellness = () => {
                         </div>
                       </div>
 
-                      <p className="text-sm text-muted-foreground font-lato mb-6">
+                      <p className="text-sm text-muted-foreground font-jost mb-6">
                         {treatment.description}
                       </p>
 
                       <div className="space-y-3 mb-6 flex-grow">
                         {treatment.benefits.map((benefit, idx) => (
                           <div key={idx} className="flex items-start gap-2">
-                            <Check className="w-4 h-4 text-gold shrink-0 mt-0.5" />
-                            <span className="text-sm text-foreground font-lato">{benefit}</span>
+                            <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                            <span className="text-sm text-foreground font-jost">{benefit}</span>
                           </div>
                         ))}
                       </div>
 
                       <div className="mt-auto pt-6 border-t border-border/30">
                         <div className="flex items-baseline gap-1 mb-2">
-                          <span className="text-3xl font-cormorant text-foreground">{treatment.price}</span>
+                          <span className="text-3xl font-playfair text-foreground">{treatment.price}</span>
                           <span className="text-sm text-muted-foreground">{treatment.priceNote}</span>
                         </div>
                         <p className="text-xs text-muted-foreground mb-4">{treatment.bestFor}</p>
@@ -325,8 +325,8 @@ const SexualWellness = () => {
                           onClick={() => setIsConsultOpen(true)}
                           className={`w-full rounded-full ${
                             treatment.badge === "Most Popular"
-                              ? "bg-gold hover:bg-gold-dark text-white"
-                              : "bg-transparent border border-foreground text-foreground hover:bg-gold hover:text-white hover:border-gold"
+                              ? "bg-primary hover:bg-primary-dark text-white"
+                              : "bg-transparent border border-foreground text-foreground hover:bg-primary hover:text-white hover:border-accent"
                           }`}
                         >
                           Get Started
@@ -344,10 +344,10 @@ const SexualWellness = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     Compare Your Options
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground">
+                  <p className="text-lg font-playfair text-muted-foreground">
                     Both medications are effective. The choice depends on your lifestyle and preferences.
                   </p>
                 </div>
@@ -355,24 +355,24 @@ const SexualWellness = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b border-gold/30">
-                        <th className="text-left py-4 px-4 font-cormorant text-lg text-foreground">Feature</th>
-                        <th className="text-center py-4 px-4 font-cormorant text-lg text-foreground">Tadalafil</th>
-                        <th className="text-center py-4 px-4 font-cormorant text-lg text-foreground">Sildenafil</th>
+                      <tr className="border-b border-accent/30">
+                        <th className="text-left py-4 px-4 font-playfair text-lg text-foreground">Feature</th>
+                        <th className="text-center py-4 px-4 font-playfair text-lg text-foreground">Tadalafil</th>
+                        <th className="text-center py-4 px-4 font-playfair text-lg text-foreground">Sildenafil</th>
                       </tr>
                     </thead>
                     <tbody>
                       {comparisonData.map((row, idx) => (
                         <tr key={idx} className="border-b border-border/30">
-                          <td className="py-4 px-4 text-muted-foreground font-lato">{row.feature}</td>
-                          <td className="py-4 px-4 text-center text-foreground font-lato">{row.tadalafil}</td>
-                          <td className="py-4 px-4 text-center text-foreground font-lato">{row.sildenafil}</td>
+                          <td className="py-4 px-4 text-muted-foreground font-jost">{row.feature}</td>
+                          <td className="py-4 px-4 text-center text-foreground font-jost">{row.tadalafil}</td>
+                          <td className="py-4 px-4 text-center text-foreground font-jost">{row.sildenafil}</td>
                         </tr>
                       ))}
                       <tr>
-                        <td className="py-4 px-4 text-muted-foreground font-lato">Monthly Price</td>
-                        <td className="py-4 px-4 text-center text-gold font-cormorant text-xl">{SEXUAL_WELLNESS_PRODUCTS.tadalafil.displayPrice}</td>
-                        <td className="py-4 px-4 text-center text-gold font-cormorant text-xl">{SEXUAL_WELLNESS_PRODUCTS.sildenafil.displayPrice}</td>
+                        <td className="py-4 px-4 text-muted-foreground font-jost">Monthly Price</td>
+                        <td className="py-4 px-4 text-center text-accent font-playfair text-xl">{SEXUAL_WELLNESS_PRODUCTS.tadalafil.displayPrice}</td>
+                        <td className="py-4 px-4 text-center text-accent font-playfair text-xl">{SEXUAL_WELLNESS_PRODUCTS.sildenafil.displayPrice}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -386,39 +386,39 @@ const SexualWellness = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     How It Works
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground">
+                  <p className="text-lg font-playfair text-muted-foreground">
                     Simple, private, and convenient.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-xl font-cormorant text-gold">1</span>
+                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                      <span className="text-xl font-playfair text-accent">1</span>
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Wellness Assessment</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Wellness Assessment</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Complete a confidential health assessment with our provider to discuss your needs and medical history.
                     </p>
                   </div>
                   <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-xl font-cormorant text-gold">2</span>
+                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                      <span className="text-xl font-playfair text-accent">2</span>
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Personalized Prescription</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Personalized Prescription</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       If appropriate, your provider prescribes the right medication and dose for your situation.
                     </p>
                   </div>
                   <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-xl font-cormorant text-gold">3</span>
+                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                      <span className="text-xl font-playfair text-accent">3</span>
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Discreet Delivery</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Discreet Delivery</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Your medication arrives in unmarked packaging. Ongoing refills and support are included.
                     </p>
                   </div>
@@ -432,33 +432,33 @@ const SexualWellness = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     Common Questions
                   </h2>
                 </div>
 
                 <div className="space-y-6">
                   <div className="border-b border-border/30 pb-6">
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Is this really private?</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Is this really private?</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Yes. Your consultation is confidential. Medications ship in unmarked packaging with no indication of contents. Your privacy is our priority.
                     </p>
                   </div>
                   <div className="border-b border-border/30 pb-6">
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">How do I know which medication is right for me?</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">How do I know which medication is right for me?</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       During your consultation, your provider will discuss your health history, lifestyle, and preferences to recommend the best option. Many men prefer Tadalafil for its longer duration and daily-dose option.
                     </p>
                   </div>
                   <div className="border-b border-border/30 pb-6">
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Are these real medications?</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Are these real medications?</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Yes. We prescribe FDA-approved Tadalafil and Sildenafil from licensed US pharmacies. These are the same active ingredients found in Cialis and Viagra.
                     </p>
                   </div>
                   <div className="pb-6">
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Can I cancel anytime?</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Can I cancel anytime?</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Yes. There are no long-term commitments. You can pause, adjust, or cancel your subscription at any time through your patient portal.
                     </p>
                   </div>
@@ -471,16 +471,16 @@ const SexualWellness = () => {
           <section className="py-16 md:py-20 bg-secondary/30">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-3xl sm:text-4xl font-cormorant mb-6 text-foreground">
+                <h2 className="text-3xl sm:text-4xl font-playfair mb-6 text-foreground">
                   Ready to Restore Your Confidence?
                 </h2>
-                <p className="text-lg font-cormorant text-muted-foreground mb-8">
+                <p className="text-lg font-playfair text-muted-foreground mb-8">
                   Start with a {CORE_SERVICES.wellnessAssessment.displayPrice} Wellness Assessment at our Evans clinic.
                 </p>
                 <Button
                   onClick={() => setIsConsultOpen(true)}
                   size="lg"
-                  className="bg-gold hover:bg-gold-dark text-white px-10 py-6 text-base md:text-lg rounded-full"
+                  className="bg-primary hover:bg-primary-dark text-white px-10 py-6 text-base md:text-lg rounded-full"
                 >
                   Book Wellness Assessment
                 </Button>

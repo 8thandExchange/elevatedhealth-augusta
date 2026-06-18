@@ -37,10 +37,10 @@ const Services = () => {
         <link rel="canonical" href="https://elevatedhealthaugusta.com/services" />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
 
-        <main>
+        <main className="flex-1">
           <section className={`${storefrontHeroSection} text-center`}>
             <div className={`${storefrontHeroInner} max-w-4xl mx-auto`}>
               <p className={storefrontHeroLabel}>Our services</p>

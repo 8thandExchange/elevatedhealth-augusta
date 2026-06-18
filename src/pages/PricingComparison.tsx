@@ -36,17 +36,17 @@ const PricingComparison = () => {
 
       <Navbar />
 
-      <main className="min-h-screen bg-background">
+      <main className="flex-1 public-page-shell">
         <section className="py-16 lg:py-20 bg-gradient-to-b from-secondary to-background">
           <div className="container mx-auto px-4 text-center">
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 border-gold/30 text-gold">
+            <Badge variant="outline" className="mb-6 px-4 py-1.5 border-accent/30 text-accent">
               <Calculator className="w-4 h-4 mr-2" />
               Pricing comparison
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-cormorant text-foreground mb-6">
-              ELEVATED programs vs. <span className="text-gold">à la carte</span>
+            <h1 className="text-4xl md:text-5xl font-playfair text-foreground mb-6">
+              ELEVATED programs vs. <span className="text-accent">à la carte</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-lato">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-jost">
               Every path starts with a {CORE_SERVICES.wellnessAssessment.displayPrice}{" "}
               {CORE_SERVICES.wellnessAssessment.name} and baseline labs. Choose a tab to see how
               bundled ELEVATED care compares to paying for each service individually.
@@ -60,7 +60,7 @@ const PricingComparison = () => {
             <Tabs defaultValue="trt" className="w-full">
               <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
                 {PROGRAM_TABS.map((t) => (
-                  <TabsTrigger key={t.value} value={t.value} className="font-lato text-xs md:text-sm">
+                  <TabsTrigger key={t.value} value={t.value} className="font-jost text-xs md:text-sm">
                     {t.label}
                   </TabsTrigger>
                 ))}
@@ -110,7 +110,7 @@ const PricingComparison = () => {
         <section className="py-12 lg:py-16 bg-muted/20">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-cormorant text-center mb-8">Common questions</h2>
+              <h2 className="text-2xl md:text-3xl font-playfair text-center mb-8">Common questions</h2>
               <div className="space-y-4">
                 <div className="rounded-lg border border-border bg-background p-6">
                   <h3 className="font-medium mb-2">Can I switch from à la carte to an ELEVATED program?</h3>

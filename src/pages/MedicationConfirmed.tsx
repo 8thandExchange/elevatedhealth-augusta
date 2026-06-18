@@ -97,9 +97,9 @@ const MedicationConfirmed = () => {
         <title>Order Confirmed | {SITE_CONFIG.clinicName}</title>
         <meta name="robots" content="noindex" />
       </Helmet>
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
-        <main className="pt-24 pb-16">
+        <main className="flex-1 pt-24 pb-16">
           <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
             <div className="text-center mb-10">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">

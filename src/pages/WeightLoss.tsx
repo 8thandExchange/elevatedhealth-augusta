@@ -203,10 +203,10 @@ const WeightLoss = () => {
         })}</script>
       </Helmet>
 
-      <div className="min-h-screen">
+      <div className="public-page-shell">
         <Navbar />
         
-        <main>
+        <main className="flex-1">
           <BodyRecompositionTeaser variant="banner" />
           <section className={storefrontHeroSection}>
             <div className={`${storefrontHeroInner} text-center max-w-4xl mx-auto`}>
@@ -404,7 +404,7 @@ const WeightLoss = () => {
           </section>
 
           {/* What's Included Section - Cream/Gold Theme */}
-          <section className="py-16 md:py-24 bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3]">
+          <section className="py-16 md:py-24 section-band-surface">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-4xl mx-auto text-center mb-12">
                 <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-jost font-light">
@@ -658,7 +658,7 @@ const WeightLoss = () => {
           </section>
 
           {/* GLP-1 Comparison Table */}
-          <section className="py-16 md:py-24 bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3]">
+          <section className="py-16 md:py-24 section-band-surface">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-5xl mx-auto">
                 <div className="text-center mb-12">

@@ -349,13 +349,13 @@ const PatientLogin = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <p className="text-xs uppercase tracking-widest text-gold mb-2">Patient Portal</p>
-            <h1 className="font-cormorant text-3xl text-foreground">Elevated Health Augusta</h1>
+            <p className="text-xs uppercase tracking-[3px] text-accent mb-2 font-jost">Patient Portal</p>
+            <h1 className="font-playfair text-3xl text-foreground">Elevated Health Augusta</h1>
           </div>
 
           <Card className="bg-card border-border/50">
             <CardHeader>
-              <CardTitle className="font-cormorant text-xl">Reset Password</CardTitle>
+              <CardTitle className="font-playfair text-xl">Reset Password</CardTitle>
               <CardDescription>Enter your email to receive a password reset link</CardDescription>
             </CardHeader>
             <CardContent>
@@ -394,7 +394,7 @@ const PatientLogin = () => {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <p className="text-xs uppercase tracking-[3px] text-gold mb-2 font-jost">Patient Portal</p>
+          <p className="text-xs uppercase tracking-[3px] text-accent mb-2 font-jost">Patient Portal</p>
           <h1 className="font-playfair italic text-4xl text-foreground">Welcome back</h1>
           <p className="mt-3 text-sm text-muted-foreground font-jost">Sign in to access your wellness dashboard.</p>
         </div>

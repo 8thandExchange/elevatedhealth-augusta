@@ -297,7 +297,7 @@ export default function ConsultPrequal() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="public-page-shell">
       <Helmet>
         <title>Enroll — Wellness Assessment | Elevated Health Augusta</title>
       </Helmet>

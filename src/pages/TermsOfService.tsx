@@ -62,16 +62,16 @@ const TermsOfService = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream">
+    <div className="public-page-shell">
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-1">
         <div className="max-w-6xl mx-auto py-12 px-6 lg:px-8">
           {/* Header */}
           <div className="mb-12">
             <h1 className="font-playfair text-4xl lg:text-5xl font-light text-foreground mb-4">
               Terms of Service & Patient Agreement
             </h1>
-            <p className="text-sm text-muted-foreground font-lato">
+            <p className="text-sm text-muted-foreground font-jost">
               Effective Date: December 2025 | Last Updated: December 2025
             </p>
           </div>
@@ -80,7 +80,7 @@ const TermsOfService = () => {
             {/* Sidebar TOC */}
             <aside className="lg:w-64 flex-shrink-0">
               <nav className="lg:sticky lg:top-24">
-                <p className="text-xs font-lato uppercase tracking-widest text-muted-foreground mb-4">
+                <p className="text-xs font-jost uppercase tracking-widest text-muted-foreground mb-4">
                   On This Page
                 </p>
                 <ul className="space-y-2">
@@ -88,7 +88,7 @@ const TermsOfService = () => {
                     <li key={section.id}>
                       <button
                         onClick={() => scrollToSection(section.id)}
-                        className={`text-sm font-lato text-left w-full py-1.5 px-3 rounded transition-colors ${
+                        className={`text-sm font-jost text-left w-full py-1.5 px-3 rounded transition-colors ${
                           activeSection === section.id
                             ? "bg-primary/10 text-primary font-medium"
                             : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -104,7 +104,7 @@ const TermsOfService = () => {
 
             {/* Main Content */}
             <article className="flex-1 max-w-3xl">
-              <div className="prose prose-slate max-w-none font-lato text-foreground leading-relaxed">
+              <div className="prose prose-slate max-w-none font-jost text-foreground leading-relaxed">
                 
                 <section id="acceptance" className="mb-12">
                   <h2 className="font-playfair text-2xl font-light text-foreground mb-4">

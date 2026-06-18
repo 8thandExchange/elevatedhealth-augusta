@@ -195,7 +195,7 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="public-page-shell">
       <Helmet>
         <title>Frequently Asked Questions | Elevated Health Augusta</title>
         <meta name="description" content="Answers about the Wellness Assessment, ELEVATED programs, membership, peptides, labs, and cash-pay pricing at Elevated Health Augusta." />
@@ -219,7 +219,7 @@ const FAQ = () => {
       </Helmet>
       <Navbar />
 
-      <main id="main-content" className="pt-28 pb-24">
+      <main id="main-content" className="flex-1 pt-28 pb-24">
         <div className="container mx-auto px-4 max-w-3xl">
           <p className="text-xs tracking-[0.25em] uppercase text-accent font-jost mb-3">
             Patient resources

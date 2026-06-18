@@ -12,6 +12,8 @@ import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
+import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
+import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
 import {
   PUBLIC_AVAILABILITY_DISCLAIMER,
   PUBLIC_PEPTIDE_CATEGORIES,
@@ -33,23 +35,23 @@ const PRICE_PROGRAM_WELLNESS = ELEVATED_PROGRAMS.wellness.displayPrice;
 const steps = [
   {
     n: "01",
-    t: `Wellness Assessment (${PRICE_CONSULT})`,
-    d: "In-person visit — goals, history, medications, and whether peptide therapy fits your situation.",
+    title: `Wellness Assessment (${PRICE_CONSULT})`,
+    body: "In-person visit — goals, history, medications, and whether peptide therapy fits your situation.",
   },
   {
     n: "02",
-    t: "Labs when indicated",
-    d: `In-office LabCorp draw (${CORE_SERVICES.comprehensivePanel.displayPrice} or ${CORE_SERVICES.expandedPanel.displayPrice} when expanded markers are ordered).`,
+    title: "Labs when indicated",
+    body: `In-office LabCorp draw (${CORE_SERVICES.comprehensivePanel.displayPrice} or ${CORE_SERVICES.expandedPanel.displayPrice} when expanded markers are ordered).`,
   },
   {
     n: "03",
-    t: "Provider review",
-    d: "Recovery peptides (BPC-157, TB-500, combined stack) require a dedicated clinical review before any plan is discussed.",
+    title: "Provider review",
+    body: "Recovery peptides (BPC-157, TB-500, combined stack) require a dedicated clinical review before any plan is discussed.",
   },
   {
     n: "04",
-    t: "Your plan",
-    d: "If appropriate, your physician selects compounds and routes — instructions are provided at your visit, not published online.",
+    title: "Your plan",
+    body: "If appropriate, your physician selects compounds and routes — instructions are provided at your visit, not published online.",
   },
 ];
 
@@ -129,10 +131,10 @@ const PeptideTherapy = () => {
         </script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
 
-        <main>
+        <main className="flex-1">
           <section className={storefrontHeroSection}>
             <div className={storefrontHeroInner}>
               <p className={storefrontHeroLabel}>Peptide Therapy</p>
@@ -289,27 +291,21 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section className="py-20 md:py-28 bg-background">
+          <section id="how-it-works" className="section-band-surface">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <div className="text-center mb-16">
-                <p className="section-label mb-4">How it works</p>
-                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">
-                  Four steps. <span className="italic">No surprises.</span>
-                </h2>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                {steps.map((s) => (
-                  <div key={s.n}>
-                    <p className="font-playfair italic text-4xl text-accent mb-4">{s.n}</p>
-                    <h3 className="font-playfair text-xl text-foreground mb-3">{s.t}</h3>
-                    <p className="font-jost font-light text-muted-foreground leading-relaxed text-sm">{s.d}</p>
-                  </div>
-                ))}
-              </div>
+              <StorefrontSectionHeader
+                label="How it works"
+                title={
+                  <>
+                    Four steps. <span className="italic">No surprises.</span>
+                  </>
+                }
+              />
+              <StorefrontStepCards steps={steps} />
             </div>
           </section>
 
-          <section className="py-20 md:py-28 bg-muted/30">
+          <section className="section-band-white">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">Who it&apos;s for</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">

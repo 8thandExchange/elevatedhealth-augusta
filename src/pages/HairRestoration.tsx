@@ -142,34 +142,34 @@ const HairRestoration = () => {
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
 
-        <main id="main-content">
+        <main className="flex-1" id="main-content">
           {/* Hero Section */}
           <section className="relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-gold/5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
             <div className="absolute inset-0 opacity-10">
-              <FollicleIcon className="absolute top-20 right-10 w-48 h-48 text-gold" />
+              <FollicleIcon className="absolute top-20 right-10 w-48 h-48 text-accent" />
               <ScalpIcon className="absolute bottom-20 left-10 w-32 h-32 text-primary" />
             </div>
             
             <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
-                <Badge variant="outline" className="mb-4 px-4 py-1.5 border-gold/30 text-gold font-lato">
+                <Badge variant="outline" className="mb-4 px-4 py-1.5 border-accent/30 text-accent font-jost">
                   For Men & Women
                 </Badge>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cormorant mb-6 animate-fade-in-up text-foreground">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair mb-6 animate-fade-in-up text-foreground">
                   Hair Restoration<br />& Regrowth
                 </h1>
-                <p className="text-lg md:text-xl lg:text-2xl font-cormorant text-muted-foreground leading-relaxed mb-10 animate-fade-in-up max-w-2xl mx-auto" style={{ animationDelay: "0.1s" }}>
+                <p className="text-lg md:text-xl lg:text-2xl font-playfair text-muted-foreground leading-relaxed mb-10 animate-fade-in-up max-w-2xl mx-auto" style={{ animationDelay: "0.1s" }}>
                   Clinically proven treatments to stop hair loss and stimulate new growth. FDA-approved medications combined with cutting-edge peptides.
                 </p>
                 <div className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
                   <Button
                     onClick={() => setIsConsultOpen(true)}
                     size="lg"
-                    className="bg-transparent border border-foreground text-foreground hover:bg-gold hover:text-white hover:border-gold px-10 py-6 text-base md:text-lg transition-all duration-300"
+                    className="bg-transparent border border-foreground text-foreground hover:bg-primary hover:text-white hover:border-accent px-10 py-6 text-base md:text-lg transition-all duration-300"
                   >
                     Start Your Hair Restoration Journey
                   </Button>
@@ -179,34 +179,34 @@ const HairRestoration = () => {
           </section>
 
           {/* Why It Works */}
-          <section className="py-12 md:py-16 bg-secondary/30 border-y border-gold/20">
+          <section className="py-12 md:py-16 bg-secondary/30 border-y border-accent/20">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                   <div>
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                      <Shield className="w-6 h-6 text-gold" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                      <Shield className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Block DHT</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Block DHT</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Stop the hormone that shrinks follicles and causes pattern baldness.
                     </p>
                   </div>
                   <div>
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                      <Zap className="w-6 h-6 text-gold" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                      <Zap className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Stimulate Growth</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Stimulate Growth</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Increase blood flow and nutrients to dormant follicles.
                     </p>
                   </div>
                   <div>
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                      <Sparkles className="w-6 h-6 text-gold" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                      <Sparkles className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-lg font-cormorant text-foreground mb-2">Regenerate</h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <h3 className="text-lg font-playfair text-foreground mb-2">Regenerate</h3>
+                    <p className="text-sm text-muted-foreground font-jost">
                       Peptide therapy activates stem cells for follicle regeneration.
                     </p>
                   </div>
@@ -220,38 +220,38 @@ const HairRestoration = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     Your Entry Point
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground">
+                  <p className="text-lg font-playfair text-muted-foreground">
                     Start with a personalized consultation to assess your hair loss pattern and determine the best protocol.
                   </p>
                 </div>
 
-                <Card className="bg-card border-2 border-gold/50 rounded-2xl shadow-lg p-8">
+                <Card className="bg-card border-2 border-accent/50 rounded-2xl shadow-lg p-8">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-                        <FollicleIcon className="w-7 h-7 text-gold" />
+                      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                        <FollicleIcon className="w-7 h-7 text-accent" />
                       </div>
                       <div>
-                        <span className="inline-block mb-2 px-3 py-1 bg-gold/10 text-gold rounded-full text-xs font-lato">
+                        <span className="inline-block mb-2 px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-jost">
                           Step 1: Consultation
                         </span>
-                        <h3 className="text-xl font-cormorant text-foreground mb-1">
+                        <h3 className="text-xl font-playfair text-foreground mb-1">
                           Hair Restoration Consultation
                         </h3>
-                        <p className="text-sm text-muted-foreground font-lato">
+                        <p className="text-sm text-muted-foreground font-jost">
                           Meet with our provider to assess your hair loss pattern, discuss your goals, and design a personalized protocol. {CORE_SERVICES.wellnessAssessment.displayPrice} paid at booking.
                         </p>
                       </div>
                     </div>
                     <div className="text-center md:text-right shrink-0">
-                      <span className="text-3xl font-cormorant text-foreground">{CORE_SERVICES.wellnessAssessment.displayPrice}</span>
+                      <span className="text-3xl font-playfair text-foreground">{CORE_SERVICES.wellnessAssessment.displayPrice}</span>
                       <p className="text-xs text-muted-foreground">Wellness Assessment</p>
                       <Button
                         onClick={() => setIsConsultOpen(true)}
-                        className="mt-4 bg-gold hover:bg-gold-dark text-white rounded-full px-6"
+                        className="mt-4 bg-primary hover:bg-primary-dark text-white rounded-full px-6"
                       >
                         Book Consultation
                       </Button>
@@ -281,10 +281,10 @@ const HairRestoration = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     Treatment Protocols
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground max-w-2xl mx-auto">
+                  <p className="text-lg font-playfair text-muted-foreground max-w-2xl mx-auto">
                     Clinically proven medications and peptides tailored to your stage of hair loss.
                   </p>
                 </div>
@@ -294,7 +294,7 @@ const HairRestoration = () => {
                     <Card 
                       key={treatment.name} 
                       className={`bg-card border rounded-2xl p-6 flex flex-col ${
-                        treatment.badge === "Most Popular" ? "border-2 border-gold/50 shadow-lg" : "border-border/50"
+                        treatment.badge === "Most Popular" ? "border-2 border-accent/50 shadow-lg" : "border-border/50"
                       }`}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -304,7 +304,7 @@ const HairRestoration = () => {
                               variant="outline" 
                               className={`mb-2 text-xs ${
                                 treatment.badge === "Most Popular" 
-                                  ? "border-gold/50 text-gold bg-gold/10" 
+                                  ? "border-accent/50 text-accent bg-accent/10" 
                                   : treatment.badge === "Premium"
                                   ? "border-amber-500/50 text-amber-600 bg-amber-500/10"
                                   : "border-primary/50 text-primary bg-primary/10"
@@ -313,27 +313,27 @@ const HairRestoration = () => {
                               {treatment.badge}
                             </Badge>
                           )}
-                          <h3 className="text-xl font-cormorant text-foreground">{treatment.name}</h3>
-                          <p className="text-sm text-gold font-lato">{treatment.subtitle}</p>
+                          <h3 className="text-xl font-playfair text-foreground">{treatment.name}</h3>
+                          <p className="text-sm text-accent font-jost">{treatment.subtitle}</p>
                         </div>
                       </div>
 
-                      <p className="text-sm text-muted-foreground font-lato mb-4 flex-grow">
+                      <p className="text-sm text-muted-foreground font-jost mb-4 flex-grow">
                         {treatment.description}
                       </p>
 
                       <div className="space-y-2 mb-6">
                         {treatment.benefits.map((benefit, idx) => (
                           <div key={idx} className="flex items-start gap-2">
-                            <Check className="w-4 h-4 text-gold shrink-0 mt-0.5" />
-                            <span className="text-sm text-foreground font-lato">{benefit}</span>
+                            <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                            <span className="text-sm text-foreground font-jost">{benefit}</span>
                           </div>
                         ))}
                       </div>
 
                       <div className="mt-auto">
                         <div className="flex items-baseline gap-1 mb-2">
-                          <span className="text-2xl font-cormorant text-foreground">{treatment.price}</span>
+                          <span className="text-2xl font-playfair text-foreground">{treatment.price}</span>
                           <span className="text-sm text-muted-foreground">{treatment.priceNote}</span>
                         </div>
                         <p className="text-xs text-muted-foreground mb-4">Best for: {treatment.bestFor}</p>
@@ -341,8 +341,8 @@ const HairRestoration = () => {
                           onClick={() => setIsConsultOpen(true)}
                           className={`w-full rounded-full ${
                             treatment.badge === "Most Popular"
-                              ? "bg-gold hover:bg-gold-dark text-white"
-                              : "bg-transparent border border-foreground text-foreground hover:bg-gold hover:text-white hover:border-gold"
+                              ? "bg-primary hover:bg-primary-dark text-white"
+                              : "bg-transparent border border-foreground text-foreground hover:bg-primary hover:text-white hover:border-accent"
                           }`}
                         >
                           Get Started
@@ -360,10 +360,10 @@ const HairRestoration = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     Protocol Comparison
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground">
+                  <p className="text-lg font-playfair text-muted-foreground">
                     Compare our treatment options to find the best fit for your needs.
                   </p>
                 </div>
@@ -371,27 +371,27 @@ const HairRestoration = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b border-gold/30">
-                        <th className="text-left py-4 px-4 font-cormorant text-lg text-foreground">Feature</th>
-                        <th className="text-center py-4 px-4 font-cormorant text-lg text-foreground">Min + Fin</th>
-                        <th className="text-center py-4 px-4 font-cormorant text-lg text-foreground">Dutasteride</th>
-                        <th className="text-center py-4 px-4 font-cormorant text-lg text-foreground">GHK-Cu</th>
+                      <tr className="border-b border-accent/30">
+                        <th className="text-left py-4 px-4 font-playfair text-lg text-foreground">Feature</th>
+                        <th className="text-center py-4 px-4 font-playfair text-lg text-foreground">Min + Fin</th>
+                        <th className="text-center py-4 px-4 font-playfair text-lg text-foreground">Dutasteride</th>
+                        <th className="text-center py-4 px-4 font-playfair text-lg text-foreground">GHK-Cu</th>
                       </tr>
                     </thead>
                     <tbody>
                       {comparisonData.map((row, idx) => (
                         <tr key={idx} className="border-b border-border/30">
-                          <td className="py-4 px-4 text-muted-foreground font-lato">{row.feature}</td>
-                          <td className="py-4 px-4 text-center text-foreground font-lato">{row.minFin}</td>
-                          <td className="py-4 px-4 text-center text-foreground font-lato">{row.dut}</td>
-                          <td className="py-4 px-4 text-center text-foreground font-lato">{row.ghk}</td>
+                          <td className="py-4 px-4 text-muted-foreground font-jost">{row.feature}</td>
+                          <td className="py-4 px-4 text-center text-foreground font-jost">{row.minFin}</td>
+                          <td className="py-4 px-4 text-center text-foreground font-jost">{row.dut}</td>
+                          <td className="py-4 px-4 text-center text-foreground font-jost">{row.ghk}</td>
                         </tr>
                       ))}
                       <tr>
-                        <td className="py-4 px-4 text-muted-foreground font-lato">Price</td>
-                        <td className="py-4 px-4 text-center text-gold font-cormorant text-lg">$129/mo</td>
-                        <td className="py-4 px-4 text-center text-gold font-cormorant text-lg">$149/mo</td>
-                        <td className="py-4 px-4 text-center text-gold font-cormorant text-lg">$149</td>
+                        <td className="py-4 px-4 text-muted-foreground font-jost">Price</td>
+                        <td className="py-4 px-4 text-center text-accent font-playfair text-lg">$129/mo</td>
+                        <td className="py-4 px-4 text-center text-accent font-playfair text-lg">$149/mo</td>
+                        <td className="py-4 px-4 text-center text-accent font-playfair text-lg">$149</td>
                       </tr>
                     </tbody>
                   </table>
@@ -405,55 +405,55 @@ const HairRestoration = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-12">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-4">
-                    <Users className="w-6 h-6 text-gold" />
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 mb-4">
+                    <Users className="w-6 h-6 text-accent" />
                   </div>
-                  <h2 className="text-3xl sm:text-4xl font-cormorant mb-4 text-foreground">
+                  <h2 className="text-3xl sm:text-4xl font-playfair mb-4 text-foreground">
                     For Men & Women
                   </h2>
-                  <p className="text-lg font-cormorant text-muted-foreground max-w-2xl mx-auto">
+                  <p className="text-lg font-playfair text-muted-foreground max-w-2xl mx-auto">
                     Hair loss affects both men and women differently. Our protocols are tailored to your specific pattern and hormonal profile.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="bg-card border border-border/50 rounded-2xl p-6">
-                    <h3 className="text-xl font-cormorant text-foreground mb-4">Male Pattern Hair Loss</h3>
-                    <p className="text-sm text-muted-foreground font-lato mb-4">
+                    <h3 className="text-xl font-playfair text-foreground mb-4">Male Pattern Hair Loss</h3>
+                    <p className="text-sm text-muted-foreground font-jost mb-4">
                       Characterized by receding hairline and crown thinning. Driven primarily by DHT sensitivity. Our protocols focus on aggressive DHT blocking combined with growth stimulation.
                     </p>
                     <ul className="space-y-2">
                       <li className="flex items-center gap-2 text-sm text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                        <Check className="w-4 h-4 text-accent" />
                         Finasteride or Dutasteride for DHT control
                       </li>
                       <li className="flex items-center gap-2 text-sm text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                        <Check className="w-4 h-4 text-accent" />
                         Minoxidil for growth stimulation
                       </li>
                       <li className="flex items-center gap-2 text-sm text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                        <Check className="w-4 h-4 text-accent" />
                         Optional GHK-Cu for enhanced results
                       </li>
                     </ul>
                   </Card>
 
                   <Card className="bg-card border border-border/50 rounded-2xl p-6">
-                    <h3 className="text-xl font-cormorant text-foreground mb-4">Female Pattern Hair Loss</h3>
-                    <p className="text-sm text-muted-foreground font-lato mb-4">
+                    <h3 className="text-xl font-playfair text-foreground mb-4">Female Pattern Hair Loss</h3>
+                    <p className="text-sm text-muted-foreground font-jost mb-4">
                       Typically presents as overall thinning, especially at the crown. Often linked to hormonal changes. We coordinate with our hormone optimization protocols for comprehensive treatment.
                     </p>
                     <ul className="space-y-2">
                       <li className="flex items-center gap-2 text-sm text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                        <Check className="w-4 h-4 text-accent" />
                         Minoxidil topical therapy
                       </li>
                       <li className="flex items-center gap-2 text-sm text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                        <Check className="w-4 h-4 text-accent" />
                         Hormone optimization if indicated
                       </li>
                       <li className="flex items-center gap-2 text-sm text-foreground">
-                        <Check className="w-4 h-4 text-gold" />
+                        <Check className="w-4 h-4 text-accent" />
                         GHK-Cu peptide for regeneration
                       </li>
                     </ul>
@@ -467,16 +467,16 @@ const HairRestoration = () => {
           <section className="py-16 md:py-20 bg-background">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-3xl sm:text-4xl font-cormorant mb-6 text-foreground">
+                <h2 className="text-3xl sm:text-4xl font-playfair mb-6 text-foreground">
                   Ready to Restore Your Hair?
                 </h2>
-                <p className="text-lg font-cormorant text-muted-foreground mb-8">
+                <p className="text-lg font-playfair text-muted-foreground mb-8">
                   Book your {CORE_SERVICES.wellnessAssessment.displayPrice} Wellness Assessment to begin a personalized protocol.
                 </p>
                 <Button
                   onClick={() => setIsConsultOpen(true)}
                   size="lg"
-                  className="bg-gold hover:bg-gold-dark text-white px-10 py-6 text-base md:text-lg rounded-full"
+                  className="bg-primary hover:bg-primary-dark text-white px-10 py-6 text-base md:text-lg rounded-full"
                 >
                   Book Hair Restoration Consultation
                 </Button>

@@ -203,6 +203,24 @@
   @apply section-band bg-primary text-primary-foreground;
 }
 
+/* Site-wide public marketing shell — Navbar + flex main + Footer */
+.public-page-shell {
+  @apply min-h-screen flex flex-col bg-background;
+}
+
+.public-page-shell > main {
+  @apply flex-1 w-full;
+}
+
+/* Premium cards on public pages (Function-style) */
+.public-page-shell main .rounded-lg.border.bg-card {
+  @apply rounded-xl shadow-[var(--shadow-sm)];
+}
+
+.public-page-shell main .rounded-lg.border.bg-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
 /* Function-inspired premium surfaces — EHA navy / steel palette */
 .premium-card {
   @apply rounded-xl border border-border bg-background shadow-[var(--shadow-sm)] transition-shadow duration-300;

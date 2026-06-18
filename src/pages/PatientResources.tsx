@@ -296,7 +296,7 @@ const VideoCard = ({ resource }: { resource: Resource }) => {
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden border-border/50 hover:border-gold/50 transition-all duration-300 hover:shadow-lg"
+      className="group cursor-pointer overflow-hidden border-border/50 hover:border-accent/50 transition-all duration-300 hover:shadow-lg"
       onClick={handleClick}
     >
       <div className="relative aspect-video bg-muted overflow-hidden">
@@ -318,7 +318,7 @@ const VideoCard = ({ resource }: { resource: Resource }) => {
         </div>
       </div>
       <CardContent className="p-4">
-        <h3 className="font-cormorant text-lg text-foreground mb-1 line-clamp-2">{resource.title}</h3>
+        <h3 className="font-playfair text-lg text-foreground mb-1 line-clamp-2">{resource.title}</h3>
         {resource.description && (
           <p className="text-sm text-muted-foreground font-light line-clamp-2">{resource.description}</p>
         )}
@@ -333,14 +333,14 @@ const PDFCard = ({ resource }: { resource: Resource }) => {
   };
 
   return (
-    <Card className="border-border/50 hover:border-gold/50 transition-all duration-300 hover:shadow-lg">
+    <Card className="border-border/50 hover:border-accent/50 transition-all duration-300 hover:shadow-lg">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
             <FileText className="h-6 w-6 text-red-600" />
           </div>
           <div className="flex-grow min-w-0">
-            <h3 className="font-cormorant text-lg text-foreground mb-1 line-clamp-2">{resource.title}</h3>
+            <h3 className="font-playfair text-lg text-foreground mb-1 line-clamp-2">{resource.title}</h3>
             {resource.description && (
               <p className="text-sm text-muted-foreground font-light line-clamp-2 mb-3">{resource.description}</p>
             )}
@@ -366,8 +366,8 @@ const FAQSection = ({ category }: { category: string }) => {
 
   return (
     <div className="mt-8">
-      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
-        <HelpCircle className="h-5 w-5 text-gold" />
+      <h2 className="font-playfair text-2xl text-foreground mb-6 flex items-center gap-2">
+        <HelpCircle className="h-5 w-5 text-accent" />
         Frequently Asked Questions
       </h2>
       <Accordion type="single" collapsible className="w-full">
@@ -392,13 +392,13 @@ const QuickReferenceSection = ({ category }: { category: string }) => {
 
   return (
     <div className="mt-8">
-      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
-        <BookOpen className="h-5 w-5 text-gold" />
+      <h2 className="font-playfair text-2xl text-foreground mb-6 flex items-center gap-2">
+        <BookOpen className="h-5 w-5 text-accent" />
         Quick Reference
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {cards.map((card, index) => (
-          <Card key={index} className={`${card.highlight ? 'border-gold bg-gold/5' : 'border-border/50'}`}>
+          <Card key={index} className={`${card.highlight ? 'border-accent bg-accent/5' : 'border-border/50'}`}>
             <CardContent className="p-4">
               <h3 className="font-semibold text-foreground mb-2">{card.title}</h3>
               <p className="text-sm text-muted-foreground">{card.content}</p>
@@ -466,17 +466,17 @@ const PatientResources = () => {
         <meta name="description" content="Educational resources for Elevated Health Augusta patients including injection tutorials, nutrition guides, and stress management techniques." />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
         
-        <main>
+        <main className="flex-1">
           {/* Hero Section */}
           <section className="relative py-24 bg-gradient-to-br from-primary via-primary/95 to-[hsl(200,25%,35%)]">
             <div className="container mx-auto px-6 text-center">
-              <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+              <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-jost font-light">
                 Patient Education
               </p>
-              <h1 className="font-cormorant text-white mb-4">
+              <h1 className="font-playfair text-white mb-4">
                 Patient Resources
               </h1>
               <p className="text-lg text-white/80 max-w-2xl mx-auto font-light">
@@ -515,7 +515,7 @@ const PatientResources = () => {
               {/* Category Description */}
               {effectiveCategory !== "all" && categoryConfig[effectiveCategory] && (
                 <div className="text-center mb-8">
-                  <h2 className="font-cormorant text-3xl text-foreground mb-2">
+                  <h2 className="font-playfair text-3xl text-foreground mb-2">
                     {categoryConfig[effectiveCategory].label}
                   </h2>
                   <p className="text-muted-foreground">
@@ -545,8 +545,8 @@ const PatientResources = () => {
                   {/* Videos Section */}
                   {videos.length > 0 && (
                     <div>
-                      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
-                        <Play className="h-5 w-5 text-gold" />
+                      <h2 className="font-playfair text-2xl text-foreground mb-6 flex items-center gap-2">
+                        <Play className="h-5 w-5 text-accent" />
                         Video Tutorials
                       </h2>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -560,8 +560,8 @@ const PatientResources = () => {
                   {/* PDFs Section */}
                   {pdfs.length > 0 && (
                     <div>
-                      <h2 className="font-cormorant text-2xl text-foreground mb-6 flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-gold" />
+                      <h2 className="font-playfair text-2xl text-foreground mb-6 flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-accent" />
                         Downloadable Guides
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -576,8 +576,8 @@ const PatientResources = () => {
                   {filteredResources.length === 0 && effectiveCategory !== "all" && suggestedResources[effectiveCategory] && (
                     <div>
                       <div className="flex items-center gap-2 mb-6">
-                        <h2 className="font-cormorant text-2xl text-foreground flex items-center gap-2">
-                          <ExternalLink className="h-5 w-5 text-gold" />
+                        <h2 className="font-playfair text-2xl text-foreground flex items-center gap-2">
+                          <ExternalLink className="h-5 w-5 text-accent" />
                           Recommended Resources
                         </h2>
                         <Badge variant="outline" className="text-xs">External</Badge>
@@ -586,7 +586,7 @@ const PatientResources = () => {
                         {suggestedResources[effectiveCategory].map((resource, idx) => (
                           <Card 
                             key={idx}
-                            className="group cursor-pointer overflow-hidden border-border/50 hover:border-gold/50 transition-all duration-300 hover:shadow-lg"
+                            className="group cursor-pointer overflow-hidden border-border/50 hover:border-accent/50 transition-all duration-300 hover:shadow-lg"
                             onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
                           >
                             <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
@@ -594,7 +594,7 @@ const PatientResources = () => {
                               <Badge className="absolute top-2 right-2 text-xs">External Video</Badge>
                             </div>
                             <CardContent className="p-4">
-                              <h3 className="font-cormorant text-lg text-foreground mb-1 line-clamp-2">{resource.title}</h3>
+                              <h3 className="font-playfair text-lg text-foreground mb-1 line-clamp-2">{resource.title}</h3>
                               <p className="text-sm text-muted-foreground font-light line-clamp-2">{resource.description}</p>
                             </CardContent>
                           </Card>
@@ -607,7 +607,7 @@ const PatientResources = () => {
                   {filteredResources.length === 0 && !showInteractiveContent && (effectiveCategory === "all" || !suggestedResources[effectiveCategory]) && (
                     <div className="text-center py-16">
                       <BookOpen className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-                      <h3 className="font-cormorant text-2xl text-foreground mb-2">Resources Coming Soon</h3>
+                      <h3 className="font-playfair text-2xl text-foreground mb-2">Resources Coming Soon</h3>
                       <p className="text-muted-foreground font-light max-w-md mx-auto">
                         We're adding educational content for this category. In the meantime, check out our FAQ section below or select a specific service category.
                       </p>
@@ -622,7 +622,7 @@ const PatientResources = () => {
               {/* Contact Card */}
               <Card className="mt-12 bg-primary/5 border-primary/20">
                 <CardContent className="p-6 text-center">
-                  <h3 className="font-cormorant text-xl text-foreground mb-2">Have Questions?</h3>
+                  <h3 className="font-playfair text-xl text-foreground mb-2">Have Questions?</h3>
                   <p className="text-muted-foreground mb-4">
                     Our care team is here to help you understand your treatment.
                   </p>

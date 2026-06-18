@@ -23,7 +23,7 @@ import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncl
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="public-page-shell">
       <CacheRefreshBanner />
       <SEOSchema />
       <Navbar />

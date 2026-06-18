@@ -114,10 +114,10 @@ const IVPaymentSuccess = () => {
       : `Your ${therapyName} is paid. Pick a time below and we'll have you in the chair.`;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="public-page-shell">
       <Navbar />
 
-      <main className="pt-24 pb-16">
+      <main className="flex-1 pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="space-y-8">
             <div className="text-center">

@@ -255,14 +255,14 @@ const ScheduleConsult = () => {
   const serviceLabel = SERVICE_LABEL[serviceType] || "Wellness Assessment";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="public-page-shell">
       <Helmet>
         <title>Schedule Your Visit | Elevated Health Augusta</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <Navbar />
 
-      <main className="pt-32 pb-20">
+      <main className="flex-1 pt-32 pb-20">
         <div className="container mx-auto px-4 max-w-3xl">
           <Button
             variant="ghost"

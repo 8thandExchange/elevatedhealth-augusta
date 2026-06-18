@@ -24,14 +24,14 @@ const HormoneReplacement = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="public-page-shell">
       <Helmet>
         <title>Hormone Replacement Therapy Augusta | HRT Clinic - Elevated Health Augusta</title>
         <meta name="description" content="Hormone replacement therapy in Augusta, GA. Start with a $79 Wellness Assessment. Chat with our Virtual Care Team 24/7. Personalized HRT for men and women." />
       </Helmet>
       <Navbar />
       
-      <main>
+      <main className="flex-1">
         {/* Hero Section */}
         <section className="py-16 md:py-24 bg-gradient-to-b from-muted/30 to-background">
           <div className="container mx-auto px-4 sm:px-6">

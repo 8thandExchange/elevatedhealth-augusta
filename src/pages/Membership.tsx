@@ -11,6 +11,8 @@ import ConsultationModal from "@/components/ConsultationModal";
 import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
+import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
+import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
@@ -80,15 +82,15 @@ const FAQ = [
 const HOW_IT_WORKS = [
   {
     n: "01",
-    t: "Wellness Assessment",
-    d: `In-person visit at Evans (${PRICE_CONSULT}) to align on goals and clinical fit.`,
+    title: "Wellness Assessment",
+    body: `In-person visit at Evans (${PRICE_CONSULT}) to align on goals and clinical fit.`,
   },
-  { n: "02", t: "Labs & review", d: "On-site LabCorp draws when ordered; your physician reviews and sets your plan." },
-  { n: "03", t: "Program enrollment", d: "Subscribe to the ELEVATED program that matches your protocol." },
+  { n: "02", title: "Labs & review", body: "On-site LabCorp draws when ordered; your physician reviews and sets your plan." },
+  { n: "03", title: "Program enrollment", body: "Subscribe to the ELEVATED program that matches your protocol." },
   {
     n: "04",
-    t: "Ongoing care",
-    d: "Quarterly labs, check-ins, messaging, and adjustments with predictable monthly pricing for what's bundled.",
+    title: "Ongoing care",
+    body: "Quarterly labs, check-ins, messaging, and adjustments with predictable monthly pricing for what's bundled.",
   },
 ];
 
@@ -117,7 +119,7 @@ const Membership = () => {
         />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/membership" />
       </Helmet>
-      <div className="min-h-screen">
+      <div className="public-page-shell">
         <Navbar />
 
         {isSuccess && (
@@ -268,19 +270,10 @@ const Membership = () => {
 
         <div className="section-divider max-w-5xl mx-auto" />
 
-        {/* HOW IT WORKS */}
-        <section className="py-16 md:py-20 bg-secondary/20">
+        <section className="section-band-surface">
           <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
-            <h2 className="font-playfair text-3xl md:text-4xl text-foreground text-center mb-12">How enrollment works</h2>
-            <div className="grid md:grid-cols-4 gap-6 text-center">
-              {HOW_IT_WORKS.map((s) => (
-                <div key={s.n}>
-                  <div className="font-playfair text-3xl text-accent mb-2">{s.n}</div>
-                  <h4 className="font-jost font-medium text-foreground mb-1">{s.t}</h4>
-                  <p className="font-jost font-light text-sm text-muted-foreground">{s.d}</p>
-                </div>
-              ))}
-            </div>
+            <StorefrontSectionHeader label="Enrollment" title="How enrollment works" />
+            <StorefrontStepCards steps={HOW_IT_WORKS} />
           </div>
         </section>
 

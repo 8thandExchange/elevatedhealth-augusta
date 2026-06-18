@@ -47,10 +47,10 @@ const Hormones = () => {
         })}</script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
 
-        <main>
+        <main className="flex-1">
           {/* Hero */}
           <section className={storefrontHeroSection}>
             <div className={storefrontHeroInner}>

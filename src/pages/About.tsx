@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
+import { storefrontHeroSection } from "@/lib/storefrontHero";
 
 const TEAM = [
   {
@@ -30,10 +31,10 @@ const About = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/about" />
       </Helmet>
-      <div className="min-h-screen">
+      <div className="public-page-shell">
         <Navbar />
-        
-        <section className="min-h-[88vh] md:min-h-[90vh] flex items-center bg-background">
+        <main className="flex-1">
+        <section className={storefrontHeroSection}>
           <div className="container mx-auto px-6 lg:px-8 max-w-3xl py-28 md:py-36">
             <p className="section-label mb-6 md:mb-8">About Elevated Health Augusta</p>
             <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl text-foreground mb-10 md:mb-12 leading-[1.05]">
@@ -79,7 +80,7 @@ const About = () => {
 
         <div className="section-divider max-w-3xl mx-auto" />
 
-        <section className="py-16 md:py-24 bg-muted/20">
+        <section className="section-band-surface">
           <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12">
               <p className="section-label mb-4">Our Team</p>
@@ -87,9 +88,9 @@ const About = () => {
                 Physician leadership
               </h2>
             </div>
-            <div className="grid md:grid-cols-2 gap-10 md:gap-12 max-w-3xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
               {TEAM.map((member) => (
-                <article key={member.id} className="flex flex-col items-center text-center space-y-3">
+                <article key={member.id} className="premium-card-muted flex flex-col items-center text-center p-8 space-y-3">
                   <div>
                     <h3 className="font-playfair text-xl text-foreground">{member.name}</h3>
                     <p className="text-xs font-jost tracking-[0.2em] uppercase text-muted-foreground mt-2">{member.role}</p>
@@ -99,6 +100,7 @@ const About = () => {
             </div>
           </div>
         </section>
+        </main>
 
         <Footer />
       </div>

@@ -11,6 +11,9 @@ import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
+import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
+import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
+import { StorefrontPricingStrip } from "@/components/marketing/StorefrontPricingStrip";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import {
   storefrontHeroInner,
@@ -43,10 +46,10 @@ const symptoms = [
 ];
 
 const steps = [
-  { n: "01", t: "Wellness Assessment ($79)", d: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
-  { n: "02", t: "Lab Draw On-Site", d: `Comprehensive hormone panel — drawn at your visit, processed by LabCorp. Baseline comprehensive wellness panel ${PRICE_PANEL}.` },
-  { n: "03", t: "Custom Protocol", d: "Physician reviews labs, designs your protocol, sends Rx to our compounding pharmacy. Your medication ships directly to your door." },
-  { n: "04", t: "Ongoing Care", d: `ELEVATED HRT (${PRICE_MEMBERSHIP}) includes prescribed creams, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
+  { n: "01", title: "Wellness Assessment ($79)", body: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
+  { n: "02", title: "Lab Draw On-Site", body: `Comprehensive hormone panel — drawn at your visit, processed by LabCorp. Baseline comprehensive wellness panel ${PRICE_PANEL}.` },
+  { n: "03", title: "Custom Protocol", body: "Physician reviews labs, designs your protocol, sends Rx to our compounding pharmacy. Your medication ships directly to your door." },
+  { n: "04", title: "Ongoing Care", body: `ELEVATED HRT (${PRICE_MEMBERSHIP}) includes prescribed creams, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];
 
 const faqs = [
@@ -78,10 +81,10 @@ const HormonesWomen = () => {
         <link rel="canonical" href="https://elevatedhealthaugusta.com/hormones-women" />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="public-page-shell">
         <Navbar />
 
-        <main>
+        <main className="flex-1">
           {/* 1. Hero (Pattern A) */}
           <section className={storefrontHeroSection}>
             <div className={storefrontHeroInner}>
@@ -110,27 +113,16 @@ const HormonesWomen = () => {
             </div>
           </section>
 
-          {/* 2. Pricing Strip (Pattern B) */}
-          <section className="py-16 md:py-20 bg-background border-y border-border">
-            <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
-              <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
-                {[
-                  { l: "Wellness Assessment", p: PRICE_CONSULT, sub: "RN intake, in-office at Evans" },
-                  { l: "Comprehensive Wellness Panel", p: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
-                  { l: ELEVATED_PROGRAMS.hrt.name, p: PRICE_MEMBERSHIP, sub: "medication + monitoring included" },
-                ].map((c) => (
-                  <div key={c.l} className="px-6 py-8 md:py-4 text-center">
-                    <p className="section-label mb-3">{c.l}</p>
-                    <p className="font-playfair text-3xl md:text-4xl text-foreground mb-2">{c.p}</p>
-                    <p className="font-jost text-xs text-muted-foreground">{c.sub}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <StorefrontPricingStrip
+            columns={[
+              { label: "Wellness Assessment", price: PRICE_CONSULT, sub: "RN intake, in-office at Evans" },
+              { label: "Comprehensive Wellness Panel", price: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
+              { label: ELEVATED_PROGRAMS.hrt.name, price: PRICE_MEMBERSHIP, sub: "medication + monitoring included" },
+            ]}
+          />
 
           {/* 3. What it is (Pattern C) */}
-          <section className="py-20 md:py-28 bg-background">
+          <section className="section-band-white">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <PatternCSplit
                 imageSrc={MARKETING_IMAGES.editorialHormonesWomen}
@@ -150,26 +142,22 @@ const HormonesWomen = () => {
           </section>
 
           {/* 4. How it works (Pattern D) */}
-          <section id="how-it-works" className="py-20 md:py-28 bg-muted/30">
+          <section id="how-it-works" className="section-band-surface">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <div className="text-center mb-16">
-                <p className="section-label mb-4">How It Works</p>
-                <h2 className="font-playfair text-4xl md:text-5xl text-foreground">Four steps. <span className="italic">No surprises.</span></h2>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                {steps.map((s) => (
-                  <div key={s.n}>
-                    <p className="font-playfair italic text-4xl text-accent mb-4">{s.n}</p>
-                    <h3 className="font-playfair text-xl text-foreground mb-3">{s.t}</h3>
-                    <p className="font-jost font-light text-muted-foreground leading-relaxed text-sm">{s.d}</p>
-                  </div>
-                ))}
-              </div>
+              <StorefrontSectionHeader
+                label="How It Works"
+                title={
+                  <>
+                    Four steps. <span className="italic">No surprises.</span>
+                  </>
+                }
+              />
+              <StorefrontStepCards steps={steps} />
             </div>
           </section>
 
           {/* 5. Who it's for */}
-          <section className="py-20 md:py-28 bg-background">
+          <section className="section-band-white">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">Who It's For</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">
