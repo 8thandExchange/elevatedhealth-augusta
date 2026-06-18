@@ -31,14 +31,14 @@ const HomeClinicGallery = () => {
   if (hasAnyPhoto === false) return null;
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-foreground text-background overflow-hidden">
+    <section ref={ref} className="py-20 md:py-28 bg-primary text-primary-foreground overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8">
         <div className={`max-w-2xl mb-12 md:mb-16 ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label section-label-on-dark mb-4">The Space</p>
           <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl leading-tight">
             Designed for calm, <span className="italic">not crowds.</span>
           </h2>
-          <p className="font-jost font-light text-background/75 mt-6 text-base md:text-lg leading-relaxed max-w-xl">
+          <p className="font-jost font-light text-primary-foreground/80 mt-6 text-base md:text-lg leading-relaxed max-w-xl">
             Physician-owned suites in Evans — where hormone consults, IV drips, and peptide protocols
             happen under one roof.
           </p>
@@ -49,7 +49,7 @@ const HomeClinicGallery = () => {
             {panels.map((p, i) => (
               <figure
                 key={p.tag}
-                className={`group bg-foreground ${revealClasses.fadeUp(isVisible)}`}
+                className={`group bg-primary ${revealClasses.fadeUp(isVisible)}`}
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
                 <MarketingImage
@@ -61,7 +61,7 @@ const HomeClinicGallery = () => {
                   <p className="font-jost text-[10px] uppercase tracking-[2.5px] text-accent mb-1">
                     {p.tag}
                   </p>
-                  <p className="font-playfair text-lg text-background">{p.caption}</p>
+                  <p className="font-playfair text-lg text-primary-foreground">{p.caption}</p>
                 </figcaption>
               </figure>
             ))}

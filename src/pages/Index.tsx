@@ -18,60 +18,28 @@ import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncl
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col bg-background">
       <CacheRefreshBanner />
       <SEOSchema />
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Hero />
-
         <PromiseSection />
-        <div className="section-divider max-w-5xl mx-auto" />
-
         <HomeClinicGallery />
-        <div className="section-divider max-w-5xl mx-auto" />
 
-        <section className="py-16 md:py-20 bg-surface">
+        <section className="py-16 md:py-20 bg-surface border-y border-border">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <EverythingIncludedPillars />
           </div>
         </section>
-        <div className="section-divider max-w-5xl mx-auto" />
 
         <WhyElevatedSection />
-        <div className="section-divider max-w-5xl mx-auto" />
-
         <HowItWorksSection />
-        <div className="section-divider max-w-5xl mx-auto" />
-
         <WhatWeDoSection />
-        <div className="section-divider max-w-5xl mx-auto" />
-
         <IVDirectBookBanner />
-
         <DifferenceSection />
-        <div className="section-divider max-w-5xl mx-auto" />
-
         <ClinicalTeamSection />
-        <div className="section-divider max-w-5xl mx-auto" />
-
-        {/* TODO: Press & Recognition section — hidden until at least 4 real partner/press logos exist. */}
-
-        {/* Credibility bar */}
-        <section className="py-12 bg-surface border-t border-border">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-xs font-jost font-medium tracking-[2.5px] uppercase text-center">
-              <span>Physician-owned · Evans, GA</span>
-              <span className="text-accent/40">·</span>
-              <span>Cash-pay · Superbills available</span>
-              <span className="text-accent/40">·</span>
-              <span>HSA / FSA welcome</span>
-            </div>
-          </div>
-        </section>
-
-        <div className="section-divider max-w-5xl mx-auto" />
-        <Contact />
+        <Contact showCredibilityBar />
       </main>
       <Footer />
       <FloatingMobileCTA />

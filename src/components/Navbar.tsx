@@ -76,14 +76,15 @@ const Navbar = () => {
             {/* Logo */}
             <button 
               onClick={() => { navigate("/"); scrollToSection("hero"); }}
-              className={`flex items-center ${onDarkNav ? "bg-background rounded-sm px-2.5 py-1.5 shadow-[var(--shadow-sm)]" : ""}`}
+              className="flex flex-col items-start text-left"
               aria-label="Elevated Health Augusta home"
             >
-              <img
-                src="/images/logo.png"
-                alt="Elevated Health — Restore, Repair, Renew"
-                className="h-10 md:h-11 w-auto object-contain"
-              />
+              <span className={`font-playfair text-xl md:text-2xl leading-none ${onDarkNav ? "text-primary-foreground" : "text-primary"}`}>
+                Elevated <span className="italic">Health</span>
+              </span>
+              <span className={`font-jost text-[9px] md:text-[10px] uppercase tracking-[0.28em] mt-1 ${onDarkNav ? "text-primary-foreground/65" : "text-muted-foreground"}`}>
+                Augusta
+              </span>
             </button>
 
             {/* Desktop Navigation */}

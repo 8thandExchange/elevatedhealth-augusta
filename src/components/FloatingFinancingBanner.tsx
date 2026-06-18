@@ -58,8 +58,8 @@ const FloatingFinancingBanner = () => {
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
-      <div className="bg-foreground/95 backdrop-blur-md text-background px-4 py-2.5 rounded-full shadow-lg flex items-center gap-3 border border-gold/20">
-        <CreditCard className="w-4 h-4 text-gold shrink-0" />
+      <div className="bg-foreground/95 backdrop-blur-md text-background px-4 py-2.5 rounded-full shadow-lg flex items-center gap-3 border border-primary-foreground/20">
+        <CreditCard className="w-4 h-4 text-accent-light shrink-0" />
         
         <div className="flex items-center gap-2 text-sm">
           <span className="font-medium">Pay in 4</span>

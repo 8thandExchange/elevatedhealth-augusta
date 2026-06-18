@@ -401,7 +401,23 @@ label {
   }
 }
 
-/* Card entrance animation */
+/* LeadConnector (GHL) chat widget — brand alignment, no layout gap below footer */
+chat-widget {
+  position: fixed !important;
+  z-index: 9990;
+  pointer-events: none;
+}
+
+chat-widget * {
+  pointer-events: auto;
+}
+
+/* Prevent empty widget host from showing as a white block before load */
+chat-widget:not([data-loaded="true"]) {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 @keyframes card-entrance {
   from {
     opacity: 0;

@@ -71,3 +71,11 @@ export function openAssistantChat(): void {
     }
   }, 250);
 }
+
+if (typeof window !== "undefined") {
+  window.addEventListener("LC_chatWidgetLoaded", () => {
+    document.querySelectorAll("chat-widget").forEach((el) => {
+      el.setAttribute("data-loaded", "true");
+    });
+  });
+}

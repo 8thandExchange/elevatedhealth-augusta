@@ -42,7 +42,7 @@ const formatPhoneNumber = (value: string): string => {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 };
 
-const Contact = () => {
+const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean }) => {
   const { openBooking } = useBooking();
   const navigate = useNavigate();
   const consultServicesLine = consultGatedServicesCopy();
@@ -144,26 +144,31 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-24 lg:py-32 bg-card scroll-mt-20 relative overflow-hidden">
+    <section id="contact" className="py-20 lg:py-28 bg-surface border-t border-border scroll-mt-20">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <p className="text-sm tracking-[0.3em] uppercase text-primary mb-4 font-inter font-semibold">
-              05 — Begin Your Restoration
-            </p>
-            <h2 className="font-inter font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-6">
-              Contact Us
+          {showCredibilityBar && (
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground text-[11px] font-jost font-medium tracking-[2.5px] uppercase text-center mb-14 pb-14 border-b border-border">
+              <span>Physician-owned · Evans, GA</span>
+              <span className="text-accent/50 hidden sm:inline">·</span>
+              <span>Cash-pay · Superbills available</span>
+              <span className="text-accent/50 hidden sm:inline">·</span>
+              <span>HSA / FSA welcome</span>
+            </div>
+          )}
+
+          <div className="text-center mb-14">
+            <p className="section-label mb-4">Get in Touch</p>
+            <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl text-foreground mb-6">
+              Begin your <span className="italic">restoration.</span>
             </h2>
-            <p className="font-lato text-lg text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
-              We will test your biology, understand your history, and architect
-              a personalized protocol designed specifically for you.
+            <p className="font-jost font-light text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Questions before you book? Send a note — or schedule your $79 Wellness Assessment when you are ready.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Left Column - Contact Form or Success State */}
-            <div className="bg-background rounded-2xl p-8 lg:p-10 border border-border/50 shadow-sm">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10">
+            <div className="bg-background border border-border rounded-sm p-8 lg:p-10 shadow-[var(--shadow-sm)]">
               {isSuccess ? (
                 /* Success State with Animation */
                 <div className="flex flex-col items-center justify-center text-center py-8 animate-fade-in">
@@ -177,18 +182,18 @@ const Contact = () => {
                     <Sparkles className="absolute -bottom-1 -left-3 w-5 h-5 text-accent/70 animate-pulse" style={{ animationDelay: '0.3s' }} />
                   </div>
                   
-                  <h3 className="font-cormorant text-3xl text-foreground mb-3">
+                  <h3 className="font-playfair text-3xl text-foreground mb-3">
                     Thank You, {submittedName}!
                   </h3>
                   
-                  <p className="font-lato text-muted-foreground font-light mb-6 max-w-sm leading-relaxed">
+                  <p className="font-jost text-muted-foreground font-light mb-6 max-w-sm leading-relaxed">
                     Your message has been received. A member of our care team will reach out within 24 hours.
                   </p>
                   
                   <div className="w-full space-y-4">
                     <div className="bg-secondary/50 rounded-xl p-4 border border-border/30">
-                      <p className="font-lato text-sm text-foreground/80 mb-1">What happens next?</p>
-                      <ul className="font-lato text-sm text-muted-foreground font-light space-y-2 text-left">
+                      <p className="font-jost text-sm text-foreground/80 mb-1">What happens next?</p>
+                      <ul className="font-jost text-sm text-muted-foreground font-light space-y-2 text-left">
                         <li className="flex items-start gap-2">
                           <span className="text-primary mt-0.5">•</span>
                           We'll review your message and health goals
@@ -209,7 +214,7 @@ const Contact = () => {
                         <Button
                           onClick={handleBooking}
                           size="lg"
-                          className="w-full rounded-sm font-lato tracking-wide"
+                          className="w-full rounded-sm font-jost tracking-wide"
                         >
                           Book a $79 Wellness Assessment
                         </Button>
@@ -222,7 +227,7 @@ const Contact = () => {
                           onClick={goToIV}
                           size="lg"
                           variant="outline"
-                          className="w-full rounded-sm font-lato tracking-wide"
+                          className="w-full rounded-sm font-jost tracking-wide"
                         >
                           <Droplet className="mr-2 h-4 w-4" /> Book IV therapy
                         </Button>
@@ -237,7 +242,7 @@ const Contact = () => {
                         setIsSuccess(false);
                         setFormData({ name: "", email: "", phone: "", area_of_interest: "", message: "" });
                       }}
-                      className="font-lato text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="font-jost text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       Send another message
                     </button>
@@ -246,7 +251,7 @@ const Contact = () => {
               ) : (
                 /* Contact Form */
                 <>
-                  <h3 className="font-cormorant text-2xl text-foreground mb-6">
+                  <h3 className="font-playfair text-2xl text-foreground mb-6">
                     Send Us a Message
                   </h3>
                   <form onSubmit={handleSubmit} className="space-y-5">
@@ -265,7 +270,7 @@ const Contact = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="contact-name" className="font-lato text-sm text-foreground/80 mb-2 block">
+                      <Label htmlFor="contact-name" className="font-jost text-sm text-foreground/80 mb-2 block">
                         Full Name *
                       </Label>
                       <Input
@@ -279,7 +284,7 @@ const Contact = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="contact-email" className="font-lato text-sm text-foreground/80 mb-2 block">
+                      <Label htmlFor="contact-email" className="font-jost text-sm text-foreground/80 mb-2 block">
                         Email Address *
                       </Label>
                       <Input
@@ -293,7 +298,7 @@ const Contact = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="contact-phone" className="font-lato text-sm text-foreground/80 mb-2 block">
+                      <Label htmlFor="contact-phone" className="font-jost text-sm text-foreground/80 mb-2 block">
                         Phone Number *
                       </Label>
                       <Input
@@ -307,7 +312,7 @@ const Contact = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="contact-interest" className="font-lato text-sm text-foreground/80 mb-2 block">
+                      <Label htmlFor="contact-interest" className="font-jost text-sm text-foreground/80 mb-2 block">
                         Area of interest *
                       </Label>
                       <Select
@@ -327,7 +332,7 @@ const Contact = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="contact-message" className="font-lato text-sm text-foreground/80 mb-2 block">
+                      <Label htmlFor="contact-message" className="font-jost text-sm text-foreground/80 mb-2 block">
                         Optional note
                       </Label>
                       <Textarea
@@ -344,7 +349,7 @@ const Contact = () => {
                       type="submit"
                       size="lg"
                       disabled={isSubmitting}
-                      className="w-full font-lato tracking-wide text-base py-6"
+                      className="w-full font-jost tracking-wide text-base py-6"
                     >
                       {isSubmitting ? (submitStatus || "Sending...") : "Send Message"}
                       {!isSubmitting && <ArrowRight className="ml-2 h-5 w-5" />}
@@ -360,7 +365,7 @@ const Contact = () => {
                         <Button
                           onClick={handleBooking}
                           size="lg"
-                          className="w-full rounded-sm font-lato tracking-wide"
+                          className="w-full rounded-sm font-jost tracking-wide"
                         >
                           Book a $79 Wellness Assessment
                         </Button>
@@ -373,7 +378,7 @@ const Contact = () => {
                           onClick={goToIV}
                           size="lg"
                           variant="outline"
-                          className="w-full rounded-sm font-lato tracking-wide"
+                          className="w-full rounded-sm font-jost tracking-wide"
                         >
                           <Droplet className="mr-2 h-4 w-4" /> Book IV therapy
                         </Button>
@@ -390,10 +395,8 @@ const Contact = () => {
             {/* Right Column - Location Info & Map */}
             <div className="space-y-8">
               {/* Location Details */}
-              <div className="bg-background rounded-2xl p-8 border border-border/50 shadow-sm">
-                <h3 className="font-cormorant text-2xl text-foreground mb-6">
-                  Visit Our Clinic
-                </h3>
+              <div className="bg-background border border-border rounded-sm p-8 shadow-[var(--shadow-sm)]">
+                <h3 className="font-playfair text-2xl text-foreground mb-6">Visit Our Clinic</h3>
                 
                 <div className="space-y-5">
                   <div className="flex items-start gap-4">
@@ -401,8 +404,8 @@ const Contact = () => {
                       <MapPin className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-lato font-medium text-foreground">Address</p>
-                      <p className="font-lato text-muted-foreground font-light">
+                      <p className="font-jost font-medium text-foreground">Address</p>
+                      <p className="font-jost text-muted-foreground font-light">
                         {SITE_CONFIG.address.line1}<br />
                         {SITE_CONFIG.address.cityStateZip}
                       </p>
@@ -414,10 +417,10 @@ const Contact = () => {
                       <Phone className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-lato font-medium text-foreground">Phone</p>
+                      <p className="font-jost font-medium text-foreground">Phone</p>
                       <a 
                         href={`tel:${SITE_CONFIG.phoneRaw}`}
-                        className="font-lato text-primary hover:underline"
+                        className="font-jost text-primary hover:underline"
                         onClick={() => trackCTAClick('cta_call', `tel:${SITE_CONFIG.phoneRaw}`)}
                       >
                         {SITE_CONFIG.phone}
@@ -430,8 +433,8 @@ const Contact = () => {
                       <Clock className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-lato font-medium text-foreground">Hours</p>
-                      <p className="font-lato text-muted-foreground font-light">
+                      <p className="font-jost font-medium text-foreground">Hours</p>
+                      <p className="font-jost text-muted-foreground font-light">
                         Monday - Friday: 9am - 5pm<br />
                         Saturday: By appointment<br />
                         Sunday: Closed
@@ -442,7 +445,7 @@ const Contact = () => {
               </div>
 
               {/* Google Map Embed */}
-              <div className="rounded-2xl overflow-hidden border border-border/50 shadow-sm">
+              <div className="rounded-sm overflow-hidden border border-border shadow-[var(--shadow-sm)]">
                 <iframe
                   src="https://maps.google.com/maps?q=7013+Evans+Town+Center+Blvd,+Suite+203,+Evans,+GA+30809&t=&z=15&ie=UTF8&iwloc=&output=embed"
                   width="100%"
@@ -462,7 +465,7 @@ const Contact = () => {
                   <Button
                     onClick={handleBooking}
                     size="lg"
-                    className="w-full rounded-sm font-lato tracking-wide"
+                    className="w-full rounded-sm font-jost tracking-wide"
                   >
                     Book a $79 Wellness Assessment
                   </Button>
@@ -475,7 +478,7 @@ const Contact = () => {
                     onClick={goToIV}
                     size="lg"
                     variant="outline"
-                    className="w-full rounded-sm font-lato tracking-wide"
+                    className="w-full rounded-sm font-jost tracking-wide"
                   >
                     <Droplet className="mr-2 h-4 w-4" /> Book IV therapy
                   </Button>
