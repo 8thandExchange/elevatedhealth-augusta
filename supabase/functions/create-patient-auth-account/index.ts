@@ -8,6 +8,25 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 import { AuthEmailRateLimiter, clientIpFromRequest } from "../_shared/auth-email-delivery.ts";
 
+const STAFF_ROLES = new Set(["admin", "staff", "provider", "business_admin"]);
+
+async function rolesForEmail(
+  admin: ReturnType<typeof createClient>,
+  normalizedEmail: string,
+): Promise<string[]> {
+  for (let page = 1; page <= 10; page++) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
+    if (error) throw error;
+    const match = data.users.find((u) => u.email?.trim().toLowerCase() === normalizedEmail);
+    if (match?.id) {
+      const { data: roles } = await admin.from("user_roles").select("role").eq("user_id", match.id);
+      return roles?.map((r) => String(r.role)) ?? [];
+    }
+    if (data.users.length < 200) break;
+  }
+  return [];
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -67,6 +86,21 @@ serve(async (req) => {
         msg.toLowerCase().includes("already") ||
         msg.toLowerCase().includes("registered") ||
         msg.toLowerCase().includes("exists");
+
+      if (alreadyRegistered) {
+        const roles = await rolesForEmail(admin, normalizedEmail);
+        const isStaff = roles.some((r) => STAFF_ROLES.has(r));
+        if (isStaff) {
+          return new Response(
+            JSON.stringify({
+              error:
+                "This email is used for a clinic staff login. For a test patient, use a different email address.",
+              error_code: "staff_email_conflict",
+            }),
+            { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+      }
 
       edgeStructuredLog(functionName, {
         event: alreadyRegistered ? "already_registered" : "create_failed",

@@ -118,12 +118,25 @@ const CreateAccount = () => {
               navigate("/patient/login");
               return;
             }
+            if (body?.error_code === "staff_email_conflict") {
+              toast.error(
+                "That email is your clinic staff login. Use a different email for a test patient (e.g. yourname+test@gmail.com).",
+              );
+              return;
+            }
             if (body?.error) throw new Error(String(body.error));
           } catch (parseErr) {
             if (parseErr instanceof Error && parseErr.message !== authError.message) throw parseErr;
           }
         }
         throw authError;
+      }
+
+      if (authData?.error_code === "staff_email_conflict") {
+        toast.error(
+          "That email is your clinic staff login. Use a different email for a test patient (e.g. yourname+test@gmail.com).",
+        );
+        return;
       }
 
       if (authData?.error_code === "already_registered") {
@@ -153,11 +166,12 @@ const CreateAccount = () => {
           fullName: displayName,
           phone: formattedPhoneForStorage,
         });
-        if (linked) {
-          resolvedPatientId = linked.patient_id;
-          primaryProgram = linked.primary_program;
-          patientPhone = formattedPhoneForStorage || linked.phone;
+        if (!linked?.patient_id) {
+          throw new Error("Could not connect your portal to a patient record. Please call the clinic.");
         }
+        resolvedPatientId = linked.patient_id;
+        primaryProgram = linked.primary_program;
+        patientPhone = formattedPhoneForStorage || linked.phone;
       } catch (linkErr: unknown) {
         const linkMsg = linkErr instanceof Error ? linkErr.message : String(linkErr);
         if (linkMsg.includes("email_already_linked")) {
@@ -165,24 +179,11 @@ const CreateAccount = () => {
           navigate("/patient/login");
           return;
         }
+        if (linkMsg.includes("not_authenticated")) {
+          toast.error("Session expired. Please try again.");
+          return;
+        }
         throw linkErr;
-      }
-
-      if (!resolvedPatientId) {
-        const { data: insertedPatient, error: insertError } = await supabase
-          .from("patients")
-          .insert({
-            user_id: userId,
-            email,
-            full_name: displayName,
-            onboarding_status: "account_created",
-            ...(formattedPhoneForStorage && { phone: formattedPhoneForStorage }),
-          })
-          .select("id, primary_program")
-          .single();
-        if (insertError) throw insertError;
-        resolvedPatientId = insertedPatient.id;
-        primaryProgram = insertedPatient.primary_program;
       }
 
       const { data: sessionData } = await supabase.auth.getSession();
@@ -220,6 +221,8 @@ const CreateAccount = () => {
       if (msg.includes("already registered")) {
         toast.error("An account with this email already exists. Please log in.");
         navigate("/patient/login");
+      } else if (msg.includes("row-level security") || msg.includes("permission denied")) {
+        toast.error("We couldn't finish portal setup. Please call the clinic — we're fixing this on our end.");
       } else {
         toast.error(msg);
       }
