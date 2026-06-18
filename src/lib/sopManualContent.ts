@@ -210,10 +210,11 @@ export const CHARGE_CHECKPOINTS: ChargeCheckpoint[] = [
   },
   {
     step: "C-08",
-    event: "Phone follow-up / no-show",
-    stripeSku: "CORE_SERVICES.phoneFollowUp / rebookingFee",
+    event: "Late cancel / no-show rebooking fee",
+    stripeSku: "CORE_SERVICES.rebookingFee",
     amount: "$99",
-    verify: "Only charge when policy applies; document in chart",
+    verify:
+      "Confirm 24-hour rule vs scheduled time. Late cancel or no-show: set rebooking_fee_required, patient pays via create-rebooking-checkout before schedule unlocks. IV refund eligible only if 24+ hr notice and service not rendered — process Stripe refund from original session; note refund ID in chart. Notify patient by email/SMS.",
   },
 ];
 

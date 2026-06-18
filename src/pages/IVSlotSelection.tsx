@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
+import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
 
 const ALLOWED_RESULTS = new Set(["cleared", "warned_acknowledged", "overridden"]);
 
@@ -106,6 +107,7 @@ const IVSlotSelection = () => {
                   Choose a calendar slot first. Payment is completed immediately after you confirm.
                 </p>
               </div>
+              <CancellationPolicySummary variant="iv-compact" className="mb-2" />
               <SlotPicker
                 ref={slotPickerRef}
                 serviceLine="iv"

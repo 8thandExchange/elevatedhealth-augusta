@@ -21,6 +21,8 @@ import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPick
 import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
+import { REBOOKING_FEE_DISPLAY } from "@/lib/cancellationPolicy";
+import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
 
 interface PaidBooking {
   id: string;
@@ -313,7 +315,7 @@ const ScheduleConsult = () => {
                   <div className="flex items-center justify-center gap-3 mb-4">
                     <CreditCard className="w-6 h-6 text-accent" />
                     <span className="text-3xl font-semibold text-foreground font-playfair">
-                      $79
+                      {REBOOKING_FEE_DISPLAY}
                     </span>
                   </div>
                   <p className="text-muted-foreground text-sm font-jost mb-6">
@@ -331,7 +333,7 @@ const ScheduleConsult = () => {
                         Processing…
                       </>
                     ) : (
-                      "Pay $79 rebooking fee"
+                      `Pay ${REBOOKING_FEE_DISPLAY} rebooking fee`
                     )}
                   </Button>
                 </CardContent>
@@ -422,6 +424,7 @@ const ScheduleConsult = () => {
                     onChange={setProviderId}
                     patientFacing
                   />
+                  <CancellationPolicySummary variant="clinical-compact" />
                   <SlotPicker
                     ref={slotPickerRef}
                     serviceLine="consult"

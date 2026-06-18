@@ -10,6 +10,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CORE_SERVICES } from "@/lib/stripeConfig";
+import {
+  CANCELLATION_NOTICE_HOURS,
+  CARE_EMAIL,
+  REBOOKING_FEE_DISPLAY,
+  REFUND_PROCESSING_WINDOW,
+} from "@/lib/cancellationPolicy";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 
@@ -100,7 +107,11 @@ const FAQ = () => {
     },
     {
       q: "What is your refund policy?",
-      a: "Program fees follow the membership and clinical policies you agree to at enrollment. Unused retail items may be returnable per clinic policy; medications you have received are generally not refundable. Ask our team for specifics before checkout.",
+      a: `Refunds depend on service type and timing. IV Lounge bookings canceled with ${CANCELLATION_NOTICE_HOURS}+ hours notice receive a full refund; late cancels and no-shows are not refunded. Completed visits, drawn labs, and dispensed medications are non-refundable. Approved refunds return to your original payment method within ${REFUND_PROCESSING_WINDOW}. See our Terms of Service or email ${CARE_EMAIL}.`,
+    },
+    {
+      q: "What is your cancellation and no-show policy?",
+      a: `Give us at least ${CANCELLATION_NOTICE_HOURS} hours notice to cancel or reschedule without penalty. Less than ${CANCELLATION_NOTICE_HOURS} hours or a no-show requires a ${REBOOKING_FEE_DISPLAY} rebooking fee before you can book again — and IV prepayments may be forfeited. Call ${SITE_CONFIG.phone} or email ${CARE_EMAIL}; do not simply skip your appointment.`,
     },
   ];
 

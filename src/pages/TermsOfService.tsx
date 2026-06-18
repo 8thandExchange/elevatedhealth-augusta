@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import {
+  CANCELLATION_NOTICE_HOURS,
+  CARE_EMAIL,
+  CLINICAL_CANCELLATION_SCENARIOS,
+  IV_CANCELLATION_SCENARIOS,
+  REFUND_PROCESSING_WINDOW,
+  REFUND_REQUEST_STEPS,
+  REBOOKING_FEE_DISPLAY,
+} from "@/lib/cancellationPolicy";
+import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
 
 const sections = [
   { id: "acceptance", label: "Acceptance of Terms" },
@@ -176,77 +186,157 @@ const TermsOfService = () => {
                   </div>
                 </section>
 
-                {/* Refund Policy - Strict */}
+                {/* Refund Policy */}
                 <section id="refund" className="mb-12">
                   <h2 className="font-playfair text-2xl font-light text-foreground mb-4">
                     Refund Policy
                   </h2>
-                  <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-6">
-                    <ul className="space-y-4 text-amber-800 dark:text-amber-300">
+                  <div className="bg-muted/30 border border-border rounded-lg p-6 space-y-6">
+                    <p className="text-foreground/80">
+                      We issue refunds when services have not been rendered and your cancellation meets the
+                      notice window below. All refund requests are reviewed by our office team — refunds are
+                      not automatic from the website.
+                    </p>
+
+                    <CancellationPolicySummary variant="refund-process" />
+
+                    <ul className="space-y-4 text-foreground/80">
                       <li className="flex items-start gap-3">
-                        <span className="font-bold mt-1">•</span>
+                        <span className="text-primary font-bold mt-1">•</span>
                         <div>
-                          <strong>Wellness Assessment &amp; labs (published rates):</strong>
+                          <strong>IV Lounge (prepaid online):</strong>
                           <p className="mt-1">
-                            Fees for the initial Wellness Assessment, add-on lab panels, and in-office phlebotomy are 
-                            collected at booking or checkout as described at checkout. <strong>Services already rendered 
-                            (including completed visits and drawn labs) are non-refundable.</strong> Rescheduling is subject 
-                            to the cancellation policy below.
+                            Full refund if you cancel with {CANCELLATION_NOTICE_HOURS}+ hours notice before
+                            your scheduled slot. Less than {CANCELLATION_NOTICE_HOURS} hours or no-show:
+                            payment is forfeited; {REBOOKING_FEE_DISPLAY} rebooking fee to schedule again.
                           </p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
-                        <span className="font-bold mt-1">•</span>
+                        <span className="text-primary font-bold mt-1">•</span>
                         <div>
-                          <strong>Membership Fees:</strong>
+                          <strong>Wellness Assessment &amp; labs:</strong>
                           <p className="mt-1">
-                            Monthly membership fees are non-refundable after the billing cycle begins. If you cancel 
-                            mid-cycle, you retain access until the end of your current billing period.
+                            Fees for completed visits and drawn labs are non-refundable. Unscheduled paid
+                            consults may be refunded if you cancel before booking a slot and before clinical
+                            work begins — contact us to confirm eligibility.
                           </p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
-                        <span className="font-bold mt-1">•</span>
+                        <span className="text-primary font-bold mt-1">•</span>
                         <div>
-                          <strong>Prescriptions:</strong>
+                          <strong>Membership fees:</strong>
                           <p className="mt-1">
-                            Per federal regulations, prescription medications cannot be returned or refunded once 
-                            dispensed by the pharmacy.
+                            Monthly membership fees are non-refundable after the billing cycle begins. Cancel
+                            with 30 days written notice; you retain access through the paid period.
                           </p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
-                        <span className="font-bold mt-1">•</span>
+                        <span className="text-primary font-bold mt-1">•</span>
                         <div>
-                          <strong>Scheduled clinical visits:</strong>
+                          <strong>Prescriptions &amp; compounded medications:</strong>
                           <p className="mt-1">
-                            Missed appointments or cancellations with less than 24 hours notice may incur the rebooking 
-                            fee described in our cancellation policy. Fees for completed visits are not refunded.
+                            Non-refundable once dispensed or shipped — medications cannot be returned per
+                            pharmacy regulations.
                           </p>
                         </div>
                       </li>
                     </ul>
+                    <p className="text-sm text-muted-foreground">
+                      Approved refunds return to your original payment method within {REFUND_PROCESSING_WINDOW}.
+                      Raise billing disputes with{" "}
+                      <a href={`mailto:${CARE_EMAIL}`} className="text-primary hover:underline">
+                        {CARE_EMAIL}
+                      </a>{" "}
+                      before initiating a chargeback.
+                    </p>
                   </div>
                 </section>
 
                 {/* Cancellation Policy */}
                 <section id="cancellation" className="mb-12">
                   <h2 className="font-playfair text-2xl font-light text-foreground mb-4">
-                    Cancellation & Rebooking Policy
+                    Cancellation &amp; No-Show Policy
                   </h2>
-                  <div className="bg-muted/30 border border-border rounded-lg p-6">
-                    <p className="text-foreground/80 mb-4">
-                      We understand that schedules change. However, last-minute cancellations prevent other patients 
-                      from receiving care.
+                  <div className="space-y-8">
+                    <p className="text-foreground/80">
+                      Last-minute cancellations and no-shows block other patients from care and leave clinical
+                      staff idle. These rules apply to IV Lounge bookings, consult-gated visits, and follow-ups.
                     </p>
-                    <div className="bg-background border border-primary/30 rounded p-4">
-                      <p className="text-foreground font-medium">
-                        Appointments canceled or rescheduled with <strong>less than 24 hours notice</strong> will 
-                        incur a <strong>$99 Rebooking Fee</strong>.
+
+                    <div>
+                      <h3 className="font-playfair text-xl text-foreground mb-4">IV Lounge</h3>
+                      <div className="overflow-x-auto rounded-lg border border-border mb-4">
+                        <table className="w-full text-sm font-jost">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/40 text-left">
+                              <th className="px-4 py-3 font-medium">If you…</th>
+                              <th className="px-4 py-3 font-medium">What happens</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {IV_CANCELLATION_SCENARIOS.map((row) => (
+                              <tr key={row.id} className="border-b border-border/60 last:border-0 align-top">
+                                <td className="px-4 py-3 text-foreground/90">{row.situation}</td>
+                                <td className="px-4 py-3 text-muted-foreground">{row.outcome}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="font-playfair text-xl text-foreground mb-4">Consults &amp; clinical visits</h3>
+                      <div className="overflow-x-auto rounded-lg border border-border mb-4">
+                        <table className="w-full text-sm font-jost">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/40 text-left">
+                              <th className="px-4 py-3 font-medium">If you…</th>
+                              <th className="px-4 py-3 font-medium">What happens</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {CLINICAL_CANCELLATION_SCENARIOS.map((row) => (
+                              <tr key={row.id} className="border-b border-border/60 last:border-0 align-top">
+                                <td className="px-4 py-3 text-foreground/90">{row.situation}</td>
+                                <td className="px-4 py-3 text-muted-foreground">{row.outcome}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div className="bg-background border border-primary/30 rounded-lg p-4">
+                      <p className="text-foreground font-medium font-jost">
+                        To cancel or reschedule, contact us at least {CANCELLATION_NOTICE_HOURS} hours before
+                        your appointment:{" "}
+                        <a href={`tel:${SITE_CONFIG.phoneRaw}`} className="text-primary hover:underline">
+                          {SITE_CONFIG.phone}
+                        </a>{" "}
+                        or{" "}
+                        <a href={`mailto:${CARE_EMAIL}`} className="text-primary hover:underline">
+                          {CARE_EMAIL}
+                        </a>
+                        .
                       </p>
-                      <p className="text-muted-foreground text-sm mt-2">
-                        This fee must be paid before a new appointment can be scheduled.
+                      <p className="text-muted-foreground text-sm mt-2 font-jost">
+                        Late cancellations and no-shows incur a {REBOOKING_FEE_DISPLAY} rebooking fee (paid
+                        before a new appointment is scheduled). Repeated no-shows may result in declined
+                        future bookings.
                       </p>
+                    </div>
+
+                    <div>
+                      <p className="font-jost font-medium text-foreground mb-2">Refund request process</p>
+                      <ol className="list-decimal pl-5 space-y-2 text-sm font-jost text-muted-foreground">
+                        {REFUND_REQUEST_STEPS.map((step) => (
+                          <li key={step}>{step}</li>
+                        ))}
+                      </ol>
                     </div>
                   </div>
                 </section>

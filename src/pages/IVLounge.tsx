@@ -16,6 +16,13 @@ import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { IV_THERAPIES_CATALOG } from "@/lib/ivTherapiesCatalog";
 import { IV_ADDONS_CATALOG } from "@/lib/ivAddonsCatalog";
 import { openAssistantChat } from "@/lib/openAssistantChat";
+import {
+  CANCELLATION_NOTICE_HOURS,
+  CARE_EMAIL,
+  REBOOKING_FEE_DISPLAY,
+  REFUND_PROCESSING_WINDOW,
+} from "@/lib/cancellationPolicy";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface Therapy {
   id: string;
@@ -581,6 +588,10 @@ const IVLounge = () => {
                 { q: "Can I add boosters at the visit?", a: "Yes. Let the clinical team know when you arrive — add-ons are charged at checkout after." },
                 { q: "Are members charged differently?", a: `ELEVATED members save ${MEMBER_DISCOUNT_PERCENT}% on eligible à la carte IV, peptide, and injectable add-ons and receive priority booking. Base walk-in IV pricing is the same.` },
                 { q: "What if I'm not feeling well after?", a: "Reach out. We follow up with every patient. Reactions are rare, but we take every concern seriously." },
+                {
+                  q: "What is your cancellation and refund policy?",
+                  a: `Give us at least ${CANCELLATION_NOTICE_HOURS} hours notice to cancel or reschedule an IV appointment for a full refund or free reschedule. Less than ${CANCELLATION_NOTICE_HOURS} hours or a no-show: no refund, and a ${REBOOKING_FEE_DISPLAY} rebooking fee applies before you can book again. Email ${CARE_EMAIL} or call ${SITE_CONFIG.phone} — do not no-show. Refunds process in ${REFUND_PROCESSING_WINDOW}.`,
+                },
               ].map((f, i) => (
                 <AccordionItem key={i} value={`faq-${i}`}>
                   <AccordionTrigger className="text-left font-playfair text-lg text-foreground">{f.q}</AccordionTrigger>

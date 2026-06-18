@@ -12,6 +12,7 @@ import {
 import { format } from "date-fns";
 import { downloadIcs } from "@/lib/ics";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
 
 interface BookingConfirmedCardProps {
   appointmentId: string;
@@ -162,6 +163,8 @@ const BookingConfirmedCard = ({
             </Button>
           )}
         </div>
+
+        <CancellationPolicySummary variant="iv-compact" />
 
         <p className="font-jost text-xs text-muted-foreground text-center pt-2 border-t border-border">
           Need to change anything? Call{" "}

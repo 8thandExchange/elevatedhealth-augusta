@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { CANCELLATION_NOTICE_HOURS, REBOOKING_FEE_DISPLAY } from "@/lib/cancellationPolicy";
 
 type YesNoKeys =
   | "has_chf"
@@ -363,7 +364,13 @@ const IVScreening = () => {
                         I confirm the information above is accurate to the best of my knowledge and understand that IV
                         therapy carries inherent risks including but not limited to vein irritation, allergic reaction,
                         infection, and fluid overload. I authorize Elevated Health Augusta clinicians to administer the
-                        treatment I have selected, contingent on this screening result.
+                        treatment I have selected, contingent on this screening result. I have read the{" "}
+                        <a href="/terms#cancellation" className="text-primary underline underline-offset-2">
+                          cancellation and refund policy
+                        </a>
+                        : {CANCELLATION_NOTICE_HOURS}+ hours notice for a full refund or free reschedule; less than{" "}
+                        {CANCELLATION_NOTICE_HOURS} hours or no-show forfeits prepayment and requires a{" "}
+                        {REBOOKING_FEE_DISPLAY} rebooking fee.
                       </Label>
                     </div>
                     {errors.acknowledged_disclaimer && (
