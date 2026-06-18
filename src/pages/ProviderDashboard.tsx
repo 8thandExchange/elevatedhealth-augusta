@@ -92,6 +92,7 @@ import HealthReportPreview from "@/components/provider/HealthReportPreview";
 import InsuranceReimbursementHub from "@/components/provider/InsuranceReimbursementHub";
 import LabResultsQueue from "@/components/provider/LabResultsQueue";
 import LabOrderWorkflow from "@/components/provider/LabOrderWorkflow";
+import { hasClinicAdminRole } from "@/lib/staffPortalRouting";
 
 interface Patient {
   id: string;
@@ -217,6 +218,7 @@ const ProviderDashboard = () => {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(() => searchParams.get("tab") || "triage");
   const [canManageTeam, setCanManageTeam] = useState(false);
+  const [isClinicAdmin, setIsClinicAdmin] = useState(false);
   const [isPrescriber, setIsPrescriber] = useState(false);
   const [renewingPatientId, setRenewingPatientId] = useState<string | null>(null);
   const [resendingActivationId, setResendingActivationId] = useState<string | null>(null);
@@ -379,11 +381,13 @@ const ProviderDashboard = () => {
         if (roleError) {
           throw roleError;
         }
-        const hasPrivilegedRole = roleRows?.some(
-          (row) => row.role === "admin" || row.role === "staff" || row.role === "business_admin",
+        const roleList = (roleRows || []).map((row) => row.role);
+        const hasPrivilegedRole = roleList.some(
+          (role) => role === "admin" || role === "staff" || role === "business_admin",
         );
         setCanManageTeam(!!hasPrivilegedRole);
-        setIsPrescriber(roleRows?.some((row) => row.role === "provider") ?? false);
+        setIsClinicAdmin(hasClinicAdminRole(roleList));
+        setIsPrescriber(roleList.includes("provider"));
       }
 
       await loadData();
@@ -408,7 +412,9 @@ const ProviderDashboard = () => {
 
       console.log("[ProviderDashboard] Orders query result:", { ordersData, ordersError });
 
-      if (ordersError) throw ordersError;
+      if (ordersError) {
+        console.error("[ProviderDashboard] Orders query failed:", ordersError);
+      }
 
       // Also load patients likely to need manual review visibility even if they do
       // not yet have an order row (including staff-added records).
@@ -426,6 +432,14 @@ const ProviderDashboard = () => {
         .is("current_protocol", null);
 
       console.log("[ProviderDashboard] Intake patients query result:", { intakePatients, intakeError });
+
+      if (intakeError) {
+        console.error("[ProviderDashboard] Intake patients query failed:", intakeError);
+      }
+
+      if (ordersError && intakeError) {
+        throw ordersError;
+      }
 
       // Combine unique patients
       const allPatients: Patient[] = [];
@@ -2287,7 +2301,7 @@ const ProviderDashboard = () => {
                       <EncounterList
                         patientId={selectedPatient.patient.id}
                         patientName={selectedPatient.patient.full_name}
-                        isAdmin={providerInfo.role === "admin"}
+                        isAdmin={isClinicAdmin}
                       />
                     </TabsContent>
                     <TabsContent value="legacy" className="mt-4">

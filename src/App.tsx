@@ -434,7 +434,7 @@ const App = () => {
               title="Intake Follow-ups"
               subtitle="Safety Intake Follow-up Queue"
               showNavbar={false}
-              allowedRoles={["admin", "business_admin", "provider"]}
+              allowedRoles={["admin", "staff", "business_admin", "provider"]}
             >
               <IntakeFollowUps />
             </ProviderLayout>
@@ -444,7 +444,7 @@ const App = () => {
               title="Intake Follow-ups"
               subtitle="Safety Intake Follow-up Queue"
               showNavbar={false}
-              allowedRoles={["admin", "business_admin", "provider"]}
+              allowedRoles={["admin", "staff", "business_admin", "provider"]}
             >
               <IntakeFollowUps />
             </ProviderLayout>

@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { patientNameEmailPhoneOrFilter } from "@/lib/patientSearch";
 
 interface KioskPatient {
   id: string;
@@ -98,11 +99,10 @@ export default function IntakeKiosk() {
     }
     setSearching(true);
     try {
-      const like = `%${q}%`;
       const { data, error } = await supabase
         .from("patients")
         .select("id, full_name, dob, phone")
-        .or(`full_name.ilike.${like},email.ilike.${like},phone.ilike.${like}`)
+        .or(patientNameEmailPhoneOrFilter(q))
         .eq("is_archived", false)
         .order("created_at", { ascending: false })
         .limit(10);

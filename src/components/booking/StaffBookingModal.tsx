@@ -26,6 +26,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, ArrowLeft, ArrowRight, Calendar, CheckCircle2, User, Search, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { patientNameEmailPhoneOrFilter } from "@/lib/patientSearch";
 import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
 import ProviderChooser from "@/components/booking/ProviderChooser";
 
@@ -189,11 +190,10 @@ const StaffBookingModal = ({
     }
     setSearching(true);
     try {
-      const like = `%${q}%`;
       const { data, error } = await supabase
         .from("patients")
         .select("id, full_name, email, phone, primary_program, elevated_membership_status")
-        .or(`full_name.ilike.${like},email.ilike.${like},phone.ilike.${like}`)
+        .or(patientNameEmailPhoneOrFilter(q))
         .eq("is_archived", false)
         .order("created_at", { ascending: false })
         .limit(10);

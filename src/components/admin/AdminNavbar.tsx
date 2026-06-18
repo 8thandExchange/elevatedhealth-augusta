@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { LogOut, Stethoscope, RefreshCw, Settings, Menu, MessageCircle, FileText, Mail, UserPlus, BookOpen, Boxes, CalendarDays, ScrollText, FlaskConical, ClipboardList, ArrowLeft, LayoutDashboard, Users } from "lucide-react";
-import { getStaffHomeLabel, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
+import { getStaffHomeLabel, getStaffPortalLoginPath, hasClinicAdminRole } from "@/lib/staffPortalRouting";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,7 +60,7 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
       const roleSet = new Set((myRoles || []).map((r) => r.role));
       if (!cancelled) {
         setCanSeeIntakeFollowUps(
-          roleSet.has("admin") || roleSet.has("business_admin") || roleSet.has("provider"),
+          hasClinicAdminRole(roleSet) || roleSet.has("staff") || roleSet.has("provider"),
         );
       }
       const { data, error } = await supabase.rpc("has_business_admin_role", { _user_id: user.id });

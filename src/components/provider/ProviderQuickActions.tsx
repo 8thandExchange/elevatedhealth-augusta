@@ -10,6 +10,7 @@ import EncounterFormModal from "./EncounterFormModal";
 import AddPatientModal from "./AddPatientModal";
 import StaffBookingModal from "@/components/booking/StaffBookingModal";
 import { supabase } from "@/integrations/supabase/client";
+import { hasClinicAdminRole } from "@/lib/staffPortalRouting";
 
 interface ProviderQuickActionsProps {
   onRefresh?: () => void;
@@ -35,7 +36,7 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
         .select("role")
         .eq("user_id", user.id);
       if (cancelled) return;
-      setIsAdmin((roles || []).some((r) => r.role === "admin"));
+      setIsAdmin(hasClinicAdminRole((roles || []).map((r) => r.role)));
     })();
     return () => {
       cancelled = true;

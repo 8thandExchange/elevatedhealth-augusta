@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { hasClinicAdminRole } from "@/lib/staffPortalRouting";
 import { 
   Loader2, User, Users, Clock, Package, Phone, Mail, TestTube,
   Calendar, CalendarPlus, CheckCircle, AlertCircle, RefreshCw, Search,
@@ -85,7 +86,7 @@ const OfficeManagerDashboard = () => {
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id);
-      setIsAdmin((roles || []).some((r) => r.role === "admin"));
+      setIsAdmin(hasClinicAdminRole((roles || []).map((r) => r.role)));
     })();
   }, []);
 

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import MyScheduleManager from "@/components/provider/MyScheduleManager";
 import { getStaffHomeLabel, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
 import { getSchedulePortalHome, mainSiteUrl } from "@/lib/schedulePortalHost";
+import { patientNameEmailPhoneOrFilter } from "@/lib/patientSearch";
 import { addDays, format, isSameDay, isToday, startOfDay, startOfWeek } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -960,7 +961,7 @@ function NewAppointmentModal(props: {
     (async () => {
       const { data } = await supabase.from("patients")
         .select("id,full_name,phone,email")
-        .or(`full_name.ilike.%${q}%,phone.ilike.%${q}%,email.ilike.%${q}%`)
+        .or(patientNameEmailPhoneOrFilter(q))
         .limit(8);
       if (!cancelled) setResults((data as any) || []);
     })();

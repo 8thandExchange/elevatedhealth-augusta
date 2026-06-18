@@ -19,6 +19,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CORE_SERVICES, MEDICATION_FILLS } from "@/lib/stripeConfig";
+import { patientNameEmailOrFilter } from "@/lib/patientSearch";
 import { Loader2, Search, CreditCard, Mail, MessageSquare, Copy } from "lucide-react";
 
 interface Patient {
@@ -86,7 +87,7 @@ const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalP
       const { data, error } = await supabase
         .from("patients")
         .select("id, full_name, email, phone")
-        .or(`full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
+        .or(patientNameEmailOrFilter(searchQuery))
         .limit(10);
 
       if (error) throw error;

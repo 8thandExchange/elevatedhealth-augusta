@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { patientNameEmailOrFilter } from "@/lib/patientSearch";
 import { Loader2, Search, MessageSquare, Send } from "lucide-react";
 
 interface Patient {
@@ -45,7 +46,7 @@ const QuickMessageModal = ({ open, onOpenChange }: QuickMessageModalProps) => {
       const { data, error } = await supabase
         .from("patients")
         .select("id, full_name, email, phone")
-        .or(`full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
+        .or(patientNameEmailOrFilter(searchQuery))
         .limit(10);
 
       if (error) throw error;
