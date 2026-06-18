@@ -12,16 +12,29 @@ export type OnetimeCheckoutOpts = {
   functionName: string;
   stripePriceId: string;
   productKey: string;
-  successUrl: string;
-  cancelUrl: string;
+  /** Prefer camelCase; snake_case accepted for legacy callers. */
+  successUrl?: string;
+  cancelUrl?: string;
+  success_url?: string;
+  cancel_url?: string;
   logConsultationBooking?: boolean;
 };
+
+function resolveCheckoutUrls(opts: OnetimeCheckoutOpts): { successUrl: string; cancelUrl: string } {
+  const successUrl = opts.successUrl ?? opts.success_url;
+  const cancelUrl = opts.cancelUrl ?? opts.cancel_url;
+  if (!successUrl?.trim() || !cancelUrl?.trim()) {
+    throw new Error("Checkout successUrl and cancelUrl are required");
+  }
+  return { successUrl: successUrl.trim(), cancelUrl: cancelUrl.trim() };
+}
 
 export async function serveOnetimePriceCheckoutFromBody(
   body: Record<string, unknown>,
   opts: OnetimeCheckoutOpts,
 ): Promise<Response> {
-  const { functionName, stripePriceId, productKey, successUrl, cancelUrl, logConsultationBooking } = opts;
+  const { functionName, stripePriceId, productKey, logConsultationBooking } = opts;
+  const { successUrl, cancelUrl } = resolveCheckoutUrls(opts);
 
   try {
     edgeStructuredLog(functionName, {
