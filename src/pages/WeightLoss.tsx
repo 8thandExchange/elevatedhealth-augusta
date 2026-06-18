@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { trackEvent } from "@/lib/analytics";
 import { useState } from "react";
@@ -30,32 +30,14 @@ const PRICE_PANEL_WEIGHT = CORE_SERVICES.expandedPanel.displayPrice;
 const PRICE_PROGRAM_GLP1 = ELEVATED_PROGRAMS.glp1.displayPrice;
 
 const WeightLoss = () => {
-  const [isConsultationLoading, setIsConsultationLoading] = useState(false);
+  const navigate = useNavigate();
   const [isSemaglutideLoading, setIsSemaglutideLoading] = useState(false);
   const [isTirzepatideLoading, setIsTirzepatideLoading] = useState(false);
   const [glpComparisonDrug, setGlpComparisonDrug] = useState<"semaglutide" | "tirzepatide">("semaglutide");
 
-  const handleConsultationCheckout = async () => {
-    setIsConsultationLoading(true);
-    trackEvent("cta_click", { cta_name: "weight_loss_consultation", destination: "checkout" });
-    try {
-      const { data, error } = await supabase.functions.invoke("create-consultation-checkout", {
-        body: { serviceType: "weight_loss" }
-      });
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        throw new Error("No checkout URL returned");
-      }
-    } catch (err) {
-      console.error("Consultation checkout error:", err);
-      toast.error("Failed to start checkout. Please try again or call us.");
-    } finally {
-      setIsConsultationLoading(false);
-    }
+  const handleConsultationCheckout = () => {
+    trackEvent("cta_click", { cta_name: "weight_loss_consultation", destination: "consult_start" });
+    navigate("/consult/start?reasons=weight_loss");
   };
 
   const handleSemaglutideCheckout = async () => {
@@ -294,16 +276,11 @@ const WeightLoss = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
                   <Button 
                     onClick={handleConsultationCheckout} 
-                    disabled={isConsultationLoading}
                     size="lg" 
                     className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white"
                   >
-                    {isConsultationLoading ? (
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    ) : (
-                      <CreditCard className="mr-2 h-5 w-5" />
-                    )}
-                    {isConsultationLoading ? "Processing..." : `Book a ${PRICE_CONSULT} Wellness Assessment`}
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Book a {PRICE_CONSULT} Wellness Assessment
                   </Button>
                   <Button onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")} size="lg" variant="outline" className="text-lg px-8 py-6 border-primary/30 text-primary bg-transparent hover:bg-primary/5">
                     Call {SITE_CONFIG.phone}
@@ -497,16 +474,11 @@ const WeightLoss = () => {
                 <div className="mt-10 text-center">
                   <Button 
                     onClick={handleConsultationCheckout} 
-                    disabled={isConsultationLoading}
                     size="lg" 
                     className="font-jost bg-primary hover:bg-primary/90 text-white"
                   >
-                    {isConsultationLoading ? (
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    ) : (
-                      <CreditCard className="mr-2 h-5 w-5" />
-                    )}
-                    {isConsultationLoading ? "Processing..." : "Book Wellness Assessment - $79"}
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Book Wellness Assessment - $79
                   </Button>
                 </div>
               </div>
@@ -704,16 +676,11 @@ const WeightLoss = () => {
                 <div className="mt-10 text-center">
                   <Button 
                     onClick={handleConsultationCheckout}
-                    disabled={isConsultationLoading}
                     size="lg"
                     className="bg-primary hover:bg-primary/90 text-white font-jost"
                   >
-                    {isConsultationLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Calendar className="mr-2 h-4 w-4" />
-                    )}
-                    {isConsultationLoading ? "Processing..." : `Book a ${PRICE_CONSULT} Wellness Assessment`}
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Book a {PRICE_CONSULT} Wellness Assessment
                   </Button>
                   <p className="text-xs text-muted-foreground mt-2">
                     Program {PRICE_PROGRAM_GLP1}; à la carte fills {MEDICATION_FILLS.semaglutide.displayPrice} /{" "}
@@ -833,13 +800,9 @@ const WeightLoss = () => {
                 <div className="mt-8 text-center">
                   <Button 
                     onClick={handleConsultationCheckout}
-                    disabled={isConsultationLoading}
                     className="bg-accent hover:bg-accent text-white font-jost"
                   >
-                    {isConsultationLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : null}
-                    {isConsultationLoading ? "Processing..." : `Book a ${PRICE_CONSULT} Wellness Assessment`}
+                    Book a {PRICE_CONSULT} Wellness Assessment
                   </Button>
                 </div>
               </div>
@@ -877,15 +840,10 @@ const WeightLoss = () => {
                     </p>
                     <Button
                       onClick={handleConsultationCheckout}
-                      disabled={isConsultationLoading}
                       className="w-full bg-accent hover:bg-accent text-white"
                     >
-                      {isConsultationLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Calendar className="mr-2 h-4 w-4" />
-                      )}
-                      {isConsultationLoading ? "..." : `Book ${PRICE_CONSULT} Wellness Assessment`}
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Book {PRICE_CONSULT} Wellness Assessment
                     </Button>
                   </CardContent>
                 </Card>
@@ -1036,16 +994,11 @@ const WeightLoss = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
                   <Button 
                     onClick={handleConsultationCheckout}
-                    disabled={isConsultationLoading}
                     size="lg" 
                     className="text-lg px-8 py-6"
                   >
-                    {isConsultationLoading ? (
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    ) : (
-                      <CreditCard className="mr-2 h-5 w-5" />
-                    )}
-                    {isConsultationLoading ? "Processing..." : "Book $79 Wellness Assessment"}
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Book $79 Wellness Assessment
                   </Button>
                   <Button 
                     onClick={() => {
