@@ -289,7 +289,7 @@ const ProviderDashboard = () => {
       "troy.w.akers@gmail.com": { name: "Troy Akers", credentials: "DO", role: "provider" },
       "clinical@elevatedhealthaugusta.com": { name: "Clinical Team", credentials: "DO", role: "provider" },
       "drdwmd@pmrehab.net": { name: "Dennis Williams", credentials: "MD", role: "provider" },
-      "caroline@elevatedhealthaugusta.com": { name: "Caroline Miller", credentials: "RN", role: "provider" },
+      "caroline@elevatedhealthaugusta.com": { name: "Caroline Marshall", credentials: "RN", role: "provider" },
       // Office Staff
       "kcovington@pmrehab.net": { name: "Kristen Covington", credentials: "", role: "office_manager" },
     };

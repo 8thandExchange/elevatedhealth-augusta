@@ -24,14 +24,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getSlotSigningKey, issueSlotToken } from "../_shared/slot-token.ts";
+import {
+  addClinicDays,
+  clinicDateKey,
+  clinicDateKeysFrom,
+  clinicDayOfWeek,
+  clinicLocalToUtc,
+  clinicMinutesFromMidnight,
+} from "../_shared/clinic-time.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-const NY_TZ = "America/New_York";
-const DOW_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
 interface Schedule {
   id: string;
@@ -109,38 +114,6 @@ function timeToMinutes(t: string) {
   return h * 60 + m;
 }
 
-function dateKey(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-function nyDateString(d: Date): string {
-  return d.toLocaleDateString("en-CA", { timeZone: NY_TZ });
-}
-
-function nyDow(d: Date): number {
-  const s = new Intl.DateTimeFormat("en-US", { timeZone: NY_TZ, weekday: "short" }).format(d);
-  return DOW_SHORT.indexOf(s as (typeof DOW_SHORT)[number]);
-}
-
-function nyMinutesFromMidnight(d: Date): number {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: NY_TZ,
-    hour: "numeric",
-    minute: "numeric",
-    hour12: false,
-  }).formatToParts(d);
-  let h = 0;
-  let m = 0;
-  for (const p of parts) {
-    if (p.type === "hour") h = parseInt(p.value, 10);
-    if (p.type === "minute") m = parseInt(p.value, 10);
-  }
-  return h * 60 + m;
-}
-
 function timeStrToMinutes(t: string | null): number | null {
   if (!t) return null;
   const [hh, mm] = t.split(":").map(Number);
@@ -192,9 +165,9 @@ function buildRoomHelpers(
   function withinBookingLimits(slotStart: Date, slotEnd: Date, serviceLine: string): boolean {
     const slotStartMs = slotStart.getTime();
     const slotEndMs = slotEnd.getTime();
-    const apptDate = nyDateString(slotStart);
-    const apptDow = nyDow(slotStart);
-    const apptMin = nyMinutesFromMidnight(slotStart);
+    const apptDate = clinicDateKey(slotStart);
+    const apptDow = clinicDayOfWeek(slotStart);
+    const apptMin = clinicMinutesFromMidnight(slotStart);
 
     for (const lim of bookingLimits) {
       if (!lim.active) continue;
@@ -301,8 +274,8 @@ serve(async (req) => {
     //   - 'addition' → expose extra slots outside the base pattern (e.g. a
     //                  one-off Saturday clinic). Treated as if it were a
     //                  matching provider_schedules row for that date only.
-    const exceptionStartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const exceptionEndDate = new Date(exceptionStartDate.getTime() + days * 24 * 60 * 60 * 1000);
+    const exceptionStartKey = clinicDateKey(now);
+    const exceptionEndKey = addClinicDays(exceptionStartKey, days);
     const { data: exceptions } = providerIds.length
       ? await supabase
           .from("schedule_exceptions")
@@ -311,8 +284,8 @@ serve(async (req) => {
           )
           .in("provider_id", providerIds)
           .contains("service_lines", [service_line])
-          .gte("exception_date", dateKey(exceptionStartDate))
-          .lte("exception_date", dateKey(exceptionEndDate))
+          .gte("exception_date", exceptionStartKey)
+          .lte("exception_date", exceptionEndKey)
       : { data: [] as Exception[] };
 
     const fetchStart = new Date(startWindow.getTime() - 48 * 60 * 60 * 1000);
@@ -349,10 +322,10 @@ serve(async (req) => {
     // addition window overlaps the base schedule.
     const seen = new Set<string>();
 
-    for (let d = 0; d < days; d++) {
-      const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d);
-      const dow = day.getDay();
-      const dayKeyStr = dateKey(day);
+    const clinicDayKeys = clinicDateKeysFrom(now, days);
+
+    for (const dayKeyStr of clinicDayKeys) {
+      const dow = clinicDayOfWeek(clinicLocalToUtc(dayKeyStr, 12 * 60));
 
       // Build the per-provider, per-day window list to iterate. Start with
       // base schedule rows that match this day-of-week, then append addition
@@ -405,9 +378,7 @@ serve(async (req) => {
         const removals = removalsByProvider.get(providerIdForDay) || [];
         for (const w of windows) {
           for (let m = w.startMin; m + duration_minutes <= w.endMin; m += w.step) {
-            const slotStart = new Date(day);
-            slotStart.setHours(0, 0, 0, 0);
-            slotStart.setMinutes(m);
+            const slotStart = clinicLocalToUtc(dayKeyStr, m);
             const slotEnd = new Date(slotStart.getTime() + duration_minutes * 60_000);
 
             // Skip past slots (with 2hr buffer)

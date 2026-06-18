@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   CLINIC_TIMEZONE,
+  addClinicDays,
+  addMonths,
+  clinicLocalToUtc,
+  clinicMinutesFromMidnight,
   formatClinicDateKey,
   formatClinicDateTime,
   isConsentActive,
 } from "./clinicTime";
-import { addMonths } from "./consents/consent-helpers";
 
 describe("clinicTime", () => {
   it("formats consent signed time in Eastern", () => {
@@ -31,5 +34,15 @@ describe("clinicTime", () => {
 
   it("uses America/New_York", () => {
     expect(CLINIC_TIMEZONE).toBe("America/New_York");
+  });
+
+  it("maps 9:00 AM Eastern to 13:00 UTC in June (EDT)", () => {
+    const utc = clinicLocalToUtc("2026-06-25", 9 * 60);
+    expect(utc.toISOString()).toBe("2026-06-25T13:00:00.000Z");
+    expect(clinicMinutesFromMidnight(utc)).toBe(9 * 60);
+  });
+
+  it("addClinicDays steps calendar dates in Eastern", () => {
+    expect(addClinicDays("2026-06-25", 1)).toBe("2026-06-26");
   });
 });

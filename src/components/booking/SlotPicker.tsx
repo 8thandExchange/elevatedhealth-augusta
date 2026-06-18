@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { formatClinicTime, formatClinicDateKey } from "@/lib/clinicTime";
 import { format, isSameDay, addDays, startOfDay } from "date-fns";
 import { toast } from "sonner";
 
@@ -87,11 +88,11 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
   }, [weekOffset]);
 
   const slotsForDay = useMemo(
-    () => slots.filter((s) => isSameDay(new Date(s.start), selectedDate)),
+    () => slots.filter((s) => formatClinicDateKey(s.start) === formatClinicDateKey(selectedDate)),
     [slots, selectedDate],
   );
 
-  const dayHasSlots = (d: Date) => slots.some((s) => isSameDay(new Date(s.start), d));
+  const dayHasSlots = (d: Date) => slots.some((s) => formatClinicDateKey(s.start) === formatClinicDateKey(d));
 
   const handleConfirm = async () => {
     if (!selectedSlot) return;
@@ -189,7 +190,7 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
                       sel ? "bg-accent text-accent-foreground border-accent" : "hover:border-accent"
                     }`}
                   >
-                    {format(new Date(s.start), "h:mm a")}
+                    {formatClinicTime(s.start)}
                   </button>
                 );
               })}
@@ -202,7 +203,7 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
         <div className="flex items-center justify-between bg-muted/30 rounded-lg p-4">
           <div>
             <p className="text-sm text-muted-foreground font-jost">Selected</p>
-            <p className="font-semibold font-jost">{format(new Date(selectedSlot.start), "EEE, MMM d · h:mm a")}</p>
+            <p className="font-semibold font-jost">{formatClinicTime(selectedSlot.start)}</p>
           </div>
           <Button onClick={handleConfirm} disabled={submitting}>
             {submitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}

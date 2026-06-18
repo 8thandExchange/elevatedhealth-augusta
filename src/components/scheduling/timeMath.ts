@@ -1,4 +1,11 @@
 import { HOUR_START, HOUR_END, SLOT_MINUTES, ProviderSchedule, ScheduleBlock, ScheduleException } from "./types";
+import {
+  clinicDayOfWeek,
+  clinicLocalToUtc,
+  addClinicDays,
+  formatClinicDateKey,
+  isSameClinicDay,
+} from "@/lib/clinicTime";
 
 export const minutesFromMidnight = (hhmmss: string) => {
   const [h, m] = hhmmss.split(":").map(Number);
@@ -41,12 +48,12 @@ export function coverageForDate(
   schedules: ProviderSchedule[],
   exceptions: ScheduleException[]
 ): CoverageSlot[] {
-  const dateStr = date.toISOString().slice(0, 10);
+  const dateStr = formatClinicDateKey(date);
   const exForDate = exceptions.filter(
     (e) => e.provider_id === providerId && e.exception_date === dateStr
   );
 
-  const dow = date.getDay();
+  const dow = clinicDayOfWeek(date);
   const recurring = schedules.filter(
     (s) => s.provider_id === providerId && s.day_of_week === dow && s.is_active
   );
@@ -83,8 +90,9 @@ export function coverageForDate(
 }
 
 export function blocksForDate(date: Date, providerId: string, blocks: ScheduleBlock[]) {
-  const dayStart = new Date(date); dayStart.setHours(0,0,0,0);
-  const dayEnd = new Date(date); dayEnd.setHours(23,59,59,999);
+  const dateKey = formatClinicDateKey(date);
+  const dayStart = clinicLocalToUtc(dateKey, 0);
+  const dayEnd = clinicLocalToUtc(addClinicDays(dateKey, 1), 0);
   return blocks
     .filter((b) => b.provider_id === providerId)
     .map((b) => ({ ...b, _start: new Date(b.start_at), _end: new Date(b.end_at) }))
@@ -112,4 +120,4 @@ export function isSlotBlocked(
 
 export const snap30 = (mins: number) => Math.round(mins / SLOT_MINUTES) * SLOT_MINUTES;
 
-export { HOUR_START, HOUR_END, SLOT_MINUTES };
+export { HOUR_START, HOUR_END, SLOT_MINUTES, isSameClinicDay };

@@ -4,6 +4,13 @@ import MyScheduleManager from "@/components/provider/MyScheduleManager";
 import { getStaffHomeLabel, getStaffPortalLoginPath } from "@/lib/staffPortalRouting";
 import { getSchedulePortalHome, mainSiteUrl } from "@/lib/schedulePortalHost";
 import { patientNameEmailPhoneOrFilter } from "@/lib/patientSearch";
+import {
+  addClinicDays,
+  clinicLocalToUtc,
+  clinicMinutesFromMidnight,
+  formatClinicDateKey,
+  formatClinicTime,
+} from "@/lib/clinicTime";
 import { addDays, format, isSameDay, isToday, startOfDay, startOfWeek } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -119,16 +126,18 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const startISO = range.start.toISOString();
-    const endISO = range.end.toISOString();
+    const firstKey = formatClinicDateKey(range.start);
+    const lastKey = formatClinicDateKey(addDays(range.end, -1));
+    const startISO = clinicLocalToUtc(firstKey, 0).toISOString();
+    const endISO = clinicLocalToUtc(addClinicDays(lastKey, 1), 0).toISOString();
     try {
       const [provRes, schedRes, blockRes, exRes, apptRes] = await Promise.all([
         supabase.rpc("get_providers_directory"),
         supabase.from("provider_schedules").select("*"),
         supabase.from("schedule_blocks").select("*").lt("start_at", endISO).gt("end_at", startISO),
         supabase.from("schedule_exceptions").select("*")
-          .gte("exception_date", format(range.start, "yyyy-MM-dd"))
-          .lt("exception_date", format(range.end, "yyyy-MM-dd")),
+          .gte("exception_date", firstKey)
+          .lt("exception_date", addClinicDays(lastKey, 1)),
         supabase.from("appointments")
           .select("id,provider_id,patient_id,scheduled_at,duration_minutes,service_line,status,notes,is_telehealth,iv_drip_booking_id,consultation_booking_id,patients(full_name,phone)")
           .gte("scheduled_at", startISO).lt("scheduled_at", endISO)
@@ -562,7 +571,7 @@ function DayView(props: {
   const slots = useMemo(() => Array.from({ length: ROWS }, (_, i) => HOUR_START * 60 + i * SLOT_MINUTES), []);
   const totalH = ROWS * ROW_PX;
   const nowMinutes = isToday(date)
-    ? new Date().getHours() * 60 + new Date().getMinutes()
+    ? clinicMinutesFromMidnight(new Date())
     : -1;
   const nowOffset = nowMinutes >= HOUR_START * 60 && nowMinutes < HOUR_END * 60
     ? ((nowMinutes - HOUR_START * 60) / SLOT_MINUTES) * ROW_PX
@@ -649,7 +658,7 @@ function DayView(props: {
               {/* Appointments */}
               {providerAppts.map((a) => {
                 const start = new Date(a.scheduled_at);
-                const startMin = start.getHours() * 60 + start.getMinutes();
+                const startMin = clinicMinutesFromMidnight(a.scheduled_at);
                 const top = ((startMin - HOUR_START * 60) / SLOT_MINUTES) * ROW_PX;
                 const height = (a.duration_minutes / SLOT_MINUTES) * ROW_PX;
                 if (top < 0 || top > totalH) return null;
@@ -670,7 +679,7 @@ function DayView(props: {
                     title={`${a.patient_name} — ${SERVICE_FULL[a.service_line] ?? a.service_line} (${style.label})`}
                   >
                     <div className="font-medium truncate">{a.patient_name?.split(" ").slice(-1)[0] ?? "Patient"}</div>
-                    <div className="opacity-90 text-[10px] truncate">{SERVICE_LABEL[a.service_line] ?? a.service_line} · {format(start, "h:mm a")}</div>
+                    <div className="opacity-90 text-[10px] truncate">{SERVICE_LABEL[a.service_line] ?? a.service_line} · {formatClinicTime(start)}</div>
                   </div>
                 );
               })}
@@ -936,17 +945,11 @@ function NewAppointmentModal(props: {
   const initialDate = useMemo(() => {
     if (isWalkIn) {
       const now = new Date();
-      const m = snap30(now.getHours() * 60 + now.getMinutes());
-      const d = new Date();
-      d.setHours(0, 0, 0, 0);
-      d.setMinutes(m);
-      return d;
+      const m = snap30(clinicMinutesFromMidnight(now));
+      return clinicLocalToUtc(formatClinicDateKey(now), m);
     }
     if (ctx) {
-      const d = new Date(ctx.date);
-      d.setHours(0, 0, 0, 0);
-      d.setMinutes(ctx.startMin);
-      return d;
+      return clinicLocalToUtc(formatClinicDateKey(ctx.date), ctx.startMin);
     }
     return new Date();
   }, [ctx, isWalkIn]);
@@ -972,9 +975,9 @@ function NewAppointmentModal(props: {
     if (!patient) return toast.error("Select a patient first");
     if (!providerId) return toast.error("Select a provider");
     setSaving(true);
+    const dayKey = formatClinicDateKey(scheduledAt);
     const [hh, mm] = timeStr.split(":").map(Number);
-    const final = new Date(scheduledAt);
-    final.setHours(hh, mm, 0, 0);
+    const final = clinicLocalToUtc(dayKey, hh * 60 + mm);
     const conflict = findConflict(providerId, final, duration, "");
     if (conflict) {
       const ok = window.confirm(`Conflict with ${conflict.patient_name} at ${format(new Date(conflict.scheduled_at), "h:mm a")}. Override?`);

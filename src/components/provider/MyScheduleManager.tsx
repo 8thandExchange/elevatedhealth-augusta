@@ -14,6 +14,14 @@ import {
   Loader2, ChevronLeft, ChevronRight, CalendarOff, Copy, AlertTriangle, Trash2, Plus, X,
 } from "lucide-react";
 import {
+  addClinicDays,
+  clinicLocalToUtc,
+  clinicMinutesFromMidnight,
+  formatClinicDateKey,
+  formatClinicTime,
+  isSameClinicDay,
+} from "@/lib/clinicTime";
+import {
   addDays, startOfWeek, endOfWeek, format, isSameDay, isBefore, addWeeks, subWeeks,
   parseISO, differenceInMinutes, isWithinInterval,
 } from "date-fns";
@@ -139,8 +147,10 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
   const fetchAll = async () => {
     if (!resolvedProviderId) return;
     setLoading(true);
-    const startISO = weekStart.toISOString();
-    const endISO = addDays(weekEnd, 1).toISOString();
+    const firstKey = formatClinicDateKey(weekStart);
+    const lastKey = formatClinicDateKey(weekEnd);
+    const startISO = clinicLocalToUtc(firstKey, 0).toISOString();
+    const endISO = clinicLocalToUtc(addClinicDays(lastKey, 1), 0).toISOString();
     const [schedRes, blockRes, apptRes] = await Promise.all([
       supabase.from("provider_schedules").select("*").eq("provider_id", resolvedProviderId).order("day_of_week"),
       supabase.from("schedule_blocks").select("*").eq("provider_id", resolvedProviderId)
@@ -443,7 +453,7 @@ function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClic
             isSameDay(parseISO(b.start_at), day) || isSameDay(parseISO(b.end_at), day) ||
             (parseISO(b.start_at) < day && parseISO(b.end_at) > addDays(day, 1))
           );
-          const dayAppts = appts.filter((a) => isSameDay(parseISO(a.scheduled_at), day));
+          const dayAppts = appts.filter((a) => isSameClinicDay(a.scheduled_at, day));
 
           return (
             <div key={col} className={`relative border-l ${isToday ? "bg-accent/5" : ""} ${isPastDay ? "bg-muted/20" : ""}`}>
@@ -555,7 +565,7 @@ function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClic
               {/* Bookings */}
               {dayAppts.map((a) => {
                 const aStart = parseISO(a.scheduled_at);
-                const startMin = aStart.getHours() * 60 + aStart.getMinutes();
+                const startMin = clinicMinutesFromMidnight(a.scheduled_at);
                 const endMin = startMin + (a.duration_minutes || 30);
                 const top = ((startMin - HOUR_START * 60) / SLOT_MINUTES) * ROW_PX;
                 const height = ((endMin - startMin) / SLOT_MINUTES) * ROW_PX;
@@ -587,7 +597,7 @@ function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClic
                     <TooltipContent side="right">
                       <div className="text-xs">
                         <div className="font-medium">{a.patient_name || "Unknown patient"}</div>
-                        <div>{SERVICE_FULL[a.service_line] || a.service_line} · {format(aStart, "h:mm a")}</div>
+                        <div>{SERVICE_FULL[a.service_line] || a.service_line} · {formatClinicTime(a.scheduled_at)}</div>
                         <div className="text-muted-foreground capitalize">{a.status}</div>
                         {outside && <div className="text-destructive mt-1">⚠ Outside set availability</div>}
                       </div>
