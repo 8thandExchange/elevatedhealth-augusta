@@ -81,8 +81,9 @@ export function Tier1IntakeBundle({
     }
 
     setConsentStepIndex(resumeIdx);
-    setPhase("dob");
-  }, [patientId, onAllConsentsComplete]);
+    // Portal patients are already authenticated — skip redundant DOB re-entry.
+    setPhase(mode === "authenticated" ? "consent" : "dob");
+  }, [patientId, mode, onAllConsentsComplete]);
 
   useEffect(() => {
     initBundle();

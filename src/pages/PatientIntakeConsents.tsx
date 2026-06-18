@@ -11,6 +11,8 @@ import { formatClinicDateTime } from "@/lib/clinicTime";
 import { Loader2, CheckCircle2, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function PatientIntakeConsents() {
   const navigate = useNavigate();
@@ -76,13 +78,16 @@ export default function PatientIntakeConsents() {
     return (
       <div className="min-h-screen bg-background">
         <PatientNavbar patientName={patient.full_name} avatarUrl={patient.avatar_url} />
-        <main className="container mx-auto max-w-lg px-4 py-12">
+        <main className="container mx-auto max-w-lg px-4 py-12 space-y-4">
           <Alert>
             <AlertDescription>
-              We need your date of birth on file before you can sign consents. Please update your
-              profile or contact the office.
+              We need your date of birth before you can sign consents. Please complete the medical
+              intake questionnaire first — it only takes a few minutes.
             </AlertDescription>
           </Alert>
+          <Button asChild className="w-full">
+            <Link to="/patient/intake">Complete medical intake</Link>
+          </Button>
         </main>
       </div>
     );

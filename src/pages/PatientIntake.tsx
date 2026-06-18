@@ -10,10 +10,22 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, CheckCircle, ShieldAlert, Loader2, User, Check, TestTube } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Navbar from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 import { PageLoader } from "@/components/ui/PageLoader";
 import ConsentStep from "@/components/patient/ConsentStep";
+import { formatDobForInput } from "@/lib/consents/dob-utils";
+import { useInvalidatePatientData } from "@/hooks/usePatient";
+
+const HORMONE_PATHWAY_IDS = new Set([
+  "hormone",
+  "hormone_female",
+  "hormone_male",
+  "testosterone",
+  "weight_loss",
+  "peptides",
+]);
 
 interface Question {
   id: string;
@@ -109,12 +121,14 @@ const WAKE_TIME_OPTIONS = [
 
 const PatientIntake = () => {
   const navigate = useNavigate();
+  const { invalidatePatient } = useInvalidatePatientData();
   const [isLoading, setIsLoading] = useState(true);
   const [patientInterests, setPatientInterests] = useState<string[]>([]);
   const [primaryProgram, setPrimaryProgram] = useState<string>("hormone");
   const [step, setStep] = useState<"profile" | "hormoneHistory" | "symptoms" | "safety" | "medical" | "consent">("profile");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fullName, setFullName] = useState<string>("");
+  const [dob, setDob] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [streetAddress, setStreetAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
@@ -127,6 +141,7 @@ const PatientIntake = () => {
   const [medicalHistory, setMedicalHistory] = useState<Record<string, boolean>>({});
   const [labcorpConditions, setLabcorpConditions] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [needsDobOnly, setNeedsDobOnly] = useState(false);
   
   // Hormone history (required for hormone optimization intake)
   const [menstrualStatus, setMenstrualStatus] = useState<string>("");
@@ -152,11 +167,20 @@ const PatientIntake = () => {
 
         const { data: patient, error } = await supabase
           .from("patients")
-          .select("treatment_request, primary_program, full_name, gender")
+          .select("treatment_request, primary_program, full_name, gender, dob, street_address, city, state, zip_code, allergies, intake_completed")
           .eq("user_id", user.id)
           .maybeSingle();
 
         if (error) throw error;
+
+        if (patient?.intake_completed && patient.dob) {
+          navigate("/patient/dashboard", { replace: true });
+          return;
+        }
+
+        if (patient?.intake_completed && !patient.dob) {
+          setNeedsDobOnly(true);
+        }
 
         if (patient) {
           // Parse treatment_request (comma-separated interests)
@@ -164,9 +188,15 @@ const PatientIntake = () => {
           setPatientInterests(interests);
           setPrimaryProgram(patient.primary_program || "hormone");
           
-          // Pre-fill name and gender if available
+          // Pre-fill profile fields if available
           if (patient.full_name) setFullName(patient.full_name);
           if (patient.gender) setGender(patient.gender);
+          if (patient.dob) setDob(formatDobForInput(patient.dob));
+          if (patient.street_address) setStreetAddress(patient.street_address);
+          if (patient.city) setCity(patient.city);
+          if (patient.state) setState(patient.state);
+          if (patient.zip_code) setZipCode(patient.zip_code);
+          if (patient.allergies) setAllergies(patient.allergies === "NKDA" ? "" : patient.allergies);
         }
       } catch (error) {
         console.error("Error fetching patient interests:", error);
@@ -179,10 +209,13 @@ const PatientIntake = () => {
     fetchPatientInterests();
   }, [navigate]);
 
-  // Determine which sections to show based on interests
+  // Determine which sections to show based on interests and selections
   const hasHormoneInterests = useMemo(() => {
-    return patientInterests.some(i => ["hormone", "weight_loss", "peptides"].includes(i));
-  }, [patientInterests]);
+    const fromDb = patientInterests.some((i) => HORMONE_PATHWAY_IDS.has(i));
+    const fromSelection = treatmentRequests.some((i) => HORMONE_PATHWAY_IDS.has(i));
+    const fromProgram = ["hormone", "weight_loss", "peptides"].includes(primaryProgram);
+    return fromDb || fromSelection || fromProgram;
+  }, [patientInterests, treatmentRequests, primaryProgram]);
 
   // Calculate visible steps based on interests
   const visibleSteps = useMemo(() => {
@@ -307,6 +340,28 @@ const PatientIntake = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Quick path: intake already done but DOB was never saved
+      if (needsDobOnly) {
+        if (!dob.trim()) throw new Error("Date of birth is required");
+        const { data: patient, error: patientError } = await supabase
+          .from("patients")
+          .select("id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (patientError || !patient) throw new Error("Patient not found");
+
+        const { error: dobError } = await supabase
+          .from("patients")
+          .update({ dob: dob.trim() })
+          .eq("id", patient.id);
+        if (dobError) throw dobError;
+
+        invalidatePatient();
+        toast.success("Date of birth saved. You can now sign your consents.");
+        navigate("/intake/consents");
+        return;
+      }
+
       // Get or create patient record
       let { data: patient, error: patientError } = await supabase
         .from("patients")
@@ -374,6 +429,7 @@ const PatientIntake = () => {
         onboarding_status: "intake_complete",
         medical_history: { ...medicalHistory, ...labcorpConditions },
         gender,
+        dob: dob.trim() || null,
         treatment_request: treatmentRequests.join(","),
         lab_path: "labcorp",
         street_address: streetAddress.trim() || null,
@@ -402,10 +458,14 @@ const PatientIntake = () => {
           .map(c => c.label);
       }
 
-      await supabase
+      const { error: updateError } = await supabase
         .from("patients")
         .update(updateData)
         .eq("id", patient.id);
+
+      if (updateError) throw updateError;
+
+      invalidatePatient();
 
       // Send notification to provider that intake is complete
       try {
@@ -449,14 +509,20 @@ const PatientIntake = () => {
 
       toast.success("Intake complete! A provider will review your results within 24-48 hours.");
       navigate("/patient/dashboard");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to submit intake");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to submit intake";
+      if (message.toLowerCase().includes("row-level security") || message.toLowerCase().includes("permission denied")) {
+        toast.error("We couldn't save your intake. Please sign out and back in, or call the clinic for help.");
+      } else {
+        toast.error(message);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const canProceedFromProfile = fullName.trim().length >= 2 && gender && treatmentRequests.length > 0;
+  const canProceedFromProfile =
+    fullName.trim().length >= 2 && dob.trim().length > 0 && gender && treatmentRequests.length > 0;
 
   if (isLoading) {
     return <PageLoader />;
@@ -517,8 +583,15 @@ const PatientIntake = () => {
           </div>
 
           {/* Profile Step */}
-          {step === "profile" && (
+          {(step === "profile" || needsDobOnly) && (
             <>
+              {needsDobOnly && (
+                <Alert className="mb-4 border-accent/40 bg-accent/5">
+                  <AlertDescription>
+                    Your intake is on file — we just need your date of birth before you can sign consents.
+                  </AlertDescription>
+                </Alert>
+              )}
               <Card className="border-border/50 mb-8">
                 <CardContent className="pt-8 pb-8">
                   <div className="flex items-center gap-2 mb-6">
@@ -529,6 +602,7 @@ const PatientIntake = () => {
                   </div>
 
                   {/* Full Name */}
+                  {!needsDobOnly && (
                   <div className="mb-8">
                     <Label htmlFor="fullName" className="text-sm font-medium mb-3 block">
                       Full Name <span className="text-red-500">*</span>
@@ -542,7 +616,25 @@ const PatientIntake = () => {
                       required
                     />
                   </div>
+                  )}
 
+                  {/* Date of Birth */}
+                  <div className="mb-8">
+                    <Label htmlFor="dob" className="text-sm font-medium mb-3 block">
+                      Date of Birth <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="dob"
+                      type="date"
+                      value={dob}
+                      onChange={(e) => setDob(e.target.value)}
+                      required
+                      className="w-full"
+                    />
+                  </div>
+
+                  {!needsDobOnly && (
+                  <>
                   {/* Gender Selection */}
                   <div className="mb-8">
                     <Label className="text-sm font-medium mb-3 block">
@@ -701,22 +793,44 @@ const PatientIntake = () => {
                       <p className="text-sm text-muted-foreground italic">Please select your gender first</p>
                     )}
                   </div>
+                  </>
+                  )}
                 </CardContent>
               </Card>
 
               <Button 
-                onClick={() => setStep("hormoneHistory")} 
+                onClick={() => {
+                  if (needsDobOnly) {
+                    void handleSubmit();
+                    return;
+                  }
+                  if (hasHormoneInterests) {
+                    setStep("hormoneHistory");
+                  } else {
+                    void handleSubmit();
+                  }
+                }}
                 className="w-full"
-                disabled={!canProceedFromProfile}
+                disabled={
+                  needsDobOnly
+                    ? !dob.trim() || isSubmitting
+                    : !canProceedFromProfile || isSubmitting
+                }
               >
-                Continue
-                <ChevronRight className="w-4 h-4 ml-2" />
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <>
+                    {needsDobOnly ? "Save & continue to consents" : hasHormoneInterests ? "Continue" : "Submit intake"}
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
               </Button>
             </>
           )}
 
           {/* Hormone history step */}
-          {step === "hormoneHistory" && (
+          {step === "hormoneHistory" && !needsDobOnly && (
             <>
               <Card className="border-border/50 mb-8">
                 <CardContent className="pt-8 pb-8">

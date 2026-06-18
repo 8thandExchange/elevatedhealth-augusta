@@ -26,14 +26,15 @@ const PatientLogin = () => {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirect");
   const returnTo = intakeReturnPath(searchParams.get("returnTo"));
+  const emailParam = searchParams.get("email")?.trim() ?? "";
   const [isLoading, setIsLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [loginMethod, setLoginMethod] = useState<"password" | "magic">("password");
-  const [magicLinkEmail, setMagicLinkEmail] = useState("");
+  const [email, setEmail] = useState(emailParam);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [showSafetyGate, setShowSafetyGate] = useState(false);
   const [createdPatientName, setCreatedPatientName] = useState("");
@@ -93,6 +94,10 @@ const PatientLogin = () => {
       clearTimeout(timeoutId);
     };
   }, [navigate]);
+
+  useEffect(() => {
+    if (emailParam) setEmail(emailParam);
+  }, [emailParam]);
 
   // Handle Google OAuth sign in (existing patients only)
   const handleGoogleSignIn = async () => {
@@ -204,8 +209,8 @@ const PatientLogin = () => {
     
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginData.email,
-        password: loginData.password,
+        email: email.trim(),
+        password,
       });
 
       if (error) throw error;
@@ -250,11 +255,51 @@ const PatientLogin = () => {
       
       toast.success("Welcome back!");
       navigate(getRedirectPath());
-    } catch (error: any) {
-      toast.error(error.message || "Login failed");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Login failed";
+      if (message.toLowerCase().includes("invalid login credentials")) {
+        toast.error("That password didn't work. Use the email sign-in link — no password needed.");
+        setShowPasswordForm(false);
+        setMagicLinkSent(false);
+      } else {
+        toast.error(message);
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const sendSignInLink = async (targetEmail: string) => {
+    const trimmed = targetEmail.trim();
+    if (!trimmed) {
+      toast.error("Enter your email address");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const result = await requestMagicLink(
+        trimmed,
+        "patient",
+        `${window.location.origin}${getRedirectPath()}`,
+      );
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
+      setEmail(trimmed);
+      setMagicLinkSent(true);
+      toast.success("Sign-in link sent! Check your email.");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to send sign-in link";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await sendSignInLink(email);
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -279,32 +324,6 @@ const PatientLogin = () => {
     }
   };
 
-  const handleMagicLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const result = await requestMagicLink(
-        magicLinkEmail,
-        "patient",
-        `${window.location.origin}${getRedirectPath()}`,
-      );
-      if (!result.ok) {
-        toast.error(result.message);
-        return;
-      }
-
-      setMagicLinkSent(true);
-      toast.success("Magic link sent! Check your email.");
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Failed to send magic link";
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Show loading while checking session
   if (checkingSession) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -416,43 +435,35 @@ const PatientLogin = () => {
               </div>
             </div>
 
-            {/* Login Method Toggle */}
-            <div className="flex gap-2 p-1 bg-muted rounded-lg">
-              <button
-                type="button"
-                onClick={() => { setLoginMethod("password"); setMagicLinkSent(false); }}
-                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-                  loginMethod === "password" 
-                    ? "bg-background text-foreground shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Password
-              </button>
-              <button
-                type="button"
-                onClick={() => { setLoginMethod("magic"); setMagicLinkSent(false); }}
-                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-1.5 ${
-                  loginMethod === "magic" 
-                    ? "bg-background text-foreground shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Mail className="w-3.5 h-3.5" />
-                Magic Link
-              </button>
-            </div>
-
-            {/* Password Login Form */}
-            {loginMethod === "password" && (
+            {/* Email sign-in — one field, link by default */}
+            {magicLinkSent ? (
+              <div className="text-center space-y-4 py-4">
+                <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                  <Mail className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-foreground">Check your email</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    We sent a sign-in link to <strong>{email}</strong>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setMagicLinkSent(false); setEmail(""); }}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Use a different email
+                </button>
+              </div>
+            ) : showPasswordForm ? (
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="login-email">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
-                    value={loginData.email}
-                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -461,19 +472,19 @@ const PatientLogin = () => {
                   <div className="relative">
                     <Input
                       id="login-password"
-                      type={showLoginPassword ? "text" : "password"}
-                      value={loginData.password}
-                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                       className="pr-11"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowLoginPassword((prev) => !prev)}
+                      onClick={() => setShowPassword((prev) => !prev)}
                       className="absolute right-2.5 top-1/2 z-20 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-sm text-[#2A2826] transition-colors hover:text-[#B8956A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      aria-label={showLoginPassword ? "Hide password" : "Show password"}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -483,59 +494,52 @@ const PatientLogin = () => {
                 </Button>
                 <button
                   type="button"
-                  onClick={() => setShowForgotPassword(true)}
+                  onClick={() => {
+                    setShowForgotPassword(true);
+                    setResetEmail(email);
+                  }}
                   className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   Forgot password?
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordForm(false)}
+                  className="w-full text-sm text-primary hover:underline"
+                >
+                  Use email sign-in link instead
+                </button>
               </form>
-            )}
-
-            {/* Magic Link Form */}
-            {loginMethod === "magic" && !magicLinkSent && (
+            ) : (
               <form onSubmit={handleMagicLink} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="magic-email">Email</Label>
+                  <Label htmlFor="signin-email">Email</Label>
                   <Input
-                    id="magic-email"
+                    id="signin-email"
                     type="email"
                     placeholder="your@email.com"
-                    value={magicLinkEmail}
-                    onChange={(e) => setMagicLinkEmail(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
+                    autoComplete="email"
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   <Mail className="w-4 h-4 mr-2" />
-                  Send Magic Link
+                  Email me a sign-in link
                 </Button>
                 <p className="text-xs text-center text-muted-foreground">
-                  We'll email you a secure link to sign in — no password needed
+                  We'll send a secure link to your inbox — no password needed
                 </p>
-              </form>
-            )}
-
-            {/* Magic Link Sent Confirmation */}
-            {loginMethod === "magic" && magicLinkSent && (
-              <div className="text-center space-y-4 py-4">
-                <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                  <Mail className="w-8 h-8 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-foreground">Check your email</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    We sent a sign-in link to <strong>{magicLinkEmail}</strong>
-                  </p>
-                </div>
                 <button
                   type="button"
-                  onClick={() => { setMagicLinkSent(false); setMagicLinkEmail(""); }}
-                  className="text-sm text-primary hover:underline"
+                  onClick={() => setShowPasswordForm(true)}
+                  className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
-                  Use a different email
+                  Sign in with password instead
                 </button>
-              </div>
+              </form>
             )}
           </CardContent>
         </Card>

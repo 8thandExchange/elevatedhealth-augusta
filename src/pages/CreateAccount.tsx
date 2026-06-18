@@ -115,7 +115,7 @@ const CreateAccount = () => {
             const body = await authError.context.json();
             if (body?.error_code === "already_registered") {
               toast.error("An account with this email already exists. Please log in.");
-              navigate("/patient/login");
+              navigate(`/patient/login?email=${encodeURIComponent(email)}`);
               return;
             }
             if (body?.error_code === "staff_email_conflict") {
@@ -141,7 +141,7 @@ const CreateAccount = () => {
 
       if (authData?.error_code === "already_registered") {
         toast.error("An account with this email already exists. Please log in.");
-        navigate("/patient/login");
+        navigate(`/patient/login?email=${encodeURIComponent(email)}`);
         return;
       }
 
@@ -176,7 +176,7 @@ const CreateAccount = () => {
         const linkMsg = linkErr instanceof Error ? linkErr.message : String(linkErr);
         if (linkMsg.includes("email_already_linked")) {
           toast.error("This email is linked to another account. Please log in or contact the clinic.");
-          navigate("/patient/login");
+          navigate(`/patient/login?email=${encodeURIComponent(email)}`);
           return;
         }
         if (linkMsg.includes("not_authenticated")) {
@@ -220,7 +220,7 @@ const CreateAccount = () => {
       console.error("Account creation error:", err);
       if (msg.includes("already registered")) {
         toast.error("An account with this email already exists. Please log in.");
-        navigate("/patient/login");
+        navigate(`/patient/login?email=${encodeURIComponent(email)}`);
       } else if (msg.includes("row-level security") || msg.includes("permission denied")) {
         toast.error("We couldn't finish portal setup. Please call the clinic — we're fixing this on our end.");
       } else {
@@ -391,7 +391,7 @@ const CreateAccount = () => {
               <p className="text-xs text-muted-foreground text-center mt-4">
                 Already have an account?{" "}
                 <a href="/patient/login" className="text-accent hover:underline">
-                  Log in here
+                  Sign in with email link
                 </a>
               </p>
             </CardContent>

@@ -6,7 +6,7 @@ const tabs = [
   { icon: Home, label: "Home", path: "/patient/dashboard" },
   { icon: Heart, label: "My Care", path: "/patient/hormone-journey" },
   { icon: MessageCircle, label: "Messages", path: "/consult" },
-  { icon: User, label: "Profile", path: "/patient/intake" },
+  { icon: User, label: "Profile", path: "/patient/dashboard" },
 ];
 
 const BottomTabBar = () => {
