@@ -12,7 +12,7 @@
  * trigger semantics.
  *
  * AUTH POSTURE (security audit R-5, 2026-05-08):
- *   - verify_jwt = true in supabase/config.toml (existing — unchanged)
+ *   - verify_jwt = true in supabase/config.toml
  *   - No additional role check: any authenticated user can compute slots,
  *     because both anonymous storefront flows (post-payment confirmation)
  *     and patient-portal flows need this.

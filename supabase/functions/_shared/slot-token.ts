@@ -1,7 +1,8 @@
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 export const SLOT_SIGNING_KEY_ENV = "SLOT_SIGNING_KEY";
-export const SLOT_TOKEN_TTL_SECONDS = 15 * 60; // 15 minutes
+// IV lane picks a slot before Stripe checkout; allow time for payment + redirect.
+export const SLOT_TOKEN_TTL_SECONDS = 90 * 60; // 90 minutes
 
 type SlotTokenPayloadV1 = {
   v: 1;

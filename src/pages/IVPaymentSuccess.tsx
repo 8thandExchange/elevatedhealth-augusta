@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CheckCircle2, Calendar, Phone, Loader2 } from "lucide-react";
+import { CheckCircle2, Phone, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
+import SlotPicker, { type SlotPickerHandle } from "@/components/booking/SlotPicker";
+import ProviderChooser from "@/components/booking/ProviderChooser";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -22,6 +23,15 @@ const IV_PRE_VISIT = [
   "Bring photo ID; allow 45–60 minutes",
 ];
 
+const SLOT_CONFLICT_CODES = new Set([
+  "room_unavailable",
+  "limit_exceeded",
+  "room_blackout",
+  "slot_taken",
+]);
+
+type BookingPhase = "auto_booking" | "pick_slot";
+
 const IVPaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const therapyName = searchParams.get("therapy") || "IV Therapy";
@@ -29,63 +39,78 @@ const IVPaymentSuccess = () => {
   const slotTokenFromQuery = searchParams.get("slot_token") || "";
   const intakeIdFromQuery = searchParams.get("intake_id") || "";
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
-  const [autoBooking, setAutoBooking] = useState(false);
-  const [slotTokenMissingError, setSlotTokenMissingError] = useState(false);
+  const [phase, setPhase] = useState<BookingPhase | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(null);
+  const slotPickerRef = useRef<SlotPickerHandle>(null);
+  const autoBookStartedRef = useRef(false);
 
-  const handleConfirm = useCallback(async ({
+  const bookSlot = useCallback(
+    async (slotToken: string): Promise<boolean> => {
+      if (!sessionId) {
+        toast.error("Missing payment session id. Please call us at " + SITE_CONFIG.phone);
+        return false;
+      }
+      const { data, error } = await supabase.functions.invoke("book-iv-appointment", {
+        body: {
+          session_id: sessionId,
+          slot_token: slotToken,
+          intake_id: intakeIdFromQuery || undefined,
+        },
+      });
+      const code = (data as { error_code?: string } | null)?.error_code;
+      if (code && SLOT_CONFLICT_CODES.has(code)) {
+        toast.error(
+          (data as { error?: string })?.error ||
+            "That slot is no longer available. Please pick another.",
+        );
+        await slotPickerRef.current?.reload();
+        return false;
+      }
+      if (error || data?.error) {
+        toast.error(data?.error || "Could not book that slot. Please pick another.");
+        return false;
+      }
+      if (data?.appointment) {
+        setConfirmed({
+          id: data.appointment.id,
+          scheduled_at: data.appointment.scheduled_at,
+          duration_minutes: data.appointment.duration_minutes || 60,
+        });
+        return true;
+      }
+      return false;
+    },
+    [intakeIdFromQuery, sessionId],
+  );
+
+  useEffect(() => {
+    if (!sessionId || confirmed || autoBookStartedRef.current) return;
+    if (!slotTokenFromQuery) {
+      setPhase("pick_slot");
+      return;
+    }
+    autoBookStartedRef.current = true;
+    const autoBook = async () => {
+      setPhase("auto_booking");
+      const ok = await bookSlot(slotTokenFromQuery);
+      if (!ok) setPhase("pick_slot");
+    };
+    void autoBook();
+  }, [sessionId, slotTokenFromQuery, confirmed, bookSlot]);
+
+  const handleConfirm = async ({
     slot,
   }: {
     slot: { slot_token: string; start: string };
   }) => {
-    if (!sessionId) {
-      toast.error("Missing payment session id. Please call us at " + SITE_CONFIG.phone);
-      return;
-    }
-    const { data, error } = await supabase.functions.invoke(
-      "book-iv-appointment",
-      {
-        body: {
-          session_id: sessionId,
-          slot_token: slot.slot_token,
-          intake_id: intakeIdFromQuery || undefined,
-        },
-      },
-    );
-    const code = (data as { error_code?: string } | null)?.error_code;
-    if (code === "room_unavailable" || code === "limit_exceeded" || code === "room_blackout" || code === "slot_taken") {
-      setSlotTokenMissingError(true);
-      toast.error((data as { error?: string })?.error || "That slot is no longer available.");
-      return;
-    }
-    if (error || data?.error) {
-      toast.error(data?.error || "Could not book that slot. Please pick another.");
-      return;
-    }
-    if (data?.appointment) {
-      setConfirmed({
-        id: data.appointment.id,
-        scheduled_at: data.appointment.scheduled_at,
-        duration_minutes: data.appointment.duration_minutes || 60,
-      });
-    }
-  }, [intakeIdFromQuery, sessionId]);
+    await bookSlot(slot.slot_token);
+  };
 
-  useEffect(() => {
-    const autoBook = async () => {
-      if (!sessionId || confirmed || autoBooking) return;
-      if (!slotTokenFromQuery) {
-        setSlotTokenMissingError(true);
-        return;
-      }
-      setAutoBooking(true);
-      try {
-        await handleConfirm({ slot: { slot_token: slotTokenFromQuery, start: "" } });
-      } finally {
-        setAutoBooking(false);
-      }
-    };
-    void autoBook();
-  }, [sessionId, slotTokenFromQuery, confirmed, autoBooking, handleConfirm]);
+  const subhead = confirmed
+    ? null
+    : phase === "auto_booking"
+      ? `Your ${therapyName} is paid. Finalizing your appointment now...`
+      : `Your ${therapyName} is paid. Pick a time below and we'll have you in the chair.`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,11 +126,9 @@ const IVPaymentSuccess = () => {
               <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-3">
                 Payment confirmed.
               </h1>
-              {!confirmed && (
+              {subhead && (
                 <p className="font-jost text-lg text-muted-foreground max-w-xl mx-auto">
-                  {slotTokenFromQuery
-                    ? `Your ${therapyName} is paid. Finalizing your appointment now...`
-                    : `Your ${therapyName} is paid. Pick a time below and we'll have you in the chair.`}
+                  {subhead}
                 </p>
               )}
             </div>
@@ -118,7 +141,7 @@ const IVPaymentSuccess = () => {
                 durationMinutes={confirmed.duration_minutes}
                 preVisitInstructions={IV_PRE_VISIT}
               />
-            ) : slotTokenFromQuery ? (
+            ) : phase === "auto_booking" ? (
               <Card>
                 <CardContent className="p-8 flex items-center justify-center">
                   <div className="text-center space-y-3">
@@ -129,28 +152,22 @@ const IVPaymentSuccess = () => {
                   </div>
                 </CardContent>
               </Card>
-            ) : (
+            ) : phase === "pick_slot" ? (
               <Card>
                 <CardContent className="p-6 md:p-8 space-y-6">
-                  <div className="text-center space-y-3">
-                    <Calendar className="h-6 w-6 text-accent mx-auto" />
-                    <h2 className="font-playfair text-xl text-foreground">
-                      We could not finalize your slot from this link.
-                    </h2>
-                  </div>
-                  <p className="text-muted-foreground font-jost">
-                    Please restart from IV screening so a valid slot token is attached before checkout.
-                  </p>
-                  {slotTokenMissingError && (
-                    <p className="text-sm text-destructive text-center">
-                      Missing or invalid slot token for this payment session.
-                    </p>
-                  )}
-                  <div className="flex justify-center">
-                    <Button asChild>
-                      <a href="/book/iv">Return to IV services</a>
-                    </Button>
-                  </div>
+                  <ProviderChooser
+                    serviceLine="iv"
+                    selectedProviderId={providerId}
+                    onChange={setProviderId}
+                  />
+                  <SlotPicker
+                    ref={slotPickerRef}
+                    serviceLine="iv"
+                    durationMinutes={60}
+                    providerId={providerId || undefined}
+                    onConfirm={handleConfirm}
+                    confirmLabel="Book this time"
+                  />
                   <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-jost pt-2 border-t border-border">
                     <Phone className="h-4 w-4" />
                     <span>
@@ -163,6 +180,12 @@ const IVPaymentSuccess = () => {
                       </a>
                     </span>
                   </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-8 flex items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-accent" />
                 </CardContent>
               </Card>
             )}

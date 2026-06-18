@@ -109,6 +109,15 @@ verify_jwt = false
 [functions.create-iv-drip-checkout]
 verify_jwt = false
 
+[functions.get-available-slots]
+verify_jwt = true
+
+[functions.book-iv-appointment]
+verify_jwt = true
+
+[functions.book-consult-appointment]
+verify_jwt = true
+
 [functions.send-flagged-patient-notification]
 verify_jwt = false
 
