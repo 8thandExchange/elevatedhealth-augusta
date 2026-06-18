@@ -229,9 +229,15 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
       {tier1IntakeComplete === false && (
         <Alert className="mb-6 border-accent/40 bg-accent/5">
           <AlertDescription className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between font-jost">
-            <span>Please complete your required clinic consents before clinical services.</span>
+            <span>
+              {!patient.dob
+                ? "Enter your date of birth, then sign your required clinic consents."
+                : "Please complete your required clinic consents before clinical services."}
+            </span>
             <Button asChild size="sm" className="shrink-0">
-              <Link to="/intake/consents">Complete consents</Link>
+              <Link to="/intake/consents">
+                {!patient.dob ? "Add date of birth" : "Complete consents"}
+              </Link>
             </Button>
           </AlertDescription>
         </Alert>

@@ -12,7 +12,10 @@ import { Loader2, CheckCircle2, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function PatientIntakeConsents() {
   const navigate = useNavigate();
@@ -21,6 +24,8 @@ export default function PatientIntakeConsents() {
   const [checking, setChecking] = useState(true);
   const [alreadyComplete, setAlreadyComplete] = useState(false);
   const [signedTypes, setSignedTypes] = useState<Set<string>>(new Set());
+  const [dob, setDob] = useState("");
+  const [savingDob, setSavingDob] = useState(false);
 
   useEffect(() => {
     async function check() {
@@ -61,6 +66,31 @@ export default function PatientIntakeConsents() {
     }
   };
 
+  const handleSaveDob = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!patient?.id) return;
+    const trimmed = dob.trim();
+    if (!trimmed) {
+      toast.error("Please enter your date of birth.");
+      return;
+    }
+
+    setSavingDob(true);
+    try {
+      const { error } = await supabase
+        .from("patients")
+        .update({ dob: trimmed })
+        .eq("id", patient.id);
+      if (error) throw error;
+      invalidatePatient();
+      toast.success("Date of birth saved. You can sign your consents below.");
+    } catch {
+      toast.error("Could not save your date of birth. Please try again or call the clinic.");
+    } finally {
+      setSavingDob(false);
+    }
+  };
+
   if (isLoading || checking) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -78,16 +108,34 @@ export default function PatientIntakeConsents() {
     return (
       <div className="min-h-screen bg-background">
         <PatientNavbar patientName={patient.full_name} avatarUrl={patient.avatar_url} />
-        <main className="container mx-auto max-w-lg px-4 py-12 space-y-4">
-          <Alert>
-            <AlertDescription>
-              We need your date of birth before you can sign consents. Please complete the medical
-              intake questionnaire first — it only takes a few minutes.
-            </AlertDescription>
-          </Alert>
-          <Button asChild className="w-full">
-            <Link to="/patient/intake">Complete medical intake</Link>
-          </Button>
+        <main className="container mx-auto max-w-lg px-4 py-12">
+          <Card className="border-border/60">
+            <CardHeader>
+              <CardTitle className="font-playfair text-2xl font-light">Date of birth</CardTitle>
+              <CardDescription>
+                We need your date of birth on file before you can sign required clinic consents.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSaveDob} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="consent-dob">Date of birth</Label>
+                  <Input
+                    id="consent-dob"
+                    type="date"
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
+                    required
+                    autoComplete="bday"
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={savingDob || !dob.trim()}>
+                  {savingDob && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Save and continue to consents
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </main>
       </div>
     );
