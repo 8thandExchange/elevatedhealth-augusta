@@ -27,7 +27,7 @@ const steps = [
 const HowItWorksSection = () => {
   const { ref, isVisible } = useScrollReveal();
   return (
-    <section ref={ref} className="py-24 md:py-32 bg-background">
+    <section ref={ref} className="section-band-white">
       <div className="container mx-auto px-6 lg:px-8">
         <div className={`max-w-2xl mx-auto text-center mb-16 ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label mb-4">How It Works</p>

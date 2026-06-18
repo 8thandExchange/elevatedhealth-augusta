@@ -8,7 +8,7 @@ const ClinicalTeamSection = () => {
   const hasPortrait = useMarketingImageAvailable(MARKETING_IMAGES.physician) === true;
 
   return (
-    <section ref={ref} className="py-24 md:py-32 bg-muted/30">
+    <section ref={ref} className="section-band-surface">
       <div className="container mx-auto px-6 lg:px-8">
         <div
           className={`max-w-5xl mx-auto grid gap-12 lg:gap-20 items-center ${

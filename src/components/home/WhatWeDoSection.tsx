@@ -17,7 +17,7 @@ const WhatWeDoSection = () => {
   const { ref, isVisible } = useScrollReveal();
 
   return (
-    <section ref={ref} className="py-24 md:py-32 bg-muted/30">
+    <section ref={ref} className="section-band-surface">
       <div className="container mx-auto px-6 lg:px-8">
         <div className={`max-w-2xl mx-auto text-center mb-6 ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label mb-4">What We Do</p>

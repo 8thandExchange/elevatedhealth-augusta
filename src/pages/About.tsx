@@ -14,11 +14,6 @@ const TEAM = [
     name: "Dr. Dennis A. Williams, MD",
     role: "Supervising Physician",
   },
-  {
-    id: "marshall",
-    name: "Caroline Marshall, RN BSN",
-    role: "Clinical Lead",
-  },
 ] as const;
 
 const About = () => {
@@ -53,9 +48,6 @@ const About = () => {
                 something better.
               </p>
               <p>
-                
-              </p>
-              <p>
                 Every protocol at Elevated Health Augusta is physician-designed. Every prescription is physician-signed. 
                 Every patient is physician-supervised. Our clinical team works together — physicians 
                 and nurses — under direct medical oversight on your individualized care plan.
@@ -87,19 +79,15 @@ const About = () => {
 
         <div className="section-divider max-w-3xl mx-auto" />
 
-        {/* Our Team — photography and bios added when assets are delivered */}
         <section className="py-16 md:py-24 bg-muted/20">
-          <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+          <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12">
               <p className="section-label mb-4">Our Team</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground">
-                The physicians and nurses behind Elevated Health Augusta
+                Physician leadership
               </h2>
-              <p className="font-jost font-light text-muted-foreground mt-4 max-w-2xl mx-auto leading-relaxed">
-                Real credentials, local presence — the same clinical leadership you&apos;ll meet in Evans.
-              </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-10 md:gap-8">
+            <div className="grid md:grid-cols-2 gap-10 md:gap-12 max-w-3xl mx-auto">
               {TEAM.map((member) => (
                 <article key={member.id} className="flex flex-col items-center text-center space-y-3">
                   <div>

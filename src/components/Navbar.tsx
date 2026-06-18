@@ -45,8 +45,17 @@ const Navbar = () => {
   const handleLogout = async () => { await logout(); };
 
   const navBg = isScrolled || !isHomePage
-    ? "bg-background/95 backdrop-blur-md border-b border-border/30"
+    ? "bg-background/95 backdrop-blur-md border-b border-border shadow-[var(--shadow-sm)]"
     : "bg-transparent border-b border-transparent";
+
+  const onDarkNav = isHomePage && !isScrolled;
+  const linkClass = onDarkNav
+    ? "text-sm font-jost font-medium text-background/80 hover:text-background transition-colors"
+    : "text-sm font-jost font-medium text-muted-foreground hover:text-foreground transition-colors";
+  const portalClass = onDarkNav
+    ? "text-sm font-jost text-background/75 hover:text-background transition-colors"
+    : "text-sm font-jost text-muted-foreground hover:text-foreground transition-colors";
+  const menuIconClass = onDarkNav ? "text-background" : "text-foreground";
 
   const navLinks = [
     { label: "Home", action: () => { navigate("/"); scrollToSection("hero"); } },
@@ -68,7 +77,7 @@ const Navbar = () => {
             {/* Logo */}
             <button 
               onClick={() => { navigate("/"); scrollToSection("hero"); }}
-              className="flex items-center"
+              className={`flex items-center ${onDarkNav ? "bg-background rounded-sm px-2.5 py-1.5 shadow-[var(--shadow-sm)]" : ""}`}
               aria-label="Elevated Health Augusta home"
             >
               <img
@@ -84,7 +93,7 @@ const Navbar = () => {
                 <button
                   key={item.label}
                   onClick={item.action}
-                  className="text-sm font-jost font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className={linkClass}
                 >
                   {item.label}
                 </button>
@@ -131,13 +140,15 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => navigate("/patient/login")}
-                  className="text-sm font-jost text-muted-foreground hover:text-foreground transition-colors"
+                  className={portalClass}
                 >
                   Patient Portal
                 </button>
               )}
               <Button 
-                className="font-jost font-medium text-sm tracking-wide px-6 py-2 rounded-sm"
+                variant={onDarkNav ? "heroLight" : "default"}
+                size="default"
+                className="font-jost font-medium text-sm tracking-wide"
                 onClick={openBooking}
               >
                 Book Now
@@ -146,7 +157,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 text-foreground"
+              className={`lg:hidden p-2 ${menuIconClass}`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
             >

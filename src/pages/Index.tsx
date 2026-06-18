@@ -31,7 +31,7 @@ const Index = () => {
         <HomeClinicGallery />
         <div className="section-divider max-w-5xl mx-auto" />
 
-        <section className="py-16 md:py-20 bg-background">
+        <section className="py-16 md:py-20 bg-surface">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <EverythingIncludedPillars />
           </div>
@@ -58,7 +58,7 @@ const Index = () => {
         {/* TODO: Press & Recognition section — hidden until at least 4 real partner/press logos exist. */}
 
         {/* Credibility bar */}
-        <section className="py-12 bg-background">
+        <section className="py-12 bg-surface border-t border-border">
           <div className="container mx-auto px-6">
             <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-xs font-jost font-medium tracking-[2.5px] uppercase text-center">
               <span>Physician-owned · Evans, GA</span>

@@ -188,63 +188,60 @@ const IVLounge = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
 
-        {/* HERO */}
-        <section className="relative min-h-[88vh] md:min-h-[90vh] flex items-center pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-          <div className="absolute top-20 -right-32 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        {/* HERO — navy band matches homepage; clear CTA hierarchy */}
+        <section className="relative min-h-[80vh] md:min-h-[85vh] flex items-center pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-primary text-primary-foreground">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-95" aria-hidden />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(199_89%_39%_/_0.18),transparent_55%)]" aria-hidden />
 
           <div className="relative container mx-auto px-6 lg:px-8 max-w-5xl text-center">
-            <Badge className="mb-6 bg-card text-foreground border border-accent/30 hover:bg-card font-jost">
+            <Badge className="mb-6 bg-primary-foreground/10 text-primary-foreground border border-primary-foreground/25 hover:bg-primary-foreground/15 font-jost">
               Walk-in friendly · No consult needed
             </Badge>
-            <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl xl:text-[5.25rem] text-foreground leading-[1.06] mb-8 md:mb-10">
+            <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl xl:text-[4.5rem] text-primary-foreground leading-[1.06] mb-8 md:mb-10">
               Pick your drip.<br />
-              <span className="italic text-accent">Book in 60 seconds.</span>
+              <span className="italic text-accent-light">Book in 60 seconds.</span>
             </h1>
-            <p className="font-jost font-light text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10">
+            <p className="font-jost font-light text-lg md:text-xl text-primary-foreground/85 max-w-2xl mx-auto mb-10">
               Physician-formulated IV therapy, administered by a registered nurse in our private Augusta lounge.
               Choose your drip, add boosters, pay online — schedule instantly after checkout.
             </p>
 
-            {/* How it works mini-strip */}
-            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-xs md:text-sm font-jost text-foreground/80 mb-6">
-              <span className="inline-flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-accent text-accent-foreground text-[11px] font-semibold flex items-center justify-center">1</span> Pick your drip</span>
-              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="inline-flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-accent text-accent-foreground text-[11px] font-semibold flex items-center justify-center">2</span> Complete screening</span>
-              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="inline-flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-accent text-accent-foreground text-[11px] font-semibold flex items-center justify-center">3</span> Pick slot & pay</span>
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-xs md:text-sm font-jost text-primary-foreground/90 mb-8">
+              <span className="inline-flex items-center gap-2"><span className="w-7 h-7 rounded-sm bg-primary-foreground/15 border border-primary-foreground/25 text-[11px] font-semibold flex items-center justify-center">1</span> Pick your drip</span>
+              <ArrowRight className="h-3.5 w-3.5 text-primary-foreground/50" />
+              <span className="inline-flex items-center gap-2"><span className="w-7 h-7 rounded-sm bg-primary-foreground/15 border border-primary-foreground/25 text-[11px] font-semibold flex items-center justify-center">2</span> Complete screening</span>
+              <ArrowRight className="h-3.5 w-3.5 text-primary-foreground/50" />
+              <span className="inline-flex items-center gap-2"><span className="w-7 h-7 rounded-sm bg-primary-foreground/15 border border-primary-foreground/25 text-[11px] font-semibold flex items-center justify-center">3</span> Pick slot & pay</span>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
               <Button
                 size="lg"
-                className="rounded-full"
+                variant="heroLight"
                 onClick={() => document.getElementById("the-menu")?.scrollIntoView({ behavior: "smooth" })}
               >
-                Browse the menu <ArrowRight className="ml-2 h-4 w-4" />
+                Browse the menu <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <Button
                 size="lg"
-                variant="outline"
-                className="rounded-full"
+                variant="heroOutline"
                 onClick={() => openAssistantChat()}
               >
                 Not sure? Chat with us
               </Button>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent" /> RN-administered</div>
-              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent" /> 45–60 minute sessions</div>
-              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent" /> Same-day availability</div>
-              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent" /> Memberships save 20%</div>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-primary-foreground/75 font-jost">
+              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent-light" /> RN-administered</div>
+              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent-light" /> 45–60 minute sessions</div>
+              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent-light" /> Same-day availability</div>
+              <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent-light" /> Memberships save 20%</div>
             </div>
           </div>
         </section>
 
         {/* PRICING STRIP (Pattern B) */}
-        <section className="py-16 md:py-20 bg-background border-y border-border">
+        <section className="py-16 md:py-20 bg-surface border-y border-border">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
               {[
@@ -377,8 +374,8 @@ const IVLounge = () => {
                             size="sm"
                             className={`rounded-full transition-all ${
                               isSelected
-                                ? "bg-accent text-accent-foreground"
-                                : "bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
+                                ? "bg-primary text-primary-foreground ring-2 ring-primary/25"
+                                : "bg-secondary text-secondary-foreground border border-primary/20 hover:bg-secondary-light"
                             }`}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -529,7 +526,7 @@ const IVLounge = () => {
                             onClick={handleCheckout}
                             disabled={checkingOut}
                             size="lg"
-                            className="w-full bg-primary text-accent hover:bg-primary-light font-jost font-medium tracking-wide rounded-sm py-6"
+                            className="w-full font-jost font-medium tracking-wide rounded-sm py-6"
                           >
                             {checkingOut ? "Loading..." : <>Continue to Screening <ArrowRight className="ml-2 h-4 w-4" /></>}
                           </Button>
@@ -556,7 +553,7 @@ const IVLounge = () => {
         <section className="py-16 md:py-20">
           <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
             <div className="border-2 border-accent/30 rounded-2xl p-8 md:p-10 bg-gradient-to-br from-accent/5 to-transparent">
-              <Badge className="mb-4 bg-accent text-accent-foreground">Same-day appointments</Badge>
+              <Badge className="mb-4 bg-secondary text-secondary-foreground border border-primary/15">Same-day appointments</Badge>
               <h2 className="font-playfair text-2xl md:text-3xl text-foreground mb-4">
                 Suffering from morning sickness? You don't have to.
               </h2>
@@ -566,7 +563,7 @@ const IVLounge = () => {
               </p>
               <p className="font-jost font-medium text-foreground mb-6">$185 · OB-referred welcome</p>
               <a href="tel:+17067603470">
-                <Button className="bg-primary text-accent hover:bg-primary-light font-jost font-medium tracking-wide rounded-sm">
+                <Button className="font-jost font-medium tracking-wide rounded-sm">
                   Call to book same-day <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </a>

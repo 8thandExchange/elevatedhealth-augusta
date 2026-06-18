@@ -64,7 +64,7 @@ export function RoomBlackouts() {
               className={[
                 "font-jost text-xs uppercase tracking-[0.14em] px-4 py-2 transition-colors",
                 filter === f
-                  ? "bg-primary text-accent"
+                  ? "bg-primary text-primary-foreground"
                   : "bg-background text-muted-foreground hover:text-foreground",
               ].join(" ")}
             >
@@ -74,7 +74,7 @@ export function RoomBlackouts() {
         </div>
         <button
           onClick={() => setShowForm((s) => !s)}
-          className="font-jost text-xs uppercase tracking-[0.14em] px-4 py-2 bg-accent text-primary-foreground rounded-sm hover:opacity-90 transition-opacity"
+          className="font-jost text-xs uppercase tracking-[0.14em] px-4 py-2 bg-primary text-primary-foreground rounded-sm hover:bg-primary-dark transition-opacity"
         >
           {showForm ? "Cancel" : "+ New Blackout"}
         </button>
@@ -223,7 +223,7 @@ function BlackoutForm({ rooms, onCreated }: { rooms: RoomPick[]; onCreated: () =
       <button
         onClick={() => void submit()}
         disabled={saving}
-        className="font-jost text-xs uppercase tracking-[0.14em] px-5 py-2.5 bg-primary text-accent rounded-sm hover:bg-primary-light transition-colors disabled:opacity-50"
+        className="font-jost text-xs uppercase tracking-[0.14em] px-5 py-2.5 bg-primary text-primary-foreground rounded-sm hover:bg-primary-dark transition-colors disabled:opacity-50"
       >
         {saving ? "Creating…" : "Create Blackout"}
       </button>

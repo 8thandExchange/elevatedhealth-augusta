@@ -147,7 +147,7 @@ const Membership = () => {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 onClick={openConsult}
-                className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-8 py-6 rounded-sm hover:bg-primary-light"
+                className="font-jost font-medium tracking-wide text-sm px-8 py-6 rounded-sm"
               >
                 Book a {PRICE_CONSULT} Wellness Assessment
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -310,7 +310,7 @@ const Membership = () => {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 onClick={openConsult}
-                className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm hover:bg-primary-light"
+                className="font-jost font-medium tracking-wide text-sm px-10 py-6 rounded-sm"
               >
                 Book a {PRICE_CONSULT} Wellness Assessment
                 <ArrowRight className="ml-2 h-4 w-4" />

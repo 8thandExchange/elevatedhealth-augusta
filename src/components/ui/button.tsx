@@ -11,12 +11,18 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary-dark rounded-none",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-none",
-        outline: "border border-primary/30 bg-background text-foreground hover:bg-primary/5 hover:border-primary rounded-none",
-        secondary: "bg-accent text-accent-foreground hover:brightness-95 rounded-none",
-        ghost: "bg-transparent text-foreground hover:text-accent normal-case tracking-normal rounded-full",
+        outline:
+          "border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground rounded-none",
+        secondary:
+          "bg-secondary text-secondary-foreground border border-primary/15 hover:bg-secondary-light rounded-none",
+        ghost: "bg-transparent text-foreground hover:text-primary normal-case tracking-normal rounded-full",
         link: "text-primary underline-offset-4 hover:underline normal-case tracking-normal",
-        hero: "bg-primary text-primary-foreground hover:bg-primary-dark rounded-none",
-        cta: "bg-primary text-primary-foreground hover:bg-primary-dark rounded-none",
+        hero: "bg-primary text-primary-foreground hover:bg-primary-dark rounded-none shadow-[var(--shadow-md)]",
+        cta: "bg-primary text-primary-foreground hover:bg-primary-dark rounded-none shadow-[var(--shadow-md)]",
+        heroLight:
+          "bg-background text-primary border border-background hover:bg-background/90 rounded-none shadow-[var(--shadow-glow)]",
+        heroOutline:
+          "border-2 border-background/50 bg-transparent text-background hover:bg-background/10 rounded-none",
       },
       size: {
         default: "h-11 px-7 py-2",

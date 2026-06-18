@@ -276,7 +276,7 @@ function RoomEditForm({
               notes,
             })
           }
-          className="font-jost text-xs uppercase tracking-[0.14em] px-4 py-2 bg-primary text-accent rounded-sm hover:bg-primary-light transition-colors"
+          className="font-jost text-xs uppercase tracking-[0.14em] px-4 py-2 bg-primary text-primary-foreground rounded-sm hover:bg-primary-dark transition-colors"
         >
           Save changes
         </button>

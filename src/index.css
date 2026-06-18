@@ -16,20 +16,25 @@
     --primary-foreground: 0 0% 100%;
     --primary-light: 207 85% 32%;
     --primary-dark: 207 100% 18%;
-    --secondary: 220 3% 66%;
+    --secondary: 220 10% 93%;
     --secondary-foreground: 207 100% 25%;
-    --secondary-light: 220 3% 78%;
+    --secondary-light: 220 8% 88%;
     --secondary-dark: 220 3% 52%;
-    --accent: 207 100% 25%;
+    /* Steel blue — highlights, icons, links (distinct from navy primary CTAs) */
+    --accent: 199 89% 39%;
     --accent-foreground: 0 0% 100%;
-    --accent-light: 207 85% 32%;
-    --gold: 207 100% 25%;
+    --accent-light: 199 75% 52%;
+    --surface: 208 40% 97%;
+    --surface-foreground: 207 100% 25%;
+    --gold: 199 89% 39%;
     --gold-foreground: 0 0% 100%;
     --gold-light: 207 85% 32%;
     --gold-dark: 207 100% 18%;
-    --soft-gold: 220 3% 88%;
+    --soft-gold: 220 10% 93%;
     --muted: 220 8% 96%;
     --muted-foreground: 220 3% 46%;
+    --surface: 208 40% 97%;
+    --surface-foreground: 207 100% 25%;
     --destructive: 0 55% 50%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 8% 90%;
@@ -40,13 +45,13 @@
     --color-ink: #00477E;
     --color-paper: #FFFFFF;
     --color-tagline: #A7A9AC;
-    --color-accent: #00477E;
+    --color-accent: #0B7BB8;
     --color-accent-on: #FFFFFF;
     --rule: 1px solid var(--color-tagline);
-    --shadow-sm: none;
-    --shadow-md: none;
-    --shadow-lg: none;
-    --shadow-glow: none;
+    --shadow-sm: 0 1px 2px hsl(207 100% 25% / 0.06);
+    --shadow-md: 0 4px 16px hsl(207 100% 25% / 0.08);
+    --shadow-lg: 0 12px 40px hsl(207 100% 25% / 0.12);
+    --shadow-glow: 0 8px 32px hsl(207 100% 25% / 0.18);
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
@@ -179,6 +184,23 @@
   height: 1px;
   background: hsl(220 3% 66% / 0.45);
   width: 100%;
+}
+
+/* Alternating section bands */
+.section-band {
+  @apply py-24 md:py-32;
+}
+
+.section-band-white {
+  @apply section-band bg-background;
+}
+
+.section-band-surface {
+  @apply section-band bg-surface;
+}
+
+.section-band-navy {
+  @apply section-band bg-primary text-primary-foreground;
 }
 
 /* Luxury section spacing utility */

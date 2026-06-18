@@ -188,7 +188,7 @@ const MedicationConfirmed = () => {
             </Card>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button asChild className="bg-primary text-accent font-jost font-medium tracking-wide text-sm px-8 py-6 rounded-sm hover:bg-primary-light">
+              <Button asChild className="font-jost font-medium tracking-wide text-sm px-8 py-6 rounded-sm">
                 <Link to="/patient/dashboard">
                   Go to your dashboard
                   <ArrowRight className="ml-2 h-4 w-4" />

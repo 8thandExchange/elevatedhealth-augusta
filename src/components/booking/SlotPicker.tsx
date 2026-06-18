@@ -156,7 +156,7 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
               disabled={!has}
               className={`p-3 rounded-lg border text-center transition-all ${
                 sel
-                  ? "bg-accent text-accent-foreground border-accent"
+                  ? "bg-primary text-primary-foreground border-primary"
                   : has
                     ? "bg-card hover:border-accent cursor-pointer"
                     : "bg-muted/30 text-muted-foreground cursor-not-allowed opacity-50"
@@ -187,7 +187,7 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
                     key={s.start + s.slot_token}
                     onClick={() => setSelectedSlot(s)}
                     className={`px-3 py-2 rounded-lg border text-sm font-jost transition-all ${
-                      sel ? "bg-accent text-accent-foreground border-accent" : "hover:border-accent"
+                      sel ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary hover:bg-secondary/80"
                     }`}
                   >
                     {formatClinicTime(s.start)}

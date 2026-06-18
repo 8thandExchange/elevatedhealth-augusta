@@ -68,7 +68,7 @@ export function BookingLimitsTable() {
       <div className="flex justify-end">
         <button
           onClick={() => setShowForm((s) => !s)}
-          className="font-jost text-xs uppercase tracking-[0.14em] px-4 py-2 bg-accent text-primary-foreground rounded-sm hover:opacity-90 transition-opacity"
+          className="font-jost text-xs uppercase tracking-[0.14em] px-4 py-2 bg-primary text-primary-foreground rounded-sm hover:bg-primary-dark transition-opacity"
         >
           {showForm ? "Cancel" : "+ New Limit"}
         </button>
@@ -305,7 +305,7 @@ function LimitForm({ onCreated }: { onCreated: () => void }) {
       <button
         onClick={() => void submit()}
         disabled={saving}
-        className="font-jost text-xs uppercase tracking-[0.14em] px-5 py-2.5 bg-primary text-accent rounded-sm hover:bg-primary-light transition-colors disabled:opacity-50"
+        className="font-jost text-xs uppercase tracking-[0.14em] px-5 py-2.5 bg-primary text-primary-foreground rounded-sm hover:bg-primary-dark transition-colors disabled:opacity-50"
       >
         {saving ? "Creating…" : "Create Limit"}
       </button>

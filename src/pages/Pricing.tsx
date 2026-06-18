@@ -1595,7 +1595,7 @@ const Pricing = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 size="lg" 
-                className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                variant="outline"
                 onClick={() => openAssistantChat()}
               >
                 <span className="inline-flex items-center gap-2 bg-green-500/20 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full mr-2">

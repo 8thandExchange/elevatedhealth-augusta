@@ -224,7 +224,6 @@ export const WhyTransdermalCream = ({ onBookConsultation }: WhyTransdermalCreamP
           <Button 
             size="lg" 
             onClick={onBookConsultation}
-            className="bg-accent hover:bg-accent-light text-accent-foreground"
           >
             Book Your $79 Wellness Assessment
           </Button>

@@ -65,7 +65,8 @@ const NotReadyToBook = ({
             {onOpenChat && (
               <Button 
                 onClick={onOpenChat} 
-                className="gap-2 rounded-full bg-accent text-accent-foreground hover:bg-accent/90"
+                variant="default"
+                className="gap-2 rounded-full"
               >
                 <MessageCircle className="h-5 w-5" />
                 {ctaText || "Chat with Virtual Care Team"}
@@ -107,7 +108,8 @@ const NotReadyToBook = ({
           {onOpenChat && (
             <Button 
               onClick={onOpenChat} 
-              className="gap-2 rounded-full bg-accent text-accent-foreground hover:bg-accent/90"
+              variant="default"
+              className="gap-2 rounded-full"
             >
               <MessageCircle className="h-5 w-5" />
               {ctaText || "Chat with Virtual Care Team"}
@@ -183,7 +185,8 @@ const NotReadyToBook = ({
         {onOpenChat && (
           <Button 
             onClick={onOpenChat} 
-            className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90"
+            variant="default"
+            className="gap-2"
           >
             <MessageCircle className="h-5 w-5" />
             {ctaText || "Chat with Virtual Care Team"}

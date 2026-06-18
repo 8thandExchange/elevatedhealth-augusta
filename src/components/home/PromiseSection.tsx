@@ -3,7 +3,7 @@ import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 const PromiseSection = () => {
   const { ref, isVisible } = useScrollReveal();
   return (
-    <section ref={ref} className="py-24 md:py-32 bg-background">
+    <section ref={ref} className="section-band-white">
       <div className="container mx-auto px-6 lg:px-8">
         <div className={`max-w-3xl mx-auto text-center ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label mb-6">Our Promise</p>

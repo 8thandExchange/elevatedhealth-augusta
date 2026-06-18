@@ -47,7 +47,7 @@ export function BrandTherapyMark({
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-full border-2 border-accent/50 bg-primary text-accent shadow-inner",
+        "flex items-center justify-center rounded-full border-2 border-primary/30 bg-primary text-primary-foreground shadow-inner",
         className
       )}
       style={{ width: size, height: size }}
