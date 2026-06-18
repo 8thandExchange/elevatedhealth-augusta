@@ -68,6 +68,7 @@ import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 import InventoryAlerts from "@/components/provider/InventoryAlerts";
 import PatientDatabase from "@/components/provider/PatientDatabase";
 import { PatientConsentStatusSection } from "@/components/provider/PatientConsentStatusSection";
+import GfeClearanceCard from "@/components/provider/GfeClearanceCard";
 import { PatientAllergies } from "@/components/provider/PatientAllergies";
 import { PatientCurrentMedications } from "@/components/provider/PatientCurrentMedications";
 import { PatientProblemList } from "@/components/provider/PatientProblemList";
@@ -2290,6 +2291,15 @@ const ProviderDashboard = () => {
                 patientPhone={selectedPatient.patient.phone ?? null}
               />
 
+              <GfeClearanceCard
+                patientId={selectedPatient.patient.id}
+                patientName={selectedPatient.patient.full_name}
+                patientEmail={selectedPatient.patient.email ?? null}
+                patientPhone={selectedPatient.patient.phone ?? null}
+                patientDob={selectedPatient.patient.dob ?? null}
+                onboardingStatus={selectedPatient.patient.onboarding_status ?? null}
+              />
+
               <Card className="border-border/50">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex flex-wrap items-center justify-between gap-2">
@@ -2909,8 +2919,8 @@ const ProviderDashboard = () => {
 
               {/* Delete Confirmation Modal */}
               <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
+                <AlertDialogContent layout="pinned">
+                  <AlertDialogHeader className="border-b border-border px-6 py-4 pt-6 text-left">
                     <AlertDialogTitle className="text-red-600 flex items-center gap-2">
                       <Trash2 className="w-5 h-5" />
                       Delete Patient Permanently
@@ -2933,7 +2943,7 @@ const ProviderDashboard = () => {
                       </div>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
+                  <AlertDialogFooter className="px-6 py-4">
                     <AlertDialogCancel onClick={() => {
                       setDeleteConfirmText("");
                       setIsDeleteModalOpen(false);
@@ -3051,7 +3061,7 @@ const ProviderDashboard = () => {
               )}
             </DialogBody>
 
-          <DialogFooter className="border-border px-6 py-4">
+          <DialogFooter className="shrink-0 border-t border-border px-6 py-4">
             <Button
               type="button"
               variant="default"

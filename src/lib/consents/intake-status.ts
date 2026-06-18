@@ -2,6 +2,7 @@
 import { TIER_1_CONSENTS } from "@/data/consents";
 import { supabase } from "@/integrations/supabase/client";
 import { getValidConsents } from "./consent-helpers";
+import { isConsentActive } from "@/lib/clinicTime";
 
 const sb = supabase as any;
 
@@ -41,24 +42,26 @@ export async function getTier1ResumeStepIndex(patientId: string): Promise<number
  * in the same sitting; otherwise start a new session id.
  */
 export async function resolveIntakeSessionId(patientId: string): Promise<string> {
-  const now = new Date().toISOString();
   const { data: rows, error } = await sb
     .from("consent_records")
-    .select("signed_session_id, consent_type")
+    .select("signed_session_id, consent_type, expires_at")
     .eq("patient_id", patientId)
     .in("consent_type", TIER_1_CONSENTS)
     .is("revoked_at", null)
-    .gt("expires_at", now)
     .not("signed_session_id", "is", null)
     .order("signed_at", { ascending: false });
 
   if (error) throw error;
-  if (!rows?.length) {
+
+  const activeRows =
+    rows?.filter((row: { expires_at: string }) => isConsentActive(row.expires_at)) ?? [];
+
+  if (!activeRows.length) {
     return crypto.randomUUID();
   }
 
   const bySession = new Map<string, Set<string>>();
-  for (const row of rows) {
+  for (const row of activeRows) {
     const sid = row.signed_session_id as string;
     if (!sid || sid.startsWith("dev-preview:")) continue;
     if (!bySession.has(sid)) bySession.set(sid, new Set());

@@ -7,6 +7,7 @@ import {
   getRequiredConsentsForRxContext,
   type RxConsentResolutionInput,
 } from "@/data/consents/medication-consent-mapping";
+import { formatClinicDateKey, isConsentActive } from "@/lib/clinicTime";
 
 /** Tier 1 intake bundle + Notice of Privacy Practices (required on file per clinic policy). */
 export const TIER_1_REQUIRED_CONSENTS: ConsentType[] = [
@@ -270,13 +271,19 @@ function classifyPatientConsent(required: ConsentType[], rows: RawRecord[]): Pat
 
     const expiryMs = new Date(rec.expires_at).getTime();
     const graceEndMs = expiryMs + GRACE_MS;
+    const stillActive = isConsentActive(rec.expires_at, new Date(now));
 
-    if (expiryMs > now) {
+    if (stillActive) {
       if (expiryMs <= horizon) {
         pushUniqueExpiring({
           consent_type: req,
           expires_at: rec.expires_at,
-          days_remaining: Math.max(0, dayBuckets(expiryMs - now)),
+          days_remaining: Math.max(
+            0,
+            dayBuckets(
+              new Date(formatClinicDateKey(rec.expires_at) + "T12:00:00").getTime() - now,
+            ),
+          ),
         });
       }
       continue;
@@ -304,7 +311,7 @@ function classifyPatientConsent(required: ConsentType[], rows: RawRecord[]): Pat
 
     const expiryMs = new Date(rec.expires_at).getTime();
     const graceEndMs = expiryMs + GRACE_MS;
-    const inGrace = expiryMs <= now && graceEndMs > now;
+    const inGrace = !isConsentActive(rec.expires_at, new Date(now)) && graceEndMs > now;
     details.push({
       consent_type: t,
       consent_version_id: rec.consent_version_id,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { format } from "date-fns";
+import { formatClinicDate, isConsentActive } from "@/lib/clinicTime";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,10 +27,19 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ConsentDocumentDisplay } from "@/components/consents/ConsentDocumentDisplay";
+import { PatientOutboundPreview } from "@/components/provider/PatientOutboundPreview";
+import {
+  buildIntakeLinkMessages,
+  buildIntakeMagicLinkUrl,
+  firstNameFromFullName,
+  intakeConsentTypeDisplayLabel,
+} from "@/lib/intakeLinkMessages";
 
 interface PatientConsentStatusSectionProps {
   patientId: string;
@@ -76,8 +85,9 @@ function rowStatusLabel(
   }
 
   const exp = new Date(record.expires_at).getTime();
-  if (exp > now) {
-    const soon = exp - now <= 30 * 24 * 60 * 60 * 1000;
+
+  if (isConsentActive(record.expires_at, new Date(now))) {
+    const soon = exp - now <= graceMs;
     if (soon) return { label: "Expiring soon", variant: "secondary" };
     return { label: "Signed", variant: "default" };
   }
@@ -101,6 +111,12 @@ export function PatientConsentStatusSection({
   const [required, setRequired] = useState<ConsentType[]>([]);
   const [records, setRecords] = useState<ConsentRecord[]>([]);
   const [previewDoc, setPreviewDoc] = useState<{ title: string; body: string } | null>(null);
+  const [sendDialogOpen, setSendDialogOpen] = useState(false);
+  const [sendPreviewToken, setSendPreviewToken] = useState<string | null>(null);
+  const [sendPreviewUrl, setSendPreviewUrl] = useState<string | null>(null);
+  const [sendPreviewTypes, setSendPreviewTypes] = useState<ConsentType[]>([]);
+  const [sendLoading, setSendLoading] = useState(false);
+  const [sendSending, setSendSending] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -143,7 +159,7 @@ export function PatientConsentStatusSection({
     }
   }, [status]);
 
-  const handleBulkTier2Send = async () => {
+  const handleOpenBulkSendPreview = async () => {
     if (!status) return;
     const tier2 = tier2ConsentsNeedingAction(status);
     if (tier2.length === 0) {
@@ -153,14 +169,13 @@ export function PatientConsentStatusSection({
       return;
     }
 
-    const channels: ("email" | "sms")[] = [];
-    if (patientEmail) channels.push("email");
-    if (patientPhone) channels.push("sms");
-    if (channels.length === 0) {
+    if (!patientEmail && !patientPhone) {
       toast.error("Patient needs email or phone on file.");
       return;
     }
 
+    setSendLoading(true);
+    setSendDialogOpen(true);
     try {
       const { data: created, error: createError } = await supabase.functions.invoke(
         "create-intake-magic-link",
@@ -170,12 +185,32 @@ export function PatientConsentStatusSection({
         throw new Error(createError?.message ?? created?.error ?? "Failed to create link");
       }
 
+      setSendPreviewToken(created.token as string);
+      setSendPreviewUrl(buildIntakeMagicLinkUrl(created.token as string));
+      setSendPreviewTypes(tier2);
+    } catch (e: unknown) {
+      setSendDialogOpen(false);
+      toast.error(e instanceof Error ? e.message : "Could not prepare preview");
+    } finally {
+      setSendLoading(false);
+    }
+  };
+
+  const handleConfirmBulkSend = async () => {
+    if (!sendPreviewToken || sendPreviewTypes.length === 0) return;
+
+    const channels: ("email" | "sms")[] = [];
+    if (patientEmail) channels.push("email");
+    if (patientPhone) channels.push("sms");
+
+    setSendSending(true);
+    try {
       const { data: sendData, error: sendError } = await supabase.functions.invoke("send-intake-magic-link", {
         body: {
           patient_id: patientId,
-          magic_link_token: created.token,
+          magic_link_token: sendPreviewToken,
           context: "tier2_consent_request",
-          consent_types: tier2,
+          consent_types: sendPreviewTypes,
           channels,
         },
       });
@@ -188,10 +223,26 @@ export function PatientConsentStatusSection({
       toast.success(
         `Consent request sent to ${patientName} via ${(sendData.delivered_channels as string[]).join(" & ")}.`,
       );
+      setSendDialogOpen(false);
+      setSendPreviewToken(null);
+      setSendPreviewUrl(null);
+      setSendPreviewTypes([]);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : "Send failed");
+    } finally {
+      setSendSending(false);
     }
   };
+
+  const bulkSendPreviewMessages = useMemo(() => {
+    if (!sendPreviewUrl) return null;
+    return buildIntakeLinkMessages({
+      context: "tier2_consent_request",
+      firstName: firstNameFromFullName(patientName),
+      magicLinkUrl: sendPreviewUrl,
+      consentDocumentLabels: sendPreviewTypes.map(intakeConsentTypeDisplayLabel),
+    });
+  }, [sendPreviewUrl, patientName, sendPreviewTypes]);
 
   const handlePrint = () => {
     const w = window.open("", "_blank");
@@ -286,10 +337,10 @@ export function PatientConsentStatusSection({
                         <Badge variant={rs.variant}>{rs.label}</Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {rec ? format(new Date(rec.signed_at), "MMM d, yyyy") : "—"}
+                        {rec ? formatClinicDate(rec.signed_at) : "—"}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {rec ? format(new Date(rec.expires_at), "MMM d, yyyy") : "—"}
+                        {rec ? formatClinicDate(rec.expires_at) : "—"}
                       </TableCell>
                       <TableCell>
                         {rec ? (
@@ -322,7 +373,7 @@ export function PatientConsentStatusSection({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="default" size="sm" onClick={() => void handleBulkTier2Send()}>
+            <Button type="button" variant="default" size="sm" onClick={() => void handleOpenBulkSendPreview()}>
               <Send className="h-4 w-4 mr-2" />
               Send all needed consents to patient
             </Button>
@@ -358,6 +409,61 @@ export function PatientConsentStatusSection({
               Close
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={sendDialogOpen}
+        onOpenChange={(open) => {
+          setSendDialogOpen(open);
+          if (!open) {
+            setSendPreviewToken(null);
+            setSendPreviewUrl(null);
+            setSendPreviewTypes([]);
+          }
+        }}
+      >
+        <DialogContent layout="pinned" className="max-h-[85vh] max-w-lg sm:max-w-lg">
+          <DialogHeader className="border-b border-border px-6 py-4 pr-12 pt-10 text-left">
+            <DialogTitle>Send consent request</DialogTitle>
+            <DialogDescription>
+              Review what {patientName} will receive before sending.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogBody>
+            {sendLoading || !bulkSendPreviewMessages ? (
+              <div className="flex items-center justify-center py-8 text-muted-foreground">
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Preparing preview…
+              </div>
+            ) : (
+              <PatientOutboundPreview
+                showEmail={Boolean(patientEmail)}
+                showSms={Boolean(patientPhone)}
+                emailSubject={bulkSendPreviewMessages.emailSubject}
+                emailText={bulkSendPreviewMessages.emailText}
+                smsBody={bulkSendPreviewMessages.smsBody}
+                consentLabels={sendPreviewTypes.map(intakeConsentTypeDisplayLabel)}
+              />
+            )}
+          </DialogBody>
+          <DialogFooter className="border-t border-border px-6 py-4">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={sendSending}
+              onClick={() => setSendDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={sendLoading || sendSending || !sendPreviewToken}
+              onClick={() => void handleConfirmBulkSend()}
+            >
+              {sendSending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send to patient"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { format } from "date-fns";
 import { Download, Loader2 } from "lucide-react";
 import type { ConsentRecord, ConsentVersion, SectionAttestations } from "@/data/consents/types";
 import { supabase } from "@/integrations/supabase/client";
+import { formatClinicDate, formatClinicDateTime, isConsentActive } from "@/lib/clinicTime";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ConsentDocumentDisplay } from "./ConsentDocumentDisplay";
@@ -19,10 +19,10 @@ function statusLabel(record: ConsentRecord): { label: string; variant: "default"
     return { label: "Revoked", variant: "destructive" };
   }
   const expires = new Date(record.expires_at);
-  if (expires.getTime() <= Date.now()) {
-    return { label: `Expired ${format(expires, "MMM d, yyyy")}`, variant: "secondary" };
+  if (!isConsentActive(record.expires_at)) {
+    return { label: `Expired ${formatClinicDate(expires)}`, variant: "secondary" };
   }
-  return { label: `Active — expires ${format(expires, "MMM d, yyyy")}`, variant: "default" };
+  return { label: `Active — expires ${formatClinicDate(expires)}`, variant: "default" };
 }
 
 export function ConsentReviewView({
@@ -83,9 +83,7 @@ export function ConsentReviewView({
           </div>
           <div>
             <dt className="text-muted-foreground">Date signed</dt>
-            <dd className="font-medium">
-              {format(new Date(consentRecord.signed_at), "MMM d, yyyy h:mm a")}
-            </dd>
+            <dd className="font-medium">{formatClinicDateTime(consentRecord.signed_at)} ET</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Version</dt>

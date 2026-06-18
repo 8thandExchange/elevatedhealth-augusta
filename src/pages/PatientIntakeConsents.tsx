@@ -4,7 +4,11 @@ import { Tier1IntakeBundle } from "@/components/consents/Tier1IntakeBundle";
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import { usePatient, useInvalidatePatientData } from "@/hooks/usePatient";
 import { hasCompletedTier1Intake, markTier1IntakeComplete } from "@/lib/consents/intake-status";
-import { Loader2 } from "lucide-react";
+import { getValidConsents } from "@/lib/consents/consent-helpers";
+import { TIER_1_CONSENTS } from "@/data/consents";
+import { consentTypeDisplayName } from "@/data/consents/medication-consent-mapping";
+import { formatClinicDateTime } from "@/lib/clinicTime";
+import { Loader2, CheckCircle2, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -14,13 +18,18 @@ export default function PatientIntakeConsents() {
   const { invalidatePatient } = useInvalidatePatientData();
   const [checking, setChecking] = useState(true);
   const [alreadyComplete, setAlreadyComplete] = useState(false);
+  const [signedTypes, setSignedTypes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     async function check() {
       if (!patient?.id) return;
       try {
-        const done = await hasCompletedTier1Intake(patient.id);
+        const [done, valid] = await Promise.all([
+          hasCompletedTier1Intake(patient.id),
+          getValidConsents(patient.id),
+        ]);
         setAlreadyComplete(done);
+        setSignedTypes(new Set(TIER_1_CONSENTS.filter((t) => valid[t])));
       } finally {
         setChecking(false);
       }
@@ -87,6 +96,9 @@ export default function PatientIntakeConsents() {
     );
   }
 
+  const completedCount = signedTypes.size;
+  const nowEastern = formatClinicDateTime(new Date());
+
   return (
     <div className="min-h-screen bg-background">
       <PatientNavbar patientName={patient.full_name} avatarUrl={patient.avatar_url} />
@@ -97,7 +109,39 @@ export default function PatientIntakeConsents() {
             Please review and sign each document below. All five are required before we can provide
             clinical services.
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Clinic time (Eastern): {nowEastern} ET
+          </p>
         </div>
+
+        {completedCount > 0 && completedCount < TIER_1_CONSENTS.length && (
+          <Alert className="mb-6 border-amber-500/40 bg-amber-500/5">
+            <AlertDescription>
+              You have {completedCount} of {TIER_1_CONSENTS.length} consents on file. Continue below
+              to finish the remaining documents.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <ul className="mb-8 space-y-2 rounded-lg border border-border/60 bg-muted/20 p-4">
+          {TIER_1_CONSENTS.map((type) => {
+            const done = signedTypes.has(type);
+            return (
+              <li key={type} className="flex items-center gap-2 text-sm">
+                {done ? (
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-green-600" />
+                ) : (
+                  <Circle className="h-4 w-4 shrink-0 text-muted-foreground" />
+                )}
+                <span className={done ? "text-foreground" : "text-muted-foreground"}>
+                  {consentTypeDisplayName(type)}
+                  {done ? " — signed" : " — needed"}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+
         <Tier1IntakeBundle
           patientId={patient.id}
           patientName={patient.full_name}

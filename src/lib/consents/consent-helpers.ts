@@ -4,6 +4,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { ConsentType } from "@/data/consents/types";
 import { SERVABLE_LEGAL_REVIEW_STATUS } from "@/lib/consents/consent-catalog";
+import { isConsentActive } from "@/lib/clinicTime";
 
 const sb = supabase as any;
 
@@ -25,19 +26,22 @@ export async function hasValidConsent(
     .eq("patient_id", patientId)
     .eq("consent_type", consentType)
     .is("revoked_at", null)
-    .gt("expires_at", new Date().toISOString())
     .order("signed_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(5);
 
-  if (error || !data) {
+  if (error || !data?.length) {
+    return { valid: false };
+  }
+
+  const active = data.find((row: { expires_at: string }) => isConsentActive(row.expires_at));
+  if (!active) {
     return { valid: false };
   }
 
   return {
     valid: true,
-    consentRecordId: data.id,
-    expiresAt: data.expires_at,
+    consentRecordId: active.id,
+    expiresAt: active.expires_at,
   };
 }
 
@@ -63,17 +67,15 @@ export async function getValidConsents(patientId: string): Promise<Record<Consen
     .from("consent_records")
     .select("consent_type, expires_at")
     .eq("patient_id", patientId)
-    .is("revoked_at", null)
-    .gt("expires_at", new Date().toISOString());
+    .is("revoked_at", null);
 
   if (error || !data) {
     return base;
   }
 
-  const now = Date.now();
   for (const row of data) {
     const t = row.consent_type as ConsentType;
-    if (row.expires_at && new Date(row.expires_at).getTime() > now) {
+    if (row.expires_at && isConsentActive(row.expires_at)) {
       base[t] = true;
     }
   }

@@ -279,3 +279,12 @@ verify_jwt = false
 [functions.send-sms-reply]
 verify_jwt = true
 
+[functions.qualiphy-send-gfe-invite]
+verify_jwt = true
+
+[functions.record-in-clinic-gfe]
+verify_jwt = true
+
+[functions.qualiphy-webhook]
+verify_jwt = false
+

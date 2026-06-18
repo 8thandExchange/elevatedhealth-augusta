@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -141,14 +143,14 @@ const EditPatientProfileModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg bg-card border border-gold/30 rounded-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-cormorant text-foreground">
+      <DialogContent layout="pinned" className="max-h-[90vh] max-w-lg rounded-2xl border border-gold/30 bg-card sm:max-w-lg">
+        <DialogHeader className="border-b border-border px-6 py-4 pr-12 pt-10 text-left">
+          <DialogTitle className="font-playfair text-xl text-foreground">
             Edit Patient Profile
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5 mt-4">
+        <DialogBody className="space-y-5">
           {/* Basic Info */}
           <div className="space-y-3">
             <Label className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
@@ -326,35 +328,34 @@ const EditPatientProfileModal = ({
               </div>
             </div>
           </div>
-        </div>
+        </DialogBody>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 mt-6 pt-4 border-t border-border">
+        <DialogFooter className="border-t border-border px-6 py-4">
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1 border-foreground/20"
+            className="flex-1 border-foreground/20 sm:flex-none"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 bg-gold hover:bg-gold-dark text-white"
+            className="flex-1 bg-gold text-white hover:bg-gold-dark sm:flex-none"
           >
             {isSaving ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Saving...
               </>
             ) : (
               <>
-                <Save className="w-4 h-4 mr-2" />
+                <Save className="mr-2 h-4 w-4" />
                 Save Changes
               </>
             )}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

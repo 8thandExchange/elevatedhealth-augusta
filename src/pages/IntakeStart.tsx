@@ -38,18 +38,48 @@ export default function IntakeStart() {
             setErrorMessage("This intake link has expired. Please contact the office for a new link.");
           } else if (reason === "revoked") {
             setErrorMessage("This intake link is no longer valid. Please contact the office.");
-          } else {
+          } else if (reason === "not_found" || reason === "missing_token" || reason === "invalid_token") {
             setErrorMessage("This intake link is invalid. Please contact the office for assistance.");
+          } else if (typeof reason === "string" && reason.toLowerCase().includes("already linked")) {
+            setErrorMessage(
+              "We could not open this intake link because this email is tied to another patient record. Please call the office.",
+            );
+          } else if (typeof reason === "string" && reason.toLowerCase().includes("already")) {
+            setErrorMessage(
+              "We could not sign you in automatically. Try opening the link in a private browser window, or call the office for a fresh link.",
+            );
+          } else {
+            setErrorMessage("This intake link could not be opened. Please contact the office for assistance.");
           }
           setState("error");
           return;
         }
 
         const targetPatientId = consumeData.patient_id as string;
-        const tokenHash = consumeData.token_hash as string;
+        const useExistingAccount = consumeData.use_existing_account === true;
+        const tokenHash = consumeData.token_hash as string | undefined;
         const pendingConsentTypes = consumeData.pending_consent_types as string[] | null | undefined;
         const pendingReconsentRequestId = consumeData.pending_reconsent_request_id as string | null | undefined;
         const pendingSubstanceId = consumeData.pending_substance_id as string | null | undefined;
+
+        const navigateAfterAuth = () => {
+          if (pendingReconsentRequestId) {
+            navigate(`/intake/reconsent?request_id=${encodeURIComponent(pendingReconsentRequestId)}`, {
+              replace: true,
+            });
+          } else if (pendingSubstanceId) {
+            navigate(`/intake/substance-acknowledgment?substance=${encodeURIComponent(pendingSubstanceId)}`, {
+              replace: true,
+            });
+          } else if (pendingConsentTypes?.length) {
+            navigate(
+              `/intake/treatment-consents?types=${encodeURIComponent(pendingConsentTypes.join(","))}`,
+              { replace: true },
+            );
+          } else {
+            navigate("/intake/consents", { replace: true });
+          }
+        };
 
         const { data: sessionData } = await supabase.auth.getSession();
         if (sessionData.session?.user) {
@@ -61,7 +91,28 @@ export default function IntakeStart() {
 
           if (currentPatient && currentPatient.id !== targetPatientId) {
             await supabase.auth.signOut();
+          } else if (currentPatient?.id === targetPatientId) {
+            setState("redirecting");
+            navigateAfterAuth();
+            return;
           }
+        }
+
+        if (useExistingAccount) {
+          setState("redirecting");
+          const returnPath = pendingReconsentRequestId
+            ? `/intake/reconsent?request_id=${encodeURIComponent(pendingReconsentRequestId)}`
+            : pendingSubstanceId
+              ? `/intake/substance-acknowledgment?substance=${encodeURIComponent(pendingSubstanceId)}`
+              : pendingConsentTypes?.length
+                ? `/intake/treatment-consents?types=${encodeURIComponent(pendingConsentTypes.join(","))}`
+                : "/intake/consents";
+          navigate(`/login?portal=patient&returnTo=${encodeURIComponent(returnPath)}`, { replace: true });
+          return;
+        }
+
+        if (!tokenHash) {
+          throw new Error("Could not sign you in. Please try the link again.");
         }
 
         const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
@@ -74,22 +125,7 @@ export default function IntakeStart() {
         }
 
         setState("redirecting");
-        if (pendingReconsentRequestId) {
-          navigate(`/intake/reconsent?request_id=${encodeURIComponent(pendingReconsentRequestId)}`, {
-            replace: true,
-          });
-        } else if (pendingSubstanceId) {
-          navigate(`/intake/substance-acknowledgment?substance=${encodeURIComponent(pendingSubstanceId)}`, {
-            replace: true,
-          });
-        } else if (pendingConsentTypes?.length) {
-          navigate(
-            `/intake/treatment-consents?types=${encodeURIComponent(pendingConsentTypes.join(","))}`,
-            { replace: true },
-          );
-        } else {
-          navigate("/intake/consents", { replace: true });
-        }
+        navigateAfterAuth();
       } catch (err) {
         if (cancelled) return;
         setState("error");

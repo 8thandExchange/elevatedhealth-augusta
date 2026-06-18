@@ -1,6 +1,17 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
-import { corsHeaders, createServiceClient } from "../_shared/intake-magic-link-auth.ts";
+import { corsHeaders } from "../_shared/intake-magic-link-auth.ts";
+import { resolvePatientAuthUserId } from "../_shared/resolve-patient-auth-user.ts";
+
+function createAdminAuthClient() {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) throw new Error("Supabase service configuration missing");
+  return createClient(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -18,7 +29,7 @@ serve(async (req) => {
       });
     }
 
-    const supabase = createServiceClient();
+    const supabase = createAdminAuthClient();
 
     const { data: link, error: linkError } = await supabase
       .from("intake_magic_links")
@@ -62,31 +73,34 @@ serve(async (req) => {
       });
     }
 
-    let authUserId = patient.user_id as string | null;
+    const authUserId = await resolvePatientAuthUserId(supabase, {
+      id: patient.id,
+      full_name: patient.full_name,
+      email: patient.email.trim().toLowerCase(),
+      user_id: patient.user_id,
+    });
 
-    if (!authUserId) {
-      const tempPassword = crypto.randomUUID() + crypto.randomUUID();
-      const { data: created, error: createError } = await supabase.auth.admin.createUser({
-        email: patient.email,
-        email_confirm: true,
-        password: tempPassword,
-        user_metadata: { full_name: patient.full_name, patient_id: patient.id },
-      });
+    const redirectTo = `${Deno.env.get("APP_BASE_URL") || "https://elevatedhealthaugusta.com"}/intake/consents`;
+    const linkEmail = patient.email.trim();
 
-      if (createError || !created.user) {
-        throw new Error(createError?.message ?? "Could not create auth user for patient");
+    let linkData: Awaited<ReturnType<typeof supabase.auth.admin.generateLink>>["data"] | null = null;
+    let genError: Error | null = null;
+
+    for (const linkType of ["magiclink", "recovery"] as const) {
+      for (const emailCandidate of [linkEmail, linkEmail.toLowerCase()]) {
+        const result = await supabase.auth.admin.generateLink({
+          type: linkType,
+          email: emailCandidate,
+          options: { redirectTo },
+        });
+        linkData = result.data;
+        genError = result.error;
+        if (!genError && linkData?.properties?.hashed_token) {
+          break;
+        }
       }
-
-      authUserId = created.user.id;
-      await supabase.from("patients").update({ user_id: authUserId }).eq("id", patient.id);
-      const { data: existingRole } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", authUserId)
-        .eq("role", "user")
-        .maybeSingle();
-      if (!existingRole) {
-        await supabase.from("user_roles").insert({ user_id: authUserId, role: "user" });
+      if (linkData?.properties?.hashed_token) {
+        break;
       }
     }
 
@@ -100,16 +114,28 @@ serve(async (req) => {
       })
       .eq("id", link.id);
 
-    const { data: linkData, error: genError } = await supabase.auth.admin.generateLink({
-      type: "magiclink",
-      email: patient.email,
-      options: {
-        redirectTo: `${Deno.env.get("APP_BASE_URL") || "https://elevatedhealthaugusta.com"}/intake/consents`,
-      },
-    });
-
     if (genError || !linkData?.properties?.hashed_token) {
-      throw new Error(genError?.message ?? "Failed to generate auth session");
+      edgeStructuredLog(functionName, {
+        event: "token_consumed_existing_account",
+        patient_id: patient.id,
+        auth_user_id: authUserId,
+        success: true,
+        error_message: genError?.message ?? "generate_link_failed",
+      });
+
+      return new Response(
+        JSON.stringify({
+          patient_id: patient.id,
+          patient_name: patient.full_name,
+          email: patient.email,
+          auth_user_id: authUserId,
+          use_existing_account: true,
+          pending_consent_types: link.pending_consent_types ?? null,
+          pending_reconsent_request_id: link.pending_reconsent_request_id ?? null,
+          pending_substance_id: link.pending_substance_id ?? null,
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     edgeStructuredLog(functionName, {

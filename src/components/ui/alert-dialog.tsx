@@ -25,34 +25,47 @@ const AlertDialogOverlay = React.forwardRef<
 ));
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 
+type AlertDialogContentProps = React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content> & {
+  layout?: "default" | "pinned";
+};
+
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <AlertDialogPortal>
-    <AlertDialogOverlay />
-    <AlertDialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 flex w-[calc(100%-2rem)] max-w-lg",
-        "max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100vh-4rem)]",
-        "-translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden",
-        "border bg-background shadow-lg duration-200",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-        "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
-        "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
-        "sm:rounded-lg",
-        className,
-      )}
-      {...props}
-    >
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-6">
-        {children}
-      </div>
-    </AlertDialogPrimitive.Content>
-  </AlertDialogPortal>
-));
+  AlertDialogContentProps
+>(({ className, children, layout = "default", ...props }, ref) => {
+  const isPinned = layout === "pinned";
+
+  return (
+    <AlertDialogPortal>
+      <AlertDialogOverlay />
+      <AlertDialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          "fixed left-[50%] top-[50%] z-50 flex w-[calc(100%-2rem)] max-w-lg",
+          "max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100vh-4rem)]",
+          "-translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden",
+          "border bg-background shadow-lg duration-200",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
+          "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+          "sm:rounded-lg",
+          isPinned && "gap-0 p-0",
+          className,
+        )}
+        {...props}
+      >
+        {isPinned ? (
+          children
+        ) : (
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-6">
+            {children}
+          </div>
+        )}
+      </AlertDialogPrimitive.Content>
+    </AlertDialogPortal>
+  );
+});
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
 
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -65,6 +78,14 @@ const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDiv
   />
 );
 AlertDialogHeader.displayName = "AlertDialogHeader";
+
+const AlertDialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-4", className)}
+    {...props}
+  />
+);
+AlertDialogBody.displayName = "AlertDialogBody";
 
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
@@ -120,6 +141,7 @@ export {
   AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
+  AlertDialogBody,
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogDescription,

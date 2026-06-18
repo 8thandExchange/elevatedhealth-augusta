@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ConsentDocument } from "@/data/consents/types";
 import { supabase } from "@/integrations/supabase/client";
-import { addMonths, hashConsentBody } from "@/lib/consents/consent-helpers";
+import { hashConsentBody, addMonths } from "@/lib/consents/consent-helpers";
+import { formatClinicDate, formatClinicDateTime } from "@/lib/clinicTime";
 import { captureSigningMetadata } from "@/lib/consents/capture-metadata";
 import {
   Dialog,
@@ -86,12 +87,8 @@ export function StaffOverrideModal({
 
   const defaultAttestation = useMemo(() => {
     const now = new Date();
-    const dateStr = now.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-    const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    const dateStr = formatClinicDate(now);
+    const timeStr = formatClinicDateTime(now).split(", ").pop() ?? "";
     const method = verificationLabel || "[verification method]";
     return `I, ${staffDisplayName}, ${staffTitle}, read this consent document aloud to the patient, ${patientName}, on ${dateStr} at ${timeStr}. The patient acknowledged understanding and verbally consented to the terms. The patient's identity was verified via ${method}.`;
   }, [staffDisplayName, staffTitle, patientName, verificationLabel]);
