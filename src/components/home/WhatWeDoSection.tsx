@@ -1,16 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { MarketingImage } from "@/components/marketing/MarketingImage";
-import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 import { getPublicHomepageServices } from "@/lib/clinicalOptimizationCatalog";
-
-const imageMap = {
-  serviceHormones: MARKETING_IMAGES.serviceHormones,
-  serviceWeightLoss: MARKETING_IMAGES.serviceWeightLoss,
-  serviceIv: MARKETING_IMAGES.serviceIv,
-  servicePeptides: MARKETING_IMAGES.servicePeptides,
-} as const;
 
 const WhatWeDoSection = () => {
   const navigate = useNavigate();
@@ -34,7 +25,6 @@ const WhatWeDoSection = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border max-w-6xl mx-auto border border-border">
           {getPublicHomepageServices().map((s, i) => {
-            const image = imageMap[s.imageKey];
             return (
               <button
                 key={s.title}
@@ -42,14 +32,6 @@ const WhatWeDoSection = () => {
                 className={`group text-left bg-background flex flex-col overflow-hidden transition-colors duration-300 hover:bg-muted/40 hover:shadow-[0_12px_40px_rgba(42,40,38,0.08)] ${revealClasses.fadeUp(isVisible)}`}
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
-                {image ? (
-                  <MarketingImage
-                    src={image}
-                    alt={s.title}
-                    className="aspect-[16/10] w-full shrink-0"
-                    imgClassName="transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : null}
                 <div className="p-10 flex flex-col flex-1">
                   <p className="section-label mb-4 text-[11px]">{s.tagline}</p>
                   <h3 className="font-playfair text-xl md:text-2xl text-foreground mb-4 leading-snug">

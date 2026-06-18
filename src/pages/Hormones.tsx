@@ -82,44 +82,34 @@ const Hormones = () => {
                 </h2>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-                {/* Women */}
-                <Link to="/hormones-women" className="group block">
-                  <div className="aspect-[4/5] bg-muted/40 mb-6 overflow-hidden">
-                    {/* TODO: editorial portrait — women's hormones */}
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 font-jost text-xs tracking-widest uppercase">
-                      Women's Portrait
-                    </div>
-                  </div>
+              <div className="grid md:grid-cols-2 gap-px bg-border border border-border max-w-4xl mx-auto">
+                <Link
+                  to="/hormones-women"
+                  className="group block bg-background p-10 md:p-12 hover:bg-surface transition-colors"
+                >
                   <p className="section-label mb-3">For Women</p>
-                  <h3 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-4">
-                    Reset.
-                  </h3>
-                  <p className="font-jost font-light text-base md:text-lg text-muted-foreground leading-relaxed mb-6">
-                    BHRT, estradiol, progesterone, testosterone for women. Compounded transdermal creams shipped to your door. Custom-dosed to your labs.
+                  <h3 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-4">Reset.</h3>
+                  <p className="font-jost font-light text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
+                    BHRT, estradiol, progesterone, testosterone for women. Compounded transdermal creams shipped to your
+                    door. Custom-dosed to your labs.
                   </p>
-                  <span className="font-jost text-sm tracking-wide text-foreground border-b border-foreground/40 group-hover:border-foreground transition-colors pb-1">
-                    Women's Hormones →
+                  <span className="inline-flex items-center gap-2 font-jost text-xs uppercase tracking-[0.12em] text-primary group-hover:gap-3 transition-all">
+                    Women&apos;s Hormones <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 </Link>
 
-                {/* Men */}
-                <Link to="/hormones-men" className="group block">
-                  <div className="aspect-[4/5] bg-muted/40 mb-6 overflow-hidden">
-                    {/* TODO: editorial portrait — men's hormones */}
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 font-jost text-xs tracking-widest uppercase">
-                      Men's Portrait
-                    </div>
-                  </div>
+                <Link
+                  to="/hormones-men"
+                  className="group block bg-background p-10 md:p-12 hover:bg-surface transition-colors border-t md:border-t-0 md:border-l border-border"
+                >
                   <p className="section-label mb-3">For Men</p>
-                  <h3 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-4">
-                    Restore.
-                  </h3>
-                  <p className="font-jost font-light text-base md:text-lg text-muted-foreground leading-relaxed mb-6">
-                    TRT and male hormone optimization. Compounded testosterone, in-clinic injections or take-home protocol. Lab-driven, physician-led.
+                  <h3 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-4">Restore.</h3>
+                  <p className="font-jost font-light text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
+                    TRT and male hormone optimization. Compounded testosterone, in-clinic injections or take-home
+                    protocol. Lab-driven, physician-led.
                   </p>
-                  <span className="font-jost text-sm tracking-wide text-foreground border-b border-foreground/40 group-hover:border-foreground transition-colors pb-1">
-                    Men's Hormones →
+                  <span className="inline-flex items-center gap-2 font-jost text-xs uppercase tracking-[0.12em] text-primary group-hover:gap-3 transition-all">
+                    Men&apos;s Hormones <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 </Link>
               </div>
