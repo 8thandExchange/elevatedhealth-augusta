@@ -73,51 +73,65 @@ export default function ConsultPrequal() {
   const [consentsScrolled, setConsentsScrolled] = useState<Record<string, boolean>>({});
   const [signatureName, setSignatureName] = useState("");
   const [alreadyPaid, setAlreadyPaid] = useState(false);
-  const [checkingPaid, setCheckingPaid] = useState(true);
+  const [checkingPaid, setCheckingPaid] = useState(false);
 
+  const emailFromUrl = searchParams.get("email") ?? "";
+  const reasonsFromUrl = searchParams.get("reasons");
+
+  const lookupAlreadyPaid = async (checkEmail: string): Promise<boolean> => {
+    const normalized = checkEmail.toLowerCase().trim();
+    if (!normalized) return false;
+
+    const [{ data: patient }, { data: booking }] = await Promise.all([
+      supabase
+        .from("patients")
+        .select("onboarding_status, elevated_membership_status")
+        .eq("email", normalized)
+        .maybeSingle(),
+      supabase
+        .from("consultation_bookings")
+        .select("id")
+        .eq("customer_email", normalized)
+        .eq("status", "paid")
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    return hasWellnessAssessmentPaid({
+      onboardingStatus: patient?.onboarding_status,
+      hasPaidConsultBooking: !!booking?.id,
+      elevatedMembershipStatus: patient?.elevated_membership_status,
+    });
+  };
+
+  // Prefill-only paid check — never tied to typed email (avoids remounting layout / footer flash).
   useEffect(() => {
+    let cancelled = false;
     (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const initialEmail = (user?.email ?? emailFromUrl).toLowerCase().trim();
+      if (!initialEmail) return;
+
       setCheckingPaid(true);
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        const checkEmail = (user?.email ?? email).toLowerCase().trim();
-        if (!checkEmail) return;
-
-        const [{ data: patient }, { data: booking }] = await Promise.all([
-          supabase
-            .from("patients")
-            .select("onboarding_status, elevated_membership_status")
-            .eq("email", checkEmail)
-            .maybeSingle(),
-          supabase
-            .from("consultation_bookings")
-            .select("id")
-            .eq("customer_email", checkEmail)
-            .eq("status", "paid")
-            .limit(1)
-            .maybeSingle(),
-        ]);
-
-        const paid = hasWellnessAssessmentPaid({
-          onboardingStatus: patient?.onboarding_status,
-          hasPaidConsultBooking: !!booking?.id,
-          elevatedMembershipStatus: patient?.elevated_membership_status,
-        });
-        setAlreadyPaid(paid);
+        const paid = await lookupAlreadyPaid(initialEmail);
+        if (!cancelled) setAlreadyPaid(paid);
       } finally {
-        setCheckingPaid(false);
+        if (!cancelled) setCheckingPaid(false);
       }
     })();
-  }, [email]);
+    return () => {
+      cancelled = true;
+    };
+  }, [emailFromUrl]);
 
   useEffect(() => {
-    const raw = searchParams.get("reasons");
-    if (raw) {
-      setReasons(new Set(raw.split(",").filter(Boolean)));
+    if (reasonsFromUrl) {
+      setReasons(new Set(reasonsFromUrl.split(",").filter(Boolean)));
     }
-  }, [searchParams]);
+  }, [reasonsFromUrl]);
 
   useEffect(() => {
     (async () => {
@@ -149,13 +163,26 @@ export default function ConsultPrequal() {
 
   const stepIndex = step === "profile" ? 1 : step === "screening" ? 2 : step === "consents" ? 3 : 4;
 
-  const submitProfile = (e: FormEvent) => {
+  const submitProfile = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !fullName.trim() || !dob || phone.replace(/\D/g, "").length < 10) {
       toast.error("Please complete contact info including phone and date of birth.");
       return;
     }
-    setStep("screening");
+
+    setLoading(true);
+    try {
+      const paid = await lookupAlreadyPaid(email);
+      if (paid) {
+        setAlreadyPaid(true);
+        return;
+      }
+      setStep("screening");
+    } catch {
+      toast.error("Could not verify enrollment status. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const submitScreening = async (e: FormEvent) => {
@@ -269,69 +296,47 @@ export default function ConsultPrequal() {
     }
   };
 
-  if (blocked) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <main className="container mx-auto max-w-lg px-4 pt-32 pb-20">
-          <Alert variant="destructive">
-            <AlertDescription>{consultScreeningBlockMessage(blocked)}</AlertDescription>
-          </Alert>
-          <Button className="mt-6 w-full" variant="outline" asChild>
-            <a href={`tel:${SITE_CONFIG.phoneRaw}`}>
-              <Phone className="mr-2 h-4 w-4" /> Call {SITE_CONFIG.phone}
-            </a>
-          </Button>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (checkingPaid) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <main className="container mx-auto max-w-lg px-4 pt-32 pb-20 text-center">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-accent" />
-          <p className="mt-4 font-jost text-muted-foreground">Checking your enrollment status…</p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (alreadyPaid) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <main className="container mx-auto max-w-lg px-4 pt-32 pb-20">
-          <Card>
-            <CardContent className="space-y-4 pt-8 text-center">
-              <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
-              <h1 className="font-playfair text-2xl">Wellness assessment already paid</h1>
-              <p className="font-jost text-sm text-muted-foreground">
-                Your one-time $79 fee is on file. Continue in the patient portal for GFE clearance, scheduling, and
-                membership enrollment — no duplicate payment needed.
-              </p>
-              <Button className="w-full" onClick={() => navigate("/patient/dashboard")}>
-                Go to patient portal
-              </Button>
-            </CardContent>
-          </Card>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       <Helmet>
         <title>Enroll — Wellness Assessment | Elevated Health Augusta</title>
       </Helmet>
       <Navbar />
-      <main className="container mx-auto max-w-2xl px-4 pt-28 pb-16">
+      <main className="flex-1 container mx-auto max-w-2xl px-4 pt-28 pb-16 w-full">
+        {checkingPaid ? (
+          <div className="max-w-lg mx-auto py-16 text-center">
+            <Loader2 className="mx-auto h-8 w-8 animate-spin text-accent" />
+            <p className="mt-4 font-jost text-muted-foreground">Checking your enrollment status…</p>
+          </div>
+        ) : alreadyPaid ? (
+          <div className="max-w-lg mx-auto">
+            <Card>
+              <CardContent className="space-y-4 pt-8 text-center">
+                <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
+                <h1 className="font-playfair text-2xl">Wellness assessment already paid</h1>
+                <p className="font-jost text-sm text-muted-foreground">
+                  Your one-time $79 fee is on file. Continue in the patient portal for GFE clearance, scheduling, and
+                  membership enrollment — no duplicate payment needed.
+                </p>
+                <Button className="w-full" onClick={() => navigate("/patient/dashboard")}>
+                  Go to patient portal
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        ) : blocked ? (
+          <div className="max-w-lg mx-auto">
+            <Alert variant="destructive">
+              <AlertDescription>{consultScreeningBlockMessage(blocked)}</AlertDescription>
+            </Alert>
+            <Button className="mt-6 w-full" variant="outline" asChild>
+              <a href={`tel:${SITE_CONFIG.phoneRaw}`}>
+                <Phone className="mr-2 h-4 w-4" /> Call {SITE_CONFIG.phone}
+              </a>
+            </Button>
+          </div>
+        ) : (
+          <>
         <div className="mb-8 text-center">
           <p className="section-label mb-2">Consult-gated programs</p>
           <h1 className="font-playfair text-3xl md:text-4xl text-foreground">Start your enrollment</h1>
@@ -406,8 +411,16 @@ export default function ConsultPrequal() {
                     ))}
                   </div>
                 </div>
-                <Button type="submit" className="w-full">
-                  Continue to screening <ArrowRight className="ml-2 h-4 w-4" />
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking…
+                    </>
+                  ) : (
+                    <>
+                      Continue to screening <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </form>
             </CardContent>
@@ -593,6 +606,8 @@ export default function ConsultPrequal() {
               </p>
             </CardContent>
           </Card>
+        )}
+          </>
         )}
       </main>
       <Footer />

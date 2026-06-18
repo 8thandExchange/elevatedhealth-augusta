@@ -58,13 +58,13 @@ const Navbar = () => {
   const menuIconClass = onDarkNav ? "text-background" : "text-foreground";
 
   const navLinks = [
-    { label: "Home", action: () => { navigate("/"); scrollToSection("hero"); } },
+    { label: "How It Works", action: () => navigate("/how-it-works") },
     { label: "Women's Hormones", action: () => navigate("/hormones-women") },
     { label: "Men's Health", action: () => navigate("/hormones-men") },
     { label: "IV Therapy", action: () => navigate("/iv-lounge") },
     { label: "Peptides", action: () => navigate("/peptides") },
     { label: "Weight Loss", action: () => navigate("/weight-loss") },
-    { label: "Membership", action: () => navigate("/membership") },
+    { label: "Pricing", action: () => navigate("/membership") },
     { label: "About", action: () => navigate("/about") },
   ];
 
@@ -142,7 +142,7 @@ const Navbar = () => {
                   onClick={() => navigate("/patient/login")}
                   className={portalClass}
                 >
-                  Patient Portal
+                  Log in
                 </button>
               )}
               <Button 
@@ -194,7 +194,7 @@ const Navbar = () => {
                     onClick={() => { navigate("/patient/login"); setIsMobileMenuOpen(false); }}
                     className="w-full text-sm font-jost text-muted-foreground hover:text-foreground transition-colors py-2"
                   >
-                    Patient Portal
+                    Log in
                   </button>
                 )}
                 

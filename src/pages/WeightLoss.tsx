@@ -23,6 +23,14 @@ import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncl
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { BodyRecompositionTeaser } from "@/components/marketing/BodyRecompositionTeaser";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ArrowRight } from "lucide-react";
+import {
+  storefrontHeroInner,
+  storefrontHeroLabel,
+  storefrontHeroLead,
+  storefrontHeroSection,
+  storefrontHeroTitle,
+} from "@/lib/storefrontHero";
 
 // Display values — actual charges flow through Stripe
 // (create-consultation-checkout, semaglutide/tirzepatide checkouts).
@@ -200,109 +208,62 @@ const WeightLoss = () => {
         
         <main>
           <BodyRecompositionTeaser variant="banner" />
-          {/* Hero Section - Warm Alabaster with Golden Balance */}
-          <section className="min-h-[88vh] md:min-h-[90vh] flex items-center pt-32 pb-20 md:pb-28 relative overflow-hidden">
-            {/* Warm Alabaster/Cream Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3]">
-              {/* Abstract Golden Fluid Balance Pattern */}
-              <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
-                {/* Zen stone-like circles representing balance */}
-                <ellipse cx="600" cy="400" rx="120" ry="40" fill="none" stroke="hsl(var(--gold))" strokeWidth="1" opacity="0.6" />
-                <ellipse cx="600" cy="360" rx="100" ry="35" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.8" opacity="0.5" />
-                <ellipse cx="600" cy="325" rx="80" ry="28" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.6" opacity="0.4" />
-                <ellipse cx="600" cy="295" rx="60" ry="22" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" opacity="0.3" />
-                {/* Flowing golden curves */}
-                <path d="M0,300 Q200,250 300,350 Q400,450 500,350 Q600,250 800,300" fill="none" stroke="hsl(var(--gold))" strokeWidth="1.5" opacity="0.3" />
-                <path d="M0,350 Q150,300 250,380 Q350,460 450,380 Q550,300 700,350 Q800,400 900,350" fill="none" stroke="hsl(var(--gold))" strokeWidth="1" opacity="0.2" />
-                {/* Equilibrium circles */}
-                <circle cx="150" cy="200" r="60" fill="none" stroke="hsl(var(--gold))" strokeWidth="0.5" opacity="0.4" />
-                <circle cx="150" cy="200" r="40" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.3" opacity="0.3" />
-              </svg>
-              {/* Soft gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#f5f0e8]/50" />
-            </div>
+          <section className={storefrontHeroSection}>
+            <div className={`${storefrontHeroInner} text-center max-w-4xl mx-auto`}>
+              <p className={storefrontHeroLabel}>Medical Weight Loss</p>
+              <h1 className={storefrontHeroTitle}>
+                Medically supervised
+                <br />
+                <span className="italic">weight management.</span>
+              </h1>
+              <p className={`${storefrontHeroLead} mx-auto`}>
+                Compounded semaglutide and tirzepatide — prescribed and monitored in person after your{" "}
+                {PRICE_CONSULT} Wellness Assessment. Transparent ELEVATED GLP-1 program pricing, LabCorp labs,
+                and a physician-led team in Evans.
+              </p>
+              <p className="font-jost text-sm text-muted-foreground mb-10 max-w-2xl mx-auto">
+                Individual results vary. We do not promise specific weight-loss amounts or timelines.
+              </p>
 
-            <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
-              <div className="max-w-5xl mx-auto text-center">
-                <div className="inline-block mb-6 animate-fade-in-up">
-                  <span className="px-4 py-2 bg-primary/10 text-primary border border-accent/30 rounded-full text-sm font-semibold">
-                    Hormonal Weight Reset
-                  </span>
-                </div>
-                
-                {/* As low as pricing badge */}
-                <div className="mb-4 animate-fade-in-up" style={{ animationDelay: "0.05s" }}>
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#FFB3C7]/20 text-[#17120F] rounded-full text-xs font-medium">
-                    💳 As low as $100/month with Klarna
-                  </span>
-                </div>
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 md:mb-8 animate-fade-in-up text-primary font-playfair leading-[1.06]" style={{ animationDelay: "0.1s" }}>
-                  Hormonal Weight Reset
-                </h1>
-                <p className="text-xl md:text-2xl text-accent mb-6 animate-fade-in-up font-jost font-medium" style={{ animationDelay: "0.15s" }}>
-                  Medically supervised weight management
-                </p>
-                <p className="text-lg md:text-xl text-primary/70 leading-relaxed mb-6 max-w-3xl mx-auto animate-fade-in-up font-jost" style={{ animationDelay: "0.2s" }}>
-                  Our program uses compounded semaglutide and compounded tirzepatide, prescribed and monitored by a physician
-                  after consultation and appropriate evaluation. These are compounded medications, not brand-name products,
-                  and availability depends on current FDA compounding rules. Begin with a {PRICE_CONSULT} consultation.
-                </p>
-                <p className="text-sm text-primary/60 leading-relaxed mb-10 max-w-2xl mx-auto animate-fade-in-up font-jost" style={{ animationDelay: "0.22s" }}>
-                  Individual results vary. We do not promise specific weight-loss amounts or timelines.
-                </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-10">
+                {[
+                  { icon: Activity, label: "In-person Evans visits" },
+                  { icon: Pill, label: "Compounded GLP-1s" },
+                  { icon: Droplet, label: "Lab-driven dosing" },
+                ].map(({ icon: Icon, label }) => (
+                  <div key={label} className="premium-card-muted flex flex-col items-center gap-2 p-4">
+                    <Icon className="w-6 h-6 text-accent" />
+                    <span className="text-sm font-jost text-foreground">{label}</span>
+                  </div>
+                ))}
+              </div>
 
-                {/* Differentiator Icons */}
-                <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
-                  {/* Saliva Diagnostics */}
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="p-3 rounded-full border border-accent/30">
-                      <Activity className="w-8 h-8 text-accent" />
-                    </div>
-                    <span className="text-sm font-jost text-primary font-medium">In-person Evans visits</span>
-                  </div>
-                  {/* GLP-1 */}
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="p-3 rounded-full border border-accent/30">
-                      <Pill className="w-8 h-8 text-accent" />
-                    </div>
-                    <span className="text-sm font-jost text-primary font-medium">Compounded GLP-1s</span>
-                  </div>
-                  {/* Labs */}
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="p-3 rounded-full border border-accent/30">
-                      <Droplet className="w-8 h-8 text-accent" />
-                    </div>
-                    <span className="text-sm font-jost text-primary font-medium">Lab-driven dosing</span>
-                  </div>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button onClick={handleConsultationCheckout} size="lg">
+                  Book {PRICE_CONSULT} Wellness Assessment
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")}
+                  size="lg"
+                  variant="outline"
+                >
+                  Call {SITE_CONFIG.phone}
+                </Button>
+              </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-                  <Button 
-                    onClick={handleConsultationCheckout} 
-                    size="lg" 
-                    className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white"
-                  >
-                    <CreditCard className="mr-2 h-5 w-5" />
-                    Book a {PRICE_CONSULT} Wellness Assessment
-                  </Button>
-                  <Button onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")} size="lg" variant="outline" className="text-lg px-8 py-6 border-primary/30 text-primary bg-transparent hover:bg-primary/5">
-                    Call {SITE_CONFIG.phone}
-                  </Button>
+              <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-accent" />
+                  <span>LabCorp on-site draws</span>
                 </div>
-
-                <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-primary/60 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-accent" />
-                    <span>LabCorp on-site draws</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-accent" />
-                    <span>FDA-Approved GLP-1s</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-accent" />
-                    <span>Transparent program pricing</span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-accent" />
+                  <span>503A compounding when prescribed</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-accent" />
+                  <span>Transparent program pricing</span>
                 </div>
               </div>
             </div>

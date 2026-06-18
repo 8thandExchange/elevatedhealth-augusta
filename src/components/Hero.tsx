@@ -66,6 +66,13 @@ const Hero = () => {
         >
           How the clinic works →
         </button>
+
+        <p
+          className="mt-10 font-jost text-xs md:text-sm uppercase tracking-[0.25em] text-primary-foreground/50 animate-fade-in-up"
+          style={{ animationDelay: "0.6s" }}
+        >
+          Physician-owned · Evans, GA · LabCorp · 503A compounding
+        </p>
       </div>
 
       <div

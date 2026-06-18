@@ -203,6 +203,54 @@
   @apply section-band bg-primary text-primary-foreground;
 }
 
+/* Function-inspired premium surfaces — EHA navy / steel palette */
+.premium-card {
+  @apply rounded-xl border border-border bg-background shadow-[var(--shadow-sm)] transition-shadow duration-300;
+}
+
+.premium-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.premium-card-muted {
+  @apply rounded-xl border border-border bg-surface shadow-[var(--shadow-sm)];
+}
+
+.stat-display {
+  font-family: 'Playfair Display', serif;
+  @apply text-4xl md:text-5xl lg:text-6xl text-foreground leading-none tracking-tight;
+}
+
+.stat-label {
+  @apply font-jost text-xs md:text-sm uppercase tracking-[0.2em] text-muted-foreground font-medium;
+}
+
+.step-number {
+  font-family: 'Playfair Display', serif;
+  @apply text-5xl md:text-6xl text-accent/90 leading-none italic;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.conditions-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 45s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conditions-marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+  }
+}
+
 /* Luxury section spacing utility */
 .section-spacing {
   @apply py-16 lg:py-20 xl:py-24;

@@ -36,22 +36,16 @@ const HowItWorksSection = () => {
           </h2>
         </div>
 
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {steps.map((s, i) => (
             <div
               key={s.n}
-              className={`${revealClasses.fadeUp(isVisible)}`}
+              className={`premium-card p-7 md:p-8 h-full ${revealClasses.fadeUp(isVisible)}`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
-              <div className="border-t border-accent/40 pt-6">
-                <p className="font-playfair italic text-accent text-2xl mb-3">{s.n}</p>
-                <h3 className="font-playfair text-lg md:text-xl text-foreground mb-3 leading-snug">
-                  {s.title}
-                </h3>
-                <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed">
-                  {s.body}
-                </p>
-              </div>
+              <p className="step-number mb-5">{s.n}</p>
+              <h3 className="font-playfair text-xl text-foreground mb-3 leading-snug">{s.title}</h3>
+              <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed">{s.body}</p>
             </div>
           ))}
         </div>

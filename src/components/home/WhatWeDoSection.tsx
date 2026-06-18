@@ -23,21 +23,21 @@ const WhatWeDoSection = () => {
           physician decides what is appropriate after assessment and labs.
         </p>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border max-w-6xl mx-auto border border-border">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
           {getPublicHomepageServices().map((s, i) => {
             return (
               <button
                 key={s.title}
                 onClick={() => navigate(s.route)}
-                className={`group text-left bg-background flex flex-col overflow-hidden transition-colors duration-300 hover:bg-muted/40 hover:shadow-[0_12px_40px_rgba(42,40,38,0.08)] ${revealClasses.fadeUp(isVisible)}`}
+                className={`group premium-card text-left flex flex-col p-8 md:p-10 hover:border-accent/25 ${revealClasses.fadeUp(isVisible)}`}
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
-                <div className="p-10 flex flex-col flex-1">
+                <div className="flex flex-col flex-1">
                   <p className="section-label mb-4 text-[11px]">{s.tagline}</p>
                   <h3 className="font-playfair text-xl md:text-2xl text-foreground mb-4 leading-snug">
                     {s.title}
                   </h3>
-                  <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed mb-6 min-h-[60px]">
+                  <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
                     {s.body}
                   </p>
                   <div className="flex items-center gap-2 font-jost text-xs uppercase tracking-[2px] text-accent group-hover:gap-3 transition-all mt-auto">

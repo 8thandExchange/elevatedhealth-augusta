@@ -30,7 +30,7 @@ const WhyElevatedSection = () => {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-px bg-border max-w-6xl mx-auto border border-border">
+        <div className="grid md:grid-cols-3 gap-px bg-border max-w-6xl mx-auto border border-border rounded-xl overflow-hidden shadow-[var(--shadow-sm)]">
           {pillars.map((p, i) => (
             <div
               key={p.label}

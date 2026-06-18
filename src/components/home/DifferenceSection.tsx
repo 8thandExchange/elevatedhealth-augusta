@@ -17,13 +17,16 @@ const DifferenceSection = () => {
       <div className="container mx-auto px-6 lg:px-8">
         <div className={`max-w-2xl mx-auto text-center mb-16 ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label mb-4">The Difference</p>
-          <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl text-foreground">
-            What sets us <span className="italic">apart.</span>
+          <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl text-foreground mb-4">
+            Not your average <span className="italic">wellness clinic.</span>
           </h2>
+          <p className="font-jost font-light text-sm text-muted-foreground max-w-xl mx-auto">
+            In-person Evans care vs. telehealth-only apps — side by side.
+          </p>
         </div>
 
-        <div className={`max-w-3xl mx-auto border border-border ${revealClasses.fadeUp(isVisible)}`}>
-          <div className="grid grid-cols-[1fr_auto_auto] bg-muted/40 border-b border-border">
+        <div className={`max-w-3xl mx-auto premium-card overflow-hidden ${revealClasses.fadeUp(isVisible)}`}>
+          <div className="grid grid-cols-[1fr_auto_auto] bg-surface border-b border-border">
             <div className="p-5 font-jost text-xs uppercase tracking-[2px] text-muted-foreground" />
             <div className="p-5 font-jost text-xs uppercase tracking-[2px] text-accent text-center min-w-[110px]">
               Elevated Health

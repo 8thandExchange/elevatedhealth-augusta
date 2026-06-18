@@ -7,11 +7,16 @@ import SEOSchema from "@/components/SEOSchema";
 import { FloatingMobileCTA } from "@/components/FloatingMobileCTA";
 import CacheRefreshBanner from "@/components/CacheRefreshBanner";
 
-import PromiseSection from "@/components/home/PromiseSection";
-import WhyElevatedSection from "@/components/home/WhyElevatedSection";
+import TrustStatsSection from "@/components/home/TrustStatsSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
+import ConditionsMarquee from "@/components/home/ConditionsMarquee";
+import PromiseSection from "@/components/home/PromiseSection";
+import LabFocusSection from "@/components/home/LabFocusSection";
+import WhyElevatedSection from "@/components/home/WhyElevatedSection";
 import WhatWeDoSection from "@/components/home/WhatWeDoSection";
+import PatientStoriesSection from "@/components/home/PatientStoriesSection";
 import DifferenceSection from "@/components/home/DifferenceSection";
+import HomePricingSection from "@/components/home/HomePricingSection";
 import ClinicalTeamSection from "@/components/home/ClinicalTeamSection";
 import HomeClinicGallery from "@/components/home/HomeClinicGallery";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
@@ -24,21 +29,24 @@ const Index = () => {
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <TrustStatsSection />
+        <HowItWorksSection />
+        <ConditionsMarquee />
         <PromiseSection />
-        <HomeClinicGallery />
-
-        <section className="py-16 md:py-20 bg-surface border-y border-border">
+        <LabFocusSection />
+        <WhyElevatedSection />
+        <WhatWeDoSection />
+        <section className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
-            <EverythingIncludedPillars />
+            <EverythingIncludedPillars className="shadow-[var(--shadow-sm)]" />
           </div>
         </section>
-
-        <WhyElevatedSection />
-        <HowItWorksSection />
-        <WhatWeDoSection />
-        <IVDirectBookBanner />
+        <PatientStoriesSection />
         <DifferenceSection />
+        <HomePricingSection />
+        <HomeClinicGallery />
         <ClinicalTeamSection />
+        <IVDirectBookBanner />
         <Contact showCredibilityBar />
       </main>
       <Footer />
