@@ -2,15 +2,15 @@
  * Pattern A storefront hero — shared sizing (larger than prior 70vh / text-7xl cap).
  */
 export const storefrontHeroSection =
-  "min-h-[88vh] md:min-h-[92vh] flex items-center bg-muted/30";
+  "min-h-[70vh] md:min-h-[92vh] flex items-center bg-muted/30";
 
 export const storefrontHeroInner =
-  "container mx-auto px-6 lg:px-8 max-w-5xl py-28 md:py-36 lg:py-40";
+  "container mx-auto px-6 lg:px-8 max-w-5xl py-20 md:py-36 lg:py-40";
 
 export const storefrontHeroLabel = "section-label mb-6 md:mb-8";
 
 export const storefrontHeroTitle =
-  "font-playfair text-6xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.25rem] text-foreground mb-8 md:mb-10 leading-[1.05] tracking-tight";
+  "font-playfair text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[5.25rem] text-foreground mb-8 md:mb-10 leading-[1.06] tracking-tight";
 
 export const storefrontHeroLead =
   "font-jost font-light text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed mb-10 max-w-2xl";

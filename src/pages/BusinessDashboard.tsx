@@ -358,7 +358,7 @@ const BusinessDashboard = () => {
 
         {/* Operational Blockers */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="flex w-full overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-3 mb-6 [&>button]:shrink-0 [&>button]:whitespace-nowrap">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
               All Blockers ({allBlockers.length})

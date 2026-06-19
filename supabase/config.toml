@@ -118,6 +118,12 @@ verify_jwt = false
 [functions.verify-consultation-payment]
 verify_jwt = false
 
+# verify-alacarte-payment — Stripe success-page verification for lab panels /
+# à la carte items; may be hit by a guest checkout, so no JWT requirement
+# (matches verify-consultation-payment / verify-hormone-payment).
+[functions.verify-alacarte-payment]
+verify_jwt = false
+
 [functions.create-iv-drip-checkout]
 verify_jwt = false
 
@@ -212,6 +218,16 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.daily-appointment-reminders]
+verify_jwt = false
+
+# two-hour-appointment-reminders — scheduled sibling of daily reminders; same
+# no-JWT cron posture so the scheduler can invoke it without a bearer token.
+[functions.two-hour-appointment-reminders]
+verify_jwt = false
+
+# send-blocked-intake-notifications — scheduled staff notification of blocked
+# IV intakes; no-JWT cron posture (sends only, returns no patient data).
+[functions.send-blocked-intake-notifications]
 verify_jwt = false
 
 [functions.send-booking-confirmation]

@@ -244,7 +244,7 @@ const WeightLoss = () => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button
-                  onClick={() => window.open(`tel:${SITE_CONFIG.phone}`, "_self")}
+                  onClick={() => window.open(`tel:${SITE_CONFIG.phoneRaw}`, "_self")}
                   size="lg"
                   variant="outline"
                 >

@@ -664,12 +664,12 @@ const PatientIntake = () => {
                         placeholder="Street Address"
                         className="w-full"
                       />
-                      <div className="grid grid-cols-6 gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
                         <Input
                           value={city}
                           onChange={(e) => setCity(e.target.value)}
                           placeholder="City"
-                          className="col-span-3"
+                          className="col-span-2 sm:col-span-3"
                         />
                         <Input
                           value={state}
@@ -682,7 +682,7 @@ const PatientIntake = () => {
                           value={zipCode}
                           onChange={(e) => setZipCode(e.target.value)}
                           placeholder="ZIP"
-                          className="col-span-2"
+                          className="col-span-1 sm:col-span-2"
                           maxLength={10}
                         />
                       </div>

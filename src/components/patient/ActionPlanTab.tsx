@@ -391,7 +391,7 @@ const ActionPlanTab = ({ labData, gender }: ActionPlanTabProps) => {
                     <Link to={item.actionLink} className="shrink-0">
                       <Button 
                         size="sm" 
-                        className="h-8 px-4 bg-navy hover:bg-navy-light text-white font-inter text-xs gap-1.5 rounded-xl w-full sm:w-auto"
+                        className="h-8 px-4 bg-primary hover:bg-primary-light text-primary-foreground font-inter text-xs gap-1.5 rounded-xl w-full sm:w-auto"
                       >
                         <ActionIcon className="w-3 h-3" />
                         {item.actionLabel}

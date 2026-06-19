@@ -185,7 +185,7 @@ serve(async (req) => {
       try {
         const { sendSms } = await import("../_shared/sms.ts");
         const smsMessage = `Hi ${firstName}! Please complete your medical intake form for Elevated Health Augusta: ${intakeLink} - This link expires in 7 days.`;
-        const smsResult = await sendSms(patientPhone, smsMessage, firstName);
+        const smsResult = await sendSms(patientPhone, smsMessage, { contactName: firstName });
         if (smsResult.success) {
           logStep("SMS sent via GHL", { phone: patientPhone });
           smsSent = true;

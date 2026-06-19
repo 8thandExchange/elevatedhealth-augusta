@@ -544,22 +544,22 @@ const PatientLogin = () => {
           </CardContent>
         </Card>
 
-        {/* New Patient CTA */}
-        <div className="mt-6 p-4 bg-muted/50 rounded-lg border border-border/50 text-center">
-          <p className="text-sm text-muted-foreground mb-3">
+        {/* New Patient CTA — prominent so first-time visitors don't dead-end on sign-in */}
+        <div className="mt-6 p-5 bg-accent/5 rounded-lg border-2 border-accent/25 text-center">
+          <p className="font-playfair text-lg text-foreground mb-1">
             New to Elevated Health Augusta?
           </p>
-          <Button 
-            variant="outline" 
+          <p className="text-sm text-muted-foreground mb-4">
+            New patients begin with a wellness assessment — your portal is created
+            automatically after your first visit.
+          </p>
+          <Button
             className="w-full"
             onClick={() => setShowConsultModal(true)}
           >
             <Calendar className="w-4 h-4 mr-2" />
-            Book Your Consultation
+            Book Your First Visit
           </Button>
-          <p className="text-xs text-muted-foreground mt-2">
-            Your portal access will be created after your first visit
-          </p>
         </div>
 
         {/* Back to Home + Staff cross-link */}

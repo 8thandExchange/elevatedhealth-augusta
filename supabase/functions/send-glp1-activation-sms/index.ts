@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
     const origin = "https://elevatedhealthaugusta.com";
     
     // Link to weight loss page where they can choose Semaglutide or Tirzepatide
-    const message = `Hi ${firstName}! Your GLP-1 weight loss membership from Elevated Health Augusta is ready. Semaglutide $399/mo or Tirzepatide $499/mo. Start here: ${origin}/weight-loss Questions? (706) 760-3470`;
+    const message = `Hi ${firstName}! Your GLP-1 weight loss membership from Elevated Health Augusta is ready. Semaglutide $249/mo or Tirzepatide $499/mo. Start here: ${origin}/weight-loss Questions? (706) 760-3470`;
     const smsResult = await sendSMS(formattedPhone, message);
     if (!smsResult.success) {
       throw new Error(smsResult.error || "SMS send failed");
