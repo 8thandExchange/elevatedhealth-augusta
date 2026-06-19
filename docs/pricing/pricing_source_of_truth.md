@@ -144,8 +144,16 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | NAD+ Troches | $99/mo | prod_UVeDctVXwIySHX | price_1TWcujCXbCBPFEeIgLXiONWC |
 | NAD+ Injection | $199/mo | prod_UVeDVPf2YZCceL | price_1TWcv4CXbCBPFEeIqJILZWQY |
 | NAD+ Nasal Spray | $99/mo | prod_UVeDO4N214JNkQ | price_1TWcvUCXbCBPFEeILsUFp0tq |
-| GHK-Cu Sublingual | $99/mo | prod_UVeEjWP5nRaa3z | price_1TWcvrCXbCBPFEeIJYVzAjXS |
 | GHK-Cu Topical | $149/mo | prod_UVeEx971R0NYhK | price_1TWcwJCXbCBPFEeIL3UgXgTu |
+
+GHK-Cu Sublingual is NOT offered (removed 2026-06-19). Topical is the only GHK-Cu form sold.
+### À La Carte Recovery Peptides (Non-Member, One-Time fills — consult-gated)
+Created 2026-06-19 via `bootstrap-recovery-peptide-prices`. One-time per-fill pricing from the Launch Offer Order System; members get 20% off via the checkout coupon. Consult-gated under Research Peptide Consent.
+| Product | Price | Stripe Product ID | Stripe Price ID |
+|---|---|---|---|
+| BPC-157 | $249 | prod_UjcGzVhmET6qGt | price_1Tk924CXbCBPFEeI2RkxZwch |
+| TB-500 (Thymosin Beta-4) | $249 | prod_UjcGW4gXuzgmUM | price_1Tk925CXbCBPFEeIJROSQX2t |
+| BPC-157 / TB-500 Recovery Stack | $349 | prod_UjcGhDI27g3tXo | price_1Tk926CXbCBPFEeILIT0UuQF |
 ### Metabolic Recomposition Stack — À La Carte (Recurring Monthly)
 | Product | Price | Stripe Product ID | Stripe Price ID |
 |---|---|---|---|

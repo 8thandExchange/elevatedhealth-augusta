@@ -9,6 +9,7 @@ import {
   MEDICATION_FILLS,
   METABOLIC_STACK_ALACARTE,
   PEPTIDE_PRODUCTS,
+  RECOVERY_PEPTIDE_PRODUCTS,
   SEXUAL_WELLNESS_PRODUCTS,
   HAIR_RESTORATION_PRODUCTS,
 } from "./stripeConfig";
@@ -48,6 +49,8 @@ function fromGroup(
 export const CATALOG: Record<string, CatalogItem> = {
   // À la carte products that earn the standard member discount.
   ...fromGroup(PEPTIDE_PRODUCTS, () => ({ kind: "discount" }), "month"),
+  // Recovery peptides are one-time à la carte fills with the standard member discount.
+  ...fromGroup(RECOVERY_PEPTIDE_PRODUCTS, () => ({ kind: "discount" }), "one_time"),
   ...fromGroup(SEXUAL_WELLNESS_PRODUCTS, () => ({ kind: "discount" }), "month"),
   ...fromGroup(HAIR_RESTORATION_PRODUCTS, () => ({ kind: "discount" }), "month"),
   ...fromGroup(METABOLIC_STACK_ALACARTE, () => ({ kind: "discount" }), "month"),

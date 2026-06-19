@@ -110,14 +110,6 @@ const PEPTIDE_CATEGORIES = {
     label: "Skin & Hair Regeneration",
     color: "bg-purple-500",
     products: {
-      ghk_cu_sublingual: {
-        label: "GHK-Cu Sublingual",
-        price: "$99/mo",
-        priceId: "price_1SfibXEOtKRY99puuRkJc5g3",
-        type: "recurring" as const,
-        description: "Copper Peptide Complex",
-        clinical: "Best for: Skin repair, hair health, anti-aging",
-      },
       ghk_cu_topical: {
         label: "GHK-Cu Topical",
         price: "$149/mo",

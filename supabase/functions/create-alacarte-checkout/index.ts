@@ -6,7 +6,7 @@
  * Prefer dedicated functions (`create-medication-fill-checkout`, etc.) for new UI.
  */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { LIVE_CORE_SERVICES, LIVE_MEDICATION_FILLS } from "../_shared/live-prices.ts";
+import { LIVE_CORE_SERVICES, LIVE_MEDICATION_FILLS, LIVE_RECOVERY_PEPTIDES } from "../_shared/live-prices.ts";
 import { checkoutCorsHeaders, serveOnetimePriceCheckoutFromBody } from "../_shared/onetime-checkout-shared.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
@@ -31,6 +31,19 @@ serve(async (req) => {
 
     if (product_key in LIVE_MEDICATION_FILLS) {
       const stripePriceId = LIVE_MEDICATION_FILLS[product_key as keyof typeof LIVE_MEDICATION_FILLS];
+      return serveOnetimePriceCheckoutFromBody(body, {
+        functionName: "create-alacarte-checkout",
+        stripePriceId,
+        productKey: product_key,
+        success_url:
+          `${origin}/alacarte-success?product=${encodeURIComponent(product_key)}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/pricing`,
+        logConsultationBooking: true,
+      });
+    }
+
+    if (product_key in LIVE_RECOVERY_PEPTIDES) {
+      const stripePriceId = LIVE_RECOVERY_PEPTIDES[product_key as keyof typeof LIVE_RECOVERY_PEPTIDES];
       return serveOnetimePriceCheckoutFromBody(body, {
         functionName: "create-alacarte-checkout",
         stripePriceId,
@@ -70,6 +83,7 @@ serve(async (req) => {
     throw new Error(
       `Invalid product key: ${product_key}. Valid: ${[
         ...Object.keys(LIVE_MEDICATION_FILLS),
+        ...Object.keys(LIVE_RECOVERY_PEPTIDES),
         "followUp",
         "labPanel",
         "labPanelExpanded",

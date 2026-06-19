@@ -36,6 +36,15 @@ export const LIVE_MEDICATION_FILLS = {
 
 export type LiveMedicationFillKey = keyof typeof LIVE_MEDICATION_FILLS;
 
+/** Recovery peptides — one-time à la carte fills (consult-gated). */
+export const LIVE_RECOVERY_PEPTIDES = {
+  bpc157: "price_1Tk924CXbCBPFEeI2RkxZwch",
+  tb500: "price_1Tk925CXbCBPFEeIJROSQX2t",
+  wolverineStack: "price_1Tk926CXbCBPFEeILIT0UuQF",
+} as const;
+
+export type LiveRecoveryPeptideKey = keyof typeof LIVE_RECOVERY_PEPTIDES;
+
 export const LIVE_SEXUAL_WELLNESS = {
   tadalafil: "price_1TWcwsCXbCBPFEeI9yGko9k8",
   sildenafil: "price_1TWcxGCXbCBPFEeIezbJUMS1",

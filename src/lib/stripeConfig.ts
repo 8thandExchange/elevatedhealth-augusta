@@ -200,19 +200,45 @@ export const PEPTIDE_PRODUCTS = {
     amount: 9900,
     displayPrice: "$99/mo",
   },
-  ghkCuSublingual: {
-    name: "GHK-Cu Sublingual",
-    priceId: "price_1TWcvrCXbCBPFEeIJYVzAjXS",
-    productId: "prod_UVeEjWP5nRaa3z",
-    amount: 9900,
-    displayPrice: "$99/mo",
-  },
   ghkCuTopical: {
     name: "GHK-Cu Topical",
     priceId: "price_1TWcwJCXbCBPFEeIL3UgXgTu",
     productId: "prod_UVeEx971R0NYhK",
     amount: 14900,
     displayPrice: "$149/mo",
+  },
+} as const;
+
+/**
+ * Recovery peptides — one-time à la carte fills (per Launch Offer Order System
+ * per-vial pricing). Consult-gated under Research Peptide Consent; 20% member
+ * discount applies via the checkout layer (pricing.ts). Created via
+ * bootstrap-recovery-peptide-prices (live Stripe).
+ */
+export const RECOVERY_PEPTIDE_PRODUCTS = {
+  bpc157: {
+    name: "BPC-157",
+    priceId: "price_1Tk924CXbCBPFEeI2RkxZwch",
+    productId: "prod_UjcGzVhmET6qGt",
+    amount: 24900,
+    displayPrice: "$249",
+    interval: "one_time",
+  },
+  tb500: {
+    name: "TB-500 (Thymosin Beta-4)",
+    priceId: "price_1Tk925CXbCBPFEeIJROSQX2t",
+    productId: "prod_UjcGW4gXuzgmUM",
+    amount: 24900,
+    displayPrice: "$249",
+    interval: "one_time",
+  },
+  wolverineStack: {
+    name: "BPC-157 / TB-500 Recovery Stack",
+    priceId: "price_1Tk926CXbCBPFEeILIT0UuQF",
+    productId: "prod_UjcGhDI27g3tXo",
+    amount: 34900,
+    displayPrice: "$349",
+    interval: "one_time",
   },
 } as const;
 
@@ -323,6 +349,7 @@ export const ALL_LIVE_PRICE_IDS = [
   ...Object.values(CORE_SERVICES).map((p) => p.priceId),
   ...Object.values(MEDICATION_FILLS).map((p) => p.priceId),
   ...Object.values(PEPTIDE_PRODUCTS).map((p) => p.priceId),
+  ...Object.values(RECOVERY_PEPTIDE_PRODUCTS).map((p) => p.priceId),
   ...Object.values(SEXUAL_WELLNESS_PRODUCTS).map((p) => p.priceId),
   ...Object.values(HAIR_RESTORATION_PRODUCTS).map((p) => p.priceId),
 ];
