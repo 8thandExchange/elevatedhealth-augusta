@@ -17,11 +17,12 @@ const Footer = () => {
     <footer className="bg-primary text-primary-foreground py-16 lg:py-20 mt-auto">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14 pt-2 border-t border-primary-foreground/15">
+          <div className="text-center mb-14 pt-12">
+            <span className="mx-auto mb-6 block h-px w-12 bg-accent" aria-hidden />
             <p className="font-playfair text-3xl md:text-4xl text-primary-foreground leading-none mb-3">
-              Elevated <span className="italic">Health</span>
+              Elevated <span className="italic text-accent-light">Health</span>
             </p>
-            <p className="font-jost text-xs font-medium uppercase tracking-[3px] text-primary-foreground/65">
+            <p className="font-jost text-xs font-medium uppercase tracking-[0.25em] text-primary-foreground/60">
               Restore · Repair · Renew · Evans, Georgia
             </p>
           </div>

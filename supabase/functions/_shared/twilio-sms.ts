@@ -36,12 +36,17 @@ function twilioConfig():
   const fromNumber = Deno.env.get("TWILIO_SMS_FROM_NUMBER");
 
   if (!accountSid || !authToken) {
-    return { ok: false, error: "TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN not configured" };
+    return {
+      ok: false,
+      error:
+        "Clinic SMS is not configured yet (missing TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN in Supabase). Use Email link or Copy link instead.",
+    };
   }
   if (!messagingServiceSid && !fromNumber) {
     return {
       ok: false,
-      error: "Configure TWILIO_MESSAGING_SERVICE_SID or TWILIO_SMS_FROM_NUMBER",
+      error:
+        "Clinic SMS is not configured yet (add TWILIO_MESSAGING_SERVICE_SID or TWILIO_SMS_FROM_NUMBER in Supabase). Use Email link or Copy link instead.",
     };
   }
 

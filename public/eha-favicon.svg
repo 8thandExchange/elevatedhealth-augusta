@@ -1,6 +1,6 @@
 <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Elevated Health favicon">
   <title>Elevated Health — Favicon</title>
-  <rect width="64" height="64" fill="#2A2826"/>
-  <text x="32" y="46" font-family="'Playfair Display', Georgia, serif" font-size="48" font-weight="400" font-style="italic" fill="#F2EBDC" text-anchor="middle">e</text>
-  <line x1="20" y1="54" x2="44" y2="54" stroke="#B8956A" stroke-width="1"/>
+  <rect width="64" height="64" fill="#00477E"/>
+  <text x="32" y="46" font-family="'Playfair Display', Georgia, serif" font-size="48" font-weight="400" font-style="italic" fill="#FFFFFF" text-anchor="middle">e</text>
+  <line x1="20" y1="54" x2="44" y2="54" stroke="#0B7BB8" stroke-width="2"/>
 </svg>

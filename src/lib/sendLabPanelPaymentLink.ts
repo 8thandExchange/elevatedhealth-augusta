@@ -7,6 +7,13 @@ import {
 
 export type LabPaymentDelivery = "email" | "sms" | "copy";
 
+export interface SendLabPanelPaymentLinkResult {
+  url: string;
+  /** Set when SMS failed but checkout URL was copied for manual send. */
+  smsManualFallback?: boolean;
+  deliveryNote?: string;
+}
+
 export interface SendLabPanelPaymentLinkInput {
   panelSlug: string;
   panelName: string;
@@ -38,7 +45,7 @@ async function invokeFunction<T extends Record<string, unknown>>(
 
 export async function sendLabPanelPaymentLink(
   input: SendLabPanelPaymentLinkInput,
-): Promise<{ url: string }> {
+): Promise<SendLabPanelPaymentLinkResult> {
   const {
     panelSlug,
     panelName,
@@ -100,17 +107,26 @@ export async function sendLabPanelPaymentLink(
     return { url };
   }
 
-  await invokeFunction(
-    "send-alacarte-payment-sms",
-    {
-      patient_phone: patientPhone,
-      patient_name: patientName,
-      payment_url: url,
-      product_name: panelName,
-      amount,
-    },
-    "Could not text the payment link",
-  );
-
-  return { url };
+  try {
+    await invokeFunction(
+      "send-alacarte-payment-sms",
+      {
+        patient_phone: patientPhone,
+        patient_name: patientName,
+        payment_url: url,
+        product_name: panelName,
+        amount,
+      },
+      "Could not text the payment link",
+    );
+    return { url };
+  } catch {
+    await navigator.clipboard.writeText(url);
+    return {
+      url,
+      smsManualFallback: true,
+      deliveryNote:
+        "SMS is not set up on the server yet. Payment link copied — paste it into Messages for the patient, or use Email link.",
+    };
+  }
 }

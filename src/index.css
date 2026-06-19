@@ -2,80 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Elevated Health Augusta — Navy, Gray, White (official logo palette) */
+/* Elevated Health Augusta — Logo palette: Navy + Steel Blue + White
+   Navy #00477E · Steel blue #0B7BB8 · Logo gray #A7A9AC
+   Editorial structure (type scale, gradients, hairlines) retained.
+   Typography: Playfair Display (display) + Jost (body) */
 
 @layer base {
   :root {
+    /* Clean paper — logo lives on white */
     --background: 0 0% 100%;
-    --foreground: 207 100% 25%;
+    --foreground: 207 90% 20%;        /* deep navy text, legible */
     --card: 0 0% 100%;
-    --card-foreground: 207 100% 25%;
+    --card-foreground: 207 90% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 207 100% 25%;
+    --popover-foreground: 207 90% 20%;
+    /* Navy anchors CTAs, footer, dark sections (logo wordmark #00477E) */
     --primary: 207 100% 25%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 207 85% 32%;
-    --primary-dark: 207 100% 18%;
-    --secondary: 220 10% 93%;
+    --primary-dark: 207 100% 17%;
+    /* Cool gray — quiet secondary surfaces (logo tagline family) */
+    --secondary: 210 16% 93%;
     --secondary-foreground: 207 100% 25%;
-    --secondary-light: 220 8% 88%;
-    --secondary-dark: 220 3% 52%;
-    /* Steel blue — highlights, icons, links (distinct from navy primary CTAs) */
-    --accent: 199 89% 39%;
+    --secondary-light: 210 14% 96%;
+    --secondary-dark: 213 8% 52%;
+    /* Steel blue — the bright accent (links, highlights, numerals) */
+    --accent: 199 89% 39%;            /* #0B7BB8 */
     --accent-foreground: 0 0% 100%;
-    --accent-light: 199 75% 52%;
-    --surface: 208 40% 97%;
-    --surface-foreground: 207 100% 25%;
+    --accent-light: 199 78% 52%;
+    /* Cool tinted band — alternating editorial sections */
+    --surface: 208 44% 97%;
+    --surface-foreground: 207 90% 20%;
+    /* Legacy "gold" aliases now map to steel blue so old components stay on-brand */
     --gold: 199 89% 39%;
     --gold-foreground: 0 0% 100%;
-    --gold-light: 207 85% 32%;
-    --gold-dark: 207 100% 18%;
-    --soft-gold: 220 10% 93%;
-    --muted: 220 8% 96%;
-    --muted-foreground: 220 3% 46%;
-    --surface: 208 40% 97%;
-    --surface-foreground: 207 100% 25%;
-    --destructive: 0 55% 50%;
+    --gold-light: 199 78% 52%;
+    --gold-dark: 207 85% 30%;
+    --soft-gold: 208 40% 90%;
+    --muted: 210 16% 96%;
+    --muted-foreground: 213 10% 44%;  /* cool gray */
+    --destructive: 0 58% 48%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 8% 90%;
-    --input: 220 8% 94%;
-    --ring: 207 100% 25%;
-    --radius: 0.1875rem;
+    --border: 210 18% 88%;            /* cool hairline */
+    --input: 210 16% 92%;
+    --ring: 199 89% 39%;              /* steel-blue focus ring */
+    --radius: 0.125rem;               /* near-squared, editorial */
     /* EHA brand raw values — for .btn-* utility classes */
     --color-ink: #00477E;
     --color-paper: #FFFFFF;
-    --color-tagline: #A7A9AC;
+    --color-tagline: #8A8F99;
     --color-accent: #0B7BB8;
     --color-accent-on: #FFFFFF;
-    --rule: 1px solid var(--color-tagline);
-    --shadow-sm: 0 1px 2px hsl(207 100% 25% / 0.06);
-    --shadow-md: 0 4px 16px hsl(207 100% 25% / 0.08);
-    --shadow-lg: 0 12px 40px hsl(207 100% 25% / 0.12);
-    --shadow-glow: 0 8px 32px hsl(207 100% 25% / 0.18);
+    --rule: 1px solid hsl(210 18% 84%);
+    /* Navy-tinted shadows — cool hue, low alpha for soft depth */
+    --shadow-sm: 0 1px 2px hsl(207 70% 22% / 0.07);
+    --shadow-md: 0 6px 24px hsl(207 70% 22% / 0.10);
+    --shadow-lg: 0 18px 50px hsl(207 70% 22% / 0.14);
+    --shadow-glow: 0 10px 40px hsl(199 89% 39% / 0.22);
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
-    --background: 207 100% 12%;
+    --background: 207 70% 10%;
     --foreground: 0 0% 98%;
-    --card: 207 100% 16%;
+    --card: 207 55% 14%;
     --card-foreground: 0 0% 98%;
-    --popover: 207 100% 16%;
+    --popover: 207 55% 14%;
     --popover-foreground: 0 0% 98%;
-    --primary: 207 85% 38%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 3% 52%;
+    /* On dark, steel blue brightens the primary action */
+    --primary: 199 80% 48%;
+    --primary-foreground: 207 100% 12%;
+    --primary-light: 199 78% 58%;
+    --primary-dark: 207 85% 30%;
+    --secondary: 207 40% 20%;
     --secondary-foreground: 0 0% 98%;
-    --accent: 207 85% 38%;
-    --accent-foreground: 0 0% 100%;
-    --muted: 207 50% 20%;
-    --muted-foreground: 220 3% 72%;
-    --destructive: 0 55% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 207 40% 24%;
-    --input: 207 40% 22%;
-    --ring: 207 85% 38%;
+    --accent: 199 80% 52%;
+    --accent-foreground: 207 100% 12%;
+    --accent-light: 199 78% 62%;
+    --surface: 207 50% 15%;
+    --surface-foreground: 0 0% 98%;
+    --muted: 207 40% 20%;
+    --muted-foreground: 210 14% 72%;
+    --destructive: 0 58% 46%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 207 35% 26%;
+    --input: 207 35% 22%;
+    --ring: 199 80% 52%;
   }
 }
 
@@ -94,6 +107,9 @@
     font-weight: 300;
     letter-spacing: 0.01em;
     line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   /* Typography — Playfair Display for Headings */
@@ -101,16 +117,19 @@
     font-family: 'Playfair Display', serif;
     font-weight: 400;
     @apply text-foreground;
-    letter-spacing: -0.01em;
-    line-height: 1.15;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+    text-wrap: balance;
   }
 
   h1 {
-    @apply text-3xl md:text-4xl lg:text-5xl;
+    @apply text-4xl md:text-5xl lg:text-6xl;
+    letter-spacing: -0.025em;
   }
 
   h2 {
-    @apply text-2xl md:text-3xl lg:text-4xl;
+    @apply text-3xl md:text-4xl lg:text-[2.75rem];
+    letter-spacing: -0.02em;
   }
 
   h3 {
@@ -123,18 +142,56 @@
     letter-spacing: 0.01em;
   }
 
-  /* Section labels — Jost 500, all caps, tracked (logo tagline gray) */
+  /* Section labels — Jost 500, all caps, tracked (warm tagline) */
   .section-label {
     font-family: 'Jost', sans-serif;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 2.5px;
+    letter-spacing: 0.22em;
     color: var(--color-tagline);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
   }
 
   .section-label-on-dark {
-    color: hsl(0 0% 100% / 0.72);
+    color: hsl(43 44% 97% / 0.7);
+  }
+
+  /* Eyebrow with a short camel hairline — editorial section intro */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-size: 0.75rem;
+    color: var(--color-tagline);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: hsl(var(--accent));
+    display: inline-block;
+  }
+  .eyebrow-center::before { display: none; }
+  .eyebrow-on-dark { color: hsl(43 44% 97% / 0.72); }
+
+  /* Lead paragraph — larger, lighter intro copy */
+  .lead {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    @apply text-lg md:text-xl;
+    line-height: 1.6;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Hairline rule in the warm border tone */
+  .hairline {
+    height: 1px;
+    width: 100%;
+    background: hsl(var(--border));
   }
 }
 
@@ -246,6 +303,11 @@
 .step-number {
   font-family: 'Playfair Display', serif;
   @apply text-5xl md:text-6xl text-accent/90 leading-none italic;
+}
+
+@keyframes scrollcue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
 }
 
 @keyframes marquee-scroll {
@@ -388,7 +450,7 @@ label {
 }
 
 .mobile-menu-link:hover {
-  color: hsl(207, 85%, 32%) !important;
+  color: hsl(199, 89%, 39%) !important;
 }
 
 .mobile-menu-close {
@@ -401,7 +463,7 @@ label {
 }
 
 .mobile-menu-overlay p {
-  color: hsl(220, 10%, 45%) !important;
+  color: hsl(213, 10%, 44%) !important;
 }
 
 .mobile-menu-overlay svg {
@@ -438,7 +500,7 @@ label {
 }
 
 .dashboard-tab-scroll::-webkit-scrollbar-thumb:hover {
-  background: #003660;
+  background: #0B7BB8;
 }
 
 /* Touch feedback */

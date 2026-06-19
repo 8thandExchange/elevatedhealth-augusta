@@ -214,7 +214,7 @@ const SmsInbox = () => {
             )}
           </h3>
           <p className="text-sm text-muted-foreground">
-            Two-way texting via Twilio — replaces GoHighLevel conversations.
+            Outbound texts are logged here. Patient replies arrive in GoHighLevel Conversations.
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={loadMessages} className="gap-2">

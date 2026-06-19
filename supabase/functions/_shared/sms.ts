@@ -1,6 +1,13 @@
 /**
  * Canonical SMS module for all edge functions.
- * Sends via Twilio and logs outbound messages to sms_messages when Supabase is available.
+ *
+ * Provider selection (set SMS_PROVIDER secret to force):
+ *   - "ghl"    → GoHighLevel LC Phone (default when GHL_API_KEY + GHL_LOCATION_ID exist)
+ *   - "twilio" → Twilio Programmable SMS
+ * When SMS_PROVIDER is unset, GHL is used if configured, otherwise Twilio.
+ *
+ * Outbound messages are logged to sms_messages when Supabase is available so the
+ * Office SMS Inbox keeps a record regardless of provider.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import {
@@ -8,8 +15,26 @@ import {
   phoneLast10,
   sendTwilioSms,
 } from "./twilio-sms.ts";
+import { ghlConfigured, sendGhlSms } from "./ghl-sms.ts";
 
 export { formatPhoneE164, phoneLast10 };
+
+type SmsProvider = "ghl" | "twilio";
+
+function resolveProvider(): SmsProvider {
+  const explicit = Deno.env.get("SMS_PROVIDER")?.trim().toLowerCase();
+  if (explicit === "ghl" || explicit === "twilio") return explicit;
+  return ghlConfigured() ? "ghl" : "twilio";
+}
+
+function splitName(contactName?: string): { firstName?: string; lastName?: string } {
+  const parts = (contactName || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return {};
+  return {
+    firstName: parts[0],
+    lastName: parts.length > 1 ? parts.slice(1).join(" ") : undefined,
+  };
+}
 
 export type SendSmsResult = {
   success: boolean;
@@ -67,13 +92,23 @@ function clinicFromNumber(): string {
   );
 }
 
-/** Send an outbound SMS via Twilio. */
+/** Send an outbound SMS via the configured provider (GHL by default, Twilio fallback). */
 export async function sendSms(
   to: string,
   message: string,
   options: SendSmsOptions = {},
 ): Promise<SendSmsResult> {
-  const result = await sendTwilioSms(to, message);
+  const provider = resolveProvider();
+
+  let result: SendSmsResult;
+  if (provider === "ghl") {
+    const { firstName, lastName } = splitName(options.contactName);
+    const ghl = await sendGhlSms({ phone: to, message, firstName, lastName });
+    result = { success: ghl.success, messageId: ghl.messageId, error: ghl.error };
+  } else {
+    result = await sendTwilioSms(to, message);
+  }
+
   if (!result.success) return result;
 
   let formattedTo: string;

@@ -76,14 +76,17 @@ const Navbar = () => {
             {/* Logo */}
             <button 
               onClick={() => { navigate("/"); scrollToSection("hero"); }}
-              className="flex flex-col items-start text-left"
+              className="flex flex-col items-start text-left group"
               aria-label="Elevated Health Augusta home"
             >
               <span className={`font-playfair text-xl md:text-2xl leading-none ${onDarkNav ? "text-primary-foreground" : "text-primary"}`}>
-                Elevated <span className="italic">Health</span>
+                Elevated <span className="italic text-accent">Health</span>
               </span>
-              <span className={`font-jost text-[9px] md:text-[10px] uppercase tracking-[0.28em] mt-1 ${onDarkNav ? "text-primary-foreground/65" : "text-muted-foreground"}`}>
-                Augusta
+              <span className={`flex items-center gap-2 mt-1.5 ${onDarkNav ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                <span className="h-px w-4 bg-accent" aria-hidden />
+                <span className="font-jost text-[9px] md:text-[10px] uppercase tracking-[0.3em]">
+                  Augusta
+                </span>
               </span>
             </button>
 

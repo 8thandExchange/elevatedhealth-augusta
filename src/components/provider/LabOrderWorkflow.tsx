@@ -207,7 +207,7 @@ export default function LabOrderWorkflow({
     const method = patient.phone ? "sms" : "email";
     setPayingOrderId(order.id);
     try {
-      await sendLabPanelPaymentLink({
+      const result = await sendLabPanelPaymentLink({
         panelSlug: order.panel_slug,
         panelName,
         patientId: patient.id,
@@ -217,7 +217,13 @@ export default function LabOrderWorkflow({
         isMember: patient.isMember,
         method,
       });
-      toast.success(method === "sms" ? "Payment link texted to patient" : "Payment link emailed to patient");
+      if (result.smsManualFallback) {
+        toast.warning(result.deliveryNote ?? "Payment link copied — paste into Messages for the patient.");
+      } else {
+        toast.success(
+          method === "sms" ? "Payment link texted to patient" : "Payment link emailed to patient",
+        );
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not send payment link");
     } finally {

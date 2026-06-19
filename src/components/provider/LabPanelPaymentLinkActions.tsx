@@ -35,7 +35,7 @@ export function LabPanelPaymentLinkActions({
   const handleSend = async (method: "email" | "sms" | "copy") => {
     setSending(method);
     try {
-      await sendLabPanelPaymentLink({
+      const result = await sendLabPanelPaymentLink({
         panelSlug,
         panelName,
         patientId,
@@ -49,6 +49,8 @@ export function LabPanelPaymentLinkActions({
         toast.success("Lab payment link copied — paste into a text or show QR on your phone.");
       } else if (method === "email") {
         toast.success(`Payment link emailed (${priceLabel})`);
+      } else if (result.smsManualFallback) {
+        toast.warning(result.deliveryNote ?? "Payment link copied — paste into Messages for the patient.");
       } else {
         toast.success(`Payment link texted (${priceLabel})`);
       }
@@ -62,7 +64,8 @@ export function LabPanelPaymentLinkActions({
   return (
     <div className={className}>
       <p className="text-[11px] text-muted-foreground mb-1.5">
-        Collect {priceLabel} on the patient&apos;s phone before draw (Stripe Checkout).
+        Collect {priceLabel} on the patient&apos;s phone before draw (Stripe Checkout). Email or Copy
+        work today; Text requires Twilio setup in Supabase.
       </p>
       <div className="flex flex-wrap gap-1.5">
         <Button
