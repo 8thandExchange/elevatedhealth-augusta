@@ -169,7 +169,7 @@ const EmailTemplates = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate("/provider")}>
+          <Button variant="ghost" onClick={() => navigate("/provider/dashboard")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Dashboard
           </Button>

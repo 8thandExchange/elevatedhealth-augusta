@@ -24,7 +24,7 @@ const StaffVendorGuide = () => {
         <div className="container mx-auto px-4 py-8 max-w-4xl space-y-8 print:max-w-none">
           <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
             <Button asChild variant="ghost" size="sm" className="font-jost gap-2">
-              <Link to="/office-manager">
+              <Link to="/office/dashboard">
                 <ArrowLeft className="h-4 w-4" />
                 Office manager
               </Link>

@@ -325,7 +325,7 @@ const StaffSystemGuide = () => {
               <p className="font-jost text-xs text-muted-foreground mt-4 print:text-black">
                 Related:{" "}
                 <span className="print:hidden">
-                  <Link to="/staff/quick-card" className="text-accent underline">
+                  <Link to="/staff-quick-card" className="text-accent underline">
                     Quick reference card
                   </Link>
                   {" · "}

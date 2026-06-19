@@ -66,7 +66,7 @@ export function CancellationPolicySummary({ variant, className = "" }: Props) {
           </li>
         </ul>
         <p className="text-xs text-muted-foreground mt-3">
-          <Link to="/terms#cancellation" className="text-primary hover:underline">
+          <Link to="/terms-of-service#cancellation" className="text-primary hover:underline">
             Full policy
           </Link>
         </p>
@@ -92,7 +92,7 @@ export function CancellationPolicySummary({ variant, className = "" }: Props) {
           Late changes and no-shows require a {REBOOKING_FEE_DISPLAY} rebooking fee before booking again.
         </p>
         <p className="text-xs text-muted-foreground mt-3">
-          <Link to="/terms#cancellation" className="text-primary hover:underline">
+          <Link to="/terms-of-service#cancellation" className="text-primary hover:underline">
             Full cancellation & refund policy
           </Link>
         </p>

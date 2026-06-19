@@ -1378,7 +1378,7 @@ const ProviderDashboard = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => scrollTabsBy(-200)}
-                  className="absolute left-1 top-1/2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-border/70 bg-background/95 text-[#2A2826] hover:text-[#B8956A]"
+                  className="absolute left-1 top-1/2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-border/70 bg-background/95 text-foreground hover:text-accent"
                   aria-label="Scroll dashboard tabs left"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -1394,7 +1394,7 @@ const ProviderDashboard = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => scrollTabsBy(200)}
-                  className="absolute right-1 top-1/2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-border/70 bg-background/95 text-[#2A2826] hover:text-[#B8956A]"
+                  className="absolute right-1 top-1/2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-border/70 bg-background/95 text-foreground hover:text-accent"
                   aria-label="Scroll dashboard tabs right"
                 >
                   <ChevronRight className="h-4 w-4" />

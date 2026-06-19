@@ -258,9 +258,7 @@ const PatientLogin = () => {
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Login failed";
       if (message.toLowerCase().includes("invalid login credentials")) {
-        toast.error("That password didn't work. Use the email sign-in link — no password needed.");
-        setShowPasswordForm(false);
-        setMagicLinkSent(false);
+        toast.error("Incorrect email or password. Try again, or use the email sign-in link instead.");
       } else {
         toast.error(message);
       }

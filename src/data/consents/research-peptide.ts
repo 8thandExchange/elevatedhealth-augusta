@@ -1,9 +1,9 @@
 import type { ConsentDocument } from "./types";
 
-/** Legal text v2026-05-15-v1 — keep in sync with `supabase/migrations/20260515194500_seed_consent_versions.sql`. */
+/** Legal text v2026-06-19-v2 — keep in sync with `supabase/migrations/20260621260000_consent_retatrutide_glp1_v2.sql`. */
 export const researchPeptideConsent: ConsentDocument = {
   type: "research_peptide",
-  version_label: "2026-05-15-v1",
+  version_label: "2026-06-19-v2",
   title: "Research Peptide Therapy Informed Consent",
   tier: 2,
   body_markdown: `
@@ -11,7 +11,7 @@ export const researchPeptideConsent: ConsentDocument = {
 **Patient Name:** _________________________________
 **Date of Birth:** _________________________________
 **Date:** _________________________________
-**Document version:** 2026-05-15-v1
+**Document version:** 2026-06-19-v2
 ---
 ## READ THIS DOCUMENT CAREFULLY. IT DESCRIBES A FORM OF MEDICAL TREATMENT THAT INVOLVES SUBSTANCES THAT ARE NOT APPROVED BY THE U.S. FOOD AND DRUG ADMINISTRATION. BY SIGNING THIS DOCUMENT, YOU ARE ACCEPTING RISKS AND LIMITATIONS THAT WOULD NOT APPLY TO TRADITIONAL FDA-APPROVED MEDICATIONS.
 ---
@@ -47,7 +47,7 @@ I understand that this consent does NOT cover:
 - Anabolic-androgenic steroids
 - Selective Androgen Receptor Modulators (SARMs)
 - Substances on the FDA Difficult to Compound list
-- Substances explicitly prohibited from compounding by the FDA (excluding retatrutide when prescribed under the ELEVATED Metabolic Recomposition program per clinic policy override dated 2026-06-14)
+- Substances explicitly prohibited from compounding by the FDA. (Retatrutide, an investigational GLP-1-class agent, is NOT covered by this research-peptide consent; if a physician selects it, it is consented separately under the GLP-1 / Weight Management Informed Consent, which includes an investigational-status disclosure.)
 - Any peptide or substance used for performance enhancement in athletic competition
 ---
 ## SECTION 2 — REGULATORY STATUS (ATTESTATION REQUIRED)
@@ -229,7 +229,7 @@ By signing below, I attest that:
 **Patient signature (typed full legal name):** _________________________________
 **Date and time signed (auto-captured):** _________________________________
 **IP address (auto-captured):** _________________________________
-**Document version signed:** 2026-05-15-v1
+**Document version signed:** 2026-06-19-v2
 **Document hash (auto-captured):** _________________________________
 ---
 *End of Research Peptide Therapy Informed Consent.*

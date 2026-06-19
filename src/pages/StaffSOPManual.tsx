@@ -198,7 +198,7 @@ const StaffSOPManual = () => {
         <div className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur print:hidden">
           <div className="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3 max-w-5xl">
             <Button asChild variant="ghost" size="sm" className="font-jost gap-2">
-              <Link to="/office-manager">
+              <Link to="/office/dashboard">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Link>

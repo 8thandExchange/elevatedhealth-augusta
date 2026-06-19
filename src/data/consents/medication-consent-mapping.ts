@@ -120,6 +120,13 @@ export const MEDICATION_CONSENT_RULES: MedicationConsentRule[] = [
     required_consents: ["glp1"],
   },
   {
+    medication_id: "compounded_retatrutide",
+    medication_category: "glp1",
+    required_consents: ["glp1", "off_label"],
+    notes:
+      "Investigational triple agonist — gated, provider-selected only, never advertised. GLP-1 consent v2 carries the investigational / not-FDA-approved / not-compoundable (FDA 503A/503B) disclosure (Section 11A). NOT the research-peptide pathway.",
+  },
+  {
     medication_id: "bpc_157",
     medication_category: "research_peptide",
     required_consents: ["research_peptide"],
@@ -330,6 +337,7 @@ function inferCanonicalFromFccNameAndCategory(
 
   if (!n && !category) return null;
 
+  if (n.includes("retatrutide")) return "compounded_retatrutide";
   if (n.includes("semaglutide")) return "compounded_semaglutide";
   if (n.includes("tirzepatide")) return "compounded_tirzepatide";
   if (n.includes("liraglutide")) return "liraglutide";

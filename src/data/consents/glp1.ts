@@ -1,9 +1,9 @@
 import type { ConsentDocument } from "./types";
 
-/** Legal text v2026-05-15-v1 — keep in sync with `supabase/migrations/20260515194500_seed_consent_versions.sql`. */
+/** Legal text v2026-06-19-v2 — keep in sync with `supabase/migrations/20260621260000_consent_retatrutide_glp1_v2.sql`. */
 export const glp1Consent: ConsentDocument = {
   type: "glp1",
-  version_label: "2026-05-15-v1",
+  version_label: "2026-06-19-v2",
   title: "GLP-1 / Weight Management Informed Consent",
   tier: 2,
   body_markdown: `
@@ -11,7 +11,7 @@ export const glp1Consent: ConsentDocument = {
 **Patient Name:** _________________________________
 **Date of Birth:** _________________________________
 **Date:** _________________________________
-**Document version:** 2026-05-15-v1
+**Document version:** 2026-06-19-v2
 ---
 ## READ THIS DOCUMENT CAREFULLY. IT DESCRIBES THE BENEFITS, RISKS, AND LIMITATIONS OF GLP-1 RECEPTOR AGONIST THERAPY AND RELATED MEDICATIONS USED FOR WEIGHT MANAGEMENT. THIS DOCUMENT INCLUDES INFORMATION ABOUT FDA BLACK BOX WARNINGS AND CONTRAINDICATIONS. YOU MUST CONFIRM YOU DO NOT HAVE CERTAIN MEDICAL CONDITIONS BEFORE THERAPY CAN BE INITIATED.
 ---
@@ -208,6 +208,20 @@ I understand that completing required monitoring is a CONDITION of continued the
 This consent is effective on the date signed below and remains in effect for twelve (12) months. The Practice will request that I re-sign this consent annually as a condition of continued therapy.
 I may withdraw this consent at any time by notifying the Practice in writing or through the patient portal, or by discontinuing therapy.
 ---
+## SECTION 11A — RETATRUTIDE: INVESTIGATIONAL TRIPLE AGONIST (ATTESTATION REQUIRED ONLY IF PRESCRIBED)
+This section applies ONLY if my provider has specifically selected retatrutide for me. Retatrutide is NOT a routine or advertised offering of the Practice; it is provided only by individual physician decision after my assessment.
+### 11A.1 — Investigational, Not FDA-Approved
+I understand that retatrutide is an INVESTIGATIONAL triple hormone receptor agonist (GIP / GLP-1 / glucagon) currently in clinical trials. Unlike semaglutide and tirzepatide — whose active molecules are FDA-approved — retatrutide is NOT approved by the FDA for ANY use, for any person, at any dose. Outside of a clinical trial there is no FDA-approved source of retatrutide.
+### 11A.2 — FDA Compounding Position
+I understand that the FDA has stated that retatrutide does NOT qualify for the pharmacy compounding exemptions under sections 503A/503B of the Federal Food, Drug, and Cosmetic Act, and that the FDA has warned firms marketing compounded or "research" retatrutide. I understand that the Practice's decision to offer retatrutide is a physician clinical judgment that does not change this federal regulatory position, and that the regulatory or legal status of retatrutide may change at any time, which could require the Practice to discontinue it without notice.
+### 11A.3 — Limited Safety Data and Class Risks
+I understand that, because retatrutide is investigational, its long-term safety, full side-effect profile, and drug interactions are not fully characterized. It carries the GLP-1-class risks described elsewhere in this consent — including the thyroid C-cell tumor black box warning, the MTC/MEN 2 contraindications in Section 4, pancreatitis, and gallbladder disease — and may carry additional risks not yet known. Its glucagon-receptor activity may affect heart rate, blood pressure, and glucose differently than GLP-1-only or GLP-1/GIP agents.
+### 11A.4 — Sourcing and Voluntary Choice
+I understand that any retatrutide I receive will be obtained ONLY through the Practice's designated 503A compounding pharmacy, never from gray-market or "research-only" vendors. I have been offered FDA-approved or compounded alternatives (including semaglutide and tirzepatide) and the option of no pharmacologic treatment. Understanding its investigational status and the FDA's compounding position, I voluntarily choose to proceed with retatrutide if and only if my physician prescribes it.
+### 11A.5 — Section 11A Attestation
+**I attest that I have read Section 11A. I understand that retatrutide is investigational, not FDA-approved for any use, and not eligible for pharmacy compounding under the FDA's stated position; that its long-term safety is not established; and that I am choosing it voluntarily after being offered approved alternatives.**
+☐ I attest to the above. (Required only if retatrutide is prescribed for me.)
+---
 ## SECTION 12 — PATIENT SIGNATURE AND ATTESTATION
 By signing below, I attest that:
 1. I have read this entire consent in its entirety, including all sections
@@ -220,7 +234,7 @@ By signing below, I attest that:
 **Patient signature (typed full legal name):** _________________________________
 **Date and time signed (auto-captured):** _________________________________
 **IP address (auto-captured):** _________________________________
-**Document version signed:** 2026-05-15-v1
+**Document version signed:** 2026-06-19-v2
 **Document hash (auto-captured):** _________________________________
 ---
 *End of GLP-1 / Weight Management Informed Consent.*
@@ -230,6 +244,7 @@ By signing below, I attest that:
     { id: "serious_risks", title: "Section 5 — Other Serious Risks", requires_attestation: true },
     { id: "pregnancy", title: "Section 7 — Pregnancy and Breastfeeding", requires_attestation: true },
     { id: "lifestyle", title: "Section 10 — Lifestyle Requirements", requires_attestation: true },
+    { id: "retatrutide_investigational", title: "Section 11A — Retatrutide Investigational Disclosure", requires_attestation: true },
     { id: "mtc_attestation", title: "MTC/MEN 2 attestation", requires_attestation: true },
   ],
   expiration_months: 12,

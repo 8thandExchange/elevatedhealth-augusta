@@ -365,7 +365,7 @@ const IVScreening = () => {
                         therapy carries inherent risks including but not limited to vein irritation, allergic reaction,
                         infection, and fluid overload. I authorize Elevated Health Augusta clinicians to administer the
                         treatment I have selected, contingent on this screening result. I have read the{" "}
-                        <a href="/terms#cancellation" className="text-primary underline underline-offset-2">
+                        <a href="/terms-of-service#cancellation" className="text-primary underline underline-offset-2">
                           cancellation and refund policy
                         </a>
                         : {CANCELLATION_NOTICE_HOURS}+ hours notice for a full refund or free reschedule; less than{" "}
