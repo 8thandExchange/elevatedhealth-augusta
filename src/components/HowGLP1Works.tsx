@@ -68,9 +68,14 @@ const HowGLP1Works = () => {
       tirzepatide: "Maximum weight loss, insulin resistance, or breaking plateaus"
     },
     {
-      feature: "Monthly Cost",
-      semaglutide: "$399/month",
-      tirzepatide: "$499/month"
+      feature: "À la carte fill",
+      semaglutide: "$299 per fill",
+      tirzepatide: "$399 per fill"
+    },
+    {
+      feature: "ELEVATED GLP-1 program",
+      semaglutide: "$349/mo all-inclusive",
+      tirzepatide: "$349/mo all-inclusive"
     }
   ];
 

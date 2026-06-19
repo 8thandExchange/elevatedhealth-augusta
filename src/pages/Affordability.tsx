@@ -86,7 +86,7 @@ const Affordability = () => {
                   </ul>
                   <div className="pt-4 border-t border-border/50">
                     <p className="text-xs text-muted-foreground">
-                      Example: $399/month becomes 4 payments of $99.75
+                      Example: $349/month becomes 4 payments of $87.25
                     </p>
                   </div>
                 </CardContent>
