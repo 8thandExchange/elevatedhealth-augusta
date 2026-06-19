@@ -30,9 +30,9 @@ export interface StackPhase {
   clinicalNotes: string;
 }
 
-/** Named bundle — display; Stripe price ID in stripeConfig. */
-export const METABOLIC_STACK_PRICE_CENTS = 119900;
-export const METABOLIC_STACK_DISPLAY = "$1,199/mo";
+/** Sold program price — ELEVATED Metabolic (tirzepatide-anchored). Stripe price ID in stripeConfig. */
+export const METABOLIC_STACK_PRICE_CENTS = 59900;
+export const METABOLIC_STACK_DISPLAY = "$599/mo";
 
 /** Catalog keys summed for à la carte comparison at full stack capacity. */
 export const STACK_ALACARTE_CATALOG_KEYS = [

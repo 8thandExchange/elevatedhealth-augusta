@@ -8,7 +8,7 @@ export const LIVE_ELEVATED_PROGRAMS = {
   hrt: "price_1TWcPKCXbCBPFEeIJKBf62b9",
   glp1: "price_1TWcPLCXbCBPFEeIK7tkeIAM",
   wellness: "price_1TWcPNCXbCBPFEeIXo6IDpPf",
-  metabolicRecomposition: "price_1TiQlECXbCBPFEeI4vKTyIq4",
+  metabolicRecomposition: "price_1Tk9kDCXbCBPFEeIKmQI5tOZ",
 } as const;
 
 export type LiveElevatedProgramKey = keyof typeof LIVE_ELEVATED_PROGRAMS;

@@ -47,11 +47,11 @@ export const ELEVATED_PROGRAMS = {
     interval: "month",
   },
   metabolicRecomposition: {
-    name: "ELEVATED METABOLIC RECOMPOSITION",
-    priceId: "price_1TiQlECXbCBPFEeI4vKTyIq4",
-    productId: "prod_UhqS2sWj7JenEp",
-    amount: 119900,
-    displayPrice: "$1,199/mo",
+    name: "ELEVATED Metabolic",
+    priceId: "price_1Tk9kDCXbCBPFEeIKmQI5tOZ",
+    productId: "prod_Ujd0CnRYCe6Ukh",
+    amount: 59900,
+    displayPrice: "$599/mo",
     interval: "month",
   },
 } as const;

@@ -216,6 +216,11 @@ verify_jwt = false
 [functions.bootstrap-recovery-peptide-prices]
 verify_jwt = false
 
+# bootstrap-elevated-metabolic-price — one-shot: archive $1,199 stack, create
+# $599 ELEVATED Metabolic. Self-checks service_role.
+[functions.bootstrap-elevated-metabolic-price]
+verify_jwt = false
+
 [functions.send-welcome-sms]
 verify_jwt = false
 

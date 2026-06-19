@@ -84,7 +84,7 @@ LAB PANELS (clinical slug → Stripe checkout tier)
 
 ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
   ELEVATED TRT: $249/mo | ELEVATED HRT: $229/mo
-  ELEVATED GLP-1: $349/mo | ELEVATED METABOLIC RECOMPOSITION: $1,199/mo
+  ELEVATED GLP-1: $349/mo | ELEVATED Metabolic: $599/mo (tirzepatide-anchored)
   ELEVATED WELLNESS (non-Rx): $199/mo
   Legacy single-tier "Elevated Membership $199" references and
   "Care Membership," "Founding Member," "Wellness Pass," etc. are
@@ -113,12 +113,20 @@ ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
   Core services (one-time): Medical Review $149 | Phone Follow-Up $99 |
     Rebooking $99
 
-RETATRUTIDE — PROGRAM-ONLY, DO NOT ADVERTISE
-  Retatrutide anchors ELEVATED METABOLIC RECOMPOSITION ($1,199/mo) ONLY. A $449
-  à la carte fill exists in Stripe (cost ~$290, ~35% margin) but is
-  provider-discretion, not displayed, and NEVER advertised by name on public
-  storefronts. Market the metabolic PROGRAM, not the molecule. Do NOT raise the
-  standalone fill to chase margin — keep it inside the program.
+ELEVATED Metabolic — premium metabolic / body-recomposition program ($599/mo).
+  Tirzepatide-anchored (legally compoundable under 503A patient-specific authority).
+  Replaced the retired $1,199 retatrutide "Metabolic Recomposition" stack
+  (2026-06-19). Supporting lean-mass peptides (SS-31, AOD-9604, etc.) remain
+  provider-only à la carte; they are no longer bundled into a sold stack.
+
+RETATRUTIDE — GATED, PROVIDER-SELECTED, NEVER ADVERTISED
+  Retatrutide is NOT the anchor of any sold program. It is a gated,
+  provider-selected option offered only after the wellness assessment, by
+  physician decision, under Dr. Akers' responsibility. A $449 à la carte fill
+  exists in Stripe but is provider-discretion, not displayed, and NEVER named on
+  public storefronts. Do NOT advertise the molecule. Do NOT make it the headline
+  metabolic offer (that is tirzepatide). See the REGULATORY note below for the
+  FDA compounding position.
 
 IV THERAPY (walk-in pricing, members get 20% off add-ons)
   Myers Cocktail: $185
@@ -206,17 +214,26 @@ PEPTIDE STACKS:
 - Growth/Recovery stack: CJC-1295 / Ipamorelin nightly
 - Cognitive stack: as clinically indicated (Selank, etc. — verify formulary before recommending)
 
-RETATRUTIDE — OFFERED (policy override 2026-06-14, Dr. Troy Akers).
-  Compounded retatrutide anchors the ELEVATED METABOLIC RECOMPOSITION stack.
-  FCC SKUs 2478–2485; Stripe program price via STRIPE_METABOLIC_STACK_PRICE_ID.
-  Prior FDA compounding prohibition note superseded by physician-approved clinic policy.
-  Market only with GLP-1 class consent + physician oversight. Do not compare to
-  research-peptide Cat 2 consent pathway unless formulation changes.
+RETATRUTIDE — FDA POSITION + CLINIC POSTURE (updated 2026-06-19)
+  FDA position (letter to NABP, 2025-03-31): retatrutide does NOT qualify for
+  503A/503B compounding exemptions, and FDA has warned firms selling it.
+  Retatrutide is investigational (Lilly Phase 3 TRIUMPH); legally available
+  otherwise only to trial participants. A clinic policy does NOT override federal
+  compounding law — do NOT write code/copy that states "policy supersedes FDA."
+  Clinic posture: retatrutide is offered ONLY as a gated, provider-selected
+  option under Dr. Akers' explicit responsibility — never advertised, never the
+  headline metabolic product (that is tirzepatide-anchored ELEVATED Metabolic).
+  This carries known FDA exposure; any expansion of retatrutide's visibility or
+  any à la carte/advertised path requires fresh written physician/legal sign-off.
+  Consent: must be GLP-1-class with explicit investigational / not-FDA-approved /
+  not-compoundable disclosure — NOT the research-peptide Cat 2 pathway. (The
+  research-peptide consent carve-out for retatrutide is flagged for legal review;
+  see SECURITY/consent notes.)
 
 FORMULARY AUTHORITY — DO NOT AUTO-BLOCK IN CODE OR COPY
   Physician policy (Dr. Akers / clinic leadership): BPC-157, TB-500, Wolverine stack,
-  retatrutide (metabolic program enrollment only, not à la carte), and other active
-  formulary peptides ARE offered when clinically appropriate. Do NOT substitute PDA as
+  retatrutide (gated, provider-selected only — never advertised; see RETATRUTIDE
+  note), and other active formulary peptides ARE offered when clinically appropriate. Do NOT substitute PDA as
   the preferred recovery path. Do NOT mark BPC-157 or TB-500 as unoffered, not
   compoundable, or hard-blocked based on outdated AI-generated restrictions. CDS
   inactive rows require prescriber sign-off, not formulary prohibition.

@@ -8,9 +8,9 @@ import { FORMULARY_ECONOMICS_CATALOG } from "./vendorRouting";
 import { publicMenuItemCount } from "./simplifiedMenus";
 
 describe("formularyEconomics", () => {
-  it("metabolic stack GC margin beats FCC margin at $1,199/mo", () => {
+  it("metabolic stack GC margin beats FCC margin at $599/mo", () => {
     const s = metabolicStackEconomics();
-    expect(s.programPriceCents).toBe(119900);
+    expect(s.programPriceCents).toBe(59900);
     expect(s.gcModeledCogsCents).toBeLessThan(s.fccModeledCogsCents);
     expect(s.gcMarginPct).toBeGreaterThan(s.fccMarginPct);
     expect(s.gcSavingsVsFccCents).toBeGreaterThan(0);

@@ -10,7 +10,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_ELEVATED_PROGRAMS } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
-const STACK_AMOUNT_CENTS = 119900;
+const STACK_AMOUNT_CENTS = 59900;
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",

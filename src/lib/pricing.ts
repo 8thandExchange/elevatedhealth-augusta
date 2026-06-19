@@ -58,13 +58,15 @@ export const CATALOG: Record<string, CatalogItem> = {
   ...fromGroup(
     MEDICATION_FILLS,
     (key) => {
+      // Retatrutide is gated/provider-only and no longer the metabolic program's
+      // included med (that program is now tirzepatide-anchored) — standard à la carte.
+      if (key === "retatrutide") return { kind: "discount" };
       const map: Record<string, ElevatedProgramKey> = {
         testosterone: "trt",
         biEst: "hrt",
         progesterone: "hrt",
         semaglutide: "glp1",
         tirzepatide: "glp1",
-        retatrutide: "metabolicRecomposition",
       };
       return { kind: "included", program: map[key] };
     },

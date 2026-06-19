@@ -34,7 +34,7 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 | ELEVATED TRT (men) | $249/month | Testosterone cypionate from Custom Pharmacy of Evans, self-injection supplies, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, anastrozole/HCG when clinically indicated, all Caroline-initiated physician oversight. |
 | ELEVATED HRT (women) | $229/month | Bi-Est cream/troches, progesterone, testosterone cream when prescribed, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. |
 | ELEVATED GLP-1 | $349/month | Compounded semaglutide OR tirzepatide from GC/STLKS network (FCC backup), monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. |
-| ELEVATED METABOLIC RECOMPOSITION | $1,199/month | 90-day phased stack: retatrutide anchor, SS-31/NAD+ mitochondrial layer, CJC/Tesamorelin GH phase, optional B-tier add-ons, physician oversight, monitoring labs per protocol. Policy override 2026-06-14 (Dr. Akers). |
+| ELEVATED Metabolic | $599/month | Premium physician-directed metabolic & body-recomposition program — compounded **tirzepatide** anchor (legally compoundable), lean-mass support, intensive labs, monthly oversight. Replaced the retired $1,199 retatrutide stack 2026-06-19. Retatrutide is NOT the anchor and is never advertised — gated, provider-selected only (see retatrutide note). |
 | ELEVATED WELLNESS (non-Rx) | $199/month | 2 free IV drips per month, 20% off à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. |
 ### What Every Membership Includes
 - Your monthly medication is included (where applicable to the program)
@@ -115,7 +115,8 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | ELEVATED TRT | $249/mo | prod_UVdgaw0SyMI2jz | price_1TWcPICXbCBPFEeInMGSsjDN |
 | ELEVATED HRT | $229/mo | prod_UVdgH1SlumTl5O | price_1TWcPKCXbCBPFEeIJKBf62b9 |
 | ELEVATED GLP-1 | $349/mo | prod_UVdgUmNtkHxr3V | price_1TWcPLCXbCBPFEeIK7tkeIAM |
-| ELEVATED METABOLIC RECOMPOSITION | $1,199/mo | prod_UhqS2sWj7JenEp | price_1TiQlECXbCBPFEeI4vKTyIq4 |
+| ELEVATED Metabolic (tirzepatide-anchored) | $599/mo | prod_Ujd0CnRYCe6Ukh | price_1Tk9kDCXbCBPFEeIKmQI5tOZ |
+| ~~ELEVATED METABOLIC RECOMPOSITION ($1,199, retatrutide stack)~~ | ARCHIVED 2026-06-19 | prod_UhqS2sWj7JenEp (inactive) | price_1TiQlECXbCBPFEeI4vKTyIq4 (inactive) |
 | ELEVATED WELLNESS | $199/mo | prod_UVdg37MnW1puuK | price_1TWcPNCXbCBPFEeIXo6IDpPf |
 ### Core Services (One-Time)
 | Product | Price | Stripe Product ID | Stripe Price ID |
