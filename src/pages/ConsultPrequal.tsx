@@ -42,26 +42,38 @@ const formatPhone = (value: string) => {
 export default function ConsultPrequal() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  // Restore the payment step across a refresh (it depends only on the persisted
-  // checkout token), so a patient who reloads at "pay" isn't bounced to the start.
-  const [step, setStep] = useState<Step>(() =>
-    sessionStorage.getItem("consult_step") === "pay" &&
-    sessionStorage.getItem("consult_checkout_token")
-      ? "pay"
-      : "profile",
-  );
+  // Draft persistence: restore in-progress enrollment across a refresh so patients
+  // aren't bounced to the start. We persist DEMOGRAPHICS + step + session only —
+  // never the health screening answers (those are re-entered if the page reloads).
+  const draft = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("consult_profile_draft") || "null") as
+        | { email?: string; fullName?: string; phone?: string; dob?: string; gender?: "female" | "male" | "other"; reasons?: string[] }
+        | null;
+    } catch {
+      return null;
+    }
+  })();
+
+  const [step, setStep] = useState<Step>(() => {
+    const saved = sessionStorage.getItem("consult_step") as Step | null;
+    if (saved === "pay" && sessionStorage.getItem("consult_checkout_token")) return "pay";
+    if (saved === "consents" && sessionStorage.getItem("consult_session_id")) return "consents";
+    if (saved === "screening" && draft?.email && draft?.dob) return "screening";
+    return "profile";
+  });
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(
     () => sessionStorage.getItem("consult_session_id"),
   );
   const [blocked, setBlocked] = useState<string[] | null>(null);
 
-  const [email, setEmail] = useState(searchParams.get("email") ?? "");
-  const [fullName, setFullName] = useState(searchParams.get("name") ?? "");
-  const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState("");
-  const [gender, setGender] = useState<"female" | "male" | "other">("female");
-  const [reasons, setReasons] = useState<Set<string>>(new Set());
+  const [email, setEmail] = useState(draft?.email ?? searchParams.get("email") ?? "");
+  const [fullName, setFullName] = useState(draft?.fullName ?? searchParams.get("name") ?? "");
+  const [phone, setPhone] = useState(draft?.phone ?? "");
+  const [dob, setDob] = useState(draft?.dob ?? "");
+  const [gender, setGender] = useState<"female" | "male" | "other">(draft?.gender ?? "female");
+  const [reasons, setReasons] = useState<Set<string>>(new Set(draft?.reasons ?? []));
 
   const [screening, setScreening] = useState({
     pregnant_or_breastfeeding: false,
@@ -83,11 +95,16 @@ export default function ConsultPrequal() {
   const [signatureName, setSignatureName] = useState("");
   const [alreadyPaid, setAlreadyPaid] = useState(false);
 
-  // Persist progress so a refresh at the payment step doesn't restart enrollment.
+  // Persist demographic draft + step + session so a refresh doesn't restart
+  // enrollment. Health screening answers are intentionally NOT persisted.
   useEffect(() => {
     sessionStorage.setItem("consult_step", step);
     if (sessionId) sessionStorage.setItem("consult_session_id", sessionId);
-  }, [step, sessionId]);
+    sessionStorage.setItem(
+      "consult_profile_draft",
+      JSON.stringify({ email, fullName, phone, dob, gender, reasons: [...reasons] }),
+    );
+  }, [step, sessionId, email, fullName, phone, dob, gender, reasons]);
   const [checkingPaid, setCheckingPaid] = useState(false);
 
   const emailFromUrl = searchParams.get("email") ?? "";
@@ -293,6 +310,7 @@ export default function ConsultPrequal() {
         sessionStorage.removeItem("consult_step");
         sessionStorage.removeItem("consult_session_id");
         sessionStorage.removeItem("consult_checkout_token");
+        sessionStorage.removeItem("consult_profile_draft");
         toast.info(data.error ?? "You have already paid the wellness assessment.");
         navigate("/patient/dashboard");
         return;

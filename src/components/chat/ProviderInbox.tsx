@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { MessageCircle, Search, User } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Search, User } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -49,7 +49,7 @@ const ProviderInbox = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="grid grid-cols-3 h-[500px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 h-[500px]">
             <div className="border-r p-4 space-y-4">
               <Skeleton className="h-10 w-full" />
               <Skeleton className="h-16 w-full" />
@@ -79,9 +79,9 @@ const ProviderInbox = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="grid grid-cols-3 h-[520px]">
-          {/* Conversation List */}
-          <div className="border-r flex flex-col">
+        <div className="grid grid-cols-1 md:grid-cols-3 h-[520px]">
+          {/* Conversation List — full-width on mobile until a thread is opened */}
+          <div className={cn("border-r flex-col", activeConversation ? "hidden md:flex" : "flex")}>
             <div className="p-3 border-b">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -115,11 +115,19 @@ const ProviderInbox = () => {
             </ScrollArea>
           </div>
 
-          {/* Message Thread */}
-          <div className="col-span-2 flex flex-col">
+          {/* Message Thread — full-width on mobile when a thread is open */}
+          <div className={cn("md:col-span-2 flex-col", activeConversation ? "flex" : "hidden md:flex")}>
             {activeConversation ? (
               <>
                 <div className="p-3 border-b flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setActiveConversation(null)}
+                    className="md:hidden -ml-1 p-1 rounded-md hover:bg-muted text-muted-foreground"
+                    aria-label="Back to conversations"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                       {activeConv?.patient?.full_name ? getInitials(activeConv.patient.full_name) : 'P'}
