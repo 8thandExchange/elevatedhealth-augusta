@@ -141,17 +141,17 @@ export interface FormularyEconomicsLine {
 export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
   {
     itemCode: "STACK-METABOLIC-FULL",
-    label: "ELEVATED Metabolic Recomposition Stack",
+    label: "ELEVATED Metabolic (tirzepatide-anchored)",
     category: "peptide_stack",
     primarySupplier: "gc",
-    primaryCostCents: 74800,
+    primaryCostCents: 30500,
     primaryCostUnit: "month",
     alternateSupplier: "fcc",
-    alternateCostCents: 117900,
-    clientPriceCents: 119900,
+    alternateCostCents: 36000,
+    clientPriceCents: 59900,
     fulfillmentPharmacySlug: VENDOR_SLUGS.gc,
     publicMenu: true,
-    notes: "GC COGS at phased-average (~$748); FCC full-capacity model ~$1,179. Retail $1,199/mo.",
+    notes: "Re-modeled 2026-06-19 for the $599/mo ELEVATED Metabolic program (tirzepatide anchor ~$185 + lean-mass/metabolic support). Replaced the retired $1,199 retatrutide stack. COGS is a modeled estimate — confirm final program composition with the clinic.",
   },
   {
     itemCode: "GLP1-SEMAGLUTIDE",

@@ -89,7 +89,7 @@ export const UPSELL_MATRIX: UpsellRow[] = [
     phase: "Counseling",
     trigger: "Fatigue, weight, libido, or brain fog",
     offer: "ELEVATED program path vs à la carte",
-    charge: "$79 consult → program $229–$1,199/mo",
+    charge: "$79 consult → program $199–$599/mo",
     script: "Our programs bundle medication, RN check-ins, quarterly labs, and messaging — usually less than piecing fills together à la carte.",
   },
   {
@@ -110,7 +110,7 @@ export const UPSELL_MATRIX: UpsellRow[] = [
     phase: "Results review",
     trigger: "Low T + high body fat",
     offer: "TRT + GLP-1 or Metabolic Recomposition",
-    charge: "$249/mo TRT or $349 GLP-1 or $1,199 metabolic",
+    charge: "$249/mo TRT or $349 GLP-1 or $599 metabolic",
     script: "Your labs support hormone optimization; if body composition is also a goal, our metabolic program combines both pathways under one physician.",
   },
   {
@@ -177,7 +177,7 @@ export const CHARGE_CHECKPOINTS: ChargeCheckpoint[] = [
     step: "C-03",
     event: "Program enrollment",
     stripeSku: "ELEVATED_PROGRAMS.*",
-    amount: "$199–$1,199/mo",
+    amount: "$199–$599/mo",
     verify: "Correct program SKU; subscription active in Stripe; webhook updated patient record",
   },
   {
@@ -199,7 +199,7 @@ export const CHARGE_CHECKPOINTS: ChargeCheckpoint[] = [
     event: "Metabolic stack adjunct fill",
     stripeSku: "Metabolic à la carte (retatrutide, SS-31, etc.)",
     amount: "Per ALGO-006 phase",
-    verify: "Included in $1,199/mo program — charge à la carte only if outside program",
+    verify: "Included in $599/mo program — charge à la carte only if outside program",
   },
   {
     step: "C-07",
@@ -264,7 +264,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         step: "1.4",
         phase: "Counsel & discover",
         if: "Symptoms suggest weight / metabolic (BMI concern, insulin resistance, prior GLP-1)",
-        then: "Counsel: ELEVATED GLP-1 ($349/mo) or Metabolic Recomposition ($1,199/mo for advanced stack). $79 consult first.",
+        then: "Counsel: ELEVATED GLP-1 ($349/mo) or Metabolic Recomposition ($599/mo for advanced stack). $79 consult first.",
         upsell: "Metabolic program if patient wants comprehensive recomposition, not just appetite suppression.",
       },
       {
@@ -564,7 +564,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       {
         step: "7",
         if: "Metabolic recomposition / advanced fat-loss stack candidacy + consents signed",
-        then: "Enroll ELEVATED METABOLIC RECOMPOSITION ($1,199/mo) — ALGO-006.",
+        then: "Enroll ELEVATED METABOLIC RECOMPOSITION ($599/mo) — ALGO-006.",
       },
       { step: "8", action: "Document protocol in chart. Route Rx per ALGO-003.", stop: true },
     ],
@@ -658,7 +658,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
     steps: [
       { step: "1", action: "Confirm Research Peptide + GLP consents signed in portal." },
       { step: "2", action: "Baseline Expanded Panel ($299) drawn in-office — weight-optimization slug." },
-      { step: "3", action: "Charge ELEVATED METABOLIC RECOMPOSITION ($1,199/mo) via Stripe." },
+      { step: "3", action: "Charge ELEVATED METABOLIC RECOMPOSITION ($599/mo) via Stripe." },
       { step: "4", action: "Phase 1 (wk 1–8): Retatrutide anchor — titrate from 0.5 mg/wk." },
       { step: "5", action: "Phase 2 (wk 2–8): Add SS-31 + NAD+ when retatrutide tolerated." },
       { step: "6", action: "Phase 3 (wk 8–12): CJC/Ipamorelin + tesamorelin for lean mass." },
@@ -744,7 +744,7 @@ export const SOP_SECTIONS: SOPSection[] = [
     summary: "Two booking lanes — never mix the workflow.",
     bullets: [
       "Lane A — IV Lounge: open booking, cash at checkout, FCC compounds + Henry Schein supplies.",
-      "Lane B — Consult-gated: $79 consult → labs → ELEVATED program ($199–$1,199/mo).",
+      "Lane B — Consult-gated: $79 consult → labs → ELEVATED program ($199–$599/mo).",
       "Hidden at launch: sexual wellness, hair restoration.",
       "Not offered: ketamine, Spravato, retatrutide outside metabolic program policy.",
     ],

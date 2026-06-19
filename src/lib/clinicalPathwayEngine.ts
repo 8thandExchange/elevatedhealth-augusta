@@ -188,10 +188,10 @@ function recommendWeightLoss(advanced: boolean): PathwayRecommendation {
       ? ["Research Peptide Consent", "GLP-1 Consent", "Off-label Tesamorelin (if prescribed)"]
       : ["GLP-1 Consent"],
     patientExplanation: advanced
-      ? "Your labs support our supervised Metabolic Recomposition program — a phased stack anchored on a weekly injection, with mitochondrial and lean-mass support added as you tolerate each layer."
+      ? "Your labs support our supervised ELEVATED Metabolic program — a tirzepatide-anchored weekly injection with lean-mass and metabolic support layered in as you tolerate each step, under close physician oversight."
       : "We'll start with a GLP-1 program: one weekly injection, RN check-ins, and labs included while you're enrolled. Semaglutide is our default; tirzepatide if clinically appropriate.",
     staffScript: advanced
-      ? "Lead with $1,199/mo all-inclusive metabolic program — not à la carte retatrutide."
+      ? "Lead with the $599/mo ELEVATED Metabolic program (tirzepatide-anchored). Retatrutide is gated/provider-selected ONLY — never the lead, never advertised."
       : "Lead with $349/mo GLP-1 program. Quote $79 consult + $299 Expanded labs for month one.",
     upsell: advanced ? undefined : "If BMI >30 or prior GLP failure, flag metabolic program at results review.",
     excludedAlternatives: ["mazdutide", "cagrilintide blends"],
