@@ -42,9 +42,18 @@ const formatPhone = (value: string) => {
 export default function ConsultPrequal() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [step, setStep] = useState<Step>("profile");
+  // Restore the payment step across a refresh (it depends only on the persisted
+  // checkout token), so a patient who reloads at "pay" isn't bounced to the start.
+  const [step, setStep] = useState<Step>(() =>
+    sessionStorage.getItem("consult_step") === "pay" &&
+    sessionStorage.getItem("consult_checkout_token")
+      ? "pay"
+      : "profile",
+  );
   const [loading, setLoading] = useState(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(
+    () => sessionStorage.getItem("consult_session_id"),
+  );
   const [blocked, setBlocked] = useState<string[] | null>(null);
 
   const [email, setEmail] = useState(searchParams.get("email") ?? "");
@@ -73,6 +82,12 @@ export default function ConsultPrequal() {
   const [consentsScrolled, setConsentsScrolled] = useState<Record<string, boolean>>({});
   const [signatureName, setSignatureName] = useState("");
   const [alreadyPaid, setAlreadyPaid] = useState(false);
+
+  // Persist progress so a refresh at the payment step doesn't restart enrollment.
+  useEffect(() => {
+    sessionStorage.setItem("consult_step", step);
+    if (sessionId) sessionStorage.setItem("consult_session_id", sessionId);
+  }, [step, sessionId]);
   const [checkingPaid, setCheckingPaid] = useState(false);
 
   const emailFromUrl = searchParams.get("email") ?? "";
@@ -275,6 +290,9 @@ export default function ConsultPrequal() {
         return;
       }
       if (data?.error_code === "already_paid") {
+        sessionStorage.removeItem("consult_step");
+        sessionStorage.removeItem("consult_session_id");
+        sessionStorage.removeItem("consult_checkout_token");
         toast.info(data.error ?? "You have already paid the wellness assessment.");
         navigate("/patient/dashboard");
         return;

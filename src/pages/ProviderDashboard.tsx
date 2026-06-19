@@ -2019,7 +2019,12 @@ const ProviderDashboard = () => {
                                     {renewingPatientId === checkIn.patient.id ? "Renewing..." : "Renew Rx"}
                                   </Button>
                                 ) : isWorsened ? (
-                                  <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600 border-red-600 hover:bg-red-50"
+                                    onClick={() => setActiveTab("messages")}
+                                  >
                                     <MessageSquare className="w-3 h-3 mr-1" />
                                     Message
                                   </Button>

@@ -126,6 +126,15 @@ const ScheduleConsult = () => {
           return;
         }
 
+        // Reconcile any paid-but-unlinked consult before resolving the booking, so a
+        // patient who paid doesn't hit the "no paid consultation" dead-end.
+        await supabase.rpc("sync_my_consult_payment_status").then(
+          ({ error }) => {
+            if (error) console.warn("[ScheduleConsult] consult payment sync skipped", error.message);
+          },
+          () => {},
+        );
+
         const booking = await resolveSchedulableConsultBooking({
           email,
           onboardingStatus: patient?.onboarding_status,

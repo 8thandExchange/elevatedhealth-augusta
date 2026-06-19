@@ -131,8 +131,8 @@ export const WhyTransdermalCream = ({ onBookConsultation }: WhyTransdermalCreamP
 
         {/* Comparison Table */}
         <div className="max-w-4xl mx-auto mb-16">
-          <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border/50">
-            <div className="grid grid-cols-4 bg-muted/50 p-4 font-semibold text-sm">
+          <div className="bg-card rounded-2xl shadow-lg overflow-x-auto border border-border/50">
+            <div className="grid grid-cols-4 min-w-[480px] bg-muted/50 p-4 font-semibold text-sm">
               <div className="text-foreground">Feature</div>
               <div className="text-center text-accent">Cream</div>
               <div className="text-center text-muted-foreground">Pellets</div>
@@ -141,7 +141,7 @@ export const WhyTransdermalCream = ({ onBookConsultation }: WhyTransdermalCreamP
             {comparisonData.map((row, index) => (
               <div 
                 key={index} 
-                className={`grid grid-cols-4 p-4 items-center ${
+                className={`grid grid-cols-4 min-w-[480px] p-4 items-center ${
                   index % 2 === 0 ? "bg-card" : "bg-muted/20"
                 }`}
               >

@@ -216,6 +216,12 @@ serve(async (req) => {
     let body: any = {};
     if (req.method === "POST") body = await req.json().catch(() => ({}));
     const service_line: string = body.service_line || url.searchParams.get("service_line") || "iv";
+    // A "consult" booking must match any consult-lane availability a provider tagged
+    // (hormone / peptide / weight_loss are all consult-gated sub-lanes), otherwise a
+    // provider who tagged a schedule only "hormone" would expose zero bookable slots.
+    const CONSULT_LANE = ["consult", "hormone", "peptide", "weight_loss", "hormone_male", "hormone_female"];
+    const acceptedServiceLines: string[] =
+      service_line === "consult" ? CONSULT_LANE : [service_line];
     const duration_minutes: number = Number(body.duration_minutes || url.searchParams.get("duration_minutes") || 60);
     const provider_id: string | null = body.provider_id || url.searchParams.get("provider_id") || null;
     const days: number = Number(body.days || url.searchParams.get("days") || 14);
@@ -239,7 +245,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    let schedQ = supabase.from("provider_schedules").select("*").eq("is_active", true).contains("service_lines", [service_line]);
+    let schedQ = supabase.from("provider_schedules").select("*").eq("is_active", true).overlaps("service_lines", acceptedServiceLines);
     if (provider_id) schedQ = schedQ.eq("provider_id", provider_id);
     const { data: schedules, error: schedErr } = await schedQ;
     if (schedErr) throw schedErr;
@@ -284,7 +290,7 @@ serve(async (req) => {
             "provider_id,exception_date,start_time,end_time,type,service_lines,slot_minutes",
           )
           .in("provider_id", providerIds)
-          .contains("service_lines", [service_line])
+          .overlaps("service_lines", acceptedServiceLines)
           .gte("exception_date", exceptionStartKey)
           .lte("exception_date", exceptionEndKey)
       : { data: [] as Exception[] };
