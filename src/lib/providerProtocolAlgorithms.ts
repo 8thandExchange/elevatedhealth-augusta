@@ -59,7 +59,7 @@ export const PROVIDER_PROTOCOL_ALGORITHMS: ProviderProtocolAlgorithm[] = [
   },
   {
     slug: "metabolic-recomposition-stack",
-    displayName: "ELEVATED Metabolic Recomposition",
+    displayName: "Advanced Metabolic Protocol (retatrutide, provider-only)",
     startDose: "Retatrutide 0.5 mg weekly phase 1",
     escalationSchedule: "90-day phased stack per metabolicStackConfig — physician-only",
     frequency: "Per phase",

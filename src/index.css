@@ -26,15 +26,17 @@
     --secondary-foreground: 207 100% 25%;
     --secondary-light: 210 14% 96%;
     --secondary-dark: 213 8% 52%;
-    /* Steel blue — the bright accent (links, highlights, numerals) */
-    --accent: 199 89% 39%;            /* #0B7BB8 */
+    /* Steel blue — the accent (links, highlights, numerals). Deepened to 33% L
+       so small text/links clear WCAG AA (>=4.5:1) on white; still logo steel-blue.
+       Use --accent-light on dark surfaces (e.g. the navy hero). */
+    --accent: 199 90% 33%;
     --accent-foreground: 0 0% 100%;
     --accent-light: 199 78% 52%;
     /* Cool tinted band — alternating editorial sections */
     --surface: 208 44% 97%;
     --surface-foreground: 207 90% 20%;
     /* Legacy "gold" aliases now map to steel blue so old components stay on-brand */
-    --gold: 199 89% 39%;
+    --gold: 199 90% 33%;
     --gold-foreground: 0 0% 100%;
     --gold-light: 199 78% 52%;
     --gold-dark: 207 85% 30%;
@@ -45,13 +47,13 @@
     --destructive-foreground: 0 0% 100%;
     --border: 210 18% 88%;            /* cool hairline */
     --input: 210 16% 92%;
-    --ring: 199 89% 39%;              /* steel-blue focus ring */
+    --ring: 199 90% 33%;              /* steel-blue focus ring */
     --radius: 0.125rem;               /* near-squared, editorial */
     /* EHA brand raw values — for .btn-* utility classes */
     --color-ink: #00477E;
     --color-paper: #FFFFFF;
     --color-tagline: #8A8F99;
-    --color-accent: #0B7BB8;
+    --color-accent: #0A6AA1;
     --color-accent-on: #FFFFFF;
     --rule: 1px solid hsl(210 18% 84%);
     /* Navy-tinted shadows — cool hue, low alpha for soft depth */
