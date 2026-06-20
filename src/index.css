@@ -170,15 +170,20 @@
     font-size: 0.75rem;
     color: var(--color-tagline);
   }
-  .eyebrow::before {
+  .eyebrow::before,
+  .eyebrow::after {
     content: "";
     width: 1.75rem;
     height: 1px;
     background: hsl(var(--accent));
     display: inline-block;
+    flex-shrink: 0;
   }
-  .eyebrow-center::before { display: none; }
+  .eyebrow-center::before,
+  .eyebrow-center::after { display: none; }
   .eyebrow-on-dark { color: hsl(43 44% 97% / 0.72); }
+  .eyebrow-on-dark::before,
+  .eyebrow-on-dark::after { background: hsl(var(--accent-light)); }
 
   /* Lead paragraph — larger, lighter intro copy */
   .lead {
