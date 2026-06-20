@@ -1,6 +1,8 @@
 /**
  * Staff system guide — structured content for /staff/system-guide (CDS Task 7).
  * Pulls live pricing and lab routing from shared libs; narrative copy is staff-facing only.
+ *
+ * Do NOT import LANE_* or PATIENT_JOURNEY_STEPS on public pages — use howClinicWorksContent.ts.
  */
 import { ALL_PATIENT_GOALS, GOAL_LABELS } from "./clinicalPathwayEngine";
 import {

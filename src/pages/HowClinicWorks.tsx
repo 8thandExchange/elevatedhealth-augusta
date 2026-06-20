@@ -8,10 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBooking } from "@/contexts/BookingContext";
 import { CORE_SERVICES } from "@/lib/stripeConfig";
 import {
-  LANE_A_IV_STEPS,
-  LANE_B_CONSULT_STEPS,
-  PATIENT_JOURNEY_STEPS,
-} from "@/lib/staffSystemGuideContent";
+  IV_LOUNGE_PATIENT_STEPS,
+  WELLNESS_PROGRAM_PATIENT_STEPS,
+  PATIENT_CARE_JOURNEY,
+} from "@/lib/howClinicWorksContent";
 import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
 
 const HowClinicWorks = () => {
@@ -53,7 +53,7 @@ const HowClinicWorks = () => {
               <CardHeader>
                 <CardTitle className="font-playfair text-xl flex items-center gap-2">
                   <Droplet className="h-5 w-5 text-accent" />
-                  Lane A — IV Lounge
+                  IV Lounge
                 </CardTitle>
                 <p className="font-jost text-sm text-muted-foreground">
                   Walk-in or online booking. No consult required.
@@ -61,7 +61,7 @@ const HowClinicWorks = () => {
               </CardHeader>
               <CardContent>
                 <ol className="font-jost text-sm space-y-3 list-decimal list-inside text-muted-foreground">
-                  {LANE_A_IV_STEPS.map((step) => (
+                  {IV_LOUNGE_PATIENT_STEPS.map((step) => (
                     <li key={step}>{step}</li>
                   ))}
                 </ol>
@@ -72,15 +72,15 @@ const HowClinicWorks = () => {
               <CardHeader>
                 <CardTitle className="font-playfair text-xl flex items-center gap-2">
                   <Stethoscope className="h-5 w-5 text-primary" />
-                  Lane B — Programs
+                  Wellness Programs
                 </CardTitle>
                 <p className="font-jost text-sm text-muted-foreground">
-                  Hormones, GLP-1 weight loss, Recovery Peptide Review, and peptide optimization.
+                  Hormones, GLP-1 weight loss, peptide therapy, and ongoing optimization — all start here.
                 </p>
               </CardHeader>
               <CardContent>
                 <ol className="font-jost text-sm space-y-3 list-decimal list-inside text-muted-foreground">
-                  {LANE_B_CONSULT_STEPS.map((step) => (
+                  {WELLNESS_PROGRAM_PATIENT_STEPS.map((step) => (
                     <li key={step}>{step}</li>
                   ))}
                 </ol>
@@ -93,7 +93,7 @@ const HowClinicWorks = () => {
               Your journey <span className="italic">with us</span>
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
-              {PATIENT_JOURNEY_STEPS.map((step) => (
+              {PATIENT_CARE_JOURNEY.map((step) => (
                 <div
                   key={step.phase}
                   className="rounded-sm border border-border/60 p-5 bg-card/50"
