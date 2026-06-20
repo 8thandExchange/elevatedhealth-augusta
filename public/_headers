@@ -1,3 +1,16 @@
+# Favicon + PWA icons — long cache (stable filenames; regenerate via scripts/generate-favicons.mjs)
+/favicon.ico
+  Cache-Control: public, max-age=604800
+
+/favicon-*.png
+  Cache-Control: public, max-age=604800
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800
+
+/eha-favicon.svg
+  Cache-Control: public, max-age=604800
+
 # HTML files - no caching to ensure fresh content
 /
   Cache-Control: no-cache, no-store, must-revalidate

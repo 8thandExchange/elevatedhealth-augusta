@@ -1,6 +1,6 @@
 {
   "name": "Elevated Health Augusta",
-  "short_name": "Elevated Health Augusta",
+  "short_name": "Elevated Health",
   "description": "Physician-owned longevity clinic: hormone optimization, IV therapy, peptide medicine & medical weight loss in Evans, GA",
   "start_url": "/",
   "display": "standalone",
@@ -9,16 +9,22 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/favicon-new.png",
+      "src": "/favicon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/favicon-new.png",
+      "src": "/favicon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["health", "medical"],
