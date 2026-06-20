@@ -125,6 +125,41 @@ const IVLounge = () => {
     [therapies, activeCategory]
   );
 
+  const pricingStripCols = useMemo(() => {
+    const dripPrices =
+      therapies.length > 0
+        ? therapies.map((t) => t.price)
+        : IV_THERAPIES_CATALOG.map((t) => t.price);
+    const addonPrices =
+      addons.length > 0
+        ? addons.map((a) => a.price)
+        : IV_ADDONS_CATALOG.map((a) => a.price);
+    const range = (prices: number[]) => {
+      if (prices.length === 0) return "—";
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      return min === max ? `$${min}` : `$${min}–$${max}`;
+    };
+
+    return [
+      {
+        l: "IV Drips",
+        p: range(dripPrices),
+        sub: "RN-administered · book online · no consult required",
+      },
+      {
+        l: "Boosters & pushes",
+        p: range(addonPrices),
+        sub: "Add to any drip — glutathione, B12, NAD+ push, and more",
+      },
+      {
+        l: "Member savings",
+        p: `${MEMBER_DISCOUNT_PERCENT}% off`,
+        sub: "ELEVATED members on IV drips and add-ons",
+      },
+    ];
+  }, [therapies, addons]);
+
   const selectedTherapy = therapies.find((t) => t.id === selectedTherapyId) || null;
   const selectedAddons = addons.filter((a) => selectedAddonIds.includes(a.id));
   const total =
@@ -244,11 +279,7 @@ const IVLounge = () => {
         <section className="py-16 md:py-20 bg-surface border-y border-border">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
-              {[
-                { l: "Walk-In Pricing", p: "$95–$185", sub: "per drip · no consult required" },
-                { l: "Premium Drips", p: "$450–$750", sub: "NAD+ infusions · longevity protocols" },
-                { l: "Member Discount", p: `${MEMBER_DISCOUNT_PERCENT}% off`, sub: "à la carte IV, peptide, and injectable add-ons for ELEVATED members · priority booking" },
-              ].map((c) => (
+              {pricingStripCols.map((c) => (
                 <div key={c.l} className="px-6 py-8 md:py-4 text-center">
                   <p className="section-label mb-3">{c.l}</p>
                   <p className="font-playfair text-3xl md:text-4xl text-foreground mb-2">{c.p}</p>
