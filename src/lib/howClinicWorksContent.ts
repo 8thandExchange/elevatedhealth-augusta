@@ -10,11 +10,10 @@ const COMP = CORE_SERVICES.comprehensivePanel.displayPrice;
 const EXP = CORE_SERVICES.expandedPanel.displayPrice;
 
 export const IV_LOUNGE_PATIENT_STEPS = [
-  "Walk in during clinic hours or book your drip online — no wellness assessment required.",
+  "Book online or walk in during clinic hours — no wellness assessment required.",
   "Complete a brief health screening so we can confirm IV therapy is safe for you.",
-  "Choose your drip or add-on (Myers Cocktail, NAD+, glutathione push, custom hydration) and check out.",
-  `ELEVATED members save ${MEMBER_DISCOUNT_PERCENT}% on IV add-ons.`,
-  "Interested in hormones, weight loss, or peptides? We can help you book a Wellness Assessment when you're ready.",
+  "Choose your drip and optional boosters (glutathione push, B12, NAD+ push, and more), then check out.",
+  `RN-administered session, typically 45–60 minutes. ELEVATED members save ${MEMBER_DISCOUNT_PERCENT}% on IV add-ons.`,
 ] as const;
 
 export const WELLNESS_PROGRAM_PATIENT_STEPS = [
@@ -23,28 +22,35 @@ export const WELLNESS_PROGRAM_PATIENT_STEPS = [
   `When clinically appropriate, we draw labs the same visit (Comprehensive Wellness Panel ${COMP} or Expanded Panel ${EXP}, processed by LabCorp).`,
   "Your physician reviews results — typically within about a week — and calls you to discuss what fits your goals.",
   "If you enroll, choose the ELEVATED program for your protocol, complete consents in the patient portal, and schedule any teaching visits.",
-  "We do not prescribe from symptoms alone. Your plan is based on labs and physician sign-off before treatment begins.",
 ] as const;
 
-export const PATIENT_CARE_JOURNEY = [
+export const CARE_PATH_COMPARISON = [
+  { label: "Consult required?", iv: "No", wellness: `Yes — ${WA} Wellness Assessment` },
+  { label: "How you start", iv: "Walk in or book online today", wellness: "Schedule your Wellness Assessment" },
   {
-    phase: "01",
-    title: "Book your visit",
-    detail: `IV Lounge walk-in or online booking — or start with a ${WA} Wellness Assessment for hormones, medical weight loss, and peptides.`,
+    label: "Best for",
+    iv: "Hydration, recovery, immunity, and performance",
+    wellness: "Hormones, medical weight loss, and peptide therapy",
+  },
+] as const;
+
+export const CARE_LANES = [
+  {
+    id: "iv-lounge",
+    lane: "Lane A",
+    title: "IV Lounge",
+    tagline: "Walk-in hydration & recovery",
+    summary: "Open booking — pick your drip, add boosters, and pay. No wellness assessment needed.",
+    steps: IV_LOUNGE_PATIENT_STEPS,
+    cta: { label: "Browse the IV menu", href: "/iv-lounge" as const },
   },
   {
-    phase: "02",
-    title: "Assessment & labs",
-    detail: "In-clinic visit with our RN or clinical team: symptoms, history, vitals, and goals. Blood draw on-site when your provider orders a panel.",
-  },
-  {
-    phase: "03",
-    title: "Physician review",
-    detail: "Your physician interprets LabCorp results and recommends a path — or redirects you safely if a program is not appropriate.",
-  },
-  {
-    phase: "04",
-    title: "Your program",
-    detail: "Enroll in the ELEVATED tier that fits your protocol. Medication where prescribed, monthly check-ins, quarterly labs, and messaging — one transparent monthly price.",
+    id: "wellness",
+    lane: "Lane B",
+    title: "Wellness Programs",
+    tagline: "Hormones · GLP-1 · peptides",
+    summary: `Physician-led programs that start with a ${WA} Wellness Assessment — credited toward your protocol if you enroll.`,
+    steps: WELLNESS_PROGRAM_PATIENT_STEPS,
+    cta: { label: `Book ${WA} Wellness Assessment`, action: "wellness-booking" as const },
   },
 ] as const;

@@ -6,13 +6,13 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBooking } from "@/contexts/BookingContext";
-import { CORE_SERVICES } from "@/lib/stripeConfig";
-import {
-  IV_LOUNGE_PATIENT_STEPS,
-  WELLNESS_PROGRAM_PATIENT_STEPS,
-  PATIENT_CARE_JOURNEY,
-} from "@/lib/howClinicWorksContent";
+import { CARE_LANES, CARE_PATH_COMPARISON } from "@/lib/howClinicWorksContent";
 import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
+
+const laneIcons = {
+  "iv-lounge": Droplet,
+  wellness: Stethoscope,
+} as const;
 
 const HowClinicWorks = () => {
   const { openBooking } = useBooking();
@@ -23,93 +23,114 @@ const HowClinicWorks = () => {
         <title>How the Clinic Works | Elevated Health Augusta</title>
         <meta
           name="description"
-          content="Physician-owned wellness clinic in Evans, GA. IV Lounge walk-ins or $79 Wellness Assessment for hormones, GLP-1 weight loss, and peptides — transparent cash-pay pricing."
+          content="Two care paths at Elevated Health Augusta: IV Lounge walk-in booking, or a $79 Wellness Assessment for hormones, GLP-1 weight loss, and peptides."
         />
       </Helmet>
       <Navbar />
       <main id="main-content" className="flex-1 pt-24 pb-16">
-        <div className="container mx-auto px-6 max-w-4xl space-y-12">
+        <div className="container mx-auto px-6 max-w-5xl space-y-14">
           <StorefrontSectionHeader
             label="Evans, Georgia"
             title={
               <>
-                How our <span className="italic">clinic</span> works
+                Two ways to <span className="italic">get care</span>
               </>
             }
-            lead="Physician-owned, cash-pay care with transparent pricing. Two simple paths: walk-in IV hydration, or a consult-gated program for hormones, medical weight loss, and peptides. In-office LabCorp draws when labs are needed."
+            lead="Same clinic, same team — two front doors. IV hydration is open booking. Hormones, medical weight loss, and peptides start with a Wellness Assessment."
           />
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pb-12">
-            <Button size="lg" onClick={openBooking} className="font-jost gap-2">
-              Book {CORE_SERVICES.wellnessAssessment.displayPrice} Wellness Assessment
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button asChild size="lg" variant="outline" className="font-jost">
-              <Link to="/iv-lounge">Book IV Lounge</Link>
-            </Button>
-          </div>
 
-          <section className="grid md:grid-cols-2 gap-5">
-            <Card className="premium-card border-accent/30">
-              <CardHeader>
-                <CardTitle className="font-playfair text-xl flex items-center gap-2">
-                  <Droplet className="h-5 w-5 text-accent" />
-                  IV Lounge
-                </CardTitle>
-                <p className="font-jost text-sm text-muted-foreground">
-                  Walk-in or online booking. No consult required.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <ol className="font-jost text-sm space-y-3 list-decimal list-inside text-muted-foreground">
-                  {IV_LOUNGE_PATIENT_STEPS.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              </CardContent>
-            </Card>
+          <section aria-labelledby="care-paths-heading">
+            <p id="care-paths-heading" className="section-label text-center mb-8">
+              Choose your path
+            </p>
+            <div className="grid md:grid-cols-2 gap-6">
+              {CARE_LANES.map((lane) => {
+                const Icon = laneIcons[lane.id];
+                const isIv = lane.id === "iv-lounge";
 
-            <Card className="premium-card border-primary/20">
-              <CardHeader>
-                <CardTitle className="font-playfair text-xl flex items-center gap-2">
-                  <Stethoscope className="h-5 w-5 text-primary" />
-                  Wellness Programs
-                </CardTitle>
-                <p className="font-jost text-sm text-muted-foreground">
-                  Hormones, GLP-1 weight loss, peptide therapy, and ongoing optimization — all start here.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <ol className="font-jost text-sm space-y-3 list-decimal list-inside text-muted-foreground">
-                  {WELLNESS_PROGRAM_PATIENT_STEPS.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              </CardContent>
-            </Card>
+                return (
+                  <Card
+                    key={lane.id}
+                    className={`premium-card h-full flex flex-col ${
+                      isIv ? "border-accent/40 bg-accent/[0.03]" : "border-primary/25 bg-primary/[0.02]"
+                    }`}
+                  >
+                    <CardHeader className="space-y-3 pb-4">
+                      <p className="section-label">{lane.lane}</p>
+                      <CardTitle className="font-playfair text-2xl flex items-center gap-2">
+                        <Icon className={`h-6 w-6 ${isIv ? "text-accent" : "text-primary"}`} />
+                        {lane.title}
+                      </CardTitle>
+                      <p className="font-jost text-sm font-medium text-foreground">{lane.tagline}</p>
+                      <p className="font-jost text-sm text-muted-foreground leading-relaxed">{lane.summary}</p>
+                    </CardHeader>
+                    <CardContent className="flex flex-col flex-1 gap-6">
+                      <ol className="font-jost text-sm space-y-3 list-decimal list-inside text-muted-foreground flex-1">
+                        {lane.steps.map((step) => (
+                          <li key={step} className="leading-relaxed">
+                            {step}
+                          </li>
+                        ))}
+                      </ol>
+                      {"href" in lane.cta ? (
+                        <Button asChild size="lg" variant={isIv ? "default" : "outline"} className="font-jost w-full">
+                          <Link to={lane.cta.href}>
+                            {lane.cta.label}
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Link>
+                        </Button>
+                      ) : (
+                        <Button size="lg" onClick={openBooking} className="font-jost w-full gap-2">
+                          {lane.cta.label}
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
           </section>
 
-          <section>
-            <h2 className="font-playfair text-2xl mb-6 text-center">
-              Your journey <span className="italic">with us</span>
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {PATIENT_CARE_JOURNEY.map((step) => (
-                <div
-                  key={step.phase}
-                  className="rounded-sm border border-border/60 p-5 bg-card/50"
-                >
-                  <p className="font-playfair text-2xl text-accent/80 italic mb-1">{step.phase}</p>
-                  <p className="font-jost font-medium text-foreground mb-1">{step.title}</p>
-                  <p className="font-jost text-sm text-muted-foreground">{step.detail}</p>
-                </div>
-              ))}
+          <section aria-labelledby="path-comparison-heading" className="rounded-sm border border-border/60 overflow-hidden">
+            <div className="bg-muted/40 px-6 py-4 text-center border-b border-border/60">
+              <h2 id="path-comparison-heading" className="font-playfair text-xl text-foreground">
+                At a <span className="italic">glance</span>
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full font-jost text-sm">
+                <thead>
+                  <tr className="border-b border-border/60 bg-surface">
+                    <th className="text-left font-medium text-muted-foreground px-6 py-4 w-1/3" scope="col" />
+                    <th className="text-left font-medium text-foreground px-6 py-4 w-1/3" scope="col">
+                      IV Lounge
+                    </th>
+                    <th className="text-left font-medium text-foreground px-6 py-4 w-1/3" scope="col">
+                      Wellness Programs
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {CARE_PATH_COMPARISON.map((row) => (
+                    <tr key={row.label} className="border-b border-border/40 last:border-0">
+                      <th className="text-left font-medium text-muted-foreground px-6 py-4 align-top" scope="row">
+                        {row.label}
+                      </th>
+                      <td className="px-6 py-4 text-muted-foreground align-top">{row.iv}</td>
+                      <td className="px-6 py-4 text-muted-foreground align-top">{row.wellness}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </section>
 
           <section className="text-center space-y-4 rounded-sm bg-muted/40 p-8">
-            <p className="font-jost text-sm text-muted-foreground max-w-xl mx-auto">
-              We do not prescribe from symptoms alone. Your provider reviews labs, confirms the right
-              path, and you complete the appropriate consents before treatment begins.
+            <p className="font-jost text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              We do not prescribe from symptoms alone. Wellness programs require labs, physician review, and
+              appropriate consents before treatment begins. IV guests who want hormones, weight loss, or peptides
+              can book a Wellness Assessment anytime.
             </p>
             <Button asChild variant="link" className="font-jost text-accent">
               <Link to="/pricing">See transparent pricing →</Link>
