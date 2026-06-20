@@ -48,15 +48,15 @@ const symptoms = [
 
 const steps = [
   { n: "01", title: "Wellness Assessment ($79)", body: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
-  { n: "02", title: "Comprehensive Male Panel", body: `Total T, Free T, Estradiol Sensitive, SHBG, DHEA-S, PSA (if ≥40), full thyroid, foundation labs. Baseline draw in-office, processed by LabCorp. ${PRICE_PANEL}.` },
-  { n: "03", title: "Custom Protocol", body: "Physician designs your protocol — typically Test cyp weekly with ancillaries (anastrozole if needed, gonadorelin for fertility preservation if desired)." },
+  { n: "02", title: "Comprehensive labs", body: `Full hormone and foundation panel — testosterone, thyroid, and the markers your physician needs to dose safely. Drawn in-office, processed by LabCorp. ${PRICE_PANEL}.` },
+  { n: "03", title: "Your personalized plan", body: "Your physician reviews results and designs your protocol — testosterone dosing, how you take it, and any supporting medications based on your labs and goals." },
   { n: "04", title: "Ongoing Care", body: `ELEVATED TRT (${PRICE_MEMBERSHIP}) includes medication, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];
 
 const faqs = [
   { q: "Is testosterone safe long-term?", a: "When properly monitored — including PSA, hematocrit, and lipids — yes. The risk profile of physician-supervised TRT is well established. The risk of unmonitored or under-dosed clinics is what gives TRT a bad name." },
   { q: "Will I need TRT for the rest of my life?", a: "If you start TRT, your body reduces its own testosterone production. That's a known trade-off. Your physician will discuss whether starting is the right call before you commit." },
-  { q: "Can I still have kids on TRT?", a: "Yes, with a gonadorelin or HCG protocol that maintains fertility. Discuss this with your physician before starting if fertility matters." },
+  { q: "Can I still have kids on TRT?", a: "Yes. If fertility is a priority, tell your physician at your assessment — there are protocols designed to preserve it while you're on TRT." },
   { q: "Self-injection vs in-clinic?", a: "Both are options. Many patients prefer self-injection at home after a brief training visit. Some prefer the routine of weekly clinic visits — your membership covers either." },
   { q: "What about pellets?", a: "Available, but we don't lead with them — dose adjustment is harder once a pellet is placed. Discuss with the physician if you're interested." },
   { q: "Is this just steroids?", a: "No. Therapeutic TRT keeps your levels in optimal physiologic range. Performance-enhancement doses are a different category — and not what we do." },
@@ -221,7 +221,7 @@ const HormonesMen = () => {
                     </div>
                     <div className="flex justify-between border-b border-border/60 pb-3">
                       <span>
-                        Supportive medications (e.g., anastrozole, HCG)
+                        Supportive medications
                         <br />
                         <span className="font-light text-sm text-muted-foreground">when clinically indicated</span>
                       </span>
