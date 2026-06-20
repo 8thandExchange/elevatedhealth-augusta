@@ -14,13 +14,13 @@ export type LeadAreaValue = (typeof LEAD_AREA_OPTIONS)[number]["value"];
 export const SERVICE_PILLARS = [
   {
     title: "IV Therapy",
-    description: "Walk-in hydration and nutrient infusions in Evans — Myers, glutathione, NAD+, and custom IV builds.",
+    description: "Walk-in IV drips and boosters in Evans — The Resurrection, Meyers, Beast Mode, and add-on pushes. Book online, no consult required.",
     href: "/iv-lounge",
     cta: "Explore IV Lounge",
   },
   {
     title: "Hormone Optimization",
-    description: "Physician-supervised TRT and BHRT with LabCorp labs and compounded protocols when clinically appropriate.",
+    description: "Physician-supervised TRT and BHRT with LabCorp labs and compounded transdermal creams when clinically appropriate.",
     href: "/hormones",
     cta: "Hormone programs",
     subLinks: [

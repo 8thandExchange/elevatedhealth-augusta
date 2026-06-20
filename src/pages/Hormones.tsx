@@ -9,6 +9,7 @@ import { useBooking } from "@/contexts/BookingContext";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
+import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import {
   storefrontHeroInner,
   storefrontHeroLabel,
@@ -16,7 +17,10 @@ import {
   storefrontHeroSection,
   storefrontHeroTitle,
 } from "@/lib/storefrontHero";
-import { MembershipComparison } from "@/components/marketing/MembershipComparison";
+import {
+  HORMONES_GATEWAY_LOCAL_COMPOUNDING,
+  HORMONES_GATEWAY_MENS_CARD,
+} from "@/lib/hormoneStorefrontContent";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
@@ -29,7 +33,7 @@ const Hormones = () => {
     <>
       <Helmet>
         <title>Hormone Therapy Augusta GA | BHRT & TRT — Elevated Health</title>
-        <meta name="description" content="Bioidentical hormone therapy in Augusta, GA. Compounded transdermal creams for women, physician-led TRT for men. Lab-driven, custom-dosed." />
+        <meta name="description" content="Bioidentical hormone therapy in Augusta, GA. Compounded transdermal creams for women and men. Lab-driven, physician-led TRT and BHRT." />
         <meta name="keywords" content="hormone therapy Augusta, BHRT Augusta GA, TRT Augusta GA, bioidentical hormones, testosterone replacement" />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/hormones" />
         <meta property="og:title" content="Hormone Therapy Augusta GA | BHRT & TRT" />
@@ -40,7 +44,7 @@ const Hormones = () => {
           "@context": "https://schema.org",
           "@type": "MedicalProcedure",
           "name": "Hormone Replacement Therapy",
-          "description": "Bioidentical hormone therapy with compounded transdermal creams for women and physician-led testosterone therapy for men, guided by lab work.",
+          "description": "Bioidentical hormone therapy with compounded transdermal creams for women and men, guided by lab work.",
           "procedureType": "https://schema.org/TherapeuticProcedure",
           "url": "https://elevatedhealthaugusta.com/hormones",
           "provider": { "@type": "MedicalClinic", "name": "Elevated Health Augusta", "url": "https://elevatedhealthaugusta.com" }
@@ -105,8 +109,7 @@ const Hormones = () => {
                   <p className="section-label mb-3">For Men</p>
                   <h3 className="font-playfair italic text-4xl md:text-5xl text-foreground mb-4">Restore.</h3>
                   <p className="font-jost font-light text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
-                    TRT and male hormone optimization. Compounded testosterone, in-clinic injections or take-home
-                    protocol. Lab-driven, physician-led.
+                    {HORMONES_GATEWAY_MENS_CARD}
                   </p>
                   <span className="inline-flex items-center gap-2 font-jost text-xs uppercase tracking-[0.12em] text-primary group-hover:gap-3 transition-all">
                     Men&apos;s Hormones <ArrowRight className="h-3.5 w-3.5" />
@@ -151,7 +154,7 @@ const Hormones = () => {
               </div>
               <div className="grid md:grid-cols-3 gap-12">
                 {[
-                  { n: "01", t: "Local compounding", d: "Women's BHRT defaults to Bi-Est cream + progesterone capsules from Custom Pharmacy of Evans — same city as our clinic. Men's TRT defaults to weekly testosterone cypionate injections. Custom-dosed to your labs; insulated from FDA patch shortages." },
+                  { n: "01", t: "Local compounding", d: HORMONES_GATEWAY_LOCAL_COMPOUNDING },
                   { n: "02", t: "Physician-led", d: "Every protocol is built and monitored by a physician. Quarterly labs. Real adjustments. No template, no auto-renew." },
                   { n: "03", t: "ELEVATED programs", d: `${ELEVATED_PROGRAMS.hrt.name} (${ELEVATED_PROGRAMS.hrt.displayPrice}) and ${ELEVATED_PROGRAMS.trt.name} (${ELEVATED_PROGRAMS.trt.displayPrice}) bundle medication where prescribed, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
                 ].map((p) => (

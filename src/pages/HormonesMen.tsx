@@ -16,6 +16,13 @@ import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectio
 import { StorefrontPricingStrip } from "@/components/marketing/StorefrontPricingStrip";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import {
+  HORMONE_PHARMACY_FOOTNOTE,
+  MENS_TRT_ALTERNATIVES_COPY,
+  MENS_TRT_LEAD_COPY,
+  MENS_TRT_MONITORING_COPY,
+  MENS_TRT_SERVICES,
+} from "@/lib/hormoneStorefrontContent";
+import {
   storefrontHeroInner,
   storefrontHeroLabel,
   storefrontHeroLead,
@@ -29,16 +36,7 @@ const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
 const PRICE_MEMBERSHIP = ELEVATED_PROGRAMS.trt.displayPrice;
 
-const services = [
-  "Testosterone cypionate (injectable, weekly)",
-  "Testosterone enanthate (alternative)",
-  "Testosterone cream (transdermal, for non-injection patients)",
-  "Brand-name options when preferred (AndroGel, Testim)",
-  "Anastrozole when indicated (estradiol management)",
-  "Gonadorelin for fertility preservation",
-  "HCG (when indicated)",
-  "Comprehensive labs and quarterly monitoring",
-];
+const services = [...MENS_TRT_SERVICES];
 
 const symptoms = [
   "Low energy", "Decreased libido", "Slow recovery", "Loss of muscle mass",
@@ -57,8 +55,8 @@ const faqs = [
   { q: "Is testosterone safe long-term?", a: "When properly monitored — including PSA, hematocrit, and lipids — yes. The risk profile of physician-supervised TRT is well established. The risk of unmonitored or under-dosed clinics is what gives TRT a bad name." },
   { q: "Will I need TRT for the rest of my life?", a: "If you start TRT, your body reduces its own testosterone production. That's a known trade-off. Your physician will discuss whether starting is the right call before you commit." },
   { q: "Can I still have kids on TRT?", a: "Yes. If fertility is a priority, tell your physician at your assessment — there are protocols designed to preserve it while you're on TRT." },
-  { q: "Self-injection vs in-clinic?", a: "Both are options. Many patients prefer self-injection at home after a brief training visit. Some prefer the routine of weekly clinic visits — your membership covers either." },
-  { q: "What about pellets?", a: "Available, but we don't lead with them — dose adjustment is harder once a pellet is placed. Discuss with the physician if you're interested." },
+  { q: "Why transdermal cream instead of injections?", a: "Daily cream maintains steadier hormone levels than weekly injections — fewer peaks and crashes, and your dose can be adjusted quickly based on how you feel and what your labs show." },
+  { q: "What if I prefer a gel or patch?", a: "We can prescribe FDA-approved gels, sprays, or patches via standard e-Rx when available and clinically appropriate. Compounded cream remains our default for custom dosing." },
   { q: "Is this just steroids?", a: "No. Therapeutic TRT keeps your levels in optimal physiologic range. Performance-enhancement doses are a different category — and not what we do." },
   { q: "Can I use HSA/FSA?", a: "Yes for the consult and labs. Medication coverage varies by plan." },
 ];
@@ -77,7 +75,7 @@ const HormonesMen = () => {
     <>
       <Helmet>
         <title>TRT Augusta GA | Men's Hormone Therapy — Elevated Health</title>
-        <meta name="description" content="Physician-supervised testosterone replacement therapy in Augusta, GA. Lab-driven, custom-dosed TRT. Compounded testosterone, in-clinic or at-home." />
+        <meta name="description" content="Physician-supervised testosterone replacement therapy in Augusta, GA. Compounded transdermal testosterone cream, lab-driven dosing, and ELEVATED TRT membership." />
         <meta name="keywords" content="TRT Augusta GA, testosterone replacement Augusta, men's hormone therapy, low T treatment Augusta" />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/hormones-men" />
       </Helmet>
@@ -94,7 +92,7 @@ const HormonesMen = () => {
                 You used to recover faster.<br /><span className="italic">You can again.</span>
               </h1>
               <p className={storefrontHeroLead}>
-                Testosterone replacement therapy under physician supervision. Lab-driven, custom-dosed, no shortcuts.
+                Testosterone replacement therapy under physician supervision. Compounded transdermal cream, lab-driven, no shortcuts.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={openBooking} size="lg" className="font-jost tracking-wide">
@@ -131,12 +129,13 @@ const HormonesMen = () => {
               >
                 <p className="section-label mb-4">What it is</p>
                 <h2 className="font-playfair italic text-4xl md:text-5xl lg:text-6xl text-foreground mb-8">
-                  TRT done right.
+                  Compounded transdermal cream.
                 </h2>
                 <div className="space-y-5 font-jost font-light text-lg text-muted-foreground leading-relaxed">
-                  <p>Most men's TRT clinics push you to the maximum dose, fastest, with minimal labs. We don't.</p>
-                  <p>Your protocol is built from your testosterone, free testosterone, estradiol-sensitive, SHBG, DHEA, and PSA (if ≥40). We monitor quarterly and adjust to keep you in optimal range — not just "above the floor."</p>
-                  <p>Most patients use compounded testosterone cypionate (injectable, weekly). We also offer testosterone cream (transdermal) for patients who prefer it. Brand-name options like AndroGel, Testim, and Androderm are available via standard e-Rx when preferred.</p>
+                  <p>Most men's TRT clinics push maximum-dose injections with minimal labs. We don't.</p>
+                  <p>{MENS_TRT_MONITORING_COPY}</p>
+                  <p>{MENS_TRT_LEAD_COPY}</p>
+                  <p>{MENS_TRT_ALTERNATIVES_COPY}</p>
                 </div>
               </PatternCSplit>
             </div>
@@ -177,7 +176,7 @@ const HormonesMen = () => {
           <section className="py-20 md:py-28 bg-background border-t border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">What's Offered</p>
-              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">A full men's <span className="italic">formulary</span>.</h2>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">What's <span className="italic">included</span>.</h2>
               <ul className="space-y-4 mb-10">
                 {services.map((s) => (
                   <li key={s} className="font-jost font-light text-foreground text-lg flex items-start gap-3">
@@ -186,7 +185,7 @@ const HormonesMen = () => {
                 ))}
               </ul>
               <p className="font-jost font-light text-sm text-muted-foreground italic border-l-2 border-accent pl-4">
-                Schedule III prescribing requires DEA registration; the physician's DEA is on file. Compounded TRT prescriptions are faxed directly to our state-licensed 503A compounding pharmacy, which ships to clinic or to the patient's home.
+                {HORMONE_PHARMACY_FOOTNOTE}
               </p>
             </div>
           </section>

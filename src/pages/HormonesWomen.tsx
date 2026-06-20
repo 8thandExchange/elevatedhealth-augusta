@@ -15,6 +15,7 @@ import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards"
 import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
 import { StorefrontPricingStrip } from "@/components/marketing/StorefrontPricingStrip";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import { WOMENS_HRT_SERVICES } from "@/lib/hormoneStorefrontContent";
 import {
   storefrontHeroInner,
   storefrontHeroLabel,
@@ -29,15 +30,7 @@ const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
 const PRICE_MEMBERSHIP = ELEVATED_PROGRAMS.hrt.displayPrice;
 
-const services = [
-  "Bioidentical hormone replacement (BHRT)",
-  "Estradiol (Bi-Est, sensitive E2 monitoring)",
-  "Progesterone optimization",
-  "Testosterone therapy for women",
-  "Thyroid optimization (when indicated by labs)",
-  "Comprehensive hormone labs (LabCorp)",
-  "Quarterly monitoring and dose adjustment",
-];
+const services = [...WOMENS_HRT_SERVICES];
 
 const symptoms = [
   "Hot flashes", "Night sweats", "Sleep disruption", "Mood changes",
@@ -48,14 +41,14 @@ const symptoms = [
 const steps = [
   { n: "01", title: "Wellness Assessment ($79)", body: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
   { n: "02", title: "Lab Draw On-Site", body: `Comprehensive hormone panel — drawn at your visit, processed by LabCorp. Baseline comprehensive wellness panel ${PRICE_PANEL}.` },
-  { n: "03", title: "Custom Protocol", body: "Physician reviews labs, designs your protocol, sends Rx to our compounding pharmacy. Your medication ships directly to your door." },
+  { n: "03", title: "Your personalized plan", body: "Physician reviews labs, designs your protocol, sends Rx to our compounding pharmacy. Your medication ships directly to your door." },
   { n: "04", title: "Ongoing Care", body: `ELEVATED HRT (${PRICE_MEMBERSHIP}) includes prescribed creams, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];
 
 const faqs = [
   { q: "Is this covered by insurance?", a: "No — we're cash-pay. We provide a superbill you can submit to your insurance for potential out-of-network reimbursement." },
   { q: "How long until I feel different?", a: "Most patients notice meaningful changes within 4–6 weeks. Sleep and energy often improve first; mood and libido follow." },
-  { q: "Do I have to come in weekly?", a: "Only if your protocol calls for it. Many patients self-administer at home after a brief training visit." },
+  { q: "Do I have to come in weekly?", a: "No — most patients apply cream at home daily. Follow-up visits are scheduled per your protocol, with quarterly labs while you're enrolled." },
   { q: "What if I don't like the cream?", a: "Your protocol is flexible. We can pivot to gels, sprays, or patches when available, or discuss other delivery methods with your physician." },
   { q: "What's the difference between FDA-approved and compounded?", a: "Both are legitimate. FDA-approved products come in fixed doses your insurance might cover if billed. Compounded medications are made by a licensed 503A pharmacy and allow custom dosing tailored to your labs." },
   { q: "Can I do this remotely?", a: "Your initial consultation and lab draw are in person at our Evans, GA clinic. Follow-up visits can be telehealth once you're established." },
@@ -177,7 +170,7 @@ const HormonesWomen = () => {
           <section className="py-20 md:py-28 bg-background border-t border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">What's Offered</p>
-              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">A full women's <span className="italic">formulary</span>.</h2>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">What's <span className="italic">included</span>.</h2>
               <ul className="space-y-4">
                 {services.map((s) => (
                   <li key={s} className="font-jost font-light text-foreground text-lg flex items-start gap-3">

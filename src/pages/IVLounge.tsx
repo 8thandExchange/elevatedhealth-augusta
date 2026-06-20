@@ -203,17 +203,17 @@ const IVLounge = () => {
     <>
       <Helmet>
         <title>IV Therapy Augusta GA | Book Online — Elevated Health</title>
-        <meta name="description" content="Book IV hydration therapy online in Augusta, GA. Myers, NAD+, Immunity, Recovery and Beauty drips. RN-administered. Same-day appointments." />
+        <meta name="description" content="Book IV hydration therapy online in Augusta, GA. Signature drips from $139, boosters from $25. RN-administered. Same-day appointments." />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/iv-lounge" />
         <meta property="og:title" content="IV Therapy Augusta GA | Elevated Health" />
-        <meta property="og:description" content="RN-administered Myers, NAD+, Immunity, Recovery and Beauty drips. Same-day appointments." />
+        <meta property="og:description" content="RN-administered IV drips and boosters — book online, no consult required. Same-day appointments in Evans." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://elevatedhealthaugusta.com/iv-lounge" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "MedicalProcedure",
           "name": "IV Hydration Therapy",
-          "description": "RN-administered IV hydration and vitamin therapy: Myers cocktail, NAD+, Immunity, Recovery, and Beauty drips.",
+          "description": "RN-administered IV hydration and vitamin therapy: signature drips, recovery and wellness blends, and optional boosters.",
           "procedureType": "https://schema.org/TherapeuticProcedure",
           "url": "https://elevatedhealthaugusta.com/iv-lounge",
           "provider": { "@type": "MedicalClinic", "name": "Elevated Health Augusta", "url": "https://elevatedhealthaugusta.com" }

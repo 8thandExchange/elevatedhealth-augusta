@@ -3,7 +3,7 @@ import { Check, X } from "lucide-react";
 
 const rows = [
   { feature: "Board-certified physician oversight", us: true, them: false },
-  { feature: "In-clinic injections & lab draws", us: true, them: false },
+  { feature: "In-office visits, IV therapy & lab draws", us: true, them: false },
   { feature: "Transdermal compounded hormones", us: true, them: false },
   { feature: "Labs & medications at cost", us: true, them: false },
   { feature: "Algorithmic, asynchronous prescribing", us: false, them: true },
