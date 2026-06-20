@@ -1,10 +1,12 @@
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
+import { ArrowRight, Droplet, Stethoscope } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBooking } from "@/contexts/BookingContext";
+import { CORE_SERVICES } from "@/lib/stripeConfig";
 import {
   LANE_A_IV_STEPS,
   LANE_B_CONSULT_STEPS,

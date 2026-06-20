@@ -531,10 +531,10 @@ label {
   }
 }
 
-/* LeadConnector (GHL) chat widget — brand alignment, no layout gap below footer */
+/* LeadConnector (GHL) chat widget — below nav (z-50) so open panel never traps navigation */
 chat-widget {
   position: fixed !important;
-  z-index: 9990;
+  z-index: 40;
   pointer-events: none;
 }
 

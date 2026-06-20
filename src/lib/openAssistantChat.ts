@@ -6,7 +6,14 @@ const LAUNCHER_SELECTORS = [
   '[aria-label="Chat"]',
   ".lc_text-widget--btn",
   'button[data-testid="launcher"]',
-  "button",
+] as const;
+
+const CLOSE_SELECTORS = [
+  '[aria-label="Close chat"]',
+  '[aria-label="Close assistant"]',
+  '[aria-label="Close"]',
+  ".lc_text-widget--close",
+  'button[data-testid="close"]',
 ] as const;
 
 function tryLeadConnectorApi(): boolean {
@@ -18,15 +25,20 @@ function tryLeadConnectorApi(): boolean {
   return false;
 }
 
-function clickLauncher(root: ParentNode): boolean {
-  for (const selector of LAUNCHER_SELECTORS) {
+function tryLeadConnectorClose(): boolean {
+  const close = window.leadConnector?.chatWidget?.closeWidget;
+  if (typeof close === "function") {
+    close();
+    return true;
+  }
+  return false;
+}
+
+function clickMatching(root: ParentNode, selectors: readonly string[]): boolean {
+  for (const selector of selectors) {
     const nodes = root.querySelectorAll(selector);
     for (const node of nodes) {
       if (!(node instanceof HTMLElement)) continue;
-      const label = node.getAttribute("aria-label")?.toLowerCase() ?? "";
-      if (selector === "button" && !label.includes("chat") && !label.includes("assistant")) {
-        continue;
-      }
       node.click();
       return true;
     }
@@ -34,19 +46,27 @@ function clickLauncher(root: ParentNode): boolean {
 
   const children = root.querySelectorAll("*");
   for (const child of children) {
-    if (child instanceof Element && child.shadowRoot && clickLauncher(child.shadowRoot)) {
+    if (child instanceof Element && child.shadowRoot && clickMatching(child.shadowRoot, selectors)) {
       return true;
     }
   }
   return false;
 }
 
-function tryShadowDomClick(): boolean {
+function forEachChatHost(fn: (root: ParentNode) => boolean): boolean {
   const hosts = document.querySelectorAll("chat-widget, [data-widget-id]");
   for (const host of hosts) {
-    if (host.shadowRoot && clickLauncher(host.shadowRoot)) return true;
+    if (host.shadowRoot && fn(host.shadowRoot)) return true;
   }
-  return clickLauncher(document);
+  return false;
+}
+
+function tryShadowDomClick(): boolean {
+  return forEachChatHost((root) => clickMatching(root, LAUNCHER_SELECTORS));
+}
+
+function tryShadowDomClose(): boolean {
+  return forEachChatHost((root) => clickMatching(root, CLOSE_SELECTORS));
 }
 
 function tryOpen(): boolean {
@@ -70,6 +90,11 @@ export function openAssistantChat(): void {
       window.removeEventListener("LC_chatWidgetLoaded", onLoaded);
     }
   }, 250);
+}
+
+/** Closes the GHL chat widget — used on SPA route changes so back/forward navigation isn't blocked. */
+export function closeAssistantChat(): void {
+  tryLeadConnectorClose() || tryShadowDomClose();
 }
 
 if (typeof window !== "undefined") {

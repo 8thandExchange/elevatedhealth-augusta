@@ -75,7 +75,13 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <button 
-              onClick={() => { navigate("/"); scrollToSection("hero"); }}
+              onClick={() => {
+                if (location.pathname === "/") {
+                  document.getElementById("hero")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                } else {
+                  navigate("/");
+                }
+              }}
               className="flex flex-col items-start text-left group"
               aria-label="Elevated Health Augusta home"
             >
