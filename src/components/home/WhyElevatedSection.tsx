@@ -23,7 +23,7 @@ const WhyElevatedSection = () => {
   return (
     <section ref={ref} className="section-band-surface">
       <div className="container mx-auto px-6 lg:px-8">
-        <div className={`max-w-2xl mx-auto text-center mb-16 ${revealClasses.fadeUp(isVisible)}`}>
+        <div className={`max-w-2xl mx-auto text-center mb-10 md:mb-16 ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label mb-4">Why Elevated Health</p>
           <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl text-foreground">
             A different <span className="italic">standard of care.</span>

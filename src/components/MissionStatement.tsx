@@ -5,7 +5,7 @@ const MissionStatement = () => {
   const { openBooking } = useBooking();
   
   return (
-    <section className="py-20 md:py-28 bg-card relative overflow-hidden">
+    <section className="storefront-section bg-card relative overflow-hidden">
       {/* Decorative peach blob */}
       <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-peach opacity-30 blur-3xl" />
       <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-peach-light opacity-25 blur-3xl" />

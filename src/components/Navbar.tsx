@@ -26,7 +26,19 @@ const Navbar = () => {
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
   useEffect(() => {
-    if (!isHomePage) { setIsScrolled(true); return; }
+    if (!isMobileMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isHomePage) {
+      setIsScrolled(true);
+      return;
+    }
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -55,7 +67,6 @@ const Navbar = () => {
   const portalClass = onDarkNav
     ? "text-sm font-jost text-background/75 hover:text-background transition-colors"
     : "text-sm font-jost text-muted-foreground hover:text-foreground transition-colors";
-  const menuIconClass = onDarkNav ? "text-background" : "text-foreground";
 
   const navLinks = [
     { label: "How It Works", action: () => navigate("/how-it-works") },
@@ -71,8 +82,8 @@ const Navbar = () => {
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${navBg}`}>
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <button 
               onClick={() => {
@@ -164,14 +175,30 @@ const Navbar = () => {
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              className={`lg:hidden p-2 ${menuIconClass}`}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+            {/* Mobile: quick book + menu */}
+            <div className="flex lg:hidden items-center gap-2">
+              <Button
+                variant={onDarkNav ? "heroLight" : "default"}
+                size="sm"
+                className="font-jost font-medium text-xs tracking-wide h-10 px-3.5 shrink-0"
+                onClick={openBooking}
+              >
+                Book
+              </Button>
+              <button
+                type="button"
+                className={`flex items-center justify-center min-h-11 min-w-11 rounded-md border transition-colors ${
+                  onDarkNav
+                    ? "border-primary-foreground/35 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20"
+                    : "border-border bg-muted/60 text-foreground hover:bg-muted"
+                }`}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileMenuOpen}
+              >
+                {isMobileMenuOpen ? <X className="h-6 w-6" strokeWidth={2.25} /> : <Menu className="h-6 w-6" strokeWidth={2.25} />}
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -179,12 +206,17 @@ const Navbar = () => {
       {/* Fullscreen Mobile Menu (rendered outside nav to escape backdrop-filter containing block) */}
       {isMobileMenuOpen && (
         <div className="mobile-menu-overlay">
-            <div className="flex flex-col px-8 pb-8">
-              <button onClick={() => setIsMobileMenuOpen(false)} className="mobile-menu-close absolute top-4 right-6 p-2">
-                <X className="h-6 w-6" />
+            <div className="flex flex-col px-5 sm:px-8 pb-8 min-h-full">
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="mobile-menu-close absolute top-3 right-4 flex items-center justify-center min-h-11 min-w-11 rounded-md border border-border"
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6" strokeWidth={2.25} />
               </button>
 
-              <nav className="flex flex-col gap-4 mt-4">
+              <nav className="flex flex-col gap-1 mt-2">
                 {navLinks.map((item) => (
                   <button key={item.label} onClick={() => { item.action(); setIsMobileMenuOpen(false); }} className="mobile-menu-link">{item.label}</button>
                 ))}

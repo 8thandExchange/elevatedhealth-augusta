@@ -173,7 +173,7 @@ const HormonesMen = () => {
           </section>
 
           {/* 6. What's offered */}
-          <section className="py-20 md:py-28 bg-background border-t border-border">
+          <section className="storefront-section bg-background border-t border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">What's Offered</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">What's <span className="italic">included</span>.</h2>
@@ -191,7 +191,7 @@ const HormonesMen = () => {
           </section>
 
           {/* 7. Pricing transparency (Pattern E) */}
-          <section className="py-20 md:py-28 bg-muted/30">
+          <section className="storefront-section bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">Pricing</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">Transparent <span className="italic">all the way through</span>.</h2>
@@ -244,7 +244,7 @@ const HormonesMen = () => {
           </section>
 
           {/* 8. FAQ */}
-          <section className="py-20 md:py-28 bg-background">
+          <section className="storefront-section bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">FAQ</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">Questions, <span className="italic">answered</span>.</h2>
@@ -260,7 +260,7 @@ const HormonesMen = () => {
           </section>
 
           {/* 9. Closing CTA */}
-          <section className="py-24 md:py-32 bg-muted/30 text-center">
+          <section className="py-14 md:py-24 lg:py-32 bg-muted/30 text-center">
             <div className="container mx-auto px-6 max-w-2xl">
               <h2 className="font-playfair text-4xl md:text-5xl text-foreground mb-8">
                 Get back to operating at <span className="italic">your level</span>.

@@ -18,7 +18,7 @@ export function StorefrontPricingStrip({ columns, className }: StorefrontPricing
       <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
         <div className="grid md:grid-cols-3 gap-5">
           {columns.map((c) => (
-            <div key={c.label} className="premium-card-muted p-8 text-center">
+            <div key={c.label} className="premium-card-muted p-5 md:p-8 text-center">
               <p className="section-label mb-3">{c.label}</p>
               <p className="stat-display text-accent mb-2">{c.price}</p>
               <p className="font-jost text-xs text-muted-foreground leading-relaxed">{c.sub}</p>

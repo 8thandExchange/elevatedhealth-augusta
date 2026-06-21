@@ -27,8 +27,8 @@ const HowClinicWorks = () => {
         />
       </Helmet>
       <Navbar />
-      <main id="main-content" className="flex-1 pt-24 pb-16">
-        <div className="container mx-auto px-6 max-w-5xl space-y-14">
+      <main id="main-content" className="flex-1 pt-20 pb-12 md:pt-24 md:pb-16">
+        <div className="container mx-auto px-4 sm:px-6 max-w-5xl space-y-10 md:space-y-14">
           <StorefrontSectionHeader
             label="Evans, Georgia"
             title={

@@ -30,7 +30,7 @@ const Affordability = () => {
 
       <main id="main-content" className="flex-1 public-page-shell">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-28 bg-gradient-to-b from-secondary/30 to-background">
+        <section className="relative storefront-section bg-gradient-to-b from-secondary/30 to-background">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">

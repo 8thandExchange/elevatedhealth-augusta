@@ -33,7 +33,7 @@ const ServicesGrid = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="storefront-section bg-background">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="section-label mb-4">Our Services</p>

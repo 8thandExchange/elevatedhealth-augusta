@@ -224,7 +224,7 @@ const IVLounge = () => {
         <Navbar />
 
         {/* HERO — navy band matches homepage; clear CTA hierarchy */}
-        <section className="relative min-h-[80vh] md:min-h-[85vh] flex items-center pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-primary text-primary-foreground">
+        <section className="relative flex items-center pt-24 pb-12 md:min-h-[85vh] md:pt-40 md:pb-24 overflow-hidden bg-primary text-primary-foreground">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-95" aria-hidden />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(199_89%_39%_/_0.18),transparent_55%)]" aria-hidden />
 

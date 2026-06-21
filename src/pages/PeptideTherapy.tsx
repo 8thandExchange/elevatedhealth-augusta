@@ -239,7 +239,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section className="py-20 md:py-28 bg-background">
+          <section className="storefront-section bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="grid md:grid-cols-12 gap-12">
                 <div className="md:col-span-5">
@@ -267,7 +267,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section className="py-20 md:py-28 bg-muted/30">
+          <section className="storefront-section bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <PatternCSplit
                 imageSrc={MARKETING_IMAGES.editorialPeptides}
@@ -322,7 +322,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section className="py-20 md:py-28 bg-background">
+          <section className="storefront-section bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">Pricing</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">
@@ -351,7 +351,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section className="py-20 md:py-28 bg-muted/30">
+          <section className="storefront-section bg-muted/30">
             <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
               <p className="section-label mb-4">FAQ</p>
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-10">
@@ -372,7 +372,7 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section className="py-24 md:py-32 bg-background text-center">
+          <section className="py-14 md:py-24 lg:py-32 bg-background text-center">
             <div className="container mx-auto px-6 max-w-2xl">
               <h2 className="font-playfair text-4xl md:text-5xl text-foreground mb-8">
                 Start your <span className="italic">Recovery Peptide Review</span>.

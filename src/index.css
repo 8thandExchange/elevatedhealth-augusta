@@ -252,7 +252,7 @@
 
 /* Alternating section bands */
 .section-band {
-  @apply py-24 md:py-32;
+  @apply py-12 md:py-24 lg:py-32;
 }
 
 .section-band-white {
@@ -340,11 +340,16 @@
 
 /* Luxury section spacing utility */
 .section-spacing {
-  @apply py-16 lg:py-20 xl:py-24;
+  @apply py-12 md:py-16 lg:py-20 xl:py-24;
 }
 
 .section-spacing-sm {
-  @apply py-12 lg:py-16 xl:py-20;
+  @apply py-10 md:py-12 lg:py-16 xl:py-20;
+}
+
+/* Storefront pages — inline sections that aren't section-band */
+.storefront-section {
+  @apply py-12 md:py-20 lg:py-28;
 }
 
 /* PWA Install Prompt animation */
@@ -439,21 +444,23 @@ label {
   background-color: hsl(0, 0%, 100%) !important;
   z-index: 60 !important;
   overflow-y: auto !important;
-  padding-top: 6rem !important;
+  padding-top: 5rem !important;
 }
 
 .mobile-menu-link {
   display: block !important;
   font-family: 'Jost', sans-serif !important;
   font-weight: 500 !important;
-  font-size: 1.25rem !important;
+  font-size: 1.125rem !important;
+  line-height: 1.4 !important;
   color: hsl(207, 100%, 25%) !important;
-  padding: 0.75rem 0 !important;
+  padding: 0.875rem 0 !important;
   text-align: left !important;
   background: transparent !important;
   border: none !important;
   width: 100% !important;
   cursor: pointer !important;
+  min-height: 44px !important;
 }
 
 .mobile-menu-link:hover {

@@ -38,7 +38,7 @@ const OurTreatments = () => {
   const { openBooking } = useBooking();
 
   return (
-    <section id="treatments" className="py-20 md:py-28 bg-background scroll-mt-20 relative overflow-hidden">
+    <section id="treatments" className="storefront-section bg-background scroll-mt-20 relative overflow-hidden">
       {/* Decorative blob */}
       <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-peach opacity-20 blur-3xl" />
       

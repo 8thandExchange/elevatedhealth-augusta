@@ -17,7 +17,7 @@ export function StorefrontSectionHeader({
   className,
 }: StorefrontSectionHeaderProps) {
   return (
-    <div className={cn(centered && "text-center", "mb-14 max-w-3xl", centered && "mx-auto", className)}>
+    <div className={cn(centered && "text-center", "mb-8 md:mb-14 max-w-3xl", centered && "mx-auto", className)}>
       {label ? <p className="section-label mb-4">{label}</p> : null}
       <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl text-foreground leading-snug">{title}</h2>
       {lead ? (

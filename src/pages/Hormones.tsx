@@ -77,7 +77,7 @@ const Hormones = () => {
           </section>
 
           {/* Split: Women / Men */}
-          <section id="paths" className="py-20 md:py-28 bg-background">
+          <section id="paths" className="storefront-section bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
               <div className="text-center mb-16">
                 <p className="section-label mb-4">Choose Your Path</p>
@@ -144,7 +144,7 @@ const Hormones = () => {
           <div className="section-divider max-w-4xl mx-auto" />
 
           {/* Why Elevated Health for Hormones */}
-          <section className="py-20 md:py-28 bg-background">
+          <section className="storefront-section bg-background">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
               <div className="text-center mb-16">
                 <p className="section-label mb-4">Why Elevated Health</p>
@@ -192,7 +192,7 @@ const Hormones = () => {
           </section>
 
           {/* Closing CTA */}
-          <section className="py-20 md:py-28 bg-background text-center">
+          <section className="storefront-section bg-background text-center">
             <div className="container mx-auto px-6 max-w-2xl">
               <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-6">
                 Not sure which path?

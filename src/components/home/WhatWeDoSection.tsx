@@ -17,7 +17,7 @@ const WhatWeDoSection = () => {
           </h2>
         </div>
         <p
-          className={`font-jost text-sm text-muted-foreground text-center max-w-2xl mx-auto mb-16 ${revealClasses.fadeUp(isVisible)}`}
+          className={`font-jost text-sm text-muted-foreground text-center max-w-2xl mx-auto mb-10 md:mb-16 ${revealClasses.fadeUp(isVisible)}`}
         >
           Lab-guided, provider-reviewed, individualized care — we help you understand options; your
           physician decides what is appropriate after assessment and labs.

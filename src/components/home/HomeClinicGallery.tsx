@@ -61,7 +61,7 @@ const HomeClinicGallery = () => {
   if (hasAnyPhoto !== true) return null;
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-primary text-primary-foreground overflow-hidden">
+    <section ref={ref} className="storefront-section bg-primary text-primary-foreground overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8">
         <div className={`max-w-2xl mb-12 md:mb-16 ${revealClasses.fadeUp(isVisible)}`}>
           <p className="section-label section-label-on-dark mb-4">The Space</p>

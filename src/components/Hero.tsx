@@ -11,17 +11,17 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative min-h-[92vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-primary"
+      className="relative min-h-0 flex items-center justify-center overflow-hidden bg-primary py-24 md:min-h-screen md:py-0"
     >
       <HeroMedia />
 
       <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/70 to-primary/90" aria-hidden />
 
-      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-36 pb-28 md:pt-40 md:pb-32">
-        <span className="eyebrow eyebrow-on-dark mb-8 md:mb-10 animate-fade-in-up">
+      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-24 pb-14 md:pt-40 md:pb-32">
+        <span className="eyebrow eyebrow-on-dark mb-5 md:mb-10 animate-fade-in-up">
           Physician-owned wellness · Evans, GA
         </span>
-        <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.75rem] text-primary-foreground leading-[1.04] mb-10 md:mb-12 animate-fade-in-up">
+        <h1 className="font-playfair text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[5.75rem] text-primary-foreground leading-[1.04] mb-6 md:mb-12 animate-fade-in-up">
           You remember what it felt like
           <br />
           <span className="italic text-accent-light" style={{ letterSpacing: "-0.025em" }}>
@@ -30,7 +30,7 @@ const Hero = () => {
         </h1>
 
         <p
-          className="text-lg sm:text-xl md:text-2xl text-primary-foreground/80 font-jost font-light leading-relaxed mb-14 max-w-2xl mx-auto animate-fade-in-up"
+          className="text-base sm:text-lg md:text-2xl text-primary-foreground/80 font-jost font-light leading-relaxed mb-8 md:mb-14 max-w-2xl mx-auto animate-fade-in-up"
           style={{ animationDelay: "0.2s" }}
         >
           Board-certified physician direction for hormone optimization, peptide therapy, IV care, and

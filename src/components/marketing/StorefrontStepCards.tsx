@@ -22,8 +22,8 @@ export function StorefrontStepCards({ steps, className, columns = "4" }: Storefr
   return (
     <div className={cn(gridClass, className)}>
       {steps.map((s) => (
-        <div key={s.n} className="premium-card p-7 md:p-8 h-full">
-          <p className="step-number mb-5">{s.n}</p>
+        <div key={s.n} className="premium-card p-5 md:p-8 h-full">
+          <p className="step-number mb-4 md:mb-5">{s.n}</p>
           <h3 className="font-playfair text-xl text-foreground mb-3 leading-snug">{s.title}</h3>
           <p className="font-jost font-light text-sm text-muted-foreground leading-relaxed">{s.body}</p>
         </div>
