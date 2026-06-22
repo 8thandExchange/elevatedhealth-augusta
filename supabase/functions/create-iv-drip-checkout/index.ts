@@ -165,8 +165,13 @@ serve(async (req) => {
       }
     }
 
+    // IMPORTANT: {CHECKOUT_SESSION_ID} must stay UNENCODED in success_url so
+    // Stripe substitutes the real session id. URLSearchParams percent-encodes
+    // the braces (%7B...%7D), which Stripe does NOT substitute — that left the
+    // success page receiving the literal "{CHECKOUT_SESSION_ID}" and every IV
+    // booking silently failing. Build the dynamic params separately, then
+    // prepend the literal session_id token (matches every other checkout fn).
     const successParams = new URLSearchParams({
-      session_id: "{CHECKOUT_SESSION_ID}",
       therapy: therapy.name,
     });
     if (slot_token) successParams.set("slot_token", slot_token);
@@ -182,7 +187,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : userEmail,
       line_items: lineItems,
       mode: "payment",
-      success_url: `${origin}/iv-payment-success?${successParams.toString()}`,
+      success_url: `${origin}/iv-payment-success?session_id={CHECKOUT_SESSION_ID}&${successParams.toString()}`,
       cancel_url: `${origin}/iv-lounge`,
       metadata: {
         user_id: userId || "",

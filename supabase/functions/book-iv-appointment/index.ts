@@ -372,11 +372,20 @@ serve(async (req) => {
     // ------------------------------------------------------------------------
     // PATIENT SELF-SERVE PATH (Stripe-paid)
     // ------------------------------------------------------------------------
-    if (!session_id) {
-      return new Response(JSON.stringify({ error: "session_id required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // Validate the Stripe session id BEFORE redeeming the slot token. Real
+    // Checkout Session ids start with "cs_". A malformed value (e.g. the
+    // unsubstituted "{CHECKOUT_SESSION_ID}" placeholder from a bad success_url)
+    // must fail here so the patient's reserved slot token is NOT burned and they
+    // can retry. This guards against the 2026-06-22 incident where every IV
+    // booking silently failed after consuming its slot token.
+    if (!session_id || !session_id.startsWith("cs_")) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid payment session. Your slot is still held — please retry, or call us if this persists.",
+          error_code: "invalid_session_id",
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
     const redeemed = await redeemSlotTokenJtiOnce({
       supabaseAdmin: supabase,
