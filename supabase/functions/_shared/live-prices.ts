@@ -23,6 +23,7 @@ export const LIVE_CORE_SERVICES = {
   rebookingFee: "price_1TWcnsCXbCBPFEeIFltNQdpi",
   comprehensivePanel: "price_1TWcoMCXbCBPFEeIKTLxoYYs",
   expandedPanel: "price_1TWcolCXbCBPFEeI11uF9lyf",
+  advancedLabAddon: "price_1TlwOqCXbCBPFEeIggO2VWdQ",
 } as const;
 
 export const LIVE_MEDICATION_FILLS = {

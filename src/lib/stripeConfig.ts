@@ -102,6 +102,13 @@ export const CORE_SERVICES = {
     amount: 29900,
     displayPrice: "$299",
   },
+  advancedLabAddon: {
+    name: "Advanced Lab Markers Add-On",
+    priceId: "price_1TlwOqCXbCBPFEeIggO2VWdQ",
+    productId: "prod_UlTLU0llI864qo",
+    amount: 12900,
+    displayPrice: "$129",
+  },
 } as const;
 
 // À la carte medication fills (non-member, one-time)

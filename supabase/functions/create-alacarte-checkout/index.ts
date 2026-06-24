@@ -66,6 +66,17 @@ serve(async (req) => {
       });
     }
 
+    if (product_key === "labAdvanced") {
+      return serveOnetimePriceCheckoutFromBody(body, {
+        functionName: "create-alacarte-checkout",
+        stripePriceId: LIVE_CORE_SERVICES.advancedLabAddon,
+        productKey: "lab_advanced_addon",
+        success_url: `${origin}/alacarte-success?product=labAdvanced&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/pricing`,
+        logConsultationBooking: true,
+      });
+    }
+
     if (product_key === "labPanel" || product_key === "labPanelExpanded") {
       const comprehensive = product_key === "labPanel";
       return serveOnetimePriceCheckoutFromBody(body, {
@@ -87,6 +98,7 @@ serve(async (req) => {
         "followUp",
         "labPanel",
         "labPanelExpanded",
+        "labAdvanced",
       ].join(", ")}`,
     );
   } catch (error) {
