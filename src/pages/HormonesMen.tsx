@@ -47,7 +47,7 @@ const symptoms = [
 
 const steps = [
   { n: "01", title: "Wellness Assessment ($79)", body: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
-  { n: "02", title: "Comprehensive labs", body: `Full hormone and foundation panel — testosterone, thyroid, and the markers your physician needs to dose safely. Drawn in-office, processed by LabCorp. ${PRICE_PANEL}.` },
+  { n: "02", title: "Guideline-based labs", body: `An evidence-based hormone and metabolic panel — testosterone, blood count, PSA, thyroid, and the safety markers your physician needs to dose you correctly. Drawn in-office, processed by LabCorp; advanced markers added only when clinically indicated. ${PRICE_PANEL}.` },
   { n: "03", title: "Your personalized plan", body: "Your physician reviews results and designs your protocol — testosterone dosing, how you take it, and any supporting medications based on your labs and goals." },
   { n: "04", title: "Ongoing Care", body: `ELEVATED TRT (${PRICE_MEMBERSHIP}) includes medication, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];

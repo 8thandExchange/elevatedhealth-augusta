@@ -41,7 +41,7 @@ const symptoms = [
 
 const steps = [
   { n: "01", title: "Wellness Assessment ($79)", body: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
-  { n: "02", title: "Lab Draw On-Site", body: `Comprehensive hormone panel — drawn at your visit, processed by LabCorp. Baseline hormone panel ${PRICE_PANEL}.` },
+  { n: "02", title: "Guideline-based labs", body: `An evidence-based hormone and metabolic panel — drawn at your visit, processed by LabCorp. We test what current menopause and hormone guidelines support; advanced markers are added only when clinically indicated. ${PRICE_PANEL}.` },
   { n: "03", title: "Your personalized plan", body: "Physician reviews labs, designs your protocol, sends Rx to our compounding pharmacy. Your medication ships directly to your door." },
   { n: "04", title: "Ongoing Care", body: `ELEVATED HRT (${PRICE_MEMBERSHIP}) includes prescribed creams, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];

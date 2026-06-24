@@ -26,14 +26,37 @@ import {
 } from "@/components/ui/table";
 import { AlertTriangle, ArrowLeft, Loader2, RefreshCw, Search } from "lucide-react";
 import { toast } from "sonner";
-import {
-  computePanelEconomics,
-  formatCentsUsd,
-  formatMarginLabel,
-} from "@/lib/labCatalogEconomics";
+import { formatCentsUsd } from "@/lib/labCatalogEconomics";
 import { LAB_PANEL_DISPLAY_NAMES, type LabPanelSlug } from "@/lib/labPanelRecommendations";
 import { labPanelNonMemberCents } from "@/lib/labPanelCheckout";
+import { labMemberCents } from "@/lib/pricing";
 import type { LabPanelRow, LabTestRow } from "@/lib/labCatalogTypes";
+
+type DefaultRule = "standing" | "reflex" | "optional" | "one_time";
+
+const RULE_LABELS: Record<DefaultRule, string> = {
+  standing: "Standing",
+  reflex: "Reflex",
+  optional: "Optional",
+  one_time: "One-time",
+};
+
+const RULE_HELP: Record<DefaultRule, string> = {
+  standing: "Drawn every time — part of the standard panel cost.",
+  reflex: "Ordered only on indication / abnormal anchor (e.g. Free T4 if TSH abnormal).",
+  optional: "Advanced add-on — not in the standard panel.",
+  one_time: "Genetic / once-in-a-lifetime — counted once at baseline.",
+};
+
+/** Tests whose cost counts toward the standard (default-draw) panel. */
+const COUNTS_TOWARD_STANDARD: DefaultRule[] = ["standing", "one_time"];
+
+interface JoinRow {
+  panel_id: string;
+  test_id: string;
+  display_order: number;
+  default_rule: DefaultRule;
+}
 
 function parseDollarsToCents(value: string): number | null {
   const trimmed = value.trim();
@@ -48,15 +71,23 @@ function centsToInput(cents: number | null | undefined): string {
   return (cents / 100).toFixed(2);
 }
 
+function marginBand(pct: number | null): "green" | "yellow" | "red" | "unknown" {
+  if (pct == null) return "unknown";
+  if (pct >= 40) return "green";
+  if (pct >= 20) return "yellow";
+  return "red";
+}
+
 export default function LabCatalogAdmin() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [tests, setTests] = useState<LabTestRow[]>([]);
   const [panels, setPanels] = useState<LabPanelRow[]>([]);
-  const [joins, setJoins] = useState<Array<{ panel_id: string; test_id: string; display_order: number }>>([]);
+  const [joins, setJoins] = useState<JoinRow[]>([]);
   const [search, setSearch] = useState("");
   const [editTest, setEditTest] = useState<LabTestRow | null>(null);
   const [saving, setSaving] = useState(false);
+  const [savingRuleKey, setSavingRuleKey] = useState<string | null>(null);
   const [draft, setDraft] = useState({
     labcorp_test_code: "",
     cpt_or_order_code: "",
@@ -72,14 +103,14 @@ export default function LabCatalogAdmin() {
       const [testsRes, panelsRes, joinsRes] = await Promise.all([
         supabase.from("lab_tests").select("*").order("display_order"),
         supabase.from("lab_panels").select("*").order("display_order"),
-        supabase.from("panel_tests").select("panel_id, test_id, display_order"),
+        supabase.from("panel_tests").select("panel_id, test_id, display_order, default_rule"),
       ]);
       if (testsRes.error) throw testsRes.error;
       if (panelsRes.error) throw panelsRes.error;
       if (joinsRes.error) throw joinsRes.error;
       setTests((testsRes.data ?? []) as LabTestRow[]);
       setPanels((panelsRes.data ?? []) as LabPanelRow[]);
-      setJoins(joinsRes.data ?? []);
+      setJoins((joinsRes.data ?? []) as JoinRow[]);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to load lab catalog");
     } finally {
@@ -91,6 +122,12 @@ export default function LabCatalogAdmin() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  const ruleByKey = useMemo(() => {
+    const m = new Map<string, DefaultRule>();
+    for (const j of joins) m.set(`${j.panel_id}:${j.test_id}`, j.default_rule);
+    return m;
+  }, [joins]);
 
   const panelsByTestId = useMemo(() => {
     const panelById = new Map(panels.map((p) => [p.id, p]));
@@ -107,12 +144,12 @@ export default function LabCatalogAdmin() {
 
   const testsByPanelId = useMemo(() => {
     const testById = new Map(tests.map((t) => [t.id, t]));
-    const map = new Map<string, LabTestRow[]>();
+    const map = new Map<string, Array<LabTestRow & { rule: DefaultRule }>>();
     for (const j of joins) {
       const test = testById.get(j.test_id);
       if (!test) continue;
       const list = map.get(j.panel_id) ?? [];
-      list.push(test);
+      list.push({ ...test, rule: j.default_rule });
       map.set(j.panel_id, list);
     }
     for (const [pid, list] of map) {
@@ -125,22 +162,35 @@ export default function LabCatalogAdmin() {
   }, [joins, tests]);
 
   const panelEconomics = useMemo(() => {
-    return panels.map((panel) => {
-      const panelTests = testsByPanelId.get(panel.id) ?? [];
-      const chargeCents = labPanelNonMemberCents(panel.slug);
-      return computePanelEconomics({
-        panelSlug: panel.slug,
-        panelName: panel.name,
-        patientChargeCents: chargeCents,
-        tests: panelTests.map((t) => ({
-          id: t.id,
-          code: t.code,
-          name: t.name,
-          eha_cost_cents: t.eha_cost_cents ?? null,
-          non_member_price_cents: t.non_member_price_cents,
-        })),
+    return panels
+      .filter((p) => p.is_active)
+      .map((panel) => {
+        const panelTests = testsByPanelId.get(panel.id) ?? [];
+        const charge = labPanelNonMemberCents(panel.slug);
+        const memberCharge = labMemberCents(charge);
+        const standardTests = panelTests.filter((t) => COUNTS_TOWARD_STANDARD.includes(t.rule));
+        const missing = standardTests.filter((t) => !t.eha_cost_cents || t.eha_cost_cents <= 0).length;
+        const standardCost = standardTests.reduce((s, t) => s + (t.eha_cost_cents ?? 0), 0);
+        const fullCost = panelTests.reduce((s, t) => s + (t.eha_cost_cents ?? 0), 0);
+        const nmProfit = charge - standardCost;
+        const nmMargin = charge > 0 ? (nmProfit / charge) * 100 : null;
+        const mbrProfit = memberCharge - standardCost;
+        const mbrMargin = memberCharge > 0 ? (mbrProfit / memberCharge) * 100 : null;
+        return {
+          panel,
+          panelTests,
+          charge,
+          memberCharge,
+          standardCost,
+          fullCost,
+          standardCount: standardTests.length,
+          missing,
+          nmProfit,
+          nmMargin,
+          mbrProfit,
+          mbrMargin,
+        };
       });
-    });
   }, [panels, testsByPanelId]);
 
   const filteredTests = useMemo(() => {
@@ -155,6 +205,27 @@ export default function LabCatalogAdmin() {
   }, [search, tests]);
 
   const missingEhaTotal = tests.filter((t) => !t.eha_cost_cents || t.eha_cost_cents <= 0).length;
+
+  const updateRule = async (panelId: string, testId: string, rule: DefaultRule) => {
+    const key = `${panelId}:${testId}`;
+    setSavingRuleKey(key);
+    // optimistic
+    setJoins((prev) =>
+      prev.map((j) => (j.panel_id === panelId && j.test_id === testId ? { ...j, default_rule: rule } : j)),
+    );
+    const { error } = await supabase
+      .from("panel_tests")
+      .update({ default_rule: rule } as Record<string, unknown>)
+      .eq("panel_id", panelId)
+      .eq("test_id", testId);
+    setSavingRuleKey(null);
+    if (error) {
+      toast.error(error.message);
+      void refresh();
+    } else {
+      toast.success(`Set ${RULE_LABELS[rule]}`);
+    }
+  };
 
   const openEdit = (test: LabTestRow) => {
     setEditTest(test);
@@ -226,12 +297,14 @@ export default function LabCatalogAdmin() {
           </div>
 
           <div>
-            <p className="section-label mb-2">Internal — lab economics</p>
+            <p className="section-label mb-2">Internal — lab economics &amp; panel composition</p>
             <h1 className="font-playfair text-3xl md:text-4xl text-foreground mb-2">Lab catalog</h1>
             <p className="font-jost text-sm text-muted-foreground max-w-3xl">
-              Master lab list ({tests.length} unique tests) and program panels via{" "}
-              <code className="text-xs">panel_tests</code>. Patient-facing checkout uses Stripe
-              comprehensive ($199) / expanded ($299) tiers — never expose COGS or margins to patients.
+              Master lab list ({tests.length} tests) and program panels. Each test in a panel has a{" "}
+              <strong>draw rule</strong> you can change live: <em>Standing</em> (every draw),{" "}
+              <em>Reflex</em> (on indication), <em>Optional</em> (advanced add-on), or{" "}
+              <em>One-time</em> (genetic). Only Standing + One-time count toward the standard panel cost.
+              Patient checkout uses Stripe $199 / $299 tiers — never expose COGS or margins to patients.
             </p>
           </div>
 
@@ -239,12 +312,10 @@ export default function LabCatalogAdmin() {
             <Card className="border-amber-500/40 bg-amber-500/5">
               <CardContent className="pt-4 flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-jost text-sm font-medium">
-                    {missingEhaTotal} lab(s) missing EHA cost — panel margins are incomplete until LabCorp
-                    client-bill pricing is entered.
-                  </p>
-                </div>
+                <p className="font-jost text-sm font-medium">
+                  {missingEhaTotal} lab(s) missing EHA cost — some standard-panel margins may be partial
+                  until LabCorp client pricing is entered.
+                </p>
               </CardContent>
             </Card>
           )}
@@ -257,77 +328,109 @@ export default function LabCatalogAdmin() {
 
             <TabsContent value="panels" className="space-y-4 mt-4">
               {panelEconomics.map((econ) => {
-                const panel = panels.find((p) => p.slug === econ.panelSlug);
-                const panelTests = panel ? (testsByPanelId.get(panel.id) ?? []) : [];
                 const displayName =
-                  LAB_PANEL_DISPLAY_NAMES[econ.panelSlug as LabPanelSlug] ?? econ.panelName;
+                  LAB_PANEL_DISPLAY_NAMES[econ.panel.slug as LabPanelSlug] ?? econ.panel.name;
+                const band = marginBand(econ.mbrMargin);
                 return (
-                  <Card key={econ.panelSlug}>
+                  <Card key={econ.panel.slug}>
                     <CardHeader className="pb-2">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <CardTitle className="font-playfair text-xl">{displayName}</CardTitle>
                         <div className="flex gap-2">
                           <Badge variant="outline" className="font-jost">
-                            {panelTests.length} labs
+                            {econ.standardCount} standard / {econ.panelTests.length} total
                           </Badge>
-                          {!panel?.is_active && (
-                            <Badge variant="secondary" className="font-jost">
-                              Inactive
-                            </Badge>
-                          )}
                         </div>
                       </div>
                       <p className="font-jost text-xs text-muted-foreground">
-                        slug: <code>{econ.panelSlug}</code>
+                        slug: <code>{econ.panel.slug}</code>
                       </p>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                         <div>
-                          <p className="font-jost text-xs text-muted-foreground">Patient charge</p>
-                          <p className="font-playfair text-2xl">{formatCentsUsd(econ.patientChargeCents)}</p>
-                        </div>
-                        <div>
-                          <p className="font-jost text-xs text-muted-foreground">Total EHA lab cost</p>
-                          <p className="font-playfair text-2xl">
-                            {econ.marginIsFinal
-                              ? formatCentsUsd(econ.totalLabCostCents)
-                              : formatCentsUsd(econ.totalLabCostCents) + " (partial)"}
+                          <p className="font-jost text-xs text-muted-foreground">Charge (non-mbr / mbr)</p>
+                          <p className="font-playfair text-xl">
+                            {formatCentsUsd(econ.charge)}
+                            <span className="text-sm text-muted-foreground">
+                              {" "}/ {formatCentsUsd(econ.memberCharge)}
+                            </span>
                           </p>
                         </div>
                         <div>
-                          <p className="font-jost text-xs text-muted-foreground">Gross profit</p>
-                          <p className="font-playfair text-2xl">
-                            {econ.marginIsFinal ? formatCentsUsd(econ.grossProfitCents) : "—"}
-                          </p>
+                          <p className="font-jost text-xs text-muted-foreground">Standard cost (COGS)</p>
+                          <p className="font-playfair text-xl">{formatCentsUsd(econ.standardCost)}</p>
                         </div>
                         <div>
-                          <p className="font-jost text-xs text-muted-foreground">Margin</p>
+                          <p className="font-jost text-xs text-muted-foreground">Standard profit (mbr)</p>
+                          <p className="font-playfair text-xl">{formatCentsUsd(econ.mbrProfit)}</p>
+                        </div>
+                        <div>
+                          <p className="font-jost text-xs text-muted-foreground">Margin (non-mbr / mbr)</p>
                           <p
-                            className={`font-playfair text-2xl ${
-                              econ.marginBand === "green"
-                                ? "text-green-600"
-                                : econ.marginBand === "red"
-                                  ? "text-destructive"
-                                  : ""
+                            className={`font-playfair text-xl ${
+                              band === "green" ? "text-green-600" : band === "red" ? "text-destructive" : ""
                             }`}
                           >
-                            {formatMarginLabel(econ)}
+                            {econ.nmMargin?.toFixed(0)}% / {econ.mbrMargin?.toFixed(0)}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="font-jost text-xs text-muted-foreground">Full cost (all ordered)</p>
+                          <p className="font-playfair text-xl text-muted-foreground">
+                            {formatCentsUsd(econ.fullCost)}
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {panelTests.map((t) => (
-                          <Badge
-                            key={t.id}
-                            variant={!t.eha_cost_cents ? "destructive" : "secondary"}
-                            className="font-jost text-xs cursor-pointer"
-                            onClick={() => openEdit(t)}
-                          >
-                            {t.code}
-                          </Badge>
-                        ))}
-                      </div>
+
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Test</TableHead>
+                            <TableHead>LabCorp</TableHead>
+                            <TableHead className="text-right">Cost</TableHead>
+                            <TableHead className="w-[150px]">Draw rule</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {econ.panelTests.map((t) => {
+                            const key = `${econ.panel.id}:${t.id}`;
+                            return (
+                              <TableRow key={t.id}>
+                                <TableCell className="font-jost text-sm">
+                                  <button
+                                    className="hover:underline text-left"
+                                    onClick={() => openEdit(t)}
+                                  >
+                                    {t.name}
+                                  </button>
+                                </TableCell>
+                                <TableCell className="text-xs">{t.labcorp_test_code ?? "—"}</TableCell>
+                                <TableCell className="text-right text-sm">
+                                  {t.eha_cost_cents ? formatCentsUsd(t.eha_cost_cents) : "—"}
+                                </TableCell>
+                                <TableCell>
+                                  <select
+                                    className="w-full h-8 px-2 rounded border bg-background text-xs font-jost"
+                                    value={t.rule}
+                                    disabled={savingRuleKey === key}
+                                    title={RULE_HELP[t.rule]}
+                                    onChange={(e) =>
+                                      void updateRule(econ.panel.id, t.id, e.target.value as DefaultRule)
+                                    }
+                                  >
+                                    {(Object.keys(RULE_LABELS) as DefaultRule[]).map((r) => (
+                                      <option key={r} value={r}>
+                                        {RULE_LABELS[r]}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
                     </CardContent>
                   </Card>
                 );
@@ -410,8 +513,7 @@ export default function LabCatalogAdmin() {
             <SheetTitle className="font-playfair">{editTest?.name}</SheetTitle>
             <SheetDescription className="font-jost">
               Code: {editTest?.code}. Programs:{" "}
-              {(editTest ? panelsByTestId.get(editTest.id) : [])?.map((p) => p.name).join(", ") ||
-                "—"}
+              {(editTest ? panelsByTestId.get(editTest.id) : [])?.map((p) => p.name).join(", ") || "—"}
             </SheetDescription>
           </SheetHeader>
           <div className="space-y-4 mt-6 font-jost text-sm">

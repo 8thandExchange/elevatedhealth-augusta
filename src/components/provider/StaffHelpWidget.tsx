@@ -72,6 +72,7 @@ const ARTICLES: HelpArticle[] = [
     links: [
       { label: "Inventory", to: "/inventory" },
       { label: "Formulary", to: "/formulary" },
+      { label: "Lab catalog (panels, COGS, draw rules)", to: "/lab-catalog" },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
       { label: "SOP Manual", to: "/staff/sop-manual" },
       { label: "Formulary economics", to: "/formulary-economics" },
@@ -127,6 +128,7 @@ export function StaffHelpWidget() {
       { label: "LabCorp Portal", href: LABCORP_PROVIDER_PORTAL_URL, icon: TestTube2, external: true },
       { label: "Inventory", to: "/inventory", icon: Boxes },
       { label: "Formulary", to: "/formulary", icon: ClipboardList },
+      { label: "Lab catalog", to: "/lab-catalog", icon: TestTube2 },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
       { label: "System guide", to: "/staff/system-guide" },
       { label: "IV safety", to: "/staff/iv-safety" },
