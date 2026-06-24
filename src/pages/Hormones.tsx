@@ -23,7 +23,8 @@ import {
 } from "@/lib/hormoneStorefrontContent";
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
-const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
+// Hormone panel is priced at the Expanded tier ($299) — see labPanelCheckout.ts.
+const PRICE_PANEL = CORE_SERVICES.expandedPanel.displayPrice;
 
 const Hormones = () => {
   const { openBooking } = useBooking();
@@ -174,7 +175,7 @@ const Hormones = () => {
               <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
                 {[
                   { l: "Wellness Assessment", p: PRICE_CONSULT, sub: "RN intake, in-office at Evans" },
-                  { l: "Comprehensive Wellness Panel", p: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
+                  { l: "Hormone Panel", p: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
                   {
                     l: "ELEVATED programs",
                     p: `${ELEVATED_PROGRAMS.hrt.displayPrice} / ${ELEVATED_PROGRAMS.trt.displayPrice}`,

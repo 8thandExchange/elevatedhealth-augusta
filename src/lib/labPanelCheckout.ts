@@ -23,13 +23,16 @@ export const LAB_PANEL_CHECKOUT: Record<string, LabPanelCheckoutMeta> = {
     testCount: 8,
     programs: ["wellness", "general"],
   },
+  // Hormone panels run 16–18 individual assays (LabCorp COGS ~$170–182), so they
+  // are priced at the Expanded $299 tier. At the $199 Comprehensive tier the
+  // member price ($159.20) sold them below cost. (2026-06-23 repricing.)
   "hormone-male": {
-    tier: "comprehensive",
+    tier: "expanded",
     testCount: 16,
     programs: ["trt"],
   },
   "hormone-female": {
-    tier: "comprehensive",
+    tier: "expanded",
     testCount: 18,
     programs: ["hrt"],
   },

@@ -27,7 +27,8 @@ import {
 // Display values — actual charges flow through Stripe via
 // create-consultation-checkout and program checkout edge functions.
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
-const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
+// Hormone panel is priced at the Expanded tier ($299) — see labPanelCheckout.ts.
+const PRICE_PANEL = CORE_SERVICES.expandedPanel.displayPrice;
 const PRICE_MEMBERSHIP = ELEVATED_PROGRAMS.hrt.displayPrice;
 
 const services = [...WOMENS_HRT_SERVICES];
@@ -40,7 +41,7 @@ const symptoms = [
 
 const steps = [
   { n: "01", title: "Wellness Assessment ($79)", body: "Meet your physician. Walk through symptoms, history, goals. About 45 minutes." },
-  { n: "02", title: "Lab Draw On-Site", body: `Comprehensive hormone panel — drawn at your visit, processed by LabCorp. Baseline comprehensive wellness panel ${PRICE_PANEL}.` },
+  { n: "02", title: "Lab Draw On-Site", body: `Comprehensive hormone panel — drawn at your visit, processed by LabCorp. Baseline hormone panel ${PRICE_PANEL}.` },
   { n: "03", title: "Your personalized plan", body: "Physician reviews labs, designs your protocol, sends Rx to our compounding pharmacy. Your medication ships directly to your door." },
   { n: "04", title: "Ongoing Care", body: `ELEVATED HRT (${PRICE_MEMBERSHIP}) includes prescribed creams, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.` },
 ];
@@ -62,7 +63,7 @@ const HormonesWomen = () => {
   const fmtCents = (cents: number) => `$${(cents / 100).toFixed(0)}`;
   const typicalProgramMonth1Cents =
     CORE_SERVICES.wellnessAssessment.amount +
-    CORE_SERVICES.comprehensivePanel.amount +
+    CORE_SERVICES.expandedPanel.amount +
     ELEVATED_PROGRAMS.hrt.amount;
 
   return (
@@ -109,7 +110,7 @@ const HormonesWomen = () => {
           <StorefrontPricingStrip
             columns={[
               { label: "Wellness Assessment", price: PRICE_CONSULT, sub: "RN intake, in-office at Evans" },
-              { label: "Comprehensive Wellness Panel", price: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
+              { label: "Hormone Panel", price: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
               { label: ELEVATED_PROGRAMS.hrt.name, price: PRICE_MEMBERSHIP, sub: "medication + monitoring included" },
             ]}
           />
@@ -192,7 +193,7 @@ const HormonesWomen = () => {
                   <p className="section-label mb-4">One-time costs</p>
                   <div className="space-y-3 font-jost text-foreground">
                     <div className="flex justify-between border-b border-border/60 pb-3"><span>Wellness Assessment</span><span className="font-medium">{PRICE_CONSULT}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Comprehensive Wellness Panel — Female</span><span className="font-medium">{PRICE_PANEL}</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Female Hormone Panel</span><span className="font-medium">{PRICE_PANEL}</span></div>
                   </div>
                 </div>
 

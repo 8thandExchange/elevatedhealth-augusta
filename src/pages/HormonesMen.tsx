@@ -33,7 +33,8 @@ import {
 // Display values — actual charges flow through Stripe via
 // create-consultation-checkout and program checkout edge functions.
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
-const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
+// Hormone panel is priced at the Expanded tier ($299) — see labPanelCheckout.ts.
+const PRICE_PANEL = CORE_SERVICES.expandedPanel.displayPrice;
 const PRICE_MEMBERSHIP = ELEVATED_PROGRAMS.trt.displayPrice;
 
 const services = [...MENS_TRT_SERVICES];
@@ -68,7 +69,7 @@ const HormonesMen = () => {
   const fmtCents = (cents: number) => `$${(cents / 100).toFixed(0)}`;
   const typicalProgramMonth1Cents =
     CORE_SERVICES.wellnessAssessment.amount +
-    CORE_SERVICES.comprehensivePanel.amount +
+    CORE_SERVICES.expandedPanel.amount +
     ELEVATED_PROGRAMS.trt.amount;
 
   return (
@@ -115,7 +116,7 @@ const HormonesMen = () => {
           <StorefrontPricingStrip
             columns={[
               { label: "Wellness Assessment", price: PRICE_CONSULT, sub: "RN intake, in-office at Evans" },
-              { label: "Comprehensive Wellness Panel", price: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
+              { label: "Hormone Panel", price: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
               { label: ELEVATED_PROGRAMS.trt.name, price: PRICE_MEMBERSHIP, sub: "medication + monitoring included" },
             ]}
           />
@@ -201,7 +202,7 @@ const HormonesMen = () => {
                   <p className="section-label mb-4">One-time costs</p>
                   <div className="space-y-3 font-jost text-foreground">
                     <div className="flex justify-between border-b border-border/60 pb-3"><span>Wellness Assessment</span><span className="font-medium">{PRICE_CONSULT}</span></div>
-                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Comprehensive Wellness Panel — Male</span><span className="font-medium">{PRICE_PANEL}</span></div>
+                    <div className="flex justify-between border-b border-border/60 pb-3"><span>Male Hormone Panel</span><span className="font-medium">{PRICE_PANEL}</span></div>
                   </div>
                 </div>
 
