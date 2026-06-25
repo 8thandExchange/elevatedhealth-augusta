@@ -233,8 +233,8 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       dosing: [],
       consents: ["Hormone Therapy Consent"],
       patientExplanation:
-        "Weekly testosterone injections with RN monitoring and quarterly labs — our standard path for men with low T pattern on labs.",
-      staffScript: "Default: test cyp from Custom Pharmacy Evans. GC STLKS backup at $40/10ml if Evans unavailable.",
+        "Daily testosterone cream with RN monitoring and quarterly labs — our standard path for men with low T pattern on labs. We do not offer injectable TRT.",
+      staffScript: "Default: men's testosterone cream from Custom Pharmacy Evans (no injectable TRT). Empower backup for cream supply.",
       upsell: "If visceral fat elevated, discuss GLP-1 or metabolic program at results call.",
       algorithmSteps: buildSteps("low_testosterone", programKey, ["testosterone cyp"]),
     };

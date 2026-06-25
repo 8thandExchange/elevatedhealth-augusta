@@ -598,7 +598,7 @@ export const CLINICAL_OPTIMIZATION_CATALOG: ClinicalOptimizationItem[] = [
     inventory_tracking_required: false,
     internal_notes: null,
     public_description: "Lab-guided testosterone optimization for men — medication included in program.",
-    staff_description: "Male hormone panel at onboarding; injectable-first TRT.",
+    staff_description: "Male hormone panel at onboarding; cream-based TRT (no injectable TRT offered).",
     provider_algorithm: { protocolSlug: "hormone-trt-male" },
     catalog_key: null,
     elevated_program_key: "trt",

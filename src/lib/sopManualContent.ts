@@ -628,10 +628,10 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
   {
     id: "ALGO-005",
     title: "Male TRT — standard protocol",
-    purpose: "Injectable-first; avoid option paralysis.",
+    purpose: "Cream-based; avoid option paralysis. Injectable TRT is not offered.",
     owner: "Provider MD",
     steps: [
-      { step: "1", action: "Testosterone cypionate 100–200 mg/mL, weekly IM or subQ. Custom Pharmacy Evans." },
+      { step: "1", action: "Testosterone cream (men's dose), applied daily, physician-titrated. Custom Pharmacy Evans." },
       {
         step: "2",
         if: "Estradiol elevated on labs",

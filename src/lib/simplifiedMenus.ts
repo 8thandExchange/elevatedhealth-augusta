@@ -70,7 +70,7 @@ export const PUBLIC_MENU: MenuTier[] = [
       },
       {
         id: "trt-default",
-        label: "Men: Testosterone cypionate weekly injection",
+        label: "Men: Testosterone cream (daily, physician-titrated)",
         priceDisplay: "via ELEVATED TRT",
         vendor: "custom_pharmacy_evans",
       },

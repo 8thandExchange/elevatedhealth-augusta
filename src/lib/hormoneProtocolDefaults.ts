@@ -67,12 +67,12 @@ export const STANDARD_MALE_TRT: StandardHormoneProtocol = {
   title: "EHA Standard TRT",
   lines: [
     {
-      compound: "Testosterone cypionate",
-      route: "IM or subQ injection weekly",
-      defaultDose: "100–200 mg/mL — typical 80–120 mg/week (physician titrated)",
+      compound: "Testosterone cream (men's dose)",
+      route: "Topical cream, applied daily",
+      defaultDose: "Compounded testosterone cream — physician-titrated to target total testosterone",
       supplier: "custom_pharmacy_evans",
       publicDefault: true,
-      rationale: "Most predictable levels; standard of care for men's TRT.",
+      rationale: "Stable daily levels without injection peaks/troughs; EHA standard for men's TRT. Injectable (cypionate) TRT is not offered.",
     },
     {
       compound: "Anastrozole",
