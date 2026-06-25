@@ -46,8 +46,9 @@ const StaffVendorGuide = () => {
             <p className="section-label mb-2">Internal — vendor routing & menu discipline</p>
             <h1 className="font-playfair text-3xl md:text-4xl text-foreground mb-2">Staff vendor guide</h1>
             <p className="font-jost text-sm text-muted-foreground">
-              GC = peptides (metabolic stack). FCC = IV + core catalog. Custom Pharmacy of Evans = all hormones.
-              Do not offer the full FCC catalog to prospects — {publicMenuItemCount()} headline items only.
+              GC = peptides + GLP-1. FCC = IV + core catalog. Custom Pharmacy of Evans = all hormones.
+              Empower = 503A backup (hormone creams, GLP-1, ODT modalities; NOT peptides). Do not offer the
+              full FCC catalog to prospects — {publicMenuItemCount()} headline items only.
             </p>
           </div>
 

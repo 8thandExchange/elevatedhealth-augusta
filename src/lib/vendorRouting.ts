@@ -10,6 +10,7 @@ export const VENDOR_SLUGS = {
   gc: "gc-scientific-network",
   fcc: "fcc",
   customPharmacyEvans: "custom-pharmacy-evans",
+  empower: "empower-pharmacy",
   drfirst: "drfirst-rcopia",
   henrySchein: "henry-schein",
   labcorp: "labcorp",
@@ -64,6 +65,15 @@ export const VENDORS: Record<string, VendorProfile> = {
     fulfillment: "fax",
     routingNote: "Default fax destination for hormone Rx. Local pickup available.",
   },
+  empower: {
+    slug: VENDOR_SLUGS.empower,
+    displayName: "Empower Pharmacy (503A backup)",
+    supplierKey: "empower",
+    role: "Backup 503A — hormones/creams, GLP-1 (injectable + ODT), NAD+, sexual health, ancillaries. Does NOT carry research/recovery/metabolic peptides.",
+    fulfillment: "portal",
+    routingNote:
+      "Patient-Specific Bill-Clinic catalog (PCAB-accredited, Houston TX). Use as backup for hormone creams and GLP-1 if Custom Pharmacy/GC is backordered, and for unique modalities (ODT/oral GLP-1, nasal, troches, dermatology). NOT a peptide source — GC/PATH remains primary for BPC-157/TB-500/SS-31/CJC/etc.",
+  },
   drfirst: {
     slug: VENDOR_SLUGS.drfirst,
     displayName: "DrFirst Rcopia (retail)",
@@ -73,6 +83,30 @@ export const VENDORS: Record<string, VendorProfile> = {
     routingNote: "Use when patient wants Vivelle/Climara/AndroGel instead of compound.",
   },
 };
+
+/**
+ * Empower Pharmacy — Patient-Specific Bill-Clinic catalog (06-16-26), cents.
+ * Backup 503A. Clinic is billed per patient-specific script (no inventory).
+ * Generally pricier than GC on overlapping items; value is regulatory posture,
+ * backup supply, and modalities GC lacks (ODT/oral GLP-1, nasal, troches, derm).
+ */
+export const EMPOWER_WHOLESALE_CENTS = {
+  // GLP-1 injectable (per maintenance month, derived from catalog vials)
+  semaglutide12_5mgInjectable: 16066, // Sema/Cyanocobalamin 5mg/mL 2.5mL = 12.5mg
+  tirzepatide68mgInjectable: 40934, // Tirz/Niacinamide 17mg/mL 4mL = 68mg (~1 mo @ 15mg/wk)
+  // GLP-1 ODT (oral, daily — distinct modality, per unit)
+  semaglutideOdt12mgPerUnit: 383, // Sema/Methylcobalamin ODT 12/0.1mg
+  tirzepatideOdt5mgPerUnit: 438, // Tirzepatide ODT 5mg
+  // Hormones / creams (per fill)
+  testosteroneCream30ml: 5280, // Testosterone Cream 1-20mg/mL 30mL
+  biEstCream30ml: 5810, // Bi-Est Cream (Estriol/Estradiol) 1-10mg/mL 30mL
+  progesteroneCream30ml: 4897, // Progesterone Cream 50mg/mL 30mL
+  progesteroneCapPerUnit: 80, // Progesterone 100mg capsule
+  // Peptide-adjacent (the only ones Empower carries)
+  sermorelin15mgInjectable: 12753, // Sermorelin Acetate (Lyo) 15mg
+  nad500mgInjectable: 5056, // NAD+ Injection (Lyo) 500mg
+  oxytocinNasal10ml: 7722, // Oxytocin Nasal Spray 100 IU/mL 10mL
+} as const;
 
 /** GC wholesale — cents. Source: GC Compound Consulting Partner Catalog 2026-05-23 (PATH + STLKS). */
 export const GC_WHOLESALE_CENTS = {
@@ -433,6 +467,8 @@ export function resolvePharmacySlugForSupplier(supplier: FormularySupplier): str
       return VENDOR_SLUGS.gc;
     case "custom_pharmacy_evans":
       return VENDOR_SLUGS.customPharmacyEvans;
+    case "empower":
+      return VENDOR_SLUGS.empower;
     case "fcc":
     default:
       return VENDOR_SLUGS.fcc;

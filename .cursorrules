@@ -160,8 +160,15 @@ PRIMARY 503A COMPOUNDING PHARMACY: FCC (Formulation Compounding
   send-rx-fax edge function (Sinch fax service). Ships
   refrigerated direct to clinic or patient.
 
-SECONDARY 503A: Empower Pharmacy (Houston, TX). Backup for
-  FCC supply issues. Account in process.
+SECONDARY 503A: Empower Pharmacy (Houston, TX). PCAB-accredited,
+  patient-specific Bill-Clinic catalog (06-16-26). Backup for hormone
+  creams and GLP-1 if Custom Pharmacy/GC backordered, plus unique
+  modalities GC lacks (ODT/oral GLP-1, nasal, troches, dermatology).
+  IMPORTANT: Empower does NOT carry research/recovery/metabolic peptides
+  (no BPC-157, TB-500, SS-31, CJC, Ipamorelin, Tesamorelin, 5-Amino-1MQ,
+  SLU-PP-332, AOD-9604) — GC/PATH stays primary for all peptides.
+  Generally pricier than GC on overlapping items. Modeled in
+  vendorRouting.ts (EMPOWER_WHOLESALE_CENTS).
 
 LAB PARTNER: LabCorp via client billing. Account application
   in flight. 2-3 week approval. Critical path for launch.

@@ -591,6 +591,11 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         then: "Vendor: FCC. Channel: FormuConnect portal.",
       },
       {
+        step: "3b",
+        if: "Custom Pharmacy or GC backordered on hormone creams/GLP-1, OR patient wants ODT/oral GLP-1 or nasal modality",
+        then: "Vendor: Empower Pharmacy (503A backup, patient-specific bill-clinic). NOT for research/recovery/metabolic peptides — those stay GC/PATH.",
+      },
+      {
         step: "4",
         if: "Patient requests FDA patch/gel (Vivelle, AndroGel, etc.)",
         then: "Vendor: DrFirst Rcopia → retail pharmacy. Not compound.",
@@ -768,7 +773,7 @@ export const SOP_SECTIONS: SOPSection[] = [
     id: "vendor",
     number: "7",
     title: "Vendor & fulfillment",
-    summary: "GC (peptides/metabolic) · FCC (IV/core) · Custom Pharmacy Evans (hormones).",
+    summary: "GC (peptides/GLP-1) · FCC (IV/core) · Custom Pharmacy Evans (hormones) · Empower (503A backup: creams/GLP-1/ODT, not peptides).",
     algorithmIds: ["ALGO-003"],
   },
   {

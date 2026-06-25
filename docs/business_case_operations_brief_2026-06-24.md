@@ -16,7 +16,8 @@ Current value proposition:
 
 ## What Changed Since Earlier Versions
 
-- Program catalog expanded and operationalized (hormones, peptides, GLP-1). ELEVATED METABOLIC RECOMPOSITION slated for retirement (teardown pending sign-off); retatrutide relocated into the GLP-1 lane as a gated, physician-only option (kept, not removed).
+- Program catalog expanded and operationalized (hormones, peptides, GLP-1). ELEVATED METABOLIC RECOMPOSITION retired (teardown shipped, migration `20260624190000`); retatrutide relocated into the GLP-1 lane as a gated, physician-only option (kept, not removed); standalone metabolic peptides kept à la carte.
+- GLP-1 repriced flat-per-molecule: semaglutide $349/mo, tirzepatide $449/mo (new live price), wired storefront→EMR→checkout→webhook. TRT margin basis corrected from injectable to men's cream; women's HRT creams confirmed costed in `clinic_formulary`.
 - IV screening and blocked-patient safety flow implemented with staff triage states.
 - Clinical formulary and clinic formulary now carry structured price + cost fields for operational quoting and margin visibility.
 - Lab and consent workflows moved from generic planning to executable in-app pathways.
@@ -155,45 +156,85 @@ Source: live LabCorp client pricing (acct 10084710, eff 2026-06-22), summed over
 
 Member quarterly labs are $0 revenue (included in program), so the standalone margins above apply to initial onboarding and non-member/à la carte orders only.
 
-### Active program margins — corrected for included quarterly labs
+### Active program margins — built on the GC Partner Catalog 05-23-26 (rebuilt 2026-06-24)
 
-This corrects the earlier drug-only view. Amortized labs = included quarterly panel COGS ÷ 3.
+Drug COGS below is sourced from the GC Compound Consulting Partner Catalog (05-23-26), citing the
+SKU/price used, NOT the stale in-app formulary or earlier estimates. Monthly cost = clinical
+maintenance dose × catalog price. Amortized labs = included quarterly panel COGS ÷ 3.
 
-- ELEVATED TRT ($249): drug ~$37 + labs ~$57/mo = ~$94 COGS → ~$155 gross (~62%). (Was ~85% drug-only.)
-- ELEVATED HRT ($229): cream cost missing + labs ~$61/mo — still not fully validated.
-- ELEVATED GLP-1 ($349), semaglutide maintenance: drug ~$140 + labs ~$63 = ~$203 → ~$146 gross (~42%).
-- ELEVATED GLP-1 ($349), tirzepatide 15 mg: drug ~$290 + labs ~$63 = ~$353 → ~-$4 gross. Underwater before labor.
-- ELEVATED WELLNESS ($199): two included Myers IV drips ~$164; no included Rx labs → ~$35 before RN labor.
+- ELEVATED TRT ($249): testosterone cream $30/30g (catalog "Testosterone Cream/Gel <200mg/gm" @
+  $1.00/gm) + anastrozole ~$6 = ~$36 drug + labs ~$57 = ~$93 COGS → ~$156 gross (~63%). The earlier
+  `~$37` was injectable cypionate (catalog Test Cyp 10mL = $40), which we don't do. Cream cost is now
+  a real catalog line, not an estimate.
+- ELEVATED HRT ($229): Bi-Est cream ~$33 (catalog "Hormone Cream/Gel 1–4 ingr" $25–$40/30g) +
+  progesterone caps ~$25 (catalog Progesterone 50–250mg cap $0.70–$1.00/unit) = ~$58 drug + labs ~$61
+  = ~$119 COGS → ~$110 gross (~48%).
+- ELEVATED GLP-1 — Semaglutide ($349): drug ~$107 (catalog PATH SEMAGLUTIDE-10MG-03ML $107 at 2.4mg/wk
+  ≈ 10mg/mo; ~$56 if dispensed from a 30mg $161 vial) + labs ~$63 = ~$170 COGS → ~$179 gross (~51%).
+  NOTE: the app formulary's $65/vial is stale and understated this by ~40%.
+- ELEVATED GLP-1 — Tirzepatide ($449): at 15mg/wk (~65mg/mo) drug ~$240 (catalog STLKS Tirz 60mg $240)
+  + labs ~$63 = ~$303 → ~$146 gross (~33%); at 10mg/wk (~43mg/mo) drug ~$185 → ~$201 gross (~45%). The
+  $449 price clears margin at every maintenance dose — it was only "underwater" under my prior inflated
+  ~$290 cost.
+- ELEVATED WELLNESS ($199): 2 Myers drips at clinic_formulary premix $45/bag = ~$90 drug (not in GC
+  catalog) → ~$109 gross (~55%) before consumables/RN time; no included Rx labs.
 
-### Metabolic Recomposition / retatrutide — corrected status
+### Metabolic Recomposition / retatrutide — final status (shipped)
 
-The 2026-06-24 pull corrected my understanding:
+- ELEVATED METABOLIC RECOMPOSITION: RETIRED. Migration `20260624190000_retire_metabolic_recomposition_program.sql`
+  deactivated `STACK-METABOLIC-FULL` and the associated CDS entries; program code/pages removed.
+- Retatrutide: KEPT. Relocated into the GLP-1 lane as a gated, physician-only, investigational option
+  (GLP-1 consent Section 11A, go-live 2026-06-21).
+- Metabolic peptides (SS-31, 5-Amino-1MQ, AOD-9604, SLU-PP-332): KEPT as standalone à la carte SKUs.
 
-- ELEVATED METABOLIC RECOMPOSITION ($1,199): intended for retirement, but still live in code and formulary (no removal migration). Full teardown is held for sign-off.
-- Retatrutide: NOT removed. It was relocated into the GLP-1 lane as a gated, physician-only, investigational option, with a new consent (GLP-1 consent Section 11A, go-live 2026-06-21) and removed from the research-peptide consent. Deleting it would tear out current legal/clinical work. Recommendation: keep.
-- Metabolic peptides (SS-31, 5-Amino-1MQ, AOD-9604, SLU-PP-332): decision pending — keep as standalone à la carte or remove with the program.
+### Catalog vs in-app formulary — costs the app has wrong
 
-### Peptide / à la carte margins (active)
+The GC Partner Catalog 05-23-26 is the real wholesale source. Where the app/DB disagrees, the app is wrong:
 
-- Recovery (BPC-157, TB-500, stack, PDA): 57–86% margin. Strong.
-- SS-31 / Tesamorelin / CJC-1295: 69–84% non-member. Strong.
-- 5-Amino-1MQ, AOD-9604, SLU-PP-332: 12–39% margin, thinnest on member side — likely near break-even after overhead.
+| Item | App / DB has | Catalog (05-23-26) says | Impact |
+| --- | --- | --- | --- |
+| Semaglutide | formulary $65/vial | 10 mg = $107 (PATH) / $110 (STLKS) | App understates GLP-1 COGS ~40% |
+| BPC-157 | DB clinic_cost $47 | 10 mg = $66 (PATH) | Recovery margin overstated |
+| Tirzepatide | vendorRouting $75 (10 mg vial) | 15 mg/wk needs ~65 mg/mo ≈ $240 | Per-vial ≠ monthly cost |
+| Men's test cream | no costed row in DB | $1.00/gm → $30 / 30 g | Add costed row to formulary |
+| 5-Amino-1MQ | sells $149 / $119 | 50 mg vial = $220 | Loses money unless vial spans multiple months |
+
+### Peptide / à la carte margins (catalog-costed)
+
+- Recovery (BPC-157 $66/mo, TB-500 $66/mo, Wolverine $94/mo, PDA $85): 62–80% margin at catalog cost. Strong.
+- Standalone metabolic: catalog vial prices are SS-31 50 mg $150, 5-Amino-1MQ 50 mg $220, AOD-9604 10 mg $90 (KDX), SLU-PP-332 5 mg $60. Monthly margin depends on vial duration; 5-Amino-1MQ is underwater at current pricing if a 50 mg vial is a single month.
 
 ### Data integrity & pricing consistency issues
 
-1) Semaglutide cost stale: formulary $65/vial vs FCC catalog $105 (SKU 2490, 3mL). Understates GLP-1 COGS everywhere.
-2) Semaglutide price disagreement: stripeConfig fill $299 vs formulary $249/$199 vs source-of-truth $299.
-3) Tirzepatide price disagreement: stripeConfig fill $399 vs formulary $499/$399.
-4) Weight/expanded panel COGS relies on estimates for Leptin/ApoB/Lp(a)/Insulin — obtain LabCorp client prices.
-5) CJC-1295/Ipamorelin and Tesamorelin have null member prices.
-6) HRT creams (Bi-Est, Progesterone, Test cream) have null supplier costs — HRT margin unverifiable.
+1) Semaglutide cost stale in app: formulary $65/vial vs catalog $107 (10 mg). Fix everywhere it drives quoting.
+2) BPC-157 DB cost $47 vs catalog $66 — recovery margins were overstated (still strong after fix).
+3) TRT copy still describes "testosterone cypionate + self-injection supplies" (source-of-truth + Stripe) while the clinical direction is cream — needs an operational copy/routing decision.
+4) 5-Amino-1MQ sell price ($149) is below the catalog 50 mg vial ($220) — confirm monthly dose or reprice.
+5) Metabolic peptide `clinic_cost_cents` is NULL in `clinical_formulary_items` — backfill from catalog.
+6) Weight/expanded panel COGS relies on estimates for Leptin/ApoB/Lp(a)/Insulin — obtain LabCorp client prices.
+7) `lab_panel_tests` mapping not applied to live DB — panel COGS can't be summed live in margin tooling.
+
+### Second source: Empower Pharmacy (Patient-Specific Bill-Clinic, 06-16-26)
+
+Empower (PCAB-accredited 503A, our secondary supplier) was evaluated as a peptide alternative. Finding: it does NOT carry the recovery or metabolic research peptides — no BPC-157, TB-500, Wolverine, SS-31, CJC-1295, Ipamorelin, Tesamorelin, 5-Amino-1MQ, SLU-PP-332, or AOD-9604. Its peptide-adjacent stock is Sermorelin, Gonadorelin, Oxytocin, topical GHK-Cu, and NAD+. So Empower complements GC; it cannot replace the peptide line.
+
+On overlapping items, GC is cheaper across the board:
+
+| Item | GC | Empower | Cheaper |
+| --- | --- | --- | --- |
+| Semaglutide @ 2.4 mg/wk | ~$107 (PATH 10 mg) | ~$134 (12.5 mg, 5mg/mL) | GC |
+| Tirzepatide @ 15 mg/wk | ~$240 (STLKS 60 mg) | ~$391 (68 mg, 17mg/mL) | GC |
+| Men's testosterone cream | $30 / 30 g | $52.80 / 30 mL | GC |
+| Bi-Est cream | $25–$40 / 30 g | $58.10 / 30 mL | GC |
+| NAD+ 1,000 mg injectable | $68 | ~$101 (2×500 mg) | GC |
+| Sermorelin 15 mg injectable | $65 (10 mg) | $127.53 (15 mg) | GC |
+
+Empower's value is therefore regulatory posture (clean 503A, no Cat-2 peptides), backup supply, and unique modalities not in GC: ODT/oral GLP-1 (semaglutide ODT 12 mg ~$115/mo, tirzepatide ODT 5 mg ~$131/mo — needle-free, daily, distinct modality not a dose-equivalent swap), nasal (oxytocin, NAD+), troches, and dermatology (GHK-Cu serums, rapamycin anti-aging gels). Recommendation: keep GC primary for injectable GLP-1 and all peptides; use Empower for hormone-cream backup, ancillary/commercial products, and the optional ODT/nasal modalities.
 
 ## Next Operational Actions
 
-1) Re-confirm the Metabolic Recomposition teardown scope now that retatrutide is known to be a separate gated GLP-1 option.
-2) Decide whether the standalone metabolic peptides (SS-31, 5-Amino, AOD, SLU) survive.
-3) Set GLP-1 flat-per-molecule pricing to cover maintenance drug cost PLUS the ~$63/mo amortized expanded-panel labs; consider a high-dose tirzepatide tier given the underwater result.
-4) Reconcile semaglutide/tirzepatide cost and price across stripeConfig, clinic_formulary, and pricing source of truth.
-5) Obtain LabCorp client prices for the four off-sheet expanded-panel assays.
-6) Backfill null member prices (CJC, Tesamorelin) and HRT cream supplier costs.
-7) Apply the pending lab_panel_tests mapping migration so margin tooling can sum panel COGS live.
+1) Backfill `clinic_formulary` / `clinical_formulary_items` cost fields from the GC catalog: semaglutide $107, BPC-157 $66, men's testosterone cream $30/30g, and the metabolic peptide vial prices.
+2) Decide whether ELEVATED TRT copy + the DB "EHA Standard TRT" row + Stripe product description should flip from injectable cypionate to cream-only.
+3) Confirm 5-Amino-1MQ monthly dosing (vials/month) and reprice if a vial is a single month.
+4) Obtain LabCorp client prices for the four off-sheet expanded-panel assays.
+5) Apply the pending `lab_panel_tests` mapping migration so margin tooling can sum panel COGS live.
