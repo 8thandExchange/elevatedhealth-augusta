@@ -21,21 +21,19 @@ interface GLP1ActivationRequest {
   payment_link?: string;
   include_hormone_addon?: boolean;
   patient_id?: string;
+  // Deprecated: legacy concierge/vitality tiers are discontinued. Accepted for
+  // backward compatibility but no longer affects pricing.
   hormone_membership_tier?: "access" | "vitality" | "concierge" | null;
 }
 
-// Pricing configuration
+// ELEVATED GLP-1 program pricing (all-inclusive monthly). Source of truth:
+// docs/pricing/pricing_source_of_truth.md + stripeConfig ELEVATED_PROGRAMS /
+// GLP1_PROGRAM_VARIANTS. Member benefit is 20% off à la carte at checkout — it
+// does NOT discount the program membership price (the medication is already
+// included). No legacy concierge/vitality tier discounts.
 const PRICING = {
-  semaglutide: {
-    full: { price: "$399", amount: 399 },
-    vitality: { price: "$359", amount: 359, discount: "10% off" },
-    concierge: { price: "$339", amount: 339, discount: "15% off" },
-  },
-  tirzepatide: {
-    full: { price: "$499", amount: 499 },
-    vitality: { price: "$449", amount: 449, discount: "10% off" },
-    concierge: { price: "$424", amount: 424, discount: "15% off" },
-  },
+  semaglutide: { price: "$349", amount: 349 },
+  tirzepatide: { price: "$449", amount: 449 },
 };
 
 const handler = async (req: Request): Promise<Response> => {
@@ -64,24 +62,12 @@ const handler = async (req: Request): Promise<Response> => {
     const isSemaglutide = medication_type === "semaglutide";
     const medicationName = isSemaglutide ? "Semaglutide" : "Tirzepatide";
     
-    // Determine pricing based on hormone membership tier
+    // ELEVATED GLP-1 program price (all-inclusive). No legacy tier discounts.
     const medPricing = PRICING[medication_type];
-    let monthlyPrice: string;
-    let discountBadge = "";
-    
-    if (hormone_membership_tier === "concierge") {
-      monthlyPrice = medPricing.concierge.price;
-      discountBadge = `<span style="background: #D4A017; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">CONCIERGE MEMBER - 15% OFF</span>`;
-    } else if (hormone_membership_tier === "vitality") {
-      monthlyPrice = medPricing.vitality.price;
-      discountBadge = `<span style="background: #2C3E50; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">VITALITY MEMBER - 10% OFF</span>`;
-    } else {
-      monthlyPrice = medPricing.full.price;
-    }
-    
-    const totalWithAddon = isSemaglutide 
-      ? `$${(hormone_membership_tier === "concierge" ? 339 : hormone_membership_tier === "vitality" ? 359 : 399) + 149}` 
-      : `$${(hormone_membership_tier === "concierge" ? 424 : hormone_membership_tier === "vitality" ? 449 : 499) + 149}`;
+    const monthlyPrice = medPricing.price;
+    const discountBadge = "";
+
+    const totalWithAddon = `$${medPricing.amount + 149}`;
 
     const hormoneAddonSection = include_hormone_addon ? `
       <div style="background: #FDF8E7; border-radius: 8px; padding: 16px; margin-top: 16px; border: 1px solid #D4A017;">
