@@ -248,7 +248,6 @@ const quickReferenceCards: Record<string, Array<{ title: string; content: string
   ],
   peptide_therapy: [
     { title: "Sermorelin", content: "Bedtime injection on empty stomach. 2-3 hours after eating.", highlight: true },
-    { title: "NAD+ Troche", content: "Dissolve under tongue. Do not eat/drink for 15 minutes after.", highlight: false },
     { title: "PT-141", content: "Take 1-4 hours before intimacy. Effects last 24-72 hours.", highlight: false }
   ],
   iv_hydration: [

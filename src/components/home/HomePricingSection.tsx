@@ -10,7 +10,7 @@ const programHighlights = [
   { program: ELEVATED_PROGRAMS.trt, label: "Men's TRT", price: ELEVATED_PROGRAMS.trt.displayPrice },
   // GLP-1 is molecule-priced (semaglutide $349 / tirzepatide $449).
   { program: ELEVATED_PROGRAMS.glp1, label: "Medical weight loss", price: GLP1_DISPLAY_PRICE_RANGE },
-  { program: ELEVATED_PROGRAMS.wellness, label: "Wellness & IV access", price: ELEVATED_PROGRAMS.wellness.displayPrice },
+  { program: ELEVATED_PROGRAMS.wellness, label: "IV membership & perks", price: ELEVATED_PROGRAMS.wellness.displayPrice },
 ];
 
 const includes = [

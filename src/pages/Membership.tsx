@@ -40,8 +40,8 @@ const PROGRAM_ROWS = [
   {
     key: "wellness" as const,
     program: ELEVATED_PROGRAMS.wellness,
-    href: "/peptides",
-    blurb: "IV benefit, 20% off eligible à la carte services, and bundled access for non-Rx-forward care.",
+    href: "/iv-lounge",
+    blurb: "Non-Rx IV membership: complimentary monthly drips plus 20% off boosters and à la carte services. No medication or labs bundled.",
   },
 ];
 
@@ -50,6 +50,15 @@ const SHARED_INCLUDES = [
   "Monthly check-in with our clinical team and unlimited secure messaging",
   "Quarterly labs and lab review included in program pricing",
   "Priority scheduling and in-clinic coordination at Evans",
+];
+
+// ELEVATED IV is the non-Rx tier — no bundled medication or labs. It gets its
+// own includes list so it never advertises Rx-program benefits it doesn't carry.
+const IV_TIER_INCLUDES = [
+  "Two complimentary signature IV drips every month (any drip on our menu)",
+  "20% off boosters and à la carte IV, peptide, and injectable services",
+  "Monthly check-in with our clinical team and unlimited secure messaging",
+  "Priority scheduling at Evans — no medication program required",
 ];
 
 const FAQ = [
@@ -115,7 +124,7 @@ const Membership = () => {
         <title>ELEVATED Programs — Transparent Monthly Care | Elevated Health Augusta</title>
         <meta
           name="description"
-          content="ELEVATED TRT, HRT, GLP-1, and WELLNESS programs bundle medication when prescribed, quarterly labs, check-ins, and messaging — one transparent monthly price."
+          content="ELEVATED TRT, HRT, GLP-1, and IV memberships bundle care — medication and quarterly labs on the Rx tiers, monthly IV visits on ELEVATED IV — into one transparent monthly price."
         />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/membership" />
       </Helmet>
@@ -190,7 +199,7 @@ const Membership = () => {
                   <p className="font-playfair text-3xl text-accent mb-3">{key === "glp1" ? GLP1_DISPLAY_PRICE_RANGE : program.displayPrice}</p>
                   <p className="font-jost font-light text-sm text-muted-foreground mb-6 flex-1">{blurb}</p>
                   <ul className="space-y-2 mb-6 font-jost text-sm text-foreground">
-                    {SHARED_INCLUDES.map((line) => (
+                    {(key === "wellness" ? IV_TIER_INCLUDES : SHARED_INCLUDES).map((line) => (
                       <li key={line} className="flex gap-2">
                         <Check className="h-4 w-4 text-accent shrink-0 mt-0.5" />
                         <span>{line}</span>

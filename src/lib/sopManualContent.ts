@@ -81,7 +81,7 @@ export const UPSELL_MATRIX: UpsellRow[] = [
   {
     phase: "Arrival (IV walk-in)",
     trigger: "Patient books Myers / NAD+ only",
-    offer: "Mention ELEVATED Wellness or peptide stacks at results review",
+    offer: "Mention ELEVATED IV or peptide options at results review",
     charge: "IV today + program later",
     script: "Many IV guests eventually join a program once they see their labs — we can start with today’s drip and book a $79 assessment when you’re ready.",
   },
@@ -271,7 +271,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         step: "1.5",
         phase: "Counsel & discover",
         if: "Recovery, longevity, cognitive, or athletic performance",
-        then: "Counsel: Named stacks (Restore, Healing, Vitality) or ELEVATED Wellness ($199/mo). Requires consult-gated path.",
+        then: "Counsel: peptide options or ELEVATED IV ($199/mo). Requires consult-gated path.",
       },
       {
         step: "1.6",
@@ -386,7 +386,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         step: "4.7",
         phase: "Provider review",
         if: "Labs optimal, patient not ready for program",
-        then: "Offer ELEVATED Wellness ($199/mo) or retest in 3–6 months. Schedule follow-up.",
+        then: "Offer ELEVATED IV ($199/mo) or retest in 3–6 months. Schedule follow-up.",
       },
       {
         step: "4.8",

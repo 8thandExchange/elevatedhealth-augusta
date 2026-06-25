@@ -42,7 +42,7 @@ export const PATIENT_JOURNEY_STEPS = [
   {
     phase: "05",
     title: "Enroll",
-    detail: `Program or stack enrollment + ${ELEVATED_PROGRAMS.wellness.displayPrice} Elevated Membership (ELEVATED Wellness tier) when appropriate.`,
+    detail: `Program enrollment + ${ELEVATED_PROGRAMS.wellness.displayPrice} ${ELEVATED_PROGRAMS.wellness.name} (non-Rx IV membership) when appropriate.`,
   },
   {
     phase: "06",

@@ -61,36 +61,8 @@ const PEPTIDE_CATEGORIES = {
       },
     },
   },
-  cellular_energy: {
-    label: "Cellular Energy",
-    color: "bg-amber-500",
-    products: {
-      nad_troche: {
-        label: "NAD+ Troches",
-        price: "$99/mo",
-        priceId: "price_1Sa3x1EOtKRY99pufL3wEyIN",
-        type: "recurring" as const,
-        description: "Sublingual NAD+",
-        clinical: "Best for: Brain fog, fatigue, daily maintenance",
-      },
-      nad_injection: {
-        label: "NAD+ Injection",
-        price: "$199/mo",
-        priceId: "price_1Sa3waEOtKRY99puCB267VpA",
-        type: "recurring" as const,
-        description: "Direct NAD+ Delivery",
-        clinical: "Best for: Severe fatigue, anti-aging, maximum effect",
-      },
-      nad_nasal: {
-        label: "NAD+ Nasal Spray",
-        price: "$99/mo",
-        priceId: "price_1SfibeEOtKRY99puUPRACDHQ",
-        type: "recurring" as const,
-        description: "Fast-Acting NAD+",
-        clinical: "Best for: Quick cognitive boost, convenience",
-      },
-    },
-  },
+  // Cellular Energy (standalone NAD+ injection / troche / nasal) discontinued
+  // 2026-06-25 — NAD+ is now offered only as the $50 IV "NAD+ Booster" add-on.
   sexual_wellness: {
     label: "Sexual Wellness",
     color: "bg-pink-500",

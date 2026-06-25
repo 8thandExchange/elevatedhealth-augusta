@@ -282,7 +282,7 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       patientExplanation:
         "Vitality stack: nightly sermorelin plus NAD+ for energy and recovery, bundled in our Wellness membership with IV perks.",
       staffScript: "If ferritin/TSH low on labs, address root cause before peptides. IV Myers add-on same visit.",
-      upsell: "ELEVATED Wellness $199/mo includes 2 IV drips.",
+      upsell: "ELEVATED IV $199/mo includes 2 IV drips.",
       algorithmSteps: buildSteps("energy_fatigue", "wellness", ["sermorelin", "NAD+"]),
     };
   },

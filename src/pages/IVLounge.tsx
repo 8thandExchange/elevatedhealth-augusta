@@ -612,7 +612,7 @@ const IVLounge = () => {
             <Accordion type="single" collapsible className="w-full">
               {[
                 { q: "Do I need a consultation first?", a: "No — IV therapy is direct-book. Our RN screens for contraindications at the visit." },
-                { q: "How long does an IV take?", a: "Most drips take 30–45 minutes. NAD+ runs longer — typically 1–2 hours depending on the dose." },
+                { q: "How long does an IV take?", a: "Most drips take 30–45 minutes. Optional boosters add only a few minutes." },
                 { q: "Can I add boosters at the visit?", a: "Yes. Let the clinical team know when you arrive — add-ons are charged at checkout after." },
                 { q: "Are members charged differently?", a: `ELEVATED members save ${MEMBER_DISCOUNT_PERCENT}% on eligible à la carte IV, peptide, and injectable add-ons and receive priority booking. Base walk-in IV pricing is the same.` },
                 { q: "What if I'm not feeling well after?", a: "Reach out. We follow up with every patient. Reactions are rare, but we take every concern seriously." },
@@ -638,7 +638,7 @@ const IVLounge = () => {
               {ELEVATED_PROGRAMS.wellness.name} — <span className="italic text-accent">{ELEVATED_PROGRAMS.wellness.displayPrice}</span>
             </h2>
             <p className="font-jost font-light text-muted-foreground leading-relaxed mb-2">
-              Two complimentary IV drip visits per month plus {MEMBER_DISCOUNT_PERCENT}% off à la carte IV, peptide, and injectable services — aligned with our Everything Included positioning for ongoing members.
+              Two complimentary signature IV drips per month (any drip on our menu) plus {MEMBER_DISCOUNT_PERCENT}% off boosters and à la carte IV, peptide, and injectable services. Boosters are discounted, not free.
             </p>
             <p className="text-sm text-muted-foreground italic mt-4">
               Program enrollment is medically gated. Cancel anytime per your agreement.

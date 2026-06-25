@@ -112,7 +112,7 @@ export const PUBLIC_HOMEPAGE_SERVICES = [
   {
     title: "IV Hydration",
     tagline: "Walk-in nutrient therapy",
-    body: "Hydration, recovery, immunity, and NAD+ infusions — book direct when screening clears you.",
+    body: "Hydration, recovery, immunity, and add-on boosters (incl. NAD+) — book direct when screening clears you.",
     route: "/iv-lounge",
     imageKey: "serviceIv" as const,
   },
@@ -176,7 +176,7 @@ export const PUBLIC_PEPTIDE_CATEGORIES = [
   {
     id: "longevity",
     title: "Longevity / Energy",
-    examples: ["NAD+", "Sermorelin", "CJC-1295 / Ipamorelin", "Tesamorelin"],
+    examples: ["Sermorelin", "CJC-1295 / Ipamorelin", "Tesamorelin"],
     note: "Vitality and GH-axis support under physician oversight — gradual titration, no public dosing schedules.",
   },
   {
@@ -188,7 +188,7 @@ export const PUBLIC_PEPTIDE_CATEGORIES = [
   {
     id: "aesthetic",
     title: "Skin / Hair / GLP-1 Transformation Support",
-    examples: ["GHK-Cu", "NAD+", "Skin, collagen, scalp, hair, and GLP-1 glow-up support"],
+    examples: ["GHK-Cu", "Skin, collagen, scalp, hair, and GLP-1 glow-up support"],
     note: "Aesthetic and transformation support compounds selected after provider review.",
   },
 ] as const;
@@ -371,7 +371,13 @@ export const CLINICAL_OPTIMIZATION_CATALOG: ClinicalOptimizationItem[] = [
     provider_algorithm: { protocolSlug: "peptide-tesamorelin" },
   }),
   fromCatalogKey("nad", PEPTIDE_PRODUCTS.nadInjection.name, "peptide_cellular", "nadInjection", {
+    // Discontinued as a sold SKU (2026-06-25). NAD+ survives only as the $50 IV
+    // booster add-on; provider-directed compounded NAD+ remains possible via protocol.
+    public_status: "inactive",
+    clinical_status: "inactive",
     requires_consent: false,
+    internal_notes:
+      "NAD+ peptide injection/troche/nasal discontinued as sold products 2026-06-25; only the $50 IV NAD+ booster add-on remains.",
     provider_algorithm: { protocolSlug: "peptide-nad-subq" },
   }),
   fromCatalogKey("ghk_cu_topical", PEPTIDE_PRODUCTS.ghkCuTopical.name, "peptide_aesthetic", "ghkCuTopical", {

@@ -208,7 +208,7 @@ const PeptideTherapy = () => {
 
           <section className="py-16 md:py-24 bg-muted/20 border-y border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-10">
-              <EverythingIncludedPillars intro="ELEVATED WELLNESS members receive 20% off eligible à la carte services when clinically appropriate." />
+              <EverythingIncludedPillars intro="ELEVATED members receive 20% off eligible à la carte services when clinically appropriate." />
               <MembershipComparison program="wellness" />
             </div>
           </section>

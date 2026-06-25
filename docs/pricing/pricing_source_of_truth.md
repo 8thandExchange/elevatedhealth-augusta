@@ -35,11 +35,11 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 | ELEVATED HRT (women) | $229/month | Bi-Est cream/troches, progesterone, testosterone cream when prescribed, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. |
 | ELEVATED GLP-1 | Semaglutide $349/month · Tirzepatide $449/month | Compounded semaglutide OR tirzepatide from GC/STLKS network (FCC backup), monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. Molecule-specific monthly price (tirzepatide costs ~2x compounded); a patient's price never changes as they titrate within their molecule. Both enroll the same `glp1` membership. |
 | ~~ELEVATED Metabolic~~ | ~~$599/month~~ | **DISCONTINUED 2026-06-24.** The standalone metabolic-recomposition bundle was retired. Advanced recomposition support now lives inside the GLP-1 lane (provider-directed à la carte peptides + gated retatrutide). The four metabolic peptides (SS-31, AOD-9604, SLU-PP-332, 5-Amino-1MQ) remain available à la carte. |
-| ELEVATED WELLNESS (non-Rx) | $199/month | 2 free IV drips per month, 20% off à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. |
+| ELEVATED IV (non-Rx) | $199/month | 2 complimentary signature IV drips per month (any menu drip), 20% off boosters + à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. **No bundled medication or labs** — this is the non-Rx IV membership (renamed from "ELEVATED WELLNESS" 2026-06-25; internal program key remains `wellness`). |
 ### What Every Membership Includes
 - Your monthly medication is included (where applicable to the program)
 - Monthly RN check-in with Caroline
-- Free quarterly labs at the Evans office
+- Free quarterly labs at the Evans office (TRT / HRT / GLP-1 tiers only; ELEVATED IV is non-Rx and does NOT include labs)
 - Lab review and protocol adjustments by Dr. Akers when needed
 - Unlimited messaging with the practice
 - Anastrozole, HCG, anti-nausea, and other supportive medications when clinically indicated
@@ -56,6 +56,8 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 ## À La Carte Services (Non-Member)
 IV Hydration, IM Injections, NAD+, Peptide Therapy, Sexual Wellness à la carte pricing is currently being finalized. Existing pricing on /iv-lounge is canonical for IV walk-in until updated. Peptide therapy à la carte continues to use FCC catalog pricing with practice markup.
 ## Discontinued / Eliminated
+- Standalone NAD+ products (2026-06-25): IV NAD+ infusion ($450/$750) AND peptide NAD+ injection/troche/nasal ($199/$99/$99). NAD+ now survives ONLY as the $50 IV "NAD+ Booster" add-on. The 3 peptide Stripe products are archived. Legacy "Vitality" stacks (Sermorelin + NAD+) deactivated in the ops formulary.
+- ELEVATED Peptides membership — considered and declined (2026-06-25). Peptides stay à la carte; any ELEVATED tier already unlocks the 20% member discount, and bundling peptides recreates the retired Metabolic-stack complexity.
 - ACCESS Membership ($99/month) — replaced by program-specific ELEVATED tiers
 - Vitality Membership branding — replaced everywhere by ELEVATED branding
 - "$99 Strategy Session" — never offered, dead text from legacy
@@ -118,7 +120,7 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | ELEVATED GLP-1 (Tirzepatide) | $449/mo | prod_UVdgUmNtkHxr3V | price_1Tm1BzCXbCBPFEeIkrr2iGcI |
 | ~~ELEVATED Metabolic (tirzepatide-anchored)~~ | ~~$599/mo~~ | prod_Ujd0CnRYCe6Ukh | price_1Tk9kDCXbCBPFEeIKmQI5tOZ — **RETIRED 2026-06-24, not sold** |
 | ~~ELEVATED METABOLIC RECOMPOSITION ($1,199, retatrutide stack)~~ | ARCHIVED 2026-06-19 | prod_UhqS2sWj7JenEp (inactive) | price_1TiQlECXbCBPFEeI4vKTyIq4 (inactive) |
-| ELEVATED WELLNESS | $199/mo | prod_UVdg37MnW1puuK | price_1TWcPNCXbCBPFEeIXo6IDpPf |
+| ELEVATED IV | $199/mo | prod_UVdg37MnW1puuK | price_1TWcPNCXbCBPFEeIXo6IDpPf |
 ### Core Services (One-Time)
 | Product | Price | Stripe Product ID | Stripe Price ID |
 |---|---|---|---|
@@ -143,9 +145,9 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | Sermorelin Injection | $149/mo | prod_UVeBkWZPGxLdmc | price_1TWcskCXbCBPFEeIBSytC63Q |
 | CJC-1295/Ipamorelin | $179/mo | prod_UVeB6yGA5Sy73e | price_1TWct7CXbCBPFEeIXT7Mv0A3 |
 | Tesamorelin | $399/mo | prod_UVeCDgLGVJ04hm | price_1TWctuCXbCBPFEeI4rpKGThG |
-| NAD+ Troches | $99/mo | prod_UVeDctVXwIySHX | price_1TWcujCXbCBPFEeIgLXiONWC |
-| NAD+ Injection | $199/mo | prod_UVeDVPf2YZCceL | price_1TWcv4CXbCBPFEeIqJILZWQY |
-| NAD+ Nasal Spray | $99/mo | prod_UVeDO4N214JNkQ | price_1TWcvUCXbCBPFEeILsUFp0tq |
+| ~~NAD+ Troches~~ | ~~$99/mo~~ | prod_UVeDctVXwIySHX | price_1TWcujCXbCBPFEeIgLXiONWC — **DISCONTINUED 2026-06-25, product archived** |
+| ~~NAD+ Injection~~ | ~~$199/mo~~ | prod_UVeDVPf2YZCceL | price_1TWcv4CXbCBPFEeIqJILZWQY — **DISCONTINUED 2026-06-25, product archived** |
+| ~~NAD+ Nasal Spray~~ | ~~$99/mo~~ | prod_UVeDO4N214JNkQ | price_1TWcvUCXbCBPFEeILsUFp0tq — **DISCONTINUED 2026-06-25, product archived** |
 | GHK-Cu Topical | $149/mo | prod_UVeEx971R0NYhK | price_1TWcwJCXbCBPFEeIL3UgXgTu |
 
 GHK-Cu Sublingual is NOT offered (removed 2026-06-19). Topical is the only GHK-Cu form sold.

@@ -89,7 +89,7 @@ ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
     membership; a patient's price never changes as they titrate within
     their molecule. Live prices: sema price_1TWcPLCXbCBPFEeIK7tkeIAM,
     tirz price_1Tm1BzCXbCBPFEeIkrr2iGcI — both on prod_UVdgUmNtkHxr3V.)
-  ELEVATED WELLNESS (non-Rx): $199/mo
+  ELEVATED IV (non-Rx IV membership): $199/mo
   (ELEVATED Metabolic $599/mo program RETIRED 2026-06-24 — see note below)
   Legacy single-tier "Elevated Membership $199" references and
   "Care Membership," "Founding Member," "Wellness Pass," etc. are
@@ -109,8 +109,9 @@ ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
   Sexual wellness: PT-141 $225 (one-time) | Tadalafil $99/mo | Sildenafil
     $79/mo | Oxytocin $89/mo
   Peptide therapy (monthly): Sermorelin $149 | CJC-1295/Ipamorelin $179 |
-    Tesamorelin $399 | NAD+ Injection $199 | NAD+ Troche $99 | NAD+ Nasal $99 |
-    GHK-Cu Topical $149  (GHK-Cu Sublingual is NOT offered)
+    Tesamorelin $399 | GHK-Cu Topical $149  (GHK-Cu Sublingual is NOT offered)
+    NAD+ peptide SKUs (injection/troche/nasal) DISCONTINUED 2026-06-25 — NAD+
+    survives only as the $50 IV booster add-on (see IV THERAPY below).
   Metabolic peptides à la carte (provider-only, monthly; standalone — NOT a
     bundled program): SS-31 $249 | AOD-9604 $129 | SLU-PP-332 $99 | 5-Amino-1MQ $119
   Hair restoration: Minoxidil+Finasteride $129/mo | Dutasteride $149/mo |
@@ -142,9 +143,11 @@ RETATRUTIDE — GATED, PROVIDER-SELECTED, NEVER ADVERTISED
 IV THERAPY (walk-in pricing, members get 20% off add-ons)
   Myers Cocktail: $185
   Glutathione IV Push: $95
-  NAD+ Infusion 250mg: $450
-  NAD+ Infusion 500mg: $750
   Custom IV Build: from $145
+  NAD+ is offered ONLY as a $50 add-on booster push. The standalone NAD+
+  infusion (250mg/500mg, formerly $450/$750) is DISCONTINUED (2026-06-25) to
+  reduce IV-menu confusion. The standalone peptide NAD+ injection/troche/nasal
+  SKUs are also discontinued — NAD+ survives solely as the IV booster.
 
 NEVER hardcode prices in component logic. Always use display
 constants at top of file with the comment pattern:

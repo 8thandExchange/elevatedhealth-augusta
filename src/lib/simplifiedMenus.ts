@@ -34,7 +34,7 @@ export const PUBLIC_MENU: MenuTier[] = [
       { id: "trt", label: "ELEVATED TRT", priceDisplay: "$249/mo", vendor: "custom_pharmacy_evans" },
       { id: "hrt", label: "ELEVATED HRT", priceDisplay: "$229/mo", vendor: "custom_pharmacy_evans" },
       { id: "glp1", label: "ELEVATED GLP-1", priceDisplay: "$349–$449/mo", vendor: "gc" },
-      { id: "wellness", label: "ELEVATED Wellness", priceDisplay: "$199/mo", vendor: "mixed" },
+      { id: "wellness", label: "ELEVATED IV", priceDisplay: "$199/mo", vendor: "mixed" },
     ],
   },
   {
@@ -43,8 +43,7 @@ export const PUBLIC_MENU: MenuTier[] = [
     description: "Five signature drips + six pushes. Custom build from menu add-ons only.",
     items: [
       { id: "myers", label: "Myers / Meyers-style drip", priceDisplay: "from $159–185", vendor: "fcc" },
-      { id: "nad-iv", label: "NAD+ infusion 250 / 500 mg", priceDisplay: "$450 / $750", vendor: "fcc" },
-      { id: "pushes", label: "Glutathione, B12, Vit C, Toradol, Zofran, NAD+ push", priceDisplay: "$25–50 each", vendor: "fcc" },
+      { id: "pushes", label: "Glutathione, B12, Vit C, Toradol, Zofran, NAD+ booster push", priceDisplay: "$25–50 each", vendor: "fcc" },
     ],
   },
   {

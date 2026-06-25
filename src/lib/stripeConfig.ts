@@ -39,7 +39,9 @@ export const ELEVATED_PROGRAMS = {
     interval: "month",
   },
   wellness: {
-    name: "ELEVATED WELLNESS",
+    // Internal key stays `wellness` (DB patients.elevated_program = 'wellness'),
+    // display name is the IV-centric membership: ELEVATED IV.
+    name: "ELEVATED IV",
     priceId: "price_1TWcPNCXbCBPFEeIXo6IDpPf",
     productId: "prod_UVdg37MnW1puuK",
     amount: 19900,
@@ -219,6 +221,13 @@ export const PEPTIDE_PRODUCTS = {
     amount: 39900,
     displayPrice: "$399/mo",
   },
+  // @deprecated NOT SOLD as of 2026-06-25. Standalone peptide NAD+ (injection /
+  // troche / nasal) was discontinued to reduce menu confusion; NAD+ now survives
+  // ONLY as the $50 IV "NAD+ Booster" add-on. These objects are retained so
+  // clinical references (clinicalOptimizationCatalog, pricing CATALOG) and webhook
+  // price-id audits keep compiling, and so existing subscriptions reconcile. Do
+  // NOT surface these on any sellable storefront or staff quoting surface. The
+  // Stripe prices are archived (inactive) — see bootstrap-archive-nad-peptide-prices.
   nadTroches: {
     name: "NAD+ Troches",
     priceId: "price_1TWcujCXbCBPFEeIgLXiONWC",

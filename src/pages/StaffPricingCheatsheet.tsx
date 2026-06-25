@@ -95,7 +95,9 @@ const StaffPricingCheatsheet = () => {
               <CardTitle className="font-playfair text-xl">Peptide catalog (recurring monthly SKUs)</CardTitle>
             </CardHeader>
             <CardContent className="font-jost text-sm space-y-1">
-              {Object.values(PEPTIDE_PRODUCTS).map((p) => (
+              {Object.entries(PEPTIDE_PRODUCTS)
+                .filter(([key]) => !key.startsWith("nad"))
+                .map(([, p]) => (
                 <div key={p.priceId} className="flex justify-between gap-4 border-b border-border/60 py-2 last:border-0">
                   <span>{p.name}</span>
                   <span className="font-medium whitespace-nowrap">{fmtMember(p.displayPrice)}</span>
