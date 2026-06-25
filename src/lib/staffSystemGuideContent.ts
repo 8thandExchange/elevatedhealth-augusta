@@ -11,7 +11,7 @@ import {
   type LabPanelSlug,
 } from "./labPanelRecommendations";
 import { labCheckoutTierForSlug, labPanelNonMemberCents } from "./labPanelCheckout";
-import { CORE_SERVICES, ELEVATED_MEMBERSHIP } from "./stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS } from "./stripeConfig";
 import { fmtUsd } from "./pricing";
 import { resolveVendorForLane, type ServiceLane } from "./vendorRouting";
 
@@ -42,7 +42,7 @@ export const PATIENT_JOURNEY_STEPS = [
   {
     phase: "05",
     title: "Enroll",
-    detail: `Program or stack enrollment + ${ELEVATED_MEMBERSHIP.displayPrice} Elevated Membership when appropriate.`,
+    detail: `Program or stack enrollment + ${ELEVATED_PROGRAMS.wellness.displayPrice} Elevated Membership (ELEVATED Wellness tier) when appropriate.`,
   },
   {
     phase: "06",
@@ -166,9 +166,9 @@ export const CHARGE_CHECKPOINTS = [
   },
   {
     when: "Membership",
-    item: ELEVATED_MEMBERSHIP.name,
-    amount: ELEVATED_MEMBERSHIP.displayPrice,
-    note: "Single tier — no legacy multi-tier names.",
+    item: "Elevated Membership",
+    amount: `from ${ELEVATED_PROGRAMS.wellness.displayPrice}`,
+    note: "Tier = ELEVATED program: Wellness $199 / HRT $229 / TRT $249 / GLP-1 $349–$449. No legacy concierge/vitality names.",
   },
   {
     when: "In-program monitoring",

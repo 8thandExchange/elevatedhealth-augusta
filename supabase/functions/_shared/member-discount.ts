@@ -8,9 +8,9 @@
  */
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
-export type ElevatedProgramKey = "trt" | "hrt" | "glp1" | "wellness" | "metabolicRecomposition";
+export type ElevatedProgramKey = "trt" | "hrt" | "glp1" | "wellness";
 
-const PROGRAM_KEYS = new Set<ElevatedProgramKey>(["trt", "hrt", "glp1", "wellness", "metabolicRecomposition"]);
+const PROGRAM_KEYS = new Set<ElevatedProgramKey>(["trt", "hrt", "glp1", "wellness"]);
 
 /**
  * TODO: Create Stripe Coupon "ELEVATED Member 20% Discount" (20% off) and set Supabase secret
@@ -57,15 +57,6 @@ export function getDiscountEligibility(
   }
   if (program === "glp1" && (productKey === "semaglutide" || productKey === "tirzepatide")) {
     return { eligible: false, reason: "already included in your GLP-1 program" };
-  }
-  if (
-    program === "metabolicRecomposition" &&
-    (productKey === "retatrutide" ||
-      productKey === "ss31" ||
-      productKey === "cjc1295Ipamorelin" ||
-      productKey === "tesamorelin")
-  ) {
-    return { eligible: false, reason: "already included in your Metabolic Recomposition program" };
   }
   return { eligible: true, reason: "" };
 }

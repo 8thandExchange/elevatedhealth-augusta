@@ -252,7 +252,7 @@ const MembershipAssignmentCard = ({
               <li>• Direct provider phone line</li>
               <li>• 40% off quarterly labs ($209)</li>
               <li>• 90-day Rx access</li>
-              <li>• 15% off GLP-1 add-ons</li>
+              <li>• 20% off GLP-1 add-ons</li>
             </ul>
           </div>
         )}

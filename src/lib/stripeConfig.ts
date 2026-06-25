@@ -460,22 +460,13 @@ export const DIAGNOSTIC_KIT_PRICES = {
 } as const;
 
 /**
- * @deprecated Single-tier $199 membership price ID. Use {@link ELEVATED_PROGRAMS.wellness} or a program-specific tier (trt / hrt / glp1).
+ * Retired single-tier $199 membership price ID (2026-06-25). Superseded by the
+ * four ELEVATED program tiers (ELEVATED_PROGRAMS: trt / hrt / glp1 / wellness).
+ * The price ID string is retained ONLY for audit/webhook reconciliation of any
+ * pre-existing subscription — it is no longer a sellable SKU. The webhook tracks
+ * this same ID independently via LEGACY_ELEVATED_MEMBERSHIP_PRICE_ID.
  */
-export const ELEVATED_MEMBERSHIP = {
-  priceId:
-    (typeof import.meta !== "undefined" &&
-      (import.meta as any).env?.VITE_STRIPE_ELEVATED_MEMBERSHIP_PRICE_ID) ||
-    "price_1TUs3LEOtKRY99puWfQy8pHj",
-  amount: 19900, // $199/mo
-  displayPrice: "$199/mo",
-  name: "Elevated Membership",
-  description:
-    "Deprecated single-tier membership copy. Prefer ELEVATED_PROGRAMS — medications are included in program tiers per live catalog.",
-  mode: "subscription" as const,
-  interval: "month",
-  edgeFunction: "create-elevated-membership-checkout",
-} as const;
+export const RETIRED_ELEVATED_MEMBERSHIP_PRICE_ID = "price_1TUs3LEOtKRY99puWfQy8pHj";
 
 /**
  * @deprecated Legacy à la carte medication keys (test Stripe account). Use {@link MEDICATION_FILLS}.
@@ -732,7 +723,7 @@ export type AdminPriceKey = keyof typeof ADMIN_PRICES;
 
 function legacyPriceIdStrings(): string[] {
   const legacyObjects = [
-    ELEVATED_MEMBERSHIP,
+    { priceId: RETIRED_ELEVATED_MEMBERSHIP_PRICE_ID },
     ...Object.values(DIAGNOSTIC_KIT_PRICES),
     ...Object.values(WEIGHT_LOSS_PRICES),
     ...Object.values(ADMIN_PRICES),
