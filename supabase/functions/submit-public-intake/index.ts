@@ -67,6 +67,8 @@ interface IntakeFormData {
     weight_concern: number;
   };
   treatment_goals: string;
+  referral_source?: string;
+  referral_source_detail?: string;
   hipaa_acknowledged: boolean;
   consent_acknowledged: boolean;
   consent_signature?: string;
@@ -147,6 +149,8 @@ serve(async (req) => {
 
     // Build updated medical history (preserve existing data, add new)
     const existingMedicalHistory = patient.medical_history || {};
+    const referralSource = (formData.referral_source || "").trim() || null;
+    const referralSourceDetail = (formData.referral_source_detail || "").trim() || null;
     const updatedMedicalHistory = {
       ...existingMedicalHistory,
       intake_completed_at: new Date().toISOString(),
@@ -155,6 +159,18 @@ serve(async (req) => {
       family_history: formData.family_history,
       safety_screening: formData.safety_screening,
       treatment_goals: formData.treatment_goals,
+      // Marketing attribution — guaranteed storage in JSONB (works regardless of
+      // whether the dedicated patients.referral_source column has been applied).
+      marketing: {
+        ...(existingMedicalHistory.marketing || {}),
+        ...(referralSource
+          ? {
+              referral_source: referralSource,
+              referral_source_detail: referralSourceDetail,
+              captured_at: new Date().toISOString(),
+            }
+          : {}),
+      },
       consent: {
         hipaa_acknowledged: formData.hipaa_acknowledged,
         consent_acknowledged: formData.consent_acknowledged,
@@ -229,6 +245,25 @@ serve(async (req) => {
     }
 
     logStep("Patient record updated", { patientId: patient.id, riskStatus });
+
+    // Best-effort: mirror referral attribution to dedicated columns for clean
+    // marketing reporting. Wrapped separately so a not-yet-applied migration
+    // (missing column) can never fail the core intake write — JSONB above is the
+    // guaranteed source of truth.
+    if (referralSource) {
+      const { error: referralError } = await supabaseAdmin
+        .from("patients")
+        .update({
+          referral_source: referralSource,
+          referral_source_detail: referralSourceDetail,
+        })
+        .eq("id", patient.id);
+      if (referralError) {
+        logStep("Referral column write skipped (non-fatal)", { error: referralError.message });
+      } else {
+        logStep("Referral source recorded", { referralSource });
+      }
+    }
 
     // CDS intake draft — pre-fill symptoms and safety flags for staff (no auto-prescribing).
     try {
@@ -368,6 +403,15 @@ serve(async (req) => {
                   <tr>
                     <td style="padding: 8px 0; font-weight: 600;">Program:</td>
                     <td style="padding: 8px 0;">${patient.primary_program}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600;">Heard about us:</td>
+                    <td style="padding: 8px 0;">${
+                      referralSource
+                        ? referralSource.replace(/_/g, " ") +
+                          (referralSourceDetail ? ` — ${referralSourceDetail}` : "")
+                        : "Not provided"
+                    }</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; font-weight: 600;">Risk Status:</td>

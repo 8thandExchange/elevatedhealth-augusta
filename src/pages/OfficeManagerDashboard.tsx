@@ -10,9 +10,11 @@ import { hasClinicAdminRole } from "@/lib/staffPortalRouting";
 import { 
   Loader2, User, Users, Clock, Package, Phone, Mail, TestTube,
   Calendar, CalendarPlus, CheckCircle, AlertCircle, RefreshCw, Search,
-  FileText, CreditCard, MessageSquare, Mic, Filter
+  FileText, CreditCard, MessageSquare, Mic, Filter, Megaphone
 } from "lucide-react";
+import { referralSourceLabel } from "@/lib/referralSources";
 import StaffBookingModal from "@/components/booking/StaffBookingModal";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SmsInbox from "@/components/office/SmsInbox";
@@ -76,6 +78,7 @@ const OfficeManagerDashboard = () => {
   const [leadSearchTerm, setLeadSearchTerm] = useState("");
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [referralCounts, setReferralCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     loadData();
@@ -132,6 +135,26 @@ const OfficeManagerDashboard = () => {
 
       if (leadsError) throw leadsError;
       setLeads(leadsData || []);
+
+      // Marketing attribution breakdown ("How did you hear about us?").
+      // Derived from medical_history->marketing JSONB, which submit-public-intake
+      // always writes (independent of the dedicated referral_source column).
+      try {
+        const { data: mh } = await supabase
+          .from("patients")
+          .select("medical_history")
+          .eq("intake_completed", true);
+        const counts: Record<string, number> = {};
+        for (const r of mh || []) {
+          const source = (r.medical_history as { marketing?: { referral_source?: string } } | null)
+            ?.marketing?.referral_source;
+          if (!source) continue;
+          counts[source] = (counts[source] || 0) + 1;
+        }
+        setReferralCounts(counts);
+      } catch (refErr) {
+        console.error("Referral breakdown load error (non-fatal):", refErr);
+      }
 
     } catch (error: any) {
       console.error("Load error:", error);
@@ -362,7 +385,7 @@ const OfficeManagerDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="flex w-full overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-5 mb-6 [&>button]:shrink-0 [&>button]:whitespace-nowrap">
+          <TabsList className="flex w-full overflow-x-auto scrollbar-hide sm:grid sm:grid-cols-6 mb-6 [&>button]:shrink-0 [&>button]:whitespace-nowrap">
             <TabsTrigger value="patients" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span className="hidden sm:inline">All Patients</span>
@@ -387,6 +410,11 @@ const OfficeManagerDashboard = () => {
               <TestTube className="w-4 h-4" />
               <span className="hidden sm:inline">LabCorp ({labPendingPatients.length})</span>
               <span className="sm:hidden">Labs</span>
+            </TabsTrigger>
+            <TabsTrigger value="marketing" className="flex items-center gap-2">
+              <Megaphone className="w-4 h-4" />
+              <span className="hidden sm:inline">Marketing</span>
+              <span className="sm:hidden">Mktg</span>
             </TabsTrigger>
           </TabsList>
 
@@ -797,6 +825,65 @@ const OfficeManagerDashboard = () => {
                     </table>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Marketing attribution */}
+          <TabsContent value="marketing">
+            <Card className="bg-card border-border/50">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Megaphone className="w-5 h-5" />
+                  How patients found us
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Self-reported on the intake form. Counts reflect patients who have completed intake.
+                </p>
+              </CardHeader>
+              <CardContent>
+                {(() => {
+                  const entries = Object.entries(referralCounts).sort((a, b) => b[1] - a[1]);
+                  const total = entries.reduce((sum, [, n]) => sum + n, 0);
+                  if (total === 0) {
+                    return (
+                      <div className="text-center py-8">
+                        <Megaphone className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                        <p className="text-muted-foreground">
+                          No referral sources captured yet. New intakes will show up here.
+                        </p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        {total} patient{total !== 1 ? "s" : ""} reported a source.
+                      </p>
+                      <div className="space-y-3">
+                        {entries.map(([source, count]) => {
+                          const pct = Math.round((count / total) * 100);
+                          return (
+                            <div key={source} className="space-y-1">
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="font-medium">{referralSourceLabel(source)}</span>
+                                <span className="text-muted-foreground">
+                                  {count} ({pct}%)
+                                </span>
+                              </div>
+                              <div className="h-2 w-full rounded-full bg-muted">
+                                <div
+                                  className="h-2 rounded-full bg-primary"
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>

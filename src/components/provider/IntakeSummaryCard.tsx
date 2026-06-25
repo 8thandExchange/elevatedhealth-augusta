@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, AlertTriangle, CheckCircle, XCircle, User, MapPin, Calendar, Pill, Heart } from "lucide-react";
+import { ClipboardList, AlertTriangle, CheckCircle, XCircle, User, MapPin, Calendar, Pill, Heart, Megaphone } from "lucide-react";
 import { format, differenceInYears } from "date-fns";
+import { referralSourceLabel } from "@/lib/referralSources";
 
 interface MedicalHistory {
   intake_completed_at?: string;
@@ -9,6 +10,11 @@ interface MedicalHistory {
   current_medications?: string;
   previous_surgeries?: string;
   treatment_goals?: string;
+  marketing?: {
+    referral_source?: string;
+    referral_source_detail?: string | null;
+    captured_at?: string;
+  };
   // Safety screening
   pregnant_nursing?: boolean;
   cardiac_conditions?: boolean;
@@ -205,6 +211,22 @@ export default function IntakeSummaryCard({ patient }: IntakeSummaryCardProps) {
             <blockquote className="text-sm italic border-l-2 border-teal-500 pl-3 py-1 bg-muted/30 rounded-r">
               "{history.treatment_goals}"
             </blockquote>
+          </div>
+        )}
+
+        {/* How they heard about us (marketing attribution) */}
+        {history?.marketing?.referral_source && (
+          <div>
+            <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+              <Megaphone className="w-3.5 h-3.5" />
+              Heard About Us
+            </h5>
+            <p className="text-sm pl-5">
+              {referralSourceLabel(history.marketing.referral_source)}
+              {history.marketing.referral_source_detail && (
+                <span className="text-muted-foreground"> — {history.marketing.referral_source_detail}</span>
+              )}
+            </p>
           </div>
         )}
       </CardContent>

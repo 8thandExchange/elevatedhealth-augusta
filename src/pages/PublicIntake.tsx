@@ -16,6 +16,7 @@ import {
   routeIntakeCare,
   type IntakeInterest,
 } from "@/lib/intakeCareRouting";
+import { REFERRAL_SOURCE_OPTIONS } from "@/lib/referralSources";
 
 interface PatientInfo {
   id: string;
@@ -82,6 +83,8 @@ export default function PublicIntake() {
     treatment_goals: "",
     secondary_goals: "",
     intake_interests: [] as IntakeInterest[],
+    referral_source: "",
+    referral_source_detail: "",
     hipaa_acknowledged: false,
     consent_acknowledged: false,
     consent_signature: "",
@@ -450,6 +453,48 @@ export default function PublicIntake() {
                       required
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2 pt-2 border-t">
+                  <Label htmlFor="referral_source">How did you hear about us?</Label>
+                  <Select
+                    value={formData.referral_source}
+                    onValueChange={(v) => {
+                      const opt = REFERRAL_SOURCE_OPTIONS.find((o) => o.value === v);
+                      setFormData((prev) => ({
+                        ...prev,
+                        referral_source: v,
+                        referral_source_detail: opt?.promptForDetail ? prev.referral_source_detail : "",
+                      }));
+                    }}
+                  >
+                    <SelectTrigger id="referral_source">
+                      <SelectValue placeholder="Select an option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {REFERRAL_SOURCE_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {REFERRAL_SOURCE_OPTIONS.find((o) => o.value === formData.referral_source)?.promptForDetail && (
+                    <Input
+                      id="referral_source_detail"
+                      value={formData.referral_source_detail}
+                      onChange={(e) => handleInputChange("referral_source_detail", e.target.value)}
+                      placeholder={
+                        formData.referral_source === "friend_family"
+                          ? "Who can we thank? (optional)"
+                          : formData.referral_source === "provider_referral"
+                            ? "Referring provider or clinic (optional)"
+                            : formData.referral_source === "social_media"
+                              ? "Which platform / account? (optional)"
+                              : "Tell us more (optional)"
+                      }
+                    />
+                  )}
                 </div>
               </>
             )}
