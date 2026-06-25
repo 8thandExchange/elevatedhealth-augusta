@@ -23,6 +23,8 @@ type EvaluateRequest = IvScreeningIntake & {
   known_allergies?: string;
   recent_surgeries?: string;
   acknowledged_disclaimer?: boolean;
+  referral_source?: string;
+  referral_source_detail?: string;
 };
 
 type IntakeResponseRow = {
@@ -216,6 +218,21 @@ serve(async (req) => {
         JSON.stringify({ error: "Failed to save intake screening" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
+    }
+
+    // Unified marketing attribution log (best-effort; never blocks screening).
+    const referralSource = (body.referral_source || "").trim() || null;
+    if (referralSource) {
+      const { error: mrError } = await supabase.from("marketing_referrals").insert({
+        channel: "iv_screening",
+        referral_source: referralSource,
+        referral_source_detail: (body.referral_source_detail || "").trim() || null,
+        contact_name: [body.first_name, body.last_name].filter(Boolean).join(" ") || null,
+        contact_email: body.email ?? null,
+      });
+      if (mrError) {
+        console.warn("[evaluate-iv-screening] marketing_referrals insert skipped (non-fatal):", mrError.message);
+      }
     }
 
     if (screeningResult === "blocked") {

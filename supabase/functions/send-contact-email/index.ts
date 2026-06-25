@@ -64,6 +64,8 @@ const contactSchema = z.object({
   phone: z.string().trim().regex(/^[0-9+\(\)\-\s]+$/, "Phone number can only contain numbers and +()-").max(20, "Phone number must be less than 20 characters"),
   area_of_interest: z.enum(LEAD_AREAS),
   message: z.string().trim().min(1, "Message is required").max(500, "Message must be less than 500 characters"),
+  referral_source: z.string().trim().max(60).optional(),
+  referral_source_detail: z.string().trim().max(200).optional(),
   _fax: z.string().optional() // Honeypot field - named to avoid browser autofill
 });
 
@@ -140,6 +142,22 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     console.log("Lead saved successfully with ID:", insertData?.id);
+
+    // Unified marketing attribution log (best-effort; never blocks the lead).
+    const referralSource = validatedData.referral_source?.trim() || null;
+    const referralSourceDetail = validatedData.referral_source_detail?.trim() || null;
+    if (referralSource) {
+      const { error: mrError } = await supabaseAdmin.from("marketing_referrals").insert({
+        channel: "contact_form",
+        referral_source: referralSource,
+        referral_source_detail: referralSourceDetail,
+        contact_name: validatedData.name,
+        contact_email: validatedData.email,
+      });
+      if (mrError) {
+        console.warn("marketing_referrals insert skipped (non-fatal):", mrError.message);
+      }
+    }
     
     const timestamp = new Date().toLocaleString('en-US', { 
       timeZone: 'America/New_York',
@@ -205,6 +223,16 @@ const handler = async (req: Request): Promise<Response> => {
                 <div class="field">
                   <div class="field-label">Area of interest:</div>
                   <div class="field-value">${escapeHtml(validatedData.area_of_interest)}</div>
+                </div>
+
+                <div class="field">
+                  <div class="field-label">Heard about us:</div>
+                  <div class="field-value">${
+                    referralSource
+                      ? escapeHtml(referralSource.replace(/_/g, " ")) +
+                        (referralSourceDetail ? ` — ${escapeHtml(referralSourceDetail)}` : "")
+                      : "Not provided"
+                  }</div>
                 </div>
                 
                 <div class="field">

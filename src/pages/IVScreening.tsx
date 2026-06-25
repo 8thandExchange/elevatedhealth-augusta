@@ -10,9 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { CANCELLATION_NOTICE_HOURS, REBOOKING_FEE_DISPLAY } from "@/lib/cancellationPolicy";
+import { REFERRAL_SOURCE_OPTIONS } from "@/lib/referralSources";
 
 type YesNoKeys =
   | "has_chf"
@@ -53,6 +55,8 @@ interface ScreeningFormState {
   current_medications: string;
   known_allergies: string;
   recent_surgeries: string;
+  referral_source: string;
+  referral_source_detail: string;
   acknowledged_disclaimer: boolean;
 }
 
@@ -118,6 +122,8 @@ const IVScreening = () => {
     current_medications: "",
     known_allergies: "",
     recent_surgeries: "",
+    referral_source: "",
+    referral_source_detail: "",
     acknowledged_disclaimer: false,
   });
 
@@ -253,6 +259,39 @@ const IVScreening = () => {
                         onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
                       />
                       {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="referral_source">How did you hear about us?</Label>
+                      <Select
+                        value={form.referral_source}
+                        onValueChange={(v) => {
+                          const opt = REFERRAL_SOURCE_OPTIONS.find((o) => o.value === v);
+                          setForm((prev) => ({
+                            ...prev,
+                            referral_source: v,
+                            referral_source_detail: opt?.promptForDetail ? prev.referral_source_detail : "",
+                          }));
+                        }}
+                      >
+                        <SelectTrigger id="referral_source">
+                          <SelectValue placeholder="Select an option (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {REFERRAL_SOURCE_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {REFERRAL_SOURCE_OPTIONS.find((o) => o.value === form.referral_source)?.promptForDetail && (
+                        <Input
+                          id="referral_source_detail"
+                          value={form.referral_source_detail}
+                          onChange={(e) => setForm((prev) => ({ ...prev, referral_source_detail: e.target.value }))}
+                          placeholder="Tell us more (optional)"
+                        />
+                      )}
                     </div>
                   </div>
                 </section>

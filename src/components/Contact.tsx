@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LEAD_AREA_OPTIONS } from "@/lib/marketingPillars";
+import { REFERRAL_SOURCE_OPTIONS } from "@/lib/referralSources";
 import { ArrowRight, MapPin, Phone, Clock, CheckCircle2, Sparkles, Droplet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { trackCTAClick } from "@/lib/analytics";
@@ -59,6 +60,8 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
     email: "",
     phone: "",
     area_of_interest: "",
+    referral_source: "",
+    referral_source_detail: "",
     message: "",
   });
   const [honeypot, setHoneypot] = useState("");
@@ -108,6 +111,8 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
           phone: validated.phone,
           area_of_interest: validated.area_of_interest,
           message: summary,
+          referral_source: formData.referral_source || undefined,
+          referral_source_detail: formData.referral_source_detail || undefined,
           _fax: honeypot,
         },
       });
@@ -126,7 +131,7 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
       
       setSubmittedName(validated.name.split(" ")[0]);
       setIsSuccess(true);
-      setFormData({ name: "", email: "", phone: "", area_of_interest: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", area_of_interest: "", referral_source: "", referral_source_detail: "", message: "" });
       trackCTAClick('contact_form_submit', 'contact_section');
       console.log("[Contact Form] Submission complete!");
     } catch (error) {
@@ -240,7 +245,7 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                     <button
                       onClick={() => {
                         setIsSuccess(false);
-                        setFormData({ name: "", email: "", phone: "", area_of_interest: "", message: "" });
+                        setFormData({ name: "", email: "", phone: "", area_of_interest: "", referral_source: "", referral_source_detail: "", message: "" });
                       }}
                       className="font-jost text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
@@ -332,12 +337,48 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                       </Select>
                     </div>
                     <div>
+                      <Label htmlFor="contact-referral" className="font-jost text-sm text-foreground/80 mb-2 block">
+                        How did you hear about us?
+                      </Label>
+                      <Select
+                        value={formData.referral_source}
+                        onValueChange={(v) => {
+                          const opt = REFERRAL_SOURCE_OPTIONS.find((o) => o.value === v);
+                          setFormData((prev) => ({
+                            ...prev,
+                            referral_source: v,
+                            referral_source_detail: opt?.promptForDetail ? prev.referral_source_detail : "",
+                          }));
+                        }}
+                      >
+                        <SelectTrigger id="contact-referral" className="bg-background border-border/50">
+                          <SelectValue placeholder="Select an option (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {REFERRAL_SOURCE_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {REFERRAL_SOURCE_OPTIONS.find((o) => o.value === formData.referral_source)?.promptForDetail && (
+                        <Input
+                          id="contact-referral-detail"
+                          value={formData.referral_source_detail}
+                          onChange={(e) => setFormData({ ...formData, referral_source_detail: e.target.value })}
+                          placeholder="Tell us more (optional)"
+                          className="mt-2 bg-background border-border/50 focus:border-primary"
+                        />
+                      )}
+                    </div>
+                    <div>
                       <Label htmlFor="contact-message" className="font-jost text-sm text-foreground/80 mb-2 block">
                         Optional note
                       </Label>
                       <Textarea
                         id="contact-message"
-                        placeholder="Best time to call, or how you heard about us (no medical details needed)"
+                        placeholder="Best time to call or anything else we should know (no medical details needed)"
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         rows={3}

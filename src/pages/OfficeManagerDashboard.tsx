@@ -79,6 +79,7 @@ const OfficeManagerDashboard = () => {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [referralCounts, setReferralCounts] = useState<Record<string, number>>({});
+  const [referralChannels, setReferralChannels] = useState<Record<string, number>>({});
 
   useEffect(() => {
     loadData();
@@ -137,21 +138,38 @@ const OfficeManagerDashboard = () => {
       setLeads(leadsData || []);
 
       // Marketing attribution breakdown ("How did you hear about us?").
-      // Derived from medical_history->marketing JSONB, which submit-public-intake
-      // always writes (independent of the dedicated referral_source column).
+      // Prefer the unified marketing_referrals table (spans medical intake, IV
+      // screening, and the contact form). If it isn't applied yet, fall back to
+      // the medical_history JSONB so the view still works.
       try {
-        const { data: mh } = await supabase
-          .from("patients")
-          .select("medical_history")
-          .eq("intake_completed", true);
         const counts: Record<string, number> = {};
-        for (const r of mh || []) {
-          const source = (r.medical_history as { marketing?: { referral_source?: string } } | null)
-            ?.marketing?.referral_source;
-          if (!source) continue;
-          counts[source] = (counts[source] || 0) + 1;
+        const channelCounts: Record<string, number> = {};
+        const mr = await supabase
+          .from("marketing_referrals" as never)
+          .select("referral_source, channel");
+        const mrData = (mr.data ?? null) as unknown as
+          | { referral_source: string | null; channel: string | null }[]
+          | null;
+        if (!mr.error && mrData) {
+          for (const r of mrData) {
+            if (r.referral_source) counts[r.referral_source] = (counts[r.referral_source] || 0) + 1;
+            if (r.channel) channelCounts[r.channel] = (channelCounts[r.channel] || 0) + 1;
+          }
+        } else {
+          const { data: mh } = await supabase
+            .from("patients")
+            .select("medical_history")
+            .eq("intake_completed", true);
+          for (const r of mh || []) {
+            const source = (r.medical_history as { marketing?: { referral_source?: string } } | null)
+              ?.marketing?.referral_source;
+            if (!source) continue;
+            counts[source] = (counts[source] || 0) + 1;
+            channelCounts["medical_intake"] = (channelCounts["medical_intake"] || 0) + 1;
+          }
         }
         setReferralCounts(counts);
+        setReferralChannels(channelCounts);
       } catch (refErr) {
         console.error("Referral breakdown load error (non-fatal):", refErr);
       }
@@ -855,10 +873,16 @@ const OfficeManagerDashboard = () => {
                       </div>
                     );
                   }
+                  const channelLabels: Record<string, string> = {
+                    medical_intake: "Wellness intake",
+                    iv_screening: "IV booking",
+                    contact_form: "Contact form",
+                  };
+                  const channelEntries = Object.entries(referralChannels).sort((a, b) => b[1] - a[1]);
                   return (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       <p className="text-sm text-muted-foreground">
-                        {total} patient{total !== 1 ? "s" : ""} reported a source.
+                        {total} response{total !== 1 ? "s" : ""} with a reported source.
                       </p>
                       <div className="space-y-3">
                         {entries.map(([source, count]) => {
@@ -881,6 +905,20 @@ const OfficeManagerDashboard = () => {
                           );
                         })}
                       </div>
+                      {channelEntries.length > 0 && (
+                        <div className="pt-2 border-t">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                            Where they were captured
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {channelEntries.map(([channel, count]) => (
+                              <Badge key={channel} variant="outline">
+                                {channelLabels[channel] ?? channel}: {count}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}

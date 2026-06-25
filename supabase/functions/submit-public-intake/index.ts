@@ -263,6 +263,19 @@ serve(async (req) => {
       } else {
         logStep("Referral source recorded", { referralSource });
       }
+
+      // Unified marketing attribution log (best-effort; never blocks intake).
+      const { error: mrError } = await supabaseAdmin.from("marketing_referrals").insert({
+        channel: "medical_intake",
+        referral_source: referralSource,
+        referral_source_detail: referralSourceDetail,
+        contact_name: patient.full_name ?? null,
+        contact_email: patient.email ?? null,
+        patient_id: patient.id,
+      });
+      if (mrError) {
+        logStep("marketing_referrals insert skipped (non-fatal)", { error: mrError.message });
+      }
     }
 
     // CDS intake draft — pre-fill symptoms and safety flags for staff (no auto-prescribing).
