@@ -4,7 +4,7 @@ export const SOAP_SERVICE_LINES = [
   { value: "weight_loss", label: "Medical Weight Loss (GLP-1)" },
   { value: "peptide", label: "Peptide Therapy" },
   { value: "iv_therapy", label: "IV Therapy" },
-  { value: "metabolic", label: "Metabolic Recomposition" },
+  { value: "metabolic", label: "Advanced Recomposition (GLP-1)" },
   { value: "general", label: "General Wellness / Longevity" },
 ] as const;
 

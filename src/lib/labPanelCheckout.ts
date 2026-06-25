@@ -85,6 +85,5 @@ export const PROGRAM_DEFAULT_LAB_SLUG: Record<string, string> = {
   trt: "hormone-male",
   hrt: "hormone-female",
   glp1: "weight-optimization",
-  metabolicRecomposition: "weight-optimization",
   wellness: "foundation-wellness",
 };

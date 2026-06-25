@@ -48,7 +48,7 @@ const PRODUCTS = [
   { value: "elevated_membership", label: "Elevated Membership", price: "$199/mo", category: "Membership" },
   { value: "consultation", label: "Wellness Assessment", price: "$79", category: "Consultation" },
   { value: "semaglutide", label: "ELEVATED GLP-1 (semaglutide path)", price: "$349/mo", category: "Weight Loss" },
-  { value: "tirzepatide", label: "ELEVATED GLP-1 (tirzepatide path)", price: "$349/mo", category: "Weight Loss" },
+  { value: "tirzepatide", label: "ELEVATED GLP-1 (tirzepatide path)", price: "$449/mo", category: "Weight Loss" },
   { value: "alacarte_testosterone", label: "Testosterone Cream", price: MEDICATION_FILLS.testosterone.displayPrice, category: "À la carte HRT" },
   { value: "alacarte_biEst", label: "Bi-Est Cream", price: MEDICATION_FILLS.biEst.displayPrice, category: "À la carte HRT" },
   { value: "alacarte_progesterone", label: "Progesterone", price: MEDICATION_FILLS.progesterone.displayPrice, category: "À la carte HRT" },

@@ -23,7 +23,7 @@ Staff order clinical panels by slug in `lab_panels`; patients pay via **two Stri
 | `hormone-male` | Comprehensive | $199 | ELEVATED TRT |
 | `hormone-female` | Comprehensive | $199 | ELEVATED HRT |
 | `foundation-wellness` | Comprehensive | $199 | General / Wellness |
-| `weight-optimization` | Expanded | $299 | ELEVATED GLP-1, Metabolic Recomposition |
+| `weight-optimization` | Expanded | $299 | ELEVATED GLP-1 |
 | `sexual-wellness` | Comprehensive | $199 | Launch-hidden (inactive in staff UI) |
 Quarterly in-program labs use the same clinical panel but **$0 patient charge** (included in membership).
 Labs are billed separately from visits. Lab fees include the in-office blood draw, LabCorp processing, and posting of results to the patient portal. Lab fees do NOT include physician review — review of abnormal results requiring Medical Review is billed separately for non-members; included for members.
@@ -33,8 +33,8 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 |---|---|---|
 | ELEVATED TRT (men) | $249/month | Testosterone cypionate from Custom Pharmacy of Evans, self-injection supplies, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, anastrozole/HCG when clinically indicated, all Caroline-initiated physician oversight. |
 | ELEVATED HRT (women) | $229/month | Bi-Est cream/troches, progesterone, testosterone cream when prescribed, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. |
-| ELEVATED GLP-1 | $349/month | Compounded semaglutide OR tirzepatide from GC/STLKS network (FCC backup), monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. |
-| ELEVATED Metabolic | $599/month | Premium physician-directed metabolic & body-recomposition program — compounded **tirzepatide** anchor (legally compoundable), lean-mass support, intensive labs, monthly oversight. Replaced the retired $1,199 retatrutide stack 2026-06-19. Retatrutide is NOT the anchor and is never advertised — gated, provider-selected only (see retatrutide note). |
+| ELEVATED GLP-1 | Semaglutide $349/month · Tirzepatide $449/month | Compounded semaglutide OR tirzepatide from GC/STLKS network (FCC backup), monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. Molecule-specific monthly price (tirzepatide costs ~2x compounded); a patient's price never changes as they titrate within their molecule. Both enroll the same `glp1` membership. |
+| ~~ELEVATED Metabolic~~ | ~~$599/month~~ | **DISCONTINUED 2026-06-24.** The standalone metabolic-recomposition bundle was retired. Advanced recomposition support now lives inside the GLP-1 lane (provider-directed à la carte peptides + gated retatrutide). The four metabolic peptides (SS-31, AOD-9604, SLU-PP-332, 5-Amino-1MQ) remain available à la carte. |
 | ELEVATED WELLNESS (non-Rx) | $199/month | 2 free IV drips per month, 20% off à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. |
 ### What Every Membership Includes
 - Your monthly medication is included (where applicable to the program)
@@ -101,7 +101,7 @@ The following phrasing is prohibited everywhere except where explicitly noted:
 ## Competitive Positioning
 What we are: Real medicine, real local care. Cash-pay wellness with transparent prices, modern compounded medications, and a relationship with a real RN and a board-certified physician.
 What we are not: Not the cheapest online TRT clinic. Not a med-spa. Not an insurance-driven primary care office. Not a "free consult then upsell" scheme.
-What patients pay first time: Most patients spend $79 (intake) + $199 (labs) + first month of program ($249-$349) for a total first-month investment of $527-$627. Predictable monthly thereafter.
+What patients pay first time: Most patients spend $79 (intake) + $199 (labs) + first month of program ($249-$449) for a total first-month investment of $527-$727. Predictable monthly thereafter.
 ## Operational Contact
 Clinic phone: (706) 760-3470
 Note: This number must appear consistently on every patient-facing surface. Any other phone number found in the codebase (e.g. 706-973-3866 on /affordability) is incorrect and must be corrected to (706) 760-3470.
@@ -114,8 +114,9 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 |---|---|---|---|
 | ELEVATED TRT | $249/mo | prod_UVdgaw0SyMI2jz | price_1TWcPICXbCBPFEeInMGSsjDN |
 | ELEVATED HRT | $229/mo | prod_UVdgH1SlumTl5O | price_1TWcPKCXbCBPFEeIJKBf62b9 |
-| ELEVATED GLP-1 | $349/mo | prod_UVdgUmNtkHxr3V | price_1TWcPLCXbCBPFEeIK7tkeIAM |
-| ELEVATED Metabolic (tirzepatide-anchored) | $599/mo | prod_Ujd0CnRYCe6Ukh | price_1Tk9kDCXbCBPFEeIKmQI5tOZ |
+| ELEVATED GLP-1 (Semaglutide) | $349/mo | prod_UVdgUmNtkHxr3V | price_1TWcPLCXbCBPFEeIK7tkeIAM |
+| ELEVATED GLP-1 (Tirzepatide) | $449/mo | prod_UVdgUmNtkHxr3V | price_1Tm1BzCXbCBPFEeIkrr2iGcI |
+| ~~ELEVATED Metabolic (tirzepatide-anchored)~~ | ~~$599/mo~~ | prod_Ujd0CnRYCe6Ukh | price_1Tk9kDCXbCBPFEeIKmQI5tOZ — **RETIRED 2026-06-24, not sold** |
 | ~~ELEVATED METABOLIC RECOMPOSITION ($1,199, retatrutide stack)~~ | ARCHIVED 2026-06-19 | prod_UhqS2sWj7JenEp (inactive) | price_1TiQlECXbCBPFEeI4vKTyIq4 (inactive) |
 | ELEVATED WELLNESS | $199/mo | prod_UVdg37MnW1puuK | price_1TWcPNCXbCBPFEeIXo6IDpPf |
 ### Core Services (One-Time)

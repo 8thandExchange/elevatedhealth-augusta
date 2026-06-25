@@ -13,8 +13,6 @@ import {
   SEXUAL_WELLNESS_PRODUCTS,
 } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
-import { metabolicStackAlacarteNonMemberCents, stackAlacarteLineItems } from "@/lib/metabolicStackPricing";
-import { METABOLIC_STACK_DISPLAY } from "@/lib/metabolicStackConfig";
 
 const fmtMember = (displayNonMember: string) => `${displayNonMember} → ${MEMBER_DISCOUNT_PERCENT}% off for ELEVATED members`;
 
@@ -159,29 +157,25 @@ const StaffPricingCheatsheet = () => {
           <Card className="border-accent/40">
             <CardContent className="font-jost text-sm space-y-3">
               <p>
-                <span className="font-medium text-foreground">Program (recommended):</span>{" "}
-                {ELEVATED_PROGRAMS.metabolicRecomposition.name} — {METABOLIC_STACK_DISPLAY} all-in (phased Rx +
-                monitoring). Protocol slug: <code className="text-xs">metabolic-recomposition-stack-90d</code> (draft —
-                Akers sign-off).
+                <span className="font-medium text-foreground">Advanced recomposition:</span>{" "}
+                The standalone ELEVATED Metabolic program was retired 2026-06-24. Advanced support is
+                delivered inside the GLP-1 program (semaglutide $349/mo · tirzepatide $449/mo) — reviewed
+                in person, not advertised.
               </p>
               <p className="text-muted-foreground">
-                À la carte if patient declines program (sum at full stack ≈ $
-                {(metabolicStackAlacarteNonMemberCents() / 100).toFixed(0)}/mo eq.):
+                Provider-directed metabolic peptides (à la carte, monthly):
               </p>
               <ul className="space-y-1 text-xs">
-                {stackAlacarteLineItems().map((line) => (
-                  <li key={line.key} className="flex justify-between gap-2">
-                    <span>{line.name}</span>
-                    <span className="whitespace-nowrap">
-                      ${(line.nonMemberCents / 100).toFixed(0)}
-                      {line.interval === "one_time" ? "/fill" : "/mo"}
-                    </span>
+                {Object.values(METABOLIC_STACK_ALACARTE).map((p) => (
+                  <li key={p.priceId} className="flex justify-between gap-2">
+                    <span>{p.name}</span>
+                    <span className="whitespace-nowrap">{p.displayPrice}</span>
                   </li>
                 ))}
               </ul>
               <p className="text-xs text-muted-foreground">
-                Stack-only à la carte SKUs: {Object.values(METABOLIC_STACK_ALACARTE).map((p) => p.name).join(", ")}.
-                Retatrutide fill {MEDICATION_FILLS.retatrutide.displayPrice} — included on program.
+                Retatrutide fill {MEDICATION_FILLS.retatrutide.displayPrice} — gated, physician-selected
+                ONLY, within the GLP-1 lane under the GLP-1 consent. Never the lead, never advertised.
               </p>
             </CardContent>
           </Card>

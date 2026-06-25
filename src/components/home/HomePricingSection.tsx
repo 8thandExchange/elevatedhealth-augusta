@@ -2,14 +2,15 @@ import { ArrowRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 import { Button } from "@/components/ui/button";
-import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_DISPLAY_PRICE_RANGE } from "@/lib/stripeConfig";
 import { useBooking } from "@/contexts/BookingContext";
 
 const programHighlights = [
-  { program: ELEVATED_PROGRAMS.hrt, label: "Women's hormones" },
-  { program: ELEVATED_PROGRAMS.trt, label: "Men's TRT" },
-  { program: ELEVATED_PROGRAMS.glp1, label: "Medical weight loss" },
-  { program: ELEVATED_PROGRAMS.wellness, label: "Wellness & IV access" },
+  { program: ELEVATED_PROGRAMS.hrt, label: "Women's hormones", price: ELEVATED_PROGRAMS.hrt.displayPrice },
+  { program: ELEVATED_PROGRAMS.trt, label: "Men's TRT", price: ELEVATED_PROGRAMS.trt.displayPrice },
+  // GLP-1 is molecule-priced (semaglutide $349 / tirzepatide $449).
+  { program: ELEVATED_PROGRAMS.glp1, label: "Medical weight loss", price: GLP1_DISPLAY_PRICE_RANGE },
+  { program: ELEVATED_PROGRAMS.wellness, label: "Wellness & IV access", price: ELEVATED_PROGRAMS.wellness.displayPrice },
 ];
 
 const includes = [
@@ -62,10 +63,10 @@ const HomePricingSection = () => {
             <h3 className="font-playfair text-2xl md:text-3xl text-foreground mb-6">All-inclusive monthly care</h3>
 
             <ul className="grid sm:grid-cols-2 gap-3 mb-8">
-              {programHighlights.map(({ program, label }) => (
+              {programHighlights.map(({ program, label, price }) => (
                 <li key={program.name} className="flex items-baseline justify-between gap-2 border-b border-border pb-2">
                   <span className="font-jost text-sm text-foreground">{label}</span>
-                  <span className="font-playfair text-lg text-accent whitespace-nowrap">{program.displayPrice}</span>
+                  <span className="font-playfair text-lg text-accent whitespace-nowrap">{price}</span>
                 </li>
               ))}
             </ul>

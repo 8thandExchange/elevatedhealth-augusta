@@ -18,7 +18,7 @@ interface MedicalClearanceCardProps {
 
 const MEDICATION_OPTIONS = [
   { value: "semaglutide", label: "Semaglutide", price: "$299/fill · $349/mo program" },
-  { value: "tirzepatide", label: "Tirzepatide", price: "$399/fill · $349/mo program" },
+  { value: "tirzepatide", label: "Tirzepatide", price: "$399/fill · $449/mo program" },
 ];
 
 export function MedicalClearanceCard({

@@ -13,6 +13,13 @@ export const LIVE_ELEVATED_PROGRAMS = {
 
 export type LiveElevatedProgramKey = keyof typeof LIVE_ELEVATED_PROGRAMS;
 
+/**
+ * ELEVATED GLP-1 — Tirzepatide molecule price ($449/mo). Lives on the same
+ * GLP-1 product (prod_UVdgUmNtkHxr3V) and maps to the SAME `glp1` membership
+ * status; semaglutide stays on LIVE_ELEVATED_PROGRAMS.glp1 ($349/mo).
+ */
+export const LIVE_GLP1_TIRZEPATIDE_PRICE_ID = "price_1Tm1BzCXbCBPFEeIkrr2iGcI";
+
 /** Legacy single-tier Elevated membership — webhook sunset 2026-08-11 */
 export const LEGACY_ELEVATED_MEMBERSHIP_PRICE_ID = "price_1TUs3LEOtKRY99puWfQy8pHj";
 

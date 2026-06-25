@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import { ArrowLeft, TrendingUp, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +17,9 @@ import {
   allEconomicsRows,
   fmtPct,
   fmtUsd,
-  metabolicStackEconomics,
 } from "@/lib/formularyEconomics";
 
 const FormularyEconomicsDashboard = () => {
-  const stack = useMemo(() => metabolicStackEconomics(), []);
   const rows = useMemo(() => allEconomicsRows(), []);
 
   return (
@@ -61,49 +59,6 @@ const FormularyEconomicsDashboard = () => {
               <code className="text-xs">20260615010000</code>. GC = peptide partner; FCC = IV/core;
               Custom Pharmacy = hormones.
             </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="font-jost text-sm font-normal text-muted-foreground">
-                  Metabolic stack @ GC COGS
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-playfair text-3xl text-foreground">{fmtPct(stack.gcMarginPct)}</p>
-                <p className="font-jost text-xs text-muted-foreground mt-1">
-                  {fmtUsd(stack.gcModeledCogsCents)} COGS on {fmtUsd(stack.programPriceCents)}/mo
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="font-jost text-sm font-normal text-muted-foreground">
-                  Same program @ FCC COGS
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-playfair text-3xl text-destructive">{fmtPct(stack.fccMarginPct)}</p>
-                <p className="font-jost text-xs text-muted-foreground mt-1">
-                  {fmtUsd(stack.fccModeledCogsCents)} COGS — not viable at full dose
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-accent/30">
-              <CardHeader className="pb-2">
-                <CardTitle className="font-jost text-sm font-normal text-muted-foreground flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-accent" />
-                  GC savings vs FCC (stack model)
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-playfair text-3xl text-accent">
-                  {fmtUsd(stack.gcSavingsVsFccCents)}
-                </p>
-                <p className="font-jost text-xs text-muted-foreground mt-1">per patient-month at modeled capacity</p>
-              </CardContent>
-            </Card>
           </div>
 
           <Card>
@@ -189,11 +144,7 @@ const FormularyEconomicsDashboard = () => {
                 <p>
                   <strong className="text-foreground">SS-31 at full daily dose</strong> uses multiple
                   GC vials/month — margin on à la carte ${249}/mo is thin if patient runs 5 mg/day.
-                  Prefer bundle or escalate price before quoting SS-31 alone.
-                </p>
-                <p>
-                  Stack COGS uses <strong className="text-foreground">phased-average</strong> GC model
-                  ($748/mo), not worst-case concurrent full dose.
+                  Escalate price before quoting SS-31 alone.
                 </p>
               </div>
             </CardContent>

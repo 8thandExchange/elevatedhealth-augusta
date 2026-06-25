@@ -12,6 +12,7 @@ import {
 import {
   CORE_SERVICES,
   ELEVATED_PROGRAMS,
+  GLP1_PROGRAM_VARIANTS,
   IV_WALKIN_EXAMPLES,
   MEDICATION_FILLS,
 } from "@/lib/stripeConfig";
@@ -53,7 +54,11 @@ function buildProgramCostRows(
   const oneTime = oneTimeStartCents(program, drug);
   const nmSteady =
     program === "glp1" ? nonMemberSteadyMonthlyCentsGlp1(drug) : nonMemberSteadyMonthlyCents(program);
-  const memberMonthly = ELEVATED_PROGRAMS[program].amount;
+  // GLP-1 member monthly is molecule-specific (semaglutide $349 / tirzepatide $449).
+  const memberMonthly =
+    program === "glp1" ? GLP1_PROGRAM_VARIANTS[drug].amount : ELEVATED_PROGRAMS[program].amount;
+  const memberMonthlyDisplay =
+    program === "glp1" ? GLP1_PROGRAM_VARIANTS[drug].displayPrice : ELEVATED_PROGRAMS[program].displayPrice;
   const nmY1 = oneTime + nmSteady * 12;
   const mY1 = oneTime + memberMonthly * 12;
   const savingsY1 = nmY1 - mY1;
@@ -67,7 +72,7 @@ function buildProgramCostRows(
     {
       service: "Then every month",
       nonMember: `~${fmtUsd(nmSteady)} (med + amortized labs + check-in)`,
-      member: ELEVATED_PROGRAMS[program].displayPrice,
+      member: memberMonthlyDisplay,
     },
     {
       service: "Year 1 total",
@@ -276,6 +281,8 @@ export function MembershipComparison({
 }: MembershipComparisonProps) {
   const rows = rowsForProgram(program, drug);
   const prog = ELEVATED_PROGRAMS[program === "wellness" ? "wellness" : program];
+  const ctaPriceDisplay =
+    program === "glp1" ? GLP1_PROGRAM_VARIANTS[drug].displayPrice : prog.displayPrice;
   const href = ctaHref ?? DEFAULT_HREF[program];
   const memberTitle =
     program === "wellness" ? ELEVATED_PROGRAMS.wellness.name : `${prog.name} Member`;
@@ -314,7 +321,7 @@ export function MembershipComparison({
         <div className="flex justify-center pt-2">
           <Button variant="outline" asChild>
             <Link to={href}>
-              Join {prog.name} — {prog.displayPrice}
+              Join {prog.name} — {ctaPriceDisplay}
             </Link>
           </Button>
         </div>
@@ -350,7 +357,7 @@ export function MembershipComparison({
           <div className="p-4 bg-accent/10 ring-2 ring-inset ring-accent flex items-center justify-center">
             <Button variant="outline" asChild>
               <Link to={href}>
-                Join {prog.name} — {prog.displayPrice}
+                Join {prog.name} — {ctaPriceDisplay}
               </Link>
             </Button>
           </div>

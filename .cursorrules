@@ -84,8 +84,13 @@ LAB PANELS (clinical slug → Stripe checkout tier)
 
 ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
   ELEVATED TRT: $249/mo | ELEVATED HRT: $229/mo
-  ELEVATED GLP-1: $349/mo | ELEVATED Metabolic: $599/mo (tirzepatide-anchored)
+  ELEVATED GLP-1: Semaglutide $349/mo | Tirzepatide $449/mo
+    (molecule-priced — tirzepatide drug costs ~2x; both = same `glp1`
+    membership; a patient's price never changes as they titrate within
+    their molecule. Live prices: sema price_1TWcPLCXbCBPFEeIK7tkeIAM,
+    tirz price_1Tm1BzCXbCBPFEeIkrr2iGcI — both on prod_UVdgUmNtkHxr3V.)
   ELEVATED WELLNESS (non-Rx): $199/mo
+  (ELEVATED Metabolic $599/mo program RETIRED 2026-06-24 — see note below)
   Legacy single-tier "Elevated Membership $199" references and
   "Care Membership," "Founding Member," "Wellness Pass," etc. are
   LEGACY — use program-specific ELEVATED tiers from stripeConfig.ts.
@@ -96,7 +101,8 @@ ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
   20% checkout discount (MEMBER_DISCOUNT_PERCENT), not a separate product.
   The old Restore/Healing/Vitality "stack" tiers are LEGACY — do not reuse.
   GLP-1 (one-time fills): Semaglutide $299 | Tirzepatide $399
-    GLP-1 patients normally enroll in ELEVATED GLP-1 ($349/mo, all-inclusive).
+    GLP-1 patients normally enroll in ELEVATED GLP-1 (semaglutide $349/mo ·
+    tirzepatide $449/mo, all-inclusive).
   Recovery peptides (one-time fills, consult-gated under Research Peptide
     Consent): BPC-157 $249 | TB-500 $249 | BPC-157/TB-500 Recovery Stack $349
     Internal-only name "Wolverine Stack" — NEVER patient-facing/checkout copy.
@@ -105,28 +111,33 @@ ELEVATED PROGRAM MEMBERSHIPS (monthly, all-inclusive)
   Peptide therapy (monthly): Sermorelin $149 | CJC-1295/Ipamorelin $179 |
     Tesamorelin $399 | NAD+ Injection $199 | NAD+ Troche $99 | NAD+ Nasal $99 |
     GHK-Cu Topical $149  (GHK-Cu Sublingual is NOT offered)
-  Metabolic à la carte (provider-only, monthly): SS-31 $249 | AOD-9604 $129 |
-    SLU-PP-332 $99 | 5-Amino-1MQ $119
+  Metabolic peptides à la carte (provider-only, monthly; standalone — NOT a
+    bundled program): SS-31 $249 | AOD-9604 $129 | SLU-PP-332 $99 | 5-Amino-1MQ $119
   Hair restoration: Minoxidil+Finasteride $129/mo | Dutasteride $149/mo |
     GHK-Cu Scalp $149/mo
   Medication fills (one-time): Testosterone $179 | Bi-Est $109 | Progesterone $99
   Core services (one-time): Medical Review $149 | Phone Follow-Up $99 |
     Rebooking $99
 
-ELEVATED Metabolic — premium metabolic / body-recomposition program ($599/mo).
-  Tirzepatide-anchored (legally compoundable under 503A patient-specific authority).
-  Replaced the retired $1,199 retatrutide "Metabolic Recomposition" stack
-  (2026-06-19). Supporting lean-mass peptides (SS-31, AOD-9604, etc.) remain
-  provider-only à la carte; they are no longer bundled into a sold stack.
+ELEVATED Metabolic — DISCONTINUED (2026-06-24).
+  The bundled metabolic / body-recomposition program (most recently the $599/mo
+  tirzepatide-anchored version; previously the $1,199 retatrutide stack) is RETIRED.
+  Do NOT reintroduce it as a sold program, Stripe price, route, or nav item without
+  fresh leadership sign-off. Advanced recomposition now lives INSIDE the ELEVATED
+  GLP-1 program: the physician may layer lean-mass/metabolic support (and, gated,
+  retatrutide) per clinical judgment, reviewed in person, not published.
+  The lean-mass peptides (SS-31, AOD-9604, SLU-PP-332, 5-Amino-1MQ) remain
+  provider-only à la carte — standalone molecules, not a bundle.
 
 RETATRUTIDE — GATED, PROVIDER-SELECTED, NEVER ADVERTISED
   Retatrutide is NOT the anchor of any sold program. It is a gated,
-  provider-selected option offered only after the wellness assessment, by
-  physician decision, under Dr. Akers' responsibility. A $449 à la carte fill
-  exists in Stripe but is provider-discretion, not displayed, and NEVER named on
-  public storefronts. Do NOT advertise the molecule. Do NOT make it the headline
-  metabolic offer (that is tirzepatide). See the REGULATORY note below for the
-  FDA compounding position.
+  provider-selected investigational option within the GLP-1 lane, offered only
+  after the wellness assessment, by physician decision, under Dr. Akers'
+  responsibility, consented under the GLP-1 consent (Section 11A). A $449 à la
+  carte fill exists in Stripe but is provider-discretion, not displayed, and NEVER
+  named on public storefronts. Do NOT advertise the molecule. Do NOT make it the
+  headline weight/GLP-1 offer (that is semaglutide/tirzepatide). See the REGULATORY
+  note below for the FDA compounding position.
 
 IV THERAPY (walk-in pricing, members get 20% off add-ons)
   Myers Cocktail: $185
@@ -221,9 +232,10 @@ RETATRUTIDE — FDA POSITION + CLINIC POSTURE (updated 2026-06-19)
   otherwise only to trial participants. A clinic policy does NOT override federal
   compounding law — do NOT write code/copy that states "policy supersedes FDA."
   Clinic posture: retatrutide is offered ONLY as a gated, provider-selected
-  option under Dr. Akers' explicit responsibility — never advertised, never the
-  headline metabolic product (that is tirzepatide-anchored ELEVATED Metabolic).
-  This carries known FDA exposure; any expansion of retatrutide's visibility or
+  option within the ELEVATED GLP-1 lane, under Dr. Akers' explicit responsibility
+  — never advertised, never the headline weight product (that is
+  semaglutide/tirzepatide). This carries known FDA exposure; any expansion of
+  retatrutide's visibility or
   any à la carte/advertised path requires fresh written physician/legal sign-off.
   Consent: must be GLP-1-class with explicit investigational / not-FDA-approved /
   not-compoundable disclosure — NOT the research-peptide Cat 2 pathway. (The

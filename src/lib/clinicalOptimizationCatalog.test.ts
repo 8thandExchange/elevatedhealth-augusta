@@ -9,10 +9,10 @@ describe("clinicalOptimizationCatalog", () => {
     expect(catalogBySlug("ketamine")?.public_status).toBe("inactive");
   });
 
-  it("keeps retatrutide provider-only / program path", () => {
+  it("keeps retatrutide gated provider-only within the GLP-1 lane", () => {
     const r = catalogBySlug("retatrutide-provider-directed");
     expect(r?.public_status).toBe("provider_only");
-    expect(r?.elevated_program_key).toBe("metabolicRecomposition");
+    expect(r?.elevated_program_key).toBe("glp1");
   });
 
   it("omits launch-hidden sexual wellness from homepage cards", () => {

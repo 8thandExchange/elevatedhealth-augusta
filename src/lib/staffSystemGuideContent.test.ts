@@ -9,7 +9,7 @@ describe("staffSystemGuideContent", () => {
     expect(weight?.patientCharge).toBe("$299");
     expect(weight?.panelName).toMatch(/Expanded/i);
     const trt = rows.find((r) => r.goalKey === "low_testosterone");
-    expect(trt?.patientCharge).toBe("$199");
+    expect(trt?.patientCharge).toBe("$299");
     const iv = rows.find((r) => r.goalKey === "iv_only");
     expect(iv?.panelSlug).toBeNull();
   });

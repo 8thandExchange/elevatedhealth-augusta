@@ -17,7 +17,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import NotReadyToBook from "@/components/NotReadyToBook";
 import HowGLP1Works from "@/components/HowGLP1Works";
-import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripeConfig";
+import {
+  CORE_SERVICES,
+  ELEVATED_PROGRAMS,
+  GLP1_DISPLAY_PRICE_RANGE,
+  GLP1_PROGRAM_VARIANTS,
+  MEDICATION_FILLS,
+} from "@/lib/stripeConfig";
 import { PUBLIC_GLP1_CARE_FLOW } from "@/lib/clinicalOptimizationCatalog";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
@@ -36,7 +42,10 @@ import {
 // (create-consultation-checkout, semaglutide/tirzepatide checkouts).
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL_WEIGHT = CORE_SERVICES.expandedPanel.displayPrice;
-const PRICE_PROGRAM_GLP1 = ELEVATED_PROGRAMS.glp1.displayPrice;
+// GLP-1 program is molecule-priced: semaglutide $349/mo, tirzepatide $449/mo.
+const PRICE_PROGRAM_GLP1 = GLP1_DISPLAY_PRICE_RANGE;
+const PRICE_PROGRAM_GLP1_SEMA = GLP1_PROGRAM_VARIANTS.semaglutide.displayPrice;
+const PRICE_PROGRAM_GLP1_TIRZ = GLP1_PROGRAM_VARIANTS.tirzepatide.displayPrice;
 
 const WeightLoss = () => {
   const navigate = useNavigate();
@@ -853,7 +862,7 @@ const WeightLoss = () => {
                         className="w-full bg-primary hover:bg-primary/90 text-white font-jost"
                       >
                         {isSemaglutideLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        {isSemaglutideLoading ? "Processing..." : "Enroll — semaglutide path"}
+                        {isSemaglutideLoading ? "Processing..." : `Enroll — semaglutide (${PRICE_PROGRAM_GLP1_SEMA})`}
                       </Button>
                       <Button
                         onClick={handleTirzepatideCheckout}
@@ -863,7 +872,7 @@ const WeightLoss = () => {
                         className="w-full border-accent text-primary font-jost"
                       >
                         {isTirzepatideLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        {isTirzepatideLoading ? "Processing..." : "Enroll — tirzepatide path"}
+                        {isTirzepatideLoading ? "Processing..." : `Enroll — tirzepatide (${PRICE_PROGRAM_GLP1_TIRZ})`}
                       </Button>
                     </div>
                   </div>

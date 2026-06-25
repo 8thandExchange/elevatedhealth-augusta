@@ -1,10 +1,12 @@
 /**
- * create-tirzepatide-checkout — same as semaglutide: **ELEVATED GLP-1** live program price.
+ * create-tirzepatide-checkout — **ELEVATED GLP-1 · Tirzepatide** ($449/mo).
+ * Tirzepatide is priced higher than semaglutide ($349) because the compounded
+ * drug costs ~2x; both enroll the patient in the same `glp1` membership.
  */
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { LIVE_ELEVATED_PROGRAMS } from "../_shared/live-prices.ts";
+import { LIVE_GLP1_TIRZEPATIDE_PRICE_ID } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
@@ -45,7 +47,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : email,
-      line_items: [{ price: LIVE_ELEVATED_PROGRAMS.glp1, quantity: 1 }],
+      line_items: [{ price: LIVE_GLP1_TIRZEPATIDE_PRICE_ID, quantity: 1 }],
       mode: "subscription",
       success_url: `${origin}/medication-confirmed?med=tirzepatide`,
       cancel_url: `${origin}/weight-loss`,

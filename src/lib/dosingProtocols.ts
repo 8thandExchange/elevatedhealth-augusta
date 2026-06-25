@@ -90,15 +90,15 @@ export const DOSING_PROTOCOLS: Record<string, DosingProtocol> = {
       { weeks: "9–12", dose: "3–4 mg (30–40 units)" },
       { weeks: "13+", dose: "4–8 mg per metabolic protocol", syringeNote: "Physician titration only" },
     ],
-    maintenanceDose: "4 mg weekly (EHA metabolic stack anchor)",
-    cycleWeeks: "12–24 weeks per 90-day recomposition program",
+    maintenanceDose: "4 mg weekly (lowest effective dose; physician titration only)",
+    cycleWeeks: "Reassess per physician",
     patientExplanation:
-      "The anchor of our Metabolic Recomposition program — a weekly injection that targets appetite, insulin sensitivity, and fat metabolism. Only offered inside the supervised program with signed consents.",
+      "An investigational weekly injection that targets appetite, insulin sensitivity, and fat metabolism. Gated and physician-selected only within the GLP-1 program under the GLP-1 consent — never advertised, never the lead.",
     staffNotes: [
-      "Metabolic Recomposition program only — not à la carte except physician exception.",
-      "Research peptide + GLP consents required.",
+      "Gated, physician-selected ONLY — within the GLP-1 lane. Not advertised, not casual à la carte.",
+      "GLP-1 consent (Section 11A investigational disclosure) required.",
     ],
-    consents: ["research_peptide", "glp1"],
+    consents: ["glp1"],
   },
   wolverine: {
     compoundKey: "wolverine",

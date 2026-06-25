@@ -5,6 +5,7 @@ import { Resend } from "https://esm.sh/resend@2.0.0";
 import {
   LEGACY_ELEVATED_MEMBERSHIP_PRICE_ID,
   LIVE_ELEVATED_PROGRAMS,
+  LIVE_GLP1_TIRZEPATIDE_PRICE_ID,
   type LiveElevatedProgramKey,
 } from "../_shared/live-prices.ts";
 import {
@@ -31,6 +32,8 @@ const ELEVATED_PROGRAM_PRICE_MAP: Record<string, ElevatedProgramKey> = {
   [LIVE_ELEVATED_PROGRAMS.trt]: "trt",
   [LIVE_ELEVATED_PROGRAMS.hrt]: "hrt",
   [LIVE_ELEVATED_PROGRAMS.glp1]: "glp1",
+  // Tirzepatide GLP-1 ($449/mo) — same membership status as semaglutide GLP-1.
+  [LIVE_GLP1_TIRZEPATIDE_PRICE_ID]: "glp1",
   [LIVE_ELEVATED_PROGRAMS.wellness]: "wellness",
   [LIVE_ELEVATED_PROGRAMS.metabolicRecomposition]: "metabolicRecomposition",
 };

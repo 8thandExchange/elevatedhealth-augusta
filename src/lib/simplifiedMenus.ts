@@ -33,8 +33,7 @@ export const PUBLIC_MENU: MenuTier[] = [
     items: [
       { id: "trt", label: "ELEVATED TRT", priceDisplay: "$249/mo", vendor: "custom_pharmacy_evans" },
       { id: "hrt", label: "ELEVATED HRT", priceDisplay: "$229/mo", vendor: "custom_pharmacy_evans" },
-      { id: "glp1", label: "ELEVATED GLP-1", priceDisplay: "$349/mo", vendor: "gc" },
-      { id: "metabolic", label: "ELEVATED Metabolic (tirzepatide-anchored)", priceDisplay: "$599/mo", vendor: "gc" },
+      { id: "glp1", label: "ELEVATED GLP-1", priceDisplay: "$349–$449/mo", vendor: "gc" },
       { id: "wellness", label: "ELEVATED Wellness", priceDisplay: "$199/mo", vendor: "mixed" },
     ],
   },
@@ -51,12 +50,11 @@ export const PUBLIC_MENU: MenuTier[] = [
   {
     id: "peptide-stacks",
     title: "Named peptide stacks (not à la carte catalog)",
-    description: "Three stacks + metabolic program. Do not recite full peptide list to prospects.",
+    description: "Three named stacks. Do not recite full peptide list to prospects.",
     items: [
       { id: "restore", label: "Restore (PT-141 weekly)", priceDisplay: "$129–179/mo", vendor: "gc" },
       { id: "healing", label: "BPC-157 / TB-500 recovery stack", priceDisplay: "$249–329/mo", vendor: "gc" },
       { id: "vitality", label: "Vitality (Sermorelin + NAD+)", priceDisplay: "$299–399/mo", vendor: "gc" },
-      { id: "metabolic-stack", label: "ELEVATED Metabolic (tirzepatide-anchored)", priceDisplay: "$599/mo", vendor: "gc" },
     ],
   },
   {

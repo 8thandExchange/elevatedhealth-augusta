@@ -75,7 +75,7 @@ const HowGLP1Works = () => {
     {
       feature: "ELEVATED GLP-1 program",
       semaglutide: "$349/mo all-inclusive",
-      tirzepatide: "$349/mo all-inclusive"
+      tirzepatide: "$449/mo all-inclusive"
     }
   ];
 

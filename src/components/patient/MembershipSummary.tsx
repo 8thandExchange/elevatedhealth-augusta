@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown } from "lucide-react";
-import { ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { ELEVATED_PROGRAMS, GLP1_DISPLAY_PRICE_RANGE } from "@/lib/stripeConfig";
 
 interface MembershipSummaryProps {
   membershipTier: string | null;
@@ -46,6 +46,10 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
 
   const isElevated = (ELEVATED_KEYS as readonly string[]).includes(membershipTier);
   const program = isElevated ? elevatedProgram(membershipTier) : null;
+  // GLP-1 price is molecule-specific ($349 semaglutide / $449 tirzepatide) and
+  // the molecule isn't stored on the membership tier, so show the range.
+  const programPriceDisplay =
+    membershipTier === "elevated_glp1" ? GLP1_DISPLAY_PRICE_RANGE : program?.displayPrice;
 
   const legacyLabel =
     membershipTier === "vitality"
@@ -69,7 +73,7 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
                 {program ? program.name : legacyLabel}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                {program ? program.displayPrice : "Historical tier — clinic has your pricing details"}
+                {program ? programPriceDisplay : "Historical tier — clinic has your pricing details"}
               </p>
             </div>
           </div>
@@ -108,7 +112,7 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
         {program && (
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <span className="text-sm text-muted-foreground">Program rate</span>
-            <span className="text-lg font-cormorant font-semibold text-primary">{program.displayPrice}</span>
+            <span className="text-lg font-cormorant font-semibold text-primary">{programPriceDisplay}</span>
           </div>
         )}
       </CardContent>

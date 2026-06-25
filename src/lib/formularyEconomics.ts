@@ -1,7 +1,6 @@
 /**
  * Formulary economics — margin and vendor comparison for staff/financial analysis.
  */
-import { ELEVATED_PROGRAMS } from "./stripeConfig";
 import {
   FORMULARY_ECONOMICS_CATALOG,
   type FormularyEconomicsLine,
@@ -46,31 +45,6 @@ export function allEconomicsRows(): EconomicsRow[] {
 
 export function economicsBySupplier(supplier: FormularySupplier): EconomicsRow[] {
   return allEconomicsRows().filter((r) => r.primarySupplier === supplier);
-}
-
-export interface StackEconomicsSummary {
-  programPriceCents: number;
-  gcModeledCogsCents: number;
-  fccModeledCogsCents: number;
-  gcMarginPct: number;
-  fccMarginPct: number;
-  gcSavingsVsFccCents: number;
-}
-
-export function metabolicStackEconomics(): StackEconomicsSummary {
-  const stack = FORMULARY_ECONOMICS_CATALOG.find((l) => l.itemCode === "STACK-METABOLIC-FULL");
-  const programPriceCents = ELEVATED_PROGRAMS.metabolicRecomposition.amount;
-  const gcModeledCogsCents = stack?.primaryCostCents ?? 74800;
-  const fccModeledCogsCents = stack?.alternateCostCents ?? 117900;
-
-  return {
-    programPriceCents,
-    gcModeledCogsCents,
-    fccModeledCogsCents,
-    gcMarginPct: marginPct(gcModeledCogsCents, programPriceCents) ?? 0,
-    fccMarginPct: marginPct(fccModeledCogsCents, programPriceCents) ?? 0,
-    gcSavingsVsFccCents: fccModeledCogsCents - gcModeledCogsCents,
-  };
 }
 
 export function totalGcSavingsMonthly(): number {

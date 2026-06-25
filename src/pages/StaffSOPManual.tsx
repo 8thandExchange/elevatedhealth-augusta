@@ -28,9 +28,8 @@ import {
   allEconomicsRows,
   fmtPct,
   fmtUsd,
-  metabolicStackEconomics,
 } from "@/lib/formularyEconomics";
-import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_PROGRAM_VARIANTS } from "@/lib/stripeConfig";
 import { VENDORS } from "@/lib/vendorRouting";
 
 function StepMeta({ step }: { step: AlgorithmStep }) {
@@ -154,7 +153,6 @@ function JourneyTimeline() {
 }
 
 const StaffSOPManual = () => {
-  const stack = metabolicStackEconomics();
   const economics = allEconomicsRows().filter((r) => r.clientPriceCents > 0);
   const master = getFeaturedAlgorithm();
 
@@ -437,39 +435,6 @@ const StaffSOPManual = () => {
               </TableBody>
             </Table>
 
-            <h3 className="font-playfair text-xl mb-4">Metabolic stack — GC vs FCC margin</h3>
-            <Table className="mb-10">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>COGS model</TableHead>
-                  <TableHead className="text-right">Cost/mo</TableHead>
-                  <TableHead className="text-right">Charge</TableHead>
-                  <TableHead className="text-right">Gross margin</TableHead>
-                  <TableHead className="text-right">Profit/mo</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>GC phased average (primary)</TableCell>
-                  <TableCell className="text-right">{fmtUsd(stack.gcModeledCogsCents)}</TableCell>
-                  <TableCell className="text-right">{fmtUsd(stack.programPriceCents)}</TableCell>
-                  <TableCell className="text-right text-accent">{fmtPct(stack.gcMarginPct)}</TableCell>
-                  <TableCell className="text-right font-medium">
-                    {fmtUsd(stack.programPriceCents - stack.gcModeledCogsCents)}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="text-muted-foreground">FCC full capacity (do not use)</TableCell>
-                  <TableCell className="text-right">{fmtUsd(stack.fccModeledCogsCents)}</TableCell>
-                  <TableCell className="text-right">{fmtUsd(stack.programPriceCents)}</TableCell>
-                  <TableCell className="text-right text-destructive">{fmtPct(stack.fccMarginPct)}</TableCell>
-                  <TableCell className="text-right">
-                    {fmtUsd(stack.programPriceCents - stack.fccModeledCogsCents)}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-
             <h3 className="font-playfair text-xl mb-4">First-month patient investment (typical)</h3>
             <Table className="mb-10">
               <TableHeader>
@@ -486,8 +451,8 @@ const StaffSOPManual = () => {
                   [
                     ["TRT", ELEVATED_PROGRAMS.trt, CORE_SERVICES.comprehensivePanel],
                     ["HRT", ELEVATED_PROGRAMS.hrt, CORE_SERVICES.comprehensivePanel],
-                    ["GLP-1", ELEVATED_PROGRAMS.glp1, CORE_SERVICES.expandedPanel],
-                    ["Metabolic", ELEVATED_PROGRAMS.metabolicRecomposition, CORE_SERVICES.expandedPanel],
+                    ["GLP-1 (semaglutide)", GLP1_PROGRAM_VARIANTS.semaglutide, CORE_SERVICES.expandedPanel],
+                    ["GLP-1 (tirzepatide)", GLP1_PROGRAM_VARIANTS.tirzepatide, CORE_SERVICES.expandedPanel],
                   ] as const
                 ).map(([label, prog, panel]) => {
                   const total =

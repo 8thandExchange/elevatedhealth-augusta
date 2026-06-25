@@ -221,6 +221,11 @@ verify_jwt = false
 [functions.bootstrap-elevated-metabolic-price]
 verify_jwt = false
 
+# bootstrap-glp1-tirzepatide-price — one-shot: add $449/mo tirzepatide price to
+# the ELEVATED GLP-1 product. Self-checks service_role.
+[functions.bootstrap-glp1-tirzepatide-price]
+verify_jwt = false
+
 [functions.send-welcome-sms]
 verify_jwt = false
 

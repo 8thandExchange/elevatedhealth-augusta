@@ -5,8 +5,8 @@ describe("cdsPathwayCatalog", () => {
   it("formats TRT default panel charge", () => {
     const lab = formatRecommendedLabPanel("hormone-male");
     expect(lab.label).toBe("Male Hormone Panel");
-    expect(lab.displayPrice).toBe("$199");
-    expect(lab.cents).toBe(19900);
+    expect(lab.displayPrice).toBe("$299");
+    expect(lab.cents).toBe(29900);
   });
 
   it("formats GLP-1 default panel as expanded tier", () => {

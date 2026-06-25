@@ -2,20 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   allEconomicsRows,
   marginPct,
-  metabolicStackEconomics,
 } from "./formularyEconomics";
 import { FORMULARY_ECONOMICS_CATALOG } from "./vendorRouting";
 import { publicMenuItemCount } from "./simplifiedMenus";
 
 describe("formularyEconomics", () => {
-  it("metabolic stack GC margin beats FCC margin at $599/mo", () => {
-    const s = metabolicStackEconomics();
-    expect(s.programPriceCents).toBe(59900);
-    expect(s.gcModeledCogsCents).toBeLessThan(s.fccModeledCogsCents);
-    expect(s.gcMarginPct).toBeGreaterThan(s.fccMarginPct);
-    expect(s.gcSavingsVsFccCents).toBeGreaterThan(0);
-  });
-
   it("retatrutide GC primary cost is below FCC alternate", () => {
     const row = allEconomicsRows().find((r) => r.itemCode === "PEPTIDE-RETATRUTIDE");
     expect(row?.primaryCostCents).toBeLessThan(row?.alternateCostCents ?? Infinity);

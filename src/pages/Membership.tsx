@@ -8,7 +8,7 @@ import { ArrowRight, Check, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import ConsultationModal from "@/components/ConsultationModal";
-import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_DISPLAY_PRICE_RANGE } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
@@ -187,7 +187,7 @@ const Membership = () => {
               {PROGRAM_ROWS.map(({ key, program, href, blurb }) => (
                 <div key={key} className="border border-border/60 p-6 bg-secondary/20 flex flex-col text-left">
                   <p className="section-label mb-2">{program.name}</p>
-                  <p className="font-playfair text-3xl text-accent mb-3">{program.displayPrice}</p>
+                  <p className="font-playfair text-3xl text-accent mb-3">{key === "glp1" ? GLP1_DISPLAY_PRICE_RANGE : program.displayPrice}</p>
                   <p className="font-jost font-light text-sm text-muted-foreground mb-6 flex-1">{blurb}</p>
                   <ul className="space-y-2 mb-6 font-jost text-sm text-foreground">
                     {SHARED_INCLUDES.map((line) => (
@@ -254,7 +254,7 @@ const Membership = () => {
                 { l: CORE_SERVICES.comprehensivePanel.name, p: PRICE_PANEL, sub: "drawn on-site, processed by LabCorp" },
                 {
                   l: "ELEVATED programs",
-                  p: `${ELEVATED_PROGRAMS.trt.displayPrice} – ${ELEVATED_PROGRAMS.wellness.displayPrice}`,
+                  p: "$199 – $449/mo",
                   sub: "Select the program that matches your protocol",
                 },
               ].map((item) => (

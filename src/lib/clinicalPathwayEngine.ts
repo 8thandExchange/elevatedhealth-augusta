@@ -2,7 +2,17 @@
  * Clinical pathway engine — goal → program → labs → compounds → dosing → consents.
  * Staff-facing decision support. Physician signs all prescriptions.
  */
-import { CORE_SERVICES, ELEVATED_PROGRAMS, type ElevatedProgramKey } from "./stripeConfig";
+import {
+  CORE_SERVICES,
+  ELEVATED_PROGRAMS,
+  GLP1_DISPLAY_PRICE_RANGE,
+  type ElevatedProgramKey,
+} from "./stripeConfig";
+
+/** GLP-1 is molecule-priced; show the range when the molecule isn't fixed. */
+function programPriceDisplay(programKey: ElevatedProgramKey): string {
+  return programKey === "glp1" ? GLP1_DISPLAY_PRICE_RANGE : ELEVATED_PROGRAMS[programKey].displayPrice;
+}
 import { PROGRAM_DEFAULT_LAB_SLUG, labCheckoutTierForSlug, labPanelNonMemberCents } from "./labPanelCheckout";
 import {
   LAB_PANEL_DISPLAY_NAMES,
@@ -132,8 +142,8 @@ function buildSteps(
     steps.push({
       order: 5,
       phase: "Enroll",
-      action: `Enroll ${ELEVATED_PROGRAMS[programKey].name} (${ELEVATED_PROGRAMS[programKey].displayPrice}).`,
-      charge: ELEVATED_PROGRAMS[programKey].displayPrice,
+      action: `Enroll ${ELEVATED_PROGRAMS[programKey].name} (${programPriceDisplay(programKey)}).`,
+      charge: programPriceDisplay(programKey),
     });
     steps.push({
       order: 6,
@@ -160,7 +170,10 @@ function buildSteps(
 }
 
 function recommendWeightLoss(advanced: boolean): PathwayRecommendation {
-  const programKey: ElevatedProgramKey = advanced ? "metabolicRecomposition" : "glp1";
+  // The standalone ELEVATED Metabolic program was retired 2026-06-24. Advanced
+  // recomposition now lives inside the GLP-1 lane: physician may layer additional
+  // metabolic support and, in gated cases, an investigational option per consent.
+  const programKey: ElevatedProgramKey = "glp1";
   const labSlug = PROGRAM_DEFAULT_LAB_SLUG[programKey];
   const lab = labMeta(labSlug);
   const compoundKeys = advanced
@@ -177,7 +190,7 @@ function recommendWeightLoss(advanced: boolean): PathwayRecommendation {
     offerTier: "program",
     programKey,
     programName: ELEVATED_PROGRAMS[programKey].name,
-    programPriceDisplay: ELEVATED_PROGRAMS[programKey].displayPrice,
+    programPriceDisplay: programPriceDisplay(programKey),
     labSlug: lab.slug,
     labPanelName: lab.name,
     labChargeCents: lab.cents,
@@ -188,12 +201,12 @@ function recommendWeightLoss(advanced: boolean): PathwayRecommendation {
       ? ["Research Peptide Consent", "GLP-1 Consent", "Off-label Tesamorelin (if prescribed)"]
       : ["GLP-1 Consent"],
     patientExplanation: advanced
-      ? "Your labs support our supervised ELEVATED Metabolic program — a tirzepatide-anchored weekly injection with lean-mass and metabolic support layered in as you tolerate each step, under close physician oversight."
+      ? "Your labs support advanced, physician-directed weight management within our GLP-1 program — your physician may layer lean-mass and metabolic support, and in select cases an investigational option, only as your labs and tolerance support each step, under close oversight."
       : "We'll start with a GLP-1 program: one weekly injection, RN check-ins, and labs included while you're enrolled. Semaglutide is our default; tirzepatide if clinically appropriate.",
     staffScript: advanced
-      ? "Lead with the $599/mo ELEVATED Metabolic program (tirzepatide-anchored). Retatrutide is gated/provider-selected ONLY — never the lead, never advertised."
-      : "Lead with $349/mo GLP-1 program. Quote $79 consult + $299 Expanded labs for month one.",
-    upsell: advanced ? undefined : "If BMI >30 or prior GLP failure, flag metabolic program at results review.",
+      ? "Lead with the GLP-1 program (semaglutide $349/mo, tirzepatide $449/mo). Advanced recomposition support — including gated, physician-selected retatrutide — is reviewed in person under the GLP-1 consent. Never the lead, never advertised."
+      : "Lead with the GLP-1 program (semaglutide $349/mo, tirzepatide $449/mo). Quote $79 consult + $299 Expanded labs for month one.",
+    upsell: advanced ? undefined : "If BMI >30 or prior GLP failure, flag advanced recomposition support at results review.",
     excludedAlternatives: ["mazdutide", "cagrilintide blends"],
     algorithmSteps: buildSteps(advanced ? "metabolic_recomposition" : "weight_loss", programKey, compoundKeys),
   };
@@ -381,7 +394,7 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       offerTier: "program",
       programKey: "glp1",
       programName: ELEVATED_PROGRAMS.glp1.name,
-      programPriceDisplay: ELEVATED_PROGRAMS.glp1.displayPrice,
+      programPriceDisplay: GLP1_DISPLAY_PRICE_RANGE,
       labSlug: lab.slug,
       labPanelName: lab.name,
       labChargeCents: lab.cents,

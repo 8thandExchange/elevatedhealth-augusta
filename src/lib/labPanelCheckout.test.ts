@@ -28,7 +28,7 @@ describe("labPanelCheckout", () => {
   it("assigns program default lab slugs", () => {
     expect(PROGRAM_DEFAULT_LAB_SLUG.trt).toBe("hormone-male");
     expect(PROGRAM_DEFAULT_LAB_SLUG.glp1).toBe("weight-optimization");
-    expect(PROGRAM_DEFAULT_LAB_SLUG.metabolicRecomposition).toBe("weight-optimization");
+    expect(PROGRAM_DEFAULT_LAB_SLUG.wellness).toBe("foundation-wellness");
   });
 
   it("maps clinical slug to à la carte checkout product key", () => {

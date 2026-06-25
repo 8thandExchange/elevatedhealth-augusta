@@ -43,7 +43,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { ELEVATED_PROGRAMS, GLP1_DISPLAY_PRICE_RANGE } from "@/lib/stripeConfig";
 import {
   Search,
   MoreHorizontal,
@@ -120,7 +120,7 @@ const statusLabels: Record<string, { label: string; variant: "default" | "second
 const membershipLabels: Record<string, { label: string; color: string }> = {
   elevated_trt: { label: `${ELEVATED_PROGRAMS.trt.name} (${ELEVATED_PROGRAMS.trt.displayPrice})`, color: "bg-emerald-100 text-emerald-900" },
   elevated_hrt: { label: `${ELEVATED_PROGRAMS.hrt.name} (${ELEVATED_PROGRAMS.hrt.displayPrice})`, color: "bg-emerald-100 text-emerald-900" },
-  elevated_glp1: { label: `${ELEVATED_PROGRAMS.glp1.name} (${ELEVATED_PROGRAMS.glp1.displayPrice})`, color: "bg-emerald-100 text-emerald-900" },
+  elevated_glp1: { label: `${ELEVATED_PROGRAMS.glp1.name} (${GLP1_DISPLAY_PRICE_RANGE})`, color: "bg-emerald-100 text-emerald-900" },
   elevated_wellness: { label: `${ELEVATED_PROGRAMS.wellness.name} (${ELEVATED_PROGRAMS.wellness.displayPrice})`, color: "bg-emerald-100 text-emerald-900" },
   access: { label: "ACCESS (Legacy)", color: "bg-slate-100 text-slate-800" },
   vitality: { label: "VITALITY (Legacy)", color: "bg-amber-100 text-amber-800" },

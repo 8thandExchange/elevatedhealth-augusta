@@ -1,7 +1,7 @@
 /**
  * Export SOP manual to Markdown / HTML for offline download.
  */
-import { CORE_SERVICES, ELEVATED_PROGRAMS } from "./stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_PROGRAM_VARIANTS } from "./stripeConfig";
 import {
   CHARGE_CHECKPOINTS,
   SOP_ALGORITHMS,
@@ -10,7 +10,7 @@ import {
   UPSELL_MATRIX,
   getAlgorithmById,
 } from "./sopManualContent";
-import { allEconomicsRows, fmtPct, fmtUsd, metabolicStackEconomics } from "./formularyEconomics";
+import { allEconomicsRows, fmtPct, fmtUsd } from "./formularyEconomics";
 
 function algorithmToMarkdown(algo: (typeof SOP_ALGORITHMS)[0]): string {
   const lines = [
@@ -41,7 +41,6 @@ function algorithmToMarkdown(algo: (typeof SOP_ALGORITHMS)[0]): string {
 }
 
 export function buildSOPManualMarkdown(): string {
-  const stack = metabolicStackEconomics();
   const economics = allEconomicsRows();
   const master = getAlgorithmById("ALGO-000");
 
@@ -133,13 +132,6 @@ export function buildSOPManualMarkdown(): string {
       (p) => `| ${p.name} | ${p.displayPrice} | Medication when in-program included |`,
     ),
     "",
-    "### Metabolic stack margin model",
-    "",
-    `| Model | COGS/mo | Charge | Gross margin |`,
-    `|-------|---------|--------|--------------|`,
-    `| GC (phased avg) | ${fmtUsd(stack.gcModeledCogsCents)} | ${fmtUsd(stack.programPriceCents)} | ${fmtPct(stack.gcMarginPct)} |`,
-    `| FCC (full capacity) | ${fmtUsd(stack.fccModeledCogsCents)} | ${fmtUsd(stack.programPriceCents)} | ${fmtPct(stack.fccMarginPct)} |`,
-    "",
     "## Appendix B — Line-item COGS & margins",
     "",
     "| Item | Primary vendor | COGS | Alternate | Alt COGS | Charge | Margin |",
@@ -157,8 +149,8 @@ export function buildSOPManualMarkdown(): string {
     "|------|---------|------|-----------------|---------------|",
     `| TRT | ${CORE_SERVICES.wellnessAssessment.displayPrice} | ${CORE_SERVICES.comprehensivePanel.displayPrice} | ${ELEVATED_PROGRAMS.trt.displayPrice} | ${fmtUsd(CORE_SERVICES.wellnessAssessment.amount + CORE_SERVICES.comprehensivePanel.amount + ELEVATED_PROGRAMS.trt.amount)} |`,
     `| HRT | ${CORE_SERVICES.wellnessAssessment.displayPrice} | ${CORE_SERVICES.comprehensivePanel.displayPrice} | ${ELEVATED_PROGRAMS.hrt.displayPrice} | ${fmtUsd(CORE_SERVICES.wellnessAssessment.amount + CORE_SERVICES.comprehensivePanel.amount + ELEVATED_PROGRAMS.hrt.amount)} |`,
-    `| GLP-1 | ${CORE_SERVICES.wellnessAssessment.displayPrice} | ${CORE_SERVICES.expandedPanel.displayPrice} | ${ELEVATED_PROGRAMS.glp1.displayPrice} | ${fmtUsd(CORE_SERVICES.wellnessAssessment.amount + CORE_SERVICES.expandedPanel.amount + ELEVATED_PROGRAMS.glp1.amount)} |`,
-    `| Metabolic stack | ${CORE_SERVICES.wellnessAssessment.displayPrice} | ${CORE_SERVICES.expandedPanel.displayPrice} | ${ELEVATED_PROGRAMS.metabolicRecomposition.displayPrice} | ${fmtUsd(CORE_SERVICES.wellnessAssessment.amount + CORE_SERVICES.expandedPanel.amount + ELEVATED_PROGRAMS.metabolicRecomposition.amount)} |`,
+    `| GLP-1 (semaglutide) | ${CORE_SERVICES.wellnessAssessment.displayPrice} | ${CORE_SERVICES.expandedPanel.displayPrice} | ${GLP1_PROGRAM_VARIANTS.semaglutide.displayPrice} | ${fmtUsd(CORE_SERVICES.wellnessAssessment.amount + CORE_SERVICES.expandedPanel.amount + GLP1_PROGRAM_VARIANTS.semaglutide.amount)} |`,
+    `| GLP-1 (tirzepatide) | ${CORE_SERVICES.wellnessAssessment.displayPrice} | ${CORE_SERVICES.expandedPanel.displayPrice} | ${GLP1_PROGRAM_VARIANTS.tirzepatide.displayPrice} | ${fmtUsd(CORE_SERVICES.wellnessAssessment.amount + CORE_SERVICES.expandedPanel.amount + GLP1_PROGRAM_VARIANTS.tirzepatide.amount)} |`,
     "",
     "---",
     "",

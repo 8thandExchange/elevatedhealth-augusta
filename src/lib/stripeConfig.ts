@@ -46,17 +46,48 @@ export const ELEVATED_PROGRAMS = {
     displayPrice: "$199/mo",
     interval: "month",
   },
-  metabolicRecomposition: {
-    name: "ELEVATED Metabolic",
-    priceId: "price_1Tk9kDCXbCBPFEeIKmQI5tOZ",
-    productId: "prod_Ujd0CnRYCe6Ukh",
-    amount: 59900,
-    displayPrice: "$599/mo",
-    interval: "month",
-  },
 } as const;
 
 export type ElevatedProgramKey = keyof typeof ELEVATED_PROGRAMS;
+
+/**
+ * ELEVATED GLP-1 molecule pricing. Both variants enroll the patient in the
+ * SAME `glp1` membership (identical elevated_program status, labs, oversight);
+ * only the monthly price differs because compounded tirzepatide costs ~2x
+ * compounded semaglutide. A patient's price never changes as they titrate
+ * within their molecule.
+ *
+ * Display values — actual charge from these live Stripe price IDs. Both prices
+ * live on the same ELEVATED GLP-1 product (prod_UVdgUmNtkHxr3V).
+ */
+export const GLP1_PROGRAM_VARIANTS = {
+  semaglutide: {
+    name: "ELEVATED GLP-1 · Semaglutide",
+    priceId: ELEVATED_PROGRAMS.glp1.priceId,
+    productId: ELEVATED_PROGRAMS.glp1.productId,
+    amount: 34900,
+    displayPrice: "$349/mo",
+    molecule: "semaglutide",
+  },
+  tirzepatide: {
+    name: "ELEVATED GLP-1 · Tirzepatide",
+    priceId: "price_1Tm1BzCXbCBPFEeIkrr2iGcI",
+    productId: "prod_UVdgUmNtkHxr3V",
+    amount: 44900,
+    displayPrice: "$449/mo",
+    molecule: "tirzepatide",
+  },
+} as const;
+
+export type Glp1Molecule = keyof typeof GLP1_PROGRAM_VARIANTS;
+
+/**
+ * GLP-1 price display for generic contexts where the molecule isn't yet known
+ * (membership badges, program lists). Use GLP1_PROGRAM_VARIANTS[molecule] when
+ * the molecule IS known (storefront molecule cards, provider charge modals).
+ */
+export const GLP1_DISPLAY_PRICE_RANGE = "$349–$449/mo";
+export const GLP1_DISPLAY_PRICE_FROM = "from $349/mo";
 
 // Core services (one-time)
 export const CORE_SERVICES = {
@@ -159,7 +190,9 @@ export const MEDICATION_FILLS = {
     productId: "prod_UhqSeeHiiHdqHr",
     amount: 44900,
     displayPrice: "$449",
-    memberAlternative: "metabolicRecomposition" satisfies ElevatedProgramKey,
+    // Gated, physician-only investigational option within the GLP-1 lane
+    // (consent Section 11A, go-live 2026-06-21). Not a routine/advertised SKU.
+    memberAlternative: "glp1" satisfies ElevatedProgramKey,
   },
 } as const;
 
@@ -249,7 +282,11 @@ export const RECOVERY_PEPTIDE_PRODUCTS = {
   },
 } as const;
 
-/** Metabolic recomposition stack — à la carte monthly (when not on STACK-METABOLIC-FULL program). */
+/**
+ * Provider-directed metabolic peptides — standalone à la carte (monthly).
+ * The bundled "ELEVATED Metabolic Recomposition" program was retired 2026-06-24;
+ * these molecules remain available individually, provider-directed.
+ */
 export const METABOLIC_STACK_ALACARTE = {
   ss31: {
     name: "SS-31 (Elamipretide)",
@@ -353,6 +390,7 @@ export const IV_WALKIN_EXAMPLES = {
 // Aggregate helpers
 export const ALL_LIVE_PRICE_IDS = [
   ...Object.values(ELEVATED_PROGRAMS).map((p) => p.priceId),
+  GLP1_PROGRAM_VARIANTS.tirzepatide.priceId,
   ...Object.values(CORE_SERVICES).map((p) => p.priceId),
   ...Object.values(MEDICATION_FILLS).map((p) => p.priceId),
   ...Object.values(PEPTIDE_PRODUCTS).map((p) => p.priceId),
@@ -361,7 +399,11 @@ export const ALL_LIVE_PRICE_IDS = [
   ...Object.values(HAIR_RESTORATION_PRODUCTS).map((p) => p.priceId),
 ];
 
-export const ELEVATED_PROGRAM_PRICE_IDS: string[] = Object.values(ELEVATED_PROGRAMS).map((p) => p.priceId);
+// Both GLP-1 molecule prices count as ELEVATED program prices (same membership).
+export const ELEVATED_PROGRAM_PRICE_IDS: string[] = [
+  ...Object.values(ELEVATED_PROGRAMS).map((p) => p.priceId),
+  GLP1_PROGRAM_VARIANTS.tirzepatide.priceId,
+];
 
 export function isElevatedProgramPrice(priceId: string): boolean {
   return ELEVATED_PROGRAM_PRICE_IDS.includes(priceId);
@@ -371,6 +413,8 @@ export function getProgramFromPriceId(priceId: string): ElevatedProgramKey | nul
   for (const [key, program] of Object.entries(ELEVATED_PROGRAMS)) {
     if (program.priceId === priceId) return key as ElevatedProgramKey;
   }
+  // Tirzepatide GLP-1 variant maps to the same `glp1` membership status.
+  if (priceId === GLP1_PROGRAM_VARIANTS.tirzepatide.priceId) return "glp1";
   return null;
 }
 

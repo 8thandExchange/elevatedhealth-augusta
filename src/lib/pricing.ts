@@ -13,7 +13,6 @@ import {
   SEXUAL_WELLNESS_PRODUCTS,
   HAIR_RESTORATION_PRODUCTS,
 } from "./stripeConfig";
-import { metabolicStackAlacarteNonMemberCents } from "./metabolicStackPricing";
 
 export const MEMBER_DISCOUNT_PERCENT = 20;
 const factor = (100 - MEMBER_DISCOUNT_PERCENT) / 100;
@@ -157,11 +156,8 @@ export function assertPricingInvariants(): void {
       throw new Error(`Pricing invariant: member > non-member for ${item.key}`);
     }
   }
-  (["trt", "hrt", "glp1", "wellness", "metabolicRecomposition"] as const).forEach((p) => {
-    const steady =
-      p === "metabolicRecomposition"
-        ? metabolicStackAlacarteNonMemberCents()
-        : nonMemberSteadyMonthlyCents(p);
+  (["trt", "hrt", "glp1", "wellness"] as const).forEach((p) => {
+    const steady = nonMemberSteadyMonthlyCents(p);
     if (ELEVATED_PROGRAMS[p].amount >= steady) {
       throw new Error(
         `Pricing invariant: ${p} membership is not cheaper than à la carte steady cost`,

@@ -140,20 +140,6 @@ export interface FormularyEconomicsLine {
 /** Backend catalog for margin analysis — sync to clinic_formulary via migration. */
 export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
   {
-    itemCode: "STACK-METABOLIC-FULL",
-    label: "ELEVATED Metabolic (tirzepatide-anchored)",
-    category: "peptide_stack",
-    primarySupplier: "gc",
-    primaryCostCents: 30500,
-    primaryCostUnit: "month",
-    alternateSupplier: "fcc",
-    alternateCostCents: 36000,
-    clientPriceCents: 59900,
-    fulfillmentPharmacySlug: VENDOR_SLUGS.gc,
-    publicMenu: true,
-    notes: "Re-modeled 2026-06-19 for the $599/mo ELEVATED Metabolic program (tirzepatide anchor ~$185 + lean-mass/metabolic support). Replaced the retired $1,199 retatrutide stack. COGS is a modeled estimate — confirm final program composition with the clinic.",
-  },
-  {
     itemCode: "GLP1-SEMAGLUTIDE",
     label: "Semaglutide (program fill)",
     category: "glp1",
@@ -437,8 +423,7 @@ export function resolvePharmacySlugForItemCode(itemCode: string): string {
   if (line) return line.fulfillmentPharmacySlug;
   if (itemCode.startsWith("HORM-")) return VENDOR_SLUGS.customPharmacyEvans;
   if (itemCode.startsWith("IV-")) return VENDOR_SLUGS.fcc;
-  if (itemCode.startsWith("STACK-METABOLIC") || itemCode.startsWith("PEPTIDE-RETATRUTIDE"))
-    return VENDOR_SLUGS.gc;
+  if (itemCode.startsWith("PEPTIDE-RETATRUTIDE")) return VENDOR_SLUGS.gc;
   return VENDOR_SLUGS.fcc;
 }
 

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Crown, Calendar, Loader2, Save, Scale, Star, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
+import { ELEVATED_PROGRAMS, GLP1_DISPLAY_PRICE_RANGE } from "@/lib/stripeConfig";
 
 interface MembershipAssignmentCardProps {
   patientId: string;
@@ -168,7 +168,7 @@ const MembershipAssignmentCard = ({
                 {ELEVATED_PROGRAMS.hrt.name} ({ELEVATED_PROGRAMS.hrt.displayPrice})
               </option>
               <option value="elevated_glp1">
-                {ELEVATED_PROGRAMS.glp1.name} ({ELEVATED_PROGRAMS.glp1.displayPrice})
+                {ELEVATED_PROGRAMS.glp1.name} ({GLP1_DISPLAY_PRICE_RANGE})
               </option>
               <option value="elevated_wellness">
                 {ELEVATED_PROGRAMS.wellness.name} ({ELEVATED_PROGRAMS.wellness.displayPrice})

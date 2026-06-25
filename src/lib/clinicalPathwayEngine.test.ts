@@ -15,9 +15,9 @@ describe("clinicalPathwayEngine", () => {
     expect(p.dosing[0]?.compoundKey).toBe("semaglutide");
   });
 
-  it("routes metabolic recomposition to full stack", () => {
+  it("routes advanced recomposition through the GLP-1 lane with gated retatrutide", () => {
     const p = recommendPathway("metabolic_recomposition");
-    expect(p.programKey).toBe("metabolicRecomposition");
+    expect(p.programKey).toBe("glp1");
     expect(p.compoundKeys).toContain("retatrutide");
     expect(p.consents).toContain("Research Peptide Consent");
   });
