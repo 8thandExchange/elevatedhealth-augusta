@@ -48,7 +48,7 @@ const PROGRAM_ROWS = [
 const SHARED_INCLUDES = [
   "Medication included when prescribed as part of your selected ELEVATED program",
   "Monthly check-in with our clinical team and unlimited secure messaging",
-  "Quarterly labs and lab review included in program pricing",
+  "Quarterly expanded lab panel and lab review included for as long as your membership is active",
   "Priority scheduling and in-clinic coordination at Evans",
 ];
 
@@ -85,6 +85,10 @@ const FAQ = [
   {
     q: "What's the cancellation policy?",
     a: "Cancel any time before your next billing date — no penalty. Medication you've already received is yours; pending refills follow clinical and pharmacy policy.",
+  },
+  {
+    q: "What happens to my included labs and member pricing if I cancel?",
+    a: "They're benefits of an active membership, not one-time perks. While you're enrolled in ELEVATED HRT, TRT, or GLP-1, your quarterly expanded lab panel is included at no extra charge and you get 20% off everything à la carte. If you cancel or let your membership lapse, those benefits end — your next quarterly panel and any other services revert to standard à la carte (non-member) pricing. Re-enroll any time and the included quarterly panel and member pricing come right back.",
   },
 ];
 

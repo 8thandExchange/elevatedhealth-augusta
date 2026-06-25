@@ -53,6 +53,7 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 - First charge pro-rates to align with calendar billing
 - Existing members keep their price for the duration of continuous membership
 - Future price changes only affect new enrollments
+- **Benefits are contingent on an active membership.** The free quarterly expanded panel (TRT / HRT / GLP-1) and the 20% à la carte discount are member-only and continue only while the membership is active. On cancellation or lapse, both end: the next quarterly panel is billed at full à la carte lab pricing, and every other service reverts to standard non-member à la carte rates. Re-enrolling restores the included quarterly panel and the 20% immediately.
 ## À La Carte Services (Non-Member)
 IV Hydration, IM Injections, NAD+, Peptide Therapy, Sexual Wellness à la carte pricing is currently being finalized. Existing pricing on /iv-lounge is canonical for IV walk-in until updated. Peptide therapy à la carte continues to use FCC catalog pricing with practice markup.
 ## Discontinued / Eliminated

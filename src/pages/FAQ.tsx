@@ -80,11 +80,11 @@ const FAQ = () => {
   const programs: QA[] = [
     {
       q: "What do ELEVATED programs include?",
-      a: "Programs bundle prescribed therapy where clinically appropriate, follow-up visits per protocol, quarterly labs and review for enrolled members, and secure messaging. Exact inclusions depend on whether you are on TRT, HRT, GLP-1, or the WELLNESS track.",
+      a: "The HRT, TRT, and GLP-1 programs bundle prescribed therapy where clinically appropriate, follow-up visits per protocol, and a quarterly expanded lab panel and review for as long as your membership stays active, plus secure messaging. ELEVATED IV is the non-Rx plan and does not include medication or labs. Exact inclusions depend on which program you are on.",
     },
     {
-      q: "How do TRT, HRT, GLP-1, and WELLNESS differ?",
-      a: "TRT (men) and HRT (women) focus on hormone optimization with LabCorp monitoring. GLP-1 is physician-supervised medical weight loss with compounded semaglutide or tirzepatide when appropriate. WELLNESS bundles non-Rx-forward benefits like IV lounge access and member discounts on eligible à la carte services.",
+      q: "How do TRT, HRT, GLP-1, and ELEVATED IV differ?",
+      a: "TRT (men) and HRT (women) focus on hormone optimization with LabCorp monitoring. GLP-1 is physician-supervised medical weight loss with compounded semaglutide or tirzepatide when appropriate. ELEVATED IV is the non-Rx plan — monthly signature IV drips plus member discounts on eligible à la carte services, with no medication or labs bundled.",
     },
     {
       q: "What is the member discount on à la carte services?",
@@ -175,7 +175,11 @@ const FAQ = () => {
     },
     {
       q: "Can I switch programs later?",
-      a: "Yes, when clinically appropriate. Your provider will reassess labs and symptoms before moving you between TRT, HRT, GLP-1, or WELLNESS tracks.",
+      a: "Yes, when clinically appropriate. Your provider will reassess labs and symptoms before moving you between TRT, HRT, GLP-1, or ELEVATED IV.",
+    },
+    {
+      q: "What happens to my included quarterly labs and member pricing if I cancel?",
+      a: "They're benefits of an active membership. While you're enrolled in ELEVATED HRT, TRT, or GLP-1, your quarterly expanded lab panel is included at no extra charge and you get 20% off everything à la carte. If you cancel or your membership lapses, those benefits end — your next quarterly panel and any other services revert to standard à la carte (non-member) pricing. Re-enroll any time and the included quarterly panel and member pricing return.",
     },
   ];
 
@@ -213,7 +217,7 @@ const FAQ = () => {
             { "@type": "Question", "name": "What hormone therapy do you offer?", "acceptedAnswer": { "@type": "Answer", "text": "Compounded transdermal bioidentical hormone creams for women and men, with FDA-approved gels or patches when preferred — all guided by LabCorp labs and physician review." } },
             { "@type": "Question", "name": "How does medical weight loss work?", "acceptedAnswer": { "@type": "Answer", "text": "Physician-supervised GLP-1 therapy (semaglutide or tirzepatide when clinically appropriate) with LabCorp labs and ongoing follow-up." } },
             { "@type": "Question", "name": "Do I need a consultation for IV therapy?", "acceptedAnswer": { "@type": "Answer", "text": "No. IV hydration drips can be booked online and are administered by a registered nurse. Same-day appointments are usually available." } },
-            { "@type": "Question", "name": "How much does membership cost?", "acceptedAnswer": { "@type": "Answer", "text": "Memberships are tiered at $199, $399, and $699 per month, with included services and member pricing on add-ons." } }
+            { "@type": "Question", "name": "How much does membership cost?", "acceptedAnswer": { "@type": "Answer", "text": "There are four ELEVATED programs — IV, HRT, TRT, and GLP-1 — ranging from $199 to $449 per month. Each bundles its own care; the HRT, TRT, and GLP-1 plans include a quarterly expanded lab panel for as long as the membership stays active, plus 20% off à la carte services. Cancel and pricing reverts to standard à la carte rates." } }
           ]
         })}</script>
       </Helmet>
