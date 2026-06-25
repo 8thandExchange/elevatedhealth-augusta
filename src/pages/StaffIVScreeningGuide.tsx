@@ -72,7 +72,7 @@ const StaffIVScreeningGuide = () => (
             <p>
               • <strong>G6PD deficiency</strong> — blocks services flagged{" "}
               <code className="text-xs">requires_g6pd_clearance</code> in the IV catalog (high-dose
-              vitamin C / NAD+ infusions).
+              vitamin C drips).
             </p>
             <p>
               • <strong>Sesame allergy</strong> — blocks only therapies flagged{" "}

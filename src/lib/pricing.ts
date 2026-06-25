@@ -73,14 +73,6 @@ export const CATALOG: Record<string, CatalogItem> = {
   ),
   // Core services: flat (intake is the same price for everyone).
   ...fromGroup(CORE_SERVICES, () => ({ kind: "flat" }), "one_time"),
-  // IV Lounge walk-in reference (SOT with /iv-lounge NAD+ 250mg pricing).
-  nadIv250Lounge: {
-    key: "nadIv250Lounge",
-    label: "NAD+ Infusion 250mg (IV Lounge)",
-    nonMemberCents: 45000,
-    member: { kind: "discount" },
-    interval: "one_time",
-  },
 };
 
 export function nonMemberPriceCents(item: CatalogItem): number {

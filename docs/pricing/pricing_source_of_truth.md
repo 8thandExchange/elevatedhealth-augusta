@@ -179,10 +179,10 @@ Created 2026-06-19 via `bootstrap-recovery-peptide-prices`. One-time per-fill pr
 | Dutasteride Protocol | $149/mo | prod_UVeIHluYVIXexo | price_1TWczRCXbCBPFEeIGjWNLOYX |
 | GHK-Cu Scalp Therapy | $149/mo | prod_UVeIyhp13vmLLw | price_1TWczwCXbCBPFEeIXCBtnslN |
 ### Member Pricing on À La Carte
-Members of any ELEVATED tier (TRT, HRT, GLP-1, or WELLNESS) receive **20% off** all à la carte services and products. Member discount logic must be applied in the checkout layer; no separate member-pricing Stripe products exist.
+Members of any ELEVATED tier (TRT, HRT, GLP-1, or IV) receive **20% off** all à la carte services and products. Member discount logic must be applied in the checkout layer; no separate member-pricing Stripe products exist.
 ### Deprecated Stripe Price IDs (Do Not Use)
 The following test-mode price IDs are deprecated. They appear in legacy code that will be replaced by the live IDs above. Any code referencing these must be updated:
-- `price_1TUs3LEOtKRY99puWfQy8pHj` (legacy single-tier Elevated $199/mo) → use ELEVATED WELLNESS or program-specific tier
+- `price_1TUs3LEOtKRY99puWfQy8pHj` (legacy single-tier Elevated $199/mo) → use ELEVATED IV or program-specific tier
 - `price_1TUs38EOtKRY99puPpc6SFMs` (Semaglutide member $199) → use ELEVATED GLP-1
 - `price_1TUs3AEOtKRY99puDOseqLDZ` (Semaglutide non-member $249) → use ELEVATED GLP-1 or Semaglutide Single Fill
 - `price_1TUs39EOtKRY99puWAF4oZT7` (Tirzepatide member $399) → use ELEVATED GLP-1
@@ -197,9 +197,9 @@ The following test-mode price IDs are deprecated. They appear in legacy code tha
 - `price_1Sa3oyEOtKRY99puGS2t9EZv` (legacy Sermorelin) → use new Sermorelin Injection ID
 - `price_1Sfm0oEOtKRY99puEurPSCU6` (legacy CJC-1295/Ipamorelin) → use new ID
 - `price_1SfibZEOtKRY99pud5SNVeXI` (legacy Tesamorelin) → use new ID
-- `price_1Sa3x1EOtKRY99pufL3wEyIN` (legacy NAD+ Troches) → use new ID
-- `price_1Sa3waEOtKRY99puCB267VpA` (legacy NAD+ Injection) → use new ID
-- `price_1SfibeEOtKRY99puUPRACDHQ` (legacy NAD+ Nasal Spray) → use new ID
+- `price_1Sa3x1EOtKRY99pufL3wEyIN` (legacy NAD+ Troches) → DISCONTINUED 2026-06-25 (NAD+ peptide products retired; NAD+ only as $50 IV booster)
+- `price_1Sa3waEOtKRY99puCB267VpA` (legacy NAD+ Injection) → DISCONTINUED 2026-06-25 (see above)
+- `price_1SfibeEOtKRY99puUPRACDHQ` (legacy NAD+ Nasal Spray) → DISCONTINUED 2026-06-25 (see above)
 - `price_1Sa3xIEOtKRY99puIXSB3L31` (legacy peptide/sexual) → use PT-141 or correct peptide
 - `price_1SfibXEOtKRY99puuRkJc5g3` (legacy GHK-Cu) → use new GHK-Cu Sublingual or Topical
 - `price_1SfibXEOtKRY99puDbZKu1zw` (legacy GHK-Cu) → use new GHK-Cu Topical or Scalp Therapy

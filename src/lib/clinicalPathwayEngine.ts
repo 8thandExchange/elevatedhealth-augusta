@@ -357,7 +357,7 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
     compoundKeys: [],
     dosing: [],
     consents: [],
-    patientExplanation: "IV Lounge walk-in — Myers, NAD+ infusion, or pushes. No consult required.",
+    patientExplanation: "IV Lounge walk-in — signature drips, boosters, or pushes. No consult required.",
     staffScript: "Lane A. Soft mention $79 assessment if hormones/weight interest surfaces.",
     upsell: "Book Wellness Assessment before they leave if any hormone/weight interest.",
     algorithmSteps: [

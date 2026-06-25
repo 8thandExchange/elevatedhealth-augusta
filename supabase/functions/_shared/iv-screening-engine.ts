@@ -55,7 +55,7 @@ export const IV_INGREDIENT_RULES: IvIngredientRule[] = [
   {
     ingredientKey: "vitamin_c_high_dose",
     displayName: "Vitamin C (high-dose infusion)",
-    servicesContaining: ["NAD+ Infusion", "Custom IV Build", "Immunity"],
+    servicesContaining: ["Custom IV Build", "Immunity"],
     hardContraindications: ["g6pd_deficiency"],
     softWarnings: ["ckd"],
     requiresG6pdClearance: true,
@@ -70,9 +70,11 @@ export const IV_INGREDIENT_RULES: IvIngredientRule[] = [
     staffAction: "Observe 15 min post-push; have bronchodilator protocol available per standing order.",
   },
   {
-    ingredientKey: "nad_infusion",
+    // Standalone NAD+ infusions discontinued 2026-06-25; NAD+ now only as the
+    // $50 IV "NAD+ Booster" add-on, which still warrants the same titration care.
+    ingredientKey: "nad_booster",
     displayName: "NAD+",
-    servicesContaining: ["NAD+ Infusion 250mg", "NAD+ Infusion 500mg"],
+    servicesContaining: ["NAD+ Booster"],
     hardContraindications: [],
     softWarnings: ["hypertension_uncontrolled", "pregnancy"],
     staffAction: "Slow titration; vitals q15min first 30 minutes.",

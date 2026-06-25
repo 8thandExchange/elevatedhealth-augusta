@@ -900,7 +900,7 @@ export default function ClinicalProtocolEditor() {
                   helper="What to watch for while the patient is in chair or in clinic."
                   values={structured.monitoring_during}
                   onChange={(v) => updateField("monitoring_during", v)}
-                  placeholder="e.g. Q15-min vitals during NAD+ infusion"
+                  placeholder="e.g. Q15-min vitals during high-dose infusion"
                   disabled={isLocked}
                   containerId={fieldToDomId("monitoring_during")}
                   highlight={highlightedField === "monitoring_during"}

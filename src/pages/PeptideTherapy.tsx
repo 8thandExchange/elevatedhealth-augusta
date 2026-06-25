@@ -79,7 +79,7 @@ const faqs = [
   },
   {
     q: "How are peptides given?",
-    a: "Depends on the protocol — subcutaneous injection, sublingual, topical, or IV (NAD+ at our IV Lounge). Your clinical team trains you on home injection when applicable.",
+    a: "Depends on the protocol — subcutaneous injection, sublingual, or topical. Your clinical team trains you on home injection when applicable.",
   },
   {
     q: "How long until I notice a difference?",

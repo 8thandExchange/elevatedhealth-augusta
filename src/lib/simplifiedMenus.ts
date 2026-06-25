@@ -49,11 +49,12 @@ export const PUBLIC_MENU: MenuTier[] = [
   {
     id: "peptide-stacks",
     title: "Named peptide stacks (not à la carte catalog)",
-    description: "Three named stacks. Do not recite full peptide list to prospects.",
+    description: "Named stacks. Do not recite full peptide list to prospects.",
     items: [
       { id: "restore", label: "Restore (PT-141 weekly)", priceDisplay: "$129–179/mo", vendor: "gc" },
       { id: "healing", label: "BPC-157 / TB-500 recovery stack", priceDisplay: "$249–329/mo", vendor: "gc" },
-      { id: "vitality", label: "Vitality (Sermorelin + NAD+)", priceDisplay: "$299–399/mo", vendor: "gc" },
+      // Vitality (Sermorelin + NAD+) retired 2026-06-25 — its NAD+ component was
+      // discontinued. Sermorelin remains available à la carte ($149/mo).
     ],
   },
   {

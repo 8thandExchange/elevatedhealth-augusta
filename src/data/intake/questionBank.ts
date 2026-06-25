@@ -187,7 +187,7 @@ export const INTAKE_QUESTION_BANK: IntakeQuestion[] = [
   },
   {
     id: "intake_interest_iv",
-    text: "Are you interested in IV hydration or NAD+ infusion?",
+    text: "Are you interested in IV hydration or boosters?",
     type: "yes_no",
     patientFacing: true,
     tags: { symptomKeys: ["dehydration", "nad_interest"] },
