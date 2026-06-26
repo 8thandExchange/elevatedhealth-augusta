@@ -94,7 +94,6 @@ export interface ClinicalOptimizationItem {
 export const CATALOG_SLUG_ALIASES: Record<string, string> = {
   bpc_157: "bpc-157",
   tb_500: "tb-500",
-  bpc_tb_recovery_stack: "bpc-157-tb-500-stack",
   pda_recovery: "pda-pentadeca-arginate",
   nad_injection: "nad",
   cjc1295_ipamorelin: "cjc-ipamorelin",
@@ -160,11 +159,10 @@ export const PUBLIC_PEPTIDE_CATEGORIES = [
     examples: [
       "BPC-157",
       "TB-500",
-      "BPC-157 / TB-500 recovery stack",
       "PDA (Pentadeca Arginate) — provider-selected alternate",
     ],
     note:
-      "Recovery peptide protocols for active adults, training recovery, tendon and ligament concerns, soft-tissue recovery, joint support, and inflammation-related recovery goals. Options may include BPC-157, TB-500, BPC-157/TB-500 recovery protocols, or related recovery peptides when clinically appropriate and prescribed by a provider.",
+      "Recovery peptide protocols for active adults, training recovery, tendon and ligament concerns, soft-tissue recovery, joint support, and inflammation-related recovery goals. Options may include BPC-157, TB-500, or related recovery peptides when clinically appropriate and prescribed by a provider.",
     featured: true,
   },
   {
@@ -203,9 +201,8 @@ export const PUBLIC_GLP1_CARE_FLOW = [
 ] as const;
 
 const FORMULARY_COST_BY_SLUG: Record<string, string> = {
-  "bpc-157": "PEPTIDE-HEALING-STACK",
-  "tb-500": "PEPTIDE-HEALING-STACK",
-  "bpc-157-tb-500-stack": "PEPTIDE-HEALING-STACK",
+  "bpc-157": "PEPTIDE-BPC157",
+  "tb-500": "PEPTIDE-TB500",
   semaglutide: "GLP1-SEMAGLUTIDE",
   tirzepatide: "GLP1-TIRZEPATIDE",
   "retatrutide-provider-directed": "PEPTIDE-RETATRUTIDE",
@@ -230,19 +227,7 @@ function economicsCostForSlug(slug: string): number | null {
           l.itemCode.toLowerCase().includes(canonical.replace(/_/g, "-")),
       );
   if (!line) return null;
-  // Individual recovery peptides — model at ~50% of blended stack COGS until discrete SKUs entered
-  if (canonical === "bpc-157" || canonical === "tb-500") {
-    return Math.round(line.primaryCostCents * 0.5);
-  }
   return line.primaryCostCents;
-}
-
-function economicsPriceForHealingStack(): { patient: number; member: number } {
-  const line = FORMULARY_ECONOMICS_CATALOG.find((l) => l.itemCode === "PEPTIDE-HEALING-STACK");
-  return {
-    patient: line?.clientPriceCents ? line.clientPriceCents + 8000 : 32900,
-    member: line?.clientPriceCents ?? 24900,
-  };
 }
 
 function fromCatalogKey(
@@ -537,40 +522,6 @@ export const CLINICAL_OPTIMIZATION_CATALOG: ClinicalOptimizationItem[] = [
     catalog_key: "tb500",
     elevated_program_key: null,
     policy_key: "tb_500",
-    margin_threshold_pct: 25,
-    last_reviewed_at: "2026-06-16",
-    reviewed_by: "Dr. Troy Akers",
-  },
-  {
-    slug: "bpc-157-tb-500-stack",
-    display_name: "BPC-157 / TB-500 Recovery Stack",
-    category: "peptide_recovery",
-    public_status: "public",
-    clinical_status: "active",
-    supplier: "FCC / GC",
-    supplier_sku: "PATH-Wolverine-10x10",
-    route: "subQ",
-    dosage_form: "injectable blend",
-    patient_price_cents: nonMemberPriceCents(CATALOG.wolverineStack),
-    member_price_cents: memberPriceCents(CATALOG.wolverineStack),
-    clinic_cost_cents: economicsCostForSlug("bpc-157-tb-500-stack"),
-    requires_labs: true,
-    lab_panel_slug: LAB_PANEL_SLUGS.foundational,
-    requires_consent: true,
-    consent_type: "research_peptide",
-    requires_provider_signoff: true,
-    ordering_supplies_required: true,
-    inventory_tracking_required: true,
-    supply_checklist_key: "recovery_peptide",
-    internal_notes: "Pre-blended recovery stack — internal SKU naming only; no patient-facing 'Wolverine' copy.",
-    regulatory_notes: "Cat 2 research peptide consent; blended vial per FCC/GC formulary.",
-    public_description:
-      "Combined BPC-157 and TB-500 recovery protocol when physician selects the stack after full review.",
-    staff_description: "Recovery Peptide Review lane; blended vial per FCC/GC formulary.",
-    provider_algorithm: { protocolSlug: "recovery-bpc-tb-stack" },
-    catalog_key: "wolverineStack",
-    elevated_program_key: null,
-    policy_key: "wolverine_stack",
     margin_threshold_pct: 25,
     last_reviewed_at: "2026-06-16",
     reviewed_by: "Dr. Troy Akers",

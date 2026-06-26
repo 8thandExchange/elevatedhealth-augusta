@@ -281,14 +281,6 @@ export const RECOVERY_PEPTIDE_PRODUCTS = {
     displayPrice: "$249",
     interval: "one_time",
   },
-  wolverineStack: {
-    name: "BPC-157 / TB-500 Recovery Stack",
-    priceId: "price_1Tk926CXbCBPFEeILIT0UuQF",
-    productId: "prod_UjcGhDI27g3tXo",
-    amount: 34900,
-    displayPrice: "$349",
-    interval: "one_time",
-  },
 } as const;
 
 /**

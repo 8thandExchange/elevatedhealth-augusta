@@ -130,9 +130,9 @@ export const UPSELL_MATRIX: UpsellRow[] = [
   {
     phase: "Follow-up (RN)",
     trigger: "Recovery, injury, or athletic goal",
-    offer: "BPC-157 / TB-500 recovery stack",
-    charge: "$249–329/mo",
-    script: "For tissue repair we use a named Healing stack — physician can add it to your plan at the next review.",
+    offer: "BPC-157 and/or TB-500 (individual recovery fills)",
+    charge: "$249/fill each",
+    script: "For tissue repair we use BPC-157 and TB-500 as separate prescriptions — your physician selects one or both at your next review.",
   },
   {
     phase: "Follow-up (quarterly)",

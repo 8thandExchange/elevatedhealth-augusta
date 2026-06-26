@@ -292,17 +292,17 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       goal: "recovery_injury",
       goalLabel: GOAL_LABELS.recovery_injury,
       offerTier: "stack",
-      compoundKeys: ["wolverine"],
-      dosing: [DOSING_PROTOCOLS.wolverine],
+      compoundKeys: ["bpc157", "tb500"],
+      dosing: [DOSING_PROTOCOLS.bpc157, DOSING_PROTOCOLS.tb500],
       consents: ["Research Peptide Consent"],
       labSlug: lab.slug,
       labPanelName: lab.name,
       labChargeCents: lab.cents,
       labChargeDisplay: lab.display,
       patientExplanation:
-        "Recovery stack: combined BPC-157 and TB-500 protocol for tissue recovery support — 6–12 week course with RN teaching when your provider determines it is appropriate.",
-      staffScript: "Recovery Peptide Review required. Quote recovery stack per membership tier. Cat 2 consent required.",
-      algorithmSteps: buildSteps("recovery_injury", undefined, ["wolverine"]),
+        "Recovery protocol: BPC-157 and/or TB-500 when your provider selects them for tissue recovery support — 6–12 week course with RN teaching when clinically appropriate.",
+      staffScript: "Recovery Peptide Review required. Quote BPC-157 and/or TB-500 per membership tier. Cat 2 consent required.",
+      algorithmSteps: buildSteps("recovery_injury", undefined, ["bpc157", "tb500"]),
     };
   },
   libido: () => {
@@ -539,7 +539,7 @@ export function recommendPathwayFromSymptoms(symptoms: string[]): PathwayRecomme
   }
   if (/aesthetic|botox|filler|wrinkle|neuromodulator/.test(s)) return recommendPathway("aesthetics");
   if (/menopause|perimenopause|hot flash|hrt|estrogen|progesterone/.test(s)) return recommendPathway("hormone_women");
-  if (/injury|tendon|recovery|surgery|bpc|wolverine/.test(s)) return recommendPathway("recovery_injury");
+  if (/injury|tendon|recovery|surgery|bpc/.test(s)) return recommendPathway("recovery_injury");
   if (/libido|pt-141|bremelanotide|sexual/.test(s)) return recommendPathway("libido");
   if (/iv|hydration|hangover|nad\+?\s*infusion|myers/.test(s)) return recommendPathway("iv_only");
   if (/fatigue|energy|brain fog|sleep/.test(s)) return recommendPathway("energy_fatigue");

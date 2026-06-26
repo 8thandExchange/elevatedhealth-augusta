@@ -46,7 +46,7 @@ const steps = [
   {
     n: "03",
     title: "Provider review",
-    body: "Recovery peptides (BPC-157, TB-500, combined stack) require a dedicated clinical review before any plan is discussed.",
+    body: "Recovery peptides (BPC-157, TB-500) require a dedicated clinical review before any plan is discussed.",
   },
   {
     n: "04",
@@ -174,7 +174,7 @@ const PeptideTherapy = () => {
               <div className="rounded-sm border border-accent/30 bg-muted/20 p-6 md:p-8">
                 <h3 className="font-playfair text-xl mb-3">Recovery Peptide Review</h3>
                 <p className="font-jost text-xs text-accent mb-3">
-                  BPC-157 · TB-500 · BPC-157/TB-500 recovery stack · PDA (provider-selected alternate)
+                  BPC-157 · TB-500 · PDA (provider-selected alternate)
                 </p>
                 <p className="font-jost text-sm text-muted-foreground leading-relaxed mb-4">
                   {RECOVERY_PEPTIDE_PUBLIC_LANGUAGE}
@@ -257,7 +257,7 @@ const PeptideTherapy = () => {
                     oversight.
                   </p>
                   <p>
-                    BPC-157, TB-500, and our recovery stack are available when your provider determines
+                    BPC-157 and TB-500 are available when your provider determines
                     they are clinically appropriate — after safety screening, consent, and pharmacy
                     confirmation. Pentadeca Arginate (PDA) is an optional oral alternate your
                     physician may select when appropriate.

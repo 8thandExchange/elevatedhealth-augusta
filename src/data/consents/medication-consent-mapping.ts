@@ -137,11 +137,6 @@ export const MEDICATION_CONSENT_RULES: MedicationConsentRule[] = [
     required_consents: ["research_peptide"],
   },
   {
-    medication_id: "wolverine_stack",
-    medication_category: "research_peptide",
-    required_consents: ["research_peptide"],
-  },
-  {
     medication_id: "cjc_1295",
     medication_category: "research_peptide",
     required_consents: ["research_peptide"],
@@ -342,7 +337,6 @@ function inferCanonicalFromFccNameAndCategory(
   if (n.includes("tirzepatide")) return "compounded_tirzepatide";
   if (n.includes("liraglutide")) return "liraglutide";
 
-  if (/wolverine|bpc.*tb|tb.*bpc/.test(n)) return "wolverine_stack";
   if (n.includes("bpc")) return "bpc_157";
   if (n.includes("tb-500") || n.includes("tb 500") || n.includes("thymosin beta")) return "tb_500";
   if (n.includes("cjc") && n.includes("ipamorelin")) return "cjc_ipamorelin_combo";

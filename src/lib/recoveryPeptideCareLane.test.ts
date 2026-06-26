@@ -27,6 +27,10 @@ describe("recovery peptide strategy", () => {
     ).toBe(true);
   });
 
+  it("does not offer the retired blended BPC-157/TB-500 stack", () => {
+    expect(catalogBySlug("bpc-157-tb-500-stack")).toBeUndefined();
+  });
+
   it("blocks recovery order until provider sign-off", () => {
     const partial = evaluateRecoveryPeptideReview({
       injuryRecoveryGoalDocumented: true,

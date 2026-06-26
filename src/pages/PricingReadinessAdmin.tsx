@@ -141,7 +141,7 @@ const PricingReadinessAdmin = () => {
             <CardContent className="font-jost text-sm text-muted-foreground space-y-2">
               <p>
                 Care lane ID: <code className="text-xs">recovery_peptide_review</code> — required before
-                quoting BPC-157, TB-500, recovery stack, or PDA.
+                quoting BPC-157, TB-500, or PDA.
               </p>
               <p>Gates: foundational labs, medication review, malignancy screen, pregnancy screen, recovery goal documentation, Research Peptide Consent, provider sign-off, economics, supply.</p>
               <p>See <code>src/lib/recoveryPeptideCareLane.ts</code> and provider protocol algorithms.</p>

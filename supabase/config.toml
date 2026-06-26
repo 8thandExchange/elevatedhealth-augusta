@@ -212,7 +212,7 @@ verify_jwt = false
 verify_jwt = false
 
 # bootstrap-recovery-peptide-prices — one-shot service-role bootstrap of the
-# BPC-157 / TB-500 / Wolverine Stack live Stripe products. Self-checks service_role.
+# BPC-157 / TB-500 live Stripe products. Self-checks service_role.
 [functions.bootstrap-recovery-peptide-prices]
 verify_jwt = false
 

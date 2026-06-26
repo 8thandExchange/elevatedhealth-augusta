@@ -1,6 +1,6 @@
 /**
  * One-shot bootstrap: create live Stripe products/prices for the Recovery peptide line
- * (BPC-157, TB-500, and the Wolverine Stack). Invoke with service-role Authorization only.
+ * (BPC-157 and TB-500). Invoke with service-role Authorization only.
  * Idempotent via product metadata `eha_catalog_key` — safe to re-run.
  *
  * Priced as one-time à la carte fills (per the Launch Offer Order System per-vial pricing).
@@ -29,14 +29,6 @@ const CATALOG: CatalogEntry[] = [
     name: "TB-500 (Thymosin Beta-4)",
     description: "Recovery peptide — provider-reviewed, consent-gated à la carte fill",
     amountCents: 24900,
-    mode: "one_time",
-  },
-  {
-    // Patient-facing name only — "Wolverine" is internal copy and must not appear on checkout.
-    key: "wolverineStack",
-    name: "BPC-157 / TB-500 Recovery Stack",
-    description: "Combined BPC-157 + TB-500 recovery stack — provider-reviewed, consent-gated à la carte fill",
-    amountCents: 34900,
     mode: "one_time",
   },
 ];

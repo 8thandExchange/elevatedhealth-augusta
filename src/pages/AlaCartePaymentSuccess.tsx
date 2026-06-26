@@ -57,7 +57,6 @@ type ProductKey =
   | "retatrutide"
   | "bpc157"
   | "tb500"
-  | "wolverineStack"
   | "followUp"
   | "labPanel"
   | "labPanelExpanded"
@@ -112,11 +111,6 @@ const PRODUCT_CATALOG: Record<ProductKey, ProductInfo> = {
   },
   tb500: {
     label: "TB-500",
-    category: "Recovery Peptide",
-    fulfillment: "medication",
-  },
-  wolverineStack: {
-    label: "BPC-157/TB-500 Recovery Stack",
     category: "Recovery Peptide",
     fulfillment: "medication",
   },

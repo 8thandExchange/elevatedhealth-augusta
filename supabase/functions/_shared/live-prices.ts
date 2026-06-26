@@ -48,7 +48,6 @@ export type LiveMedicationFillKey = keyof typeof LIVE_MEDICATION_FILLS;
 export const LIVE_RECOVERY_PEPTIDES = {
   bpc157: "price_1Tk924CXbCBPFEeI2RkxZwch",
   tb500: "price_1Tk925CXbCBPFEeIJROSQX2t",
-  wolverineStack: "price_1Tk926CXbCBPFEeILIT0UuQF",
 } as const;
 
 export type LiveRecoveryPeptideKey = keyof typeof LIVE_RECOVERY_PEPTIDES;

@@ -16,18 +16,17 @@ export const RECOVERY_PEPTIDE_CARE_LANE_ID = "recovery_peptide_review" as const;
 export const RECOVERY_PEPTIDE_CARE_LANE_LABEL = "Recovery Peptide Review";
 
 export const RECOVERY_PEPTIDE_PUBLIC_LANGUAGE =
-  "Recovery peptide protocols for active adults, training recovery, tendon and ligament concerns, soft-tissue recovery, joint support, and inflammation-related recovery goals. Options may include BPC-157, TB-500, BPC-157/TB-500 recovery protocols, or related recovery peptides when clinically appropriate and prescribed by a provider.";
+  "Recovery peptide protocols for active adults, training recovery, tendon and ligament concerns, soft-tissue recovery, joint support, and inflammation-related recovery goals. Options may include BPC-157, TB-500, or related recovery peptides when clinically appropriate and prescribed by a provider.";
 
 export const RECOVERY_PEPTIDE_PATIENT_PORTAL_MESSAGE =
   "Your provider is reviewing whether a recovery peptide protocol is appropriate based on your history, symptoms, goals, labs, and safety screen.";
 
 export const RECOVERY_PEPTIDE_STAFF_HANDOFF =
-  "Patient is in the Recovery Peptide Review pathway. Complete safety screens, labs, and Research Peptide Consent before discussing BPC-157, TB-500, the recovery stack, or PDA. Quote only when economics and supply are ready and the physician has signed the plan.";
+  "Patient is in the Recovery Peptide Review pathway. Complete safety screens, labs, and Research Peptide Consent before discussing BPC-157, TB-500, or PDA. Quote only when economics and supply are ready and the physician has signed the plan.";
 
 export type RecoveryPeptideSlug =
   | "bpc-157"
   | "tb-500"
-  | "bpc-157-tb-500-stack"
   | "pda-pentadeca-arginate";
 
 export interface RecoveryPeptideReviewInput {
@@ -79,7 +78,6 @@ export interface RecoveryPeptideReviewResult {
 const RECOVERY_COMPOUNDS: RecoveryPeptideSlug[] = [
   "bpc-157",
   "tb-500",
-  "bpc-157-tb-500-stack",
   "pda-pentadeca-arginate",
 ];
 
@@ -287,7 +285,7 @@ export function evaluateRecoveryPeptideReview(
       staffActions.push("Confirm FCC/GC pharmacy availability for selected compound");
     }
   } else {
-    staffActions.push("Select BPC-157, TB-500, recovery stack, or PDA after review");
+    staffActions.push("Select BPC-157, TB-500, or PDA after review");
   }
 
   const clinicalBlockers = blockers.filter(

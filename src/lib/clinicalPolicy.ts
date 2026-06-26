@@ -74,7 +74,6 @@ export function resolvePolicyKeyForCandidate(candidateKey: string): string {
     trt_testosterone_cypionate: "testosterone_cypionate",
     hrt_bi_est_cream: "bi_est_cream",
     hrt_progesterone_oral: "progesterone_oral",
-    recovery_wolverine_stack: "wolverine_stack",
     libido_pt141: "pt_141",
     policy_ketamine: "ketamine",
     policy_retatrutide_ala_carte: "retatrutide",

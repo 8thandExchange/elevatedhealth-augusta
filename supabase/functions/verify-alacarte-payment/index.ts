@@ -49,7 +49,6 @@ const PRODUCT_LABEL: Record<string, string> = {
   retatrutide: "Compounded Retatrutide Fill",
   bpc157: "BPC-157",
   tb500: "TB-500",
-  wolverineStack: "BPC-157/TB-500 Recovery Stack",
   followUp: "Follow-up Consultation",
   labPanel: "Comprehensive Wellness Panel",
   labPanelExpanded: "Expanded Lab Panel",

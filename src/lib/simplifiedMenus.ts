@@ -52,7 +52,8 @@ export const PUBLIC_MENU: MenuTier[] = [
     description: "Named stacks. Do not recite full peptide list to prospects.",
     items: [
       { id: "restore", label: "Restore (PT-141 weekly)", priceDisplay: "$129–179/mo", vendor: "gc" },
-      { id: "healing", label: "BPC-157 / TB-500 recovery stack", priceDisplay: "$249–329/mo", vendor: "gc" },
+      { id: "bpc157", label: "BPC-157 (recovery fill)", priceDisplay: "$249/fill", vendor: "gc" },
+      { id: "tb500", label: "TB-500 (recovery fill)", priceDisplay: "$249/fill", vendor: "gc" },
       // Vitality (Sermorelin + NAD+) retired 2026-06-25 — its NAD+ component was
       // discontinued. Sermorelin remains available à la carte ($149/mo).
     ],
