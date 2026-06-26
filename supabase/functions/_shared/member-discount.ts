@@ -7,10 +7,62 @@
  * (create via Stripe Dashboard or stripe.coupons.create — see PR12 plan doc).
  */
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import type Stripe from "https://esm.sh/stripe@18.5.0";
 
 export type ElevatedProgramKey = "trt" | "hrt" | "glp1" | "wellness";
 
 const PROGRAM_KEYS = new Set<ElevatedProgramKey>(["trt", "hrt", "glp1", "wellness"]);
+
+/** Stripe subscription statuses that still entitle a member to the discount. */
+const LIVE_ACTIVE_STATUSES = new Set(["active", "trialing"]);
+
+export type MemberDiscountOpts = {
+  /**
+   * When provided, the member's Stripe subscription is verified live so a
+   * cancelled/past-due subscription that hasn't synced to the DB yet cannot
+   * keep getting the discount. Transient Stripe errors fail open to the DB flag.
+   */
+  stripe?: Stripe;
+};
+
+/**
+ * Determines the patient_id that may receive a member discount, bound to the
+ * authenticated caller — closing the spoofable `patient_id` hole on à la carte.
+ *
+ * - No/invalid auth → null (guest; full price).
+ * - Staff/admin caller → trusted to transact for the supplied patient (payment links).
+ * - Patient caller → only ever their OWN patient row, regardless of what was supplied.
+ */
+export async function resolveAuthorizedDiscountPatientId(
+  supabaseAdmin: SupabaseClient,
+  authHeader: string | null | undefined,
+  suppliedPatientId: string | null | undefined,
+): Promise<string | null> {
+  if (!authHeader) return null;
+  const token = authHeader.replace("Bearer ", "").trim();
+  if (!token) return null;
+
+  const { data: userData, error } = await supabaseAdmin.auth.getUser(token);
+  if (error || !userData?.user) return null;
+  const userId = userData.user.id;
+
+  const { data: roles } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId);
+  const isStaff = Array.isArray(roles) && roles.some((r) => r.role === "admin" || r.role === "staff");
+  if (isStaff) {
+    const supplied = suppliedPatientId ? String(suppliedPatientId).trim() : "";
+    return supplied !== "" ? supplied : null;
+  }
+
+  const { data: ownPatient } = await supabaseAdmin
+    .from("patients")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return ownPatient?.id ?? null;
+}
 
 /**
  * TODO: Create Stripe Coupon "ELEVATED Member 20% Discount" (20% off) and set Supabase secret
@@ -26,6 +78,7 @@ export function getElevatedMemberCouponId(): string | null {
 export async function getActiveElevatedProgram(
   supabaseAdmin: SupabaseClient,
   patientId: string,
+  opts?: MemberDiscountOpts,
 ): Promise<ElevatedProgramKey | null> {
   const { data, error } = await supabaseAdmin
     .from("patients")
@@ -39,6 +92,19 @@ export async function getActiveElevatedProgram(
 
   const raw = data.elevated_program as string | null | undefined;
   if (!raw || !PROGRAM_KEYS.has(raw as ElevatedProgramKey)) return null;
+
+  // Live verification: a subscription cancelled/past-due in Stripe but not yet
+  // synced to the DB must not keep the discount. Fail open on transient errors.
+  if (opts?.stripe) {
+    try {
+      const sub = await opts.stripe.subscriptions.retrieve(data.stripe_subscription_id as string);
+      if (!LIVE_ACTIVE_STATUSES.has(sub.status)) return null;
+    } catch (_err) {
+      // Stripe lookup failed (transient/permissions) — trust the DB flag rather
+      // than block a legitimate member.
+    }
+  }
+
   return raw as ElevatedProgramKey;
 }
 
@@ -76,12 +142,13 @@ export async function resolveMemberCouponForCheckout(
   supabaseAdmin: SupabaseClient,
   patientId: string | null | undefined,
   productKey: string,
+  opts?: MemberDiscountOpts,
 ): Promise<CheckoutDiscountResult> {
   if (!patientId || patientId.trim() === "") {
     return { applied_discount: "none", program: null };
   }
 
-  const program = await getActiveElevatedProgram(supabaseAdmin, patientId);
+  const program = await getActiveElevatedProgram(supabaseAdmin, patientId, opts);
   if (!program) {
     return { applied_discount: "none", program: null };
   }

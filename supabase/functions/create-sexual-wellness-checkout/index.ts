@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_SEXUAL_WELLNESS } from "../_shared/live-prices.ts";
-import { resolveMemberCouponForCheckout } from "../_shared/member-discount.ts";
+import { resolveAuthorizedDiscountPatientId, resolveMemberCouponForCheckout } from "../_shared/member-discount.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
@@ -62,11 +62,21 @@ serve(async (req) => {
     const priceId = LIVE_SEXUAL_WELLNESS[mappedKey];
     const isOneTime = mappedKey === "pt141";
 
-    const discount = await resolveMemberCouponForCheckout(supabaseService, patientId ?? null, mappedKey);
-
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
+
+    const discountPatientId = await resolveAuthorizedDiscountPatientId(
+      supabaseService,
+      authHeader,
+      bodyPatientId ?? null,
+    );
+    const discount = await resolveMemberCouponForCheckout(
+      supabaseService,
+      discountPatientId,
+      mappedKey,
+      { stripe },
+    );
 
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;

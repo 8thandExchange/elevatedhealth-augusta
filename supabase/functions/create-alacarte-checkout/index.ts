@@ -21,6 +21,7 @@ serve(async (req) => {
     if (!product_key) throw new Error("product_key is required");
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+    const authHeader = req.headers.get("Authorization");
 
     edgeStructuredLog("create-alacarte-checkout", {
       event_type: "dispatch",
@@ -39,7 +40,7 @@ serve(async (req) => {
           `${origin}/alacarte-success?product=${encodeURIComponent(product_key)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/pricing`,
         logConsultationBooking: true,
-      });
+      }, authHeader);
     }
 
     if (product_key in LIVE_RECOVERY_PEPTIDES) {
@@ -52,7 +53,7 @@ serve(async (req) => {
           `${origin}/alacarte-success?product=${encodeURIComponent(product_key)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/pricing`,
         logConsultationBooking: true,
-      });
+      }, authHeader);
     }
 
     if (product_key === "followUp") {
@@ -63,7 +64,7 @@ serve(async (req) => {
         success_url: `${origin}/alacarte-success?product=followUp&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/pricing`,
         logConsultationBooking: true,
-      });
+      }, authHeader);
     }
 
     if (product_key === "labAdvanced") {
@@ -74,7 +75,7 @@ serve(async (req) => {
         success_url: `${origin}/alacarte-success?product=labAdvanced&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/pricing`,
         logConsultationBooking: true,
-      });
+      }, authHeader);
     }
 
     if (product_key === "labPanel" || product_key === "labPanelExpanded") {
@@ -88,7 +89,7 @@ serve(async (req) => {
         success_url: `${origin}/alacarte-success?product=labPanel&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/pricing`,
         logConsultationBooking: true,
-      });
+      }, authHeader);
     }
 
     throw new Error(

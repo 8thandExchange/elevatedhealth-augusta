@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { resolveMemberCouponForCheckout } from "../_shared/member-discount.ts";
+import { resolveAuthorizedDiscountPatientId, resolveMemberCouponForCheckout } from "../_shared/member-discount.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 
 const corsHeaders = {
@@ -24,6 +24,7 @@ serve(async (req) => {
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
     const supabaseAnon = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -82,7 +83,20 @@ serve(async (req) => {
       : resolvedPatientId;
     const isGuest = !patientId;
 
-    const discount = await resolveMemberCouponForCheckout(supabaseService, patientId ?? null, "iv_session");
+    // Discount is bound to the authenticated caller (or staff acting for a
+    // patient) and verified live against Stripe — a spoofed body patient_id or a
+    // stale "active" flag can no longer grant someone else's member price.
+    const discountPatientId = await resolveAuthorizedDiscountPatientId(
+      supabaseService,
+      authHeader,
+      bodyPatientId ?? null,
+    );
+    const discount = await resolveMemberCouponForCheckout(
+      supabaseService,
+      discountPatientId,
+      "iv_session",
+      { stripe },
+    );
 
     const { data: intake, error: intakeErr } = await supabaseService
       .from("iv_intake_responses")
@@ -118,8 +132,6 @@ serve(async (req) => {
       }
       addons = addonData || [];
     }
-
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
     let customerId: string | undefined;
     if (userEmail) {

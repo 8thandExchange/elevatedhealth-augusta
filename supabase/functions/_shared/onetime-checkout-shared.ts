@@ -1,6 +1,6 @@
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { resolveMemberCouponForCheckout } from "./member-discount.ts";
+import { resolveAuthorizedDiscountPatientId, resolveMemberCouponForCheckout } from "./member-discount.ts";
 import { edgeStructuredLog } from "./edge-structured-log.ts";
 
 export const checkoutCorsHeaders = {
@@ -32,6 +32,7 @@ function resolveCheckoutUrls(opts: OnetimeCheckoutOpts): { successUrl: string; c
 export async function serveOnetimePriceCheckoutFromBody(
   body: Record<string, unknown>,
   opts: OnetimeCheckoutOpts,
+  authHeader?: string | null,
 ): Promise<Response> {
   const { functionName, stripePriceId, productKey, logConsultationBooking } = opts;
   const { successUrl, cancelUrl } = resolveCheckoutUrls(opts);
@@ -59,10 +60,24 @@ export async function serveOnetimePriceCheckoutFromBody(
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    const discount = await resolveMemberCouponForCheckout(supabaseService, patient_id ?? null, productKey);
-    const isGuest = !patient_id || String(patient_id).trim() === "";
-
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+
+    // Member discount only applies to a patient_id that the authenticated caller
+    // is allowed to act for (the patient themselves, or staff/admin). A raw
+    // client-supplied patient_id no longer grants someone else's discount.
+    // We still keep the supplied patient_id in metadata for webhook attribution.
+    const discountPatientId = await resolveAuthorizedDiscountPatientId(
+      supabaseService,
+      authHeader,
+      patient_id ?? null,
+    );
+    const discount = await resolveMemberCouponForCheckout(
+      supabaseService,
+      discountPatientId,
+      productKey,
+      { stripe },
+    );
+    const isGuest = !patient_id || String(patient_id).trim() === "";
 
     const customers = await stripe.customers.list({ email: patient_email, limit: 1 });
     let customerId: string | undefined;
@@ -181,5 +196,5 @@ export async function serveOnetimePriceCheckout(
     return new Response(null, { headers: checkoutCorsHeaders });
   }
   const body = await req.json();
-  return serveOnetimePriceCheckoutFromBody(body, opts);
+  return serveOnetimePriceCheckoutFromBody(body, opts, req.headers.get("Authorization"));
 }

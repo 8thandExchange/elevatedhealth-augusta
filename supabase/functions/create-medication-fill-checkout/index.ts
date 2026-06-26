@@ -40,7 +40,7 @@ serve(async (req) => {
       success_url: `${origin}/alacarte-success?product=${encodeURIComponent(medication_key)}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/pricing`,
       logConsultationBooking: true,
-    });
+    }, req.headers.get("Authorization"));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     edgeStructuredLog(

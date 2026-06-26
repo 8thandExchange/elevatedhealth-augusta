@@ -71,6 +71,7 @@ serve(async (req) => {
       supabaseClient,
       patientRow?.id ?? null,
       "peptide",
+      { stripe },
     );
     logStep("Member discount resolved", {
       patient_id: patientRow?.id ?? null,
