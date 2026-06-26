@@ -2,8 +2,14 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { LIVE_ELEVATED_PROGRAMS } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import {
+  parseComboAddonKey,
+  parseComboAnchorKey,
+  stripeLineItemsForComboSelection,
+  type ComboAnchorKey,
+} from "../_shared/elevated-combo-prices.ts";
+import { hasClinicStaffRole } from "../_shared/staff-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -46,9 +52,17 @@ const checkRateLimit = (identifier: string): { allowed: boolean; retryAfter?: nu
   return { allowed: true };
 };
 
-/** Live ELEVATED GLP-1 program price — activation links use the single program SKU. */
-const GLP1_SUBSCRIPTION_PRICE_ID = LIVE_ELEVATED_PROGRAMS.glp1;
-const GLP1_MONTHLY_DISPLAY = 349;
+function resolveAnchor(
+  combo_anchor: string | undefined,
+  base_membership: string,
+): ComboAnchorKey {
+  const parsed = parseComboAnchorKey(combo_anchor);
+  if (parsed) return parsed;
+  if (base_membership === "tirzepatide") return "glp1_tirzepatide";
+  if (base_membership === "trt") return "trt";
+  if (base_membership === "hrt") return "hrt";
+  return "glp1_semaglutide";
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -101,7 +115,7 @@ serve(async (req) => {
       });
     }
     
-    const hasPermission = roles?.some(r => r.role === "admin" || r.role === "staff" || r.role === "business_admin");
+    const hasPermission = hasClinicStaffRole((roles ?? []).map((r) => String(r.role)));
     if (!hasPermission) {
       logStep("ERROR: Insufficient permissions", { userId: userData.user.id, roles });
       return new Response(JSON.stringify({ error: "Forbidden: Insufficient permissions" }), {
@@ -140,17 +154,29 @@ serve(async (req) => {
     logStep("Resend key check", { hasKey: !!resendKey });
 
     const body = await req.json();
-    const { 
-      first_name, 
-      phone, 
-      base_membership = "semaglutide", 
+    const {
+      first_name,
+      phone,
+      base_membership = "semaglutide",
       include_hormone_addon = false,
+      combo_anchor,
+      combo_addon,
+      combo_slug,
       patient_email,
       patient_id,
       send_email = false,
     } = body;
 
-    logStep("Request body received", { first_name, phone, base_membership, include_hormone_addon, patient_email, send_email });
+    logStep("Request body received", {
+      first_name,
+      base_membership,
+      combo_anchor,
+      combo_addon,
+      combo_slug,
+      include_hormone_addon,
+      patient_email,
+      send_email,
+    });
 
     edgeStructuredLog("send-activation-sms", {
       event_type: "request",
@@ -165,24 +191,24 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    const lineItems: Array<{ price: string; quantity: number }> = [
-      { price: GLP1_SUBSCRIPTION_PRICE_ID, quantity: 1 },
-    ];
-    logStep("Line item", { price_id: GLP1_SUBSCRIPTION_PRICE_ID, base_membership });
-
-    if (include_hormone_addon) {
-      edgeStructuredLog("send-activation-sms", {
-        event_type: "deprecated_addon_ignored",
-        success: true,
-        action_taken: "hormone_addon_not_applied_use_update_subscription_addon",
-      });
+    const anchorKey = resolveAnchor(combo_anchor, base_membership);
+    let addonKey = parseComboAddonKey(combo_addon);
+    if (!addonKey && include_hormone_addon) {
+      addonKey = anchorKey.startsWith("glp1") ? "trt" : null;
     }
 
-    const totalMonthly = GLP1_MONTHLY_DISPLAY;
+    const lineItems = stripeLineItemsForComboSelection(anchorKey, addonKey);
+    logStep("Combo line items", { anchorKey, addonKey, lineItems });
 
-    // Create Stripe Checkout session for subscription
+    let totalMonthly = 0;
+    for (const li of lineItems) {
+      const price = await stripe.prices.retrieve(li.price);
+      totalMonthly += price.unit_amount ?? 0;
+    }
+
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
-    
+    const resolvedComboSlug = combo_slug || (addonKey ? `${anchorKey}+${addonKey}` : anchorKey);
+
     const session = await stripe.checkout.sessions.create({
       customer_email: patient_email || undefined,
       line_items: lineItems,
@@ -193,7 +219,11 @@ serve(async (req) => {
         first_name,
         phone: phone || "",
         base_membership,
-        include_hormone_addon: String(include_hormone_addon),
+        combo_anchor: anchorKey,
+        combo_addon: addonKey ?? "",
+        combo_slug: resolvedComboSlug,
+        include_hormone_addon: String(!!addonKey && (addonKey === "trt" || addonKey === "hrt")),
+        patient_id: patient_id || "",
       },
     });
 
@@ -214,8 +244,10 @@ serve(async (req) => {
       try {
         const resend = new Resend(resendKey);
         
-        const membershipName = "ELEVATED GLP-1 (monthly care)";
-        
+        const membershipName = addonKey
+          ? `ELEVATED Combo (${resolvedComboSlug.replace(/\+/g, " + ")})`
+          : `ELEVATED Program (${anchorKey.replace(/_/g, " ")})`;
+
         const emailHtml = `
           <!DOCTYPE html>
           <html>
@@ -286,7 +318,10 @@ serve(async (req) => {
             patient_email: patient_email,
             patient_phone: phone || null,
             base_membership: base_membership,
-            addon_tier: include_hormone_addon ? "hormone_addon" : "none",
+            addon_tier: addonKey ?? "none",
+            combo_slug: resolvedComboSlug,
+            combo_anchor: anchorKey,
+            combo_addon: addonKey,
             total_monthly: totalMonthly,
             stripe_checkout_url: paymentLink,
             status: "pending",

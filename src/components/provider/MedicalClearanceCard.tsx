@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, CheckCircle, Pill, Scale, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { COMBO_ADDONS } from "@/lib/elevatedComboPrograms";
 
 interface MedicalClearanceCardProps {
   patientId: string;
@@ -190,7 +191,9 @@ export function MedicalClearanceCard({
         <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
           <div>
             <p className="text-sm font-medium">Add Hormone Therapy</p>
-            <p className="text-xs text-muted-foreground">+$149/month for optimized results</p>
+            <p className="text-xs text-muted-foreground">
+              {COMBO_ADDONS.trt.addOnDisplayPrice} (men) · {COMBO_ADDONS.hrt.addOnDisplayPrice} (women) — medication only
+            </p>
           </div>
           <Button
             variant={includeHormoneAddon ? "default" : "outline"}

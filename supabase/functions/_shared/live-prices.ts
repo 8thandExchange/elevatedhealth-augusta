@@ -52,6 +52,16 @@ export const LIVE_RECOVERY_PEPTIDES = {
 
 export type LiveRecoveryPeptideKey = keyof typeof LIVE_RECOVERY_PEPTIDES;
 
+/** ELEVATED combo medication-only add-ons — bootstrapped 2026-06-26. */
+export const LIVE_COMBO_ADDON_PRICE_IDS = {
+  trt: "price_1TmedJCXbCBPFEeIPJlH1Yq1",
+  hrt: "price_1TmedKCXbCBPFEeImjKoYNoS",
+  glp1_semaglutide: "price_1TmedKCXbCBPFEeITDtxayx4",
+  glp1_tirzepatide: "price_1TmedLCXbCBPFEeIgzXJt0Lz",
+} as const;
+
+export type LiveComboAddonKey = keyof typeof LIVE_COMBO_ADDON_PRICE_IDS;
+
 export const LIVE_SEXUAL_WELLNESS = {
   tadalafil: "price_1TWcwsCXbCBPFEeI9yGko9k8",
   sildenafil: "price_1TWcxGCXbCBPFEeIezbJUMS1",

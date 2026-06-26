@@ -230,6 +230,10 @@ verify_jwt = false
 [functions.bootstrap-glp1-tirzepatide-price]
 verify_jwt = false
 
+# bootstrap-elevated-combo-prices — medication-only add-on recurring SKUs for combo programs.
+[functions.bootstrap-elevated-combo-prices]
+verify_jwt = false
+
 [functions.send-welcome-sms]
 verify_jwt = false
 

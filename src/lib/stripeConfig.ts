@@ -84,6 +84,47 @@ export const GLP1_PROGRAM_VARIANTS = {
 export type Glp1Molecule = keyof typeof GLP1_PROGRAM_VARIANTS;
 
 /**
+ * ELEVATED combo medication-only add-ons (stacked on anchor subscription).
+ * Bootstrapped via `bootstrap-elevated-combo-prices`. See docs/pricing/elevated_combo_programs.md.
+ */
+export const ELEVATED_COMBO_ADDONS = {
+  trt: {
+    key: "trt" as const,
+    name: "ELEVATED TRT Medication Add-On",
+    priceId: "price_1TmedJCXbCBPFEeIPJlH1Yq1",
+    productId: "prod_UmD3cuEtIBIFHh",
+    amount: 14900,
+    displayPrice: "+$149/mo",
+  },
+  hrt: {
+    key: "hrt" as const,
+    name: "ELEVATED HRT Medication Add-On",
+    priceId: "price_1TmedKCXbCBPFEeImjKoYNoS",
+    productId: "prod_UmD3E2SshdwFcs",
+    amount: 12900,
+    displayPrice: "+$129/mo",
+  },
+  glp1_semaglutide: {
+    key: "glp1_semaglutide" as const,
+    name: "ELEVATED GLP-1 Semaglutide Medication Add-On",
+    priceId: "price_1TmedKCXbCBPFEeITDtxayx4",
+    productId: "prod_UmD3ZVJuvgw1uc",
+    amount: 24900,
+    displayPrice: "+$249/mo",
+  },
+  glp1_tirzepatide: {
+    key: "glp1_tirzepatide" as const,
+    name: "ELEVATED GLP-1 Tirzepatide Medication Add-On",
+    priceId: "price_1TmedLCXbCBPFEeIgzXJt0Lz",
+    productId: "prod_UmD3WbYQaYby9x",
+    amount: 34900,
+    displayPrice: "+$349/mo",
+  },
+} as const;
+
+export type ElevatedComboAddonKey = keyof typeof ELEVATED_COMBO_ADDONS;
+
+/**
  * GLP-1 price display for generic contexts where the molecule isn't yet known
  * (membership badges, program lists). Use GLP1_PROGRAM_VARIANTS[molecule] when
  * the molecule IS known (storefront molecule cards, provider charge modals).

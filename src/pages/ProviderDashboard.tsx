@@ -32,7 +32,7 @@ import {
 import { Label } from "@/components/ui/label";
 import LabAnalysisCard from "@/components/provider/LabAnalysisCard";
 import LabCorpRequisition from "@/components/provider/LabCorpRequisition";
-import HormoneAddonSelector from "@/components/provider/HormoneAddonSelector";
+import ElevatedComboSelector from "@/components/provider/ElevatedComboSelector";
 import PeptideAddonSelector from "@/components/provider/PeptideAddonSelector";
 import RecoveryPeptideReviewPanel from "@/components/provider/RecoveryPeptideReviewPanel";
 import HairRestorationAddonSelector from "@/components/provider/HairRestorationAddonSelector";
@@ -2709,21 +2709,29 @@ const ProviderDashboard = () => {
                 />
               )}
 
-              {/* Hormone Protocol Pricing Add-On Selector — GLP-1 patients only */}
-              {(selectedPatient.patient.primary_program === "glp1" ||
-                selectedPatient.patient.primary_program === "semaglutide" ||
-                selectedPatient.patient.primary_program === "tirzepatide" ||
-                selectedPatient.patient.primary_program === "weight_loss") && (
-              <HormoneAddonSelector
-                patientId={selectedPatient.patient.id}
-                patientName={selectedPatient.patient.full_name}
-                patientEmail={selectedPatient.patient.email}
-                patientPhone={selectedPatient.patient.phone}
-                currentHasAddon={!!(selectedPatient.patient.medical_history as Record<string, unknown>)?.has_hormone_addon}
-                baseMembership={
-                  selectedPatient.patient.primary_program === "tirzepatide" ? "tirzepatide" : "semaglutide"
-                }
-              />
+              {/* ELEVATED combo enrollment — anchor + medication-only add-on */}
+              {(["glp1", "semaglutide", "tirzepatide", "weight_loss", "hormone", "trt", "hrt"].includes(
+                selectedPatient.patient.primary_program ?? "",
+              ) ||
+                selectedPatient.patient.treatment_request?.includes("weight") ||
+                selectedPatient.patient.treatment_request?.includes("hormone") ||
+                selectedPatient.patient.treatment_request?.includes("glp")) && (
+                <ElevatedComboSelector
+                  patientId={selectedPatient.patient.id}
+                  patientName={selectedPatient.patient.full_name}
+                  patientEmail={selectedPatient.patient.email}
+                  patientPhone={selectedPatient.patient.phone}
+                  patientGender={selectedPatient.patient.gender}
+                  primaryProgram={selectedPatient.patient.primary_program}
+                  treatmentRequest={selectedPatient.patient.treatment_request}
+                  currentAddonKey={
+                    (selectedPatient.patient.medical_history as Record<string, unknown>)?.has_hormone_addon
+                      ? selectedPatient.patient.gender === "female"
+                        ? "hrt"
+                        : "trt"
+                      : null
+                  }
+                />
               )}
 
               <RecoveryPeptideReviewPanel

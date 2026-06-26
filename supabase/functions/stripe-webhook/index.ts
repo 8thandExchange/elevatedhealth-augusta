@@ -12,6 +12,7 @@ import {
   fulfillConsultationPayment,
   isConsultationCheckoutSession,
 } from "../_shared/fulfill-consultation-payment.ts";
+import { resolveSubscriptionElevatedState } from "../_shared/elevated-combo-prices.ts";
 
 /** Legacy single-tier Elevated price IDs — stop recognizing after 2026-08-11 (PR12 sunset). */
 
@@ -304,6 +305,22 @@ async function notifyStaffOfPayment(
   }
 }
 
+async function subscriptionPriceIds(
+  stripe: Stripe,
+  session: Stripe.Checkout.Session,
+): Promise<string[]> {
+  try {
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10 });
+    return lineItems.data.map((li) => li.price?.id).filter((id): id is string => !!id);
+  } catch {
+    return [];
+  }
+}
+
+async function allSubscriptionItemPriceIds(sub: Stripe.Subscription): Promise<string[]> {
+  return sub.items.data.map((it) => it.price?.id).filter((id): id is string => !!id);
+}
+
 async function firstSubscriptionPriceId(
   stripe: Stripe,
   session: Stripe.Checkout.Session,
@@ -494,9 +511,11 @@ serve(async (req) => {
       }
 
       if (session.mode === "subscription") {
-        const priceId = await firstSubscriptionPriceId(stripe, session);
+        const priceIds = await subscriptionPriceIds(stripe, session);
+        const priceId = priceIds[0] ?? null;
+        const resolved = resolveSubscriptionElevatedState(priceIds);
+        const program = resolved.elevated_program;
         const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
-        const program = priceId ? getProgramFromPriceId(priceId) : null;
         const recognition = recognitionForProgram(program, legacy);
 
         const subId = typeof session.subscription === "string"
@@ -547,6 +566,7 @@ serve(async (req) => {
             .update({
               elevated_membership_status: "active",
               elevated_program: program,
+              elevated_program_addon: resolved.elevated_program_addon,
               stripe_subscription_id: subId,
             })
             .eq("id", patientIdMeta);
@@ -653,9 +673,11 @@ serve(async (req) => {
 
     if (event.type === "customer.subscription.created") {
       const subscription = event.data.object as Stripe.Subscription;
-      const priceId = await firstSubscriptionItemPriceId(subscription);
+      const priceIds = await allSubscriptionItemPriceIds(subscription);
+      const priceId = priceIds[0] ?? null;
+      const resolved = resolveSubscriptionElevatedState(priceIds);
+      const program = resolved.elevated_program;
       const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
-      const program = priceId ? getProgramFromPriceId(priceId) : null;
       const recognition = recognitionForProgram(program, legacy);
       const customerId = typeof subscription.customer === "string"
         ? subscription.customer
@@ -681,6 +703,7 @@ serve(async (req) => {
           .update({
             elevated_membership_status: "active",
             elevated_program: program,
+            elevated_program_addon: resolved.elevated_program_addon,
             stripe_subscription_id: subscription.id,
           })
           .eq("email", email);
@@ -701,9 +724,11 @@ serve(async (req) => {
 
     if (event.type === "customer.subscription.updated") {
       const subscription = event.data.object as Stripe.Subscription;
-      const priceId = await firstSubscriptionItemPriceId(subscription);
+      const priceIds = await allSubscriptionItemPriceIds(subscription);
+      const priceId = priceIds[0] ?? null;
+      const resolved = resolveSubscriptionElevatedState(priceIds);
+      const program = resolved.elevated_program;
       const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
-      const program = priceId ? getProgramFromPriceId(priceId) : null;
       const recognition = recognitionForProgram(program, legacy);
       const customerId = typeof subscription.customer === "string"
         ? subscription.customer
@@ -738,6 +763,7 @@ serve(async (req) => {
             .update({
               elevated_membership_status: "active",
               elevated_program: program,
+              elevated_program_addon: resolved.elevated_program_addon,
               stripe_subscription_id: subscription.id,
             })
             .eq("email", email);
@@ -757,7 +783,7 @@ serve(async (req) => {
         subscription.status === "canceled" || subscription.status === "unpaid" ||
         subscription.status === "incomplete_expired"
       ) {
-        const isElevated = !!(priceId && (getProgramFromPriceId(priceId) || legacy));
+        const isElevated = !!(program || legacy || priceIds.some((id) => getProgramFromPriceId(id)));
         const { error } = await supabaseClient
           .from("patients")
           .update({
@@ -766,6 +792,7 @@ serve(async (req) => {
               ? {
                 elevated_membership_status: "cancelled",
                 elevated_program: null,
+                elevated_program_addon: null,
                 stripe_subscription_id: null,
               }
               : {}),
@@ -787,8 +814,10 @@ serve(async (req) => {
 
     if (event.type === "customer.subscription.deleted") {
       const subscription = event.data.object as Stripe.Subscription;
-      const priceId = await firstSubscriptionItemPriceId(subscription);
-      const program = priceId ? getProgramFromPriceId(priceId) : null;
+      const priceIds = await allSubscriptionItemPriceIds(subscription);
+      const priceId = priceIds[0] ?? null;
+      const resolved = resolveSubscriptionElevatedState(priceIds);
+      const program = resolved.elevated_program;
       const legacy = !!(priceId && LEGACY_ELEVATED_PRICE_IDS.includes(priceId));
       const recognition = recognitionForProgram(program, legacy);
       const customerId = typeof subscription.customer === "string"
@@ -814,6 +843,7 @@ serve(async (req) => {
         const elevatedClear = {
           elevated_membership_status: "cancelled",
           elevated_program: null as string | null,
+          elevated_program_addon: null as string | null,
           stripe_subscription_id: null as string | null,
         };
         const { error } = await supabaseClient
