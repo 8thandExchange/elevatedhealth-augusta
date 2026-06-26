@@ -2630,7 +2630,7 @@ const ProviderDashboard = () => {
                   androgen: selectedPatient.latestLog.androgen_score || 0,
                   cortisol: selectedPatient.latestLog.cortisol_score || 0,
                 } : undefined}
-                onApplyToRx={(meds) => setRecommendedMedications(meds)}
+                onApplyToRx={(meds) => handleApplyFromHealthReport(meds)}
               />
 
               {/* Mark Labs Reviewed Button */}

@@ -54,13 +54,26 @@ const IVSlotSelection = () => {
     void guard();
   }, [intakeId, navigate, serviceId]);
 
+  const readSelectedAddonIds = (): string[] => {
+    try {
+      const raw = sessionStorage.getItem(`iv_addon_ids:${serviceId}`);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
+    } catch {
+      return [];
+    }
+  };
+
   const handleConfirm = async ({ slot }: { slot: { slot_token: string; start: string } }) => {
     if (!serviceId || !intakeId || !therapyIdForCheckout) return;
     setCheckingOut(true);
     try {
+      const addonIds = readSelectedAddonIds();
       const { data, error } = await supabase.functions.invoke("create-iv-drip-checkout", {
         body: {
           therapy_id: therapyIdForCheckout,
+          addon_ids: addonIds,
           intake_id: intakeId,
           slot_token: slot.slot_token,
           success_query: {

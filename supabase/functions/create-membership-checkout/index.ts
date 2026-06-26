@@ -57,42 +57,76 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
     );
+    // Service-role client: lets an authorized staff/admin caller resolve and
+    // charge a DIFFERENT patient (the one selected in QuickPaymentModal) rather
+    // than themselves. Patient self-serve still resolves their own record.
+    const supabaseService = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("Authentication required");
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData } = await supabaseClient.auth.getUser(token);
-    if (!userData.user?.email) throw new Error("User not authenticated");
+    if (!userData.user?.id) throw new Error("User not authenticated");
 
-    const userEmail = userData.user.email;
-    const userId = userData.user.id;
+    const callerId = userData.user.id;
 
+    const body = await req.json().catch(() => ({} as Record<string, unknown>));
     let bodyProgram: LiveElevatedProgramKey | undefined;
-    try {
-      const body = await req.json().catch(() => ({}));
-      if (body?.program && typeof body.program === "string") {
-        const k = body.program as LiveElevatedProgramKey;
-        if (k in LIVE_ELEVATED_PROGRAMS) bodyProgram = k;
-      }
-    } catch {
-      /* empty */
+    if (typeof body?.program === "string" && (body.program as string) in LIVE_ELEVATED_PROGRAMS) {
+      bodyProgram = body.program as LiveElevatedProgramKey;
+    }
+    const targetPatientId =
+      typeof body?.patientId === "string"
+        ? (body.patientId as string)
+        : typeof body?.patient_id === "string"
+          ? (body.patient_id as string)
+          : null;
+    const targetEmail =
+      typeof body?.email === "string"
+        ? (body.email as string)
+        : typeof body?.patient_email === "string"
+          ? (body.patient_email as string)
+          : null;
+
+    // Is the caller staff/admin acting on behalf of a selected patient?
+    const { data: callerRoles } = await supabaseService
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerId);
+    const callerIsStaff = (callerRoles ?? []).some(
+      (r: { role: string }) => r.role === "admin" || r.role === "staff",
+    );
+    const actingOnBehalf = callerIsStaff && Boolean(targetPatientId || targetEmail);
+
+    const patientSelect =
+      "id, user_id, onboarding_status, full_name, email, treatment_request, primary_program";
+    let patientQuery = supabaseService.from("patients").select(patientSelect);
+    if (actingOnBehalf) {
+      patientQuery = targetPatientId
+        ? patientQuery.eq("id", targetPatientId)
+        : patientQuery.eq("email", targetEmail as string);
+    } else {
+      // Self-serve: the caller pays for their own membership.
+      patientQuery = patientQuery.eq("user_id", callerId);
     }
 
-    const { data: patient, error: patientError } = await supabaseClient
-      .from("patients")
-      .select("id, onboarding_status, full_name, treatment_request, primary_program")
-      .eq("user_id", userId)
-      .maybeSingle();
+    const { data: patient, error: patientError } = await patientQuery.maybeSingle();
 
     if (patientError) throw new Error("Failed to fetch patient record");
     if (!patient) throw new Error("Patient record not found");
 
     if (!ALLOWED_ONBOARDING.includes(patient.onboarding_status || "")) {
       throw new Error(
-        "LAB_REVIEW_REQUIRED: Your lab results must be reviewed by a provider before purchasing a membership. Please schedule your Lab Review appointment.",
+        "LAB_REVIEW_REQUIRED: This patient's lab results must be reviewed by a provider before purchasing a membership. Please complete the Lab Review first.",
       );
     }
+
+    const billingEmail = patient.email || targetEmail;
+    if (!billingEmail) throw new Error("Patient has no email on file to send the membership invoice to.");
 
     const program = bodyProgram ?? inferProgramFromPatient(patient);
     const priceId = LIVE_ELEVATED_PROGRAMS[program];
@@ -100,25 +134,26 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
     let customerId: string | undefined;
-    const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
+    const customers = await stripe.customers.list({ email: billingEmail, limit: 1 });
     if (customers.data.length > 0) customerId = customers.data[0].id;
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : userEmail,
+      customer_email: customerId ? undefined : billingEmail,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       success_url: `${origin}/patient/dashboard?subscription=success`,
       cancel_url: `${origin}/membership`,
       metadata: {
-        user_id: userId,
+        user_id: patient.user_id ?? "",
         patient_id: patient.id,
         product_key: `elevated_${program}`,
         elevated_program: program,
         is_guest_checkout: "false",
         applied_discount: "none",
+        created_on_behalf: actingOnBehalf ? "true" : "false",
       },
     });
 

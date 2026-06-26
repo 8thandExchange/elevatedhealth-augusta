@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   CheckCircle2, Award, Heart, Users, TrendingDown, Activity, 
   Apple, Scale, Droplet, LineChart, Brain, Pill, Clock, 
-  MessageCircle, Shield, CreditCard, Loader2, Calendar
+  MessageCircle, Shield, CreditCard, Calendar
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -13,8 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { trackEvent } from "@/lib/analytics";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import NotReadyToBook from "@/components/NotReadyToBook";
 import HowGLP1Works from "@/components/HowGLP1Works";
 import {
@@ -49,8 +47,6 @@ const PRICE_PROGRAM_GLP1_TIRZ = GLP1_PROGRAM_VARIANTS.tirzepatide.displayPrice;
 
 const WeightLoss = () => {
   const navigate = useNavigate();
-  const [isSemaglutideLoading, setIsSemaglutideLoading] = useState(false);
-  const [isTirzepatideLoading, setIsTirzepatideLoading] = useState(false);
   const [glpComparisonDrug, setGlpComparisonDrug] = useState<"semaglutide" | "tirzepatide">("semaglutide");
 
   useEffect(() => {
@@ -66,51 +62,10 @@ const WeightLoss = () => {
     navigate("/consult/start?reasons=weight_loss");
   };
 
-  const handleSemaglutideCheckout = async () => {
-    setIsSemaglutideLoading(true);
-    trackEvent("cta_click", { cta_name: "semaglutide_membership", destination: "checkout" });
-    try {
-      const { data, error } = await supabase.functions.invoke("create-semaglutide-checkout", {
-        body: {}
-      });
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        throw new Error("No checkout URL returned");
-      }
-    } catch (err) {
-      console.error("Semaglutide checkout error:", err);
-      toast.error("Failed to start checkout. Please try again or call us.");
-    } finally {
-      setIsSemaglutideLoading(false);
-    }
-  };
-
-  const handleTirzepatideCheckout = async () => {
-    setIsTirzepatideLoading(true);
-    trackEvent("cta_click", { cta_name: "tirzepatide_membership", destination: "checkout" });
-    try {
-      const { data, error } = await supabase.functions.invoke("create-tirzepatide-checkout", {
-        body: {}
-      });
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        throw new Error("No checkout URL returned");
-      }
-    } catch (err) {
-      console.error("Tirzepatide checkout error:", err);
-      toast.error("Failed to start checkout. Please try again or call us.");
-    } finally {
-      setIsTirzepatideLoading(false);
-    }
-  };
+  // GLP-1 is consult-gated (Lane B): the public storefront routes every purchase
+  // intent to the $79 wellness assessment. Subscription enrollment and à la carte
+  // fills are created post-clearance from the patient portal / staff payment links,
+  // so no direct GLP-1 checkout handler lives here.
 
   // 3-Step Concierge Workflow
   const processSteps = [
@@ -855,25 +810,28 @@ const WeightLoss = () => {
                       ))}
                     </ul>
                     <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-1 mb-1 text-sm font-jost">
+                        <div className="flex justify-between gap-2">
+                          <span className="text-primary/70">Semaglutide</span>
+                          <span className="font-medium text-accent">{PRICE_PROGRAM_GLP1_SEMA}/mo</span>
+                        </div>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-primary/70">Tirzepatide</span>
+                          <span className="font-medium text-accent">{PRICE_PROGRAM_GLP1_TIRZ}/mo</span>
+                        </div>
+                      </div>
                       <Button
-                        onClick={handleSemaglutideCheckout}
-                        disabled={isSemaglutideLoading}
+                        onClick={handleConsultationCheckout}
                         size="lg"
                         className="w-full bg-primary hover:bg-primary/90 text-white font-jost"
                       >
-                        {isSemaglutideLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        {isSemaglutideLoading ? "Processing..." : `Enroll — semaglutide (${PRICE_PROGRAM_GLP1_SEMA})`}
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Start with your {PRICE_CONSULT} assessment
                       </Button>
-                      <Button
-                        onClick={handleTirzepatideCheckout}
-                        disabled={isTirzepatideLoading}
-                        size="lg"
-                        variant="outline"
-                        className="w-full border-accent text-primary font-jost"
-                      >
-                        {isTirzepatideLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        {isTirzepatideLoading ? "Processing..." : `Enroll — tirzepatide (${PRICE_PROGRAM_GLP1_TIRZ})`}
-                      </Button>
+                      <p className="text-[11px] text-primary/50 font-jost leading-snug">
+                        GLP-1 therapy is prescription-only. You'll enroll in monthly care after your assessment and
+                        provider clearance.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -896,23 +854,16 @@ const WeightLoss = () => {
                     </div>
                     <div className="flex flex-col gap-2 mt-auto">
                       <Button
-                        onClick={handleSemaglutideCheckout}
-                        disabled={isSemaglutideLoading}
+                        onClick={handleConsultationCheckout}
                         size="sm"
                         variant="outline"
                         className="w-full font-jost"
                       >
-                        {isSemaglutideLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Checkout — semaglutide"}
+                        Start with your {PRICE_CONSULT} assessment
                       </Button>
-                      <Button
-                        onClick={handleTirzepatideCheckout}
-                        disabled={isTirzepatideLoading}
-                        size="sm"
-                        variant="outline"
-                        className="w-full font-jost"
-                      >
-                        {isTirzepatideLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Checkout — tirzepatide"}
-                      </Button>
+                      <p className="text-[11px] text-muted-foreground font-jost leading-snug">
+                        Pay-per-fill is arranged by your clinician after your assessment — no online self-checkout.
+                      </p>
                     </div>
                   </CardContent>
                 </Card>

@@ -36,16 +36,20 @@ interface QuickPaymentModalProps {
 }
 
 // Current taxonomy. Aligned with stripeConfig.ts:
-//   - $199/mo Elevated Membership (single tier)
+//   - ELEVATED program memberships: IV ($199), TRT ($249), HRT ($229). The
+//     program is passed to create-membership-checkout, which charges the
+//     SELECTED patient (not the staff caller). GLP-1 enrolls via the dedicated
+//     semaglutide/tirzepatide checkouts.
 //   - $79 Wellness Assessment (consultation)
-//   - GLP-1 weight loss (member/non-member; modal sends non-member link
-//     by default; staff can route a member through their dashboard)
 //   - À la carte: testosterone / biEst / progesterone / follow-up / lab panel
 //
-// Removed: Hormone tiers (access/vitality/concierge), Vitality, hormone
-// add-on, IV ketamine, retired $149 discovery-style consult SKU. All Réveil-era.
+// Removed: legacy single-tier "$199 Elevated Membership", hormone tiers
+// (access/vitality/concierge), Vitality, hormone add-on, IV ketamine, retired
+// $149 discovery-style consult SKU. All Réveil-era.
 const PRODUCTS = [
-  { value: "elevated_membership", label: "Elevated Membership", price: "$199/mo", category: "Membership" },
+  { value: "elevated_iv", label: "ELEVATED IV Membership", price: "$199/mo", category: "Membership" },
+  { value: "elevated_trt", label: "ELEVATED TRT Membership", price: "$249/mo", category: "Membership" },
+  { value: "elevated_hrt", label: "ELEVATED HRT Membership", price: "$229/mo", category: "Membership" },
   { value: "consultation", label: "Wellness Assessment", price: "$79", category: "Consultation" },
   { value: "semaglutide", label: "ELEVATED GLP-1 (semaglutide path)", price: "$349/mo", category: "Weight Loss" },
   { value: "tirzepatide", label: "ELEVATED GLP-1 (tirzepatide path)", price: "$449/mo", category: "Weight Loss" },
@@ -99,10 +103,17 @@ const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalP
     }
   };
 
+  // ELEVATED program memberships → the umbrella membership checkout, with the
+  // program passed through so it charges the right tier for the SELECTED patient.
+  const MEMBERSHIP_PROGRAM: Record<string, "wellness" | "trt" | "hrt"> = {
+    elevated_iv: "wellness",
+    elevated_trt: "trt",
+    elevated_hrt: "hrt",
+  };
+
   const getEdgeFunction = (product: string) => {
+    if (product in MEMBERSHIP_PROGRAM) return "create-membership-checkout";
     switch (product) {
-      case "elevated_membership":
-        return "create-membership-checkout";
       case "consultation":
         return "create-consultation-checkout";
       case "semaglutide":
@@ -116,6 +127,14 @@ const QuickPaymentModal = ({ open, onOpenChange, onSuccess }: QuickPaymentModalP
   };
 
   const getCheckoutBody = (product: string, patient: Patient) => {
+    if (product in MEMBERSHIP_PROGRAM) {
+      return {
+        program: MEMBERSHIP_PROGRAM[product],
+        email: patient.email,
+        name: patient.full_name,
+        patientId: patient.id,
+      };
+    }
     if (product.startsWith("alacarte_")) {
       return {
         product_key: product.replace("alacarte_", ""),

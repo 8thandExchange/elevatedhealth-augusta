@@ -155,9 +155,9 @@ const Membership = () => {
               <span className="italic">one transparent monthly price.</span>
             </h1>
             <p className="font-jost font-light text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Four ELEVATED programs — each bundles medication when prescribed, monthly check-ins, quarterly labs, lab
-              review, and unlimited messaging. Initial Wellness Assessment and baseline labs are paid upfront; then
-              predictable membership pricing.
+              Four ELEVATED programs. HRT, TRT, and GLP-1 bundle your medication, quarterly labs, and lab review;
+              ELEVATED IV is the IV-only membership with two drips a month. All include monthly check-ins and unlimited
+              messaging. Initial Wellness Assessment and baseline labs are paid upfront; then predictable membership pricing.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button

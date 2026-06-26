@@ -190,6 +190,17 @@ const IVLounge = () => {
     if (!selectedTherapy) return;
     setCheckingOut(true);
     try {
+      // Carry selected boosters through the multi-step screening → slots flow so
+      // they actually get charged at checkout. Keyed per drip so switching drips
+      // never applies stale add-ons.
+      try {
+        sessionStorage.setItem(
+          `iv_addon_ids:${selectedTherapy.id}`,
+          JSON.stringify(selectedAddonIds),
+        );
+      } catch {
+        /* sessionStorage unavailable — add-ons simply won't pre-carry */
+      }
       navigate(`/book/iv/screening?serviceId=${encodeURIComponent(selectedTherapy.id)}`);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Could not start screening. Please call us to book.";
@@ -238,7 +249,7 @@ const IVLounge = () => {
             </h1>
             <p className="font-jost font-light text-lg md:text-xl text-primary-foreground/85 max-w-2xl mx-auto mb-10">
               Physician-formulated IV therapy, administered by a registered nurse in our private Augusta lounge.
-              Choose your drip, add boosters, pay online — schedule instantly after checkout.
+              Choose your drip, add boosters, complete a quick screening, pick your time, and pay.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-xs md:text-sm font-jost text-primary-foreground/90 mb-8">

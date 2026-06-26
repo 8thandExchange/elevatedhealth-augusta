@@ -20,7 +20,7 @@ const steps = [
   {
     n: "04",
     title: "Ongoing Optimization",
-    body: "An ELEVATED program keeps you on track with medication included where prescribed, monthly check-ins with our clinical team, quarterly labs, and unlimited messaging.",
+    body: "An ELEVATED program keeps you on track: the HRT, TRT, and GLP-1 plans include your medication and quarterly labs, while ELEVATED IV covers two drips a month — all with monthly clinical check-ins and unlimited messaging.",
   },
 ];
 

@@ -14,9 +14,9 @@ const programHighlights = [
 ];
 
 const includes = [
-  "Medication included when prescribed in your program",
+  "Medication included in the HRT, TRT & GLP-1 programs",
   "Monthly clinical check-in and unlimited messaging",
-  "Quarterly labs and physician review included",
+  "Quarterly labs in the Rx programs (ELEVATED IV is IV-only — two drips a month)",
   "Transparent monthly pricing — no hidden pharmacy fees",
   "Month-to-month — cancel anytime",
 ];

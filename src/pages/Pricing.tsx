@@ -206,7 +206,7 @@ const Pricing = () => {
                 "name": "What is included in an ELEVATED membership?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ELEVATED program memberships include monthly medication where applicable to the program, monthly check-in with our clinical team, free quarterly labs at the clinic, clinically appropriate lab review and protocol adjustments, and unlimited messagingóone transparent monthly price. Initial Wellness Assessment and baseline labs are separate one-time onboarding fees.",
+                  "text": "The ELEVATED HRT, TRT, and GLP-1 program memberships include monthly medication, a monthly check-in with our clinical team, free quarterly labs at the clinic, clinically appropriate lab review and protocol adjustments, and unlimited messaging in one transparent monthly price. ELEVATED IV ($199/mo) is the IV-only membership: it includes two signature drips each month and concierge perks, but no medication and no labs. The initial Wellness Assessment and baseline labs are separate one-time onboarding fees.",
                 },
               },
             ],
@@ -292,7 +292,7 @@ const Pricing = () => {
               to="/pricing-comparison" 
               className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent/80 transition-colors"
             >
-              <span>Compare Membership vs. ¿ La Carte Pricing</span>
+              <span>Compare Membership vs. ù La Carte Pricing</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -332,8 +332,9 @@ const Pricing = () => {
                     <CardContent className="flex flex-col flex-grow pt-0">
                       <p className="text-3xl font-playfair text-foreground mb-4">{p.displayPrice}</p>
                       <p className="text-xs text-muted-foreground font-jost flex-grow mb-4 leading-relaxed">
-                        Medication included where prescribed, monthly check-in with our clinical team, quarterly labs,
-                        lab review when needed, unlimited messaging.
+                        {key === "wellness"
+                          ? "Two signature IV drips every month, monthly check-in with our clinical team, unlimited messaging, priority booking, and 20% off boosters & ù la carte. No medication or labs bundled ù this is the IV membership."
+                          : "Medication included where prescribed, monthly check-in with our clinical team, quarterly labs, lab review when needed, unlimited messaging."}
                       </p>
                       <Button variant="outline" asChild className="mt-auto rounded-full">
                         <Link to={href}>View program</Link>
@@ -346,7 +347,7 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* Mental Wellness ó no ketamine / esketamine services offered (Phase 3 may expand) */}
+        {/* Mental Wellness ù no ketamine / esketamine services offered (Phase 3 may expand) */}
         {shouldShow("mental") && (
           <section className="py-12 lg:py-16 bg-background">
             <div className="container mx-auto px-4 max-w-3xl text-center">
@@ -357,9 +358,9 @@ const Pricing = () => {
                 Mental wellness
               </h2>
               <p className="text-muted-foreground font-jost text-sm leading-relaxed">
-                IV ketamine and SPRAVATOÆ (esketamine) are not offered at Elevated Health Augusta. If
+                IV ketamine and SPRAVATOù (esketamine) are not offered at Elevated Health Augusta. If
                 you are working with depression or anxiety, our clinicians can discuss evidence-based
-                options within our active service linesósuch as medical weight loss, hormone
+                options within our active service linesùsuch as medical weight loss, hormone
                 optimization, IV hydration, and primary care coordination. Call{" "}
                 <a className="text-accent underline-offset-4 hover:underline" href={`tel:+1${SITE_CONFIG.phoneRaw}`}>
                   {SITE_CONFIG.phone}
@@ -471,7 +472,7 @@ const Pricing = () => {
                         </div>
                         <p className="mt-4 text-xs text-green-600 font-jost flex items-center gap-1">
                           <Check className="w-3 h-3" />
-                          Labs NOT required to start ó most patients begin same week
+                          Labs NOT required to start ù most patients begin same week
                         </p>
                       </div>
                     </div>
@@ -505,7 +506,7 @@ const Pricing = () => {
                         <div className="flex flex-col gap-4">
                           <div>
                             <h3 className="text-xl font-playfair text-slate-900 mb-2">
-                              Metabolic Reset Membership
+                              ELEVATED GLP-1 Membership
                             </h3>
                             <p className="text-slate-600 font-jost text-sm leading-relaxed">
                               Once medically cleared, you unlock the all-inclusive membership. Choose your GLP-1 medication with 24/7 provider access.
@@ -518,7 +519,7 @@ const Pricing = () => {
                               <div className="flex items-center justify-between">
                                 <span className="font-jost font-medium text-slate-800">Semaglutide</span>
                                 <div className="text-right">
-                                  <span className="text-xl font-playfair text-slate-900">$399</span>
+                                  <span className="text-xl font-playfair text-slate-900">$349</span>
                                   <span className="text-xs text-slate-500 font-jost">/mo</span>
                                 </div>
                               </div>
@@ -527,7 +528,7 @@ const Pricing = () => {
                               <div className="flex items-center justify-between">
                                 <span className="font-jost font-medium text-slate-800">Tirzepatide</span>
                                 <div className="text-right">
-                                  <span className="text-xl font-playfair text-slate-900">$499</span>
+                                  <span className="text-xl font-playfair text-slate-900">$449</span>
                                   <span className="text-xs text-slate-500 font-jost">/mo</span>
                                 </div>
                               </div>
@@ -554,7 +555,7 @@ const Pricing = () => {
                         <div className="mt-6 p-3 bg-slate-50 rounded-lg flex items-center gap-2">
                           <ShieldAlert className="w-4 h-4 text-slate-500" />
                           <span className="text-xs text-slate-600 font-jost">
-                            Requires Medical Clearance ó Complete Steps 1 & 2 first
+                            Requires Medical Clearance ù Complete Steps 1 & 2 first
                           </span>
                         </div>
                       </div>
@@ -711,7 +712,7 @@ const Pricing = () => {
                             <p className="text-sm text-slate-600 font-jost leading-relaxed">
                               Program memberships include hormone therapy where prescribed, monthly check-ins with our clinical team,
                               quarterly labs, clinically appropriate physician review, and
-                              unlimited messagingósee men&apos;s and women&apos;s program pages for
+                              unlimited messagingùsee men&apos;s and women&apos;s program pages for
                               details.
                             </p>
                           </div>
@@ -747,7 +748,7 @@ const Pricing = () => {
                       <Heart className="w-6 h-6 text-feminine" />
                     </div>
                     <div className="flex-grow">
-                      <h4 className="font-playfair text-lg text-foreground">Elevated+ for Her</h4>
+                      <h4 className="font-playfair text-lg text-foreground">ELEVATED HRT for Her</h4>
                       <p className="text-sm text-muted-foreground font-jost">
                         Menopause, perimenopause & women's hormone health
                       </p>
@@ -762,7 +763,7 @@ const Pricing = () => {
                       <Shield className="w-6 h-6 text-masculine" />
                     </div>
                     <div className="flex-grow">
-                      <h4 className="font-playfair text-lg text-foreground">Elevated+ for Him</h4>
+                      <h4 className="font-playfair text-lg text-foreground">ELEVATED TRT for Him</h4>
                       <p className="text-sm text-muted-foreground font-jost">
                         Testosterone therapy, energy & performance
                       </p>
@@ -788,7 +789,7 @@ const Pricing = () => {
                     Peptide Therapy
                   </h2>
                   <p className="text-muted-foreground font-jost text-sm">
-                    5 categories ï 15+ protocols ï Cellular optimization & longevity
+                    5 categories ù 15+ protocols ù Cellular optimization & longevity
                   </p>
                 </div>
               </div>
@@ -989,7 +990,7 @@ const Pricing = () => {
                     IV Hydration Lounge
                   </h2>
                   <p className="text-muted-foreground font-jost text-sm">
-                    Walk-ins welcome ï No membership required
+                    Walk-ins welcome ù No membership required
                   </p>
                 </div>
               </div>
@@ -1022,7 +1023,7 @@ const Pricing = () => {
                   Pay in 4 interest-free payments with Klarna at checkout
                 </p>
                 <p className="text-sm text-muted-foreground font-jost mb-4">
-                  Add-ons: <span className="text-foreground">B12 $25</span> ï <span className="text-foreground">Glutathione $35</span> ï <span className="text-foreground">NAD+ Booster $50</span>
+                  Add-ons: <span className="text-foreground">B12 $25</span> ù <span className="text-foreground">Glutathione $35</span> ù <span className="text-foreground">NAD+ Booster $50</span>
                 </p>
                 <Button variant="outline" onClick={() => navigate("/iv-lounge")}>
                   View Full IV Menu <ArrowRight className="w-4 h-4 ml-2" />
@@ -1336,7 +1337,7 @@ const Pricing = () => {
           </section>
         )}
 
-        {/* ¿ La Carte Pricing Section */}
+        {/* ù La Carte Pricing Section */}
         <section className="py-12 lg:py-16 bg-secondary/30">
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
@@ -1344,7 +1345,7 @@ const Pricing = () => {
                 No Membership Required
               </Badge>
               <h2 className="text-3xl md:text-4xl font-playfair text-foreground mb-4">
-                ¿ La Carte Pricing
+                ù La Carte Pricing
               </h2>
               <p className="text-lg text-muted-foreground font-jost max-w-2xl mx-auto">
                 Need individual medications without a membership? We offer pay-as-you-go options 
@@ -1469,9 +1470,9 @@ const Pricing = () => {
 
             <div className="mt-10 max-w-4xl mx-auto bg-card rounded-xl border border-border p-6 text-center">
               <p className="font-jost text-sm text-muted-foreground">
-                ELEVATED members receive {MEMBER_DISCOUNT_PERCENT}% off eligible ‡ la carte IV, peptide, and injectable
+                ELEVATED members receive {MEMBER_DISCOUNT_PERCENT}% off eligible ù la carte IV, peptide, and injectable
                 services where checkout supports the discount. Program medications are included in TRT, HRT, and GLP-1
-                membershipsónot billed separately.
+                membershipsùnot billed separately.
               </p>
             </div>
           </div>
@@ -1535,7 +1536,7 @@ const Pricing = () => {
                     </div>
                     <h3 className="font-playfair text-xl text-foreground mb-2">Pay Over Time</h3>
                     <p className="text-muted-foreground font-jost text-sm mb-4">
-                      Choose monthly payments from 3-36 months. Know your rate upfrontóno hidden fees, ever.
+                      Choose monthly payments from 3-36 months. Know your rate upfrontùno hidden fees, ever.
                     </p>
                     <ul className="space-y-2">
                       <li className="flex items-center gap-2 text-sm font-jost text-foreground">
@@ -1585,7 +1586,7 @@ const Pricing = () => {
               Not Sure Where to Start?
             </h2>
             <p className="text-lg text-muted-foreground font-jost max-w-2xl mx-auto mb-4">
-              Chat with our <span className="font-semibold text-foreground">Virtual Care Team</span> for instant answers about pricing, insurance, and logisticsó24/7.
+              Chat with our <span className="font-semibold text-foreground">Virtual Care Team</span> for instant answers about pricing, insurance, and logisticsù24/7.
             </p>
             <p className="text-sm text-muted-foreground font-jost max-w-xl mx-auto mb-8 italic">
               When you&apos;re ready for personalized medical guidance, book a{" "}
@@ -1667,11 +1668,11 @@ const Pricing = () => {
 
               <AccordionItem value="item-5" className="border border-border rounded-lg px-6 py-1">
                 <AccordionTrigger className="text-left font-playfair text-lg hover:no-underline py-4">
-                  What's included in the ‡ la carte consultations?
+                  What's included in the ù la carte consultations?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground font-jost pb-4">
                   {CORE_SERVICES.wellnessAssessment.displayPrice} visits include history, goals, vitals, and a written
-                  plan recommendation. Labs and program fees are quoted separately before you commitóno hidden bundles.
+                  plan recommendation. Labs and program fees are quoted separately before you commitùno hidden bundles.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

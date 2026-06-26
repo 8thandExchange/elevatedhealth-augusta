@@ -387,23 +387,6 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
-    const redeemed = await redeemSlotTokenJtiOnce({
-      supabaseAdmin: supabase,
-      jti: verifiedSlot.jti,
-      tokenExpUnix: verifiedSlot.expiresAtUnix,
-      bookingFunction: "book-iv-appointment",
-      bookingRef: session_id,
-    });
-    if (!redeemed.ok) {
-      return new Response(
-        JSON.stringify({
-          error: "That slot token has already been used. Please pick another time.",
-          error_code: redeemed.code,
-        }),
-        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
-
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
     const session = await stripe.checkout.sessions.retrieve(session_id);
     if (session.payment_status !== "paid") {
@@ -447,7 +430,7 @@ serve(async (req) => {
         .single();
       if (cErr) throw cErr;
       bookingId = created.id;
-    } else if (existing.appointment_id) {
+    } else if (existing?.appointment_id) {
       return new Response(JSON.stringify({ error: "Slot already booked for this session", appointment_id: existing.appointment_id }), {
         status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -472,6 +455,26 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Slot just got booked. Please pick another." }), {
         status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
+    }
+
+    // Payment is confirmed paid, not already booked for this session, and the
+    // slot is free. Redeem the one-time slot token as late as possible — a failed
+    // payment or a slot conflict above must never burn the patient's held slot.
+    const redeemed = await redeemSlotTokenJtiOnce({
+      supabaseAdmin: supabase,
+      jti: verifiedSlot.jti,
+      tokenExpUnix: verifiedSlot.expiresAtUnix,
+      bookingFunction: "book-iv-appointment",
+      bookingRef: session_id,
+    });
+    if (!redeemed.ok) {
+      return new Response(
+        JSON.stringify({
+          error: "That slot token has already been used. Please pick another time.",
+          error_code: redeemed.code,
+        }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     // Find or create patient by email
