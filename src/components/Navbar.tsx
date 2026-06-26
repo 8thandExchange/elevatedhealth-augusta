@@ -58,14 +58,14 @@ const Navbar = () => {
 
   const navBg = isScrolled || !isHomePage
     ? "bg-background/95 backdrop-blur-md border-b border-border shadow-[var(--shadow-sm)]"
-    : "bg-transparent border-b border-transparent";
+    : "bg-gradient-to-b from-primary/92 via-primary/55 to-transparent backdrop-blur-[3px] border-b border-primary-foreground/10";
 
   const onDarkNav = isHomePage && !isScrolled;
   const linkClass = onDarkNav
-    ? "text-sm font-jost font-medium text-background/80 hover:text-background transition-colors"
+    ? "text-sm font-jost font-medium text-primary-foreground/85 hover:text-primary-foreground transition-colors"
     : "text-sm font-jost font-medium text-muted-foreground hover:text-foreground transition-colors";
   const portalClass = onDarkNav
-    ? "text-sm font-jost text-background/75 hover:text-background transition-colors"
+    ? "text-sm font-jost text-primary-foreground/80 hover:text-primary-foreground transition-colors"
     : "text-sm font-jost text-muted-foreground hover:text-foreground transition-colors";
 
   const navLinks = [
@@ -96,10 +96,23 @@ const Navbar = () => {
               className="flex flex-col items-start text-left group"
               aria-label="Elevated Health Augusta home"
             >
-              <span className={`font-playfair text-xl md:text-2xl leading-none ${onDarkNav ? "text-primary-foreground" : "text-primary"}`}>
-                Elevated <span className="italic text-accent">Health</span>
+              <span
+                className={`font-playfair text-xl md:text-2xl leading-none ${
+                  onDarkNav
+                    ? "text-primary-foreground [text-shadow:0_1px_3px_rgba(0,0,0,0.55)]"
+                    : "text-primary"
+                }`}
+              >
+                Elevated{" "}
+                <span className={`italic ${onDarkNav ? "text-accent-light" : "text-accent"}`}>
+                  Health
+                </span>
               </span>
-              <span className={`flex items-center gap-2 mt-1.5 ${onDarkNav ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+              <span
+                className={`flex items-center gap-2 mt-1.5 ${
+                  onDarkNav ? "text-primary-foreground/75 [text-shadow:0_1px_2px_rgba(0,0,0,0.45)]" : "text-muted-foreground"
+                }`}
+              >
                 <span className="h-px w-4 bg-accent" aria-hidden />
                 <span className="font-jost text-[9px] md:text-[10px] uppercase tracking-[0.3em]">
                   Augusta

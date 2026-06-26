@@ -21,6 +21,9 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useBooking } from "@/contexts/BookingContext";
 import { consultGatedServicesCopy } from "@/lib/serviceConfig";
+import { CORE_SERVICES } from "@/lib/stripeConfig";
+import { MarketingImage } from "@/components/marketing/MarketingImage";
+import { MARKETING_IMAGES } from "@/lib/marketingImages";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -43,10 +46,13 @@ const formatPhoneNumber = (value: string): string => {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 };
 
+const WA_PRICE = CORE_SERVICES.wellnessAssessment.displayPrice;
+const BOOK_WA_LABEL = `Book ${WA_PRICE} Wellness Assessment`;
+const WA_CTA_HELPER = "Required first step for hormones, peptides, and weight loss.";
+
 const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean }) => {
   const { openBooking } = useBooking();
   const navigate = useNavigate();
-  const consultServicesLine = consultGatedServicesCopy();
 
   const goToIV = () => {
     trackCTAClick('cta_iv_lounge', 'contact_section');
@@ -172,7 +178,7 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-start">
             <div className="bg-background border border-border rounded-sm p-8 lg:p-10 shadow-[var(--shadow-sm)]">
               {isSuccess ? (
                 /* Success State with Animation */
@@ -209,7 +215,7 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-primary mt-0.5">•</span>
-                          Book your $79 Wellness Assessment online when you are ready
+                          {BOOK_WA_LABEL} online when you are ready
                         </li>
                       </ul>
                     </div>
@@ -221,10 +227,10 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                           size="lg"
                           className="w-full rounded-sm font-jost tracking-wide"
                         >
-                          Book a $79 Wellness Assessment
+                          {BOOK_WA_LABEL}
                         </Button>
                         <p className="text-xs font-jost text-muted-foreground leading-snug">
-                          For {consultServicesLine}.
+                          {WA_CTA_HELPER}
                         </p>
                       </div>
                       <div className="space-y-2">
@@ -234,10 +240,10 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                           variant="outline"
                           className="w-full rounded-sm font-jost tracking-wide"
                         >
-                          <Droplet className="mr-2 h-4 w-4" /> Book IV therapy
+                          <Droplet className="mr-2 h-4 w-4" /> Book IV Therapy
                         </Button>
                         <p className="text-xs font-jost text-muted-foreground leading-snug">
-                          Walk-in friendly. No consult required. Pick your drip and schedule online.
+                          Walk-in friendly. No consult required.
                         </p>
                       </div>
                     </div>
@@ -396,45 +402,18 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                       {!isSubmitting && <ArrowRight className="ml-2 h-5 w-5" />}
                     </Button>
                   </form>
-
-                  <div className="mt-6 pt-6 border-t border-border/30">
-                    <p className="text-xs font-jost tracking-[0.2em] uppercase text-muted-foreground text-center mb-4">
-                      Or book directly
-                    </p>
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <Button
-                          onClick={handleBooking}
-                          size="lg"
-                          className="w-full rounded-sm font-jost tracking-wide"
-                        >
-                          Book a $79 Wellness Assessment
-                        </Button>
-                        <p className="text-xs font-jost text-muted-foreground leading-snug">
-                          For {consultServicesLine}.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <Button
-                          onClick={goToIV}
-                          size="lg"
-                          variant="outline"
-                          className="w-full rounded-sm font-jost tracking-wide"
-                        >
-                          <Droplet className="mr-2 h-4 w-4" /> Book IV therapy
-                        </Button>
-                        <p className="text-xs font-jost text-muted-foreground leading-snug">
-                          Walk-in friendly. No consult required. Pick your drip and schedule online.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </>
               )}
             </div>
 
-            {/* Right Column - Location Info & Map */}
-            <div className="space-y-8">
+            {/* Right Column - clinic photo, location, map, booking */}
+            <div className="space-y-5">
+              <MarketingImage
+                src={MARKETING_IMAGES.staffCaroline}
+                alt="Caroline Marshall at Elevated Health Augusta in Evans, Georgia"
+                className="aspect-[16/10] border border-border rounded-sm shadow-[var(--shadow-sm)]"
+              />
+
               {/* Location Details */}
               <div className="bg-background border border-border rounded-sm p-8 shadow-[var(--shadow-sm)]">
                 <h3 className="font-playfair text-2xl text-foreground mb-6">Visit Our Clinic</h3>
@@ -500,18 +479,18 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                 />
               </div>
 
-              {/* Quick CTA — bifurcated */}
-              <div className="grid sm:grid-cols-2 gap-3">
+              {/* Quick CTA — single location, no duplicate left-column buttons */}
+              <div className="grid sm:grid-cols-2 gap-3 pt-1">
                 <div className="space-y-2">
                   <Button
                     onClick={handleBooking}
                     size="lg"
                     className="w-full rounded-sm font-jost tracking-wide"
                   >
-                    Book a $79 Wellness Assessment
+                    {BOOK_WA_LABEL}
                   </Button>
-                  <p className="text-xs font-jost text-muted-foreground leading-snug text-center">
-                    {consultServicesLine.charAt(0).toUpperCase() + consultServicesLine.slice(1)}.
+                  <p className="text-xs font-jost text-muted-foreground leading-snug text-center sm:text-left">
+                    {WA_CTA_HELPER}
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -521,9 +500,9 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
                     variant="outline"
                     className="w-full rounded-sm font-jost tracking-wide"
                   >
-                    <Droplet className="mr-2 h-4 w-4" /> Book IV therapy
+                    <Droplet className="mr-2 h-4 w-4" /> Book IV Therapy
                   </Button>
-                  <p className="text-xs font-jost text-muted-foreground leading-snug text-center">
+                  <p className="text-xs font-jost text-muted-foreground leading-snug text-center sm:text-left">
                     Walk-in friendly. No consult required.
                   </p>
                 </div>

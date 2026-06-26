@@ -11,13 +11,21 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative min-h-0 flex items-center justify-center overflow-hidden bg-primary py-24 md:min-h-screen md:py-0"
+      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-primary md:min-h-screen"
     >
       <HeroMedia />
 
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/70 to-primary/90" aria-hidden />
+      {/* Stronger top scrim so fixed navbar + logo stay readable over bright video frames */}
+      <div
+        className="absolute inset-x-0 top-0 h-28 md:h-32 bg-gradient-to-b from-primary/95 to-transparent pointer-events-none z-[1]"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/72 to-primary/92 pointer-events-none z-[1]"
+        aria-hidden
+      />
 
-      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-24 pb-14 md:pt-40 md:pb-32">
+      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-28 pb-16 md:pt-40 md:pb-32">
         <span className="eyebrow eyebrow-on-dark mb-5 md:mb-10 animate-fade-in-up">
           Physician-owned wellness · Evans, GA
         </span>

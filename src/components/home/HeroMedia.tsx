@@ -39,7 +39,7 @@ export function HeroMedia() {
         playsInline
         preload="auto"
         poster={MARKETING_IMAGES.heroPoster}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-center max-md:object-[center_40%]"
         aria-hidden
       >
         <source src={MARKETING_IMAGES.heroVideo} type="video/mp4" />
@@ -52,7 +52,7 @@ export function HeroMedia() {
       <img
         src={MARKETING_IMAGES.heroPoster}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-center max-md:object-[center_40%]"
         aria-hidden
       />
     );

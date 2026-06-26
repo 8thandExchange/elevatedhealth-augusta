@@ -5,16 +5,8 @@ import { useEffect } from "react";
 import { storefrontHeroSection } from "@/lib/storefrontHero";
 
 const TEAM = [
-  {
-    id: "akers",
-    name: "Dr. Troy Akers, DO",
-    role: "Owner / Medical Director",
-  },
-  {
-    id: "williams",
-    name: "Dr. Dennis A. Williams, MD",
-    role: "Supervising Physician",
-  },
+  { id: "akers", name: "Dr. Troy Akers" },
+  { id: "williams", name: "Dr. Dennis Williams" },
 ] as const;
 
 const About = () => {
@@ -90,11 +82,8 @@ const About = () => {
             </div>
             <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
               {TEAM.map((member) => (
-                <article key={member.id} className="premium-card-muted flex flex-col items-center text-center p-8 space-y-3">
-                  <div>
-                    <h3 className="font-playfair text-xl text-foreground">{member.name}</h3>
-                    <p className="text-xs font-jost tracking-[0.2em] uppercase text-muted-foreground mt-2">{member.role}</p>
-                  </div>
+                <article key={member.id} className="premium-card-muted flex flex-col items-center text-center p-8">
+                  <h3 className="font-playfair text-xl text-foreground">{member.name}</h3>
                 </article>
               ))}
             </div>
