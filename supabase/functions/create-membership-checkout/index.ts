@@ -13,6 +13,7 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_ELEVATED_PROGRAMS, type LiveElevatedProgramKey } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import { hasClinicStaffRole } from "../_shared/staff-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -97,8 +98,8 @@ serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", callerId);
-    const callerIsStaff = (callerRoles ?? []).some(
-      (r: { role: string }) => r.role === "admin" || r.role === "staff",
+    const callerIsStaff = hasClinicStaffRole(
+      (callerRoles ?? []).map((r: { role: string }) => String(r.role)),
     );
     const actingOnBehalf = callerIsStaff && Boolean(targetPatientId || targetEmail);
 

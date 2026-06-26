@@ -75,7 +75,7 @@ const StaffVendorGuide = () => {
                 <ul className="text-muted-foreground space-y-1 text-xs">
                   <li>IV Lounge → {resolveVendorForLane("iv_lounge").displayName}</li>
                   <li>Metabolic / GC peptides → {resolveVendorForLane("peptides_gc").displayName}</li>
-                  <li>Sermorelin, NAD+, healing stack → {resolveVendorForLane("peptides_fcc").displayName}</li>
+                  <li>Sermorelin, BPC-157, TB-500 → {resolveVendorForLane("peptides_fcc").displayName} or GC per SKU</li>
                   <li>GLP-1 sema/tirz → {resolveVendorForLane("weight_glp1").displayName}</li>
                   <li>All hormones → {resolveVendorForLane("hormones").displayName}</li>
                 </ul>

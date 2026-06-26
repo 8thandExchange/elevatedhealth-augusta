@@ -4,7 +4,14 @@ export type StaffAuthResult =
   | { ok: true; user_id: string; roles: string[] }
   | { ok: false; status: number; error: string };
 
-const CLINICAL_ROLES = new Set(["admin", "staff", "provider", "business_admin"]);
+export const CLINIC_STAFF_ROLES = new Set(["admin", "staff", "provider", "business_admin"]);
+
+/** True when the user can act on behalf of patients (staff desk, RN, provider, business admin). */
+export function hasClinicStaffRole(roles: string[]): boolean {
+  return roles.some((r) => CLINIC_STAFF_ROLES.has(r));
+}
+
+const CLINICAL_ROLES = CLINIC_STAFF_ROLES;
 
 /** Require an authenticated user with a provider-portal role (admin/staff/provider/business_admin). */
 export async function requireClinicalStaffRole(req: Request): Promise<StaffAuthResult> {

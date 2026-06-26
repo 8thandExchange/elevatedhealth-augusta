@@ -116,9 +116,9 @@ export const UPSELL_MATRIX: UpsellRow[] = [
   {
     phase: "Results review",
     trigger: "Perimenopause symptoms, normal T",
-    offer: "ELEVATED HRT + optional Vitality stack",
-    charge: "$229/mo HRT; Vitality $299–399/mo",
-    script: "Bi-Est and progesterone are our standard — many women add the Vitality stack for sleep and recovery once stable on hormones.",
+    offer: "ELEVATED HRT + optional sermorelin à la carte",
+    charge: "$229/mo HRT; sermorelin $149/mo if added",
+    script: "Bi-Est and progesterone are our standard — sermorelin may be added à la carte for sleep and recovery once stable on hormones.",
   },
   {
     phase: "Enrollment",
@@ -368,7 +368,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         phase: "Provider review",
         if: "Female — BHRT candidacy",
         then: "Approve ELEVATED HRT → ALGO-004 protocol.",
-        upsell: "Vitality stack if sleep/recovery goals.",
+        upsell: "Sermorelin à la carte or IV NAD+ booster if sleep/recovery goals.",
       },
       {
         step: "4.5",
@@ -587,7 +587,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       },
       {
         step: "3",
-        if: "IV premix, glutathione, sermorelin, NAD+, healing stack, AOD, SLU, GLP-1 backup",
+        if: "IV premix, glutathione, sermorelin, BPC-157/TB-500, AOD, SLU, GLP-1 backup",
         then: "Vendor: FCC. Channel: FormuConnect portal.",
       },
       {

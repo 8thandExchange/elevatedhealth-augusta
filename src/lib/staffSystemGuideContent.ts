@@ -166,7 +166,7 @@ export const CHARGE_CHECKPOINTS = [
   },
   {
     when: "Membership",
-    item: "Elevated Membership",
+    item: "ELEVATED Programs",
     amount: `from ${ELEVATED_PROGRAMS.wellness.displayPrice}`,
     note: "Tier = ELEVATED program: Wellness $199 / HRT $229 / TRT $249 / GLP-1 $349–$449. No legacy concierge/vitality names.",
   },

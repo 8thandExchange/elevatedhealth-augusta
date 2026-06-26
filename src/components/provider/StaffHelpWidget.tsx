@@ -83,8 +83,9 @@ const ARTICLES: HelpArticle[] = [
     title: "GC vs FCC vs Custom Pharmacy",
     keywords: ["gc", "fcc", "vendor", "pharmacy", "routing", "cogs", "margin"],
     steps: [
-      "Metabolic stack and advanced peptides → GC Scientific partner network.",
-      "IV, sermorelin, NAD+, healing stack → FCC FormuConnect.",
+      "Metabolic peptides and advanced recovery (BPC-157, TB-500) → GC Scientific partner network.",
+      "IV Lounge premix and boosters → FCC FormuConnect.",
+      "Sermorelin → GC or FCC per catalog availability.",
       "All hormones → Custom Pharmacy of Evans (fax).",
     ],
     links: [{ label: "Vendor guide", to: "/staff/vendor-guide" }, { label: "System guide", to: "/staff/system-guide" }, { label: "IV safety", to: "/staff/iv-safety" }],

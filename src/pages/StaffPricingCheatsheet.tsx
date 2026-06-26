@@ -144,10 +144,10 @@ const StaffPricingCheatsheet = () => {
                 network 503A).
               </p>
               <p>
-                <strong>FCC</strong> — IV Lounge, sermorelin, NAD+, healing stack, AOD, SLU, 5-amino, GLP-1 backup.
+                <strong>FCC</strong> — IV Lounge premix, glutathione pushes, GLP-1 backup when GC unavailable.
               </p>
               <p>
-                <strong>Custom Pharmacy of Evans</strong> — all hormones (Bi-Est cream + prog caps women; test cyp men).
+                <strong>Custom Pharmacy of Evans</strong> — all hormones (Bi-Est cream + prog caps women; men's testosterone cream).
               </p>
               <p className="text-xs text-muted-foreground pt-2">
                 Full guide: <Link to="/staff/vendor-guide" className="text-accent underline">/staff/vendor-guide</Link> ·

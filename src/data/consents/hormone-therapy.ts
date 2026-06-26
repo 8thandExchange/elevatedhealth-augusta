@@ -19,7 +19,8 @@ export const hormoneTherapyConsent: ConsentDocument = {
 This consent governs my receipt of hormone replacement therapy ("HRT") from Elevated Health Augusta (the "Practice"). HRT may include, depending on my clinical needs and the recommendations of the clinical team:
 ### 1.1 — Hormones I May Receive
 **For male patients (Testosterone Replacement Therapy / "TRT"):**
-- Testosterone (typically as testosterone cypionate, testosterone propionate, or other esters), administered by intramuscular or subcutaneous injection, topical cream or gel, or compounded oral or sublingual preparations
+- Compounded transdermal testosterone cream (daily application) — our standard men's TRT offering
+- Testosterone gel or FDA-approved transdermal alternatives when clinically indicated and available
 - Anastrozole or other aromatase inhibitors, if needed to manage estradiol levels during testosterone therapy
 - Human Chorionic Gonadotropin (HCG) or related agents, if clinically indicated to preserve testicular function or fertility
 - Enclomiphene citrate or other selective estrogen receptor modulators ("SERMs"), if clinically indicated as an alternative or adjunct to testosterone therapy
@@ -41,7 +42,7 @@ I understand that:
 - The Practice and I will discuss which form (commercial vs. compounded) is appropriate based on my clinical needs, insurance status (the Practice does not bill insurance, but I may have separate coverage for FDA-approved products), and personal preference
 ### 1.3 — Compounding Pharmacy Partners
 The Practice works with the following 503A compounding pharmacies for hormone preparations:
-- **Custom Pharmacy of Evans** — Evans, Georgia — primary for all hormone therapy: Bi-Est transdermal cream, oral micronized progesterone, women's low-dose testosterone cream, men's testosterone cypionate injections, pellets, and related preparations
+- **Custom Pharmacy of Evans** — Evans, Georgia — primary for all hormone therapy: Bi-Est transdermal cream, oral micronized progesterone, women's low-dose testosterone cream, men's transdermal testosterone cream, and related preparations
 - **Formulation Compounding Center (FCC)** — Lewisville, Texas — backup injectable and alternate formulations (troches, capsules) when clinically indicated
 - **DrFirst Rcopia** — FDA-approved retail patches, gels, and brand testosterone when patient prefers commercial products
 The Practice may use other state-licensed 503A compounding pharmacies as clinically appropriate or as availability requires.

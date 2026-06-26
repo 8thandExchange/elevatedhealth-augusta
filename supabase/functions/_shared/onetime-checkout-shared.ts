@@ -77,6 +77,16 @@ export async function serveOnetimePriceCheckoutFromBody(
       productKey,
       { stripe },
     );
+    if (discount.ineligible_reason === "coupon_not_configured" && discount.program) {
+      edgeStructuredLog(functionName, {
+        event_type: "coupon_missing",
+        success: false,
+        action_taken: "member_discount_skipped",
+        patient_id: discountPatientId,
+        product_recognition: productKey,
+        error_message: "STRIPE_ELEVATED_MEMBER_COUPON_ID not configured",
+      }, "info");
+    }
     const isGuest = !patient_id || String(patient_id).trim() === "";
 
     const customers = await stripe.customers.list({ email: patient_email, limit: 1 });

@@ -34,7 +34,7 @@ const TEMPLATE_LABELS: Record<string, string> = {
   treatment_authorized: "Treatment Authorized",
   intake_reminder: "Intake Reminder",
   appointment_reminder: "Appointment Reminder",
-  membership_activation: "Elevated Membership Activation",
+  membership_activation: "ELEVATED Program Activation",
   glp1_activation: "GLP-1 Activation",
   // Legacy (Réveil-era) template keys — historical rows only:
   kit_payment: "Kit Payment Request (legacy)",

@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
+import { MEMBER_ALACARTE_DISCOUNT_COPY } from "@/lib/membershipCopy";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -88,7 +89,7 @@ const FAQ = () => {
     },
     {
       q: "What is the member discount on à la carte services?",
-      a: "Elevated Membership includes 20% off eligible à la carte add-ons where pricing allows. Your clinician will confirm what applies to your plan.",
+      a: MEMBER_ALACARTE_DISCOUNT_COPY + " Your clinician will confirm what applies to your plan.",
     },
   ];
 
@@ -163,7 +164,7 @@ const FAQ = () => {
   const membership: QA[] = [
     {
       q: "How does membership renew?",
-      a: "Elevated Membership renews monthly until you cancel according to the notice window in your membership agreement.",
+      a: "Your ELEVATED program renews monthly until you cancel according to the notice window in your membership agreement.",
     },
     {
       q: "What is the cancellation policy?",

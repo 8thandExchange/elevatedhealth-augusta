@@ -78,8 +78,8 @@ const MESSAGE_TYPES = [
   },
   {
     value: "membership_activation",
-    label: "Elevated Membership Activation",
-    description: "Send $199/mo Elevated Membership signup link",
+    label: "ELEVATED Program Activation",
+    description: "Send program-specific membership signup link (TRT/HRT/GLP-1/IV)",
     emailFunction: "send-membership-activation",
     smsFunction: "send-membership-activation-sms",
   },
@@ -178,7 +178,7 @@ const QuickEmailModal = ({ open, onOpenChange, onSuccess }: QuickEmailModalProps
       welcome: "Welcome to Elevated Health Augusta, {{patient_name}}!",
       consultation_invite: "Your $79 Wellness Assessment Awaits",
       labs_reviewed: "Your Lab Results Are Ready",
-      membership_activation: "Activate Your Elevated Membership",
+      membership_activation: "Activate Your ELEVATED Program",
       glp1_activation: "Start Your Weight Loss Journey",
       intake_reminder: "Complete Your Health Intake",
     };

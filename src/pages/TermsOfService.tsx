@@ -153,8 +153,8 @@ const TermsOfService = () => {
                       <li className="flex items-start gap-3">
                         <span className="text-primary font-bold mt-1">•</span>
                         <span>
-                          <strong>Recurring Subscription:</strong> The Elevated Membership is a recurring monthly 
-                          subscription. Payments are processed automatically via Stripe on the anniversary of your 
+                          <strong>Recurring Subscription:</strong> ELEVATED program memberships (TRT, HRT, GLP-1, or ELEVATED IV) are recurring monthly
+                          subscriptions. Payments are processed automatically via Stripe on the anniversary of your
                           initial subscription date.
                         </span>
                       </li>

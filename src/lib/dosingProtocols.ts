@@ -181,8 +181,8 @@ export const DOSING_PROTOCOLS: Record<string, DosingProtocol> = {
     maintenanceDose: "200 mcg at bedtime",
     cycleWeeks: "8–12 weeks on, 4–6 weeks off",
     patientExplanation:
-      "A nightly injection that supports your body's natural growth hormone rhythm — often paired with NAD+ in our Vitality stack for sleep and recovery.",
-    staffNotes: ["Vitality stack component.", "Green-light peptide (not Cat 2)."],
+      "A nightly injection that supports your body's natural growth hormone rhythm — often paired with IV NAD+ add-ons at the lounge when your provider selects both.",
+    staffNotes: ["Green-light peptide (not Cat 2).", "Optional add-on to ELEVATED IV — not bundled in membership."],
     consents: [],
   },
   nadInjection: {
@@ -202,7 +202,10 @@ export const DOSING_PROTOCOLS: Record<string, DosingProtocol> = {
     cycleWeeks: "8–16 weeks",
     patientExplanation:
       "Supports cellular energy and recovery. We start low because some patients feel flushing or nausea at higher doses.",
-    staffNotes: ["Vitality stack + metabolic phase 2.", "IV NAD+ separate SKU at IV Lounge."],
+    staffNotes: [
+      "Standalone peptide NAD+ injection/troche/nasal SKUs discontinued 2026-06-25.",
+      "Active path: IV NAD+ infusion or $50 booster at IV Lounge only.",
+    ],
     consents: [],
   },
   cjcIpamorelin: {

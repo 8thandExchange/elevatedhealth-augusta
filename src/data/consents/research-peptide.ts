@@ -26,13 +26,13 @@ As of the date of this consent, the Practice currently offers the following rese
 - **Selank**
 - **Thymosin Alpha-1**
 - **GHK-Cu** (Copper Tripeptide) — sublingual and topical formulations preferred; injectable formulation only when clinically indicated
-- **"Wolverine Stack"** — a combined protocol of BPC-157 and TB-500
+- **Pentadeca Arginate (PDA)** — optional oral recovery alternate when physician selects it
+**Note:** Combined BPC-157/TB-500 pre-blended vials are not offered; BPC-157 and TB-500 are prescribed separately when clinically appropriate.
 The Practice also offers the following peptides that, while clinically related, do NOT require this consent because they are FDA-approved, not on the FDA Category 2 Bulk Substances list, or otherwise have a distinct regulatory status:
 - Sermorelin
 - Tesamorelin (FDA-approved for HIV-associated lipodystrophy; may be prescribed off-label for other indications, in which case the separate Off-Label Use Acknowledgment applies)
-- NAD+ (all delivery methods)
+- NAD+ (IV Lounge infusions and boosters; standalone peptide NAD+ injection/troche/nasal SKUs are not sold)
 - PT-141 (Bremelanotide, FDA-approved as Vyleesi for HSDD)
-- Pentadeca Arginate (PDA)
 ### 1.2 — Class-Based Consent
 I understand that this consent applies not only to the specific substances listed in Section 1.1, but to the **class** of research peptides — meaning substances with the following shared characteristics:
 - Not approved by the FDA for human prescription use

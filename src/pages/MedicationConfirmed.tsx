@@ -259,7 +259,7 @@ const MedicationConfirmed = () => {
               <Button asChild variant="outline" className="font-jost font-medium tracking-wide text-sm px-8 py-6 rounded-sm">
                 <Link to="/membership">
                   <Calendar className="mr-2 h-4 w-4" />
-                  Learn about Elevated Membership
+                  Learn about ELEVATED Programs
                 </Link>
               </Button>
             </div>

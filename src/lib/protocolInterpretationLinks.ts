@@ -3,7 +3,7 @@
  * See supabase/migrations/20260509140000_seed_clinical_protocol_drafts.sql
  */
 export const INTERPRETATION_KEY_TO_PROTOCOL_SLUGS: Record<string, string[]> = {
-  male_trt_initiation: ["male-trt-initiation-compounded-cypionate"],
+  male_trt_initiation: ["male-trt-initiation-transdermal-cream"],
   trt_e2_management: ["quarterly-hormone-monitoring-male"],
   female_biest: ["bhrt-female-initiation-transdermal"],
   female_progesterone: ["bhrt-female-initiation-transdermal"],

@@ -2,6 +2,8 @@
 
 DROP POLICY IF EXISTS "Staff can upload lab documents" ON storage.objects;
 DROP POLICY IF EXISTS "Staff can view lab documents" ON storage.objects;
+DROP POLICY IF EXISTS "Clinical staff can upload lab documents" ON storage.objects;
+DROP POLICY IF EXISTS "Clinical staff can view lab documents" ON storage.objects;
 
 CREATE POLICY "Clinical staff can upload lab documents"
 ON storage.objects FOR INSERT

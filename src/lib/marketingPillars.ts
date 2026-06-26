@@ -1,11 +1,13 @@
 /** Marketing lead + services hub — no PHI in free-text health fields. */
 
+import { ELEVATED_PROGRAMS_PRICE_RANGE } from "./membershipCopy";
+
 export const LEAD_AREA_OPTIONS = [
   { value: "iv_therapy", label: "IV Therapy" },
   { value: "hormone_optimization", label: "Hormone Optimization" },
   { value: "peptide_therapy", label: "Peptide Therapy" },
   { value: "medical_weight_loss", label: "Medical Weight Loss" },
-  { value: "membership", label: "Elevated Membership ($199/mo)" },
+  { value: "membership", label: `ELEVATED Programs (${ELEVATED_PROGRAMS_PRICE_RANGE})` },
   { value: "general", label: "General / Not sure yet" },
 ] as const;
 
@@ -43,8 +45,8 @@ export const SERVICE_PILLARS = [
     cta: "Weight programs",
   },
   {
-    title: "Elevated Membership",
-    description: "One membership — $199/month — member pricing on labs, programs, and eligible services.",
+    title: "ELEVATED Programs",
+    description: `Program-specific memberships (${ELEVATED_PROGRAMS_PRICE_RANGE}) bundle care, labs where included, and member pricing on eligible à la carte services.`,
     href: "/membership",
     cta: "Membership",
   },

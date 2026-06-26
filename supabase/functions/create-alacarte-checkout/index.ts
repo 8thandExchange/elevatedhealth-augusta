@@ -20,6 +20,12 @@ serve(async (req) => {
     const product_key = body.product_key as string | undefined;
     if (!product_key) throw new Error("product_key is required");
 
+    if (product_key === "wolverineStack" || product_key === "metabolicStack") {
+      throw new Error(
+        `${product_key === "wolverineStack" ? "BPC-157/TB-500 recovery stack" : "Metabolic recomposition stack"} is no longer sold. Use individual SKUs or book a Wellness Assessment.`,
+      );
+    }
+
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
     const authHeader = req.headers.get("Authorization");
 

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import { hasClinicStaffRole } from "../_shared/staff-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -56,8 +57,8 @@ serve(async (req) => {
       .select("role")
       .eq("user_id", userData.user.id);
 
-    const hasAccess = roles?.some(r => r.role === "admin" || r.role === "staff");
-    if (!hasAccess) throw new Error("Unauthorized - admin/staff access required");
+    const hasAccess = hasClinicStaffRole((roles ?? []).map((r) => String(r.role)));
+    if (!hasAccess) throw new Error("Unauthorized - clinic staff access required");
 
     logStep("Admin authorized", { userId: userData.user.id });
 

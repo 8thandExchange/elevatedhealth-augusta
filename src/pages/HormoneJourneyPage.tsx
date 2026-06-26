@@ -15,6 +15,15 @@ import EditProfileModal from "@/components/patient/EditProfileModal";
 import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import PatientNavbar from "@/components/patient/PatientNavbar";
 import { hasCompletedTier1Intake } from "@/lib/consents/intake-status";
+import type { ElevatedProgramKey } from "@/lib/stripeConfig";
+
+function inferMembershipProgram(patient: Pick<Patient, "treatment_request" | "primary_program">): ElevatedProgramKey {
+  const blob = `${patient.treatment_request || ""} ${patient.primary_program || ""}`.toLowerCase();
+  if (/weight|glp|semaglutide|tirzepatide|obes|ozempic|mounjaro/.test(blob)) return "glp1";
+  if (/trt|testosterone|androgen|male|men/.test(blob)) return "trt";
+  if (/hrt|bhrt|bi-?est|estrogen|progesterone|female|women/.test(blob)) return "hrt";
+  return "wellness";
+}
 
 interface SymptomLog {
   id: string;
@@ -34,6 +43,7 @@ interface Patient {
   intake_completed: boolean;
   onboarding_status: string | null;
   treatment_request: string | null;
+  primary_program: string | null;
 }
 
 interface Order {
@@ -62,7 +72,7 @@ const HormoneJourneyPage = () => {
 
       const { data: patientData, error: patientError } = await supabase
         .from("patients")
-        .select("id, full_name, email, avatar_url, current_protocol, intake_completed, onboarding_status, treatment_request")
+        .select("id, full_name, email, avatar_url, current_protocol, intake_completed, onboarding_status, treatment_request, primary_program")
         .eq("user_id", user.id)
         .maybeSingle();
 
@@ -202,8 +212,12 @@ const HormoneJourneyPage = () => {
                                  patient?.onboarding_status === "treatment_active";
 
   const handlePurchaseMembership = async () => {
+    if (!patient) return;
     try {
-      const { data, error } = await supabase.functions.invoke("create-membership-checkout");
+      const program = inferMembershipProgram(patient);
+      const { data, error } = await supabase.functions.invoke("create-membership-checkout", {
+        body: { program },
+      });
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, "_blank");

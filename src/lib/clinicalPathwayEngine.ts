@@ -259,7 +259,7 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       patientExplanation:
         "Bi-Est cream plus oral progesterone at bedtime — our standard BHRT path with quarterly labs and RN check-ins.",
       staffScript: "Custom Pharmacy Evans fax default. DrFirst patch only if patient prefers FDA product.",
-      upsell: "Vitality stack (sermorelin + NAD+) after 8–12 weeks stable on BHRT if sleep/recovery goals.",
+      upsell: "Optional sermorelin à la carte ($149/mo) or IV NAD+ add-ons after 8–12 weeks stable on BHRT if sleep/recovery goals.",
       algorithmSteps: buildSteps("hormone_women", programKey, ["Bi-Est cream", "progesterone"]),
     };
   },
@@ -276,14 +276,14 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       labPanelName: lab.name,
       labChargeCents: lab.cents,
       labChargeDisplay: lab.display,
-      compoundKeys: ["sermorelin", "nadInjection"],
-      dosing: [DOSING_PROTOCOLS.sermorelin, DOSING_PROTOCOLS.nadInjection],
+      compoundKeys: ["sermorelin"],
+      dosing: [DOSING_PROTOCOLS.sermorelin],
       consents: [],
       patientExplanation:
-        "Vitality stack: nightly sermorelin plus NAD+ for energy and recovery, bundled in our Wellness membership with IV perks.",
-      staffScript: "If ferritin/TSH low on labs, address root cause before peptides. IV Myers add-on same visit.",
-      upsell: "ELEVATED IV $199/mo includes 2 IV drips.",
-      algorithmSteps: buildSteps("energy_fatigue", "wellness", ["sermorelin", "NAD+"]),
+        "ELEVATED IV membership includes signature IV drips. Sermorelin may be added à la carte when your provider selects it for sleep and recovery support.",
+      staffScript: "If ferritin/TSH low on labs, address root cause before peptides. IV NAD+ booster add-on same visit — standalone peptide NAD+ SKUs are not sold.",
+      upsell: "ELEVATED IV $199/mo includes 2 IV drips; sermorelin $149/mo à la carte when indicated.",
+      algorithmSteps: buildSteps("energy_fatigue", "wellness", ["sermorelin", "IV NAD+ booster"]),
     };
   },
   recovery_injury: () => {
@@ -338,12 +338,12 @@ const PATHWAY_MAP: Record<PatientGoal, () => PathwayRecommendation> = {
       labPanelName: lab.name,
       labChargeCents: lab.cents,
       labChargeDisplay: lab.display,
-      compoundKeys: ["sermorelin", "nadInjection"],
-      dosing: [DOSING_PROTOCOLS.sermorelin, DOSING_PROTOCOLS.nadInjection],
+      compoundKeys: ["sermorelin"],
+      dosing: [DOSING_PROTOCOLS.sermorelin],
       consents: [],
-      patientExplanation: "Wellness membership with Vitality peptides, IV lounge access, and quarterly monitoring.",
-      staffScript: "Do not recite 104-SKU catalog. Lead with Wellness + Vitality.",
-      algorithmSteps: buildSteps("longevity", "wellness", ["sermorelin", "NAD+"]),
+      patientExplanation: "ELEVATED IV membership with optional sermorelin à la carte and IV lounge access when clinically appropriate.",
+      staffScript: "Lead with ELEVATED IV — do not recite full peptide catalog. NAD+ is IV Lounge only (not standalone peptide SKUs).",
+      algorithmSteps: buildSteps("longevity", "wellness", ["sermorelin", "IV NAD+"]),
     };
   },
   iv_only: () => ({

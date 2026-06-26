@@ -8,6 +8,8 @@
  */
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import type Stripe from "https://esm.sh/stripe@18.5.0";
+import { hasClinicStaffRole } from "./staff-auth.ts";
+import { edgeStructuredLog } from "./edge-structured-log.ts";
 
 export type ElevatedProgramKey = "trt" | "hrt" | "glp1" | "wellness";
 
@@ -50,8 +52,8 @@ export async function resolveAuthorizedDiscountPatientId(
     .from("user_roles")
     .select("role")
     .eq("user_id", userId);
-  const isStaff = Array.isArray(roles) && roles.some((r) => r.role === "admin" || r.role === "staff");
-  if (isStaff) {
+  const roleList = (roles ?? []).map((r) => String(r.role));
+  if (hasClinicStaffRole(roleList)) {
     const supplied = suppliedPatientId ? String(suppliedPatientId).trim() : "";
     return supplied !== "" ? supplied : null;
   }
@@ -160,6 +162,14 @@ export async function resolveMemberCouponForCheckout(
 
   const couponId = getElevatedMemberCouponId();
   if (!couponId) {
+    edgeStructuredLog("member-discount", {
+      event_type: "coupon_missing",
+      success: false,
+      action_taken: "member_discount_skipped",
+      patient_id: patientId,
+      error_message:
+        "STRIPE_ELEVATED_MEMBER_COUPON_ID is not set — member will pay full à la carte price. Create the 20% coupon in Stripe and add the secret in Supabase.",
+    }, "info");
     return { applied_discount: "none", program, ineligible_reason: "coupon_not_configured" };
   }
 

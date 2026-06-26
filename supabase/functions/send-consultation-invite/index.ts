@@ -4,6 +4,7 @@ import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import { hasClinicStaffRole } from "../_shared/staff-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,7 +49,7 @@ serve(async (req) => {
       .select("role")
       .eq("user_id", userData.user.id);
 
-    const hasAccess = roles?.some(r => r.role === "admin" || r.role === "staff");
+    const hasAccess = hasClinicStaffRole((roles ?? []).map((r) => String(r.role)));
     if (!hasAccess) throw new Error("Insufficient permissions");
 
     logStep("Authorization verified");

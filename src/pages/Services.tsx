@@ -32,7 +32,7 @@ const Services = () => {
         <title>Services | Elevated Health Augusta</title>
         <meta
           name="description"
-          content="IV therapy, hormone optimization, peptide therapy, medical weight loss, and Elevated Membership — physician-owned wellness in Evans, GA."
+          content="IV therapy, hormone optimization, peptide therapy, medical weight loss, and ELEVATED program memberships — physician-owned wellness in Evans, GA."
         />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/services" />
       </Helmet>

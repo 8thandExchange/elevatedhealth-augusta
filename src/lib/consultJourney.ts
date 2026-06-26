@@ -1,4 +1,5 @@
 import type { GfeClearanceRow } from "@/lib/gfeClearance";
+import { ELEVATED_PROGRAMS_SUMMARY } from "./membershipCopy";
 import { patientGfeIsComplete } from "@/lib/gfeClearance";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 
@@ -230,7 +231,7 @@ export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
   if (["protocol_approved", "pending_pharmacy_order"].includes(status)) {
     return {
       title: "Activate your membership",
-      description: "Your treatment plan is ready. Elevated Membership ($199/mo) includes ongoing care — separate from your $79 assessment.",
+      description: `Your treatment plan is ready. Enroll in your ELEVATED program (${ELEVATED_PROGRAMS_SUMMARY}) — separate from your $79 assessment.`,
       ctaLabel: "View membership",
       ctaPath: "/patient/dashboard",
     };

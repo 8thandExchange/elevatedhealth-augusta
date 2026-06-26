@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { resolveMemberCouponForCheckout } from "../_shared/member-discount.ts";
+import { hasClinicStaffRole } from "../_shared/staff-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -44,8 +45,8 @@ serve(async (req) => {
       .select("role")
       .eq("user_id", userId);
 
-    const hasAccess = roles?.some((r) => r.role === "admin" || r.role === "staff");
-    if (!hasAccess) throw new Error("Unauthorized: admin or staff role required");
+    const hasAccess = hasClinicStaffRole((roles ?? []).map((r) => String(r.role)));
+    if (!hasAccess) throw new Error("Unauthorized: clinic staff role required");
     logStep("Authorization verified");
 
     const { patient_email, price_id, peptide_type, is_recurring } = await req.json();
