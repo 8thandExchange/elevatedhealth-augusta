@@ -52,7 +52,7 @@ async function requireStaffOrAdmin(req: Request): Promise<
     .select("role")
     .eq("user_id", user_id);
   const isStaffOrAdmin = (roles || []).some(
-    (r) => r.role === "staff" || r.role === "admin",
+    (r) => r.role === "staff" || r.role === "admin" || r.role === "provider",
   );
   if (!isStaffOrAdmin) {
     return { ok: false, status: 403, error: "Staff or admin role required" };

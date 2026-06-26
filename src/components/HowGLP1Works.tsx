@@ -19,7 +19,7 @@ const HowGLP1Works = () => {
     },
     {
       icon: Scale,
-      title: "Metabolic Reset",
+      title: "ELEVATED GLP-1 pathway",
       description: "Improves insulin sensitivity and reduces blood sugar spikes, helping your body burn fat more efficiently."
     },
     {
@@ -112,13 +112,13 @@ const HowGLP1Works = () => {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
-            <p className="text-sm tracking-[0.3em] uppercase text-gold mb-4 font-lato font-light">
+            <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-jost font-light">
               The Science
             </p>
-            <h2 className="font-cormorant text-primary text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="font-playfair text-primary text-3xl md:text-4xl font-bold mb-4">
               How GLP-1 Medications Transform Your Metabolism
             </h2>
-            <p className="text-lg text-muted-foreground font-lato max-w-3xl mx-auto">
+            <p className="text-lg text-muted-foreground font-jost max-w-3xl mx-auto">
               FDA-approved GLP-1 receptor agonists represent a breakthrough in medical weight loss, 
               working with your body's natural hunger hormones to produce sustainable results.
             </p>
@@ -129,15 +129,15 @@ const HowGLP1Works = () => {
             {mechanisms.map((item, index) => {
               const Icon = item.icon;
               return (
-                <Card key={index} className="border-gold/20 hover:border-gold/40 transition-all hover:shadow-lg">
+                <Card key={index} className="border-accent/20 hover:border-accent/40 transition-all hover:shadow-lg">
                   <CardContent className="p-6 text-center">
-                    <div className="inline-flex p-3 bg-gold/10 rounded-full mb-4">
-                      <Icon className="h-6 w-6 text-gold" />
+                    <div className="inline-flex p-3 bg-accent/10 rounded-full mb-4">
+                      <Icon className="h-6 w-6 text-accent" />
                     </div>
-                    <h3 className="font-cormorant text-lg text-primary font-bold mb-2">
+                    <h3 className="font-playfair text-lg text-primary font-bold mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground font-lato">
+                    <p className="text-sm text-muted-foreground font-jost">
                       {item.description}
                     </p>
                   </CardContent>
@@ -147,16 +147,16 @@ const HowGLP1Works = () => {
           </div>
 
           {/* SEO-Optimized Explainer */}
-          <div className="bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3] rounded-2xl p-8 mb-16 border border-gold/20">
+          <div className="bg-gradient-to-br from-[#f5f0e8] via-[#faf7f2] to-[#f0ebe3] rounded-2xl p-8 mb-16 border border-accent/20">
             <div className="flex items-start gap-4 mb-6">
-              <div className="shrink-0 p-2 bg-gold/10 rounded-lg">
-                <Clock className="h-6 w-6 text-gold" />
+              <div className="shrink-0 p-2 bg-accent/10 rounded-lg">
+                <Clock className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <h3 className="font-cormorant text-xl text-primary font-bold mb-2">
+                <h3 className="font-playfair text-xl text-primary font-bold mb-2">
                   What Happens When You Take a GLP-1 Medication
                 </h3>
-                <p className="text-muted-foreground font-lato leading-relaxed">
+                <p className="text-muted-foreground font-jost leading-relaxed">
                   Within hours of your weekly injection, GLP-1 levels rise in your bloodstream. Your brain's 
                   appetite center receives signals that you're satisfied, even before finishing a normal-sized meal. 
                   Over the following days, your stomach empties more slowly, extending that fullness. Meanwhile, 
@@ -169,25 +169,25 @@ const HowGLP1Works = () => {
             <div className="grid md:grid-cols-3 gap-4">
               <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg">
                 <TrendingDown className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-lato text-primary">Reduced hunger hormones</span>
+                <span className="text-sm font-jost text-primary">Reduced hunger hormones</span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg">
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-lato text-primary">Improved insulin response</span>
+                <span className="text-sm font-jost text-primary">Improved insulin response</span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white/60 rounded-lg">
                 <Scale className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-lato text-primary">Enhanced fat metabolism</span>
+                <span className="text-sm font-jost text-primary">Enhanced fat metabolism</span>
               </div>
             </div>
           </div>
 
           {/* Comparison Section Header */}
           <div className="text-center mb-8">
-            <h3 className="font-cormorant text-2xl md:text-3xl text-primary font-bold mb-3">
+            <h3 className="font-playfair text-2xl md:text-3xl text-primary font-bold mb-3">
               Semaglutide vs. Tirzepatide: Which is Right for You?
             </h3>
-            <p className="text-muted-foreground font-lato max-w-2xl mx-auto">
+            <p className="text-muted-foreground font-jost max-w-2xl mx-auto">
               Both medications are FDA-approved and clinically proven. Your provider will help you choose 
               based on your goals, medical history, and budget.
             </p>
@@ -196,17 +196,17 @@ const HowGLP1Works = () => {
           {/* Mobile-Friendly Comparison Cards */}
           <div className="md:hidden space-y-4 mb-12">
             {comparisonData.map((row, index) => (
-              <Card key={index} className="border-gold/20">
+              <Card key={index} className="border-accent/20">
                 <CardContent className="p-4">
-                  <h4 className="font-cormorant text-primary font-bold mb-3">{row.feature}</h4>
+                  <h4 className="font-playfair text-primary font-bold mb-3">{row.feature}</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-gold font-medium mb-1">Semaglutide</p>
+                      <p className="text-xs text-accent font-medium mb-1">Semaglutide</p>
                       <p className="text-sm text-muted-foreground">{row.semaglutide}</p>
                     </div>
-                    <div className={row.highlight === "tirzepatide" ? "bg-gold/10 -m-2 p-2 rounded-lg" : ""}>
-                      <p className="text-xs text-gold font-medium mb-1">Tirzepatide</p>
-                      <p className={`text-sm ${row.highlight === "tirzepatide" ? "text-gold font-medium" : "text-muted-foreground"}`}>
+                    <div className={row.highlight === "tirzepatide" ? "bg-accent/10 -m-2 p-2 rounded-lg" : ""}>
+                      <p className="text-xs text-accent font-medium mb-1">Tirzepatide</p>
+                      <p className={`text-sm ${row.highlight === "tirzepatide" ? "text-accent font-medium" : "text-muted-foreground"}`}>
                         {row.tirzepatide}
                       </p>
                     </div>
@@ -221,18 +221,18 @@ const HowGLP1Works = () => {
             <table className="w-full border-collapse bg-white rounded-xl shadow-sm overflow-hidden">
               <thead>
                 <tr className="bg-primary/5">
-                  <th className="p-4 text-left font-cormorant text-lg text-primary w-1/4"></th>
-                  <th className="p-4 text-center font-cormorant text-lg text-primary w-[37.5%]">
+                  <th className="p-4 text-left font-playfair text-lg text-primary w-1/4"></th>
+                  <th className="p-4 text-center font-playfair text-lg text-primary w-[37.5%]">
                     <div className="flex flex-col items-center gap-1">
                       <span className="font-bold">Semaglutide</span>
-                      <span className="text-sm font-lato font-normal text-muted-foreground">Ozempic • Wegovy</span>
+                      <span className="text-sm font-jost font-normal text-muted-foreground">Ozempic • Wegovy</span>
                     </div>
                   </th>
-                  <th className="p-4 text-center font-cormorant text-lg text-gold bg-gold/10 w-[37.5%]">
+                  <th className="p-4 text-center font-playfair text-lg text-accent bg-accent/10 w-[37.5%]">
                     <div className="flex flex-col items-center gap-1">
-                      <span className="inline-block px-2 py-0.5 bg-gold text-white text-xs rounded-full mb-1 font-lato">Premium</span>
+                      <span className="inline-block px-2 py-0.5 bg-accent text-white text-xs rounded-full mb-1 font-jost">Premium</span>
                       <span className="font-bold">Tirzepatide</span>
-                      <span className="text-sm font-lato font-normal text-muted-foreground">Mounjaro • Zepbound</span>
+                      <span className="text-sm font-jost font-normal text-muted-foreground">Mounjaro • Zepbound</span>
                     </div>
                   </th>
                 </tr>
@@ -240,11 +240,11 @@ const HowGLP1Works = () => {
               <tbody>
                 {comparisonData.map((row, index) => (
                   <tr key={index} className="border-b border-border/50">
-                    <td className="p-4 font-lato text-primary font-medium">{row.feature}</td>
-                    <td className="p-4 text-center font-lato text-muted-foreground text-sm">
+                    <td className="p-4 font-jost text-primary font-medium">{row.feature}</td>
+                    <td className="p-4 text-center font-jost text-muted-foreground text-sm">
                       {row.semaglutide}
                     </td>
-                    <td className={`p-4 text-center font-lato text-sm bg-gold/5 ${row.highlight === "tirzepatide" ? "text-gold font-medium" : "text-muted-foreground"}`}>
+                    <td className={`p-4 text-center font-jost text-sm bg-accent/5 ${row.highlight === "tirzepatide" ? "text-accent font-medium" : "text-muted-foreground"}`}>
                       {row.tirzepatide}
                     </td>
                   </tr>
@@ -257,10 +257,10 @@ const HowGLP1Works = () => {
           <div className="flex items-start gap-4 p-6 bg-blue-50 border border-blue-200 rounded-xl mb-12">
             <AlertCircle className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-cormorant text-lg text-primary font-bold mb-1">
+              <h4 className="font-playfair text-lg text-primary font-bold mb-1">
                 Clinical Guidance
               </h4>
-              <p className="text-sm text-muted-foreground font-lato">
+              <p className="text-sm text-muted-foreground font-jost">
                 During your $79 Wellness Assessment, your provider will review your medical history, current medications, 
                 and weight loss goals to recommend the most appropriate medication. Factors like insulin resistance, 
                 prior GLP-1 experience, and cardiovascular history influence which option is safest and most effective for you.
@@ -270,16 +270,16 @@ const HowGLP1Works = () => {
 
           {/* FAQ Section */}
           <div className="max-w-3xl mx-auto">
-            <h3 className="font-cormorant text-2xl text-primary font-bold text-center mb-8">
+            <h3 className="font-playfair text-2xl text-primary font-bold text-center mb-8">
               GLP-1 Medication FAQs
             </h3>
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
-                  <AccordionTrigger className="text-left font-lato font-semibold text-primary">
+                  <AccordionTrigger className="text-left font-jost font-semibold text-primary">
                     {faq.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground font-lato leading-relaxed">
+                  <AccordionContent className="text-muted-foreground font-jost leading-relaxed">
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>

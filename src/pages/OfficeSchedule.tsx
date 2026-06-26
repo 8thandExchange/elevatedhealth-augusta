@@ -89,6 +89,7 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
   const [hiddenServices, setHiddenServices] = useState<Set<string>>(new Set());
   const [hiddenStatuses, setHiddenStatuses] = useState<Set<string>>(new Set(["cancelled"]));
   const [search, setSearch] = useState("");
+  const [hoursProviderId, setHoursProviderId] = useState<string>("");
 
   // UI state
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
@@ -164,6 +165,12 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
   }, [range.start.getTime(), range.end.getTime()]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
+
+  useEffect(() => {
+    if (providers.length > 0 && !hoursProviderId) {
+      setHoursProviderId(providers[0].user_id);
+    }
+  }, [providers, hoursProviderId]);
 
   // Realtime subscriptions
   useEffect(() => {
@@ -279,11 +286,23 @@ export default function OfficeSchedule({ portalMode = false, loginPath = "/admin
             )}
             <ScheduleTabBar activeTab={activeTab} onTabChange={setActiveTab} portalMode={portalMode} />
             <div className="flex-1" />
+            {providers.length > 0 && (
+              <select
+                className="text-sm border border-border rounded-md px-2 py-1.5 bg-background"
+                value={hoursProviderId}
+                onChange={(e) => setHoursProviderId(e.target.value)}
+                aria-label="Provider whose hours to edit"
+              >
+                {providers.map((p) => (
+                  <option key={p.user_id} value={p.user_id}>{p.display_name}</option>
+                ))}
+              </select>
+            )}
             <LabCorpPortalLink variant="icon" />
           </div>
         </div>
         <div className={`${portalMode ? "flex-1 overflow-auto" : ""} container mx-auto px-4 py-6`}>
-          <MyScheduleManager />
+          <MyScheduleManager providerId={hoursProviderId || null} />
         </div>
       </div>
     );

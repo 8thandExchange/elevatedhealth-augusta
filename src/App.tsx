@@ -425,17 +425,17 @@ const App = () => {
             </ProviderLayout>
           } />
           <Route path="/admin/settings" element={
-            <ProviderLayout title="Clinic Settings" subtitle="Configuration" showNavbar={false}>
+            <ProviderLayout title="Clinic Settings" subtitle="Configuration" showNavbar={false} allowedRoles={["admin"]}>
               <ClinicSettings />
             </ProviderLayout>
           } />
           <Route path="/admin/scheduling" element={
-            <ProviderLayout title="Scheduling Settings" subtitle="Practice Settings" showNavbar={false}>
+            <ProviderLayout title="Scheduling Settings" subtitle="Practice Settings" showNavbar={false} allowedRoles={["admin"]}>
               <SchedulingSettings />
             </ProviderLayout>
           } />
           <Route path="/admin/provider-schedules" element={
-            <ProviderLayout title="Provider Schedules" subtitle="Practice Scheduling" showNavbar={false}>
+            <ProviderLayout title="Provider Schedules" subtitle="Practice Scheduling" showNavbar={false} allowedRoles={["admin"]}>
               <ProviderSchedules />
             </ProviderLayout>
           } />
@@ -477,14 +477,14 @@ const App = () => {
             </ProviderLayout>
           } />
           <Route path="/admin/business" element={
-            <ProviderLayout title="Business Dashboard" subtitle="Revenue & Operations" showNavbar={false}>
+            <ProviderLayout title="Business Dashboard" subtitle="Revenue & Operations" showNavbar={false} allowedRoles={["admin"]}>
               <Suspense fallback={<RouteFallback />}>
                 <BusinessDashboard />
               </Suspense>
             </ProviderLayout>
           } />
           <Route path="/admin/email-templates" element={
-            <ProviderLayout title="Email Templates" subtitle="Template Management" showNavbar={false}>
+            <ProviderLayout title="Email Templates" subtitle="Template Management" showNavbar={false} allowedRoles={["admin"]}>
               <EmailTemplates />
             </ProviderLayout>
           } />

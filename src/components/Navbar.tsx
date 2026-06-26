@@ -75,7 +75,7 @@ const Navbar = () => {
     { label: "IV Therapy", action: () => navigate("/iv-lounge") },
     { label: "Peptides", action: () => navigate("/peptides") },
     { label: "Weight Loss", action: () => navigate("/weight-loss") },
-    { label: "Pricing", action: () => navigate("/membership") },
+    { label: "Pricing", action: () => navigate("/pricing") },
     { label: "About", action: () => navigate("/about") },
   ];
 

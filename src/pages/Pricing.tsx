@@ -818,14 +818,11 @@ const Pricing = () => {
                       Stimulates natural growth hormone production
                     </p>
                   </CardHeader>
-                  <CardContent className="flex flex-col flex-grow">
+                    <CardContent className="flex flex-col flex-grow">
                     <div className="mb-2">
-                      <span className="text-3xl font-playfair text-foreground">$79</span>
+                      <span className="text-3xl font-playfair text-foreground">$149</span>
                       <span className="text-muted-foreground font-jost">/month</span>
                     </div>
-                    <p className="text-xs text-accent font-jost mb-4">
-                      or 4 payments of $37 with Klarna
-                    </p>
                     <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
                         <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
@@ -846,38 +843,26 @@ const Pricing = () => {
                   </CardContent>
                 </Card>
 
-                {/* NAD+ */}
-                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col">
+                {/* NAD+ IV booster — standalone peptide/infusion SKUs discontinued */}
+                <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col opacity-90">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-amber-600 border-amber-500/30">
-                      Cellular Energy
+                      IV add-on only
                     </Badge>
-                    <h3 className="text-xl font-playfair text-foreground">NAD+</h3>
+                    <h3 className="text-xl font-playfair text-foreground">NAD+ Booster</h3>
                     <p className="text-sm text-muted-foreground font-jost">
-                      Cellular energy & cognitive enhancement
+                      $50 push add-on during any IV drip — not sold as a standalone infusion or peptide SKU.
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
-                    <div className="mb-4">
-                      <span className="text-xl font-playfair text-foreground">Troches</span>
-                      <span className="text-3xl font-playfair text-foreground ml-2">$149</span>
-                      <span className="text-muted-foreground font-jost">/mo</span>
-                    </div>
-                    <div className="mb-4 text-sm text-muted-foreground">
-                      or Injections <span className="font-playfair text-foreground text-lg">$199</span>/mo
-                    </div>
                     <ul className="space-y-2 mb-6 flex-grow">
                       <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
                         <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                        Mental clarity & focus
-                      </li>
-                      <li className="flex items-start gap-2 text-sm font-jost text-muted-foreground">
-                        <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                        Anti-aging benefits
+                        Available at checkout when booking IV at the lounge
                       </li>
                     </ul>
-                    <Button variant="outline" className="w-full mt-auto" onClick={() => navigate("/peptides")}>
-                      Learn More
+                    <Button variant="outline" className="w-full mt-auto" onClick={() => navigate("/iv-lounge")}>
+                      Book IV
                     </Button>
                   </CardContent>
                 </Card>

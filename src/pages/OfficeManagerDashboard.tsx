@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,6 +65,7 @@ interface ChatLead {
 }
 
 const OfficeManagerDashboard = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -249,6 +250,20 @@ const OfficeManagerDashboard = () => {
     const matchesSource = leadSourceFilter === "all" || lead.source === leadSourceFilter;
     return matchesSearch && matchesStatus && matchesSource;
   });
+
+  const updateLeadStatus = async (leadId: string, status: string) => {
+    const { error } = await supabase.from("chat_leads").update({ status }).eq("id", leadId);
+    if (error) {
+      toast.error("Could not update lead status");
+      return;
+    }
+    setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, status } : l)));
+    toast.success("Lead status updated");
+  };
+
+  const openPatientChart = (patientId: string) => {
+    navigate(`/provider/dashboard?patient=${patientId}`);
+  };
 
   const getLeadStatusBadge = (status: string | null) => {
     const statusConfig: Record<string, { label: string; color: string }> = {
@@ -479,7 +494,8 @@ const OfficeManagerDashboard = () => {
                         filteredPatients.map((patient) => (
                           <tr 
                             key={patient.id} 
-                            className={`border-b border-border/30 hover:bg-muted/30 ${patient.is_archived ? "opacity-50" : ""}`}
+                            className={`border-b border-border/30 hover:bg-muted/30 cursor-pointer ${patient.is_archived ? "opacity-50" : ""}`}
+                            onClick={() => openPatientChart(patient.id)}
                           >
                             <td className="py-4 px-4">
                               <div className="flex items-center gap-3">
@@ -770,8 +786,22 @@ const OfficeManagerDashboard = () => {
                             <td className="py-4 px-4">
                               {getSourceBadge(lead.source)}
                             </td>
-                            <td className="py-4 px-4">
-                              {getLeadStatusBadge(lead.status)}
+                            <td className="py-4 px-4" onClick={(e) => e.stopPropagation()}>
+                              <Select
+                                value={lead.status || "new"}
+                                onValueChange={(v) => void updateLeadStatus(lead.id, v)}
+                              >
+                                <SelectTrigger className="h-8 w-[130px] text-xs">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="new">New</SelectItem>
+                                  <SelectItem value="contacted">Contacted</SelectItem>
+                                  <SelectItem value="qualified">Qualified</SelectItem>
+                                  <SelectItem value="converted">Converted</SelectItem>
+                                  <SelectItem value="closed">Closed</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </td>
                             <td className="py-4 px-4 text-sm text-muted-foreground">
                               {new Date(lead.created_at).toLocaleDateString()}

@@ -10,8 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
-import { formatClinicTime, formatClinicDateKey } from "@/lib/clinicTime";
-import { format, isSameDay, addDays, startOfDay } from "date-fns";
+import { formatClinicTime, formatClinicDateKey, addClinicDays, clinicDayOfWeek, clinicLocalToUtc, isSameClinicDay, CLINIC_TIMEZONE } from "@/lib/clinicTime";
+import { format } from "date-fns";
 import { toast } from "sonner";
 
 interface Slot {
@@ -51,7 +51,9 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [slots, setSlots] = useState<Slot[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(() =>
+    clinicLocalToUtc(formatClinicDateKey(new Date()), 12 * 60),
+  );
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
 
@@ -83,9 +85,19 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
   }, [loadSlots]);
 
   const days = useMemo(() => {
-    const start = addDays(startOfDay(new Date()), weekOffset * 7);
-    return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+    const todayKey = formatClinicDateKey(new Date());
+    const dow = clinicDayOfWeek(new Date());
+    const fromMonday = dow === 0 ? 6 : dow - 1;
+    const mondayKey = addClinicDays(todayKey, -fromMonday + weekOffset * 7);
+    return Array.from({ length: 7 }, (_, i) =>
+      clinicLocalToUtc(addClinicDays(mondayKey, i), 12 * 60),
+    );
   }, [weekOffset]);
+
+  const formatClinicWeekday = (d: Date) =>
+    new Intl.DateTimeFormat("en-US", { timeZone: CLINIC_TIMEZONE, weekday: "short" }).format(d);
+  const formatClinicDayNum = (d: Date) =>
+    new Intl.DateTimeFormat("en-US", { timeZone: CLINIC_TIMEZONE, day: "numeric" }).format(d);
 
   const slotsForDay = useMemo(
     () => slots.filter((s) => formatClinicDateKey(s.start) === formatClinicDateKey(selectedDate)),
@@ -148,7 +160,7 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
       <div className="grid grid-cols-7 gap-2">
         {days.map((d) => {
           const has = dayHasSlots(d);
-          const sel = isSameDay(d, selectedDate);
+          const sel = isSameClinicDay(d, selectedDate);
           return (
             <button
               key={d.toISOString()}
@@ -162,8 +174,8 @@ export const SlotPicker = forwardRef<SlotPickerHandle, SlotPickerProps>(function
                     : "bg-muted/30 text-muted-foreground cursor-not-allowed opacity-50"
               }`}
             >
-              <div className="text-xs uppercase">{format(d, "EEE")}</div>
-              <div className="text-lg font-semibold">{format(d, "d")}</div>
+              <div className="text-xs uppercase">{formatClinicWeekday(d)}</div>
+              <div className="text-lg font-semibold">{formatClinicDayNum(d)}</div>
             </button>
           );
         })}

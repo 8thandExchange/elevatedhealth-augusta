@@ -67,6 +67,7 @@ import ResendIntakeLinkButton from "@/components/provider/ResendIntakeLinkButton
 import ProviderQuickActions from "@/components/provider/ProviderQuickActions";
 import InventoryAlerts from "@/components/provider/InventoryAlerts";
 import PatientDatabase from "@/components/provider/PatientDatabase";
+import QuickPaymentModal from "@/components/provider/QuickPaymentModal";
 import { PatientConsentStatusSection } from "@/components/provider/PatientConsentStatusSection";
 import GfeClearanceCard from "@/components/provider/GfeClearanceCard";
 import { PatientAllergies } from "@/components/provider/PatientAllergies";
@@ -266,6 +267,13 @@ const ProviderDashboard = () => {
   // Quick pharmacy order modal state
   const [pharmacyOrderPatient, setPharmacyOrderPatient] = useState<PendingPharmacyPatient | null>(null);
   const [isPharmacyModalOpen, setIsPharmacyModalOpen] = useState(false);
+  const [quickPaymentOpen, setQuickPaymentOpen] = useState(false);
+  const [quickPaymentPatient, setQuickPaymentPatient] = useState<{
+    id: string;
+    full_name: string;
+    email: string | null;
+    phone: string | null;
+  } | null>(null);
   // Recommended medications from lab analysis
   const tabsScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollTabsLeft, setCanScrollTabsLeft] = useState(false);
@@ -726,6 +734,15 @@ const ProviderDashboard = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    const patientFromQuery = searchParams.get("patient");
+    if (patientFromQuery) {
+      void openPatientById(patientFromQuery);
+      const next = new URLSearchParams(searchParams);
+      next.delete("patient");
+      navigate({ pathname: location.pathname, search: next.toString() ? `?${next}` : "" }, { replace: true });
+      return;
+    }
+
     const routeState = location.state as ProviderDashboardRouteState | null;
     if (!routeState?.openPatientId) return;
 
@@ -738,7 +755,7 @@ const ProviderDashboard = () => {
     // Clear one-time deep-link state so refresh/back doesn't re-open.
     navigate(location.pathname, { replace: true, state: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.state, location.pathname, navigate, pendingPatients]);
+  }, [location.state, location.pathname, navigate, pendingPatients, searchParams]);
 
   useEffect(() => {
     if (
@@ -2199,6 +2216,24 @@ const ProviderDashboard = () => {
                     setConsentScrollPatientId(patientId);
                     void openPatientById(patientId);
                   }}
+                  onSendPayment={(patient) => {
+                    setQuickPaymentPatient(patient);
+                    setQuickPaymentOpen(true);
+                  }}
+                  onMessage={(patient) => {
+                    if (patient.phone) {
+                      window.open(`sms:${patient.phone.replace(/\D/g, "")}`, "_self");
+                    } else {
+                      toast.error("No phone number on file for this patient.");
+                    }
+                  }}
+                  onSendEmail={(patient) => {
+                    if (patient.email) {
+                      window.location.href = `mailto:${patient.email}`;
+                    } else {
+                      toast.error("No email on file for this patient.");
+                    }
+                  }}
                 />
               </CardContent>
             </Card>
@@ -2674,15 +2709,22 @@ const ProviderDashboard = () => {
                 />
               )}
 
-              {/* Hormone Protocol Pricing Add-On Selector */}
+              {/* Hormone Protocol Pricing Add-On Selector — GLP-1 patients only */}
+              {(selectedPatient.patient.primary_program === "glp1" ||
+                selectedPatient.patient.primary_program === "semaglutide" ||
+                selectedPatient.patient.primary_program === "tirzepatide" ||
+                selectedPatient.patient.primary_program === "weight_loss") && (
               <HormoneAddonSelector
                 patientId={selectedPatient.patient.id}
                 patientName={selectedPatient.patient.full_name}
                 patientEmail={selectedPatient.patient.email}
                 patientPhone={selectedPatient.patient.phone}
-                currentHasAddon={!!(selectedPatient.patient.medical_history as Record<string, any>)?.has_hormone_addon}
-                baseMembership="semaglutide"
+                currentHasAddon={!!(selectedPatient.patient.medical_history as Record<string, unknown>)?.has_hormone_addon}
+                baseMembership={
+                  selectedPatient.patient.primary_program === "tirzepatide" ? "tirzepatide" : "semaglutide"
+                }
               />
+              )}
 
               <RecoveryPeptideReviewPanel
                 patientName={selectedPatient.patient.full_name}
@@ -3129,6 +3171,12 @@ const ProviderDashboard = () => {
           }}
         />
       )}
+
+      <QuickPaymentModal
+        open={quickPaymentOpen}
+        onOpenChange={setQuickPaymentOpen}
+        onSuccess={() => loadData()}
+      />
 
       {/* Provider AI Assistant - Floating Chat */}
     </div>

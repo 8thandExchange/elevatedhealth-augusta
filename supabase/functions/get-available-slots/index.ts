@@ -60,6 +60,7 @@ interface Appt {
   provider_id: string;
   scheduled_at: string;
   duration_minutes: number;
+  status?: string;
 }
 
 interface Exception {
@@ -265,14 +266,16 @@ serve(async (req) => {
           .lte("start_at", endWindow.toISOString())
       : { data: [] as Block[] };
 
+    const fetchStart = new Date(startWindow.getTime() - 48 * 60 * 60 * 1000);
+
     const { data: appts } = providerIds.length
       ? await supabase
           .from("appointments")
           .select("provider_id,scheduled_at,duration_minutes,status")
           .in("provider_id", providerIds)
           .neq("status", "cancelled")
-          .gte("scheduled_at", startWindow.toISOString())
-          .lte("scheduled_at", endWindow.toISOString())
+          .gte("scheduled_at", fetchStart.toISOString())
+          .lt("scheduled_at", endWindow.toISOString())
       : { data: [] as Appt[] };
 
     // schedule_exceptions overrides the base provider_schedules pattern on
@@ -295,7 +298,6 @@ serve(async (req) => {
           .lte("exception_date", exceptionEndKey)
       : { data: [] as Exception[] };
 
-    const fetchStart = new Date(startWindow.getTime() - 48 * 60 * 60 * 1000);
     const [{ data: roomsData }, { data: blackoutsData }, { data: roomApptsRaw }, { data: limitsData }] = await Promise.all([
       supabase
         .from("rooms")
@@ -398,6 +400,7 @@ serve(async (req) => {
             // Conflict with appointments
             const conflictAppt = (appts || []).some((a: Appt) => {
               if (a.provider_id !== providerIdForDay) return false;
+              if (a.status && ["no_show", "rescheduled"].includes(a.status)) return false;
               const aStart = new Date(a.scheduled_at).getTime();
               const aEnd = aStart + (a.duration_minutes || 30) * 60_000;
               return slotStart.getTime() < aEnd && slotEnd.getTime() > aStart;

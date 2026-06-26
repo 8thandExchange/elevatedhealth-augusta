@@ -22,8 +22,8 @@ interface HormoneAddonSelectorProps {
 }
 
 const BASE_MEMBERSHIPS = [
-  { value: "semaglutide", label: "Semaglutide Membership", price: 399 },
-  { value: "tirzepatide", label: "Tirzepatide Membership", price: 499 },
+  { value: "semaglutide", label: "Semaglutide Membership", price: 349 },
+  { value: "tirzepatide", label: "Tirzepatide Membership", price: 449 },
 ];
 
 const HORMONE_ADDON_PRICE = 149;
@@ -44,7 +44,7 @@ const HormoneAddonSelector = ({
   const [emailSent, setEmailSent] = useState(false);
 
   const selectedBase = BASE_MEMBERSHIPS.find(m => m.value === selectedMembership);
-  const basePrice = selectedBase?.price || 399;
+  const basePrice = selectedBase?.price || 349;
   const addonPrice = includeHormones ? HORMONE_ADDON_PRICE : 0;
   const totalMonthly = basePrice + addonPrice;
 
