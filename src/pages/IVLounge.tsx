@@ -16,6 +16,9 @@ import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { IV_THERAPIES_CATALOG } from "@/lib/ivTherapiesCatalog";
 import { IV_ADDONS_CATALOG } from "@/lib/ivAddonsCatalog";
 import { openAssistantChat } from "@/lib/openAssistantChat";
+import { MarketingHeroBackdrop } from "@/components/marketing/MarketingHeroBackdrop";
+import { MarketingImage } from "@/components/marketing/MarketingImage";
+import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import {
   CANCELLATION_NOTICE_HOURS,
   CARE_EMAIL,
@@ -236,7 +239,11 @@ const IVLounge = () => {
 
         {/* HERO — navy band matches homepage; clear CTA hierarchy */}
         <section className="relative flex items-center pt-24 pb-12 md:min-h-[85vh] md:pt-40 md:pb-24 overflow-hidden bg-primary text-primary-foreground">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-95" aria-hidden />
+          <MarketingHeroBackdrop
+            src={MARKETING_IMAGES.ivLounge}
+            className="opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary-dark opacity-95" aria-hidden />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(199_89%_39%_/_0.18),transparent_55%)]" aria-hidden />
 
           <div className="relative container mx-auto px-6 lg:px-8 max-w-5xl text-center">
@@ -282,6 +289,31 @@ const IVLounge = () => {
               <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent-light" /> 45–60 minute sessions</div>
               <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent-light" /> Same-day availability</div>
               <div className="flex items-center gap-2"><Check className="h-4 w-4 text-accent-light" /> Memberships save 20%</div>
+            </div>
+          </div>
+        </section>
+
+        {/* RN-led care */}
+        <section className="py-16 md:py-24 bg-background border-b border-border">
+          <div className="container mx-auto px-6 lg:px-8 max-w-5xl grid md:grid-cols-2 gap-12 items-center">
+            <MarketingImage
+              src={MARKETING_IMAGES.ivLounge}
+              alt="Caroline Marshall, RN preparing an IV infusion at Elevated Health Augusta"
+              className="aspect-[4/5] border border-border"
+            />
+            <div>
+              <p className="section-label mb-4">RN-Administered</p>
+              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-4 leading-tight">
+                Caroline Marshall, RN runs your visit.
+              </h2>
+              <p className="font-jost font-light text-muted-foreground leading-relaxed mb-4">
+                Every IV at Elevated Health Augusta is prepared and monitored by our registered nurse
+                under physician standing orders — not a med-spa tech menu. You get a clinical environment,
+                transparent dosing, and a team that knows your history when you come back.
+              </p>
+              <p className="font-jost text-sm text-foreground/80">
+                Walk in, pick your drip, complete a quick screening, and book same-day when slots are open.
+              </p>
             </div>
           </div>
         </section>

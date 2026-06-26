@@ -66,7 +66,7 @@ const BoosterModal = ({
               <div className="p-2 bg-primary/10 rounded-full">
                 {getBoosterIcon(iconName)}
               </div>
-              <DialogTitle className="font-cormorant text-xl font-semibold text-foreground">
+              <DialogTitle className="font-playfair text-xl font-semibold text-foreground">
                 {name}
               </DialogTitle>
             </div>

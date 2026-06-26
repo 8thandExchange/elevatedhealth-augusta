@@ -3062,12 +3062,12 @@ const ProviderDashboard = () => {
               {recommendedProtocol ? (
                 <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/30">
                   <CardHeader>
-                    <CardTitle className="text-sm text-gold uppercase tracking-wider">
+                    <CardTitle className="text-sm text-accent uppercase tracking-wider">
                       Recommended Protocol
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <h3 className="font-cormorant text-2xl text-foreground">
+                    <h3 className="font-playfair text-2xl text-foreground">
                       {recommendedProtocol.name.includes("Menopause") ? "Protocol A (Menopause)" :
                        recommendedProtocol.name.includes("Vitality") ? "Protocol B (Vitality)" :
                        recommendedProtocol.name}

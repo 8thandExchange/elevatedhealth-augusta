@@ -7,7 +7,7 @@ const panels = [
   {
     src: MARKETING_IMAGES.clinicExterior,
     alt: "Elevated Health Augusta clinic exterior in Evans, Georgia",
-    caption: "Evans Town Center",
+    caption: "Suite 203 · Evans Town Center",
     tag: "Location",
   },
   {

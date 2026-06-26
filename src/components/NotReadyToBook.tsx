@@ -97,7 +97,7 @@ const NotReadyToBook = ({
         <div className="flex justify-center mb-4">
           <Heart className="h-8 w-8 text-accent" />
         </div>
-        <h3 className="text-2xl font-cormorant font-medium text-foreground mb-3">
+        <h3 className="text-2xl font-playfair font-medium text-foreground mb-3">
           {title || "Questions? We're here for you."}
         </h3>
         <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
@@ -174,7 +174,7 @@ const NotReadyToBook = ({
   // Variant A (default): Original "Let's chat first" copy
   return (
     <section className={`bg-background rounded-2xl p-8 text-center border border-border/30 ${className}`}>
-      <h3 className="text-2xl font-cormorant font-medium text-foreground mb-3">
+      <h3 className="text-2xl font-playfair font-medium text-foreground mb-3">
         {title || "Have Questions? Chat with Us First."}
       </h3>
       <p className="text-muted-foreground mb-6 max-w-lg mx-auto">

@@ -211,7 +211,7 @@ const DashboardActivityWidget = () => {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-gold" />
+              <Calendar className="h-5 w-5 text-accent" />
               Upcoming Appointments
             </CardTitle>
             <Button variant="ghost" size="icon" onClick={loadData}>
@@ -238,12 +238,12 @@ const DashboardActivityWidget = () => {
                           {apt.customer_name || apt.customer_email}
                         </span>
                         {isToday(new Date(apt.booked_for)) && (
-                          <Badge variant="default" className="bg-gold text-white">
+                          <Badge variant="default" className="bg-accent text-white">
                             Today
                           </Badge>
                         )}
                         {isTomorrow(new Date(apt.booked_for)) && (
-                          <Badge variant="outline" className="border-gold text-gold">
+                          <Badge variant="outline" className="border-gold text-accent">
                             Tomorrow
                           </Badge>
                         )}
@@ -268,7 +268,7 @@ const DashboardActivityWidget = () => {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg flex items-center gap-2">
-            <Bell className="h-5 w-5 text-gold" />
+            <Bell className="h-5 w-5 text-accent" />
             Recent Activity
           </CardTitle>
         </CardHeader>

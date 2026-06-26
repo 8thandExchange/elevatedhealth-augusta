@@ -102,7 +102,7 @@ const TreatmentPlan = ({ protocolName, dispenserType, instructions }: TreatmentP
     return (
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="font-cormorant text-xl">My Treatment Plan</CardTitle>
+          <CardTitle className="font-playfair text-xl">My Treatment Plan</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground text-sm">
@@ -118,7 +118,7 @@ const TreatmentPlan = ({ protocolName, dispenserType, instructions }: TreatmentP
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <h2 className="font-cormorant text-xl text-foreground">My Treatment Plan</h2>
+        <h2 className="font-playfair text-xl text-foreground">My Treatment Plan</h2>
         <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
           Active
         </span>
@@ -143,7 +143,7 @@ const TreatmentPlan = ({ protocolName, dispenserType, instructions }: TreatmentP
           <div className="flex items-center gap-3">
             {details.icon}
             <div>
-              <h3 className="font-cormorant text-lg font-semibold text-foreground">
+              <h3 className="font-playfair text-lg font-semibold text-foreground">
                 {details.title}
               </h3>
               <p className="text-xs text-muted-foreground">{protocolName}</p>

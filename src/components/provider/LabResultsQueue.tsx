@@ -128,7 +128,7 @@ const LabResultsQueue = ({ onSelectPatient }: LabResultsQueueProps) => {
     <Card className="border-border/50 bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg font-cormorant">
+          <CardTitle className="flex items-center gap-2 text-lg font-playfair">
             <TestTube className="w-5 h-5 text-primary" />
             Lab Results Queue
             {pendingResults.length > 0 && (

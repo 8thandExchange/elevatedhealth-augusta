@@ -17,7 +17,7 @@ const PaymentMethodsBadge = ({
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {showText && !isCompact && (
-        <span className={`text-xs font-lato ${isDark ? "text-background/70" : "text-muted-foreground"}`}>
+        <span className={`text-xs font-jost ${isDark ? "text-background/70" : "text-muted-foreground"}`}>
           Flexible financing available
         </span>
       )}

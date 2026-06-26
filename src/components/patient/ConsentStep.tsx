@@ -57,7 +57,7 @@ const ConsentStep = ({ treatmentType, patientName, onBack, onSubmit, isSubmittin
         <CardContent className="pt-8 pb-8">
           <div className="flex items-center gap-2 mb-6">
             <Shield className="w-5 h-5 text-primary" />
-            <h2 className="font-cormorant text-xl text-foreground">
+            <h2 className="font-playfair text-xl text-foreground">
               Informed Consent & Agreement
             </h2>
           </div>

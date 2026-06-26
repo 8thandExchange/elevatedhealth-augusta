@@ -20,7 +20,7 @@ const WelcomeIntake = ({ patientName, intakeCompleted = false }: WelcomeIntakePr
               <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <h3 className="font-cormorant text-xl text-foreground mb-2">
+              <h3 className="font-playfair text-xl text-foreground mb-2">
                 Intake Complete
               </h3>
               <p className="text-muted-foreground">
@@ -49,7 +49,7 @@ const WelcomeIntake = ({ patientName, intakeCompleted = false }: WelcomeIntakePr
           </div>
 
           {/* Welcome Text */}
-          <h2 className="font-cormorant text-2xl text-foreground mb-2">
+          <h2 className="font-playfair text-2xl text-foreground mb-2">
             Welcome, {patientName}!
           </h2>
           <p className="text-muted-foreground mb-6">

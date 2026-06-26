@@ -154,8 +154,8 @@ const HealthOverview = ({
           <p className="text-xs text-muted-foreground font-inter">Your biological scorecard</p>
         </div>
         {overallScore !== null && (
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/10 border border-gold/20">
-            <span className="text-sm font-inter font-bold text-gold">{overallScore}%</span>
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 border border-gold/20">
+            <span className="text-sm font-inter font-bold text-accent">{overallScore}%</span>
           </div>
         )}
       </div>

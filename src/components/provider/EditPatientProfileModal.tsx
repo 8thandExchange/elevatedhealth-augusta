@@ -341,7 +341,7 @@ const EditPatientProfileModal = ({
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 bg-gold text-white hover:bg-gold-dark sm:flex-none"
+            className="flex-1 bg-accent text-white hover:bg-accent-dark sm:flex-none"
           >
             {isSaving ? (
               <>

@@ -126,7 +126,7 @@ export const MyRegimenCard = ({ protocolName, items }: MyRegimenCardProps) => {
       <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-border/50">
         <div className="flex items-center gap-2">
           <Droplets className="w-5 h-5 text-primary" />
-          <CardTitle className="font-cormorant text-xl">My Daily Routine</CardTitle>
+          <CardTitle className="font-playfair text-xl">My Daily Routine</CardTitle>
         </div>
         <p className="text-xs text-muted-foreground">{protocolName}</p>
       </CardHeader>

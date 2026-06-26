@@ -449,10 +449,10 @@ const ConsultationTracker = () => {
             <p className="text-xs text-green-600">Converted</p>
           </CardContent>
         </Card>
-        <Card className="bg-gold/10 border-gold/30">
+        <Card className="bg-accent/10 border-gold/30">
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-gold">{conversionRate}%</p>
-            <p className="text-xs text-gold">Conversion Rate</p>
+            <p className="text-2xl font-bold text-accent">{conversionRate}%</p>
+            <p className="text-xs text-accent">Conversion Rate</p>
           </CardContent>
         </Card>
       </div>
@@ -547,7 +547,7 @@ const ConsultationTracker = () => {
                 <div 
                   key={consult.id}
                   className={`p-4 rounded-lg border cursor-pointer transition-colors hover:bg-muted/50 ${
-                    selectedConsultation?.id === consult.id ? "border-gold bg-gold/5" : ""
+                    selectedConsultation?.id === consult.id ? "border-gold bg-accent/5" : ""
                   } ${consult.status === "archived" ? "opacity-60" : ""}`}
                   onClick={() => {
                     setSelectedConsultation(consult);

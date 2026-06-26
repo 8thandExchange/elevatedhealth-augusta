@@ -48,13 +48,26 @@ import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 
-type ProductKey = "testosterone" | "biEst" | "progesterone" | "followUp" | "labPanel";
+type ProductKey =
+  | "testosterone"
+  | "biEst"
+  | "progesterone"
+  | "semaglutide"
+  | "tirzepatide"
+  | "retatrutide"
+  | "bpc157"
+  | "tb500"
+  | "wolverineStack"
+  | "followUp"
+  | "labPanel"
+  | "labPanelExpanded"
+  | "labAdvanced";
 
 interface ProductInfo {
   label: string;
   category: string;
   /** What kind of post-payment surface to render. */
-  fulfillment: "medication" | "follow_up_visit" | "lab_draw";
+  fulfillment: "medication" | "follow_up_visit" | "lab_draw" | "order_only";
   serviceLine?: "consult" | "follow_up";
   durationMinutes?: number;
   appointmentType?: string;
@@ -77,6 +90,36 @@ const PRODUCT_CATALOG: Record<ProductKey, ProductInfo> = {
     category: "Women's HRT",
     fulfillment: "medication",
   },
+  semaglutide: {
+    label: "Compounded Semaglutide Fill",
+    category: "Medical Weight Loss",
+    fulfillment: "medication",
+  },
+  tirzepatide: {
+    label: "Compounded Tirzepatide Fill",
+    category: "Medical Weight Loss",
+    fulfillment: "medication",
+  },
+  retatrutide: {
+    label: "Compounded Retatrutide Fill",
+    category: "Medical Weight Loss",
+    fulfillment: "medication",
+  },
+  bpc157: {
+    label: "BPC-157",
+    category: "Recovery Peptide",
+    fulfillment: "medication",
+  },
+  tb500: {
+    label: "TB-500",
+    category: "Recovery Peptide",
+    fulfillment: "medication",
+  },
+  wolverineStack: {
+    label: "BPC-157/TB-500 Recovery Stack",
+    category: "Recovery Peptide",
+    fulfillment: "medication",
+  },
   followUp: {
     label: "Follow-up Consultation",
     category: "Provider Visit",
@@ -86,12 +129,25 @@ const PRODUCT_CATALOG: Record<ProductKey, ProductInfo> = {
     appointmentType: "follow_up_visit",
   },
   labPanel: {
-    label: "Lab Panel",
+    label: "Comprehensive Wellness Panel",
     category: "Diagnostics",
     fulfillment: "lab_draw",
     serviceLine: "consult",
     durationMinutes: 15,
     appointmentType: "lab_draw",
+  },
+  labPanelExpanded: {
+    label: "Expanded Lab Panel",
+    category: "Diagnostics",
+    fulfillment: "lab_draw",
+    serviceLine: "consult",
+    durationMinutes: 15,
+    appointmentType: "lab_draw",
+  },
+  labAdvanced: {
+    label: "Advanced Lab Add-on",
+    category: "Diagnostics",
+    fulfillment: "order_only",
   },
 };
 
@@ -381,7 +437,20 @@ const AlaCartePaymentSuccess = () => {
           {!verifying && verified && productInfo?.fulfillment === "medication" &&
             renderShipmentConfirmation()}
 
-          {!verifying && verified && productInfo?.fulfillment !== "medication" &&
+          {!verifying && verified && productInfo?.fulfillment === "order_only" && (
+            <Card className="mb-6">
+              <CardContent className="p-6 md:p-8">
+                <p className="font-jost font-light text-sm text-muted-foreground">
+                  Your {productInfo.label} order is confirmed. Our clinical team will coordinate
+                  next steps and reach out if we need anything before your visit.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {!verifying && verified &&
+            productInfo?.fulfillment !== "medication" &&
+            productInfo?.fulfillment !== "order_only" &&
             productInfo &&
             renderVisitBookingFlow()}
 

@@ -73,6 +73,17 @@ interface Block {
   end_at: string;   // ISO
   reason: string | null;
 }
+interface ScheduleException {
+  id: string;
+  provider_id: string;
+  exception_date: string; // YYYY-MM-DD
+  start_time: string;
+  end_time: string;
+  service_lines: string[];
+  slot_minutes: number;
+  type: "addition" | "removal";
+  reason: string | null;
+}
 interface Appt {
   id: string;
   provider_id: string | null;
@@ -119,6 +130,7 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
 
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [exceptions, setExceptions] = useState<ScheduleException[]>([]);
   const [appts, setAppts] = useState<Appt[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -127,9 +139,11 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
     | { kind: "create"; col: number; startMin: number; endMin: number; anchor: { x: number; y: number } }
     | { kind: "edit-schedule"; schedule: Schedule; anchor: { x: number; y: number } }
     | { kind: "edit-block"; block: Block; anchor: { x: number; y: number } }
+    | { kind: "edit-exception"; exception: ScheduleException; anchor: { x: number; y: number } }
     | null
   >(null);
   const [timeOffModalOpen, setTimeOffModalOpen] = useState(false);
+  const [exceptionModalOpen, setExceptionModalOpen] = useState(false);
 
   // ── Resolve provider id: explicit prop first, else auth.uid() ──
   useEffect(() => {
@@ -154,16 +168,19 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
     const lastKey = formatClinicDateKey(weekEnd);
     const startISO = clinicLocalToUtc(firstKey, 0).toISOString();
     const endISO = clinicLocalToUtc(addClinicDays(lastKey, 1), 0).toISOString();
-    const [schedRes, blockRes, apptRes] = await Promise.all([
+    const [schedRes, blockRes, apptRes, excRes] = await Promise.all([
       supabase.from("provider_schedules").select("*").eq("provider_id", resolvedProviderId).order("day_of_week"),
       supabase.from("schedule_blocks").select("*").eq("provider_id", resolvedProviderId)
         .lt("start_at", endISO).gt("end_at", startISO),
       supabase.from("appointments").select("id,provider_id,patient_id,scheduled_at,duration_minutes,service_line,status,patients(full_name)")
         .eq("provider_id", resolvedProviderId).neq("status", "cancelled")
         .gte("scheduled_at", startISO).lt("scheduled_at", endISO),
+      supabase.from("schedule_exceptions").select("*").eq("provider_id", resolvedProviderId)
+        .gte("exception_date", firstKey).lte("exception_date", lastKey),
     ]);
     setSchedules((schedRes.data as any) || []);
     setBlocks((blockRes.data as any) || []);
+    setExceptions((excRes.data as any) || []);
     setAppts(((apptRes.data as any) || []).map((a: any) => ({ ...a, patient_name: a.patients?.full_name ?? null })));
     setLoading(false);
   };
@@ -250,6 +267,42 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
     setEditor(null); fetchAll();
   };
 
+  const addException = async (
+    dateKey: string,
+    type: "addition" | "removal",
+    startMin: number,
+    endMin: number,
+    services: string[],
+    slotMin: number,
+    reason: string | null,
+  ) => {
+    if (!resolvedProviderId) return;
+    if (endMin <= startMin) return toast.error("End time must be after start time");
+    if (!services.length) return toast.error("Pick at least one service");
+    const { error } = await supabase.from("schedule_exceptions").insert({
+      provider_id: resolvedProviderId,
+      exception_date: dateKey,
+      start_time: minutesToHHMM(startMin) + ":00",
+      end_time: minutesToHHMM(endMin) + ":00",
+      service_lines: services,
+      slot_minutes: slotMin,
+      type,
+      reason: reason || null,
+    });
+    if (error) return toast.error(error.message);
+    toast.success(type === "addition" ? "Extra hours added for that date" : "Hours closed for that date");
+    fetchAll();
+  };
+
+  const deleteException = async (id: string) => {
+    if (!confirm("Remove this one-off schedule change?")) return;
+    const { error } = await supabase.from("schedule_exceptions").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Removed");
+    setEditor(null);
+    fetchAll();
+  };
+
   const copyWeekForward = async () => {
     if (!resolvedProviderId || schedules.length === 0) {
       toast.error("Nothing to copy — set availability first");
@@ -295,6 +348,9 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
             <Button variant="outline" size="sm" onClick={copyWeekForward}>
               <Copy className="h-4 w-4 mr-1" /> Copy week
             </Button>
+            <Button variant="outline" size="sm" onClick={() => setExceptionModalOpen(true)}>
+              <Plus className="h-4 w-4 mr-1" /> One-off hours
+            </Button>
             <Button size="sm" onClick={() => setTimeOffModalOpen(true)}>
               <CalendarOff className="h-4 w-4 mr-1" /> Block off time
             </Button>
@@ -311,6 +367,7 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
                 days={days}
                 schedules={schedules}
                 blocks={blocks}
+                exceptions={exceptions}
                 appts={appts}
                 isPastWeek={isPastWeek}
                 onCreate={(col, startMin, endMin, anchor) =>
@@ -318,6 +375,7 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
                 }
                 onClickSchedule={(s, anchor) => setEditor({ kind: "edit-schedule", schedule: s, anchor })}
                 onClickBlock={(b, anchor) => setEditor({ kind: "edit-block", block: b, anchor })}
+                onClickException={(ex, anchor) => setEditor({ kind: "edit-exception", exception: ex, anchor })}
               />
             )}
           </CardContent>
@@ -328,6 +386,8 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-accent/30 border-l-2 border-accent" />Available</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-primary" />Booked</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-muted" style={{ backgroundImage: "repeating-linear-gradient(45deg,hsl(var(--muted-foreground)/.3) 0 2px,transparent 2px 6px)" }} />Time off</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-2 border-dashed border-accent bg-accent/10" />One-off extra</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-destructive/20 border border-destructive/40" />One-off closed</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-muted/40" />Past</span>
         </div>
 
@@ -360,12 +420,31 @@ export default function MyScheduleManager({ providerId: providerIdProp }: MySche
             onDelete={() => deleteBlock(editor.block.id)}
           />
         )}
+        {editor?.kind === "edit-exception" && (
+          <EditExceptionPopover
+            anchor={editor.anchor}
+            exception={editor.exception}
+            onCancel={() => setEditor(null)}
+            onDelete={() => deleteException(editor.exception.id)}
+          />
+        )}
 
         {/* Block-off-time modal */}
         <TimeOffModal
           open={timeOffModalOpen}
           onOpenChange={setTimeOffModalOpen}
           onCreate={(s, e, r) => { addBlock(s, e, r); setTimeOffModalOpen(false); }}
+        />
+
+        {/* One-off schedule exception modal */}
+        <ExceptionModal
+          open={exceptionModalOpen}
+          onOpenChange={setExceptionModalOpen}
+          defaultDate={formatClinicDateKey(weekStart)}
+          onCreate={(dateKey, type, startMin, endMin, services, slotMin, reason) => {
+            addException(dateKey, type, startMin, endMin, services, slotMin, reason);
+            setExceptionModalOpen(false);
+          }}
         />
       </div>
     </TooltipProvider>
@@ -380,14 +459,16 @@ interface WeekGridProps {
   days: Date[];
   schedules: Schedule[];
   blocks: Block[];
+  exceptions: ScheduleException[];
   appts: Appt[];
   isPastWeek: boolean;
   onCreate: (col: number, startMin: number, endMin: number, anchor: { x: number; y: number }) => void;
   onClickSchedule: (s: Schedule, anchor: { x: number; y: number }) => void;
   onClickBlock: (b: Block, anchor: { x: number; y: number }) => void;
+  onClickException: (ex: ScheduleException, anchor: { x: number; y: number }) => void;
 }
 
-function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClickSchedule, onClickBlock }: WeekGridProps) {
+function WeekGrid({ days, schedules, blocks, exceptions, appts, isPastWeek, onCreate, onClickSchedule, onClickBlock, onClickException }: WeekGridProps) {
   const today = new Date();
   const nowMin = clinicMinutesFromMidnight(new Date());
 
@@ -463,6 +544,7 @@ function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClic
             const bEndKey = formatClinicDateKey(b.end_at);
             return bStartKey <= dayKey && bEndKey >= dayKey;
           });
+          const dayExceptions = exceptions.filter((ex) => ex.exception_date === dayKey);
           const dayAppts = appts.filter((a) => isSameClinicDay(a.scheduled_at, day));
 
           return (
@@ -571,6 +653,42 @@ function WeekGrid({ days, schedules, blocks, appts, isPastWeek, onCreate, onClic
                   >
                     <div className="text-[10px] font-medium text-muted-foreground">Time off</div>
                     {b.reason && <div className="text-[9px] text-muted-foreground italic truncate">{b.reason}</div>}
+                  </button>
+                );
+              })}
+
+              {/* One-off schedule exceptions (additions / removals for this date) */}
+              {dayExceptions.map((ex) => {
+                const startMin = minutesFromMidnight(ex.start_time);
+                const endMin = minutesFromMidnight(ex.end_time);
+                const top = ((startMin - HOUR_START * 60) / SLOT_MINUTES) * ROW_PX;
+                const height = ((endMin - startMin) / SLOT_MINUTES) * ROW_PX;
+                if (top + height < 0 || top > ROWS * ROW_PX) return null;
+                const isAddition = ex.type === "addition";
+                return (
+                  <button
+                    key={ex.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                      onClickException(ex, { x: r.left + r.width / 2, y: r.top });
+                    }}
+                    className={`absolute left-1 right-1 rounded text-left p-1 overflow-hidden transition-colors ${
+                      isAddition
+                        ? "bg-accent/10 hover:bg-accent/20 border-2 border-dashed border-accent"
+                        : "border border-destructive/40 bg-destructive/15 hover:bg-destructive/25"
+                    }`}
+                    style={{ top: Math.max(top, 0), height: Math.min(height, ROWS * ROW_PX - Math.max(top, 0)), zIndex: 2 }}
+                  >
+                    <div className="text-[10px] font-medium text-foreground/80">
+                      {isAddition ? "One-off extra" : "One-off closed"}
+                    </div>
+                    <div className="text-[9px] text-muted-foreground">
+                      {format(new Date(2000, 0, 1, Math.floor(startMin / 60), startMin % 60), "h:mma")}
+                      –
+                      {format(new Date(2000, 0, 1, Math.floor(endMin / 60), endMin % 60), "h:mma")}
+                    </div>
+                    {ex.reason && <div className="text-[9px] text-muted-foreground italic truncate">{ex.reason}</div>}
                   </button>
                 );
               })}
@@ -834,6 +952,189 @@ function TimeOffModal({ open, onOpenChange, onCreate }: {
             if (!start || !end) return toast.error("Pick start and end");
             onCreate(parseClinicDatetimeLocal(start).toISOString(), parseClinicDatetimeLocal(end).toISOString(), reason || null);
           }}>Add</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EditExceptionPopover({ anchor, exception, onCancel, onDelete }: {
+  anchor: { x: number; y: number };
+  exception: ScheduleException;
+  onCancel: () => void;
+  onDelete: () => void;
+}) {
+  const startMin = minutesFromMidnight(exception.start_time);
+  const endMin = minutesFromMidnight(exception.end_time);
+  return (
+    <PopoverShell anchor={anchor}>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-medium text-sm">
+            {exception.type === "addition" ? "One-off extra hours" : "One-off closed hours"}
+          </h3>
+          <button onClick={onCancel} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {format(parseISO(`${exception.exception_date}T12:00:00`), "EEE, MMM d")} ·{" "}
+          {format(new Date(2000, 0, 1, Math.floor(startMin / 60), startMin % 60), "h:mm a")} –{" "}
+          {format(new Date(2000, 0, 1, Math.floor(endMin / 60), endMin % 60), "h:mm a")}
+        </p>
+        <div className="flex flex-wrap gap-1">
+          {exception.service_lines.map((sl) => (
+            <span key={sl} className="text-[10px] px-1.5 py-0.5 rounded bg-muted">{SERVICE_LABEL[sl] || sl}</span>
+          ))}
+        </div>
+        {exception.reason && <p className="text-sm">Reason: <span className="italic">{exception.reason}</span></p>}
+        <div className="flex justify-end gap-2">
+          <Button variant="ghost" size="sm" onClick={onCancel}>Close</Button>
+          <Button variant="destructive" size="sm" onClick={onDelete}>
+            <Trash2 className="h-4 w-4 mr-1" /> Remove
+          </Button>
+        </div>
+      </div>
+    </PopoverShell>
+  );
+}
+
+function ExceptionModal({ open, onOpenChange, defaultDate, onCreate }: {
+  open: boolean;
+  onOpenChange: (b: boolean) => void;
+  defaultDate: string;
+  onCreate: (
+    dateKey: string,
+    type: "addition" | "removal",
+    startMin: number,
+    endMin: number,
+    services: string[],
+    slotMin: number,
+    reason: string | null,
+  ) => void;
+}) {
+  const [dateKey, setDateKey] = useState(defaultDate);
+  const [type, setType] = useState<"addition" | "removal">("addition");
+  const [start, setStart] = useState("09:00");
+  const [end, setEnd] = useState("17:00");
+  const [services, setServices] = useState<string[]>(["consult"]);
+  const [slot, setSlot] = useState(30);
+  const [reason, setReason] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      setDateKey(defaultDate);
+      setType("addition");
+      setStart("09:00");
+      setEnd("17:00");
+      setServices(["consult"]);
+      setSlot(30);
+      setReason("");
+    }
+  }, [open, defaultDate]);
+
+  const toggle = (id: string) =>
+    setServices((arr) => (arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id]));
+
+  const parseTimeMin = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>One-off schedule change</DialogTitle></DialogHeader>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Add extra hours on a specific date (e.g. Saturday clinic) or close part of a day without changing your weekly pattern.
+        </p>
+        <div className="space-y-3">
+          <div>
+            <Label className="text-xs">Date</Label>
+            <Input type="date" value={dateKey} onChange={(e) => setDateKey(e.target.value)} />
+          </div>
+          <div>
+            <Label className="text-xs">Change type</Label>
+            <RadioGroup value={type} onValueChange={(v) => setType(v as "addition" | "removal")} className="flex gap-4 mt-1.5">
+              <label className="flex items-center gap-1.5 text-sm cursor-pointer">
+                <RadioGroupItem value="addition" /> Add extra hours
+              </label>
+              <label className="flex items-center gap-1.5 text-sm cursor-pointer">
+                <RadioGroupItem value="removal" /> Close hours
+              </label>
+            </RadioGroup>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div><Label className="text-xs">Start</Label><Input type="time" value={start} onChange={(e) => setStart(e.target.value)} /></div>
+            <div><Label className="text-xs">End</Label><Input type="time" value={end} onChange={(e) => setEnd(e.target.value)} /></div>
+          </div>
+          {type === "addition" && (
+            <>
+              <div>
+                <Label className="text-xs">Services</Label>
+                <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  {SERVICE_LINES.map((sl) => (
+                    <button
+                      key={sl.id}
+                      type="button"
+                      onClick={() => toggle(sl.id)}
+                      className={`text-xs px-2 py-1 rounded-full border transition-colors ${
+                        services.includes(sl.id)
+                          ? "bg-accent text-accent-foreground border-accent"
+                          : "bg-background border-border hover:border-accent/50"
+                      }`}
+                    >
+                      {sl.full}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label className="text-xs">Slot length</Label>
+                <RadioGroup value={String(slot)} onValueChange={(v) => setSlot(Number(v))} className="flex gap-3 mt-1.5">
+                  {[15, 30, 45, 60].map((m) => (
+                    <label key={m} className="flex items-center gap-1.5 text-xs cursor-pointer">
+                      <RadioGroupItem value={String(m)} /> {m}m
+                    </label>
+                  ))}
+                </RadioGroup>
+              </div>
+            </>
+          )}
+          {type === "removal" && (
+            <div>
+              <Label className="text-xs">Services to close</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {SERVICE_LINES.map((sl) => (
+                  <button
+                    key={sl.id}
+                    type="button"
+                    onClick={() => toggle(sl.id)}
+                    className={`text-xs px-2 py-1 rounded-full border transition-colors ${
+                      services.includes(sl.id)
+                        ? "bg-destructive/20 text-destructive border-destructive/40"
+                        : "bg-background border-border hover:border-destructive/30"
+                    }`}
+                  >
+                    {sl.full}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          <div>
+            <Label className="text-xs">Reason (optional)</Label>
+            <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Saturday clinic, lunch block…" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button onClick={() => {
+            if (!dateKey) return toast.error("Pick a date");
+            const startMin = parseTimeMin(start);
+            const endMin = parseTimeMin(end);
+            if (endMin <= startMin) return toast.error("End time must be after start time");
+            if (!services.length) return toast.error("Pick at least one service");
+            onCreate(dateKey, type, startMin, endMin, services, slot, reason || null);
+          }}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

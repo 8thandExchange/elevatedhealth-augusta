@@ -30,7 +30,7 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
     return (
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="font-cormorant text-xl flex items-center gap-2">
+          <CardTitle className="font-playfair text-xl flex items-center gap-2">
             <Crown className="w-5 h-5 text-muted-foreground" />
             Membership
           </CardTitle>
@@ -69,7 +69,7 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
           <div className="flex items-center gap-3">
             <Crown className="w-6 h-6 text-primary" />
             <div>
-              <CardTitle className="font-cormorant text-xl">
+              <CardTitle className="font-playfair text-xl">
                 {program ? program.name : legacyLabel}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
@@ -112,7 +112,7 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
         {program && (
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <span className="text-sm text-muted-foreground">Program rate</span>
-            <span className="text-lg font-cormorant font-semibold text-primary">{programPriceDisplay}</span>
+            <span className="text-lg font-playfair font-semibold text-primary">{programPriceDisplay}</span>
           </div>
         )}
       </CardContent>

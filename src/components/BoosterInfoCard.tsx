@@ -50,7 +50,7 @@ const BoosterInfoCard = ({
           <div className="p-2 bg-primary/10 rounded-full">
             {getBoosterIcon(iconName)}
           </div>
-          <h4 className="font-cormorant text-lg font-semibold text-foreground">
+          <h4 className="font-playfair text-lg font-semibold text-foreground">
             {name}
           </h4>
         </div>

@@ -673,9 +673,9 @@ const PrescriptionPortalModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-lg bg-card border border-gold/30 rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-cormorant text-foreground flex items-center gap-2">
-            <span className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center">
-              <svg className="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <DialogTitle className="text-xl font-playfair text-foreground flex items-center gap-2">
+            <span className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+              <svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 <path d="M9 12h6M9 16h6" />
               </svg>
@@ -788,10 +788,10 @@ const PrescriptionPortalModal = ({
           </div>
         )}
 
-        <div className="bg-gold/5 border border-gold/30 rounded-lg p-4 mt-4">
+        <div className="bg-accent/5 border border-gold/30 rounded-lg p-4 mt-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-gold uppercase tracking-wider mb-2">Complete Rx</p>
+              <p className="text-xs font-medium text-accent uppercase tracking-wider mb-2">Complete Rx</p>
               <p className="text-sm text-foreground font-medium leading-relaxed">{rxString}</p>
               <p className="text-xs text-muted-foreground mt-2">
                 Qty: {quantity} | Refills: {effectiveRefills} | {supplyDays}-day supply
@@ -805,9 +805,9 @@ const PrescriptionPortalModal = ({
                 await navigator.clipboard.writeText(fullRx);
                 toast.success("Full Rx copied!");
               }}
-              className="flex-shrink-0 h-8 w-8 p-0 hover:bg-gold/10"
+              className="flex-shrink-0 h-8 w-8 p-0 hover:bg-accent/10"
             >
-              <Copy className="w-4 h-4 text-gold" />
+              <Copy className="w-4 h-4 text-accent" />
             </Button>
           </div>
         </div>
@@ -887,7 +887,7 @@ const PrescriptionPortalModal = ({
                   !pharmacy ||
                   !matchedProvider
                 }
-                className="w-full bg-gold hover:bg-gold-dark text-white disabled:opacity-50"
+                className="w-full bg-accent hover:bg-accent-dark text-white disabled:opacity-50"
               >
                 {faxStatus === "transmitting" ? (
                   <>

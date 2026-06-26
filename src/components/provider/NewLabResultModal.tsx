@@ -363,7 +363,7 @@ const NewLabResultModal = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && resetAndClose()}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-cormorant text-xl">
+          <DialogTitle className="flex items-center gap-2 font-playfair text-xl">
             <Beaker className="w-5 h-5 text-primary" />
             {isEditMode ? "Edit LabCorp Panel" : "New LabCorp Panel"}
           </DialogTitle>

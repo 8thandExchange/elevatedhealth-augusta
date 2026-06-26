@@ -124,7 +124,7 @@ const membershipLabels: Record<string, { label: string; color: string }> = {
   elevated_wellness: { label: `${ELEVATED_PROGRAMS.wellness.name} (${ELEVATED_PROGRAMS.wellness.displayPrice})`, color: "bg-emerald-100 text-emerald-900" },
   access: { label: "ACCESS (Legacy)", color: "bg-slate-100 text-slate-800" },
   vitality: { label: "VITALITY (Legacy)", color: "bg-amber-100 text-amber-800" },
-  concierge: { label: "CONCIERGE (Legacy)", color: "bg-gold/20 text-gold" },
+  concierge: { label: "CONCIERGE (Legacy)", color: "bg-accent/20 text-accent" },
   semaglutide: { label: "Semaglutide (Legacy)", color: "bg-blue-100 text-blue-800" },
   tirzepatide: { label: "Tirzepatide (Legacy)", color: "bg-purple-100 text-purple-800" },
 };

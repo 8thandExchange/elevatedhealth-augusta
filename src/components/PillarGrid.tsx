@@ -66,10 +66,10 @@ const PillarGrid = ({ onOpenBooking }: PillarGridProps) => {
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-20 animate-fade-in-up">
-            <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-lato font-light">
+            <p className="text-sm tracking-[0.3em] uppercase text-accent mb-4 font-jost font-light">
               Our Approach
             </p>
-            <h2 className="font-cormorant text-foreground mb-6">
+            <h2 className="font-playfair text-foreground mb-6">
               Your Path to Wellness
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
@@ -94,7 +94,7 @@ const PillarGrid = ({ onOpenBooking }: PillarGridProps) => {
                       <Icon className="h-16 w-16 text-primary" />
                     </div>
                     
-                    <h3 className="text-2xl font-cormorant mb-3 text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="text-2xl font-playfair mb-3 text-foreground group-hover:text-primary transition-colors">
                       {pillar.title}
                     </h3>
                     
@@ -113,7 +113,7 @@ const PillarGrid = ({ onOpenBooking }: PillarGridProps) => {
                     </ul>
 
                     {/* Learn More Link */}
-                    <div className="flex items-center gap-2 text-primary font-lato text-sm tracking-wide">
+                    <div className="flex items-center gap-2 text-primary font-jost text-sm tracking-wide">
                       <span className="elegant-underline">Learn More</span>
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </div>

@@ -83,12 +83,12 @@ const KitTracker = ({
     <Card className="bg-gradient-to-br from-card to-muted/30 border-gold/20 overflow-hidden">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-cormorant text-xl text-foreground flex items-center gap-2">
-            <Package className="w-5 h-5 text-gold" />
+          <CardTitle className="font-playfair text-xl text-foreground flex items-center gap-2">
+            <Package className="w-5 h-5 text-accent" />
             Your Diagnostic Journey
           </CardTitle>
           {/* Progress percentage badge */}
-          <span className="text-xs font-medium px-2 py-1 rounded-full bg-gold/20 text-gold">
+          <span className="text-xs font-medium px-2 py-1 rounded-full bg-accent/20 text-accent">
             {progressPercent > 0 ? `${progressPercent}%` : "Started"}
           </span>
         </div>
@@ -118,7 +118,7 @@ const KitTracker = ({
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-500 z-10",
                       state === "completed" && "bg-green-500 border-green-500 text-white scale-100",
-                      state === "current" && "bg-gold border-gold text-white animate-pulse scale-110",
+                      state === "current" && "bg-accent border-gold text-white animate-pulse scale-110",
                       state === "upcoming" && "bg-background border-border text-muted-foreground scale-90"
                     )}
                   >
@@ -135,7 +135,7 @@ const KitTracker = ({
                       className={cn(
                         "text-sm font-medium transition-colors duration-300",
                         state === "completed" && "text-green-600 dark:text-green-400",
-                        state === "current" && "text-gold",
+                        state === "current" && "text-accent",
                         state === "upcoming" && "text-muted-foreground"
                       )}
                     >
@@ -166,7 +166,7 @@ const KitTracker = ({
                     className={cn(
                       "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 flex-shrink-0",
                       state === "completed" && "bg-green-500 border-green-500 text-white",
-                      state === "current" && "bg-gold border-gold text-white animate-pulse",
+                      state === "current" && "bg-accent border-gold text-white animate-pulse",
                       state === "upcoming" && "bg-background border-border text-muted-foreground"
                     )}
                   >
@@ -193,7 +193,7 @@ const KitTracker = ({
                     className={cn(
                       "text-sm font-medium transition-colors duration-300",
                       state === "completed" && "text-green-600 dark:text-green-400",
-                      state === "current" && "text-gold",
+                      state === "current" && "text-accent",
                       state === "upcoming" && "text-muted-foreground"
                     )}
                   >
@@ -231,7 +231,7 @@ const KitTracker = ({
           {displayStatus === "results_ready" && onBookCall && (
             <Button 
               onClick={onBookCall} 
-              className="w-full sm:w-auto bg-gold hover:bg-gold/90 min-h-[44px] active:scale-95 transition-transform"
+              className="w-full sm:w-auto bg-accent hover:bg-accent/90 min-h-[44px] active:scale-95 transition-transform"
             >
               <Calendar className="w-4 h-4 mr-2" />
               Book Your Strategy Call

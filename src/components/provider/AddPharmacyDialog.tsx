@@ -124,7 +124,7 @@ export function AddPharmacyDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md bg-card border border-gold/30">
         <DialogHeader>
-          <DialogTitle className="font-cormorant text-xl">Add fax pharmacy</DialogTitle>
+          <DialogTitle className="font-playfair text-xl">Add fax pharmacy</DialogTitle>
           <DialogDescription>
             Saves to your pharmacy list for future prescriptions. Fax-only — use FCC from the main
             list for portal orders.
@@ -176,7 +176,7 @@ export function AddPharmacyDialog({
           <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={saving}>
             Cancel
           </Button>
-          <Button type="button" onClick={handleSave} disabled={saving} className="bg-gold hover:bg-gold/90 text-primary-foreground">
+          <Button type="button" onClick={handleSave} disabled={saving} className="bg-accent hover:bg-accent/90 text-primary-foreground">
             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Save pharmacy
           </Button>

@@ -219,7 +219,7 @@ const SymptomCheckIn = () => {
 
       {/* Header */}
       <div className="px-6 pt-8 pb-4">
-        <p className="text-xs uppercase tracking-widest text-gold font-medium">
+        <p className="text-xs uppercase tracking-widest text-accent font-medium">
           {categoryLabels[currentCategory].title}
         </p>
         <p className="text-sm text-muted-foreground mt-1">
@@ -231,7 +231,7 @@ const SymptomCheckIn = () => {
       <div className="flex-1 flex flex-col justify-center px-6">
         <div className="space-y-12">
           <div>
-            <h2 className="font-cormorant text-3xl md:text-4xl text-foreground mb-2">
+            <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-2">
               {currentQuestion.label}
             </h2>
             <p className="text-muted-foreground">
@@ -269,7 +269,7 @@ const SymptomCheckIn = () => {
           {/* Current Selection Display */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 border border-primary/20">
-              <span className="text-2xl font-cormorant text-primary">
+              <span className="text-2xl font-playfair text-primary">
                 {currentValue}
               </span>
             </div>

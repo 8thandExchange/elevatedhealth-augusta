@@ -25,7 +25,7 @@ const BottomTabBar = () => {
             className={cn(
               "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all active:scale-95",
               isActive(tab.path) 
-                ? "text-gold" 
+                ? "text-accent" 
                 : "text-muted-foreground hover:text-foreground"
             )}
           >

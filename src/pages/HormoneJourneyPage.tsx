@@ -237,7 +237,7 @@ const HormoneJourneyPage = () => {
           <div className="inline-flex items-center justify-center p-3 bg-pink-500/20 rounded-full mb-2">
             <Sparkles className="w-8 h-8 text-pink-600" />
           </div>
-          <h1 className="font-cormorant text-3xl text-foreground">Hormone & Wellness Journey</h1>
+          <h1 className="font-playfair text-3xl text-foreground">Hormone & Wellness Journey</h1>
           <p className="text-muted-foreground">
             Your personalized treatment progress and wellness tracking
           </p>
@@ -255,7 +255,7 @@ const HormoneJourneyPage = () => {
         {/* Circular Health Gauges */}
         {latestLog && (
           <div>
-            <h2 className="font-cormorant text-xl text-foreground mb-6 text-center">Your Wellness Status</h2>
+            <h2 className="font-playfair text-xl text-foreground mb-6 text-center">Your Wellness Status</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
               <CircularGauge
                 score={latestLog.estrogen_score}
@@ -346,7 +346,7 @@ const HormoneJourneyPage = () => {
           <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
-                <h3 className="font-cormorant text-xl text-foreground">
+                <h3 className="font-playfair text-xl text-foreground">
                   Ready to optimize your protocol?
                 </h3>
                 <p className="text-sm text-muted-foreground">

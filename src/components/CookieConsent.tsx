@@ -79,7 +79,7 @@ const CookieConsent = () => {
       aria-hidden={!isVisible}
     >
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/70 backdrop-blur-sm shadow-md">
-        <span className="text-xs text-background/80 font-lato">
+        <span className="text-xs text-background/80 font-jost">
           Cookies
         </span>
         <button

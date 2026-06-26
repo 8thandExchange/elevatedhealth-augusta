@@ -27,7 +27,7 @@ const DashboardWelcomeState = ({
     <div className="space-y-6">
       {/* Welcome Header */}
       <div className="text-center py-6">
-        <h2 className="text-2xl font-cormorant text-foreground mb-2">
+        <h2 className="text-2xl font-playfair text-foreground mb-2">
           Welcome, {providerName}
         </h2>
         <p className="text-muted-foreground">

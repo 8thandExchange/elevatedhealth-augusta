@@ -44,8 +44,16 @@ const PRODUCT_LABEL: Record<string, string> = {
   testosterone: "Testosterone Cream",
   biEst: "Bi-Est Cream",
   progesterone: "Progesterone",
+  semaglutide: "Compounded Semaglutide Fill",
+  tirzepatide: "Compounded Tirzepatide Fill",
+  retatrutide: "Compounded Retatrutide Fill",
+  bpc157: "BPC-157",
+  tb500: "TB-500",
+  wolverineStack: "BPC-157/TB-500 Recovery Stack",
   followUp: "Follow-up Consultation",
-  labPanel: "Lab Panel",
+  labPanel: "Comprehensive Wellness Panel",
+  labPanelExpanded: "Expanded Lab Panel",
+  labAdvanced: "Advanced Lab Add-on",
 };
 
 serve(async (req) => {

@@ -184,9 +184,9 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="min-w-0 flex-1">
           {subtitle && (
-            <p className="text-xs uppercase tracking-widest text-gold truncate">{subtitle}</p>
+            <p className="text-xs uppercase tracking-widest text-accent truncate">{subtitle}</p>
           )}
-          <h1 className="font-cormorant text-xl md:text-2xl text-foreground truncate">{title}</h1>
+          <h1 className="font-playfair text-xl md:text-2xl text-foreground truncate">{title}</h1>
         </div>
         
         {/* Desktop Navigation */}

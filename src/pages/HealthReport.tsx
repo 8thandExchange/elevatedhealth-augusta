@@ -162,7 +162,7 @@ const HealthReport = () => {
             </Button>
             <div>
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Health Report</p>
-              <h1 className="font-cormorant text-2xl text-foreground">My Health Report</h1>
+              <h1 className="font-playfair text-2xl text-foreground">My Health Report</h1>
             </div>
           </div>
         </header>
@@ -173,7 +173,7 @@ const HealthReport = () => {
               <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center">
                 <Lock className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h2 className="font-cormorant text-xl text-foreground">
+              <h2 className="font-playfair text-xl text-foreground">
                 Report Not Yet Available
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -217,8 +217,8 @@ const HealthReport = () => {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <p className="text-xs uppercase tracking-widest text-gold">Results Reveal</p>
-            <h1 className="font-cormorant text-2xl text-foreground">My Health Report</h1>
+            <p className="text-xs uppercase tracking-widest text-accent">Results Reveal</p>
+            <h1 className="font-playfair text-2xl text-foreground">My Health Report</h1>
           </div>
         </div>
       </header>
@@ -232,7 +232,7 @@ const HealthReport = () => {
                 <FileText className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-cormorant text-xl text-foreground">
+                <h3 className="font-playfair text-xl text-foreground">
                   Your Results Are In, {patient?.full_name?.split(" ")[0]}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -252,7 +252,7 @@ const HealthReport = () => {
 
         {/* Correlation Cards */}
         <div className="space-y-4">
-          <h2 className="font-cormorant text-xl text-foreground">Symptom & Lab Correlation</h2>
+          <h2 className="font-playfair text-xl text-foreground">Symptom & Lab Correlation</h2>
           
           <div className="grid gap-4">
             {/* Estrogen */}

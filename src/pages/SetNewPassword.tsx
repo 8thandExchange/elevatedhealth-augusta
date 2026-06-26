@@ -153,7 +153,7 @@ const SetNewPassword = () => {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <p className="text-xs uppercase tracking-[3px] text-gold mb-2 font-jost">Password Recovery</p>
+          <p className="text-xs uppercase tracking-[3px] text-accent mb-2 font-jost">Password Recovery</p>
           <h1 className="font-playfair italic text-4xl text-foreground">Set New Password</h1>
         </div>
 

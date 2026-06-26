@@ -86,7 +86,9 @@ serve(async (req) => {
           ? LIVE_CORE_SERVICES.comprehensivePanel
           : LIVE_CORE_SERVICES.expandedPanel,
         productKey: comprehensive ? "lab_comprehensive" : "lab_expanded",
-        success_url: `${origin}/alacarte-success?product=labPanel&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: comprehensive
+          ? `${origin}/alacarte-success?product=labPanel&session_id={CHECKOUT_SESSION_ID}`
+          : `${origin}/alacarte-success?product=labPanelExpanded&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/pricing`,
         logConsultationBooking: true,
       }, authHeader);

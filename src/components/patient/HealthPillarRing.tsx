@@ -177,7 +177,7 @@ const HealthPillarRing = ({
         <Button 
           size="sm" 
           variant="outline" 
-          className="mt-2 text-[10px] h-6 px-2 border-gold/50 text-gold hover:bg-gold hover:text-primary-foreground font-inter"
+          className="mt-2 text-[10px] h-6 px-2 border-gold/50 text-accent hover:bg-accent hover:text-primary-foreground font-inter"
           onClick={onUnlock}
         >
           Unlock ${unlockPrice}

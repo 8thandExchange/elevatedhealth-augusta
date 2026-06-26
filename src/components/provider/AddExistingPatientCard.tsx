@@ -348,7 +348,7 @@ const AddExistingPatientCard = ({ onPatientAdded, embedded = false }: AddExistin
   ) : (
     <Card className="border-gold/30 bg-gradient-to-br from-gold/5 to-transparent">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm flex items-center gap-2 text-gold">
+        <CardTitle className="text-sm flex items-center gap-2 text-accent">
           <Users className="w-4 h-4" />
           Add Existing Patient
         </CardTitle>

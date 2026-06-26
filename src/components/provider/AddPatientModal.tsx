@@ -40,7 +40,7 @@ const AddPatientModal = ({ onPatientAdded, trigger }: AddPatientModalProps) => {
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-cormorant">
+          <DialogTitle className="text-xl font-playfair">
             {selectedOption ? (
               <Button variant="ghost" size="sm" onClick={resetModal} className="mr-2">
                 ← Back
@@ -82,8 +82,8 @@ const AddPatientModal = ({ onPatientAdded, trigger }: AddPatientModalProps) => {
               onClick={() => setSelectedOption("existing")}
             >
               <CardHeader className="pb-2">
-                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mb-2">
-                  <Users className="w-6 h-6 text-gold" />
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-2">
+                  <Users className="w-6 h-6 text-accent" />
                 </div>
                 <CardTitle className="text-lg">Add Existing Patient</CardTitle>
                 <CardDescription>No consultation fee required</CardDescription>
@@ -94,7 +94,7 @@ const AddPatientModal = ({ onPatientAdded, trigger }: AddPatientModalProps) => {
                   <li>• Transfers from other EMR systems</li>
                   <li>• Creates account immediately</li>
                 </ul>
-                <Button variant="ghost" size="sm" className="mt-4 w-full text-gold hover:text-gold">
+                <Button variant="ghost" size="sm" className="mt-4 w-full text-accent hover:text-accent">
                   Select <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </CardContent>

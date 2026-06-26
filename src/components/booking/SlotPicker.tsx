@@ -32,8 +32,8 @@ export interface SlotPickerHandle {
   reload: () => Promise<void>;
 }
 
-// Token migration note: this widget previously used legacy `bg-gold` /
-// `text-gold` / `border-gold` tokens. Tailwind aliases those to the modern
+// Token migration note: this widget previously used legacy `bg-accent` /
+// `text-accent` / `border-gold` tokens. Tailwind aliases those to the modern
 // camel/accent palette, but new pages render with `bg-accent`, so we updated
 // this widget to match — keeps the booking flow visually coherent with
 // BookingConfirmedCard / ProviderChooser.

@@ -91,8 +91,8 @@ const PatientNavbar = ({ patientName, avatarUrl, onEditProfile }: PatientNavbarP
               </AvatarFallback>
             </Avatar>
             <div className="hidden sm:block min-w-0">
-              <p className="text-xs uppercase tracking-widest text-gold">Patient Portal</p>
-              <h1 className="font-cormorant text-lg text-foreground truncate">
+              <p className="text-xs uppercase tracking-widest text-accent">Patient Portal</p>
+              <h1 className="font-playfair text-lg text-foreground truncate">
                 {patientName}
               </h1>
             </div>
@@ -166,7 +166,7 @@ const PatientNavbar = ({ patientName, avatarUrl, onEditProfile }: PatientNavbarP
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="text-xs text-gold">Patient Portal</p>
+                <p className="text-xs text-accent">Patient Portal</p>
                 <p className="font-medium text-sm truncate">{patientName}</p>
               </div>
             </div>

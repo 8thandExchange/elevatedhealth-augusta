@@ -81,8 +81,8 @@ const DailyProtocolCard = ({
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-primary-dark p-6 text-primary-foreground">
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-gold/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-gold/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl" />
+      <div className="absolute top-0 right-0 w-40 h-40 bg-accent/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+      <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl" />
       
       {/* Header */}
       <div className="relative flex items-start justify-between mb-6">
@@ -110,13 +110,13 @@ const DailyProtocolCard = ({
             )}
           >
             {action.completed && (
-              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gold rounded-full flex items-center justify-center">
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-accent rounded-full flex items-center justify-center">
                 <Check className="w-3 h-3 text-primary" />
               </div>
             )}
             <action.icon className={cn(
               "w-6 h-6",
-              action.completed ? "text-gold" : "text-primary-foreground"
+              action.completed ? "text-accent" : "text-primary-foreground"
             )} />
             <span className="text-xs font-inter font-medium text-center leading-tight">
               {action.label}

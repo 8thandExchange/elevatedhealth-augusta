@@ -11,14 +11,15 @@
  * direct line to our clinical team if they have questions.
  */
 import { Helmet } from "react-helmet";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, Package, Phone, MessageSquare, Calendar, ArrowRight } from "lucide-react";
+import { CheckCircle2, Package, Phone, MessageSquare, Calendar, ArrowRight, Loader2 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
+import { supabase } from "@/integrations/supabase/client";
 
 type MedKey = "semaglutide" | "tirzepatide" | "glp1-continuation" | "glp1_starter";
 
@@ -86,10 +87,44 @@ const isMedKey = (v: string | null): v is MedKey =>
 const MedicationConfirmed = () => {
   const [searchParams] = useSearchParams();
   const medParam = searchParams.get("med");
+  const sessionId = searchParams.get("session_id");
+
+  const [verifying, setVerifying] = useState(!!sessionId);
+  const [verified, setVerified] = useState(!sessionId);
+  const [verificationError, setVerificationError] = useState<string | null>(null);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
+  useEffect(() => {
+    if (!sessionId) return;
+    let cancelled = false;
+    const verify = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("verify-alacarte-payment", {
+          body: { session_id: sessionId },
+        });
+        if (cancelled) return;
+        if (error) throw error;
+        if (!data?.success) {
+          setVerificationError(data?.message || "We couldn't confirm payment yet.");
+          return;
+        }
+        setVerified(true);
+      } catch (e) {
+        if (cancelled) return;
+        console.error("verify-alacarte-payment failed", e);
+        setVerificationError("We couldn't verify your payment. Please call (706) 760-3470.");
+      } finally {
+        if (!cancelled) setVerifying(false);
+      }
+    };
+    verify();
+    return () => { cancelled = true; };
+  }, [sessionId]);
+
   const med = useMemo(() => (isMedKey(medParam) ? MEDICATION_INFO[medParam] : null), [medParam]);
+
+  const showContent = verified && !verifying;
 
   return (
     <>
@@ -121,7 +156,31 @@ const MedicationConfirmed = () => {
               )}
             </div>
 
-            {med && (
+            {verifying && (
+              <Card className="text-center mb-6">
+                <CardContent className="p-12 space-y-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto" />
+                  <p className="font-jost text-muted-foreground">Verifying your payment&hellip;</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {!verifying && verificationError && (
+              <Card className="border-destructive/30 mb-6">
+                <CardContent className="p-6 text-center space-y-3">
+                  <p className="font-jost text-foreground">{verificationError}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => window.location.assign(`tel:${SITE_CONFIG.phoneRaw}`)}
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call {SITE_CONFIG.phone}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {showContent && med && (
               <Card className="border-accent/30 mb-6">
                 <CardContent className="p-6 md:p-8">
                   <div className="flex items-start gap-4">
@@ -142,7 +201,7 @@ const MedicationConfirmed = () => {
               </Card>
             )}
 
-            {med && (
+            {showContent && med && (
               <Card className="mb-6">
                 <CardContent className="p-6 md:p-8">
                   <h2 className="font-playfair text-xl text-foreground mb-4">What happens next</h2>
@@ -160,6 +219,7 @@ const MedicationConfirmed = () => {
               </Card>
             )}
 
+            {showContent && (
             <Card className="bg-secondary/30 mb-8">
               <CardContent className="p-6 md:p-8">
                 <h3 className="font-playfair text-lg text-foreground mb-3">
@@ -186,7 +246,9 @@ const MedicationConfirmed = () => {
                 </div>
               </CardContent>
             </Card>
+            )}
 
+            {showContent && (
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button asChild className="font-jost font-medium tracking-wide text-sm px-8 py-6 rounded-sm">
                 <Link to="/patient/dashboard">
@@ -201,6 +263,7 @@ const MedicationConfirmed = () => {
                 </Link>
               </Button>
             </div>
+            )}
           </div>
         </main>
         <Footer />

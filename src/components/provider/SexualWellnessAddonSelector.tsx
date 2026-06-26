@@ -143,7 +143,7 @@ const SexualWellnessAddonSelector = ({
     <Card className="border-gold/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Heart className="w-5 h-5 text-gold" />
+          <Heart className="w-5 h-5 text-accent" />
           Sexual Wellness
         </CardTitle>
         <p className="text-sm text-muted-foreground flex items-center gap-2">
@@ -163,7 +163,7 @@ const SexualWellnessAddonSelector = ({
                 key={key}
                 className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
                   isActive
-                    ? "bg-gold/5 border-gold/40"
+                    ? "bg-accent/5 border-gold/40"
                     : "bg-card border-border/50 hover:border-gold/30"
                 }`}
               >
@@ -184,7 +184,7 @@ const SexualWellnessAddonSelector = ({
                               ? "bg-green-500/10 text-green-600 border-green-500/30"
                               : product.badge === "Unisex"
                               ? "bg-purple-500/10 text-purple-600 border-purple-500/30"
-                              : "bg-gold/10 text-gold border-gold/30"
+                              : "bg-accent/10 text-accent border-gold/30"
                           }`}
                           variant="outline"
                         >
@@ -216,7 +216,7 @@ const SexualWellnessAddonSelector = ({
                   </Tooltip>
                 </div>
                 <div className="flex items-center gap-2 ml-2">
-                  <Badge variant="outline" className="text-gold border-gold/30 whitespace-nowrap">
+                  <Badge variant="outline" className="text-accent border-gold/30 whitespace-nowrap">
                     {product.price}
                   </Badge>
                   <Button
@@ -224,7 +224,7 @@ const SexualWellnessAddonSelector = ({
                     variant="outline"
                     onClick={() => handleAddToSubscription(key, product)}
                     disabled={isLoading || !patientEmail || !hasPrice}
-                    className="border-gold/30 hover:bg-gold/10 text-xs whitespace-nowrap"
+                    className="border-gold/30 hover:bg-accent/10 text-xs whitespace-nowrap"
                   >
                     {isLoading ? (
                       <Loader2 className="w-3 h-3 animate-spin" />

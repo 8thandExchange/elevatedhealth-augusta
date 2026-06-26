@@ -60,8 +60,8 @@ const FCCFormularyLookup = ({ isOpen, onClose, initialQuery = "", onSelect }: FC
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent layout="pinned" className="max-h-[85vh] max-w-3xl rounded-2xl border border-gold/30 bg-card">
         <DialogHeader className="border-b border-border/50 px-6 py-4 pr-12 pt-10 text-left">
-          <DialogTitle className="flex items-center gap-2 font-cormorant text-xl">
-            <Pill className="h-5 w-5 text-gold" />
+          <DialogTitle className="flex items-center gap-2 font-playfair text-xl">
+            <Pill className="h-5 w-5 text-accent" />
             FCC FormuConnect 2026 Formulary
           </DialogTitle>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -90,7 +90,7 @@ const FCCFormularyLookup = ({ isOpen, onClose, initialQuery = "", onSelect }: FC
               onClick={() => setFilter(cat)}
               className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
                 filter === cat
-                  ? "bg-gold text-white border-gold"
+                  ? "bg-accent text-white border-gold"
                   : "bg-secondary/40 text-muted-foreground border-border hover:border-gold/30"
               }`}
             >
@@ -113,7 +113,7 @@ const FCCFormularyLookup = ({ isOpen, onClose, initialQuery = "", onSelect }: FC
               >
                 <button
                   onClick={() => handleCopySku(item.sku)}
-                  className="flex-shrink-0 font-mono text-xs px-2 py-1 rounded bg-gold/10 text-gold border border-gold/30 hover:bg-gold/20 min-w-[60px]"
+                  className="flex-shrink-0 font-mono text-xs px-2 py-1 rounded bg-accent/10 text-accent border border-gold/30 hover:bg-accent/20 min-w-[60px]"
                   title="Copy SKU"
                 >
                   {copiedSku === item.sku ? (
@@ -129,7 +129,7 @@ const FCCFormularyLookup = ({ isOpen, onClose, initialQuery = "", onSelect }: FC
                     {item.notes && <span className="text-amber-600"> • {item.notes}</span>}
                   </p>
                 </div>
-                <Badge variant="outline" className="text-gold border-gold/30 text-xs whitespace-nowrap">
+                <Badge variant="outline" className="text-accent border-gold/30 text-xs whitespace-nowrap">
                   {item.price}
                 </Badge>
                 <Button variant="ghost" size="sm" onClick={() => handleCopyLine(item)} className="h-7 w-7 p-0" title="Copy full line">

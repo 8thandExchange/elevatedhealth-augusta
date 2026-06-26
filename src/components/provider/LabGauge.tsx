@@ -56,7 +56,7 @@ const LabGauge = ({ label, value, unit, min, max, optimalMin, optimalMax }: LabG
 
       {/* Value Display */}
       <div className="mb-3">
-        <span className="text-2xl font-cormorant text-foreground">
+        <span className="text-2xl font-playfair text-foreground">
           {value !== null ? value.toFixed(1) : "--"}
         </span>
         <span className="text-sm text-muted-foreground ml-1">{unit}</span>

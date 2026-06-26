@@ -107,7 +107,7 @@ const Auth = () => {
           <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
             <Mail className="w-8 h-8 text-green-600" />
           </div>
-          <h1 className="font-cormorant text-3xl text-foreground mb-4">Check Your Email</h1>
+          <h1 className="font-playfair text-3xl text-foreground mb-4">Check Your Email</h1>
           <p className="text-muted-foreground mb-6">
             We sent a login link to <span className="font-medium text-foreground">{email}</span>. 
             Click the link in the email to sign in securely.
@@ -131,15 +131,15 @@ const Auth = () => {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <p className="text-xs uppercase tracking-widest text-gold mb-2">
+          <p className="text-xs uppercase tracking-widest text-accent mb-2">
             {mode === "patient" ? "Patient Portal" : "Provider Portal"}
           </p>
-          <h1 className="font-cormorant text-3xl text-foreground">Elevated Health Augusta</h1>
+          <h1 className="font-playfair text-3xl text-foreground">Elevated Health Augusta</h1>
         </div>
 
         <Card className="bg-card border-border/50">
           <CardHeader>
-            <CardTitle className="font-cormorant text-xl">
+            <CardTitle className="font-playfair text-xl">
               {mode === "patient" ? "Welcome Back" : "Provider Login"}
             </CardTitle>
             <CardDescription>

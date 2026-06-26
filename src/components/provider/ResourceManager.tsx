@@ -189,7 +189,7 @@ const ResourceManager = () => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="font-cormorant text-xl">Patient Resources</CardTitle>
+        <CardTitle className="font-playfair text-xl">Patient Resources</CardTitle>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="gap-2">
@@ -199,7 +199,7 @@ const ResourceManager = () => {
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle className="font-cormorant">Add New Resource</DialogTitle>
+              <DialogTitle className="font-playfair">Add New Resource</DialogTitle>
             </DialogHeader>
 
             <Tabs value={resourceType} onValueChange={(v) => setResourceType(v as ResourceType)}>

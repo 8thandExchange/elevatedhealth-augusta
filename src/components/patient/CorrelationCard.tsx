@@ -69,7 +69,7 @@ const CorrelationCard = ({
       {/* Header */}
       <div className={cn("px-4 py-3 flex items-center gap-3", colorClass)}>
         {icon}
-        <h3 className="font-cormorant text-lg font-semibold text-white">{hormone}</h3>
+        <h3 className="font-playfair text-lg font-semibold text-white">{hormone}</h3>
         {isValidated && (
           <span className="ml-auto flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full text-xs font-medium text-white">
             <Check className="w-3 h-3" />

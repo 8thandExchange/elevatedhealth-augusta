@@ -588,7 +588,7 @@ const PatientIntake = () => {
                 <CardContent className="pt-8 pb-8">
                   <div className="flex items-center gap-2 mb-6">
                     <User className="w-5 h-5 text-primary" />
-                    <h2 className="font-cormorant text-xl text-foreground">
+                    <h2 className="font-playfair text-xl text-foreground">
                       Tell Us About Yourself
                     </h2>
                   </div>
@@ -828,7 +828,7 @@ const PatientIntake = () => {
                 <CardContent className="pt-8 pb-8">
                   <div className="flex items-center gap-2 mb-6">
                     <TestTube className="w-5 h-5 text-blue-500" />
-                    <h2 className="font-cormorant text-xl text-foreground">
+                    <h2 className="font-playfair text-xl text-foreground">
                       Hormone History
                     </h2>
                   </div>
@@ -969,7 +969,7 @@ const PatientIntake = () => {
             <>
               <Card className="border-border/50 mb-8">
                 <CardContent className="pt-8 pb-8">
-                  <h2 className="font-cormorant text-2xl text-foreground mb-2">
+                  <h2 className="font-playfair text-2xl text-foreground mb-2">
                     {currentQuestion.label}
                   </h2>
                   <p className="text-muted-foreground text-sm mb-8">
@@ -1027,7 +1027,7 @@ const PatientIntake = () => {
                 <CardContent className="pt-8 pb-8">
                   <div className="flex items-center gap-2 mb-4">
                     <ShieldAlert className="w-5 h-5 text-amber-500" />
-                    <h2 className="font-cormorant text-xl text-foreground">
+                    <h2 className="font-playfair text-xl text-foreground">
                       {gender === "male" ? "Androgen Safety Check" : "Hormone Safety Check"}
                     </h2>
                   </div>
@@ -1079,7 +1079,7 @@ const PatientIntake = () => {
                 <CardContent className="pt-8 pb-8">
                   <div className="flex items-center gap-2 mb-4">
                     <ShieldAlert className="w-5 h-5 text-red-500" />
-                    <h2 className="font-cormorant text-xl text-foreground">
+                    <h2 className="font-playfair text-xl text-foreground">
                       Medical History
                     </h2>
                   </div>

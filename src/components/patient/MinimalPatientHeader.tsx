@@ -39,7 +39,7 @@ const MinimalPatientHeader = ({ patientName, avatarUrl, onEditProfile }: Minimal
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-xs text-gold font-inter font-medium uppercase tracking-wider">Welcome back</p>
+              <p className="text-xs text-accent font-inter font-medium uppercase tracking-wider">Welcome back</p>
               <h1 className="font-playfair text-lg text-foreground font-semibold -mt-0.5">
                 {firstName}
               </h1>

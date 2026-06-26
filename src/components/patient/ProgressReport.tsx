@@ -71,7 +71,7 @@ const ProgressReport = ({ previousScores, currentScores, onContinue }: ProgressR
               <Minus className="w-8 h-8 text-muted-foreground" />
             )}
           </div>
-          <CardTitle className="font-cormorant text-2xl">
+          <CardTitle className="font-playfair text-2xl">
             {improved ? "Great Progress!" : worsened ? "We're Here For You" : "Check-In Complete"}
           </CardTitle>
         </CardHeader>

@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import { probeMarketingImage } from "@/hooks/useMarketingImageAvailable";
 
 type MediaMode = "video" | "poster" | "mesh";
 
-function probe(url: string): Promise<boolean> {
-  return fetch(url, { method: "HEAD" }).then((r) => r.ok).catch(() => false);
-}
-
-/** Background layer for homepage hero — auto-enables video/poster when files exist in /public/images/. */
+/** Background layer for homepage hero — video when available, poster fallback. */
 export function HeroMedia() {
   const [mode, setMode] = useState<MediaMode>("mesh");
 
   useEffect(() => {
     let cancelled = false;
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     (async () => {
-      if (await probe(MARKETING_IMAGES.heroVideo)) {
+      if (!prefersReducedMotion && (await probeMarketingImage(MARKETING_IMAGES.heroVideo))) {
         if (!cancelled) setMode("video");
         return;
       }
-      if (await probe(MARKETING_IMAGES.heroPoster)) {
+      if (await probeMarketingImage(MARKETING_IMAGES.heroPoster)) {
         if (!cancelled) setMode("poster");
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -34,6 +37,7 @@ export function HeroMedia() {
         loop
         muted
         playsInline
+        preload="auto"
         poster={MARKETING_IMAGES.heroPoster}
         className="absolute inset-0 h-full w-full object-cover"
         aria-hidden

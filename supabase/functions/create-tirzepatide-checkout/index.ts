@@ -49,7 +49,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : email,
       line_items: [{ price: LIVE_GLP1_TIRZEPATIDE_PRICE_ID, quantity: 1 }],
       mode: "subscription",
-      success_url: `${origin}/medication-confirmed?med=tirzepatide`,
+      success_url: `${origin}/medication-confirmed?med=tirzepatide&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/weight-loss`,
       metadata: {
         service_type: "tirzepatide_membership",

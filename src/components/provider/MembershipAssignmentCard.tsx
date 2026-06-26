@@ -39,7 +39,7 @@ const MembershipAssignmentCard = ({
       case "vitality":
         return "bg-gradient-to-r from-primary to-primary/80 text-white";
       case "concierge":
-        return "bg-gradient-to-r from-gold to-gold/80 text-gold-foreground";
+        return "bg-gradient-to-r from-gold to-gold/80 text-accent-foreground";
       case "elevated_trt":
       case "elevated_hrt":
       case "elevated_glp1":
@@ -129,7 +129,7 @@ const MembershipAssignmentCard = ({
     <Card className="border-gold/30 bg-gradient-to-br from-gold/5 to-transparent">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm flex items-center gap-2">
-          <Crown className="w-4 h-4 text-gold" />
+          <Crown className="w-4 h-4 text-accent" />
           Membership Management
         </CardTitle>
       </CardHeader>
@@ -245,8 +245,8 @@ const MembershipAssignmentCard = ({
         )}
 
         {tier === "concierge" && (
-          <div className="text-xs text-muted-foreground p-3 bg-gold/10 rounded-lg">
-            <p className="font-medium text-gold mb-1">CONCIERGE Includes:</p>
+          <div className="text-xs text-muted-foreground p-3 bg-accent/10 rounded-lg">
+            <p className="font-medium text-accent mb-1">CONCIERGE Includes:</p>
             <ul className="space-y-0.5">
               <li>• Unlimited provider consults</li>
               <li>• Direct provider phone line</li>
