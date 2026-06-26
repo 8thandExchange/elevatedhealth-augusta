@@ -8,6 +8,7 @@ import EditProfileModal from "@/components/patient/EditProfileModal";
 import SafetyGate from "@/components/patient/SafetyGate";
 import OAuthOnboarding from "@/components/patient/OAuthOnboarding";
 import PatientDashboardHome from "@/components/patient/PatientDashboardHome";
+import PatientChatWidget from "@/components/chat/PatientChatWidget";
 import { usePatient, useInvalidatePatientData } from "@/hooks/usePatient";
 import { useAuth } from "@/contexts/AuthContext";
 import { linkPatientAccount } from "@/lib/patientAccountLink";
@@ -165,6 +166,8 @@ const PatientServices = () => {
         currentAvatarUrl={patient.avatar_url}
         onUpdate={() => invalidatePatient()}
       />
+
+      <PatientChatWidget patientId={patient.id} />
     </div>
   );
 };

@@ -79,100 +79,50 @@ serve(async (req) => {
 
     // Find customer in Stripe
     const customers = await stripe.customers.list({ email: patient_email, limit: 1 });
-    
-    if (is_recurring) {
-      // For recurring items, add to existing subscription or create checkout
-      if (customers.data.length > 0) {
-        const customerId = customers.data[0].id;
-        logStep("Found existing customer", { customerId });
+    const customerId = customers.data[0]?.id;
 
-        // Check for active subscription
-        const subscriptions = await stripe.subscriptions.list({
-          customer: customerId,
-          status: "active",
-          limit: 1,
+    const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
+
+    // À la carte peptides are sold as their own discounted checkout — never merged
+    // into the patient's membership subscription (which would co-mingle billing and
+    // prevent a clean peptide-only member discount). Active members get 20% off via
+    // the ELEVATED member coupon; if the coupon is ever invalid we retry without it
+    // so a checkout can never hard-fail on the discount.
+    const baseParams: Stripe.Checkout.SessionCreateParams = {
+      customer: customerId,
+      customer_email: customerId ? undefined : patient_email,
+      line_items: [{ price: price_id, quantity: 1 }],
+      mode: is_recurring ? "subscription" : "payment",
+      success_url: `${origin}/provider/dashboard?${is_recurring ? "peptide_added" : "peptide_purchased"}=true`,
+      cancel_url: `${origin}/provider/dashboard`,
+      metadata: {
+        peptide_type: peptide_type ?? "",
+        patient_email,
+        applied_discount: discount.applied_discount,
+      },
+    };
+
+    let session;
+    if (discount.discounts && discount.discounts.length > 0) {
+      try {
+        session = await stripe.checkout.sessions.create({ ...baseParams, discounts: discount.discounts });
+      } catch (couponErr) {
+        logStep("Coupon application failed, retrying at full price", {
+          message: couponErr instanceof Error ? couponErr.message : String(couponErr),
         });
-
-        if (subscriptions.data.length > 0) {
-          // Add item to existing subscription
-          const subscription = subscriptions.data[0];
-          logStep("Adding to existing subscription", { subscriptionId: subscription.id });
-
-          const updatedSubscription = await stripe.subscriptions.update(subscription.id, {
-            items: [
-              ...subscription.items.data.map((item: { id: string }) => ({ id: item.id })),
-              { price: price_id },
-            ],
-            proration_behavior: "create_prorations",
-          });
-
-          logStep("Subscription updated", {
-            newItemCount: updatedSubscription.items.data.length,
-            // NOTE: merging a peptide line into the patient's existing (membership)
-            // subscription cannot carry a peptide-only coupon without also
-            // discounting the membership line, so the 20% member discount is NOT
-            // applied on this path. For clean member discounting, à la carte
-            // peptides should be sold via create-alacarte-checkout instead.
-            member_discount_applied: false,
-          });
-
-          return new Response(
-            JSON.stringify({
-              success: true,
-              message: "Peptide added to subscription",
-              subscription_id: updatedSubscription.id,
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-          );
-        }
+        session = await stripe.checkout.sessions.create({
+          ...baseParams,
+          metadata: { ...baseParams.metadata, applied_discount: "none" },
+        });
       }
-
-      // No existing subscription - create a checkout session for new subscription
-      logStep("No active subscription, creating checkout session");
-
-      const session = await stripe.checkout.sessions.create({
-        customer: customers.data[0]?.id,
-        customer_email: customers.data.length === 0 ? patient_email : undefined,
-        line_items: [{ price: price_id, quantity: 1 }],
-        mode: "subscription",
-        ...(discount.discounts ? { discounts: discount.discounts } : {}),
-        success_url: `${req.headers.get("origin")}/provider/dashboard?peptide_added=true`,
-        cancel_url: `${req.headers.get("origin")}/provider/dashboard`,
-        metadata: {
-          peptide_type,
-          patient_email,
-          applied_discount: discount.applied_discount,
-        },
-      });
-
-      return new Response(
-        JSON.stringify({ url: session.url }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-      );
     } else {
-      // One-time payment - always create a checkout session
-      logStep("Creating one-time payment session");
-
-      const session = await stripe.checkout.sessions.create({
-        customer: customers.data[0]?.id,
-        customer_email: customers.data.length === 0 ? patient_email : undefined,
-        line_items: [{ price: price_id, quantity: 1 }],
-        mode: "payment",
-        ...(discount.discounts ? { discounts: discount.discounts } : {}),
-        success_url: `${req.headers.get("origin")}/provider/dashboard?peptide_purchased=true`,
-        cancel_url: `${req.headers.get("origin")}/provider/dashboard`,
-        metadata: {
-          peptide_type,
-          patient_email,
-          applied_discount: discount.applied_discount,
-        },
-      });
-
-      return new Response(
-        JSON.stringify({ url: session.url }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-      );
+      session = await stripe.checkout.sessions.create(baseParams);
     }
+
+    return new Response(
+      JSON.stringify({ url: session.url }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
+    );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });

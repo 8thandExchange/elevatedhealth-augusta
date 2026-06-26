@@ -26,6 +26,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ConsultJourneyProgress from "@/components/patient/ConsultJourneyProgress";
 import MembershipSummary from "@/components/patient/MembershipSummary";
+import PatientRecordsSection from "@/components/patient/PatientRecordsSection";
+import BillingPortalButton from "@/components/patient/BillingPortalButton";
 import type { Patient } from "@/hooks/usePatient";
 import { usePatientDashboard } from "@/hooks/usePatientDashboard";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
@@ -500,6 +502,9 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
                 )}
               </CardContent>
             </Card>
+
+            {/* Visit notes, IV visits, documents, superbills */}
+            <PatientRecordsSection patientId={patient.id} patientEmail={patient.email} />
           </div>
 
           {/* Sidebar */}
@@ -610,6 +615,13 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
                     </Link>
                   </Button>
                 )}
+                <Button variant="outline" className="justify-start font-jost" asChild>
+                  <Link to="/schedule-consult">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Schedule a visit
+                  </Link>
+                </Button>
+                <BillingPortalButton />
                 <Button variant="outline" className="justify-start font-jost" asChild>
                   <Link to="/patient/checkin">
                     <MessageCircle className="mr-2 h-4 w-4" />

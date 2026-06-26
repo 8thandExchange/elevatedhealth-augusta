@@ -97,6 +97,16 @@ const PEPTIDE_CATEGORIES = {
 type CategoryKey = keyof typeof PEPTIDE_CATEGORIES;
 type ProductKey = string;
 
+interface PeptideProduct {
+  label: string;
+  price: string;
+  priceId: string;
+  type: "recurring" | "one_time";
+  description: string;
+  clinical: string;
+  badge?: string;
+}
+
 const PeptideAddonSelector = ({
   patientId,
   patientName,
@@ -132,7 +142,7 @@ const PeptideAddonSelector = ({
     setSelectedPeptides(updated);
   };
 
-  const handleAddToSubscription = async (key: string, product: any) => {
+  const handleAddToSubscription = async (key: string, product: PeptideProduct) => {
     if (!patientEmail) {
       toast.error("Patient email is required to add subscription items");
       return;
@@ -167,9 +177,9 @@ const PeptideAddonSelector = ({
         setSelectedPeptides(updated);
         onUpdate?.(Array.from(updated));
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Peptide add error:", error);
-      toast.error(error.message || `Failed to add ${product.label}`);
+      toast.error(error instanceof Error ? error.message : `Failed to add ${product.label}`);
     } finally {
       setIsProcessing(null);
     }
@@ -308,8 +318,9 @@ const PeptideAddonSelector = ({
         {/* Info Note */}
         <div className="bg-secondary/50 rounded-lg p-3 text-sm text-muted-foreground">
           <p>
-            <strong>Margins:</strong> All peptide pricing includes healthy profit margins.
-            Recurring items are added to patient subscriptions. One-time items open payment links.
+            <strong>Billing:</strong> Each peptide opens its own secure payment link (separate from
+            membership billing). Active ELEVATED members automatically get 20% off at checkout — no
+            coupon needed.
           </p>
         </div>
       </CardContent>
