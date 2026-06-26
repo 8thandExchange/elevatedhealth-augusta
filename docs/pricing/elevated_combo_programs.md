@@ -109,7 +109,7 @@ Steady state: **$498/mo** — vs **$598/mo** if two full programs.
 3. **One Stripe subscription** — two line items (anchor price + add-on price).
 4. **Consents** — union of anchor + add-on (GLP-1 + Hormone Therapy when both lanes active).
 5. **Staging** — physician may start anchor only, add medication add-on after 8–12 weeks stable (clinical discretion).
-6. **Chart fields** — `elevated_program` = anchor program key; `elevated_program_addon` = add-on key (migration pending).
+6. **Chart fields** — `elevated_program` = anchor program key; `elevated_program_addon` = add-on key (live column on `patients`).
 
 ---
 
@@ -164,4 +164,4 @@ Wire into:
 2. Combo checkout edge function (single subscription, 1–2 line items).
 3. Webhook + patient column `elevated_program_addon`.
 4. Storefront FAQ + Weight Loss page combo strip.
-5. Retire legacy `HormoneAddonSelector` test price path.
+5. Retire legacy `HormoneAddonSelector` — replaced by `ElevatedComboSelector` (2026-06-26).

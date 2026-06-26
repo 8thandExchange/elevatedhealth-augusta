@@ -277,6 +277,9 @@ verify_jwt = false
 [functions.create-glp1-checkout]
 verify_jwt = false
 
+[functions.create-elevated-combo-checkout]
+verify_jwt = true
+
 [functions.create-wellness-membership-checkout]
 verify_jwt = false
 

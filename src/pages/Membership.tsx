@@ -10,6 +10,8 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import ConsultationModal from "@/components/ConsultationModal";
 import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_DISPLAY_PRICE_RANGE } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
+import ElevatedComboUpsell from "@/components/marketing/ElevatedComboUpsell";
+import { COMBO_SAVINGS_HOOK } from "@/lib/comboMarketingCopy";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
 import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
@@ -187,6 +189,8 @@ const Membership = () => {
         <section className="py-12 md:py-16 bg-background">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <EverythingIncludedPillars intro="Every ELEVATED tier follows the same clinical rhythm; only the clinical focus and bundled medication change." />
+            <ElevatedComboUpsell variant="glp1_led" className="mt-10" />
+            <p className="font-jost text-xs text-center text-muted-foreground mt-4">{COMBO_SAVINGS_HOOK}</p>
           </div>
         </section>
 

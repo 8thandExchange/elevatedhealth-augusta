@@ -3253,6 +3253,8 @@ export type Database = {
           elevated_membership_paused_until: string | null
           elevated_membership_started_at: string | null
           elevated_membership_status: string | null
+          elevated_program: string | null
+          elevated_program_addon: string | null
           email: string | null
           full_name: string
           gender: string | null
@@ -3311,6 +3313,8 @@ export type Database = {
           elevated_membership_paused_until?: string | null
           elevated_membership_started_at?: string | null
           elevated_membership_status?: string | null
+          elevated_program?: string | null
+          elevated_program_addon?: string | null
           email?: string | null
           full_name: string
           gender?: string | null
@@ -3369,6 +3373,8 @@ export type Database = {
           elevated_membership_paused_until?: string | null
           elevated_membership_started_at?: string | null
           elevated_membership_status?: string | null
+          elevated_program?: string | null
+          elevated_program_addon?: string | null
           email?: string | null
           full_name?: string
           gender?: string | null

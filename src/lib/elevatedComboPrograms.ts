@@ -5,7 +5,7 @@
  * Add-ons cover prescribed medication + pharmacy fulfillment only — no duplicate bundle.
  *
  * Pricing analysis: docs/pricing/elevated_combo_programs.md
- * Stripe add-on price IDs: pending live bootstrap (see ELEVATED_COMBO_ADDONS.stripePriceId).
+ * Stripe add-on price IDs: live — see ELEVATED_COMBO_ADDONS in stripeConfig.ts.
  */
 import {
   ELEVATED_PROGRAMS,

@@ -2,10 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown } from "lucide-react";
 import { ELEVATED_PROGRAMS, GLP1_DISPLAY_PRICE_RANGE } from "@/lib/stripeConfig";
+import { COMBO_ADDONS, type ComboAddonKey } from "@/lib/elevatedComboPrograms";
+import { fmtUsd } from "@/lib/pricing";
 
 interface MembershipSummaryProps {
   membershipTier: string | null;
   renewalDate?: string;
+  programAddon?: string | null;
 }
 
 const ELEVATED_KEYS = ["elevated_trt", "elevated_hrt", "elevated_glp1", "elevated_wellness"] as const;
@@ -25,7 +28,7 @@ function elevatedProgram(tier: string) {
   }
 }
 
-const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryProps) => {
+const MembershipSummary = ({ membershipTier, renewalDate, programAddon }: MembershipSummaryProps) => {
   if (!membershipTier) {
     return (
       <Card className="border-border/50">
@@ -61,6 +64,11 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
           : membershipTier === "semaglutide" || membershipTier === "tirzepatide"
             ? `Legacy: ${membershipTier}`
             : `Membership (${membershipTier})`;
+
+  const addonDef =
+    programAddon && programAddon in COMBO_ADDONS
+      ? COMBO_ADDONS[programAddon as ComboAddonKey]
+      : null;
 
   return (
     <Card className="border-2 border-primary/30">
@@ -106,6 +114,15 @@ const MembershipSummary = ({ membershipTier, renewalDate }: MembershipSummaryPro
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <span className="text-sm text-muted-foreground">Next billing</span>
             <span className="text-sm font-medium text-foreground">{renewalDate}</span>
+          </div>
+        )}
+
+        {addonDef && (
+          <div className="flex items-center justify-between pt-4 border-t border-border">
+            <span className="text-sm text-muted-foreground">Medication add-on</span>
+            <span className="text-sm font-medium text-foreground">
+              {addonDef.shortLabel} ({fmtUsd(addonDef.addOnMonthlyCents)}/mo)
+            </span>
           </div>
         )}
 

@@ -36,6 +36,15 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 | ELEVATED GLP-1 | Semaglutide $349/month · Tirzepatide $449/month | Compounded semaglutide OR tirzepatide from GC/STLKS network (FCC backup), monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. Molecule-specific monthly price (tirzepatide costs ~2x compounded); a patient's price never changes as they titrate within their molecule. Both enroll the same `glp1` membership. |
 | ~~ELEVATED Metabolic~~ | ~~$599/month~~ | **DISCONTINUED 2026-06-24.** The standalone metabolic-recomposition bundle was retired. Advanced recomposition support now lives inside the GLP-1 lane (provider-directed à la carte peptides + gated retatrutide). The four metabolic peptides (SS-31, AOD-9604, SLU-PP-332, 5-Amino-1MQ) remain available à la carte. |
 | ELEVATED IV (non-Rx) | $199/month | 2 complimentary signature IV drips per month (any menu drip), 20% off boosters + à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. **No bundled medication or labs** — this is the non-Rx IV membership (renamed from "ELEVATED WELLNESS" 2026-06-25; internal program key remains `wellness`). |
+### ELEVATED Combo Programs (Anchor + Medication Add-On)
+When a patient needs **two lanes** (e.g. GLP-1 + hormones), enroll **one anchor program** (full bundle above) plus a **medication-only add-on** on the same Stripe subscription. Add-ons do NOT duplicate RN check-ins, messaging, or quarterly labs ($100/mo savings vs two full programs).
+| Add-on (medication only) | Price | Stripe Price ID |
+|---|---|---|
+| TRT medication add-on | +$149/mo | `price_1TmedJCXbCBPFEeIPJlH1Yq1` |
+| HRT medication add-on | +$129/mo | `price_1TmedKCXbCBPFEeImjKoYNoS` |
+| GLP-1 semaglutide medication add-on | +$249/mo | `price_1TmedKCXbCBPFEeITDtxayx4` |
+| GLP-1 tirzepatide medication add-on | +$349/mo | `price_1TmedLCXbCBPFEeIgzXJt0Lz` |
+Example totals: GLP-1 semaglutide ($349) + TRT add-on ($149) = **$498/mo**. Full matrix: `docs/pricing/elevated_combo_programs.md`.
 ### What Every Membership Includes
 - Your monthly medication is included (where applicable to the program)
 - Monthly RN check-in with Caroline

@@ -182,6 +182,27 @@ const StaffPricingCheatsheet = () => {
             </CardContent>
           </Card>
 
+          <Card className="border-primary/30">
+            <CardHeader>
+              <CardTitle className="font-playfair text-xl">ELEVATED Combo (dual lane)</CardTitle>
+            </CardHeader>
+            <CardContent className="font-jost text-sm space-y-2">
+              <p className="text-muted-foreground">
+                One anchor program (full bundle) + medication-only add-on on the same subscription. Use
+                Provider Dashboard → ELEVATED Combo Enrollment.
+              </p>
+              <ul className="space-y-1 text-xs">
+                <li className="flex justify-between gap-2"><span>TRT med add-on</span><span>+$149/mo</span></li>
+                <li className="flex justify-between gap-2"><span>HRT med add-on</span><span>+$129/mo</span></li>
+                <li className="flex justify-between gap-2"><span>GLP-1 sema med add-on</span><span>+$249/mo</span></li>
+                <li className="flex justify-between gap-2"><span>GLP-1 tirz med add-on</span><span>+$349/mo</span></li>
+              </ul>
+              <p className="text-xs text-muted-foreground">
+                Example: GLP-1 sema $349 + TRT add-on $149 = $498/mo (save $100 vs two full programs).
+              </p>
+            </CardContent>
+          </Card>
+
           <Card className="border-destructive/40">
             <CardHeader>
               <CardTitle className="font-playfair text-xl text-destructive">DO NOT QUOTE TO PATIENTS</CardTitle>

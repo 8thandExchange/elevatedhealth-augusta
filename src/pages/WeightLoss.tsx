@@ -24,6 +24,7 @@ import {
 } from "@/lib/stripeConfig";
 import { PUBLIC_GLP1_CARE_FLOW } from "@/lib/clinicalOptimizationCatalog";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
+import ElevatedComboUpsell from "@/components/marketing/ElevatedComboUpsell";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { BodyRecompositionTeaser } from "@/components/marketing/BodyRecompositionTeaser";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -236,6 +237,7 @@ const WeightLoss = () => {
           <section className="py-16 md:py-24 bg-muted/20 border-y border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-10">
               <EverythingIncludedPillars intro="ELEVATED GLP-1 bundles medication when prescribed with the same clinical rhythm we use across every ELEVATED program." />
+              <ElevatedComboUpsell variant="glp1_led" className="mt-8" showCta={false} />
               <div className="flex flex-col items-center gap-4">
                 <p className="font-jost text-sm text-muted-foreground text-center max-w-md">
                   Compare program vs. à la carte for the medication you are considering.

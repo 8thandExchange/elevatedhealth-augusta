@@ -559,12 +559,12 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       {
         step: "6",
         if: "GLP-1 candidacy (semaglutide or tirzepatide)",
-        then: "Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo).",
+        then: "Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo). Use combo enrollment if hormones also indicated (medication-only add-on on same subscription).",
       },
       {
         step: "7",
-        if: "Advanced recomposition / fat-loss candidacy + consents signed",
-        then: "Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo); layer advanced recomposition support per ALGO-006.",
+        if: "Dual lane (weight + hormones) clinically appropriate",
+        then: "Anchor program + medication add-on via ElevatedComboSelector — e.g. GLP-1 + TRT add-on $149/mo ($498 total sema) or TRT + GLP-1 sema add-on $249/mo. One RN visit, one quarterly lab draw.",
       },
       { step: "8", action: "Document protocol in chart. Route Rx per ALGO-003.", stop: true },
     ],

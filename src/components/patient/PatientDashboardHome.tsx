@@ -548,6 +548,7 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
             <MembershipSummary
               membershipTier={patient.membership_tier ?? patient.elevated_membership_status ?? null}
               renewalDate={patient.membership_renewal_date ?? undefined}
+              programAddon={(patient as { elevated_program_addon?: string | null }).elevated_program_addon ?? null}
             />
 
             {/* Consents */}

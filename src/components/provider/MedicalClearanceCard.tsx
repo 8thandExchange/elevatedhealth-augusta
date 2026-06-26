@@ -13,6 +13,7 @@ interface MedicalClearanceCardProps {
   patientId: string;
   patientName: string;
   patientEmail: string | null;
+  patientGender?: string | null;
   onboardingStatus: string | null;
   onStatusUpdate?: () => void;
 }
@@ -26,6 +27,7 @@ export function MedicalClearanceCard({
   patientId,
   patientName,
   patientEmail,
+  patientGender,
   onboardingStatus,
   onStatusUpdate,
 }: MedicalClearanceCardProps) {
@@ -60,13 +62,24 @@ export function MedicalClearanceCard({
 
       // Send GLP-1 activation email if patient has email
       if (patientEmail) {
-        const { error: emailError } = await supabase.functions.invoke("send-glp1-activation", {
+        const anchorKey =
+          selectedMedication === "tirzepatide" ? "glp1_tirzepatide" : "glp1_semaglutide";
+        const addonKey = includeHormoneAddon
+          ? patientGender === "female"
+            ? "hrt"
+            : "trt"
+          : null;
+
+        const { error: emailError } = await supabase.functions.invoke("send-activation-sms", {
           body: {
-            patient_name: patientName,
+            first_name: patientName.split(" ")[0] || patientName,
             patient_email: patientEmail,
-            medication_type: selectedMedication,
-            include_hormone_addon: includeHormoneAddon,
             patient_id: patientId,
+            base_membership: selectedMedication,
+            combo_anchor: anchorKey,
+            combo_addon: addonKey,
+            include_hormone_addon: includeHormoneAddon,
+            send_email: true,
           },
         });
 

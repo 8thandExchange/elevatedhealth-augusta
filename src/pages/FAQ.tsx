@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { MEMBER_ALACARTE_DISCOUNT_COPY } from "@/lib/membershipCopy";
+import { COMBO_GLP1_HORMONE_BODY, COMBO_SAVINGS_HOOK } from "@/lib/comboMarketingCopy";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,10 @@ const FAQ = () => {
     {
       q: "How do TRT, HRT, GLP-1, and ELEVATED IV differ?",
       a: "TRT (men) and HRT (women) focus on hormone optimization with LabCorp monitoring. GLP-1 is physician-supervised medical weight loss with compounded semaglutide or tirzepatide when appropriate. ELEVATED IV is the non-Rx plan — monthly signature IV drips plus member discounts on eligible à la carte services, with no medication or labs bundled.",
+    },
+    {
+      q: "Can I combine weight loss and hormone programs?",
+      a: `Yes, when clinically appropriate. You enroll in one ELEVATED anchor program (GLP-1, TRT, or HRT) that includes your RN check-ins, messaging, and quarterly labs, then add the second lane as a medication-only add-on — for example TRT for +$149/mo or HRT for +$129/mo on top of GLP-1. ${COMBO_SAVINGS_HOOK} ${COMBO_GLP1_HORMONE_BODY}`,
     },
     {
       q: "What is the member discount on à la carte services?",

@@ -20,6 +20,8 @@ export interface Patient {
   membership_tier: string | null;
   membership_renewal_date: string | null;
   elevated_membership_status?: string | null;
+  elevated_program?: string | null;
+  elevated_program_addon?: string | null;
   street_address: string | null;
   city: string | null;
   state: string | null;

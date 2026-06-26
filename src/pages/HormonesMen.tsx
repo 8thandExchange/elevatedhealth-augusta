@@ -9,6 +9,7 @@ import { useBooking } from "@/contexts/BookingContext";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
+import ElevatedComboUpsell from "@/components/marketing/ElevatedComboUpsell";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
 import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
@@ -109,6 +110,7 @@ const HormonesMen = () => {
           <section className="py-12 md:py-16 bg-muted/20 border-b border-border">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-10">
               <EverythingIncludedPillars />
+              <ElevatedComboUpsell variant="hormone_led" className="mt-2" showCta={false} />
               <MembershipComparison program="trt" />
             </div>
           </section>

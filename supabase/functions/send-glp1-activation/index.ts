@@ -67,12 +67,13 @@ const handler = async (req: Request): Promise<Response> => {
     const monthlyPrice = medPricing.price;
     const discountBadge = "";
 
-    const totalWithAddon = `$${medPricing.amount + 149}`;
+    const hormoneAddonAmount = include_hormone_addon ? 149 : 0;
+    const totalWithAddon = `$${medPricing.amount + hormoneAddonAmount}`;
 
     const hormoneAddonSection = include_hormone_addon ? `
       <div style="background: #FDF8E7; border-radius: 8px; padding: 16px; margin-top: 16px; border: 1px solid #D4A017;">
         <p style="color: #2C3E50; font-size: 14px; margin: 0;">
-          <strong>+ Hormone Add-On:</strong> $149/month<br>
+          <strong>+ Hormone Add-On:</strong> $149/mo (men's TRT) or $129/mo (women's HRT)<br>
           <span style="color: #5D6D7E;">Includes bioidentical hormone therapy optimized for weight loss</span>
         </p>
         <p style="color: #D4A017; font-size: 16px; font-weight: 600; margin: 8px 0 0 0;">
