@@ -93,7 +93,7 @@ const ProviderQuickActions = ({ onRefresh }: ProviderQuickActionsProps) => {
             className="whitespace-nowrap"
           >
             <CreditCard className="w-4 h-4 mr-2" />
-            Payment
+            Send Payment Link
           </Button>
 
           <LabCorpPortalLink />

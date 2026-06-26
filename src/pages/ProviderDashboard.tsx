@@ -3181,6 +3181,7 @@ const ProviderDashboard = () => {
         open={quickPaymentOpen}
         onOpenChange={setQuickPaymentOpen}
         onSuccess={() => loadData()}
+        initialPatient={quickPaymentPatient}
       />
 
       {/* Provider AI Assistant - Floating Chat */}

@@ -312,6 +312,22 @@ export function quoteCombo(selection: ComboSelection): ComboQuote {
   };
 }
 
+/** Parse combo_slug from staff checkout / activation flows. */
+export function parseComboSlug(slug: string): ComboSelection {
+  const trimmed = slug.trim();
+  if (!trimmed) {
+    throw new Error("Combo slug is required");
+  }
+  if (trimmed.includes("+")) {
+    const [anchor, addon] = trimmed.split("+", 2);
+    return {
+      anchor: anchor as ComboAnchorKey,
+      addon: addon as ComboAddonKey,
+    };
+  }
+  return { anchor: trimmed as ComboAnchorKey, addon: null };
+}
+
 /** Suggest default anchor from patient primary_program / treatment_request. */
 export function inferAnchorFromPatient(input: {
   primary_program?: string | null;
