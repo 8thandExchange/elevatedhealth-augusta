@@ -21,12 +21,12 @@ WHERE item_code = 'STACK-HEALING';
 UPDATE public.clinical_formulary_items
 SET public_status = 'inactive',
     clinical_status = 'inactive',
-    staff_notes = COALESCE(staff_notes, '') ||
-      CASE WHEN staff_notes IS NULL OR staff_notes = '' THEN '' ELSE E'\n' END ||
+    active = false,
+    regulatory_notes = COALESCE(regulatory_notes, '') ||
+      CASE WHEN regulatory_notes IS NULL OR regulatory_notes = '' THEN '' ELSE E'\n' END ||
       'DISCONTINUED 2026-06-26 — use individual bpc-157 and tb-500 rows.',
     updated_at = timezone('utc', now())
-WHERE slug = 'bpc-157-tb-500-stack'
-  AND (public_status IS DISTINCT FROM 'inactive' OR clinical_status IS DISTINCT FROM 'inactive');
+WHERE slug = 'bpc-157-tb-500-stack';
 
 -- CDS candidate — keep inactive; document discontinuation.
 UPDATE public.cds_candidates
