@@ -17,6 +17,18 @@ import LabPdfUploader, { type ParsedLabData } from "./LabPdfUploader";
 import { autoPersistLabcorpInterpretationAfterSave } from "@/lib/persistLabcorpInterpretation";
 import { linkLabResultToOpenOrder } from "@/lib/labsWorkflow";
 
+function formatClinicalSaveError(message: string): string {
+  const lower = message.toLowerCase();
+  if (
+    lower.includes("row-level security") ||
+    lower.includes("permission denied") ||
+    lower.includes("42501")
+  ) {
+    return "Your account cannot save lab results. Log in with your clinic staff email (e.g. caroline@elevatedhealthaugusta.com), not a patient portal account.";
+  }
+  return message;
+}
+
 interface ExistingLabResult {
   id: string;
   collection_date: string;
@@ -328,7 +340,9 @@ const NewLabResultModal = ({
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "Unknown error";
-      toast.error("Failed to save lab results", { description: message });
+      toast.error("Failed to save lab results", {
+        description: formatClinicalSaveError(message),
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -439,6 +453,7 @@ const NewLabResultModal = ({
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <LabPdfUploader
+              patientId={patientId}
               patientName={patientName}
               onParsed={handleParsed}
               onPdfUploaded={(url) =>

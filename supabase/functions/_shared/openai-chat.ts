@@ -106,6 +106,84 @@ export async function openaiVisionChat(
   return { ok: true, content: String(content) };
 }
 
+/** Extract assistant text from OpenAI Responses API payload. */
+function extractResponsesApiText(json: Record<string, unknown>): string | null {
+  if (typeof json.output_text === "string" && json.output_text.trim()) {
+    return json.output_text;
+  }
+  const output = json.output;
+  if (!Array.isArray(output)) return null;
+  for (const item of output) {
+    if (!item || typeof item !== "object") continue;
+    const block = item as Record<string, unknown>;
+    if (block.type !== "message" || !Array.isArray(block.content)) continue;
+    for (const part of block.content) {
+      if (!part || typeof part !== "object") continue;
+      const piece = part as Record<string, unknown>;
+      if (piece.type === "output_text" && typeof piece.text === "string" && piece.text.trim()) {
+        return piece.text;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Parse a PDF with GPT-4o via the Responses API (native PDF input).
+ * Vision image_url does NOT accept application/pdf — use this for LabCorp PDFs.
+ */
+export async function openaiPdfChat(
+  prompt: string,
+  base64Data: string,
+  opts?: { model?: string; filename?: string },
+): Promise<ChatResult> {
+  const { apiKey } = getOpenAIConfig();
+  const model = opts?.model?.trim() || Deno.env.get("OPENAI_VISION_MODEL")?.trim() || "gpt-4o";
+  if (!apiKey) {
+    return { ok: false, status: 503, error: "OPENAI_API_KEY is not configured in Supabase secrets." };
+  }
+
+  const fileData = `data:application/pdf;base64,${base64Data}`;
+  const resp = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0,
+      max_output_tokens: 800,
+      input: [{
+        role: "user",
+        content: [
+          { type: "input_text", text: prompt },
+          {
+            type: "input_file",
+            filename: opts?.filename?.trim() || "lab-report.pdf",
+            file_data: fileData,
+          },
+        ],
+      }],
+    }),
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    console.error("openai-pdf error", resp.status, text.slice(0, 500));
+    if (resp.status === 429) return { ok: false, status: 429, error: "Rate limit. Try again in a moment." };
+    if (resp.status === 401) {
+      return { ok: false, status: 503, error: "OpenAI API key invalid. Check OPENAI_API_KEY secret." };
+    }
+    return { ok: false, status: 500, error: "AI could not read this PDF. Try a photo/screenshot or enter values manually." };
+  }
+
+  const json = await resp.json() as Record<string, unknown>;
+  const content = extractResponsesApiText(json);
+  if (!content) return { ok: false, status: 500, error: "No AI response from PDF parser." };
+  return { ok: true, content };
+}
+
 export async function openaiChatWithTools(
   messages: ChatMessage[],
   tools: unknown[],

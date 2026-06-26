@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { openaiVisionChat } from "../_shared/openai-chat.ts";
+import { openaiPdfChat, openaiVisionChat } from "../_shared/openai-chat.ts";
+import { requireClinicalStaffRole } from "../_shared/staff-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -80,16 +81,48 @@ function repairJson(jsonStr: string): string {
   return jsonStr;
 }
 
+function normalizeMimeType(mimeType: string, filename?: string): string {
+  const trimmed = mimeType?.trim().toLowerCase() || "";
+  if (trimmed === "application/pdf" || trimmed.endsWith("/pdf")) return "application/pdf";
+  if (trimmed.startsWith("image/")) return trimmed;
+  const lowerName = filename?.toLowerCase() || "";
+  if (lowerName.endsWith(".pdf")) return "application/pdf";
+  if (/\.(png|jpe?g|gif|webp)$/.test(lowerName)) {
+    const ext = lowerName.split(".").pop() || "jpeg";
+    return ext === "jpg" ? "image/jpeg" : `image/${ext === "jpeg" ? "jpeg" : ext}`;
+  }
+  return trimmed || "application/pdf";
+}
+
+function isPdfMime(mimeType: string): boolean {
+  return mimeType === "application/pdf" || mimeType.endsWith("/pdf");
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { pdfBase64, mimeType = "application/pdf" } = await req.json();
+    const auth = await requireClinicalStaffRole(req);
+    if (!auth.ok) {
+      return new Response(JSON.stringify({ success: false, error: auth.error }), {
+        status: auth.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { pdfBase64, mimeType = "application/pdf", filename } = await req.json();
     if (!pdfBase64) throw new Error("PDF data is required");
 
-    const ai = await openaiVisionChat(buildPrompt(), mimeType, pdfBase64, { max_tokens: 800 });
+    const normalizedMime = normalizeMimeType(mimeType, filename);
+    const prompt = buildPrompt();
+
+    // PDFs must use Responses API — vision image_url rejects application/pdf.
+    const ai = isPdfMime(normalizedMime)
+      ? await openaiPdfChat(prompt, pdfBase64, { filename: filename || "lab-report.pdf" })
+      : await openaiVisionChat(prompt, normalizedMime, pdfBase64, { max_tokens: 800 });
+
     if (!ai.ok) {
       return new Response(JSON.stringify({ success: false, error: ai.error }), {
         status: ai.status,

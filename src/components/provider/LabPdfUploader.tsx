@@ -1,8 +1,9 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { readEdgeFunctionError } from "@/lib/edgeFunctionError";
 import { toast } from "sonner";
-import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
 export interface ParsedLabData {
   collectionDate: string | null;
@@ -14,7 +15,6 @@ export interface ParsedLabData {
   dheas: number | null;
   cortisol: number | null;
   pgE2Ratio: number | null;
-  // LabCorp fields
   hematocrit?: number | null;
   psa?: number | null;
   alt?: number | null;
@@ -35,20 +35,31 @@ export interface ParsedLabData {
 }
 
 interface LabPdfUploaderProps {
+  patientId: string;
   patientName: string;
   onParsed: (data: ParsedLabData) => void;
   onPdfUploaded: (url: string) => void;
 }
 
-const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploaderProps) => {
+function resolveMimeType(file: File): string {
+  if (file.type) return file.type;
+  const lower = file.name.toLowerCase();
+  if (lower.endsWith(".pdf")) return "application/pdf";
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  return file.type || "application/pdf";
+}
+
+const LabPdfUploader = ({ patientId, patientName, onParsed, onPdfUploaded }: LabPdfUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [parseStatus, setParseStatus] = useState<"idle" | "success" | "error">("idle");
+  const [parseStatus, setParseStatus] = useState<"idle" | "success" | "partial" | "error">("idle");
 
   const handleFile = useCallback(async (file: File) => {
+    const mimeType = resolveMimeType(file);
     const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
+    if (!allowedTypes.includes(mimeType)) {
       toast.error("Please upload a PDF or image file");
       return;
     }
@@ -63,7 +74,31 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
     setParseStatus("idle");
 
     try {
-      // Convert file to base64
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("You are not signed in. Log in at /admin/login and try again.");
+      }
+
+      // Store PDF first so chart retains the document even if AI parse fails.
+      const safeName = file.name.replace(/[^\w.-]+/g, "_");
+      const filePath = `${patientId}/labs/${Date.now()}-${safeName}`;
+      const { error: uploadError } = await supabase.storage
+        .from('lab-documents')
+        .upload(filePath, file, { contentType: mimeType, upsert: false });
+
+      if (uploadError) {
+        const msg = uploadError.message.toLowerCase();
+        if (msg.includes("row-level security") || msg.includes("permission") || msg.includes("403")) {
+          throw new Error(
+            "Could not store the lab PDF. Use your clinic staff login (e.g. caroline@elevatedhealthaugusta.com), not a patient account."
+          );
+        }
+        throw new Error(`Could not store lab PDF: ${uploadError.message}`);
+      }
+
+      const { data: urlData } = supabase.storage.from('lab-documents').getPublicUrl(filePath);
+      onPdfUploaded(urlData.publicUrl);
+
       const reader = new FileReader();
       const base64Promise = new Promise<string>((resolve, reject) => {
         reader.onload = () => {
@@ -75,62 +110,56 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
       reader.readAsDataURL(file);
       const pdfBase64 = await base64Promise;
 
-      // Call edge function to parse
       const { data, error } = await supabase.functions.invoke('parse-zrt-labs', {
-        body: { pdfBase64, mimeType: file.type }
+        body: { pdfBase64, mimeType, filename: file.name },
       });
 
-      if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || 'Failed to parse PDF');
+      if (error) {
+        const detail = await readEdgeFunctionError(
+          error,
+          "AI could not read this file. Enter values manually below — the PDF is saved to the chart."
+        );
+        setParseStatus("partial");
+        toast.warning("PDF saved — auto-fill unavailable", { description: detail });
+        return;
+      }
+
+      if (!data?.success) {
+        setParseStatus("partial");
+        toast.warning("PDF saved — auto-fill unavailable", {
+          description: data?.error || "Enter values manually below.",
+        });
+        return;
+      }
 
       const parsedData = data.data as ParsedLabData;
 
-      // Validate patient name matches (fuzzy match)
       if (parsedData.patientName) {
         const pdfName = parsedData.patientName.toLowerCase().replace(/[^a-z]/g, '');
         const expectedName = patientName.toLowerCase().replace(/[^a-z]/g, '');
         if (!pdfName.includes(expectedName.slice(0, 5)) && !expectedName.includes(pdfName.slice(0, 5))) {
           toast.warning("Patient name in PDF may not match", {
-            description: `PDF shows: ${parsedData.patientName}`
+            description: `PDF shows: ${parsedData.patientName}`,
           });
         }
       }
 
-      // Upload PDF to storage
-      const { data: { user } } = await supabase.auth.getUser();
-      const filePath = `${user?.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from('lab-documents')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        console.error('Storage upload error:', uploadError);
-        // Don't fail the whole process if storage fails
-      } else {
-        const { data: urlData } = supabase.storage
-          .from('lab-documents')
-          .getPublicUrl(filePath);
-        onPdfUploaded(urlData.publicUrl);
-      }
-
       setParseStatus("success");
       onParsed(parsedData);
-      
+
       const sourceLabel = parsedData.labSource === 'labcorp' ? 'LabCorp' : 'Lab';
       toast.success(`${sourceLabel} values extracted!`, {
-        description: `Confidence: ${Math.round((parsedData.confidence?.overall || 0.9) * 100)}%`
+        description: `Confidence: ${Math.round((parsedData.confidence?.overall || 0.9) * 100)}%`,
       });
-
-    } catch (error: any) {
-      console.error('Error parsing PDF:', error);
+    } catch (error: unknown) {
+      console.error('Error uploading/parsing lab PDF:', error);
       setParseStatus("error");
-      toast.error("Failed to parse lab PDF", {
-        description: error.message || "Please enter values manually"
-      });
+      const message = error instanceof Error ? error.message : "Please enter values manually";
+      toast.error("Failed to upload lab PDF", { description: message });
     } finally {
       setIsParsing(false);
     }
-  }, [patientName, onParsed, onPdfUploaded]);
+  }, [patientId, patientName, onParsed, onPdfUploaded]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -157,10 +186,12 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
         onDragLeave={handleDragLeave}
         className={`
           border-2 border-dashed rounded-lg p-4 text-center transition-all cursor-pointer
-          ${isDragging 
-            ? 'border-primary bg-primary/5' 
+          ${isDragging
+            ? 'border-primary bg-primary/5'
             : parseStatus === "success"
               ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+              : parseStatus === "partial"
+                ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/20'
               : parseStatus === "error"
                 ? 'border-destructive bg-destructive/5'
                 : 'border-border hover:border-primary/50 hover:bg-secondary/30'
@@ -170,7 +201,7 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
         {isParsing ? (
           <div className="flex flex-col items-center gap-2 py-2">
             <Loader2 className="w-6 h-6 text-primary animate-spin" />
-            <p className="text-sm text-muted-foreground">Extracting lab values...</p>
+            <p className="text-sm text-muted-foreground">Saving and extracting lab values...</p>
             {fileName && (
               <p className="text-xs text-muted-foreground">{fileName}</p>
             )}
@@ -197,13 +228,36 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
               Upload different file
             </Button>
           </div>
+        ) : parseStatus === "partial" ? (
+          <div className="flex flex-col items-center gap-2 py-2">
+            <AlertCircle className="w-6 h-6 text-amber-600" />
+            <p className="text-sm text-amber-700 dark:text-amber-400 font-medium">
+              PDF saved — enter values manually
+            </p>
+            <p className="text-xs text-muted-foreground">Auto-fill could not read this file</p>
+            {fileName && (
+              <p className="text-xs text-muted-foreground">{fileName}</p>
+            )}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setParseStatus("idle");
+                setFileName(null);
+              }}
+              className="text-xs"
+            >
+              Upload different file
+            </Button>
+          </div>
         ) : parseStatus === "error" ? (
           <div className="flex flex-col items-center gap-2 py-2">
             <AlertCircle className="w-6 h-6 text-destructive" />
             <p className="text-sm text-destructive font-medium">
-              Could not parse PDF
+              Could not upload PDF
             </p>
-            <p className="text-xs text-muted-foreground">Please enter values manually below</p>
+            <p className="text-xs text-muted-foreground">Check your login and try again</p>
             <Button
               type="button"
               variant="ghost"
@@ -225,11 +279,11 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
               <span className="text-sm text-muted-foreground"> (LabCorp PDF)</span>
             </div>
             <p className="text-xs text-muted-foreground">
-              AI will extract lab values automatically
+              PDF is saved to the chart; AI fills values when it can
             </p>
             <input
               type="file"
-              accept="application/pdf,image/png,image/jpeg"
+              accept="application/pdf,image/png,image/jpeg,.pdf"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
@@ -239,7 +293,7 @@ const LabPdfUploader = ({ patientName, onParsed, onPdfUploaded }: LabPdfUploader
           </label>
         )}
       </div>
-      
+
       {!isParsing && parseStatus === "idle" && (
         <p className="text-xs text-center text-muted-foreground">
           Or enter values manually below
