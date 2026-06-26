@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { resolveMemberCouponForCheckout } from "../_shared/member-discount.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -58,6 +59,24 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
+    // Resolve ELEVATED member 20% discount. Peptides are à la carte (never a
+    // bundled program medication), so any active member is eligible. We look up
+    // the patient by email to read their membership state server-side.
+    const { data: patientRow } = await supabaseClient
+      .from("patients")
+      .select("id")
+      .eq("email", patient_email)
+      .maybeSingle();
+    const discount = await resolveMemberCouponForCheckout(
+      supabaseClient,
+      patientRow?.id ?? null,
+      "peptide",
+    );
+    logStep("Member discount resolved", {
+      patient_id: patientRow?.id ?? null,
+      applied_discount: discount.applied_discount,
+    });
+
     // Find customer in Stripe
     const customers = await stripe.customers.list({ email: patient_email, limit: 1 });
     
@@ -87,7 +106,15 @@ serve(async (req) => {
             proration_behavior: "create_prorations",
           });
 
-          logStep("Subscription updated", { newItemCount: updatedSubscription.items.data.length });
+          logStep("Subscription updated", {
+            newItemCount: updatedSubscription.items.data.length,
+            // NOTE: merging a peptide line into the patient's existing (membership)
+            // subscription cannot carry a peptide-only coupon without also
+            // discounting the membership line, so the 20% member discount is NOT
+            // applied on this path. For clean member discounting, à la carte
+            // peptides should be sold via create-alacarte-checkout instead.
+            member_discount_applied: false,
+          });
 
           return new Response(
             JSON.stringify({
@@ -108,11 +135,13 @@ serve(async (req) => {
         customer_email: customers.data.length === 0 ? patient_email : undefined,
         line_items: [{ price: price_id, quantity: 1 }],
         mode: "subscription",
+        ...(discount.discounts ? { discounts: discount.discounts } : {}),
         success_url: `${req.headers.get("origin")}/provider/dashboard?peptide_added=true`,
         cancel_url: `${req.headers.get("origin")}/provider/dashboard`,
         metadata: {
           peptide_type,
           patient_email,
+          applied_discount: discount.applied_discount,
         },
       });
 
@@ -129,11 +158,13 @@ serve(async (req) => {
         customer_email: customers.data.length === 0 ? patient_email : undefined,
         line_items: [{ price: price_id, quantity: 1 }],
         mode: "payment",
+        ...(discount.discounts ? { discounts: discount.discounts } : {}),
         success_url: `${req.headers.get("origin")}/provider/dashboard?peptide_purchased=true`,
         cancel_url: `${req.headers.get("origin")}/provider/dashboard`,
         metadata: {
           peptide_type,
           patient_email,
+          applied_discount: discount.applied_discount,
         },
       });
 
