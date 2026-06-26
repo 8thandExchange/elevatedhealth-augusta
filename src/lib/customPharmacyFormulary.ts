@@ -110,17 +110,6 @@ export const CUSTOM_PHARMACY_PREPARATIONS: CustomPharmacyPreparation[] = [
   // MEN'S BHRT / ANDROPAUSE
   // ==========================================================
   {
-    id: "cpe-testosterone-cypionate",
-    name: "Testosterone Cypionate Injectable",
-    category: "male_hormone",
-    preparation_type: "injection",
-    strength_options: ["100mg/mL", "150mg/mL", "200mg/mL"],
-    default_strength: "200mg/mL",
-    default_sig: "Inject ___ mL IM or sub-Q weekly",
-    default_quantity: "10mL vial",
-    notes: "Confirm patient preference: IM (deltoid/glute) vs sub-Q (abdomen/thigh).",
-  },
-  {
     id: "cpe-testosterone-cream-men",
     name: "Testosterone Cream (Men's Dose)",
     category: "male_hormone",
@@ -139,28 +128,6 @@ export const CUSTOM_PHARMACY_PREPARATIONS: CustomPharmacyPreparation[] = [
     default_strength: "200mg",
     default_sig: "Insert subcutaneously per protocol; replace every 3-4 months",
     default_quantity: "4-10 pellets per protocol",
-  },
-  {
-    id: "cpe-anastrozole",
-    name: "Anastrozole Capsules",
-    category: "male_hormone",
-    preparation_type: "capsule",
-    strength_options: ["0.25mg", "0.5mg", "1mg"],
-    default_strength: "0.5mg",
-    default_sig: "Take 1 capsule by mouth twice weekly",
-    default_quantity: "30 capsules",
-    notes: "Used to manage aromatization in TRT. Titrate based on estradiol levels.",
-  },
-  {
-    id: "cpe-hcg",
-    name: "HCG Injectable",
-    category: "male_hormone",
-    preparation_type: "injection",
-    strength_options: ["1000 IU/mL", "5000 IU/mL"],
-    default_strength: "1000 IU/mL",
-    default_sig: "Inject ___ IU sub-Q twice weekly",
-    default_quantity: "10mL vial",
-    notes: "Preserves fertility / testicular volume during TRT.",
   },
   {
     id: "cpe-enclomiphene",

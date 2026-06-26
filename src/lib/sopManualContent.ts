@@ -577,7 +577,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
     steps: [
       {
         step: "1",
-        if: "Hormone Rx (Bi-Est, progesterone, test cyp, pellets, anastrozole, HCG)",
+        if: "Hormone Rx (Bi-Est, progesterone, testosterone cream, pellets)",
         then: "Vendor: Custom Pharmacy of Evans. Channel: fax (send-rx-fax). Default.",
       },
       {
@@ -620,7 +620,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       {
         step: "4",
         if: "Cream intolerance OR patient prefers patch",
-        then: "Escalate: DrFirst → FDA patch, OR troches (FCC/Custom).",
+        then: "Escalate: DrFirst → FDA patch/gel.",
       },
       { step: "5", action: "Quarterly labs + RN check-in included in ELEVATED HRT.", stop: true },
     ],
@@ -635,17 +635,17 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       {
         step: "2",
         if: "Estradiol elevated on labs",
-        then: "Add anastrozole 0.25–0.5 mg 2×/week.",
+        then: "Physician reassesses cream dose. Anastrozole and HCG are not offered.",
       },
       {
         step: "3",
         if: "Fertility preservation requested",
-        then: "Add HCG or discuss enclomiphene alternative (not classic TRT).",
+        then: "Discuss enclomiphene alternative (fertility-first, not classic TRT).",
       },
       {
         step: "4",
-        if: "Needle refusal",
-        then: "Escalate: testosterone cream OR DrFirst brand gel.",
+        if: "Patient prefers an FDA brand",
+        then: "Escalate: DrFirst brand gel (AndroGel/Testim).",
       },
       {
         step: "5",

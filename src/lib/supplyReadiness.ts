@@ -121,7 +121,7 @@ export const SUPPLY_PROFILES: Record<SupplyCategory, Omit<SupplyReadinessProfile
   hormone_cream: {
     category: "hormone_cream",
     checklist: [
-      { key: "cream_tube", label: "Compounded cream/troche", required: true },
+      { key: "cream_tube", label: "Compounded cream", required: true },
       { key: "applicator", label: "Applicator / dosing card", required: true },
       { key: "patient_education", label: "Application instructions", required: true },
       { key: "labels", label: "Rx labels", required: true },

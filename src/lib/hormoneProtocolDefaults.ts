@@ -56,7 +56,6 @@ export const STANDARD_FEMALE_BHRT: StandardHormoneProtocol = {
   ],
   escalationPaths: [
     "FDA estradiol patch/gel via DrFirst Rcopia (patient prefers retail)",
-    "Bi-Est troches/sublingual (FCC or Custom Pharmacy) — absorption issues",
     "Pellets (Custom Pharmacy) — shared decision; hard to adjust once placed",
   ],
 };
@@ -74,27 +73,8 @@ export const STANDARD_MALE_TRT: StandardHormoneProtocol = {
       publicDefault: true,
       rationale: "Stable daily levels without injection peaks/troughs; EHA standard for men's TRT. Injectable (cypionate) TRT is not offered.",
     },
-    {
-      compound: "Anastrozole",
-      route: "Oral capsule",
-      defaultDose: "0.25–0.5 mg 2×/week when E2 elevated",
-      supplier: "custom_pharmacy_evans",
-      publicDefault: false,
-      escalationOnly: true,
-      rationale: "Ancillary — only when clinically indicated by labs.",
-    },
-    {
-      compound: "HCG or gonadorelin",
-      route: "SubQ injection",
-      defaultDose: "Per fertility-preservation protocol",
-      supplier: "custom_pharmacy_evans",
-      publicDefault: false,
-      escalationOnly: true,
-      rationale: "When patient wants fertility or testicular volume on TRT.",
-    },
   ],
   escalationPaths: [
-    "Testosterone cream (Custom Pharmacy) — needle-averse patients",
     "Enclomiphene monotherapy (Custom Pharmacy) — fertility-first, not classic TRT",
     "FDA AndroGel/Testim via DrFirst — brand preference / superbill",
     "Pellets (Custom Pharmacy) — patient request only; we do not lead with these",

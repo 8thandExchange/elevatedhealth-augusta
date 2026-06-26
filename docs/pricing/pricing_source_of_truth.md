@@ -31,8 +31,8 @@ Labs are billed separately from visits. Lab fees include the in-office blood dra
 These are the flagship offerings. Each bundles medication + monitoring + check-ins into one monthly price. Modeled on the Tactus Health "no hidden fees" structure.
 | Program | Price | Inclusions |
 |---|---|---|
-| ELEVATED TRT (men) | $249/month | Testosterone **cream** (men's dose) from Custom Pharmacy of Evans — daily, physician-titrated; **injectable (cypionate) TRT is not offered** (discontinued 2026-06-25). Monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, anastrozole/HCG when clinically indicated, all Caroline-initiated physician oversight. |
-| ELEVATED HRT (women) | $229/month | Bi-Est cream/troches, progesterone, testosterone cream when prescribed, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. |
+| ELEVATED TRT (men) | $249/month | Testosterone **cream** (men's dose) from Custom Pharmacy of Evans — daily, physician-titrated; **injectable (cypionate) TRT is not offered** (discontinued 2026-06-25). Monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. **Anastrozole and HCG are not offered.** |
+| ELEVATED HRT (women) | $229/month | Bi-Est cream, progesterone, testosterone cream when prescribed, monthly RN check-in, unlimited messaging, free quarterly Comprehensive Wellness Panel, all Caroline-initiated physician oversight. (Troches are not offered.) |
 | ELEVATED GLP-1 | Semaglutide $349/month · Tirzepatide $449/month | Compounded semaglutide OR tirzepatide from GC/STLKS network (FCC backup), monthly dose titration, monthly RN check-in, unlimited messaging, free quarterly Expanded Panel, anti-nausea support when clinically indicated, all Caroline-initiated physician oversight. Molecule-specific monthly price (tirzepatide costs ~2x compounded); a patient's price never changes as they titrate within their molecule. Both enroll the same `glp1` membership. |
 | ~~ELEVATED Metabolic~~ | ~~$599/month~~ | **DISCONTINUED 2026-06-24.** The standalone metabolic-recomposition bundle was retired. Advanced recomposition support now lives inside the GLP-1 lane (provider-directed à la carte peptides + gated retatrutide). The four metabolic peptides (SS-31, AOD-9604, SLU-PP-332, 5-Amino-1MQ) remain available à la carte. |
 | ELEVATED IV (non-Rx) | $199/month | 2 complimentary signature IV drips per month (any menu drip), 20% off boosters + à la carte IV/peptide/injectable services, monthly RN check-in, unlimited messaging, priority booking. **No bundled medication or labs** — this is the non-Rx IV membership (renamed from "ELEVATED WELLNESS" 2026-06-25; internal program key remains `wellness`). |
@@ -42,7 +42,7 @@ These are the flagship offerings. Each bundles medication + monitoring + check-i
 - Free quarterly labs at the Evans office (TRT / HRT / GLP-1 tiers only; ELEVATED IV is non-Rx and does NOT include labs)
 - Lab review and protocol adjustments by Dr. Akers when needed
 - Unlimited messaging with the practice
-- Anastrozole, HCG, anti-nausea, and other supportive medications when clinically indicated
+- Supportive medications (e.g., anti-nausea support for GLP-1) when clinically indicated — anastrozole and HCG are not offered
 - All clinical care needed to keep treatment on track
 ### What's NOT Included
 - Initial Wellness Assessment ($79) and initial baseline labs ($199) — one-time onboarding
