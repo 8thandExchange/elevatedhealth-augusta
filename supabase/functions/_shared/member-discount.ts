@@ -3,8 +3,8 @@
  * Coupon "ELEVATED Member 20% Discount" is applied server-side only after
  * `getActiveElevatedProgram` succeeds and `getDiscountEligibility` allows the SKU.
  *
- * Set `STRIPE_ELEVATED_MEMBER_COUPON_ID` in Supabase secrets before live deploy
- * (create via Stripe Dashboard or stripe.coupons.create — see PR12 plan doc).
+ * Set `STRIPE_ELEVATED_MEMBER_COUPON_ID` in Supabase secrets (live coupon
+ * `avPA0zlW` / "ELEVATED Member 20% Discount" — verify via bootstrap-member-coupon).
  */
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import type Stripe from "https://esm.sh/stripe@18.5.0";
@@ -67,8 +67,8 @@ export async function resolveAuthorizedDiscountPatientId(
 }
 
 /**
- * TODO: Create Stripe Coupon "ELEVATED Member 20% Discount" (20% off) and set Supabase secret
- * `STRIPE_ELEVATED_MEMBER_COUPON_ID` before production. Never expose to clients.
+ * Live Stripe coupon ID for ELEVATED Member 20% à la carte discount.
+ * Verified 2026-06-26 via bootstrap-member-coupon (do not expose to clients).
  */
 export const ELEVATED_MEMBER_COUPON_ENV_KEY = "STRIPE_ELEVATED_MEMBER_COUPON_ID";
 

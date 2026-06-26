@@ -216,6 +216,10 @@ verify_jwt = false
 [functions.bootstrap-recovery-peptide-prices]
 verify_jwt = false
 
+# bootstrap-member-coupon — verify/create ELEVATED Member 20% Stripe coupon. Service-role only.
+[functions.bootstrap-member-coupon]
+verify_jwt = false
+
 # bootstrap-elevated-metabolic-price — one-shot: archive $1,199 stack, create
 # $599 ELEVATED Metabolic. Self-checks service_role.
 [functions.bootstrap-elevated-metabolic-price]
