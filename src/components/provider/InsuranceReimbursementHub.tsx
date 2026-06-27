@@ -47,7 +47,7 @@ const COVERAGE_DATA: Record<string, {
     tips: [
       "E&M visits (office visits) may be eligible for out-of-network reimbursement when medically necessary",
       "Ask about out-of-network benefits if your plan has them",
-      "We provide superbills for HSA/FSA reimbursement on non-covered services",
+      "We provide superbills for out-of-network reimbursement on non-covered services",
     ],
   },
   tricare: {
@@ -91,7 +91,7 @@ const COVERAGE_DATA: Record<string, {
     notCovered: [],
     tips: [
       "All services are available at our published cash-pay rates",
-      "We provide superbills for HSA/FSA and out-of-network reimbursement",
+      "We provide superbills for out-of-network reimbursement",
       "Membership plans reduce per-visit and medication costs",
       "Ask about financing options through Affirm/Klarna",
     ],
@@ -105,7 +105,7 @@ const COVERAGE_DATA: Record<string, {
       "For other plans, we operate as out-of-network providers",
       "We provide detailed superbills with CPT/ICD-10 codes for reimbursement",
       "Many plans reimburse 50–80% of out-of-network charges — check your benefits",
-      "HSA and FSA funds can be used for all medical services",
+      "Payment at checkout is by card — Klarna and Affirm available on eligible purchases",
     ],
   },
 };
@@ -200,16 +200,11 @@ const InsuranceReimbursementHub = ({
       ` : ""}
 
       <div class="hsa">
-        <h2 style="margin-top:0">💳 HSA / FSA Reimbursement</h2>
-        <p>Even for services not covered by insurance, you can use Health Savings Account (HSA) 
-        or Flexible Spending Account (FSA) funds. We provide detailed superbills with CPT and ICD-10 
-        codes that you can submit to your HSA/FSA administrator.</p>
-        <p><strong>Steps:</strong></p>
-        <ol>
-          <li>Request a superbill from our office after your visit</li>
-          <li>Submit the superbill to your HSA/FSA administrator</li>
-          <li>Reimbursement is typically processed within 5–10 business days</li>
-        </ol>
+        <h2 style="margin-top:0">💳 Payment & Documentation</h2>
+        <p>We accept major credit and debit cards at checkout. Klarna and Affirm are available on
+        eligible purchases. We do not currently accept HSA or FSA cards directly.</p>
+        <p>After your visit, we can provide a detailed superbill with CPT and ICD-10 codes for
+        out-of-network insurance reimbursement requests.</p>
       </div>
 
       <div class="tips">
@@ -332,12 +327,13 @@ const InsuranceReimbursementHub = ({
           </ul>
         </div>
 
-        {/* HSA/FSA Quick Reminder */}
+        {/* Payment reminder for staff counseling */}
         <div className="bg-accent/5 border border-accent/20 rounded-lg p-3">
-          <p className="text-xs font-medium text-foreground">💳 HSA / FSA Eligible</p>
+          <p className="text-xs font-medium text-foreground">💳 Payment at checkout</p>
           <p className="text-xs text-muted-foreground mt-1">
-            All medical services qualify for HSA/FSA reimbursement. Generate a superbill below and 
-            the patient can submit it to their HSA/FSA administrator.
+            Card only — Klarna and Affirm on eligible purchases. We do not accept HSA or FSA cards
+            directly. Generate a superbill below if the patient needs documentation for insurance
+            reimbursement.
           </p>
         </div>
 

@@ -30,6 +30,11 @@ import {
   HANDBOOK_PDF_PATH,
 } from "@/lib/integratedOpsHandbookExport";
 import {
+  CHEAT_SHEET_PDF_PATH,
+  downloadFormularyCheatSheetHtml,
+  downloadFormularyCheatSheetMarkdown,
+} from "@/lib/formularyCheatSheetExport";
+import {
   allEconomicsRows,
   fmtPct,
   fmtUsd,
@@ -213,10 +218,53 @@ const StaffSOPManual = () => {
                 className="font-jost gap-2 bg-primary"
                 asChild
               >
+                <Link to="/staff/formulary-cheat-sheet">
+                  <FileText className="h-4 w-4" />
+                  View Formulary Cheat Sheet
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="font-jost gap-2"
+                asChild
+              >
+                <a href={CHEAT_SHEET_PDF_PATH} target="_blank" rel="noopener noreferrer">
+                  <Download className="h-4 w-4" />
+                  Cheat Sheet PDF
+                </a>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                className="font-jost gap-2 bg-primary"
+                asChild
+              >
                 <a href={HANDBOOK_PDF_PATH} download>
                   <Download className="h-4 w-4" />
                   Full Handbook (PDF)
                 </a>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="font-jost gap-2"
+                onClick={() => downloadFormularyCheatSheetMarkdown()}
+              >
+                <FileText className="h-4 w-4" />
+                Cheat Sheet (MD)
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="font-jost gap-2"
+                onClick={() => downloadFormularyCheatSheetHtml()}
+              >
+                <FileText className="h-4 w-4" />
+                Cheat Sheet (HTML)
               </Button>
               <Button
                 type="button"

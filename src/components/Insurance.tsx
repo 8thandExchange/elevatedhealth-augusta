@@ -111,7 +111,7 @@ const Insurance = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <Shield className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">Receipt provided for HSA/FSA</span>
+                  <span className="text-sm text-foreground">Itemized receipts and superbills available</span>
                 </li>
               </ul>
             </Card>

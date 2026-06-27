@@ -20,9 +20,9 @@ const Affordability = () => {
         <title>Affordable Payment Options | Klarna, Affirm, Insurance | Elevated Health Augusta</title>
         <meta
           name="description"
-          content="Flexible payment plans with Klarna and Affirm. We accept Blue Cross Blue Shield, TRICARE, and VA insurance where applicable. HSA/FSA eligible. $79 Wellness Assessment, paid at booking."
+          content="Flexible payment plans with Klarna and Affirm. We accept Blue Cross Blue Shield, TRICARE, and VA insurance where applicable. $79 Wellness Assessment, paid at booking."
         />
-        <meta name="keywords" content="payment plans Augusta GA, Klarna healthcare, Affirm medical financing, HSA FSA eligible, cash-pay wellness Evans GA" />
+        <meta name="keywords" content="payment plans Augusta GA, Klarna healthcare, Affirm medical financing, cash-pay wellness Evans GA" />
         <link rel="canonical" href="https://elevatedhealthaugusta.com/affordability" />
       </Helmet>
 
@@ -130,39 +130,39 @@ const Affordability = () => {
                 </CardContent>
               </Card>
 
-              {/* HSA/FSA Card */}
+              {/* Cash Pay Card */}
               <Card className="border border-border/50 shadow-lg hover:shadow-xl transition-shadow">
                 <CardHeader className="pb-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Heart className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="font-playfair text-2xl text-foreground">HSA & FSA Eligible</CardTitle>
+                  <CardTitle className="font-playfair text-2xl text-foreground">Cash Pay &amp; Cards</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground font-jost">
-                    Use your pre-tax health savings to pay for treatments—saving you up to 30% on out-of-pocket costs.
+                    Transparent pricing with no surprise billing. Pay by card at checkout — we keep costs clear before you commit.
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>Health Savings Account (HSA)</span>
+                      <span>Major credit and debit cards</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>Flexible Spending Account (FSA)</span>
+                      <span>Klarna and Affirm on eligible purchases</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>Health Reimbursement Arrangement (HRA)</span>
+                      <span>Itemized receipts provided</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>Receipts provided for reimbursement</span>
+                      <span>Superbills for insurance reimbursement requests</span>
                     </li>
                   </ul>
                   <div className="pt-4 border-t border-border/50">
                     <p className="text-xs text-muted-foreground">
-                      Most treatments qualify as medical expenses under IRS guidelines.
+                      We do not currently accept HSA or FSA cards directly at checkout.
                     </p>
                   </div>
                 </CardContent>
@@ -192,7 +192,7 @@ const Affordability = () => {
                     </li>
                     <li className="flex items-start gap-2 text-sm text-foreground">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span>Receipt provided for HSA/FSA or reimbursement requests</span>
+                      <span>Itemized receipt provided on request</span>
                     </li>
                   </ul>
                 </CardContent>

@@ -164,7 +164,7 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
               <span className="text-accent/50 hidden sm:inline">·</span>
               <span>Cash-pay · Superbills available</span>
               <span className="text-accent/50 hidden sm:inline">·</span>
-              <span>HSA / FSA welcome</span>
+              <span>Klarna &amp; Affirm at checkout</span>
             </div>
           )}
 

@@ -60,7 +60,6 @@ const faqs = [
   { q: "Why transdermal cream instead of injections?", a: "Daily cream maintains steadier hormone levels than weekly injections — fewer peaks and crashes, and your dose can be adjusted quickly based on how you feel and what your labs show." },
   { q: "What if I prefer a gel or patch?", a: "We can prescribe FDA-approved gels, sprays, or patches via standard e-Rx when available and clinically appropriate. Compounded cream remains our default for custom dosing." },
   { q: "Is this just steroids?", a: "No. Therapeutic TRT keeps your levels in optimal physiologic range. Performance-enhancement doses are a different category — and not what we do." },
-  { q: "Can I use HSA/FSA?", a: "Yes for the consult and labs. Medication coverage varies by plan." },
 ];
 
 const HormonesMen = () => {

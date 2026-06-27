@@ -113,7 +113,7 @@ const StaffQuickCard = () => {
               </div>
               <div className="bg-muted/50 rounded-lg p-3 print:bg-gray-50">
                 <h3 className="font-bold text-xs uppercase tracking-wide mb-1">Payment Options</h3>
-                <p className="text-xs">HSA/FSA accepted</p>
+                <p className="text-xs">Card, cash, Klarna &amp; Affirm</p>
                 <p className="text-xs">Klarna/Affirm financing available</p>
               </div>
             </div>

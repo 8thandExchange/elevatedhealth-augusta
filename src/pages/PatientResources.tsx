@@ -100,7 +100,7 @@ const categoryConfig: Record<string, { label: string; icon: any; description: st
   billing_payment: {
     label: "Billing & Payment",
     icon: FileText,
-    description: "HSA/FSA, insurance, superbills, and membership info",
+    description: "Insurance, superbills, and membership info",
     color: "gold"
   },
   getting_started: {
@@ -187,8 +187,8 @@ const serviceFAQs: Record<string, Array<{ question: string; answer: string }>> =
   ],
   billing_payment: [
     {
-      question: "Can I use my HSA or FSA card to pay?",
-      answer: "Yes! HSA (Health Savings Account) and FSA (Flexible Spending Account) cards work just like credit cards at checkout. Many of our cash-pay services are eligible expenses—confirm with your plan administrator."
+      question: "What payment methods do you accept?",
+      answer: "We accept major credit and debit cards at checkout. Klarna and Affirm are available on eligible purchases for installment plans. We do not currently accept HSA or FSA cards directly — ask the front office if you need an itemized receipt for your records."
     },
     {
       question: "What is a superbill and how do I use it?",

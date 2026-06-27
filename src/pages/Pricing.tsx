@@ -190,7 +190,7 @@ const Pricing = () => {
                 "name": "Do you offer payment plans?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "We partner with Klarna and Affirm for eligible purchases at checkout. HSA and FSA cards may be used for many services; patients may also submit superbills for potential reimbursement.",
+                  "text": "We partner with Klarna and Affirm for eligible purchases at checkout. Patients may also submit superbills for potential out-of-network reimbursement.",
                 },
               },
               {
@@ -198,7 +198,7 @@ const Pricing = () => {
                 "name": "Is any of this covered by insurance?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Elevated Health Augusta is a cash-pay practice. We provide documentation so patients may self-submit to insurance or use HSA/FSA where permitted.",
+                  "text": "Elevated Health Augusta is a cash-pay practice. We provide documentation so patients may self-submit to insurance for potential out-of-network reimbursement.",
                 },
               },
               {
@@ -292,7 +292,7 @@ const Pricing = () => {
               to="/pricing-comparison" 
               className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent/80 transition-colors"
             >
-              <span>Compare Membership vs. ù La Carte Pricing</span>
+              <span>Compare Membership vs. ? La Carte Pricing</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -333,7 +333,7 @@ const Pricing = () => {
                       <p className="text-3xl font-playfair text-foreground mb-4">{p.displayPrice}</p>
                       <p className="text-xs text-muted-foreground font-jost flex-grow mb-4 leading-relaxed">
                         {key === "wellness"
-                          ? "Two signature IV drips every month, monthly check-in with our clinical team, unlimited messaging, priority booking, and 20% off boosters & ù la carte. No medication or labs bundled ù this is the IV membership."
+                          ? "Two signature IV drips every month, monthly check-in with our clinical team, unlimited messaging, priority booking, and 20% off boosters & ? la carte. No medication or labs bundled ? this is the IV membership."
                           : "Medication included where prescribed, monthly check-in with our clinical team, quarterly labs, lab review when needed, unlimited messaging."}
                       </p>
                       <Button variant="outline" asChild className="mt-auto rounded-full">
@@ -347,7 +347,7 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* Mental Wellness ù no ketamine / esketamine services offered (Phase 3 may expand) */}
+        {/* Mental Wellness ? no ketamine / esketamine services offered (Phase 3 may expand) */}
         {shouldShow("mental") && (
           <section className="py-12 lg:py-16 bg-background">
             <div className="container mx-auto px-4 max-w-3xl text-center">
@@ -358,9 +358,9 @@ const Pricing = () => {
                 Mental wellness
               </h2>
               <p className="text-muted-foreground font-jost text-sm leading-relaxed">
-                IV ketamine and SPRAVATOù (esketamine) are not offered at Elevated Health Augusta. If
+                IV ketamine and SPRAVATO? (esketamine) are not offered at Elevated Health Augusta. If
                 you are working with depression or anxiety, our clinicians can discuss evidence-based
-                options within our active service linesùsuch as medical weight loss, hormone
+                options within our active service lines?such as medical weight loss, hormone
                 optimization, IV hydration, and primary care coordination. Call{" "}
                 <a className="text-accent underline-offset-4 hover:underline" href={`tel:+1${SITE_CONFIG.phoneRaw}`}>
                   {SITE_CONFIG.phone}
@@ -472,7 +472,7 @@ const Pricing = () => {
                         </div>
                         <p className="mt-4 text-xs text-green-600 font-jost flex items-center gap-1">
                           <Check className="w-3 h-3" />
-                          Labs NOT required to start ù most patients begin same week
+                          Labs NOT required to start ? most patients begin same week
                         </p>
                       </div>
                     </div>
@@ -555,7 +555,7 @@ const Pricing = () => {
                         <div className="mt-6 p-3 bg-slate-50 rounded-lg flex items-center gap-2">
                           <ShieldAlert className="w-4 h-4 text-slate-500" />
                           <span className="text-xs text-slate-600 font-jost">
-                            Requires Medical Clearance ù Complete Steps 1 & 2 first
+                            Requires Medical Clearance ? Complete Steps 1 & 2 first
                           </span>
                         </div>
                       </div>
@@ -712,7 +712,7 @@ const Pricing = () => {
                             <p className="text-sm text-slate-600 font-jost leading-relaxed">
                               Program memberships include hormone therapy where prescribed, monthly check-ins with our clinical team,
                               quarterly labs, clinically appropriate physician review, and
-                              unlimited messagingùsee men&apos;s and women&apos;s program pages for
+                              unlimited messaging?see men&apos;s and women&apos;s program pages for
                               details.
                             </p>
                           </div>
@@ -789,7 +789,7 @@ const Pricing = () => {
                     Peptide Therapy
                   </h2>
                   <p className="text-muted-foreground font-jost text-sm">
-                    5 categories ù 15+ protocols ù Cellular optimization & longevity
+                    5 categories ? 15+ protocols ? Cellular optimization & longevity
                   </p>
                 </div>
               </div>
@@ -843,7 +843,7 @@ const Pricing = () => {
                   </CardContent>
                 </Card>
 
-                {/* NAD+ IV booster ó standalone peptide/infusion SKUs discontinued */}
+                {/* NAD+ IV booster ? standalone peptide/infusion SKUs discontinued */}
                 <Card className="border border-border hover:border-accent/30 transition-all hover:shadow-lg flex flex-col opacity-90">
                   <CardHeader className="pb-4">
                     <Badge variant="outline" className="w-fit text-amber-600 border-amber-500/30">
@@ -851,7 +851,7 @@ const Pricing = () => {
                     </Badge>
                     <h3 className="text-xl font-playfair text-foreground">NAD+ Booster</h3>
                     <p className="text-sm text-muted-foreground font-jost">
-                      $50 push add-on during any IV drip ó not sold as a standalone infusion or peptide SKU.
+                      $50 push add-on during any IV drip ? not sold as a standalone infusion or peptide SKU.
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-col flex-grow">
@@ -975,7 +975,7 @@ const Pricing = () => {
                     IV Hydration Lounge
                   </h2>
                   <p className="text-muted-foreground font-jost text-sm">
-                    Walk-ins welcome ù No membership required
+                    Walk-ins welcome ? No membership required
                   </p>
                 </div>
               </div>
@@ -1008,7 +1008,7 @@ const Pricing = () => {
                   Pay in 4 interest-free payments with Klarna at checkout
                 </p>
                 <p className="text-sm text-muted-foreground font-jost mb-4">
-                  Add-ons: <span className="text-foreground">B12 $25</span> ù <span className="text-foreground">Glutathione $35</span> ù <span className="text-foreground">NAD+ Booster $50</span>
+                  Add-ons: <span className="text-foreground">B12 $25</span> ? <span className="text-foreground">Glutathione $35</span> ? <span className="text-foreground">NAD+ Booster $50</span>
                 </p>
                 <Button variant="outline" onClick={() => navigate("/iv-lounge")}>
                   View Full IV Menu <ArrowRight className="w-4 h-4 ml-2" />
@@ -1322,7 +1322,7 @@ const Pricing = () => {
           </section>
         )}
 
-        {/* ù La Carte Pricing Section */}
+        {/* ? La Carte Pricing Section */}
         <section className="py-12 lg:py-16 bg-secondary/30">
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
@@ -1330,7 +1330,7 @@ const Pricing = () => {
                 No Membership Required
               </Badge>
               <h2 className="text-3xl md:text-4xl font-playfair text-foreground mb-4">
-                ù La Carte Pricing
+                ? La Carte Pricing
               </h2>
               <p className="text-lg text-muted-foreground font-jost max-w-2xl mx-auto">
                 Need individual medications without a membership? We offer pay-as-you-go options 
@@ -1455,9 +1455,9 @@ const Pricing = () => {
 
             <div className="mt-10 max-w-4xl mx-auto bg-card rounded-xl border border-border p-6 text-center">
               <p className="font-jost text-sm text-muted-foreground">
-                ELEVATED members receive {MEMBER_DISCOUNT_PERCENT}% off eligible ù la carte IV, peptide, and injectable
+                ELEVATED members receive {MEMBER_DISCOUNT_PERCENT}% off eligible ? la carte IV, peptide, and injectable
                 services where checkout supports the discount. Program medications are included in TRT, HRT, and GLP-1
-                membershipsùnot billed separately.
+                memberships?not billed separately.
               </p>
             </div>
           </div>
@@ -1521,7 +1521,7 @@ const Pricing = () => {
                     </div>
                     <h3 className="font-playfair text-xl text-foreground mb-2">Pay Over Time</h3>
                     <p className="text-muted-foreground font-jost text-sm mb-4">
-                      Choose monthly payments from 3-36 months. Know your rate upfrontùno hidden fees, ever.
+                      Choose monthly payments from 3-36 months. Know your rate upfront?no hidden fees, ever.
                     </p>
                     <ul className="space-y-2">
                       <li className="flex items-center gap-2 text-sm font-jost text-foreground">
@@ -1548,9 +1548,9 @@ const Pricing = () => {
                       <BadgeCheck className="w-6 h-6 text-accent" />
                     </div>
                     <div>
-                      <h4 className="font-playfair text-lg text-foreground">HSA/FSA Accepted</h4>
+                      <h4 className="font-playfair text-lg text-foreground">Flexible Payment Options</h4>
                       <p className="text-sm text-muted-foreground font-jost">
-                        Use your pre-tax health savings for most of our services
+                        Pay by card at checkout ? Klarna and Affirm available on eligible purchases
                       </p>
                     </div>
                   </div>
@@ -1571,7 +1571,7 @@ const Pricing = () => {
               Not Sure Where to Start?
             </h2>
             <p className="text-lg text-muted-foreground font-jost max-w-2xl mx-auto mb-4">
-              Chat with our <span className="font-semibold text-foreground">Virtual Care Team</span> for instant answers about pricing, insurance, and logisticsù24/7.
+              Chat with our <span className="font-semibold text-foreground">Virtual Care Team</span> for instant answers about pricing, insurance, and logistics?24/7.
             </p>
             <p className="text-sm text-muted-foreground font-jost max-w-xl mx-auto mb-8 italic">
               When you&apos;re ready for personalized medical guidance, book a{" "}
@@ -1646,18 +1646,18 @@ const Pricing = () => {
                   Is any of this covered by insurance?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground font-jost pb-4">
-                  Elevated Health Augusta is cash-pay. We provide superbills for potential out-of-network reimbursement
-                  and accept many HSA/FSA cards. Coverage varies by plan.
+                  Elevated Health Augusta is cash-pay. We provide superbills for potential out-of-network reimbursement.
+                  Coverage varies by plan.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-5" className="border border-border rounded-lg px-6 py-1">
                 <AccordionTrigger className="text-left font-playfair text-lg hover:no-underline py-4">
-                  What's included in the ù la carte consultations?
+                  What's included in the ? la carte consultations?
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground font-jost pb-4">
                   {CORE_SERVICES.wellnessAssessment.displayPrice} visits include history, goals, vitals, and a written
-                  plan recommendation. Labs and program fees are quoted separately before you commitùno hidden bundles.
+                  plan recommendation. Labs and program fees are quoted separately before you commit?no hidden bundles.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

@@ -75,6 +75,7 @@ const ARTICLES: HelpArticle[] = [
       { label: "Lab catalog (panels, COGS, draw rules)", to: "/lab-catalog" },
       { label: "Vendor guide", to: "/staff/vendor-guide" },
       { label: "SOP Manual", to: "/staff/sop-manual" },
+      { label: "Formulary cheat sheet", to: "/staff/formulary-cheat-sheet" },
       { label: "Formulary economics", to: "/formulary-economics" },
     ],
   },
@@ -137,6 +138,7 @@ export function StaffHelpWidget() {
       { label: "Clinical policy", to: "/clinical-policy" },
       { label: "Formulary economics", to: "/formulary-economics" },
       { label: "SOP Manual", to: "/staff/sop-manual", icon: ClipboardList },
+      { label: "Formulary cheat sheet", to: "/staff/formulary-cheat-sheet", icon: ClipboardList },
     ],
     [],
   );

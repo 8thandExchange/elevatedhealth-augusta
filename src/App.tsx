@@ -102,6 +102,7 @@ const ClinicalProtocolLibrary = lazy(() => import("./pages/ClinicalProtocolLibra
 const ClinicalProtocolDetail = lazy(() => import("./pages/ClinicalProtocolDetail"));
 const ClinicalProtocolEditor = lazy(() => import("./components/provider/ClinicalProtocolEditor"));
 const StaffSOPManual = lazy(() => import("./pages/StaffSOPManual"));
+const StaffFormularyCheatSheet = lazy(() => import("./pages/StaffFormularyCheatSheet"));
 const StaffSystemGuide = lazy(() => import("./pages/StaffSystemGuide"));
 const StaffClinicalPathway = lazy(() => import("./pages/StaffClinicalPathway"));
 const StaffVendorGuide = lazy(() => import("./pages/StaffVendorGuide"));
@@ -277,6 +278,13 @@ const App = () => {
             <ProviderLayout title="SOP Manual" subtitle="Algorithms · financials · workflows" showNavbar={false}>
               <Suspense fallback={<RouteFallback />}>
                 <StaffSOPManual />
+              </Suspense>
+            </ProviderLayout>
+          } />
+          <Route path="/staff/formulary-cheat-sheet" element={
+            <ProviderLayout title="Formulary Cheat Sheet" subtitle="Memberships · IV · hormones · peptides" showNavbar={false}>
+              <Suspense fallback={<RouteFallback />}>
+                <StaffFormularyCheatSheet />
               </Suspense>
             </ProviderLayout>
           } />

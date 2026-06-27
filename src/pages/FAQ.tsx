@@ -104,10 +104,6 @@ const FAQ = () => {
       a: "We are cash-pay and do not bill insurance. We can provide a superbill for you to submit to your plan for possible out-of-network reimbursement — coverage is never guaranteed.",
     },
     {
-      q: "Can I use HSA or FSA?",
-      a: "Many patients use HSA/FSA cards for eligible services, but eligibility depends on your plan administrator. We recommend confirming with them before paying.",
-    },
-    {
       q: "Do you offer financing?",
       a: "Yes — Affirm and Klarna are available where supported at checkout. Terms are set by the financing partner.",
     },

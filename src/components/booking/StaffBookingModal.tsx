@@ -681,7 +681,7 @@ const StaffBookingModal = ({
                       <Label htmlFor="iv-pay-at-visit" className="flex-1 cursor-pointer">
                         <p className="font-jost font-medium">Pay at visit</p>
                         <p className="text-xs text-muted-foreground">
-                          Patient pays in the lounge with card, cash, or HSA.
+                          Patient pays in the lounge with card or cash.
                         </p>
                       </Label>
                     </CardContent>

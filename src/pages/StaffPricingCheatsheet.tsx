@@ -35,6 +35,9 @@ const StaffPricingCheatsheet = () => {
             <Button type="button" variant="outline" size="sm" className="font-jost" onClick={() => window.print()}>
               Print
             </Button>
+            <Button asChild variant="default" size="sm" className="font-jost">
+              <Link to="/staff/formulary-cheat-sheet">Full formulary cheat sheet (PDF layout)</Link>
+            </Button>
           </div>
 
           <div>
