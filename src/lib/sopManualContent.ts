@@ -5,9 +5,9 @@
 
 export const SOP_MANUAL_META = {
   title: "Elevated Health Augusta — Standard Operating Procedures",
-  version: "1.1.0",
-  effectiveDate: "2026-06-15",
-  owner: "Troy Akers, DO / Dennis Williams",
+  version: "2.0.0",
+  effectiveDate: "2026-06-26",
+  owner: "Dr. Troy Akers / Dr. Dennis Williams",
   classification: "Internal — staff & management only",
   address: "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809",
   phone: "(706) 760-3470",
@@ -497,7 +497,8 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       {
         step: "8.IV.1",
         phase: "IV Lounge",
-        action: "Present IV menu: Myers, NAD+ 250/500, pushes, custom build from add-ons.",
+        action:
+          "Present IV menu: The Resurrection, The Meyers, Beast Mode, The Shield, The Glow; NAD+ $50 booster only; add-on pushes.",
         charge: "C-05: menu price at checkout",
       },
       {
@@ -680,7 +681,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       { step: "1", action: "Lead with ELEVATED program price if patient qualifies for a program." },
       {
         step: "2",
-        if: "Patient holds active ELEVATED program (TRT/HRT/GLP-1/Wellness/Metabolic)",
+        if: "Patient holds active ELEVATED program (TRT/HRT/GLP-1/IV)",
         then: "À la carte add-ons: 20% off per pricing.ts MEMBER_DISCOUNT_PERCENT.",
       },
       {

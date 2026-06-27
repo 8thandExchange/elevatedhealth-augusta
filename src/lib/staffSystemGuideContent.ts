@@ -64,8 +64,8 @@ export const PATIENT_JOURNEY_STEPS = [
 export const LANE_A_IV_STEPS = [
   "Patient walks in or books IV Lounge online.",
   "IV screening edge function runs hard blocks (CHF, pregnancy, G6PD for high-dose vitamin C, etc.).",
-  "Select drip or push; charge at checkout (Myers, NAD+, glutathione, custom build).",
-  "Members receive 15% off IV add-ons.",
+  "Select drip or push; charge at checkout (signature drips $139–$169; NAD+ $50 booster; glutathione and other pushes).",
+  "Members receive 20% off IV add-ons beyond the 2 included drips on ELEVATED IV.",
   "Soft mention $79 Wellness Assessment only if hormone/weight interest surfaces.",
 ] as const;
 
@@ -168,7 +168,7 @@ export const CHARGE_CHECKPOINTS = [
     when: "Membership",
     item: "ELEVATED Programs",
     amount: `from ${ELEVATED_PROGRAMS.wellness.displayPrice}`,
-    note: "Tier = ELEVATED program: Wellness $199 / HRT $229 / TRT $249 / GLP-1 $349–$449. No legacy concierge/vitality names.",
+    note: `Tier = ELEVATED program: ${ELEVATED_PROGRAMS.wellness.name} ${ELEVATED_PROGRAMS.wellness.displayPrice} / HRT ${ELEVATED_PROGRAMS.hrt.displayPrice} / TRT ${ELEVATED_PROGRAMS.trt.displayPrice} / GLP-1 ${ELEVATED_PROGRAMS.glp1.displayPrice}. No legacy concierge/vitality names.`,
   },
   {
     when: "In-program monitoring",

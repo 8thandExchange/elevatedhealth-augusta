@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import { probeMarketingImage } from "@/hooks/useMarketingImageAvailable";
 
-type MediaMode = "video" | "poster" | "mesh";
+const mediaClass =
+  "absolute inset-0 h-full w-full object-cover object-center max-md:object-[center_40%]";
 
-/** Background layer for homepage hero — video when available, poster fallback. */
+/**
+ * Homepage hero background — poster renders immediately; video layers on when available.
+ * Wrapped in z-0 so headline/CTAs always sit above the media stack.
+ */
 export function HeroMedia() {
-  const [mode, setMode] = useState<MediaMode>("mesh");
+  const [useVideo, setUseVideo] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -15,48 +20,34 @@ export function HeroMedia() {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    (async () => {
-      if (!prefersReducedMotion && (await probeMarketingImage(MARKETING_IMAGES.heroVideo))) {
-        if (!cancelled) setMode("video");
-        return;
-      }
-      if (await probeMarketingImage(MARKETING_IMAGES.heroPoster)) {
-        if (!cancelled) setMode("poster");
-      }
-    })();
+    if (prefersReducedMotion) return;
+
+    probeMarketingImage(MARKETING_IMAGES.heroVideo).then((ok) => {
+      if (!cancelled && ok) setUseVideo(true);
+    });
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  if (mode === "video") {
-    return (
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        poster={MARKETING_IMAGES.heroPoster}
-        className="absolute inset-0 h-full w-full object-cover object-center max-md:object-[center_40%]"
-        aria-hidden
-      >
-        <source src={MARKETING_IMAGES.heroVideo} type="video/mp4" />
-      </video>
-    );
-  }
-
-  if (mode === "poster") {
-    return (
-      <img
-        src={MARKETING_IMAGES.heroPoster}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover object-center max-md:object-[center_40%]"
-        aria-hidden
-      />
-    );
-  }
-
-  return null;
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+      <img src={MARKETING_IMAGES.heroPoster} alt="" className={mediaClass} />
+      {useVideo && !videoFailed && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster={MARKETING_IMAGES.heroPoster}
+          onError={() => setVideoFailed(true)}
+          className={mediaClass}
+        >
+          <source src={MARKETING_IMAGES.heroVideo} type="video/mp4" />
+        </video>
+      )}
+    </div>
+  );
 }

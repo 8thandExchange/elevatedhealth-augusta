@@ -23,7 +23,12 @@ import {
   type SOPAlgorithm,
   type AlgorithmStep,
 } from "@/lib/sopManualContent";
-import { downloadSOPManualHtml, downloadSOPManualMarkdown } from "@/lib/sopManualExport";
+import { downloadSOPManualHtml } from "@/lib/sopManualExport";
+import {
+  downloadIntegratedOpsHandbookHtml,
+  downloadIntegratedOpsHandbookMarkdown,
+  HANDBOOK_PDF_PATH,
+} from "@/lib/integratedOpsHandbookExport";
 import {
   allEconomicsRows,
   fmtPct,
@@ -204,28 +209,39 @@ const StaffSOPManual = () => {
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
+                size="sm"
+                className="font-jost gap-2 bg-primary"
+                asChild
+              >
+                <a href={HANDBOOK_PDF_PATH} download>
+                  <Download className="h-4 w-4" />
+                  Full Handbook (PDF)
+                </a>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="font-jost gap-2"
+                onClick={() => downloadIntegratedOpsHandbookMarkdown()}
+              >
+                <FileText className="h-4 w-4" />
+                Full Handbook (MD)
+              </Button>
+              <Button
+                type="button"
                 variant="outline"
                 size="sm"
                 className="font-jost gap-2"
                 onClick={() => downloadSOPManualHtml()}
               >
-                <FileText className="h-4 w-4" />
-                Download HTML
+                SOP only (HTML)
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 className="font-jost gap-2"
-                onClick={() => downloadSOPManualMarkdown()}
-              >
-                <Download className="h-4 w-4" />
-                Download Markdown
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                className="font-jost gap-2 bg-primary"
                 onClick={() => window.print()}
               >
                 <Printer className="h-4 w-4" />
@@ -244,14 +260,14 @@ const StaffSOPManual = () => {
             </div>
             <p className="section-label mb-4">{SOP_MANUAL_META.classification}</p>
             <h1 className="font-playfair text-4xl md:text-5xl text-foreground mb-2 leading-tight">
-              Standard Operating
+              Clinical Operations
               <br />
-              <span className="italic">Procedures Manual</span>
+              <span className="italic">Handbook</span>
             </h1>
             <p className="font-playfair italic text-accent text-xl mb-6">Elevated Health Augusta</p>
             <p className="font-jost text-muted-foreground max-w-xl mx-auto mb-8">
-              Complete patient journey: counsel → labs → review → prescribe → follow-up.
-              Billing checkpoints and ethical upsell at every phase.
+              Business operations, clinical SOPs, and staff quick reference — one integrated document
+              for team discussion. Use <strong>Full Handbook</strong> download for offline review.
             </p>
             <div className="inline-grid grid-cols-2 md:grid-cols-4 gap-4 text-left font-jost text-sm border border-border rounded-lg p-6 max-w-3xl mx-auto bg-muted/20">
               <div>

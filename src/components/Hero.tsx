@@ -15,21 +15,21 @@ const Hero = () => {
     >
       <HeroMedia />
 
-      {/* Stronger top scrim so fixed navbar + logo stay readable over bright video frames */}
+      {/* Scrim stack — z-[1] sits above video (z-0), below copy (z-20) */}
       <div
-        className="absolute inset-x-0 top-0 h-28 md:h-32 bg-gradient-to-b from-primary/95 to-transparent pointer-events-none z-[1]"
+        className="absolute inset-x-0 top-0 h-28 md:h-32 bg-gradient-to-b from-primary/90 to-transparent pointer-events-none z-[1]"
         aria-hidden
       />
       <div
-        className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/72 to-primary/92 pointer-events-none z-[1]"
+        className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/55 to-primary/80 pointer-events-none z-[1]"
         aria-hidden
       />
 
-      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-28 pb-16 md:pt-40 md:pb-32">
-        <span className="eyebrow eyebrow-on-dark mb-5 md:mb-10 animate-fade-in-up">
+      <div className="relative z-20 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-28 pb-16 md:pt-40 md:pb-32">
+        <span className="eyebrow eyebrow-on-dark mb-5 md:mb-10">
           Physician-owned wellness · Evans, GA
         </span>
-        <h1 className="font-playfair text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[5.75rem] text-primary-foreground leading-[1.04] mb-6 md:mb-12 animate-fade-in-up">
+        <h1 className="font-playfair text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[5.75rem] text-primary-foreground leading-[1.04] mb-6 md:mb-12 drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)]">
           You remember what it felt like
           <br />
           <span className="italic text-accent-light" style={{ letterSpacing: "-0.025em" }}>
@@ -37,18 +37,12 @@ const Hero = () => {
           </span>
         </h1>
 
-        <p
-          className="text-base sm:text-lg md:text-2xl text-primary-foreground/80 font-jost font-light leading-relaxed mb-8 md:mb-14 max-w-2xl mx-auto animate-fade-in-up"
-          style={{ animationDelay: "0.2s" }}
-        >
+        <p className="text-base sm:text-lg md:text-2xl text-primary-foreground/90 font-jost font-light leading-relaxed mb-8 md:mb-14 max-w-2xl mx-auto drop-shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
           Board-certified physician direction for hormone optimization, peptide therapy, IV care, and
           medical weight loss — cash-pay, transparent pricing, in-person in Evans.
         </p>
 
-        <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up"
-          style={{ animationDelay: "0.4s" }}
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
             size="lg"
             variant="heroLight"
@@ -69,16 +63,12 @@ const Hero = () => {
 
         <button
           onClick={() => navigate("/how-it-works")}
-          className="mt-6 text-primary-foreground/70 font-jost text-sm underline underline-offset-4 decoration-accent-light/40 hover:text-primary-foreground hover:decoration-accent-light transition-colors animate-fade-in-up"
-          style={{ animationDelay: "0.5s" }}
+          className="mt-6 text-primary-foreground/80 font-jost text-sm underline underline-offset-4 decoration-accent-light/40 hover:text-primary-foreground hover:decoration-accent-light transition-colors"
         >
           How the clinic works →
         </button>
 
-        <p
-          className="mt-12 font-jost text-[11px] md:text-xs uppercase tracking-[0.28em] text-primary-foreground/45 animate-fade-in-up"
-          style={{ animationDelay: "0.6s" }}
-        >
+        <p className="mt-12 font-jost text-[11px] md:text-xs uppercase tracking-[0.28em] text-primary-foreground/55">
           Physician-owned · Evans, GA · LabCorp · 503A compounding
         </p>
       </div>
@@ -86,7 +76,7 @@ const Hero = () => {
       {/* Refined scroll cue — thin descending hairline rather than a bouncing chevron */}
       <button
         onClick={() => navigate("/how-it-works")}
-        className="group absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        className="group absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
         aria-label="Scroll to learn how the clinic works"
       >
         <span className="font-jost text-[10px] uppercase tracking-[0.3em] text-primary-foreground/40 group-hover:text-primary-foreground/70 transition-colors">
