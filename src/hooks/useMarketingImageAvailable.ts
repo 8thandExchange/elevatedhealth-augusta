@@ -48,3 +48,29 @@ export function useAnyMarketingImageAvailable(srcs: string[]): boolean | null {
 
   return any;
 }
+
+/** Probe a set of paths once; avoids mounting empty layout shells while per-image hooks catch up. */
+export function useMarketingImagesBatch(srcs: string[]): {
+  ready: boolean;
+  available: ReadonlySet<string>;
+} {
+  const [ready, setReady] = useState(false);
+  const [available, setAvailable] = useState<ReadonlySet<string>>(() => new Set());
+
+  useEffect(() => {
+    let cancelled = false;
+    setReady(false);
+    Promise.all(
+      srcs.map(async (src) => [src, await probeMarketingImage(src)] as const),
+    ).then((results) => {
+      if (cancelled) return;
+      setAvailable(new Set(results.filter(([, ok]) => ok).map(([src]) => src)));
+      setReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [srcs.join("|")]);
+
+  return { ready, available };
+}

@@ -7,14 +7,17 @@ type Props = {
   alt: string;
   className?: string;
   imgClassName?: string;
+  /** Parent already probed this path — skip second HEAD round-trip. */
+  preverified?: boolean;
 };
 
 /**
  * Renders only when the file exists under /public. Shows a muted shell while the image loads
  * so layout does not flash as a blank white panel.
  */
-export function MarketingImage({ src, alt, className, imgClassName }: Props) {
-  const available = useMarketingImageAvailable(src);
+export function MarketingImage({ src, alt, className, imgClassName, preverified }: Props) {
+  const probed = useMarketingImageAvailable(preverified ? undefined : src);
+  const available = preverified ? true : probed;
   const [loaded, setLoaded] = useState(false);
 
   if (available !== true) return null;

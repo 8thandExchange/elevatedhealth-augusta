@@ -41,33 +41,33 @@ export const useScrollReveal = (options: UseScrollRevealOptions = {}) => {
 
 // Animation classes for different reveal effects
 export const revealClasses = {
-  fadeUp: (isVisible: boolean, delay: number = 0) =>
+  fadeUp: (isVisible: boolean, delay: number = 0, forceVisible = false) =>
     `transition-all duration-700 ease-out ${
-      isVisible
-        ? 'opacity-100 translate-y-0'
-        : 'opacity-0 translate-y-8'
+      isVisible || forceVisible
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 translate-y-8"
     }`,
-  fadeIn: (isVisible: boolean, delay: number = 0) =>
+  fadeIn: (isVisible: boolean, delay: number = 0, forceVisible = false) =>
     `transition-all duration-500 ease-out ${
-      isVisible ? 'opacity-100' : 'opacity-0'
+      isVisible || forceVisible ? "opacity-100" : "opacity-0"
     }`,
-  scaleIn: (isVisible: boolean, delay: number = 0) =>
+  scaleIn: (isVisible: boolean, delay: number = 0, forceVisible = false) =>
     `transition-all duration-500 ease-out ${
-      isVisible
-        ? 'opacity-100 scale-100'
-        : 'opacity-0 scale-95'
+      isVisible || forceVisible
+        ? "opacity-100 scale-100"
+        : "opacity-0 scale-95"
     }`,
-  slideInLeft: (isVisible: boolean, delay: number = 0) =>
+  slideInLeft: (isVisible: boolean, delay: number = 0, forceVisible = false) =>
     `transition-all duration-600 ease-out ${
-      isVisible
-        ? 'opacity-100 translate-x-0'
-        : 'opacity-0 -translate-x-8'
+      isVisible || forceVisible
+        ? "opacity-100 translate-x-0"
+        : "opacity-0 -translate-x-8"
     }`,
-  slideInRight: (isVisible: boolean, delay: number = 0) =>
+  slideInRight: (isVisible: boolean, delay: number = 0, forceVisible = false) =>
     `transition-all duration-600 ease-out ${
-      isVisible
-        ? 'opacity-100 translate-x-0'
-        : 'opacity-0 translate-x-8'
+      isVisible || forceVisible
+        ? "opacity-100 translate-x-0"
+        : "opacity-0 translate-x-8"
     }`,
 };
 

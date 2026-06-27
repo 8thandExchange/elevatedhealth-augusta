@@ -1,6 +1,6 @@
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
 import { MarketingImage } from "@/components/marketing/MarketingImage";
-import { useAnyMarketingImageAvailable, useMarketingImageAvailable } from "@/hooks/useMarketingImageAvailable";
+import { useMarketingImagesBatch } from "@/hooks/useMarketingImageAvailable";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 
 const panels = [
@@ -24,46 +24,21 @@ const panels = [
   },
 ] as const;
 
-function GalleryPanel({
-  panel,
-  index,
-  isVisible,
-}: {
-  panel: (typeof panels)[number];
-  index: number;
-  isVisible: boolean;
-}) {
-  const available = useMarketingImageAvailable(panel.src);
-  if (available !== true) return null;
-
-  return (
-    <figure
-      className={`group bg-primary ${revealClasses.fadeUp(isVisible)}`}
-      style={{ transitionDelay: `${index * 100}ms` }}
-    >
-      <MarketingImage
-        src={panel.src}
-        alt={panel.alt}
-        className="aspect-[4/5] md:aspect-[3/4] transition-transform duration-500 group-hover:scale-[1.02]"
-      />
-      <figcaption className="px-6 py-5 border-t border-accent/20">
-        <p className="font-jost text-[10px] uppercase tracking-[2.5px] text-accent mb-1">{panel.tag}</p>
-        <p className="font-playfair text-lg text-primary-foreground">{panel.caption}</p>
-      </figcaption>
-    </figure>
-  );
-}
+const panelSrcs = panels.map((p) => p.src);
 
 const HomeClinicGallery = () => {
   const { ref, isVisible } = useScrollReveal();
-  const hasAnyPhoto = useAnyMarketingImageAvailable(panels.map((p) => p.src));
+  const { ready, available } = useMarketingImagesBatch(panelSrcs);
 
-  if (hasAnyPhoto !== true) return null;
+  const visiblePanels = panels.filter((p) => available.has(p.src));
+
+  // Wait until probes finish — never mount the navy band with an empty photo grid.
+  if (!ready || visiblePanels.length === 0) return null;
 
   return (
     <section ref={ref} className="storefront-section bg-primary text-primary-foreground overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8">
-        <div className={`max-w-2xl mb-12 md:mb-16 ${revealClasses.fadeUp(isVisible)}`}>
+        <div className={`max-w-2xl mb-12 md:mb-16 ${revealClasses.fadeUp(isVisible, 0, true)}`}>
           <p className="section-label section-label-on-dark mb-4">The Space</p>
           <h2 className="font-playfair text-3xl md:text-4xl lg:text-5xl leading-tight">
             Designed for calm, <span className="italic">not crowds.</span>
@@ -74,9 +49,32 @@ const HomeClinicGallery = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-px bg-accent/30 border border-accent/20">
-          {panels.map((p, i) => (
-            <GalleryPanel key={p.tag} panel={p} index={i} isVisible={isVisible} />
+        <div
+          className={`grid gap-px bg-accent/30 border border-accent/20 ${
+            visiblePanels.length === 1
+              ? "max-w-md mx-auto"
+              : visiblePanels.length === 2
+                ? "md:grid-cols-2 max-w-3xl mx-auto"
+                : "md:grid-cols-3"
+          }`}
+        >
+          {visiblePanels.map((panel, index) => (
+            <figure
+              key={panel.tag}
+              className={`group bg-primary ${revealClasses.fadeUp(isVisible, 0, true)}`}
+              style={{ transitionDelay: `${index * 100}ms` }}
+            >
+              <MarketingImage
+                src={panel.src}
+                alt={panel.alt}
+                preverified
+                className="aspect-[4/5] md:aspect-[3/4] transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+              <figcaption className="px-6 py-5 border-t border-accent/20">
+                <p className="font-jost text-[10px] uppercase tracking-[2.5px] text-accent mb-1">{panel.tag}</p>
+                <p className="font-playfair text-lg text-primary-foreground">{panel.caption}</p>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>

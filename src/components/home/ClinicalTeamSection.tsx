@@ -1,26 +1,30 @@
 import { MarketingImage } from "@/components/marketing/MarketingImage";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
-import { useMarketingImageAvailable } from "@/hooks/useMarketingImageAvailable";
+import { useMarketingImagesBatch } from "@/hooks/useMarketingImageAvailable";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
+
+const teamSrcs = [MARKETING_IMAGES.staffCaroline, MARKETING_IMAGES.physician];
 
 const ClinicalTeamSection = () => {
   const { ref, isVisible } = useScrollReveal();
-  const hasCaroline = useMarketingImageAvailable(MARKETING_IMAGES.staffCaroline) === true;
-  const hasPhysician = useMarketingImageAvailable(MARKETING_IMAGES.physician) === true;
+  const { ready, available } = useMarketingImagesBatch(teamSrcs);
 
-  if (!hasCaroline && !hasPhysician) return null;
+  const hasCaroline = available.has(MARKETING_IMAGES.staffCaroline);
+  const hasPhysician = available.has(MARKETING_IMAGES.physician);
+
+  if (!ready || (!hasCaroline && !hasPhysician)) return null;
 
   return (
     <section ref={ref} className="section-band-surface">
       <div className="container mx-auto px-6 lg:px-8 space-y-20 md:space-y-28">
-        {/* Caroline — forward-facing clinical team */}
         {hasCaroline && (
           <div
-            className={`max-w-5xl mx-auto grid gap-12 lg:gap-20 items-center md:grid-cols-2 ${revealClasses.fadeUp(isVisible)}`}
+            className={`max-w-5xl mx-auto grid gap-12 lg:gap-20 items-center md:grid-cols-2 ${revealClasses.fadeUp(isVisible, 0, true)}`}
           >
             <MarketingImage
               src={MARKETING_IMAGES.staffCaroline}
               alt="Caroline Marshall, RN — Elevated Health Augusta"
+              preverified
               className="aspect-[4/5] border border-border order-1"
             />
 
@@ -49,11 +53,9 @@ const ClinicalTeamSection = () => {
           </div>
         )}
 
-        {/* Physician ownership — Dr. Akers & Dr. Williams, no titles */}
         {hasPhysician && (
           <div
-            className={`max-w-5xl mx-auto grid gap-12 lg:gap-20 items-center md:grid-cols-2 ${revealClasses.fadeUp(isVisible)}`}
-            style={{ transitionDelay: "120ms" }}
+            className={`max-w-5xl mx-auto grid gap-12 lg:gap-20 items-center md:grid-cols-2 ${revealClasses.fadeUp(isVisible, 120, true)}`}
           >
             <div className="order-2 md:order-1">
               <p className="section-label mb-5">Physician-Owned</p>
@@ -85,6 +87,7 @@ const ClinicalTeamSection = () => {
             <MarketingImage
               src={MARKETING_IMAGES.physician}
               alt="Dr. Troy Akers — Elevated Health Augusta"
+              preverified
               className="aspect-[4/5] border border-border order-1 md:order-2"
               imgClassName="grayscale-[10%]"
             />
