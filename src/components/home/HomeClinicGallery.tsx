@@ -12,14 +12,14 @@ const panels = [
   },
   {
     src: MARKETING_IMAGES.clinicInterior,
-    alt: "Private treatment suite at Elevated Health Augusta",
-    caption: "Private suites",
-    tag: "Environment",
+    alt: "Clinical IV preparation at Elevated Health Augusta",
+    caption: "Clinical precision",
+    tag: "In-office care",
   },
   {
     src: MARKETING_IMAGES.ivLounge,
-    alt: "IV therapy lounge at Elevated Health Augusta",
-    caption: "IV Lounge",
+    alt: "RN administering IV therapy to a patient at Elevated Health Augusta",
+    caption: "Your IV visit",
     tag: "Walk-in care",
   },
 ] as const;
