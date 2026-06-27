@@ -23,7 +23,7 @@ import { useBooking } from "@/contexts/BookingContext";
 import { consultGatedServicesCopy } from "@/lib/serviceConfig";
 import { CORE_SERVICES } from "@/lib/stripeConfig";
 import { MarketingImage } from "@/components/marketing/MarketingImage";
-import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import { MARKETING_IMAGES, MARKETING_IMAGE_FRAMING } from "@/lib/marketingImages";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -411,7 +411,8 @@ const Contact = ({ showCredibilityBar = false }: { showCredibilityBar?: boolean 
               <MarketingImage
                 src={MARKETING_IMAGES.staffCaroline}
                 alt="Caroline Marshall at Elevated Health Augusta in Evans, Georgia"
-                className="aspect-[16/10] border border-border rounded-sm shadow-[var(--shadow-sm)]"
+                className="aspect-[2/3] max-h-[420px] w-full border border-border rounded-sm shadow-[var(--shadow-sm)]"
+                imgClassName={MARKETING_IMAGE_FRAMING.staffCaroline}
               />
 
               {/* Location Details */}

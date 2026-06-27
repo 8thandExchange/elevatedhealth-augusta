@@ -1,5 +1,5 @@
 import { MarketingImage } from "@/components/marketing/MarketingImage";
-import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import { MARKETING_IMAGES, MARKETING_IMAGE_FRAMING } from "@/lib/marketingImages";
 import { useMarketingImagesBatch } from "@/hooks/useMarketingImageAvailable";
 import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 
@@ -25,7 +25,8 @@ const ClinicalTeamSection = () => {
               src={MARKETING_IMAGES.staffCaroline}
               alt="Caroline Marshall, RN — Elevated Health Augusta"
               preverified
-              className="aspect-[4/5] border border-border order-1"
+              className="aspect-[2/3] border border-border order-1"
+              imgClassName={MARKETING_IMAGE_FRAMING.staffCaroline}
             />
 
             <div className="order-2">

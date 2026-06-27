@@ -22,3 +22,8 @@ export const MARKETING_IMAGES = {
 } as const;
 
 export type MarketingImageKey = keyof typeof MARKETING_IMAGES;
+
+/** object-position tweaks for portraits that must keep the subject's head in frame */
+export const MARKETING_IMAGE_FRAMING = {
+  staffCaroline: "object-[50%_8%]",
+} as const;
