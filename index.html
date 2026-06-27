@@ -63,6 +63,26 @@
 
     <!-- GoHighLevel Chat Widget (Chloe) -->
     <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="68d55e4eb4ddc5808f43b3d2"></script>
+    <script>
+      (function () {
+        function markLoaded() {
+          document.querySelectorAll("chat-widget").forEach(function (el) {
+            el.setAttribute("data-loaded", "true");
+          });
+        }
+        window.addEventListener("LC_chatWidgetLoaded", markLoaded);
+        var attempts = 0;
+        var timer = setInterval(function () {
+          attempts += 1;
+          if (window.leadConnector && window.leadConnector.chatWidget) {
+            markLoaded();
+            clearInterval(timer);
+          } else if (attempts >= 80) {
+            clearInterval(timer);
+          }
+        }, 250);
+      })();
+    </script>
   </head>
 
   <body>

@@ -547,17 +547,19 @@ label {
 chat-widget {
   position: fixed !important;
   z-index: 40;
+}
+
+/* Hide empty host until GHL injects the launcher; reveal once loaded or opened via API */
+chat-widget:not([data-loaded="true"]) {
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 
-chat-widget * {
+chat-widget[data-loaded="true"] {
+  opacity: 1;
+  visibility: visible;
   pointer-events: auto;
-}
-
-/* Prevent empty widget host from showing as a white block before load */
-chat-widget:not([data-loaded="true"]) {
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
 @keyframes card-entrance {

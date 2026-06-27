@@ -2,26 +2,43 @@ export const OPEN_ASSISTANT_CHAT_EVENT = "open-assistant-chat";
 
 const LAUNCHER_SELECTORS = [
   '[aria-label="Open chat"]',
+  '[aria-label="Open Chat"]',
   '[aria-label="Open assistant"]',
   '[aria-label="Chat"]',
+  '[aria-label="Chat with us"]',
   ".lc_text-widget--btn",
+  '[class*="text-widget"][class*="btn"]',
   'button[data-testid="launcher"]',
+  '[class*="launcher"]',
+  "button",
 ] as const;
 
 const CLOSE_SELECTORS = [
   '[aria-label="Close chat"]',
+  '[aria-label="Close Chat"]',
   '[aria-label="Close assistant"]',
   '[aria-label="Close"]',
   ".lc_text-widget--close",
   'button[data-testid="close"]',
 ] as const;
 
+function markChatWidgetsLoaded(): void {
+  document.querySelectorAll("chat-widget").forEach((el) => {
+    el.setAttribute("data-loaded", "true");
+  });
+}
+
 function tryLeadConnectorApi(): boolean {
-  const open = window.leadConnector?.chatWidget?.openWidget;
+  const widget = window.leadConnector?.chatWidget;
+  if (!widget) return false;
+
+  const open = widget.openWidget;
   if (typeof open === "function") {
-    open();
+    open.call(widget);
+    markChatWidgetsLoaded();
     return true;
   }
+
   return false;
 }
 
@@ -39,8 +56,11 @@ function clickMatching(root: ParentNode, selectors: readonly string[]): boolean 
     const nodes = root.querySelectorAll(selector);
     for (const node of nodes) {
       if (!(node instanceof HTMLElement)) continue;
-      node.click();
-      return true;
+      if (node.matches('button, [role="button"], a')) {
+        node.click();
+        markChatWidgetsLoaded();
+        return true;
+      }
     }
   }
 
@@ -58,7 +78,7 @@ function forEachChatHost(fn: (root: ParentNode) => boolean): boolean {
   for (const host of hosts) {
     if (host.shadowRoot && fn(host.shadowRoot)) return true;
   }
-  return false;
+  return fn(document);
 }
 
 function tryShadowDomClick(): boolean {
@@ -78,6 +98,7 @@ export function openAssistantChat(): void {
   if (tryOpen()) return;
 
   const onLoaded = () => {
+    markChatWidgetsLoaded();
     tryOpen();
   };
   window.addEventListener("LC_chatWidgetLoaded", onLoaded, { once: true });
@@ -85,6 +106,9 @@ export function openAssistantChat(): void {
   let attempts = 0;
   const interval = window.setInterval(() => {
     attempts += 1;
+    if (window.leadConnector?.chatWidget) {
+      markChatWidgetsLoaded();
+    }
     if (tryOpen() || attempts >= 40) {
       window.clearInterval(interval);
       window.removeEventListener("LC_chatWidgetLoaded", onLoaded);
@@ -99,8 +123,6 @@ export function closeAssistantChat(): void {
 
 if (typeof window !== "undefined") {
   window.addEventListener("LC_chatWidgetLoaded", () => {
-    document.querySelectorAll("chat-widget").forEach((el) => {
-      el.setAttribute("data-loaded", "true");
-    });
+    markChatWidgetsLoaded();
   });
 }

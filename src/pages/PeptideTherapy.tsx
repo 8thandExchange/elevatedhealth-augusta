@@ -8,9 +8,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 import { SITE_CONFIG } from "@/lib/siteConfig";
-import { CORE_SERVICES, ELEVATED_PROGRAMS } from "@/lib/stripeConfig";
-import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
-import { MembershipComparison } from "@/components/marketing/MembershipComparison";
+import { CORE_SERVICES, PEPTIDE_PRODUCTS } from "@/lib/stripeConfig";
+import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
 import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
 import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
@@ -30,7 +29,7 @@ import {
 
 const PRICE_CONSULT = CORE_SERVICES.wellnessAssessment.displayPrice;
 const PRICE_PANEL = CORE_SERVICES.comprehensivePanel.displayPrice;
-const PRICE_PROGRAM_WELLNESS = ELEVATED_PROGRAMS.wellness.displayPrice;
+const PEPTIDE_FROM = PEPTIDE_PRODUCTS.sermorelin.displayPrice;
 
 const steps = [
   {
@@ -207,9 +206,36 @@ const PeptideTherapy = () => {
           </section>
 
           <section className="py-16 md:py-24 bg-muted/20 border-y border-border">
-            <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-10">
-              <EverythingIncludedPillars intro="ELEVATED members receive 20% off eligible à la carte services when clinically appropriate." />
-              <MembershipComparison program="wellness" />
+            <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+              <div className="rounded-xl border border-border bg-background p-8 md:p-10 shadow-[var(--shadow-sm)]">
+                <p className="section-label mb-3">Pricing model</p>
+                <h2 className="font-playfair text-2xl md:text-3xl text-foreground mb-4">
+                  Peptides are <span className="italic">à la carte</span> — not an IV membership
+                </h2>
+                <div className="space-y-4 font-jost font-light text-sm md:text-base text-muted-foreground leading-relaxed max-w-3xl">
+                  <p>
+                    There is no separate peptide membership. After your Wellness Assessment, labs when
+                    indicated, and provider review, eligible compounds are billed individually — not
+                    bundled into ELEVATED IV or any Rx program.
+                  </p>
+                  <p>
+                    Active ELEVATED members (HRT, TRT, or GLP-1) receive {MEMBER_DISCOUNT_PERCENT}% off
+                    eligible peptide fills at checkout. That discount does not replace the consult-gated
+                    review required before any peptide is ordered.
+                  </p>
+                  <p>
+                    Monthly IV drips live on the{" "}
+                    <Link to="/iv-lounge" className="text-accent underline-offset-4 hover:underline">
+                      IV Lounge
+                    </Link>{" "}
+                    and{" "}
+                    <Link to="/membership" className="text-accent underline-offset-4 hover:underline">
+                      ELEVATED IV
+                    </Link>{" "}
+                    membership — separate from peptide therapy.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -224,9 +250,9 @@ const PeptideTherapy = () => {
                     sub: `or ${CORE_SERVICES.expandedPanel.displayPrice} expanded when ordered`,
                   },
                   {
-                    l: ELEVATED_PROGRAMS.wellness.name,
-                    p: PRICE_PROGRAM_WELLNESS,
-                    sub: "Member discount on eligible services",
+                    l: "À la carte peptides",
+                    p: `From ${PEPTIDE_FROM}`,
+                    sub: `After provider review · members save ${MEMBER_DISCOUNT_PERCENT}%`,
                   },
                 ].map((c) => (
                   <div key={c.l} className="px-6 py-8 md:py-4 text-center">
@@ -340,13 +366,25 @@ const PeptideTherapy = () => {
                   </span>
                 </div>
                 <div className="flex justify-between border-b border-border/60 pb-3">
-                  <span>{ELEVATED_PROGRAMS.wellness.name}</span>
-                  <span className="font-medium">{PRICE_PROGRAM_WELLNESS}</span>
+                  <span>À la carte peptides (when prescribed)</span>
+                  <span className="font-medium text-right">From {PEPTIDE_FROM}</span>
                 </div>
               </div>
               <p className="font-jost text-sm text-muted-foreground mt-6">
-                Ongoing peptide program pricing is quoted after your provider review — not listed as a public
-                catalog. See <Link to="/pricing" className="text-accent underline-offset-4 hover:underline">full pricing</Link> for program memberships.
+                Ongoing peptide pricing is quoted after your provider review — not listed as a public
+                catalog. IV membership and Rx program pricing are on{" "}
+                <Link to="/iv-lounge" className="text-accent underline-offset-4 hover:underline">
+                  IV Lounge
+                </Link>{" "}
+                and{" "}
+                <Link to="/membership" className="text-accent underline-offset-4 hover:underline">
+                  Membership
+                </Link>
+                . See{" "}
+                <Link to="/pricing" className="text-accent underline-offset-4 hover:underline">
+                  full pricing
+                </Link>{" "}
+                for all programs.
               </p>
             </div>
           </section>
