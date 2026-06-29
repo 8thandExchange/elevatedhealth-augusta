@@ -4,7 +4,7 @@ const stats = [
   { value: "$79", label: "Wellness Assessment", detail: "Universal front door — credited toward your program when you enroll" },
   { value: "503A", label: "Compounding pharmacy", detail: "Patient-specific medications from licensed 503A partners" },
   { value: "LabCorp", label: "Lab partner", detail: "In-office draws at Evans — results in your portal" },
-  { value: "100%", label: "Physician-owned", detail: "Every protocol signed by a board-certified MD" },
+  { value: "100%", label: "Physician-owned", detail: "Every protocol signed by a board-certified physician" },
 ];
 
 const TrustStatsSection = () => {

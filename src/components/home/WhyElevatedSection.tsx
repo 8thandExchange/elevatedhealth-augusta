@@ -3,7 +3,7 @@ import { useScrollReveal, revealClasses } from "@/hooks/useScrollReveal";
 const pillars = [
   {
     label: "Physician-Led",
-    title: "Every protocol signed by an MD.",
+    title: "Every protocol signed by a board-certified physician.",
     body: "Not a med-spa. Not a chain. Care is directed by board-certified physicians and administered in-clinic by experienced clinical staff.",
   },
   {
