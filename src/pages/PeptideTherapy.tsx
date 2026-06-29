@@ -137,6 +137,9 @@ const PeptideTherapy = () => {
           <section className={storefrontHeroSection}>
             <div className={storefrontHeroInner}>
               <p className={storefrontHeroLabel}>Peptide Therapy</p>
+              <p className="font-jost italic text-base md:text-lg text-primary-foreground/85 mb-3 md:mb-5">
+                Training harder than your body bounces back?
+              </p>
               <h1 className={storefrontHeroTitle}>
                 Recovery Peptide Review.
                 <br />

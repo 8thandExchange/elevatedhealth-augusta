@@ -61,6 +61,10 @@ const Hero = () => {
           </Button>
         </div>
 
+        <p className="mt-4 font-jost text-sm text-center text-primary-foreground/70">
+          Transparent pricing, no surprise bills · Physician-owned · Evans, GA
+        </p>
+
         <button
           onClick={() => navigate("/how-it-works")}
           className="mt-6 text-primary-foreground/80 font-jost text-sm underline underline-offset-4 decoration-accent-light/40 hover:text-primary-foreground hover:decoration-accent-light transition-colors"
