@@ -392,6 +392,8 @@ export function buildStaffQuickCardHtml(): string {
         </div>`,
       ).join("")}
     </div>
+    <h3>Combo medication add-ons — second Rx lane (save $100/mo vs two full programs)</h3>
+    <p style="font-size:0.62rem;margin:0 0 0.25rem">Use Elevated Combo Selector in provider portal. Peptides layer on as separate SKUs (−20% member). Full playbook → Staff Complete Reference PDF.</p>
     ${tableHtml(["Combo add-on (med only)", "Price", "Note"], COMBO_ADDON_ROWS)}
     <h3>Visits, labs & onboarding</h3>
     ${tableHtml(["Service", "Price", "Notes"], VISIT_LAB_ROWS)}
@@ -424,7 +426,7 @@ export function buildStaffQuickCardHtml(): string {
       <div>
         <h3>Recovery (consult-gated)</h3>
         ${tableHtml(["Product", "Price", "Notes"], [[RECOVERY_STACK.name, RECOVERY_STACK.displayPrice, RECOVERY_STACK.memberDisplay + " member · " + RECOVERY_STACK.note]])}
-        <p style="font-size:0.62rem;color:var(--muted);margin-top:0.35rem">Full peptide &amp; à la carte pricing → Formulary Cheat Sheet (digital/PDF).</p>
+        <p style="font-size:0.62rem;color:var(--muted);margin-top:0.35rem">Full formulary, dosing &amp; multi-peptide pricing → Staff Complete Reference PDF.</p>
       </div>
     </div>
     <div class="two-col" style="margin-top:0.35rem">
@@ -449,7 +451,7 @@ export function buildStaffQuickCardHtml(): string {
       ).join("")}
     </div>
     <div class="callout" style="margin-top:0.4rem">
-      <strong>Deep references:</strong> Formulary Cheat Sheet (every SKU) · SOP Manual (algorithms) · ${escapeHtml(m.portal)}
+      <strong>Deep references:</strong> Staff Complete Reference (formulary + dosing + multi-peptide strategy) · SOP Manual (algorithms) · ${escapeHtml(m.portal)}
     </div>
     `,
   );
@@ -499,7 +501,7 @@ export function buildStaffQuickCardMarkdown(): string {
     "",
     ...MEMBERSHIP_ROWS.map((r) => `- **${r.name}** ${r.price} — ${r.highlight}`),
     "",
-    "See Formulary Cheat Sheet for complete SKU list.",
+    "See Staff Complete Reference for full formulary, dosing, and multi-peptide pricing.",
     "",
   ].join("\n");
 }
@@ -665,9 +667,10 @@ export function buildStaffDeskCardHtml(): string {
         ${escapeHtml(STAFF_OPENING_SCRIPT)}
       </div>
       <div class="bar-box">
-        <strong>Two lanes — never mix</strong>
-        <b>Lane A (IV):</b> Walk-in drips/pushes — no $79 consult.<br/>
-        <b>Lane B (Rx):</b> $79 Wellness Assessment → labs → physician review → program ($199–$449/mo).
+        <strong>Two lanes + multi-service stacking</strong>
+        <b>Lane A (IV):</b> Walk-in — no $79 consult.<br/>
+        <b>Lane B (Rx):</b> $79 Assessment → labs → program.<br/>
+        <b>Multi-service:</b> Anchor + med add-on (save $100/mo) + peptides (−20% member) — Combo Selector in portal.
       </div>
     </div>
     <div class="programs">
@@ -705,7 +708,7 @@ export function buildStaffDeskCardHtml(): string {
         </div>
       </div>
     </div>
-    <div class="foot">Full SKU list → Formulary Cheat Sheet PDF · Algorithms → SOP Manual · ${escapeHtml(m.domain)}</div>
+    <div class="foot">Full formulary → Staff Complete Reference PDF · Algorithms → SOP Manual · ${escapeHtml(m.domain)}</div>
   </div>
 </body>
 </html>`;

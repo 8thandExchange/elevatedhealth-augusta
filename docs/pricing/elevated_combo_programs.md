@@ -153,8 +153,24 @@ Wire into:
 ## What is NOT a combo
 
 - **ELEVATED IV ($199)** — non-Rx; no hormone/GLP-1 combo SKUs in v1.
-- **À la carte peptide fills** — member 20% off; separate from program combo.
+- **À la carte peptide fills** — member 20% off; separate from program combo (Layer 3). See `src/lib/multiServiceAddonPlaybook.ts`.
 - **Two full programs** — deprecated path for new enrollments; existing dual subscribers may be migrated at renewal.
+
+---
+
+## Layer 3 — Peptides on top of combo (TRT + GLP-1 + peptides)
+
+Patients wanting **three or more lanes** use the combo for Rx (layers 1–2) plus à la carte peptides (layer 3):
+
+| Layer | Example | Billing |
+|-------|---------|---------|
+| Anchor | GLP-1 semaglutide $349/mo | Full ELEVATED bundle |
+| Med add-on | + TRT $149/mo | Same Stripe subscription |
+| Peptide | BPC stack $349 fill | Separate SKU · member −20% |
+
+**Staff playbook:** `src/lib/multiServiceAddonPlaybook.ts` · **Staff PDF:** Complete Reference pages 2–3.
+
+**Do not** fold peptides into the combo subscription — preserves margin and avoids program SKU sprawl.
 
 ---
 

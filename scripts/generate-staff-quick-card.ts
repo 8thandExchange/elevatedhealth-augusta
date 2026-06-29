@@ -14,6 +14,11 @@ import {
   DESK_CARD_FILENAME_BASE,
   QUICK_CARD_FILENAME_BASE,
 } from "../src/lib/staffQuickCardExport";
+import {
+  buildStaffMasterGuideHtml,
+  buildStaffMasterGuideMarkdown,
+  MASTER_GUIDE_FILENAME_BASE,
+} from "../src/lib/staffMasterGuideExport";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const targets = [join(root, "docs", "clinical"), join(root, "public", "downloads")];
@@ -21,12 +26,16 @@ const targets = [join(root, "docs", "clinical"), join(root, "public", "downloads
 const fullHtml = buildStaffQuickCardHtml();
 const deskHtml = buildStaffDeskCardHtml();
 const md = buildStaffQuickCardMarkdown();
+const masterHtml = buildStaffMasterGuideHtml();
+const masterMd = buildStaffMasterGuideMarkdown();
 
 for (const dir of targets) {
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${QUICK_CARD_FILENAME_BASE}.md`), md, "utf8");
   writeFileSync(join(dir, `${QUICK_CARD_FILENAME_BASE}.html`), fullHtml, "utf8");
   writeFileSync(join(dir, `${DESK_CARD_FILENAME_BASE}.html`), deskHtml, "utf8");
+  writeFileSync(join(dir, `${MASTER_GUIDE_FILENAME_BASE}.md`), masterMd, "utf8");
+  writeFileSync(join(dir, `${MASTER_GUIDE_FILENAME_BASE}.html`), masterHtml, "utf8");
 }
 
 function chromePath(): string | null {
@@ -57,9 +66,12 @@ const fullHtmlPath = join(docsDir, `${QUICK_CARD_FILENAME_BASE}.html`);
 const fullPdfPath = join(docsDir, `${QUICK_CARD_FILENAME_BASE}.pdf`);
 const deskHtmlPath = join(docsDir, `${DESK_CARD_FILENAME_BASE}.html`);
 const deskPdfPath = join(docsDir, `${DESK_CARD_FILENAME_BASE}.pdf`);
+const masterHtmlPath = join(docsDir, `${MASTER_GUIDE_FILENAME_BASE}.html`);
+const masterPdfPath = join(docsDir, `${MASTER_GUIDE_FILENAME_BASE}.pdf`);
 
 const fullOk = renderPdf(fullHtmlPath, fullPdfPath);
 const deskOk = renderPdf(deskHtmlPath, deskPdfPath);
+const masterOk = renderPdf(masterHtmlPath, masterPdfPath);
 
 for (const dir of [docsDir, pubDir]) {
   if (fullOk) {
@@ -70,6 +82,10 @@ for (const dir of [docsDir, pubDir]) {
     copyFileSync(deskPdfPath, join(dir, `${DESK_CARD_FILENAME_BASE}.pdf`));
     copyFileSync(deskPdfPath, join(dir, "EHA-Staff-Desk-Card.pdf"));
   }
+  if (masterOk) {
+    copyFileSync(masterPdfPath, join(dir, `${MASTER_GUIDE_FILENAME_BASE}.pdf`));
+    copyFileSync(masterPdfPath, join(dir, "EHA-Staff-Complete-Reference.pdf"));
+  }
 }
 
 console.log(
@@ -78,6 +94,8 @@ console.log(
     `Generated ${DESK_CARD_FILENAME_BASE}.{html${deskOk ? ",pdf" : ""}}`,
     fullOk ? "Stable: EHA-Staff-Quick-Reference.pdf" : "",
     deskOk ? "Stable: EHA-Staff-Desk-Card.pdf (1-page laminate)" : "",
+    masterOk ? `Generated ${MASTER_GUIDE_FILENAME_BASE}.{md,html,pdf}` : "",
+    masterOk ? "Stable: EHA-Staff-Complete-Reference.pdf (full formulary)" : "",
     "→ docs/clinical/ and public/downloads/",
   ]
     .filter(Boolean)

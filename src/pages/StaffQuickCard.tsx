@@ -11,27 +11,37 @@ import {
   downloadFullQuickReferencePdf,
   QUICK_CARD_PDF_STABLE,
 } from "@/lib/staffQuickCardExport";
+import {
+  buildStaffMasterGuideHtml,
+  downloadMasterGuidePdf,
+  MASTER_GUIDE_PDF_STABLE,
+} from "@/lib/staffMasterGuideExport";
 import { QUICK_CARD_META } from "@/lib/staffQuickCardContent";
+import { MASTER_GUIDE_META } from "@/lib/staffMasterGuideContent";
+
+type ViewMode = "desk" | "full" | "complete";
 
 const StaffQuickCard = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [view, setView] = useState<"desk" | "full">("desk");
+  const [view, setView] = useState<ViewMode>("complete");
   const [downloading, setDownloading] = useState<string | null>(null);
 
-  const html = useMemo(
-    () => (view === "desk" ? buildStaffDeskCardHtml() : buildStaffQuickCardHtml()),
-    [view],
-  );
+  const html = useMemo(() => {
+    if (view === "desk") return buildStaffDeskCardHtml();
+    if (view === "full") return buildStaffQuickCardHtml();
+    return buildStaffMasterGuideHtml();
+  }, [view]);
 
   const handlePrint = () => {
     iframeRef.current?.contentWindow?.print();
   };
 
-  const handleDownload = async (kind: "desk" | "full") => {
+  const handleDownload = async (kind: "desk" | "full" | "complete") => {
     setDownloading(kind);
     try {
       if (kind === "desk") await downloadDeskCardPdf();
-      else await downloadFullQuickReferencePdf();
+      else if (kind === "full") await downloadFullQuickReferencePdf();
+      else await downloadMasterGuidePdf();
     } finally {
       setDownloading(null);
     }
@@ -40,7 +50,7 @@ const StaffQuickCard = () => {
   return (
     <>
       <Helmet>
-        <title>Staff Quick Reference Card | Elevated Health Augusta</title>
+        <title>Staff Reference | Elevated Health Augusta</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -53,10 +63,19 @@ const StaffQuickCard = () => {
                 SOP Manual
               </Link>
             </Button>
-            <p className="font-jost text-sm text-muted-foreground hidden md:block">
-              {QUICK_CARD_META.title} · laminate the 1-page desk card
+            <p className="font-jost text-sm text-muted-foreground hidden lg:block">
+              Complete Reference = full formulary · dosing · multi-peptide pricing
             </p>
             <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={view === "complete" ? "default" : "outline"}
+                className="font-jost"
+                onClick={() => setView("complete")}
+              >
+                Complete reference
+              </Button>
               <Button
                 type="button"
                 size="sm"
@@ -73,7 +92,7 @@ const StaffQuickCard = () => {
                 className="font-jost"
                 onClick={() => setView("full")}
               >
-                3-page full guide
+                3-page summary
               </Button>
             </div>
           </div>
@@ -82,11 +101,22 @@ const StaffQuickCard = () => {
               type="button"
               size="sm"
               className="font-jost gap-2"
+              disabled={downloading === "complete"}
+              onClick={() => handleDownload("complete")}
+            >
+              <Download className="h-4 w-4" />
+              {downloading === "complete" ? "Downloading…" : "Download Complete Reference PDF"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="font-jost gap-2"
               disabled={downloading === "desk"}
               onClick={() => handleDownload("desk")}
             >
               <Download className="h-4 w-4" />
-              {downloading === "desk" ? "Downloading…" : "Download Desk Card PDF"}
+              {downloading === "desk" ? "Downloading…" : "Desk Card PDF"}
             </Button>
             <Button
               type="button"
@@ -97,11 +127,17 @@ const StaffQuickCard = () => {
               onClick={() => handleDownload("full")}
             >
               <Download className="h-4 w-4" />
-              {downloading === "full" ? "Downloading…" : "Download Full Guide PDF"}
+              {downloading === "full" ? "Downloading…" : "3-Page Summary PDF"}
             </Button>
             <Button type="button" variant="outline" size="sm" className="font-jost gap-2" onClick={handlePrint}>
               <Printer className="h-4 w-4" />
               Print preview
+            </Button>
+            <Button type="button" variant="ghost" size="sm" className="font-jost gap-2" asChild>
+              <a href={MASTER_GUIDE_PDF_STABLE} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4" />
+                Open complete PDF
+              </a>
             </Button>
             <Button type="button" variant="ghost" size="sm" className="font-jost gap-2" asChild>
               <a href={DESK_CARD_PDF_STABLE} target="_blank" rel="noopener noreferrer">
@@ -109,18 +145,12 @@ const StaffQuickCard = () => {
                 Open desk PDF
               </a>
             </Button>
-            <Button type="button" variant="ghost" size="sm" className="font-jost gap-2" asChild>
-              <a href={QUICK_CARD_PDF_STABLE} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4" />
-                Open full PDF
-              </a>
-            </Button>
           </div>
         </div>
 
         <iframe
           ref={iframeRef}
-          title={QUICK_CARD_META.title}
+          title={view === "complete" ? MASTER_GUIDE_META.title : QUICK_CARD_META.title}
           srcDoc={html}
           className="flex-1 w-full min-h-[calc(100vh-10rem)] border-0 bg-white print:min-h-screen print:h-auto"
         />
