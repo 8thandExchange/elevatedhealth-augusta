@@ -21,8 +21,14 @@ import {
   POLICY_BULLETS,
 } from "./formularyCheatSheetContent";
 import { STAFF_PRINT_CSS_ROOT } from "./staffPrintBrand";
+import {
+  buildMedicationCheatSheetFragmentHtml,
+  MEDICATION_CHEAT_SHEET_HTML_PATH,
+  MEDICATION_CHEAT_SHEET_PDF_PATH,
+} from "./formularyMedicationExport";
 
 export { CHEAT_SHEET_FILENAME_BASE };
+export { MEDICATION_CHEAT_SHEET_HTML_PATH, MEDICATION_CHEAT_SHEET_PDF_PATH };
 
 export const CHEAT_SHEET_PDF_PATH = `/downloads/${CHEAT_SHEET_FILENAME_BASE}.pdf`;
 export const CHEAT_SHEET_HTML_PATH = `/downloads/${CHEAT_SHEET_FILENAME_BASE}.html`;
@@ -419,6 +425,7 @@ export function buildFormularyCheatSheetHtml(): string {
     </div>
     <h3>IV signature drips (walk-in · RN-administered)</h3>
     ${tableHtml(["Drip", "Walk-in", "Member", "Category", "Ingredients"], IV_DRIP_ROWS)}
+    ${buildMedicationCheatSheetFragmentHtml()}
     `,
   );
 

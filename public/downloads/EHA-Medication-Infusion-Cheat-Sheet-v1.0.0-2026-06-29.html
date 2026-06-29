@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Elevated Health Augusta — Medication &amp; Infusion Cheat Sheet</title>
+  <style>
+  @page { size: letter portrait; margin: 0.45in; }
+  :root {
+    --navy: #00477E;
+    --steel: #A4A4A1;
+    --paper: #FFFFFF;
+    --ink: #14202B;
+    --muted: #5B6770;
+    --warn-bg: #FFF8E6;
+    --warn-border: #C4A000;
+    --danger-bg: #FDEEEE;
+    --danger-border: #8B2E2E;
+    --border: #C9D4DD;
+    --surface: #F4F8FB;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    margin: 0;
+    font-size: 8.5pt;
+    line-height: 1.35;
+  }
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: var(--navy);
+    color: var(--paper);
+    padding: 2rem;
+    page-break-after: always;
+  }
+  .cover h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    font-size: 1.65rem;
+    margin: 0.25rem 0;
+  }
+  .cover h1 em { font-style: italic; color: var(--steel); }
+  .cover .sub { font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem; }
+  .cover .meta { margin-top: 2rem; font-size: 0.75rem; opacity: 0.75; line-height: 1.6; }
+  .cover .version {
+    margin-top: 1.5rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--steel);
+  }
+  .page { padding: 0.1in 0; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid var(--steel);
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.65rem;
+  }
+  .page-header h2 {
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
+    margin: 0;
+    color: var(--navy);
+  }
+  .page-header .tag {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  h3 {
+    font-family: Georgia, serif;
+    font-size: 0.82rem;
+    margin: 0.65rem 0 0.35rem;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  h4 { font-size: 0.75rem; color: var(--navy); margin: 0.5rem 0 0.25rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+    margin: 0.35rem 0 0.5rem;
+    page-break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.28rem 0.4rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--navy);
+    color: var(--paper);
+    font-weight: 600;
+    font-size: 0.62rem;
+    width: 28%;
+  }
+  .proto-block { page-break-inside: avoid; margin-bottom: 0.65rem; }
+  .callout-reviewer {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    border-left: 3px solid var(--warn-border);
+    padding: 0.35rem 0.5rem;
+    font-size: 0.65rem;
+    margin: 0.35rem 0;
+  }
+  .callout-reviewer strong { color: #7a5a00; }
+  .callout-danger {
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    border-left: 3px solid var(--danger-border);
+    padding: 0.4rem 0.55rem;
+    font-size: 0.68rem;
+    margin: 0.5rem 0;
+    page-break-inside: avoid;
+  }
+  .callout-danger strong { color: var(--danger-border); }
+  .usp797 { font-size: 0.68rem; }
+  .usp797 ul, .usp797 ol { margin: 0.2rem 0 0.35rem; padding-left: 1.1rem; }
+  .usp797 li { margin-bottom: 0.15rem; }
+  .footer-note {
+    font-size: 0.58rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.35rem;
+  }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+  
+  <section class="cover">
+    <h1><em>Medication</em> &amp; Infusion<br/>Cheat Sheet</h1>
+    <p class="sub">IV protocols of record · USP 797 prep · RN clinical reference</p>
+    <p class="meta">7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809<br/>(706) 760-3470 · elevatedhealthaugusta.com</p>
+    <p class="version">Internal — clinical staff only (no patient pricing) · 2026-06-29</p>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>IV administration — protocol of record</h2>
+      <span class="tag">IV protocols · v1.0.0</span>
+    </div>
+    
+    <div class="proto-block">
+      <h3>IV Myers Cocktail Administration</h3>
+      <p style="font-size:0.62rem;color:var(--muted);margin:0 0 0.25rem">Protocol slug: iv-myers-cocktail · sourced from 20260509140000_seed_clinical_protocol_drafts.sql</p>
+      <table><tbody><tr><th>Indication</th><td>Adult IV wellness / nutrient repletion per standing orders.</td></tr><tr><th>Medication</th><td>Myers cocktail components as listed</td></tr><tr><th>Dose</th><td>Per formulation above</td></tr><tr><th>Base / diluent</th><td>Magnesium chloride 1g, calcium gluconate 100mg, B-complex 1mL, B12 1mg, B5 250mg, B6 100mg, vitamin C 5g, in 250mL normal saline.</td></tr><tr><th>Route</th><td>IV infusion</td></tr><tr><th>Frequency</th><td>Per order / membership benefit</td></tr><tr><th>Duration</th><td>30–45 minutes</td></tr><tr><th>Pre-administration checks</th><td>Verify identity · Two RN checks on bag labeling · Patent IV access</td></tr><tr><th>Monitoring (during)</th><td>VS q15min first 30min · Patient comfort</td></tr><tr><th>Monitoring (post)</th><td>Discharge instructions · Adverse event reporting pathway</td></tr><tr><th>Administration</th><td>Prime line · Infuse per rate policy · Dispose sharps per clinic SOP</td></tr></tbody></table>
+      <div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Verify Myers formulation matches Henry Schein standard pre-mixed bag if you're using one, vs. compounded in-house</div><div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Confirm 30-45 min infusion rate matches your preference; some clinicians push slower for first-time patients</div><div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Vitamin C dose of 5g — verify G6PD screening expectation in your intake (high-dose IV C is contraindicated in G6PD deficiency)</div>
+    </div>
+
+    <div class="proto-block">
+      <h3>IV NAD+ 250mg Infusion</h3>
+      <p style="font-size:0.62rem;color:var(--muted);margin:0 0 0.25rem">Protocol slug: iv-nad-250mg · sourced from 20260509140000_seed_clinical_protocol_drafts.sql</p>
+      <table><tbody><tr><th>Indication</th><td>NAD+ IV therapy 250mg session.</td></tr><tr><th>Medication</th><td>NAD+</td></tr><tr><th>Dose</th><td>250mg</td></tr><tr><th>Base / diluent</th><td>NAD+ 250mg in 500mL normal saline.</td></tr><tr><th>Route</th><td>IV infusion</td></tr><tr><th>Frequency</th><td>Per order</td></tr><tr><th>Duration</th><td>60–90 min</td></tr><tr><th>Pre-administration checks</th><td>Baseline VS · Pregnancy status if applicable</td></tr><tr><th>Monitoring (during)</th><td>VS per IV lounge policy · Symptom assessment q15–30min</td></tr><tr><th>Monitoring (post)</th><td>Post-infusion check · Home instructions</td></tr><tr><th>Administration</th><td>Dilute per pharmacy label · Gradual rate titration per tolerance</td></tr></tbody></table>
+      <div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Verify NAD source — FCC compounded vs. commercial. Affects concentration and dilution math</div><div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Some clinicians use Glutathione push at end of NAD+ — confirm if you want this in standard protocol or as add-on</div><div class="callout-reviewer"><strong>OPEN reviewer note:</strong> First-time patient slower start (90-120 min) — confirm threshold for 'first-time'</div>
+    </div>
+
+    <div class="proto-block">
+      <h3>IV NAD+ 500mg Infusion</h3>
+      <p style="font-size:0.62rem;color:var(--muted);margin:0 0 0.25rem">Protocol slug: iv-nad-500mg · sourced from 20260509140000_seed_clinical_protocol_drafts.sql</p>
+      <table><tbody><tr><th>Indication</th><td>NAD+ IV therapy 500mg session.</td></tr><tr><th>Medication</th><td>NAD+</td></tr><tr><th>Dose</th><td>500mg</td></tr><tr><th>Base / diluent</th><td>NAD+ 500mg in 500mL normal saline.</td></tr><tr><th>Route</th><td>IV infusion</td></tr><tr><th>Frequency</th><td>Per order</td></tr><tr><th>Duration</th><td>90–120 min</td></tr><tr><th>Pre-administration checks</th><td>Review prior NAD+ sessions · VS baseline</td></tr><tr><th>Monitoring (during)</th><td>VS q15min early · Symptom log</td></tr><tr><th>Monitoring (post)</th><td>Extended observation if symptoms</td></tr><tr><th>Administration</th><td>Longer observation window · Gradual titration</td></tr></tbody></table>
+      <div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Confirm step-up requirement — should patients always do 250mg first, or is 500mg first-time acceptable for low-risk patients?</div><div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Verify max dose ceiling — some clinicians cap at 500mg per session; others go to 750mg or 1g</div>
+    </div>
+
+    <div class="proto-block">
+      <h3>IV Glutathione Push</h3>
+      <p style="font-size:0.62rem;color:var(--muted);margin:0 0 0.25rem">Protocol slug: iv-glutathione-push · sourced from 20260509140000_seed_clinical_protocol_drafts.sql</p>
+      <table><tbody><tr><th>Indication</th><td>IV glutathione push.</td></tr><tr><th>Medication</th><td>Glutathione</td></tr><tr><th>Dose</th><td>1–2g per order</td></tr><tr><th>Base / diluent</th><td>Glutathione 1–2g IV push.</td></tr><tr><th>Route</th><td>IV push</td></tr><tr><th>Frequency</th><td>Per order</td></tr><tr><th>Duration</th><td>5–10 min</td></tr><tr><th>Pre-administration checks</th><td>Verify dose on order · Patent IV</td></tr><tr><th>Monitoring (during)</th><td>Continuous observation</td></tr><tr><th>Monitoring (post)</th><td>Post-push VS</td></tr><tr><th>Administration</th><td>Slow push · RN at bedside</td></tr></tbody></table>
+      <div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Confirm dose preference — 1g standard, 2g for higher-need patients, or always 2g?</div><div class="callout-reviewer"><strong>OPEN reviewer note:</strong> Some clinicians require sulfa allergy screening (theoretical cross-reactivity, debated). Confirm your stance</div>
+    </div>
+    <div class="footer-note">Elevated Health Augusta · (706) 760-3470 · Clinical staff only — no patient pricing</div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Prep standards &amp; hold list</h2>
+      <span class="tag">USP 797 · No-protocol injectables · v1.0.0</span>
+    </div>
+    
+    <div class="callout-danger">
+      <strong>Prescription Injectables — NO PROTOCOL OF RECORD</strong><br/>
+      Do not administer Toradol, Zofran, Benadryl, or Pepcid until a clinical protocol is signed in the Protocol Library.
+    </div>
+    <table>
+      <thead><tr><th>Agent</th><th>Informal use</th><th>Status</th></tr></thead>
+      <tbody><tr><td><strong>Toradol</strong> (ketorolac)</td><td>Anti-inflammatory IV push</td><td>⛔ NO PROTOCOL — do not administer until signed</td></tr><tr><td><strong>Zofran</strong> (ondansetron)</td><td>Antiemetic IV push</td><td>⛔ NO PROTOCOL — do not administer until signed</td></tr><tr><td><strong>Benadryl</strong> (diphenhydramine)</td><td>Antihistamine IV/IM</td><td>⛔ NO PROTOCOL — do not administer until signed</td></tr><tr><td><strong>Pepcid</strong> (famotidine)</td><td>H2 blocker IV</td><td>⛔ NO PROTOCOL — do not administer until signed</td></tr></tbody>
+    </table>
+    <h3>Preparation / Reconstitution / Admixture (USP 797)</h3>
+    <div class="usp797"><h4>Before you touch anything</h4>
+<ol>
+<li>Perform hand hygiene (soap + water or ABHR) before entering the prep area and after removing gloves.</li>
+<li>Confirm **patient identity**, **signed order**, and **allergy status** against the chart and wristband.</li>
+<li>Inspect every vial, bag, and ampule: correct drug, concentration, beyond-use date (BUD), intact seal, no particulate or discoloration. **Do not use** compromised containers.</li>
+<li>Gather only the supplies needed for this single patient preparation (ISO 5 / PEC mindset even in a non-compounding primary suite — minimize traffic and clutter).</li>
+</ol>
+<h4>Work surface &amp; garbing</h4>
+<ul>
+<li>Disinfect the prep counter with approved sporicidal/low-level disinfectant; allow full contact time per manufacturer label.</li>
+<li>Gloves required for all manipulations. Mask and hair cover when preparing multiple admixtures in one session or when pharmacy SOP requires.</li>
+<li>No food, drink, or personal phones on the prep surface.</li>
+</ul>
+<h4>Reconstitution (peptides / lyophilized vials)</h4>
+<ul>
+<li>Use <strong>bacteriostatic water for injection (BWFI)</strong> or diluent specified on the <strong>pharmacy label</strong> — never swap diluents without pharmacist or physician direction.</li>
+<li>Inject diluent slowly down the vial wall; gentle swirl only — <strong>do not shake</strong> unless label instructs.</li>
+<li>Document lot number, reconstitution date/time, and initials on the patient-specific label.</li>
+<li>Apply BUD from pharmacy label or USP 795/797 tables — when in doubt, use the <strong>shorter</strong> dating. Refrigerate if label requires.</li>
+</ul>
+<h4>Admixture (IV bags &amp; syringes)</h4>
+<ul>
+<li>Use <strong>closed-system transfer device (CSTD)</strong> or needleless connectors when available.</li>
+<li>Add medications to the bag <strong>in order listed on the protocol</strong>; invert gently after each addition — do not shake protein/peptide-containing solutions unless protocol specifies.</li>
+<li>Label every final container with: patient name, drug(s), concentration, total volume, route, BUD date/time, preparer initials.</li>
+<li><strong>Two-RN verification</strong> required for high-alert additions (electrolytes, insulin-class, chemotherapy-class, or per clinic policy) and for all bags leaving the prep area.</li>
+</ul>
+<h4>Immediate-use vs. stored preparations</h4>
+<ul>
+<li><strong>Immediate-use</strong> (administer within 1 hour of prep, no BUD storage): permitted when no high-risk compounding and patient is on-site — still label and document.</li>
+<li><strong>Stored admixtures</strong> (refrigerated or room temp per USP): only per written pharmacy policy with assigned BUD; log in compounding record.</li>
+</ul>
+<h4>Administration handoff</h4>
+<ul>
+<li>Compare the prepared product to the <strong>signed clinical protocol</strong> (or physician order if protocol not yet signed).</li>
+<li>Prime IV tubing per manufacturer; verify infusion rate against protocol duration.</li>
+<li>Remain at bedside for IV pushes and for the first 15 minutes of any new infusion per IV lounge policy.</li>
+</ul>
+<h4>Waste &amp; documentation</h4>
+<ul>
+<li>Discard partial vials and sharps per clinic SOP and Georgia medical waste rules.</li>
+<li>Record lot numbers, prep time, administrator, and any adverse events in the IV flowsheet / EHR.</li>
+</ul>
+<h4>When to stop and escalate</h4>
+<ul>
+<li>Missing or unsigned protocol for the medication you are about to give → <strong>hold</strong> and notify physician.</li>
+<li>Patient fails pre-administration checks on the protocol → <strong>do not administer</strong>; notify RN lead or physician.</li>
+<li>Any break in aseptic technique → discard prepared product and start over.</li>
+</ul></div>
+    
+    <div class="footer-note">Elevated Health Augusta · (706) 760-3470 · Clinical staff only — no patient pricing</div>
+  </section>
+</body>
+</html>

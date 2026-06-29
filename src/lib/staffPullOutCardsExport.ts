@@ -27,6 +27,8 @@ import {
 import { IV_THERAPIES_CATALOG } from "./ivTherapiesCatalog";
 import { DOSING_PROTOCOLS } from "./dosingProtocols";
 import { fmtUsd, labMemberCents } from "./pricing";
+import { buildIvMedicationCardRows } from "./formularyMedicationContent";
+import { IV_MEDICATION_PROTOCOL_SECTIONS } from "./formularyMedicationContent";
 
 export const CARDS_META = {
   title: "Pull-Out Reference Cards",
@@ -207,7 +209,21 @@ const ivCard: SectionCard = {
   footnote: "NAD+ is the $50 booster push only — no peptide NAD+, no standalone NAD+ infusion.",
 };
 
-/* ----------------------------- CARD 6: SEXUAL WELLNESS ----------------------------- */
+/* ----------------------------- CARD 6: IV MEDICATION PROTOCOLS (staff clinical) ----------------------------- */
+const ivMedicationCard: SectionCard = {
+  section: "IV Medication Protocols",
+  blurb: "Clinical doses from protocol seed (body_structured) — staff only, not patient pricing.",
+  items: buildIvMedicationCardRows().map(([title, doseBase, routeDuration, checks]) => ({
+    is: title,
+    does: doseBase,
+    rx: routeDuration,
+    cost: checks,
+  })),
+  footnote:
+    "Toradol · Zofran · Benadryl · Pepcid — protocol drafts (iv-addon-*) pending Dr. Akers signature; do not administer until signed. Open reviewer notes on IV protocols must be resolved before treating as settled.",
+};
+
+/* ----------------------------- CARD 7: SEXUAL WELLNESS ----------------------------- */
 const sexualWellnessCard: SectionCard = {
   section: "Sexual Wellness",
   blurb: "Consult-gated. Available after visit — do not promote on public storefront.",
@@ -226,8 +242,12 @@ export const ALL_CARDS: SectionCard[] = [
   glp1Card,
   peptidesCard,
   ivCard,
+  ivMedicationCard,
   sexualWellnessCard,
 ];
+
+/** Staff clinical IV protocol card — re-export for verification scripts. */
+export { IV_MEDICATION_PROTOCOL_SECTIONS };
 
 /* ----------------------------- HTML / PRINT ----------------------------- */
 

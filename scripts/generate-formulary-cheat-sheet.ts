@@ -11,6 +11,7 @@ import {
   buildFormularyCheatSheetMarkdown,
   CHEAT_SHEET_FILENAME_BASE,
 } from "../src/lib/formularyCheatSheetExport";
+import { execSync as execSyncNode } from "node:child_process";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const targets = [
@@ -59,3 +60,8 @@ if (existsSync(primaryPdf)) {
 console.log(
   `Generated ${CHEAT_SHEET_FILENAME_BASE}.{md,html${existsSync(primaryPdf) ? ",pdf" : ""}} in docs/clinical/ and public/downloads/`,
 );
+
+execSyncNode("npx tsx scripts/generate-medication-cheat-sheet.ts", {
+  cwd: root,
+  stdio: "inherit",
+});
