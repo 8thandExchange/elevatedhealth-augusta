@@ -19,6 +19,10 @@ import {
   buildStaffMasterGuideMarkdown,
   MASTER_GUIDE_FILENAME_BASE,
 } from "../src/lib/staffMasterGuideExport";
+import {
+  buildPullOutCardsHtml,
+  CARDS_FILENAME_BASE,
+} from "../src/lib/staffPullOutCardsExport";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const targets = [join(root, "docs", "clinical"), join(root, "public", "downloads")];
@@ -28,6 +32,7 @@ const deskHtml = buildStaffDeskCardHtml();
 const md = buildStaffQuickCardMarkdown();
 const masterHtml = buildStaffMasterGuideHtml();
 const masterMd = buildStaffMasterGuideMarkdown();
+const cardsHtml = buildPullOutCardsHtml();
 
 for (const dir of targets) {
   mkdirSync(dir, { recursive: true });
@@ -36,17 +41,37 @@ for (const dir of targets) {
   writeFileSync(join(dir, `${DESK_CARD_FILENAME_BASE}.html`), deskHtml, "utf8");
   writeFileSync(join(dir, `${MASTER_GUIDE_FILENAME_BASE}.md`), masterMd, "utf8");
   writeFileSync(join(dir, `${MASTER_GUIDE_FILENAME_BASE}.html`), masterHtml, "utf8");
+  writeFileSync(join(dir, `${CARDS_FILENAME_BASE}.html`), cardsHtml, "utf8");
 }
 
 function chromePath(): string | null {
   const candidates = [
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
     "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "/usr/bin/google-chrome",
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
   ];
   return candidates.find((p) => existsSync(p)) ?? null;
 }
 
-function renderPdf(htmlPath: string, pdfPath: string): boolean {
+async function renderPdf(htmlPath: string, pdfPath: string): Promise<boolean> {
+  try {
+    const { chromium } = await import("playwright");
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.goto(`file://${htmlPath}`, { waitUntil: "networkidle" });
+    await page.pdf({
+      path: pdfPath,
+      printBackground: true,
+      preferCSSPageSize: true,
+    });
+    await browser.close();
+    return existsSync(pdfPath);
+  } catch (err) {
+    console.warn("Playwright PDF failed, trying Chrome headless:", err);
+  }
+
   const chrome = chromePath();
   if (!chrome) {
     console.warn("Chrome/Chromium not found — skipped PDF generation.");
@@ -68,10 +93,13 @@ const deskHtmlPath = join(docsDir, `${DESK_CARD_FILENAME_BASE}.html`);
 const deskPdfPath = join(docsDir, `${DESK_CARD_FILENAME_BASE}.pdf`);
 const masterHtmlPath = join(docsDir, `${MASTER_GUIDE_FILENAME_BASE}.html`);
 const masterPdfPath = join(docsDir, `${MASTER_GUIDE_FILENAME_BASE}.pdf`);
+const cardsHtmlPath = join(docsDir, `${CARDS_FILENAME_BASE}.html`);
+const cardsPdfPath = join(docsDir, `${CARDS_FILENAME_BASE}.pdf`);
 
-const fullOk = renderPdf(fullHtmlPath, fullPdfPath);
-const deskOk = renderPdf(deskHtmlPath, deskPdfPath);
-const masterOk = renderPdf(masterHtmlPath, masterPdfPath);
+const fullOk = await renderPdf(fullHtmlPath, fullPdfPath);
+const deskOk = await renderPdf(deskHtmlPath, deskPdfPath);
+const masterOk = await renderPdf(masterHtmlPath, masterPdfPath);
+const cardsOk = await renderPdf(cardsHtmlPath, cardsPdfPath);
 
 for (const dir of [docsDir, pubDir]) {
   if (fullOk) {
@@ -86,6 +114,10 @@ for (const dir of [docsDir, pubDir]) {
     copyFileSync(masterPdfPath, join(dir, `${MASTER_GUIDE_FILENAME_BASE}.pdf`));
     copyFileSync(masterPdfPath, join(dir, "EHA-Staff-Complete-Reference.pdf"));
   }
+  if (cardsOk) {
+    copyFileSync(cardsPdfPath, join(dir, `${CARDS_FILENAME_BASE}.pdf`));
+    copyFileSync(cardsPdfPath, join(dir, "EHA-Staff-Pull-Out-Cards.pdf"));
+  }
 }
 
 console.log(
@@ -96,6 +128,8 @@ console.log(
     deskOk ? "Stable: EHA-Staff-Desk-Card.pdf (1-page laminate)" : "",
     masterOk ? `Generated ${MASTER_GUIDE_FILENAME_BASE}.{md,html,pdf}` : "",
     masterOk ? "Stable: EHA-Staff-Complete-Reference.pdf (full formulary)" : "",
+    cardsOk ? `Generated ${CARDS_FILENAME_BASE}.{html,pdf}` : "",
+    cardsOk ? "Stable: EHA-Staff-Pull-Out-Cards.pdf" : "",
     "→ docs/clinical/ and public/downloads/",
   ]
     .filter(Boolean)

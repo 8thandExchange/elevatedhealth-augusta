@@ -45,6 +45,16 @@ import {
   buildTripleServiceTableRows,
   buildLayerSummaryRows,
 } from "./multiServiceAddonPlaybook";
+import {
+  COST_MARGIN_META,
+  MEMBERSHIP_MARGIN_ROWS,
+  MEMBERSHIP_COST_LINES,
+  IV_NUTRIENT_COST_ROWS,
+  SEXUAL_WELLNESS_COST_ROWS,
+  COST_COMPLIANCE_FLAGS,
+  SUPPLIER_DIRECTORY,
+  confidenceLabel,
+} from "./staffCostMarginContent";
 
 export { MASTER_GUIDE_FILENAME_BASE };
 
@@ -450,6 +460,68 @@ export function buildStaffMasterGuideHtml(): string {
     `,
   );
 
+  const costMarginPage = page(
+    "Cost & Margin",
+    "Cost & margin — STAFF ONLY (never patient-facing)",
+    `
+    <div class="callout warn"><strong>Classification:</strong> ${escapeHtml(COST_MARGIN_META.classification)}</div>
+    <h3>Membership gross margin (medication line)</h3>
+    ${tableHtml(
+      ["Program", "Revenue/mo", "Med cost/mo", "Gross on med", "Confidence", "Note"],
+      MEMBERSHIP_MARGIN_ROWS.map((r) => [
+        r.program,
+        r.revenueMo,
+        r.medCostMo,
+        r.grossOnMed,
+        confidenceLabel(r.confidence),
+        r.note,
+      ]),
+    )}
+    <h3>Medication cost detail (by supplier)</h3>
+    ${tableHtml(
+      ["Item", "Supplier", "Unit cost", "Basis", "Monthly", "Confidence"],
+      MEMBERSHIP_COST_LINES.map((r) => [
+        r.item,
+        r.supplier,
+        r.unitCost,
+        r.basis,
+        r.monthly,
+        confidenceLabel(r.confidence),
+      ]),
+    )}
+    <h3>IV / injectable nutrient cost — GC network (HYBRID / STLKS)</h3>
+    ${tableHtml(
+      ["Nutrient", "Supplier", "Wholesale", "Basis", "Confidence"],
+      IV_NUTRIENT_COST_ROWS.map((r) => [
+        r.nutrient,
+        r.supplier,
+        r.wholesale,
+        r.basis,
+        confidenceLabel(r.confidence),
+      ]),
+    )}
+    <h3>Sexual wellness cost — GC network (503A)</h3>
+    ${tableHtml(
+      ["Product", "Supplier", "Wholesale", "Basis", "Confidence"],
+      SEXUAL_WELLNESS_COST_ROWS.map((r) => [
+        r.product,
+        r.supplier,
+        r.wholesale,
+        r.basis,
+        confidenceLabel(r.confidence),
+      ]),
+    )}
+    <h3>Supplier directory — who fills what</h3>
+    ${tableHtml(
+      ["Supplier", "Type", "Fills", "Status"],
+      SUPPLIER_DIRECTORY.map((r) => [r.supplier, r.type, r.fills, r.status]),
+    )}
+    <h3>Cost & sourcing compliance flags</h3>
+    <ul>${COST_COMPLIANCE_FLAGS.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>
+    <div class="callout warn"><strong>Review trigger:</strong> ${escapeHtml(COST_MARGIN_META.reviewTrigger)}</div>
+    `,
+  );
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -470,6 +542,7 @@ export function buildStaffMasterGuideHtml(): string {
   ${ivPage}
   ${hiddenPage}
   ${rulesPage}
+  ${costMarginPage}
 </body>
 </html>`;
 }
@@ -555,6 +628,77 @@ export function buildStaffMasterGuideMarkdown(): string {
     "## IV boosters",
     "",
     tableMd(["Add-on", "Description", "Benefits", "Price", "Member", "Best for"], buildDetailedIvAddonRows()),
+    "",
+    "## Cost & Margin — STAFF ONLY (never patient-facing)",
+    "",
+    `> ${COST_MARGIN_META.classification}`,
+    "",
+    "### Membership gross margin (medication line)",
+    "",
+    tableMd(
+      ["Program", "Revenue/mo", "Med cost/mo", "Gross on med", "Confidence", "Note"],
+      MEMBERSHIP_MARGIN_ROWS.map((r) => [
+        r.program,
+        r.revenueMo,
+        r.medCostMo,
+        r.grossOnMed,
+        confidenceLabel(r.confidence),
+        r.note,
+      ]),
+    ),
+    "",
+    "### Medication cost detail (by supplier)",
+    "",
+    tableMd(
+      ["Item", "Supplier", "Unit cost", "Basis", "Monthly", "Confidence"],
+      MEMBERSHIP_COST_LINES.map((r) => [
+        r.item,
+        r.supplier,
+        r.unitCost,
+        r.basis,
+        r.monthly,
+        confidenceLabel(r.confidence),
+      ]),
+    ),
+    "",
+    "### IV / injectable nutrient cost — GC network (HYBRID / STLKS)",
+    "",
+    tableMd(
+      ["Nutrient", "Supplier", "Wholesale", "Basis", "Confidence"],
+      IV_NUTRIENT_COST_ROWS.map((r) => [
+        r.nutrient,
+        r.supplier,
+        r.wholesale,
+        r.basis,
+        confidenceLabel(r.confidence),
+      ]),
+    ),
+    "",
+    "### Sexual wellness cost — GC network (503A)",
+    "",
+    tableMd(
+      ["Product", "Supplier", "Wholesale", "Basis", "Confidence"],
+      SEXUAL_WELLNESS_COST_ROWS.map((r) => [
+        r.product,
+        r.supplier,
+        r.wholesale,
+        r.basis,
+        confidenceLabel(r.confidence),
+      ]),
+    ),
+    "",
+    "### Supplier directory — who fills what",
+    "",
+    tableMd(
+      ["Supplier", "Type", "Fills", "Status"],
+      SUPPLIER_DIRECTORY.map((r) => [r.supplier, r.type, r.fills, r.status]),
+    ),
+    "",
+    "### Cost & sourcing compliance flags",
+    "",
+    ...COST_COMPLIANCE_FLAGS.map((f) => `- ${f}`),
+    "",
+    `> **Review trigger:** ${COST_MARGIN_META.reviewTrigger}`,
     "",
   ].join("\n");
 }

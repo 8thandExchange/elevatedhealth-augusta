@@ -335,7 +335,7 @@ function algorithmToHtml(algo: (typeof SOP_ALGORITHMS)[0]): string {
 }
 
 const HANDBOOK_CSS = `
-  :root { --charcoal: #2A2826; --camel: #B8956A; --bone: #F2EBDC; --muted: #6b6560; }
+  :root { --charcoal: #00477E; --camel: #0B7BB8; --bone: #FFFFFF; --surface: #F4F8FB; --muted: #5B6770; --border: #C9D4DD; }
   * { box-sizing: border-box; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--charcoal); background: var(--bone); margin: 0; padding: 2rem; line-height: 1.55; font-size: 11pt; }
   .cover { text-align: center; padding: 3rem 2rem; background: var(--charcoal); color: var(--bone); margin: -2rem -2rem 2rem; border-bottom: 4px solid var(--camel); page-break-after: always; }

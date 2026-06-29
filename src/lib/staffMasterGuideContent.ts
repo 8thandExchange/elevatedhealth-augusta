@@ -45,9 +45,9 @@ import { CORE_SERVICES } from "./stripeConfig";
 
 export const MASTER_GUIDE_META = {
   title: "Staff Complete Reference",
-  subtitle: "Process · Multi-Service Add-Ons · Formulary · Dosing · Pricing",
-  version: "2.3.0",
-  effectiveDate: "2026-06-28",
+  subtitle: "Process · Multi-Service Add-Ons · Formulary · Dosing · Pricing · Cost & Margin",
+  version: "2.4.0",
+  effectiveDate: "2026-06-29",
   classification: "Internal — master staff formulary & operations reference",
   clinic: "Elevated Health Augusta",
   address: "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809",

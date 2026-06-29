@@ -5,13 +5,13 @@
 export const STAFF_PRINT_BRAND = {
   navy: "#00477E",
   navyDark: "#002D4F",
-  steel: "#0A6AA1",
+  steel: "#0B7BB8",
   steelLight: "#3D9FD1",
   paper: "#FFFFFF",
   ink: "#0B3555",
-  surface: "#F4F7FA",
-  muted: "#646B75",
-  border: "#D9DFE6",
+  surface: "#F4F8FB",
+  muted: "#5B6770",
+  border: "#C9D4DD",
   green: "#1a5f1a",
   red: "#8b2e2e",
 } as const;
