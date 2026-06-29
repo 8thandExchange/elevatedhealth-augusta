@@ -2,7 +2,12 @@
  * Shared OpenAI chat helper for Supabase Edge Functions.
  * Set OPENAI_API_KEY in Supabase → Edge Functions → Secrets.
  * Optional: OPENAI_MODEL (default gpt-4o-mini).
+ * PHI paths require OPENAI_BAA_ACTIVE=true unless caller sets allowWithoutBaa.
  */
+
+import { assertOpenAiBaaAllowed, type OpenAiBaaOpts } from "./openai-baa-gate.ts";
+
+export type { OpenAiBaaOpts };
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -18,8 +23,11 @@ export function getOpenAIConfig() {
 
 export async function openaiChat(
   messages: ChatMessage[],
-  opts?: { temperature?: number; max_tokens?: number },
+  opts?: { temperature?: number; max_tokens?: number } & OpenAiBaaOpts,
 ): Promise<ChatResult> {
+  const baaBlock = assertOpenAiBaaAllowed(opts);
+  if (baaBlock) return baaBlock;
+
   const { apiKey, model } = getOpenAIConfig();
   if (!apiKey) {
     return { ok: false, status: 503, error: "OPENAI_API_KEY is not configured in Supabase secrets." };
@@ -65,8 +73,11 @@ export async function openaiVisionChat(
   prompt: string,
   mimeType: string,
   base64Data: string,
-  opts?: { model?: string; max_tokens?: number },
+  opts?: { model?: string; max_tokens?: number } & OpenAiBaaOpts,
 ): Promise<ChatResult> {
+  const baaBlock = assertOpenAiBaaAllowed(opts);
+  if (baaBlock) return baaBlock;
+
   const { apiKey } = getOpenAIConfig();
   const model = opts?.model?.trim() || Deno.env.get("OPENAI_VISION_MODEL")?.trim() || "gpt-4o";
   if (!apiKey) {
@@ -135,8 +146,11 @@ function extractResponsesApiText(json: Record<string, unknown>): string | null {
 export async function openaiPdfChat(
   prompt: string,
   base64Data: string,
-  opts?: { model?: string; filename?: string },
+  opts?: { model?: string; filename?: string } & OpenAiBaaOpts,
 ): Promise<ChatResult> {
+  const baaBlock = assertOpenAiBaaAllowed(opts);
+  if (baaBlock) return baaBlock;
+
   const { apiKey } = getOpenAIConfig();
   const model = opts?.model?.trim() || Deno.env.get("OPENAI_VISION_MODEL")?.trim() || "gpt-4o";
   if (!apiKey) {
@@ -188,11 +202,14 @@ export async function openaiChatWithTools(
   messages: ChatMessage[],
   tools: unknown[],
   toolChoice: unknown,
-  opts?: { model?: string; temperature?: number },
+  opts?: { model?: string; temperature?: number } & OpenAiBaaOpts,
 ): Promise<
   | { ok: true; toolName: string; arguments: string }
   | { ok: false; status: number; error: string }
 > {
+  const baaBlock = assertOpenAiBaaAllowed(opts);
+  if (baaBlock) return baaBlock;
+
   const { apiKey } = getOpenAIConfig();
   const model = opts?.model?.trim() || Deno.env.get("OPENAI_MODEL")?.trim() || "gpt-4o-mini";
   if (!apiKey) {

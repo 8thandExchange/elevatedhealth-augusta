@@ -13,6 +13,7 @@ import {
   isConsultationCheckoutSession,
 } from "../_shared/fulfill-consultation-payment.ts";
 import { resolveSubscriptionElevatedState } from "../_shared/elevated-combo-prices.ts";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 /** Legacy single-tier Elevated price IDs — stop recognizing after 2026-08-11 (PR12 sunset). */
 
@@ -237,7 +238,7 @@ async function notifyStaffOfPayment(
   // 1) Email — reliable channel.
   try {
     const emailResp = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+      from: MAIL_FROM,
       to: [STAFF_NOTIFICATION_EMAIL],
       subject: `💰 New payment: ${opts.patientName} — ${amountLabel} (${opts.description})`,
       html: generateStaffPaymentEmail({
@@ -642,7 +643,7 @@ serve(async (req) => {
 
           try {
             const emailResponse = await resend.emails.send({
-              from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+              from: MAIL_FROM,
               to: [customerEmail],
               subject: "Welcome to Elevated Health Augusta – Your Membership is Active!",
               html: generateWelcomeEmail(patientName),

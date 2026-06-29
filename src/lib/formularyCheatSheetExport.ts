@@ -20,6 +20,7 @@ import {
   HAIR_ROWS,
   POLICY_BULLETS,
 } from "./formularyCheatSheetContent";
+import { STAFF_PRINT_CSS_ROOT } from "./staffPrintBrand";
 
 export { CHEAT_SHEET_FILENAME_BASE };
 
@@ -126,19 +127,12 @@ function tableHtml(headers: readonly string[], rows: readonly (readonly string[]
 
 const CHEAT_SHEET_CSS = `
   @page { size: letter portrait; margin: 0.45in; }
-  :root {
-    --charcoal: #2A2826;
-    --camel: #B8956A;
-    --bone: #F2EBDC;
-    --surface: #faf8f4;
-    --muted: #6b6560;
-    --border: #d4cfc6;
-  }
+  ${STAFF_PRINT_CSS_ROOT}
   * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color: var(--charcoal);
-    background: white;
+    font-family: 'Jost', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
     margin: 0;
     padding: 0;
     font-size: 8.5pt;
@@ -151,14 +145,14 @@ const CHEAT_SHEET_CSS = `
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     padding: 2rem;
     page-break-after: always;
   }
   .cover .mark {
     width: 56px; height: 56px;
-    border: 2px solid var(--camel);
+    border: 2px solid var(--steel);
     border-radius: 3px;
     font-family: Georgia, 'Times New Roman', serif;
     font-style: italic;
@@ -173,7 +167,7 @@ const CHEAT_SHEET_CSS = `
     margin: 0.25rem 0;
     max-width: 28rem;
   }
-  .cover h1 em { font-style: italic; color: var(--camel); }
+  .cover h1 em { font-style: italic; color: var(--steel); }
   .cover .sub {
     font-size: 0.95rem;
     opacity: 0.9;
@@ -190,7 +184,7 @@ const CHEAT_SHEET_CSS = `
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--camel);
+    color: var(--steel);
   }
   .page {
     padding: 0.1in 0;
@@ -201,7 +195,7 @@ const CHEAT_SHEET_CSS = `
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    border-bottom: 2px solid var(--camel);
+    border-bottom: 2px solid var(--steel);
     padding-bottom: 0.35rem;
     margin-bottom: 0.65rem;
     page-break-after: avoid;
@@ -224,7 +218,7 @@ const CHEAT_SHEET_CSS = `
     font-family: Georgia, serif;
     font-size: 0.82rem;
     margin: 0.65rem 0 0.35rem;
-    color: var(--camel);
+    color: var(--steel);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     page-break-after: avoid;
@@ -262,7 +256,7 @@ const CHEAT_SHEET_CSS = `
   }
   .membership-card {
     border: 1px solid var(--border);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     border-radius: 3px;
     padding: 0.45rem 0.55rem;
     background: var(--surface);
@@ -276,7 +270,7 @@ const CHEAT_SHEET_CSS = `
   .membership-card .price {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--camel);
+    color: var(--steel);
     margin: 0.15rem 0;
   }
   .membership-card .detail {
@@ -284,7 +278,7 @@ const CHEAT_SHEET_CSS = `
     color: var(--muted);
     line-height: 1.3;
   }
-  .membership-card .detail strong { color: var(--charcoal); font-weight: 600; }
+  .membership-card .detail strong { color: var(--navy); font-weight: 600; }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -299,20 +293,20 @@ const CHEAT_SHEET_CSS = `
     vertical-align: top;
   }
   th {
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     font-weight: 600;
     font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  tr:nth-child(even) td { background: rgba(184, 149, 106, 0.06); }
+  tr:nth-child(even) td { background: rgba(10, 106, 161, 0.04); }
   .price-col { font-weight: 600; white-space: nowrap; }
   .member-col { color: #1a5f1a; font-weight: 600; white-space: nowrap; }
   .callout {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     padding: 0.4rem 0.55rem;
     font-size: 0.68rem;
     margin: 0.4rem 0;

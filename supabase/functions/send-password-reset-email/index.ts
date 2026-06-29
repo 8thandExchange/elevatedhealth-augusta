@@ -7,6 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -178,7 +179,7 @@ serve(async (req) => {
 
     const resend = new Resend(resendKey);
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+      from: MAIL_FROM,
       to: [normalizedEmail],
       subject: "Reset your Elevated Health Augusta password",
       html: passwordResetHtml(resetLink, portal),

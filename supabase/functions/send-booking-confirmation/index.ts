@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -42,7 +43,6 @@ const CLINIC_NAME = "Elevated Health Augusta";
 const CLINIC_ADDRESS = "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809";
 const CLINIC_PHONE = "(706) 760-3470";
 const CLINIC_PHONE_RAW = "+17067603470";
-const FROM_ADDRESS = "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>";
 
 // Service line → patient-facing pre-visit instructions. Mirrors the lists
 // rendered on the in-app confirmation page so email and on-site copy agree.
@@ -224,7 +224,7 @@ async function sendEmail(args: SendBookingArgs): Promise<{ success: boolean; err
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: FROM_ADDRESS,
+        from: MAIL_FROM,
         to: [args.email],
         subject,
         html: buildEmailHtml(args),

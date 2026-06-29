@@ -33,6 +33,7 @@ import {
   buildLabPricingRows,
   LAB_PANEL_ORDERING_ROWS,
 } from "./staffMasterGuideContent";
+import { STAFF_PRINT_CSS_ROOT } from "./staffPrintBrand";
 import {
   MULTI_SERVICE_PLAYBOOK,
   ENROLLMENT_STEPS,
@@ -69,23 +70,15 @@ function tableHtml(headers: readonly string[], rows: readonly (readonly string[]
 
 const CSS = `
   @page { size: letter portrait; margin: 0.4in; }
-  :root {
-    --charcoal: #2A2826;
-    --camel: #B8956A;
-    --bone: #F2EBDC;
-    --surface: #faf8f4;
-    --muted: #6b6560;
-    --border: #d4cfc6;
-    --green: #1a5f1a;
-    --red: #8b2e2e;
-  }
+  ${STAFF_PRINT_CSS_ROOT}
   * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    color: var(--charcoal);
+    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
     margin: 0;
     font-size: 7.5pt;
     line-height: 1.3;
+    background: var(--paper);
   }
   .cover {
     min-height: 100vh;
@@ -94,29 +87,29 @@ const CSS = `
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     padding: 1.5rem;
     page-break-after: always;
   }
   .cover .mark {
     width: 56px; height: 56px;
-    border: 2px solid var(--camel);
+    border: 2px solid var(--steel-light);
     border-radius: 3px;
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-style: italic;
     font-size: 2rem;
     line-height: 52px;
     margin-bottom: 0.75rem;
   }
   .cover h1 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 400;
     font-size: 1.65rem;
     margin: 0.2rem 0;
     max-width: 26rem;
   }
-  .cover h1 em { font-style: italic; color: var(--camel); }
+  .cover h1 em { font-style: italic; color: var(--steel-light); }
   .cover .sub { font-size: 0.9rem; opacity: 0.9; margin-top: 0.4rem; max-width: 22rem; }
   .cover .meta { margin-top: 1.5rem; font-size: 0.72rem; opacity: 0.75; line-height: 1.6; }
   .cover .version {
@@ -124,7 +117,7 @@ const CSS = `
     font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--camel);
+    color: var(--steel-light);
   }
   .page { padding: 0.05in 0; page-break-after: always; }
   .page:last-child { page-break-after: auto; }
@@ -132,16 +125,17 @@ const CSS = `
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    border-bottom: 2px solid var(--camel);
+    border-bottom: 2px solid var(--steel);
     padding-bottom: 0.3rem;
     margin-bottom: 0.5rem;
     page-break-after: avoid;
   }
   .page-header h2 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1rem;
     font-weight: 600;
     margin: 0;
+    color: var(--navy);
   }
   .page-header .tag {
     font-size: 0.58rem;
@@ -150,10 +144,10 @@ const CSS = `
     color: var(--muted);
   }
   h3 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 0.78rem;
     margin: 0.5rem 0 0.25rem;
-    color: var(--camel);
+    color: var(--steel);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -169,19 +163,19 @@ const CSS = `
     text-align: left;
     vertical-align: top;
   }
-  th { background: var(--surface); font-weight: 600; }
-  tr:nth-child(even) td { background: #fdfcfa; }
+  th { background: var(--surface); font-weight: 600; color: var(--navy); }
+  tr:nth-child(even) td { background: rgba(10, 106, 161, 0.04); }
   ul, ol { margin: 0.2rem 0 0.35rem; padding-left: 1rem; }
   li { margin-bottom: 0.12rem; }
   .callout {
     background: var(--surface);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     padding: 0.35rem 0.5rem;
     margin: 0.35rem 0;
     font-size: 7pt;
   }
   .callout.warn { border-left-color: var(--red); background: #fdf8f8; }
-  .callout strong { color: var(--charcoal); }
+  .callout strong { color: var(--navy); }
   .script {
     font-style: italic;
     background: var(--surface);
@@ -197,11 +191,11 @@ const CSS = `
     padding: 0.35rem;
     border-radius: 2px;
   }
-  .lane-box h4 { margin: 0 0 0.2rem; font-size: 0.72rem; color: var(--camel); }
+  .lane-box h4 { margin: 0 0 0.2rem; font-size: 0.72rem; color: var(--steel); }
   .lane-box ol { margin: 0; padding-left: 1rem; font-size: 6.8pt; }
   .journey { font-size: 6.8pt; }
   .journey-row { display: grid; grid-template-columns: 1.2rem 1fr 4rem; gap: 0.25rem; margin-bottom: 0.15rem; }
-  .journey-num { font-weight: 700; color: var(--camel); }
+  .journey-num { font-weight: 700; color: var(--steel); }
   .say-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 6.8pt; }
   .say-do { border-left: 2px solid var(--green); padding-left: 0.35rem; }
   .say-dont { border-left: 2px solid var(--red); padding-left: 0.35rem; }
@@ -218,7 +212,7 @@ const CSS = `
     padding-top: 0.25rem;
     margin-top: 0.35rem;
   }
-  .footer strong { color: var(--charcoal); font-size: 0.65rem; }
+  .footer strong { color: var(--navy); font-size: 0.65rem; }
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }

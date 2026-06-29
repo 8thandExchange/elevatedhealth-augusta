@@ -2,6 +2,7 @@
  * Export SOP manual to Markdown / HTML for offline download.
  */
 import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_PROGRAM_VARIANTS } from "./stripeConfig";
+import { STAFF_PRINT_CSS_ROOT } from "./staffPrintBrand";
 import {
   CHARGE_CHECKPOINTS,
   SOP_ALGORITHMS,
@@ -171,17 +172,12 @@ export function buildSOPManualMarkdown(): string {
 }
 
 const BRAND_CSS = `
-  :root {
-    --charcoal: #2A2826;
-    --camel: #B8956A;
-    --bone: #F2EBDC;
-    --muted: #6b6560;
-  }
+  ${STAFF_PRINT_CSS_ROOT}
   * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    color: var(--charcoal);
-    background: var(--bone);
+    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
     margin: 0;
     padding: 2rem;
     line-height: 1.55;
@@ -190,49 +186,50 @@ const BRAND_CSS = `
   .cover {
     text-align: center;
     padding: 3rem 2rem;
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     margin: -2rem -2rem 2rem;
-    border-bottom: 4px solid var(--camel);
+    border-bottom: 4px solid var(--steel);
   }
   .cover .mark {
     display: inline-block;
     width: 64px; height: 64px;
-    background: var(--charcoal);
-    border: 2px solid var(--camel);
+    background: var(--navy);
+    border: 2px solid var(--steel-light);
     border-radius: 4px;
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-style: italic;
     font-size: 2.5rem;
     line-height: 64px;
     margin-bottom: 1rem;
   }
   .cover h1 {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
     font-weight: 400;
     font-size: 2rem;
     margin: 0.5rem 0;
   }
-  .cover h1 em { font-style: italic; }
+  .cover h1 em { font-style: italic; color: var(--steel-light); }
   .cover .meta { font-size: 0.85rem; opacity: 0.85; margin-top: 1.5rem; }
   .badge {
     display: inline-block;
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--camel);
+    color: var(--steel-light);
     margin-bottom: 0.5rem;
   }
   h2 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.35rem;
-    border-bottom: 2px solid var(--camel);
+    border-bottom: 2px solid var(--steel);
     padding-bottom: 0.35rem;
     margin-top: 2rem;
     page-break-after: avoid;
+    color: var(--navy);
   }
-  h3 { font-family: Georgia, serif; font-size: 1.1rem; margin-top: 1.5rem; }
-  h4 { font-size: 0.95rem; color: var(--camel); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; margin-top: 1.5rem; color: var(--navy); }
+  h4 { font-size: 0.95rem; color: var(--steel); margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -240,32 +237,32 @@ const BRAND_CSS = `
     margin: 1rem 0;
     page-break-inside: avoid;
   }
-  th, td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
-  th { background: var(--charcoal); color: var(--bone); }
-  tr:nth-child(even) { background: rgba(184,149,106,0.08); }
+  th, td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+  th { background: var(--navy); color: var(--paper); }
+  tr:nth-child(even) { background: rgba(10, 106, 161, 0.04); }
   .algo {
-    border: 1px solid #ccc;
+    border: 1px solid var(--border);
     border-radius: 6px;
     margin: 1rem 0;
     overflow: hidden;
     page-break-inside: avoid;
   }
   .algo-head {
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     padding: 0.75rem 1rem;
   }
   .algo-head .id { font-size: 0.7rem; opacity: 0.7; text-transform: uppercase; }
   .algo-body { padding: 0; }
   .algo-step {
     padding: 0.6rem 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
     font-size: 0.9rem;
   }
   .algo-step:last-child { border-bottom: none; }
-  .charge { color: #1a5f1a; font-size: 0.8rem; margin-top: 0.25rem; }
-  .upsell { color: #8b6914; font-size: 0.8rem; margin-top: 0.25rem; }
-  .phase { font-weight: 600; color: var(--camel); }
+  .charge { color: var(--green); font-size: 0.8rem; margin-top: 0.25rem; }
+  .upsell { color: var(--steel); font-size: 0.8rem; margin-top: 0.25rem; }
+  .phase { font-weight: 600; color: var(--steel); }
   @media print {
     body { background: white; padding: 0; }
     .cover { margin: 0 0 1rem; page-break-after: always; }

@@ -191,7 +191,7 @@ const StaffSOPManual = () => {
 
       <div className="sop-manual-root min-h-screen bg-background print:bg-white">
         {/* Branded top bar */}
-        <div className="sop-brand-bar bg-primary print:bg-[#2A2826]">
+        <div className="sop-brand-bar bg-primary">
           <div className="h-1 bg-accent" />
           <div className="container mx-auto px-4 py-2 flex items-center gap-3 max-w-5xl print:hidden">
             <div className="h-8 w-8 rounded bg-primary border border-accent/50 flex items-center justify-center">
@@ -339,8 +339,8 @@ const StaffSOPManual = () => {
         <div className="container mx-auto px-4 py-10 max-w-5xl">
           {/* Cover */}
           <header className="sop-cover text-center mb-16 relative">
-            <div className="hidden print:block absolute inset-x-0 top-0 h-2 bg-[#B8956A]" />
-            <div className="inline-flex h-20 w-20 items-center justify-center rounded-lg bg-primary border-2 border-accent mb-6 print:border-[#B8956A]">
+            <div className="hidden print:block absolute inset-x-0 top-0 h-2 bg-accent" />
+            <div className="inline-flex h-20 w-20 items-center justify-center rounded-lg bg-primary border-2 border-accent mb-6">
               <span className="font-playfair italic text-5xl text-primary-foreground">e</span>
             </div>
             <p className="section-label mb-4">{SOP_MANUAL_META.classification}</p>

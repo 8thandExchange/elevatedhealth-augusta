@@ -5,6 +5,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 import { hasClinicStaffRole } from "../_shared/staff-auth.ts";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -333,7 +334,7 @@ serve(async (req) => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+      from: MAIL_FROM,
       to: [patient_email],
       subject: emailSubject,
       html: emailHtml,

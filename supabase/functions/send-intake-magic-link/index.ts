@@ -9,13 +9,13 @@ import {
   intakeConsentTypeDisplayLabel,
   type IntakeLinkContext,
 } from "../_shared/intake-magic-link-messages.ts";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 import {
   corsHeaders,
   createServiceClient,
   requireStaffOrServiceRole,
 } from "../_shared/intake-magic-link-auth.ts";
 
-const FROM_EMAIL = "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -143,7 +143,7 @@ serve(async (req) => {
       } else {
         try {
           await resend.emails.send({
-            from: FROM_EMAIL,
+            from: MAIL_FROM,
             to: [patient.email],
             subject: messages.emailSubject,
             text: messages.emailText,

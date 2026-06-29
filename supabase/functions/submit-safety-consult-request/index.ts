@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -215,7 +216,7 @@ serve(async (req) => {
       });
     }
 
-    const from = "admin@elevatedhealthaugusta.com";
+    const from = MAIL_FROM;
     const staffTo = "appointments@elevatedhealthaugusta.com";
 
     await sendResendEmail({

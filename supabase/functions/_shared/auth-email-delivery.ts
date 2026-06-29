@@ -1,6 +1,6 @@
 /** Deliver Supabase auth links via Resend (avoids Supabase built-in email rate limits). */
 
-export const AUTH_EMAIL_FROM = "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>";
+export { AUTH_EMAIL_FROM, MAIL_FROM } from "./mail-config.ts";
 
 export function escapeHtml(value: string): string {
   return value

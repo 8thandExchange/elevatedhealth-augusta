@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 import {
+import { MAIL_FROM } from "../_shared/mail-config.ts";
   CONSULT_FEE_USD,
   fulfillConsultationPayment,
   recognizeConsultationProduct,
@@ -177,7 +178,7 @@ serve(async (req) => {
     if (resend && customerEmail) {
       try {
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+          from: MAIL_FROM,
           to: [customerEmail],
           subject: `Your $${CONSULT_FEE_USD} Wellness Assessment is paid · pick a time inside`,
           html: `<p>Hi ${firstName}, your Wellness Assessment is paid. Your enrollment code is <strong>${bookingCreditCode}</strong>. Return to the confirmation page to pick a visit time.</p>`,
@@ -189,7 +190,7 @@ serve(async (req) => {
 
       try {
         await resend.emails.send({
-          from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+          from: MAIL_FROM,
           to: ["appointments@elevatedhealthaugusta.com"],
           subject: `New ${emailConfig.title} paid — ${customerName || customerEmail}`,
           html: `

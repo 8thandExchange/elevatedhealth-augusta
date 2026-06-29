@@ -1,5 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { openaiPdfChat, openaiVisionChat } from "../_shared/openai-chat.ts";
+import {
+  tryDeterministicLabParse,
+  type ParsedLabResult,
+} from "../_shared/lab-pdf-deterministic.ts";
 import { requireClinicalStaffRole } from "../_shared/staff-auth.ts";
 
 const corsHeaders = {
@@ -7,35 +11,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
-
-interface ParsedLabResult {
-  collectionDate: string | null;
-  patientName: string | null;
-  labSource: "zrt" | "labcorp" | "unknown";
-  estradiol: number | null;
-  progesterone: number | null;
-  testosterone: number | null;
-  dheas: number | null;
-  cortisol: number | null;
-  pgE2Ratio: number | null;
-  hematocrit: number | null;
-  psa: number | null;
-  alt: number | null;
-  ast: number | null;
-  a1c: number | null;
-  tsh: number | null;
-  freeT3: number | null;
-  freeT4: number | null;
-  vitaminD: number | null;
-  fastingInsulin: number | null;
-  triglycerides: number | null;
-  hdl: number | null;
-  ldl: number | null;
-  confidence: {
-    overall: number;
-    fields: Record<string, number>;
-  };
-}
 
 function buildPrompt(): string {
   return `You are a medical lab result extraction system. Analyze this lab report and extract values.
@@ -116,9 +91,19 @@ serve(async (req) => {
     if (!pdfBase64) throw new Error("PDF data is required");
 
     const normalizedMime = normalizeMimeType(mimeType, filename);
-    const prompt = buildPrompt();
 
-    // PDFs must use Responses API — vision image_url rejects application/pdf.
+    // Local-first: text-layer PDFs with recognized format never leave the clinic.
+    if (isPdfMime(normalizedMime)) {
+      const deterministic = tryDeterministicLabParse(pdfBase64);
+      if (deterministic) {
+        return new Response(JSON.stringify({ success: true, data: deterministic }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // AI fallback — image/PDF may contain PHI; gated by OPENAI_BAA_ACTIVE (no allowWithoutBaa).
+    const prompt = buildPrompt();
     const ai = isPdfMime(normalizedMime)
       ? await openaiPdfChat(prompt, pdfBase64, { filename: filename || "lab-report.pdf" })
       : await openaiVisionChat(prompt, normalizedMime, pdfBase64, { max_tokens: 800 });
@@ -141,6 +126,7 @@ serve(async (req) => {
       if (!parsedResult.confidence) {
         parsedResult.confidence = { overall: 0.9, fields: {} };
       }
+      parsedResult.source = "ai_fallback";
     } catch (parseError) {
       console.error("Failed to parse AI response:", ai.content, parseError);
       throw new Error("Failed to parse lab results. Try a PNG/JPEG screenshot or enter values manually.");

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -92,7 +93,7 @@ const handler = async (req: Request): Promise<Response> => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+        from: MAIL_FROM,
         to: [patientEmail],
         subject: "Your Labcorp Requisition is Ready - Elevated Health Augusta",
         html: emailHtml,

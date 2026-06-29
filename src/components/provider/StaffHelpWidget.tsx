@@ -195,7 +195,7 @@ export function StaffHelpWidget() {
                 Ask the Help Assistant
               </div>
               <p className="mt-1 text-xs font-jost text-muted-foreground">
-                Keep questions portal-focused. Don’t include patient names, emails, or phone numbers.
+                Portal workflows only. Do not paste patient names, dates of birth, contact information, or other PHI.
               </p>
               <div className="mt-3 flex gap-2">
                 <Input

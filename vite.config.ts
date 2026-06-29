@@ -15,7 +15,7 @@ export default defineConfig(() => ({
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime"],
   },
-  test: {
+    test: {
     environment: "node",
     include: ["src/**/*.test.ts", "scripts/**/*.test.ts"],
   },

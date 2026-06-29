@@ -46,7 +46,7 @@ import { CORE_SERVICES } from "./stripeConfig";
 export const MASTER_GUIDE_META = {
   title: "Staff Complete Reference",
   subtitle: "Process · Multi-Service Add-Ons · Formulary · Dosing · Pricing",
-  version: "2.2.0",
+  version: "2.3.0",
   effectiveDate: "2026-06-28",
   classification: "Internal — master staff formulary & operations reference",
   clinic: "Elevated Health Augusta",

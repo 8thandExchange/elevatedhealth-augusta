@@ -19,6 +19,10 @@
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { openaiChatWithTools } from "../_shared/openai-chat.ts";
+import {
+  formatDeidentifiedLabPrompt,
+  toDeidentifiedLabContext,
+} from "../_shared/phi-deidentify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -120,9 +124,7 @@ Deno.serve(async (req) => {
 
     const { data: patient, error: pErr } = await supabase
       .from("patients")
-      .select(
-        "id, full_name, dob, gender, primary_program, current_protocol, medical_history, treatment_request, service_interests",
-      )
+      .select("id, dob, gender, primary_program, medical_history, service_interests")
       .eq("id", patient_id)
       .maybeSingle();
 
@@ -135,29 +137,20 @@ Deno.serve(async (req) => {
 
     const { data: meds } = await supabase
       .from("medications")
-      .select("medication_name, dosage, service_line, status")
+      .select("medication_name, service_line, status")
       .eq("patient_id", patient_id)
       .eq("status", "active");
 
-    const age = patient.dob
-      ? Math.floor(
-          (Date.now() - new Date(patient.dob).getTime()) /
-            (365.25 * 24 * 3600 * 1000),
-        )
-      : null;
+    const deidentified = toDeidentifiedLabContext({
+      dob: patient.dob,
+      gender: patient.gender,
+      primary_program: patient.primary_program,
+      service_interests: patient.service_interests,
+      medical_history: patient.medical_history,
+      medications: meds ?? [],
+    });
 
-    const userPrompt = `Patient profile:
-- Name: ${patient.full_name}
-- Age: ${age ?? "unknown"}
-- Gender: ${patient.gender ?? "unknown"}
-- Primary program: ${patient.primary_program ?? "—"}
-- Current protocol: ${patient.current_protocol ?? "—"}
-- Treatment request: ${patient.treatment_request ?? "—"}
-- Service interests: ${JSON.stringify(patient.service_interests ?? [])}
-- Medical history: ${JSON.stringify(patient.medical_history ?? {})}
-- Active medications: ${JSON.stringify(meds ?? [])}
-
-Recommend the appropriate baseline / monitoring lab panel.`;
+    const userPrompt = formatDeidentifiedLabPrompt(deidentified);
 
     const tools = [{
       type: "function",
@@ -200,10 +193,12 @@ Recommend the appropriate baseline / monitoring lab panel.`;
       },
     }];
 
+    // Payload is Safe Harbor de-identified (no 18 identifiers), so this call is not PHI and does not require the OpenAI BAA.
     const ai = await openaiChatWithTools(
       [{ role: "system", content: SYSTEM }, { role: "user", content: userPrompt }],
       tools,
       { type: "function", function: { name: "recommend_panel" } },
+      { allowWithoutBaa: true },
     );
 
     if (!ai.ok) {

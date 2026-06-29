@@ -6,13 +6,13 @@ import {
   splitFullName,
 } from "./gfe-clearance.ts";
 import { buildGfeLinkMessages } from "./gfe-clearance-messages.ts";
+import { MAIL_FROM } from "./mail-config.ts";
 import {
   createQualiphyExamInvite,
   getQualiphyExamIds,
   qualiphyWebhookUrl,
 } from "./qualiphy-client.ts";
 
-const FROM_EMAIL = "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>";
 const DEFAULT_PATIENT_STATE = "GA";
 
 export type GfeInviteErrorCode =
@@ -187,7 +187,7 @@ export async function sendQualiphyGfeInvite(
     const { Resend } = await import("https://esm.sh/resend@2.0.0");
     const resend = new Resend(resendKey);
     const { error: emailError } = await resend.emails.send({
-      from: FROM_EMAIL,
+      from: MAIL_FROM,
       to: [patient.email],
       subject: messages.emailSubject,
       html: messages.emailHtml,

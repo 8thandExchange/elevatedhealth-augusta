@@ -1,90 +1,113 @@
 # Elevated Health Augusta — Launch Checklist
 
-**Brand:** Elevated Health Augusta (EHA)
-**Palette:** Bone `#F2EBDC` · Warm Charcoal `#2A2826` · Camel `#B8956A`
-**Typography:** Playfair Display (headings) · Jost (body)
-**Stack:** React + Vite + Tailwind, Lovable Cloud backend
+**Last updated:** 2026-06-28 (derived from repo state)  
+**Brand palette (live tokens in `src/index.css`):** Navy `#00477E` · Steel blue accent `#0A6AA1` · White `#FFFFFF` · Logo gray `#A7A9AC`  
+**Typography (live):** Playfair Display + Jost (`tailwind.config.ts`)  
+**Frontend:** React + Vite + Tailwind → **Vercel** (`vercel.json`, auto-deploy on push to `main`)  
+**Backend:** Supabase (Postgres, Auth, Edge Functions — deploy via Supabase CLI, not Git push)
+
+Canonical pricing: [`docs/pricing/pricing_source_of_truth.md`](docs/pricing/pricing_source_of_truth.md)
 
 ---
 
-## Phase 1 — Public Homepage (status: in progress)
+## Phase 1 — Public storefront
 
-### Brand & Design System
-- [x] Bone / Warm Charcoal / Camel tokens in `src/index.css`
-- [x] Playfair Display + Jost wired in `tailwind.config.ts`
-- [x] Semantic tokens used across components (no hard-coded colors)
-- [x] Responsive layout (mobile-first, Tailwind breakpoints)
+### Brand & design system
+- [x] Navy / steel-blue / white tokens in `src/index.css`
+- [x] Playfair Display + Jost in `tailwind.config.ts`
+- [x] Semantic Tailwind tokens (`primary`, `accent`, `surface`, etc.)
+- [ ] TODO: Audit remaining Réveil-era hardcoded hex in edge-function email HTML templates (separate from this checklist)
 
-### Homepage Sections
-- [x] Hero with primary CTA
-- [x] Service overview (4 active pillars)
-- [x] About / clinical team (generic identity)
-- [x] Testimonials
-- [x] Insurance & financing info
-- [x] Footer with legal links
+### Active public service routes (`src/App.tsx`)
+- [x] IV Therapy — `/iv-lounge`, `/book/iv/*`
+- [x] Hormone Optimization — `/hormones`, `/hormones-women`, `/hormones-men`
+- [x] Medical Weight Loss — `/weightloss`, `/weight-loss`
+- [x] Peptide Therapy — `/peptides`
+- [x] Membership — `/membership`
+- [x] Ketamine / Spravato legacy routes redirect home (not offered)
+- [x] Sexual wellness & hair restoration routes → `NotFound` (launch-hidden)
 
-### Active Services (the only four offered)
-- [x] Hormone Optimization
-- [x] Medical Weight Loss
-- [x] IV Therapy
-- [x] Peptide Therapy
-- [x] **Ketamine / SPRAVATO removed** (sunsetted — not offered)
+### Pricing surfaces (see pricing source of truth — do not duplicate here)
+- [x] Wellness Assessment — $79 (documented)
+- [x] Lab panels — Comprehensive $199 · Expanded $299 (documented)
+- [x] ELEVATED programs — TRT $249 · HRT $229 · GLP-1 sema $349 / tirz $449 · IV $199/mo (documented)
+- [x] ELEVATED Metabolic — **retired** (documented)
+- [ ] TODO: Pre-launch Stripe **live mode** cutover (test keys still possible in dev — verify secrets before go-live)
 
-### Pricing Surface
-- [x] Wellness Assessment — $79 (RN entry point)
-- [x] MD Evaluation (internal escalation) — $149
-- [x] Hormone Mapping Kit — $250
-- [x] Memberships — $199 / $399 / $699
-
-### SEO & Accessibility
-- [x] Semantic HTML, single H1 per route
-- [x] Meta title (<60 chars) + description (<160 chars) per page
-- [x] Canonical tags, OG/Twitter meta
-- [x] Alt text on all images
-- [x] Keyboard navigation, 44px touch targets
-- [x] Sitemap & robots.txt published
-
-### Performance
-- [x] Hero image preloaded
-- [x] Below-the-fold images lazy-loaded
-- [x] Font preconnect for Google Fonts
-- [x] Service worker + CACHE_VERSION cache busting
+### SEO & legal pages
+- [x] Privacy, HIPAA notice, Terms, Accessibility routes exist
+- [x] `/pricing`, `/faq`, `/how-it-works`
+- [ ] TODO: Confirm production meta/OG tags and sitemap on live Vercel deploy
 
 ---
 
-## Backend & Operational
-- [x] Lovable Cloud connected
-- [x] Auth: master admin (`admin@elevatedhealthaugusta.com`)
-- [x] Provider invite flow (create-now or email-invite)
-- [x] Stripe checkout for active services
-- [x] Resend (email) live; patient/staff SMS via GoHighLevel (Sinch removed from app)
-- [x] Booking confirmations (email + SMS)
-- [x] Patient portal: invitation-only post-consult
+## Phase 2 — Booking lanes
+
+### Lane A — IV Lounge (walk-in)
+- [x] Public IV booking flow (`/book/iv/*`, screening, slots)
+- [x] Stripe IV checkout edge functions present
+- [ ] TODO: End-to-end dry run with live Stripe + schedule slots
+
+### Lane B — Consult-gated (hormones, peptides, weight loss)
+- [x] Consult prequal + schedule (`/consult`, `/schedule-consult`, `/book/consult`)
+- [x] Public intake + consent routes (`/intake`, `/intake/consents`)
+- [x] $79 consultation checkout edge function
+- [ ] TODO: LabCorp client billing approval + live draw workflow
 
 ---
 
-## Pre-Launch QA
-- [ ] All nav links resolve (no orphan ketamine/spravato pages)
-- [ ] Booking widget submits and writes to `consultation_bookings`
-- [ ] Confirmation email + SMS deliver
-- [ ] Mobile floating CTA opens consultation modal
-- [ ] Test in Chrome, Safari, Firefox
-- [ ] Test on iPhone + Android viewports
-- [ ] Lighthouse: Performance, Accessibility, SEO ≥ 90
+## Phase 3 — Staff / provider portal
 
-## Post-Launch
-- [ ] Submit sitemap to Google Search Console
-- [ ] Verify GA4 events fire
-- [ ] Google Business Profile updated
-- [ ] Monitor edge function logs for first 48h
+- [x] Provider dashboard, schedules (`/provider/*`, `/office/schedule`)
+- [x] Formulary, inventory, lab catalog (staff routes)
+- [x] Staff reference PDFs in `public/downloads/` (Complete Reference v2.3.0, Quick Card v1.0.4)
+- [x] Staff help AI + lab panel recommender edge functions (BAA-gated where PHI may be sent)
+- [ ] TODO: Provider DEA / Schedule III onboarding workflow (per `.cursorrules` remaining work)
 
 ---
 
-## URLs
-- Local dev: http://localhost:8080 (run `npm run dev`; Vite falls back to 8081 if 8080 is busy)
-- Production: https://elevatedhealthaugusta.com
-- Supabase project: https://supabase.com/dashboard/project/jiiparpfkjytdcuelcns
+## Phase 4 — Communications
 
-> Note: As of 2026-05-17, production is still served from Lovable's
-> hosting against the pre-migration codebase. Cutover to direct hosting
-> (Vercel/Netlify/etc) is pending — see Pre-Launch section.
+- [x] Resend email — sender consolidated via `supabase/functions/_shared/mail-config.ts` (`RESEND_FROM_EMAIL` secret)
+- [x] Twilio SMS (patient/staff notifications)
+- [x] Telnyx fax (Rx to compounding pharmacy)
+- [ ] TODO: Verify `RESEND_FROM_EMAIL` and domain DNS (SPF/DKIM) in production Resend dashboard
+
+---
+
+## Phase 5 — AI / PHI compliance (pre-launch)
+
+- [x] OpenAI BAA gate — `OPENAI_BAA_ACTIVE` secret required for PHI paths (`_shared/openai-baa-gate.ts`)
+- [x] `recommend-lab-panel` — Safe Harbor de-identified payload (`allowWithoutBaa: true`)
+- [x] `staff-help-ai` — free-form staff input; **BAA-gated** (PHI possible in questions)
+- [x] `parse-zrt-labs` — deterministic text-layer parse first; AI fallback BAA-gated
+- [ ] TODO: Execute OpenAI BAA + zero-retention configuration; set `OPENAI_BAA_ACTIVE=true`
+
+---
+
+## Phase 6 — Launch blockers (explicit TODOs)
+
+- [ ] Stripe live mode + webhook endpoint verification
+- [ ] Supabase edge functions + migrations deployed to prod (`jiiparpfkjytdcuelcns`)
+- [ ] Lab panel catalog seeded in `lab_panels` table
+- [ ] Real clinic photography (replace placeholders if any remain)
+- [ ] LabCorp account live for client billing
+- [ ] Replace synthetic lab PDF text fixtures with real TEST PDFs in `parse-zrt-labs/fixtures/` for parser validation
+
+---
+
+## Operational contact
+
+**Phone (canonical):** (706) 760-3470  
+**Address:** 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809  
+**Domain:** elevatedhealthaugusta.com
+
+---
+
+## Deprecated / do not resurrect
+
+- Réveil / ketamine / Spravato storefront
+- Bone / camel / charcoal as primary brand (superseded by navy palette in `src/index.css`)
+- Legacy single-tier “Elevated Membership $199” as headline offer — use ELEVATED program tiers from pricing doc
+- ELEVATED Metabolic bundled program ($599/mo) — retired 2026-06-24
+- “Lovable Cloud” as backend — backend is Supabase; frontend on Vercel

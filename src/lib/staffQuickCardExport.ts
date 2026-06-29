@@ -21,6 +21,7 @@ import {
   VISIT_LAB_ROWS,
   MEMBERSHIP_ROWS,
 } from "./staffQuickCardContent";
+import { STAFF_PRINT_CSS_ROOT } from "./staffPrintBrand";
 
 export { QUICK_CARD_FILENAME_BASE };
 
@@ -51,23 +52,15 @@ function tableHtml(headers: readonly string[], rows: readonly (readonly string[]
 
 const CSS = `
   @page { size: letter portrait; margin: 0.4in; }
-  :root {
-    --charcoal: #2A2826;
-    --camel: #B8956A;
-    --bone: #F2EBDC;
-    --surface: #faf8f4;
-    --muted: #6b6560;
-    --border: #d4cfc6;
-    --green: #1a5f1a;
-    --red: #8b2e2e;
-  }
+  ${STAFF_PRINT_CSS_ROOT}
   * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    color: var(--charcoal);
+    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
     margin: 0;
     font-size: 8pt;
     line-height: 1.32;
+    background: var(--paper);
   }
   .cover {
     min-height: 100vh;
@@ -76,29 +69,29 @@ const CSS = `
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     padding: 1.5rem;
     page-break-after: always;
   }
   .cover .mark {
     width: 52px; height: 52px;
-    border: 2px solid var(--camel);
+    border: 2px solid var(--steel-light);
     border-radius: 3px;
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-style: italic;
     font-size: 1.75rem;
     line-height: 48px;
     margin-bottom: 0.75rem;
   }
   .cover h1 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 400;
     font-size: 1.55rem;
     margin: 0.2rem 0;
     max-width: 24rem;
   }
-  .cover h1 em { color: var(--camel); font-style: italic; }
+  .cover h1 em { color: var(--steel-light); font-style: italic; }
   .cover .sub { font-size: 0.9rem; opacity: 0.92; margin-top: 0.35rem; }
   .cover .meta { margin-top: 1.25rem; font-size: 0.72rem; opacity: 0.78; line-height: 1.55; }
   .cover .version {
@@ -106,7 +99,7 @@ const CSS = `
     font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--camel);
+    color: var(--steel-light);
   }
   .page { page-break-after: always; padding: 0.05in 0; }
   .page:last-child { page-break-after: auto; }
@@ -114,14 +107,15 @@ const CSS = `
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    border-bottom: 2px solid var(--camel);
+    border-bottom: 2px solid var(--steel);
     padding-bottom: 0.3rem;
     margin-bottom: 0.5rem;
   }
   .page-header h2 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1rem;
     margin: 0;
+    color: var(--navy);
   }
   .page-header .tag {
     font-size: 0.58rem;
@@ -130,16 +124,16 @@ const CSS = `
     color: var(--muted);
   }
   h3 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 0.75rem;
     margin: 0.5rem 0 0.25rem;
-    color: var(--camel);
+    color: var(--steel);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
   .script {
     background: var(--surface);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     padding: 0.45rem 0.55rem;
     font-size: 0.72rem;
     font-style: italic;
@@ -164,7 +158,7 @@ const CSS = `
     letter-spacing: 0.05em;
     color: var(--muted);
   }
-  .quick-card .val { font-size: 0.68rem; font-weight: 600; margin-top: 0.15rem; }
+  .quick-card .val { font-size: 0.68rem; font-weight: 600; margin-top: 0.15rem; color: var(--navy); }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
   .lane {
     border: 1px solid var(--border);
@@ -173,13 +167,14 @@ const CSS = `
     background: var(--surface);
     page-break-inside: avoid;
   }
-  .lane-a { border-top: 3px solid #4a7c59; }
-  .lane-b { border-top: 3px solid var(--camel); }
+  .lane-a { border-top: 3px solid var(--steel-light); }
+  .lane-b { border-top: 3px solid var(--steel); }
   .lane h4 {
     font-size: 0.72rem;
     margin: 0 0 0.25rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    color: var(--navy);
   }
   .lane ol {
     margin: 0;
@@ -203,8 +198,8 @@ const CSS = `
     flex-shrink: 0;
     width: 1.1rem;
     height: 1.1rem;
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     border-radius: 2px;
     font-size: 0.58rem;
     font-weight: 700;
@@ -221,21 +216,22 @@ const CSS = `
   }
   .membership-card {
     border: 1px solid var(--border);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     border-radius: 3px;
     padding: 0.35rem 0.45rem;
     background: var(--surface);
     page-break-inside: avoid;
   }
   .membership-card .name {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 0.78rem;
     font-weight: 600;
+    color: var(--navy);
   }
   .membership-card .price {
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--camel);
+    color: var(--steel);
   }
   .membership-card .detail {
     font-size: 0.62rem;
@@ -256,18 +252,18 @@ const CSS = `
     vertical-align: top;
   }
   th {
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     font-size: 0.58rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
-  tr:nth-child(even) td { background: rgba(184, 149, 106, 0.06); }
+  tr:nth-child(even) td { background: rgba(10, 106, 161, 0.04); }
   .price { font-weight: 600; white-space: nowrap; }
   .callout {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     padding: 0.35rem 0.45rem;
     font-size: 0.64rem;
     margin: 0.35rem 0;
@@ -278,9 +274,9 @@ const CSS = `
     font-size: 0.64rem;
   }
   .say-list li { margin-bottom: 0.2rem; color: var(--green); }
-  .say-list li span { color: var(--charcoal); }
+  .say-list li span { color: var(--ink); }
   .dont-list li { margin-bottom: 0.2rem; color: var(--red); }
-  .dont-list li span { color: var(--charcoal); }
+  .dont-list li span { color: var(--ink); }
   .team-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -293,7 +289,7 @@ const CSS = `
     border-radius: 3px;
     background: var(--surface);
   }
-  .team-card strong { display: block; font-size: 0.68rem; }
+  .team-card strong { display: block; font-size: 0.68rem; color: var(--navy); }
   .team-card em { font-size: 0.58rem; color: var(--muted); font-style: normal; }
   .footer {
     text-align: center;
@@ -303,7 +299,7 @@ const CSS = `
     padding-top: 0.3rem;
     margin-top: 0.4rem;
   }
-  .footer strong { color: var(--charcoal); font-size: 0.72rem; }
+  .footer strong { color: var(--navy); font-size: 0.72rem; }
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
@@ -541,26 +537,18 @@ export function downloadFullQuickReferencePdf(): Promise<void> {
 
 const DESK_CSS = `
   @page { size: letter portrait; margin: 0.28in; }
-  :root {
-    --charcoal: #2A2826;
-    --camel: #B8956A;
-    --bone: #F2EBDC;
-    --surface: #faf8f4;
-    --muted: #6b6560;
-    --border: #d4cfc6;
-    --green: #1a5f1a;
-    --red: #8b2e2e;
-  }
+  ${STAFF_PRINT_CSS_ROOT}
   * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    color: var(--charcoal);
+    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
     margin: 0;
     font-size: 6.5pt;
     line-height: 1.22;
+    background: var(--paper);
   }
   .sheet {
-    border: 2px solid var(--charcoal);
+    border: 2px solid var(--navy);
     border-radius: 4px;
     padding: 0.22in;
     min-height: calc(11in - 0.56in);
@@ -570,17 +558,18 @@ const DESK_CSS = `
   }
   .head {
     text-align: center;
-    border-bottom: 2px solid var(--camel);
+    border-bottom: 2px solid var(--steel);
     padding-bottom: 0.08in;
   }
   .head h1 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 11pt;
     margin: 0;
     letter-spacing: 0.04em;
+    color: var(--navy);
   }
   .head p { margin: 0.04in 0 0; font-size: 7pt; color: var(--muted); }
-  .head .phone { font-size: 9pt; font-weight: 700; color: var(--charcoal); margin-top: 0.06in; }
+  .head .phone { font-size: 9pt; font-weight: 700; color: var(--navy); margin-top: 0.06in; }
   .bar {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -593,7 +582,7 @@ const DESK_CSS = `
     border-radius: 3px;
     padding: 0.06in 0.08in;
   }
-  .bar-box strong { display: block; font-size: 6.5pt; text-transform: uppercase; letter-spacing: 0.04em; color: var(--camel); margin-bottom: 0.03in; }
+  .bar-box strong { display: block; font-size: 6.5pt; text-transform: uppercase; letter-spacing: 0.04em; color: var(--steel); margin-bottom: 0.03in; }
   .programs {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -601,36 +590,36 @@ const DESK_CSS = `
   }
   .prog {
     border: 1px solid var(--border);
-    border-top: 2px solid var(--camel);
+    border-top: 2px solid var(--steel);
     border-radius: 3px;
     padding: 0.06in;
     background: var(--surface);
     text-align: center;
   }
-  .prog .n { font-family: Georgia, serif; font-size: 6.8pt; font-weight: 600; line-height: 1.15; min-height: 2.2em; }
-  .prog .p { font-size: 9pt; font-weight: 700; color: var(--camel); margin: 0.03in 0; }
+  .prog .n { font-family: 'Playfair Display', Georgia, serif; font-size: 6.8pt; font-weight: 600; line-height: 1.15; min-height: 2.2em; color: var(--navy); }
+  .prog .p { font-size: 9pt; font-weight: 700; color: var(--steel); margin: 0.03in 0; }
   .prog .d { font-size: 5.8pt; color: var(--muted); line-height: 1.2; }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.1in; flex: 1; }
   .col h2 {
-    font-family: Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 7pt;
     margin: 0 0 0.05in;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--camel);
+    color: var(--steel);
     border-bottom: 1px solid var(--border);
     padding-bottom: 0.03in;
   }
   table { width: 100%; border-collapse: collapse; font-size: 6pt; margin-bottom: 0.06in; }
   th, td { border: 1px solid var(--border); padding: 0.04in 0.05in; text-align: left; vertical-align: top; }
-  th { background: var(--charcoal); color: var(--bone); font-size: 5.5pt; text-transform: uppercase; }
+  th { background: var(--navy); color: var(--paper); font-size: 5.5pt; text-transform: uppercase; }
   .journey { font-size: 5.8pt; columns: 2; column-gap: 0.12in; }
   .journey div { break-inside: avoid; margin-bottom: 0.04in; }
   .journey b { font-size: 6pt; }
   ul { margin: 0; padding-left: 0.9em; font-size: 5.8pt; }
   ul.do li { color: var(--green); }
   ul.dont li { color: var(--red); }
-  ul.do span, ul.dont span { color: var(--charcoal); }
+  ul.do span, ul.dont span { color: var(--ink); }
   .team { display: grid; grid-template-columns: 1fr 1fr; gap: 0.06in; font-size: 5.8pt; }
   .team div { background: var(--surface); border: 1px solid var(--border); padding: 0.04in 0.06in; border-radius: 2px; }
   .foot { text-align: center; font-size: 5.5pt; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.05in; margin-top: auto; }

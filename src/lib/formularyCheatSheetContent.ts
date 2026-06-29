@@ -182,7 +182,7 @@ export const HAIR_ROWS = Object.values(HAIR_RESTORATION_PRODUCTS).map((p) => [
 export const POLICY_BULLETS = [
   "Medication is INCLUDED in ELEVATED TRT / HRT / GLP-1 — never say “plus pharmacy costs.”",
   "NAD+ is ONLY the $50 IV booster push — no peptide NAD+, no standalone NAD+ infusion.",
-  "Ketamine / Spravato — not offered (legacy).",
+  "Ketamine / Spravato — not offered.",
   "Retatrutide — physician-selected within GLP-1 lane only; full consent; never headline or advertise.",
   "Injectable TRT (cypionate) — not offered. Anastrozole and HCG — not offered.",
   "Cash pay · no insurance billing · itemized receipts & superbills on request.",

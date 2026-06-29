@@ -1,0 +1,10 @@
+ZRT Laboratory
+Saliva Profile Report
+Collection Date: 01/15/2026
+Patient: TEST PATIENT ZRT
+Estradiol: 1.8 pg/mL
+Progesterone: 125 pg/mL
+Testosterone: 42 pg/mL
+DHEA-S: 1800 ng/mL
+Cortisol: 0.85 ng/mL
+P/G Ratio: 69.4

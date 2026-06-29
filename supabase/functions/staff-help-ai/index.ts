@@ -51,6 +51,9 @@ function redactLikelyPII(input: string): string {
     .replace(/\b(\+?1[\s-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/g, "[REDACTED_PHONE]");
 }
 
+const STAFF_PHI_INPUT_NOTICE =
+  "Do not paste patient names, dates of birth, contact information, or other PHI into this assistant. Ask about portal workflows only.";
+
 const KNOWLEDGE_BASE = `
 You are the internal staff help assistant for Elevated Health Augusta (EHA).
 Goal: Give concise, step-by-step instructions for using the staff portal.
@@ -58,6 +61,7 @@ Goal: Give concise, step-by-step instructions for using the staff portal.
 Hard rules:
 - NO medical advice. NO dosing. NO diagnosis. If asked, advise to escalate to the clinician/medical director.
 - Do not request or retain patient identifiers. If the user mentions a patient name/email/phone, ignore it and answer generically.
+- ${STAFF_PHI_INPUT_NOTICE}
 - If an action requires admin permissions, say so clearly.
 - Prefer sending the user to the exact route in the staff portal.
 
@@ -132,7 +136,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify({ answer: ai.content }), {
+    return new Response(JSON.stringify({
+      answer: ai.content,
+      notice: STAFF_PHI_INPUT_NOTICE,
+    }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

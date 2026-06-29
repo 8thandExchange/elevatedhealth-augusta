@@ -1,0 +1,17 @@
+Laboratory Corporation of America
+LabCorp Patient Report
+Collection Date: 2026-01-19
+Patient Name: TEST PATIENT LABCORP
+Hematocrit: 42 %
+PSA: 0.9 ng/mL
+ALT: 22 U/L
+AST: 19 U/L
+HbA1c: 5.4 %
+TSH: 2.1 mIU/L
+Free T3: 3.2 pg/mL
+Free T4: 1.1 ng/dL
+Vitamin D: 38 ng/mL
+Fasting Insulin: 8 uIU/mL
+Triglycerides: 95 mg/dL
+HDL: 58 mg/dL
+LDL: 102 mg/dL

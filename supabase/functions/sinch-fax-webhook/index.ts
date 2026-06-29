@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -61,7 +62,7 @@ async function sendFailureAlert(
 
   try {
     await resend.emails.send({
-      from: "Elevated Health Augusta <noreply@elevatedhealthaugusta.com>",
+      from: MAIL_FROM,
       to: ["appointments@elevatedhealthaugusta.com"],
       subject: `⚠️ Fax Failed: ${patientName} - ${medication}`,
       html,

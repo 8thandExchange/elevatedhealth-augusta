@@ -25,7 +25,7 @@ import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_PROGRAM_VARIANTS } from "./strip
 export const QUICK_CARD_META = {
   title: "Staff Quick Reference Card",
   subtitle: "Process · Menu · Pricing · Rules",
-  version: "1.0.3",
+  version: "1.0.4",
   effectiveDate: "2026-06-28",
   classification: "Internal — print & laminate at front desk",
   clinic: "Elevated Health Augusta",

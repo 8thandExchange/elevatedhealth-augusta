@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Elevated Health Augusta — Staff Complete Reference</title>
+  <style>
+  @page { size: letter portrait; margin: 0.4in; }
+  
+  :root {
+    --navy: #00477E;
+    --navy-dark: #002D4F;
+    --steel: #0A6AA1;
+    --steel-light: #3D9FD1;
+    --paper: #FFFFFF;
+    --ink: #0B3555;
+    --surface: #F4F7FA;
+    --muted: #646B75;
+    --border: #D9DFE6;
+    --green: #1a5f1a;
+    --red: #8b2e2e;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    margin: 0;
+    font-size: 7.5pt;
+    line-height: 1.3;
+    background: var(--paper);
+  }
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: var(--navy);
+    color: var(--paper);
+    padding: 1.5rem;
+    page-break-after: always;
+  }
+  .cover .mark {
+    width: 56px; height: 56px;
+    border: 2px solid var(--steel-light);
+    border-radius: 3px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 2rem;
+    line-height: 52px;
+    margin-bottom: 0.75rem;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.65rem;
+    margin: 0.2rem 0;
+    max-width: 26rem;
+  }
+  .cover h1 em { font-style: italic; color: var(--steel-light); }
+  .cover .sub { font-size: 0.9rem; opacity: 0.9; margin-top: 0.4rem; max-width: 22rem; }
+  .cover .meta { margin-top: 1.5rem; font-size: 0.72rem; opacity: 0.75; line-height: 1.6; }
+  .cover .version {
+    margin-top: 1rem;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--steel-light);
+  }
+  .page { padding: 0.05in 0; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid var(--steel);
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
+    page-break-after: avoid;
+  }
+  .page-header h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--navy);
+  }
+  .page-header .tag {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.78rem;
+    margin: 0.5rem 0 0.25rem;
+    color: var(--steel);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 6.8pt;
+    margin: 0.25rem 0 0.4rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.18rem 0.28rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--surface); font-weight: 600; color: var(--navy); }
+  tr:nth-child(even) td { background: rgba(10, 106, 161, 0.04); }
+  ul, ol { margin: 0.2rem 0 0.35rem; padding-left: 1rem; }
+  li { margin-bottom: 0.12rem; }
+  .callout {
+    background: var(--surface);
+    border-left: 3px solid var(--steel);
+    padding: 0.35rem 0.5rem;
+    margin: 0.35rem 0;
+    font-size: 7pt;
+  }
+  .callout.warn { border-left-color: var(--red); background: #fdf8f8; }
+  .callout strong { color: var(--navy); }
+  .script {
+    font-style: italic;
+    background: var(--surface);
+    padding: 0.35rem 0.5rem;
+    border-radius: 2px;
+    margin-bottom: 0.4rem;
+    font-size: 7pt;
+  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .lane-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem;
+    border-radius: 2px;
+  }
+  .lane-box h4 { margin: 0 0 0.2rem; font-size: 0.72rem; color: var(--steel); }
+  .lane-box ol { margin: 0; padding-left: 1rem; font-size: 6.8pt; }
+  .journey { font-size: 6.8pt; }
+  .journey-row { display: grid; grid-template-columns: 1.2rem 1fr 4rem; gap: 0.25rem; margin-bottom: 0.15rem; }
+  .journey-num { font-weight: 700; color: var(--steel); }
+  .say-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 6.8pt; }
+  .say-do { border-left: 2px solid var(--green); padding-left: 0.35rem; }
+  .say-dont { border-left: 2px solid var(--red); padding-left: 0.35rem; }
+  .team-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    font-size: 6.8pt;
+  }
+  .footer {
+    font-size: 0.55rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 0.25rem;
+    margin-top: 0.35rem;
+  }
+  .footer strong { color: var(--navy); font-size: 0.65rem; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+  
+  <section class="cover">
+    <div class="mark">E</div>
+    <h1>Staff <em>Complete Reference</em></h1>
+    <p class="sub">Process · Multi-Service Add-Ons · Formulary · Dosing · Pricing</p>
+    <p class="meta">7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809<br/>(706) 760-3470 · elevatedhealthaugusta.com</p>
+    <p class="version">Internal — master staff formulary &amp; operations reference · v2.3.0 · 2026-06-28</p>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>How we work</h2>
+      <span class="tag">Process · v2.3.0</span>
+    </div>
+    
+    <div class="script">We start with what you want, but we confirm with labs and a physician review before any prescription. The $79 Wellness Assessment is our front door for hormones, weight loss, and peptides — IV Lounge is walk-in without a consult.</div>
+    <div class="two-col">
+      <div class="lane-box">
+        <h4>Lane A — IV Lounge (walk-in)</h4>
+        <ol><li>Patient walks in or books IV Lounge online.</li><li>IV screening edge function runs hard blocks (CHF, pregnancy, G6PD for high-dose vitamin C, etc.).</li><li>Select drip or push; charge at checkout (signature drips $139–$169; NAD+ $50 booster; glutathione and other pushes).</li><li>Members receive 20% off IV add-ons beyond the 2 included drips on ELEVATED IV.</li><li>Soft mention $79 Wellness Assessment only if hormone/weight interest surfaces.</li></ol>
+      </div>
+      <div class="lane-box">
+        <h4>Lane B — Consult-gated (Rx · peptides · hormones)</h4>
+        <ol><li>Patient pays $79 Wellness Assessment via Stripe before or at booking.</li><li>In-person visit: history, vitals, goal confirmation.</li><li>Order goal-appropriate lab panel; draw same visit when possible.</li><li>Run CDS assessment in provider chart (staff) → physician review (prescriber only).</li><li>Results call: enroll program, collect consents, schedule RN teaching.</li><li>Never promise a specific medication before labs and physician sign-off.</li></ol>
+      </div>
+    </div>
+    <h3>Patient journey (9 steps)</h3>
+    <div class="journey">
+      <div class="journey-row"><span class="journey-num">1</span><span>Arrival — Warm welcome, identify intent</span><span>Front desk</span></div><div class="journey-row"><span class="journey-num">2</span><span>Counsel &amp; discover — Educate on EHA services; no price guessing</span><span>Kristen / Caroline</span></div><div class="journey-row"><span class="journey-num">3</span><span>Wellness Assessment — Charge $79; intake + lane lock</span><span>Kristen + RN</span></div><div class="journey-row"><span class="journey-num">4</span><span>Labs ordered &amp; drawn — Correct panel, correct charge</span><span>Caroline</span></div><div class="journey-row"><span class="journey-num">5</span><span>Provider review — Clinical decision within 5–7 days</span><span>Provider MD</span></div><div class="journey-row"><span class="journey-num">6</span><span>Program enrollment — Stripe subscription + consents</span><span>Kristen</span></div><div class="journey-row"><span class="journey-num">7</span><span>Prescribe &amp; ship — Vendor routing ALGO-003</span><span>Provider + Kristen</span></div><div class="journey-row"><span class="journey-num">8</span><span>Follow-up cadence — RN check-ins, quarterly labs</span><span>Caroline + Kristen</span></div><div class="journey-row"><span class="journey-num">9</span><span>Retain &amp; grow — Verify billing + ethical upsell</span><span>All staff</span></div>
+    </div>
+    <h3>Quick reference</h3>
+    <ul><li><strong>Front door:</strong> $79 Wellness Assessment</li><li><strong>Member discount:</strong> 20% off all à la carte</li><li><strong>Payment:</strong> Card · Klarna · Affirm · superbills on request</li><li><strong>Lane A:</strong> IV Lounge — walk-in, no consult</li><li><strong>Lane B:</strong> Hormones · GLP-1 · peptides — consult-gated</li></ul>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Multi-service add-on playbook</h2>
+      <span class="tag">Multi-service · v2.3.0</span>
+    </div>
+    
+    <div class="callout"><strong>Serve TRT + weight loss + peptides — one care bundle, medication add-ons, à la carte peptides</strong><br/>Three layers: (1) one anchor program owns the care bundle, (2) optional medication add-on for the second Rx lane on the same Stripe subscription, (3) peptides as separate SKUs with member 20% off — never duplicate the care bundle.</div>
+    <h3>Three layers — how competitive stacking works</h3>
+    <table><thead><tr><th>Layer</th><th>What it is</th><th>Pricing</th><th>Care included</th><th>How to enroll</th></tr></thead><tbody><tr><td>Layer 1 · Anchor</td><td>One full ELEVATED program</td><td>TRT $249 · HRT $229 · GLP-1 sema $349 · GLP-1 tirz $449</td><td>RN check-ins · messaging · quarterly labs · primary Rx</td><td>Elevated Combo Selector — anchor tile</td></tr><tr><td>Layer 2 · Med add-on</td><td>Second Rx lane · same subscription</td><td>+TRT $149 · +HRT $129 · +sema $249 · +tirz $349</td><td>Saves $100/mo vs second full program</td><td>Combo Selector — add-on tile · update-subscription-addon</td></tr><tr><td>Layer 3+ · Peptides</td><td>À la carte · separate SKU(s)</td><td>Catalog price · member −20% each line</td><td>Recovery stack $349 bundle only published peptide bundle</td><td>Send Payment Link per peptide · physician layers 1–2 at a time</td></tr><tr><td>IV membership</td><td>ELEVATED IV $199</td><td>Non-Rx · no hormone/GLP combo SKUs</td><td>20% off à la carte IV + peptides</td><td>Separate from Rx combo — can stack with layer 3 peptides</td></tr></tbody></table>
+    <h3>What one care bundle includes (never duplicate on add-on)</h3>
+    <ul><li>Monthly RN check-in (both protocols reviewed in one visit)</li><li>Unlimited secure messaging</li><li>Quarterly in-office labs (Expanded panel when GLP-1 is in the mix)</li><li>Physician review and protocol adjustments when clinically indicated</li></ul>
+    <h3>Enrollment process (Provider Dashboard)</h3>
+    <ol><li>$79 Wellness Assessment + baseline labs ($199 hormones · $299 if GLP-1 in mix)</li><li>Provider review — document all lanes: weight, hormones, recovery, vitality, metabolic adjuncts</li><li>Pick anchor = primary clinical goal (weight → GLP-1 anchor; hormones → TRT/HRT anchor)</li><li>If second Rx lane indicated → select medication add-on in Elevated Combo Selector (one subscription, two line items)</li><li>Send combo checkout link OR update existing subscription via update-subscription-addon</li><li>Peptides (layer 3): after consent + gates → separate Send Payment Link per SKU (member −20% each line)</li><li>Quote total monthly = combo total + sum of peptide lines (show math on paper)</li><li>Chart: elevated_program (anchor) + elevated_program_addon + peptide SKUs in care plan</li><li>Staging OK: physician may start anchor only; add medication add-on after 8–12 weeks stable</li></ol>
+    <div class="two-col">
+      <div class="say-do"><h3 style="margin-top:0;color:var(--green)">Always</h3><ul><li>&quot;One visit, one lab cadence, both medications — you save $100/month vs two separate programs.&quot;</li><li>&quot;Your anchor program includes RN check-ins, quarterly labs, and messaging. The add-on is medication only.&quot;</li><li>&quot;Peptides bill separately at member pricing — we layer them after your core protocols are stable.&quot;</li><li>Use Elevated Combo Selector in provider portal — do not manually price-match in Stripe</li></ul></div>
+      <div class="say-dont"><h3 style="margin-top:0;color:var(--red)">Never</h3><ul><li>Enroll two full ELEVATED programs for the same patient — always anchor + add-on ($100/mo lost + duplicate visits)</li><li>Fold peptides into the combo subscription or invent custom bundle prices — leadership approval only</li><li>Stack additional discounts on top of member 20% on peptides</li><li>Say plus pharmacy costs on TRT/HRT/GLP-1 anchor or add-on lines</li><li>Skip Expanded labs when GLP-1 is in the combo — one draw covers both lanes</li></ul></div>
+    </div>
+    <h3>Margin guardrails</h3>
+    <ul><li>Medication add-ons priced at full program minus $100 — preserves ~30%+ gross margin on drug COGS</li><li>Peptides: catalog price only; member discount = 20% per line — no extra stacking</li><li>Recovery stack ($349) is the only published peptide bundle SKU — saves vs $498 à la carte BPC+TB</li><li>If anchor + add-on + 2 peptides feels high, stage peptides — do not discount the combo</li></ul>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Dual-lane combos — anchor + medication add-on</h2>
+      <span class="tag">Combo matrix · v2.3.0</span>
+    </div>
+    
+    <p style="font-size:7pt;margin:0 0 0.35rem">Pick one anchor + optional add-on. Totals are symmetric — anchor order does not change the bill. Save $100/mo vs two full programs.</p>
+    <table><thead><tr><th>Combo</th><th>Total/mo</th><th>Add-on line</th><th>Savings</th><th>Onboarding labs</th></tr></thead><tbody><tr><td>ELEVATED GLP-1 · Semaglutide</td><td>$349/mo</td><td>—</td><td>Anchor only</td><td>$299 once at start</td></tr><tr><td>ELEVATED GLP-1 · Semaglutide + TRT medication add-on</td><td>$498/mo</td><td>+$149/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr><tr><td>ELEVATED GLP-1 · Semaglutide + HRT medication add-on</td><td>$478/mo</td><td>+$129/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr><tr><td>ELEVATED GLP-1 · Tirzepatide</td><td>$449/mo</td><td>—</td><td>Anchor only</td><td>$299 once at start</td></tr><tr><td>ELEVATED GLP-1 · Tirzepatide + TRT medication add-on</td><td>$598/mo</td><td>+$149/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr><tr><td>ELEVATED GLP-1 · Tirzepatide + HRT medication add-on</td><td>$578/mo</td><td>+$129/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr><tr><td>ELEVATED TRT</td><td>$249/mo</td><td>—</td><td>Anchor only</td><td>$199 once at start</td></tr><tr><td>ELEVATED TRT + GLP-1 semaglutide medication add-on</td><td>$498/mo</td><td>+$249/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr><tr><td>ELEVATED TRT + GLP-1 tirzepatide medication add-on</td><td>$598/mo</td><td>+$349/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr><tr><td>ELEVATED HRT</td><td>$229/mo</td><td>—</td><td>Anchor only</td><td>$199 once at start</td></tr><tr><td>ELEVATED HRT + GLP-1 semaglutide medication add-on</td><td>$478/mo</td><td>+$249/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr><tr><td>ELEVATED HRT + GLP-1 tirzepatide medication add-on</td><td>$578/mo</td><td>+$349/mo</td><td>Save $100/mo vs two full programs</td><td>$299 once at start</td></tr></tbody></table>
+    <h3>Triple-service scenarios (combo + peptides)</h3>
+    <table><thead><tr><th>Patient scenario</th><th>Combo/mo</th><th>Peptides</th><th>Steady state</th><th>Staff script</th></tr></thead><tbody><tr><td>Man · weight loss + TRT + recovery (BPC/TB stack)</td><td>$498/mo</td><td>BPC-157 / TB-500 Recovery Stack: $349 ($279 member)</td><td>$498/mo combo · stack billed per fill cycle</td><td>GLP-1 semaglutide program with TRT medication add-on — $498/mo all-in for both Rx lanes. Recovery stack is a separate one-time fill; member saves 20%.</td></tr><tr><td>Woman · weight loss + HRT + sermorelin (vitality)</td><td>$578/mo</td><td>Sermorelin Injection: $149 ($119 member)</td><td>$697/mo steady state</td><td>Tirzepatide anchor with HRT medication add-on — $578/mo. Sermorelin layers on as its own subscription once physician clears; member price $119/mo.</td></tr><tr><td>Man · TRT anchor + semaglutide + CJC/Ipamorelin</td><td>$498/mo</td><td>CJC-1295/Ipamorelin: $179 ($143 member)</td><td>$641/mo steady state</td><td>TRT-led combo with semaglutide add-on — $498/mo symmetric either anchor order. CJC/Ipamorelin added after stability review.</td></tr><tr><td>Man · TRT + tirzepatide + BPC-157 (ongoing recovery fill)</td><td>$598/mo</td><td>BPC-157 fill: $249 ($199 member)</td><td>$797/mo steady state</td><td>Highest-demand men's stack — $598/mo for TRT + tirzepatide medication lanes. BPC is consult-gated fill, not in the combo.</td></tr></tbody></table>
+    <h3>Layer 3 — Peptides (à la carte on top of combo)</h3>
+    <p style="font-size:7pt">Peptides never duplicate the care bundle. Bill as separate SKUs after consult-gated review. Active ELEVATED members save 20% on each peptide line.</p>
+    <ul><li>Physician layers 1–2 peptides at a time after anchor ± add-on is stable.</li><li>Recovery stack (BPC + TB) = $349 / $279 member — only published peptide bundle.</li><li>Research Peptide Consent + malignancy screen for Cat 2 compounds.</li><li>Retatrutide is NOT a casual peptide add-on — GLP-1 lane only, physician-gated.</li></ul>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Comprehensive &amp; Expanded lab panels — what to order</h2>
+      <span class="tag">Lab panels · v2.3.0</span>
+    </div>
+    
+    <div class="callout">
+      <strong>Comprehensive Wellness Panel ($199)</strong> = Foundation Wellness · 8 tests.<br/>
+      <strong>Expanded Panel ($299)</strong> = Hormone (TRT/HRT) or Weight/GLP-1 · 16–18 tests (includes all 8 Foundation tests).<br/>
+      Initial labs are paid at onboarding; quarterly panels are included on ELEVATED TRT, HRT, and GLP-1 while active.
+    </div>
+    <h3>Which panel to order (by program)</h3>
+    <table><thead><tr><th>Program / pathway</th><th>Panel name</th><th>Non-member</th><th>Member (−20%)</th><th>When</th></tr></thead><tbody><tr><td>ELEVATED TRT (men)</td><td>Hormone — Male (16 tests)</td><td>$299</td><td>$239</td><td>Baseline before TRT · quarterly included while member</td></tr><tr><td>ELEVATED HRT (women)</td><td>Hormone — Female (18 tests)</td><td>$299</td><td>$239</td><td>Baseline before HRT · quarterly included while member</td></tr><tr><td>ELEVATED GLP-1 / weight loss</td><td>Weight / Expanded (16 tests)</td><td>$299</td><td>$239</td><td>Baseline before GLP-1 · quarterly included while member</td></tr><tr><td>GLP-1 + hormone combo</td><td>Weight / Expanded (16 tests)</td><td>$299</td><td>$239</td><td>One draw covers both lanes when GLP-1 is in the mix</td></tr><tr><td>General wellness / IV / peptides</td><td>Foundation Wellness (8 tests)</td><td>$199</td><td>$159</td><td>Comprehensive Wellness Panel · annual or as indicated</td></tr><tr><td>Sexual wellness workup</td><td>Sexual Wellness (7 tests)</td><td>$199</td><td>$159</td><td>When clinically indicated for libido/ED workup</td></tr></tbody></table>
+    <h3>What each panel includes (tests)</h3>
+    <table><thead><tr><th>Panel</th><th>Tests included</th></tr></thead><tbody><tr><td>Foundation Wellness (8)</td><td>CBC · Comprehensive Metabolic Panel · Lipid panel · Hemoglobin A1c · hs-CRP · TSH · Vitamin D (25-OH) · Ferritin</td></tr><tr><td>Hormone — Male (16)</td><td>All 8 Foundation tests + Total Testosterone · Free Testosterone · Estradiol (sensitive) · SHBG · LH · FSH · PSA · DHEA-Sulfate</td></tr><tr><td>Hormone — Female (18)</td><td>All 8 Foundation tests + Estradiol (sensitive) · Progesterone · FSH · LH · Prolactin · DHEA-Sulfate · Free T3 · Free T4 · Total Testosterone · SHBG</td></tr><tr><td>Weight / Expanded (16)</td><td>All 8 Foundation tests + Fasting insulin · Apolipoprotein B · Lipoprotein(a) · Leptin · Homocysteine · Folate · Vitamin B12 · Iron studies</td></tr><tr><td>Sexual Wellness (7)</td><td>Total Testosterone · Free Testosterone · Estradiol (sensitive) · Prolactin · SHBG · DHEA-Sulfate · TSH</td></tr></tbody></table>
+    <h3>Draw frequency</h3>
+    <table><thead><tr><th>Panel</th><th>When to draw</th></tr></thead><tbody><tr><td>Foundation Wellness</td><td>At onboarding with the Wellness Assessment; then annually or when clinically indicated</td></tr><tr><td>Hormone — Male / Female</td><td>Baseline before starting HRT/TRT, then included every quarter (every 3 months) while a member; extra recheck after a dose change when the physician orders it</td></tr><tr><td>Weight / Expanded</td><td>Baseline before starting GLP-1, then included every quarter while a GLP-1 member</td></tr><tr><td>Sexual Wellness</td><td>Ordered when a patient is being worked up for sexual-wellness concerns</td></tr></tbody></table>
+    <h3>Lab pricing reference</h3>
+    <table><thead><tr><th>Panel</th><th>Walk-in</th><th>Member</th><th>Margin</th><th>LabCorp COGS</th></tr></thead><tbody><tr><td>Foundation Wellness (8 tests)</td><td>$199</td><td>$159</td><td>73% gross margin</td><td>LabCorp COGS $53.70</td></tr><tr><td>Hormone — Male (16 tests)</td><td>$299</td><td>$239</td><td>43% gross margin</td><td>LabCorp COGS $170.65</td></tr><tr><td>Hormone — Female (18 tests)</td><td>$299</td><td>$239</td><td>39% gross margin</td><td>LabCorp COGS $182.25</td></tr><tr><td>Weight / Expanded (16 tests)</td><td>$299</td><td>$239</td><td>36% gross margin</td><td>LabCorp COGS $190.10</td></tr><tr><td>Sexual Wellness (7 tests)</td><td>$199</td><td>$159</td><td>46% gross margin</td><td>LabCorp COGS $107.55</td></tr></tbody></table>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>ELEVATED memberships &amp; visits</h2>
+      <span class="tag">Programs · v2.3.0</span>
+    </div>
+    
+    <h3>ELEVATED programs (monthly, all-inclusive)</h3>
+    <table><thead><tr><th>Program</th><th>Price</th><th>Medication</th><th>Labs</th><th>Key notes</th></tr></thead><tbody><tr><td>ELEVATED IV</td><td>$199/mo</td><td>None (IV-only)</td><td>Not included</td><td>2 signature drips/mo · 20% off add-ons · priority booking</td></tr><tr><td>ELEVATED HRT</td><td>$229/mo</td><td>Bi-Est + progesterone (+ T cream if Rx)</td><td>Quarterly Comprehensive ($199 value)</td><td>Cream only — no troches</td></tr><tr><td>ELEVATED TRT</td><td>$249/mo</td><td>Testosterone cream (daily)</td><td>Quarterly Comprehensive ($199 value)</td><td>No injections · no anastrozole · no HCG</td></tr><tr><td>ELEVATED GLP-1</td><td>$349/mo · $449/mo</td><td>Compounded semaglutide OR tirzepatide</td><td>Quarterly Expanded ($299 value)</td><td>Price locked to molecule — titration does not change monthly rate</td></tr></tbody></table>
+    <h3>Combo medication add-ons (stack on anchor program)</h3>
+    <table><thead><tr><th>Add-on</th><th>Price</th><th>Note</th></tr></thead><tbody><tr><td>TRT</td><td>+$149/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>HRT</td><td>+$129/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>GLP-1 Semaglutide</td><td>+$249/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>GLP-1 Tirzepatide</td><td>+$349/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr></tbody></table>
+    <h3>Not included in any membership</h3>
+    <ul><li>Initial $79 Wellness Assessment + baseline labs ($199 or $299)</li><li>Patient-requested $149 Medical Review</li><li>À la carte beyond plan inclusions (members get 20% off)</li></ul>
+    <h3>Visits & labs</h3>
+    <table><thead><tr><th>Service</th><th>Price</th><th>Notes</th></tr></thead><tbody><tr><td>Wellness Assessment</td><td>$79</td><td>RN intake · universal front door</td></tr><tr><td>Maintenance Visit</td><td>$79</td><td>RN follow-up under standing orders</td></tr><tr><td>Medical Review</td><td>$149</td><td>Physician · complex cases / patient-requested</td></tr><tr><td>Physician Phone Follow-Up</td><td>$99</td><td>Physician phone · non-members</td></tr><tr><td>Rebooking Fee</td><td>$99</td><td>Late cancel / no-show</td></tr><tr><td>Comprehensive Wellness Panel</td><td>$199</td><td>Foundation 8-test panel · general wellness baseline</td></tr><tr><td>Expanded Panel</td><td>$299</td><td>Hormone (TRT/HRT) · GLP-1/weight · member quarterly included on Rx programs</td></tr></tbody></table>
+    <h3>Charge checkpoints</h3>
+    <table><thead><tr><th>ID</th><th>When</th><th>Amount</th></tr></thead><tbody><tr><td>C-01</td><td>Wellness Assessment booked</td><td>$79</td></tr><tr><td>C-02</td><td>Lab panel drawn</td><td>$199 or $299</td></tr><tr><td>C-03</td><td>Program enrollment</td><td>$199–$449/mo</td></tr><tr><td>C-04</td><td>À la carte med fill</td><td>Per SKU — $0 if included in their plan</td></tr><tr><td>C-05</td><td>IV Lounge walk-in</td><td>Drip $139–$169 · boosters $25–$50</td></tr><tr><td>C-08</td><td>Rebooking fee</td><td>$99</td></tr></tbody></table>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Hormone optimization — protocols &amp; pricing</h2>
+      <span class="tag">Hormones · v2.3.0</span>
+    </div>
+    
+    <p style="font-size:7pt;margin:0 0 0.35rem">Default paths: women → Bi-Est cream + progesterone (ELEVATED HRT). Men → testosterone cream daily (ELEVATED TRT). No injectable TRT, pellets, anastrozole, or HCG.</p>
+    <table><thead><tr><th>Protocol</th><th>What it does</th><th>Dosing summary</th><th>Program price</th><th>À la carte member</th><th>Labs / notes</th></tr></thead><tbody><tr><td>Men — ELEVATED TRT (testosterone cream)</td><td>Lab-guided testosterone optimization; daily transdermal cream titrated to labs</td><td>50–100 mg testosterone daily transdermal (physician-titrated to labs) · Adjust q6–8 weeks per total T, free T, E2, hematocrit · Daily</td><td>$249/mo all-inclusive</td><td>Medication included — never say plus pharmacy</td><td>Quarterly Comprehensive labs included</td></tr><tr><td>Women — ELEVATED HRT (Bi-Est + progesterone)</td><td>Lab-guided bioidentical hormone balance; cream + oral progesterone</td><td>Bi-Est 0.5–1.5 mg daily transdermal · Titrate per symptoms and labs q8–12 weeks</td><td>$229/mo all-inclusive</td><td>Medication included · cream only — no troches</td><td>Quarterly Comprehensive labs included</td></tr><tr><td>Testosterone Fill</td><td>À la carte fill outside program</td><td>Physician-directed</td><td>$179</td><td>$143</td><td>Included on ELEVATED TRT</td></tr><tr><td>Bi-Est Cream Fill</td><td>À la carte fill outside program</td><td>Physician-directed</td><td>$109</td><td>$87</td><td>Included on ELEVATED HRT</td></tr><tr><td>Progesterone Fill</td><td>À la carte fill outside program</td><td>Physician-directed</td><td>$99</td><td>$79</td><td>Included on ELEVATED HRT</td></tr></tbody></table>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Weight loss (GLP-1) — dosing &amp; pricing</h2>
+      <span class="tag">GLP-1 · v2.3.0</span>
+    </div>
+    
+    <p style="font-size:7pt;margin:0 0 0.35rem">Program price locked to molecule — titration does not change monthly rate. Retatrutide: physician-gated within GLP-1 lane only — never advertise.</p>
+    <table><thead><tr><th>Product</th><th>Purpose</th><th>Dosing</th><th>Price</th><th>Member</th><th>Notes</th></tr></thead><tbody><tr><td>ELEVATED GLP-1 · Semaglutide</td><td>A weekly injection that reduces appetite and improves blood sugar. We start low and increase slowly so nausea stays manageable.</td><td>SubQ · Once weekly · 1–4: 0.25 mg (5 units) → 5–8: 0.5 mg (10 units) → 9+: 1 mg (20 units) maintenance · Maint: 1 mg weekly (typical program target) · Cycle: 12–68 weeks; reassess every 12 weeks</td><td>$349/mo</td><td>Included in program</td><td>All-inclusive program</td></tr><tr><td>ELEVATED GLP-1 · Tirzepatide</td><td>A dual-action weekly injection for weight and metabolic health. We escalate every four weeks based on how you feel.</td><td>SubQ · Once weekly · 1–4: 2.5 mg (50 units) → 5–8: 5 mg (100 units; may split injection) → 9–12: 7.5 mg (150 units; split) → 13+: 7.5–15 mg weekly per tolerance · Maint: 7.5 mg weekly (common maintenance) · Cycle: 12–52 weeks</td><td>$449/mo</td><td>Included in program</td><td>All-inclusive program</td></tr><tr><td>Semaglutide Single Fill</td><td>A weekly injection that reduces appetite and improves blood sugar. We start low and increase slowly so nausea stays manageable.</td><td>SubQ · Once weekly · 1–4: 0.25 mg (5 units) → 5–8: 0.5 mg (10 units) → 9+: 1 mg (20 units) maintenance · Maint: 1 mg weekly (typical program target) · Cycle: 12–68 weeks; reassess every 12 weeks</td><td>$299</td><td>$239</td><td>Single fill · non-member / between programs</td></tr><tr><td>Tirzepatide Single Fill</td><td>A dual-action weekly injection for weight and metabolic health. We escalate every four weeks based on how you feel.</td><td>SubQ · Once weekly · 1–4: 2.5 mg (50 units) → 5–8: 5 mg (100 units; may split injection) → 9–12: 7.5 mg (150 units; split) → 13+: 7.5–15 mg weekly per tolerance · Maint: 7.5 mg weekly (common maintenance) · Cycle: 12–52 weeks</td><td>$399</td><td>$319</td><td>Single fill</td></tr><tr><td>Retatrutide Monthly (Gated)</td><td>An investigational weekly injection that targets appetite, insulin sensitivity, and fat metabolism. Gated and physician-selected only within the GLP-1 program under the GLP-1 consent — never advertised, never the lead.</td><td>SubQ · Once weekly · 1–4: 1 mg (10 units) → 5–8: 2 mg (20 units) → 9–12: 3–4 mg (30–40 units) → 13+: 4–8 mg per metabolic protocol · Maint: 4 mg weekly (lowest effective dose; physician titration only) · Cycle: Reassess per physician</td><td>$499/mo</td><td>$399</td><td>Provider-gated · GLP-1 consent · never advertise</td></tr></tbody></table>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>All peptides — purpose, dosing &amp; pricing</h2>
+      <span class="tag">Peptides · v2.3.0</span>
+    </div>
+    
+    <p style="font-size:7pt;margin:0 0 0.35rem">Consult-gated. Research Peptide Consent for Cat 2 compounds. Reconstitution: 2 ml bacteriostatic water unless pharmacy label differs.</p>
+    <table><thead><tr><th>Peptide</th><th>What it does</th><th>Dosing</th><th>Non-member</th><th>Member (−20%)</th><th>Billing</th><th>Notes</th></tr></thead><tbody><tr><td>Sermorelin Injection</td><td>A nightly injection that supports your body's natural growth hormone rhythm — often paired with IV NAD+ add-ons at the lounge when your provider selects both.</td><td>SubQ · Daily · (At bedtime (aligns with natural GH pulse)) · 1–4: 100–200 mcg (2–4 units) → 5–12: 200–300 mcg (4–6 units) daily · Maint: 200 mcg at bedtime · Cycle: 8–12 weeks on, 4–6 weeks off</td><td>$149/mo</td><td>$119</td><td>Monthly sub</td><td>Consult-gated · monthly</td></tr><tr><td>CJC-1295/Ipamorelin</td><td>A combined nightly injection that supports lean mass and recovery during weight loss — used in phase 3 of our metabolic program.</td><td>SubQ · 1–2× daily · (Bedtime or post-workout) · 1–4: 100 mcg each (2 units) once daily → 5–12: 200 mcg each (4 units) once or twice daily · Maint: 200 mcg CJC + 200 mcg Ipamorelin · Cycle: 8–16 weeks on, 4–6 weeks off</td><td>$179/mo</td><td>$143</td><td>Monthly sub</td><td>Consult-gated · monthly</td></tr><tr><td>Tesamorelin</td><td>Targets visceral fat and supports lean mass — especially useful when you're losing weight and want to protect muscle.</td><td>SubQ · Daily, 5–7 nights/week · (Bedtime) · 1–4: 1 mg (20 units) → 5+: 1–2 mg (20–40 units) 5 nights/week · Maint: 2 mg nightly × 5 nights/week · Cycle: 8–24 weeks</td><td>$399/mo</td><td>$319</td><td>Monthly sub</td><td>Consult-gated · monthly</td></tr><tr><td>GHK-Cu Topical</td><td>Skin, collagen, and scalp support — topical peptide for aesthetic goals</td><td>Topical · daily AM/PM per pharmacy label</td><td>$149/mo</td><td>$119</td><td>Monthly sub</td><td>Consult-gated · monthly</td></tr><tr><td>PT-141 (Bremelanotide)</td><td>An as-needed injection for libido support — not daily. We start at 1 mg and adjust based on response.</td><td>SubQ · As needed, max 1×/day · (2–4 hours before anticipated activity) · 1–4: 1 mg (20 units) up to 3×/week → 5+: 1–2 mg as needed, max 3×/week · Maint: 1–2 mg as needed · Cycle: 4–12 weeks, then 2–4 week break</td><td>$225</td><td>$180</td><td>One-time fill (PRN protocol)</td><td>Sexual wellness · PRN libido · not daily research peptide</td></tr><tr><td>BPC-157</td><td>A recovery peptide your provider may select to support tissue recovery after injury or intense training.</td><td>SubQ (near injury site if localized) · Daily or 5–7 days/week · 1–2: 250 mcg daily → 3–12: 500 mcg daily · Maint: 500 mcg daily · Cycle: 6–12 weeks on, 4–6 weeks off</td><td>$249</td><td>$199</td><td>One-time fill</td><td>One-time fill · Research Peptide Consent</td></tr><tr><td>TB-500 (Thymosin Beta-4)</td><td>A weekly recovery peptide your provider may select for tissue mobility and training recovery support.</td><td>SubQ · Weekly · 1–6: 2–2.5 mg subQ weekly (loading) → 7–12: 2 mg weekly maintenance if extended · Maint: 2 mg weekly · Cycle: 6–12 weeks typical; physician-defined</td><td>$249</td><td>$199</td><td>One-time fill</td><td>One-time fill · Research Peptide Consent</td></tr><tr><td>BPC-157 / TB-500 Recovery Stack</td><td>A recovery peptide your provider may select to support tissue recovery after injury or intense training.</td><td>SubQ (near injury site if localized) · Daily or 5–7 days/week · 1–2: 250 mcg daily → 3–12: 500 mcg daily · Maint: 500 mcg daily · Cycle: 6–12 weeks on, 4–6 weeks off</td><td>$349</td><td>$279</td><td>One-time bundle</td><td>Consult-gated · Research Peptide Consent · never say “Wolverine” to patients</td></tr><tr><td>SS-31 (Elamipretide)</td><td>Supports mitochondrial function and energy — added once you've tolerated the anchor GLP injection in the metabolic program.</td><td>SubQ · Daily · 1–2: 2–4 mg daily → 3+: 4–10 mg daily per tolerance · Maint: 4 mg daily (clinical trial reference dose) · Cycle: 4–12 weeks</td><td>$249/mo</td><td>$199</td><td>Monthly sub</td><td>Provider-only · standalone (no bundled metabolic program)</td></tr><tr><td>AOD-9604</td><td>A fat-metabolism adjunct used in later phases when plateaus occur — physician-directed only.</td><td>SubQ · Daily · (Morning, empty stomach) · 1–12: 250–500 mcg daily · Maint: 250–500 mcg daily · Cycle: 4–12 weeks on, 4 weeks off</td><td>$129/mo</td><td>$103</td><td>Monthly sub</td><td>Provider-only · standalone (no bundled metabolic program)</td></tr><tr><td>SLU-PP-332</td><td>An optional metabolic adjunct for plateau support — only with physician approval.</td><td>SubQ · Daily · 1+: Per physician protocol · Maint: Physician-directed · Cycle: Physician-directed</td><td>$99/mo</td><td>$79</td><td>Monthly sub</td><td>Provider-only · standalone (no bundled metabolic program)</td></tr><tr><td>5-Amino-1MQ</td><td>Metabolic adjunct — physician-directed plateau support</td><td>Per physician protocol</td><td>$119/mo</td><td>$95</td><td>Monthly sub</td><td>Provider-only · standalone (no bundled metabolic program)</td></tr></tbody></table>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>IV drips &amp; boosters — Lane A walk-in</h2>
+      <span class="tag">IV Lounge · v2.3.0</span>
+    </div>
+    
+    <h3>Signature drips</h3>
+    <table><thead><tr><th>Drip</th><th>What it does</th><th>Ingredients</th><th>Walk-in</th><th>Member</th><th>Category</th></tr></thead><tbody><tr><td>The Resurrection</td><td>Rise again. Rapid rehydration with nausea and headache relief built in.</td><td>Saline, B-Complex, Zofran, Toradol</td><td>$139</td><td>$111</td><td>Recovery</td></tr><tr><td>The Meyers</td><td>The OG vitamin IV. Your weekly reset for energy, mood, and metabolic balance.</td><td>Saline, Magnesium, B-Complex, Calcium</td><td>$159</td><td>$127</td><td>Wellness</td></tr><tr><td>Beast Mode</td><td>Peak performance recovery. Accelerate muscle repair and crush fatigue post-workout.</td><td>Amino Acids, B12, Magnesium, Taurine</td><td>$169</td><td>$135</td><td>Performance</td></tr><tr><td>The Shield</td><td>Immune support for travel, cold season, and high-exposure weeks.</td><td>Saline, Vitamin C, Zinc, B-Complex</td><td>$149</td><td>$119</td><td>Immunity</td></tr><tr><td>The Glow</td><td>Skin, hair, and nail support with brightening antioxidants.</td><td>Saline, Biotin, Vitamin C, Glutathione</td><td>$159</td><td>$127</td><td>Glow</td></tr></tbody></table>
+    <h3>Boosters & pushes (add to any drip)</h3>
+    <table><thead><tr><th>Add-on</th><th>What it does</th><th>Benefits</th><th>Price</th><th>Member</th><th>Best for</th></tr></thead><tbody><tr><td>Glutathione Push</td><td>Detox, liver support, and skin brightening.</td><td>Detox &amp; liver support · Skin brightening · Immune support</td><td>$35</td><td>$28</td><td>Glow, Detox, Recovery</td></tr><tr><td>B12 Shot</td><td>Energy, mental clarity, and metabolism.</td><td>Sustained energy · Mental clarity · Metabolism</td><td>$25</td><td>$20</td><td>Fatigue, Brain fog, Athletes</td></tr><tr><td>Vitamin C Push</td><td>High-dose immune and collagen support.</td><td>Immune support · Collagen · Faster recovery</td><td>$25</td><td>$20</td><td>Cold season, Travel, Skin health</td></tr><tr><td>Toradol Push</td><td>Fast anti-inflammatory pain relief.</td><td>Pain relief · Anti-inflammatory · Non-drowsy</td><td>$25</td><td>$20</td><td>Hangover, Headache, Muscle soreness</td></tr><tr><td>Zofran Push</td><td>Anti-nausea — works within minutes.</td><td>Stops nausea · Settles stomach · Fast absorption</td><td>$25</td><td>$20</td><td>Hangover, Morning sickness, Stomach upset</td></tr><tr><td>NAD+ Booster</td><td>Cellular energy and longevity support.</td><td>Cellular energy · Focus · Recovery</td><td>$50</td><td>$40</td><td>Longevity, Brain fog, Performance</td></tr></tbody></table>
+    <div class="callout warn"><strong>NAD+:</strong> Only the $50 IV booster push — no peptide NAD+, no standalone NAD+ infusion.</div>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Sexual wellness &amp; hair (launch-hidden)</h2>
+      <span class="tag">Staff-only SKUs · v2.3.0</span>
+    </div>
+    
+    <p style="font-size:7pt;margin:0 0 0.35rem">Available after consult — do not promote on public storefront or cold outreach.</p>
+    <h3>Sexual wellness</h3>
+    <table><thead><tr><th>Product</th><th>Price</th><th>Member</th><th>Notes</th></tr></thead><tbody><tr><td>Tadalafil</td><td>$99/mo</td><td>$79</td><td>Launch-hidden — do not promote on storefront</td></tr><tr><td>Sildenafil</td><td>$79/mo</td><td>$63</td><td>Launch-hidden — do not promote on storefront</td></tr><tr><td>PT-141 (Bremelanotide)</td><td>$225</td><td>$180</td><td>Launch-hidden — do not promote on storefront</td></tr><tr><td>Oxytocin Nasal Spray</td><td>$89/mo</td><td>$71</td><td>Launch-hidden — do not promote on storefront</td></tr></tbody></table>
+    <h3>Hair restoration</h3>
+    <table><thead><tr><th>Product</th><th>Price</th><th>Member</th><th>Notes</th></tr></thead><tbody><tr><td>Minoxidil + Finasteride</td><td>$129/mo</td><td>$103</td><td>Launch-hidden — do not promote on storefront</td></tr><tr><td>Dutasteride Protocol</td><td>$149/mo</td><td>$119</td><td>Launch-hidden — do not promote on storefront</td></tr><tr><td>GHK-Cu Scalp Therapy</td><td>$149/mo</td><td>$119</td><td>Launch-hidden — do not promote on storefront</td></tr></tbody></table>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Staff reminders · team · scripting</h2>
+      <span class="tag">Rules · v2.3.0</span>
+    </div>
+    
+    <h3>Policy reminders</h3>
+    <ul><li>Medication is INCLUDED in ELEVATED TRT / HRT / GLP-1 — never say “plus pharmacy costs.”</li><li>NAD+ is ONLY the $50 IV booster push — no peptide NAD+, no standalone NAD+ infusion.</li><li>Ketamine / Spravato — not offered.</li><li>Retatrutide — physician-selected within GLP-1 lane only; full consent; never headline or advertise.</li><li>Injectable TRT (cypionate) — not offered. Anastrozole and HCG — not offered.</li><li>Cash pay · no insurance billing · itemized receipts &amp; superbills on request.</li><li>Benefits end on membership cancel: quarterly labs revert to full price; 20% discount ends.</li></ul>
+    <div class="say-grid">
+      <div class="say-do">
+        <h3 style="margin-top:0;color:var(--green)">Do say</h3>
+        <ul><li>&quot;Our ELEVATED programs bundle your medication, RN check-ins, quarterly labs, and messaging — one price.&quot;</li><li>&quot;Every new patient starts with a $79 Wellness Assessment unless they're IV walk-in only.&quot;</li><li>&quot;Active members get 20% off à la carte — IV, peptides, extra labs.&quot;</li><li>&quot;We are cash-pay; we can provide itemized receipts and superbills on request.&quot;</li><li>&quot;IV Lounge is walk-in — no consult required for drips and pushes.&quot;</li></ul>
+      </div>
+      <div class="say-dont">
+        <h3 style="margin-top:0;color:var(--red)">Never say</h3>
+        <ul><li>&quot;Plus pharmacy costs&quot; or &quot;medication billed separately&quot; on TRT/HRT/GLP-1.</li><li>Promise a specific drug or dose before labs + physician review.</li><li>Offer ketamine, Spravato, injectable TRT, anastrozole, HCG, or pellets.</li><li>Advertise or lead with retatrutide — physician-gated only.</li><li>Standalone NAD+ infusion or peptide NAD+ — NAD+ is the $50 IV booster only.</li></ul>
+      </div>
+    </div>
+    <h3>Team</h3>
+    <div class="team-grid">
+      <div><strong>Kristen</strong> · Coordinator<br/><span style="color:var(--muted)">Scheduling · enrollment · billing verify · patient comms</span></div><div><strong>Caroline, RN</strong> · Clinical<br/><span style="color:var(--muted)">IV · phlebotomy · RN check-ins · standing orders</span></div><div><strong>Dr. Dennis Williams</strong> · Owner / Physician<br/><span style="color:var(--muted)">Exams · protocols · Rx sign-off</span></div><div><strong>Dr. Troy Akers</strong> · Owner / Physician<br/><span style="color:var(--muted)">Oversight · sign-off · escalations</span></div>
+    </div>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+</body>
+</html>

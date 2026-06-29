@@ -22,6 +22,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { handleCatalogConsentPdf } from "./catalog-handler.ts";
+import { MAIL_FROM } from "../_shared/mail-config.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -368,7 +369,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Elevated Health Augusta <noreply@elevatedhealthaugusta.com>',
+          from: MAIL_FROM,
           to: [patient.email],
           subject: `Your Signed Consent Form - ${clinicName}`,
           html: `
