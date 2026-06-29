@@ -366,13 +366,18 @@ const AdminNavbar = ({ title, subtitle, onRefresh, isRefreshing, onNavigateToMes
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/staff-pricing-cheatsheet" target="_blank" className="cursor-pointer">
-                  Full Pricing Cheatsheet
+                <Link to="/staff-quick-card" target="_blank" className="cursor-pointer">
+                  Staff Quick Card (PDF)
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/staff-quick-card" target="_blank" className="cursor-pointer">
-                  Quick Reference Card
+                <Link to="/staff/formulary-cheat-sheet" target="_blank" className="cursor-pointer">
+                  Formulary Cheat Sheet
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/staff-pricing-cheatsheet" target="_blank" className="cursor-pointer">
+                  Full Pricing Cheatsheet
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
