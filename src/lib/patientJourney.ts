@@ -17,15 +17,7 @@ export type RedeemableCreditRow = {
 };
 
 export async function fetchPatientJourney(patientUserId: string): Promise<PatientJourneyRow | null> {
-  const { data, error } = await (supabase as unknown as {
-    from: (table: string) => {
-      select: (cols: string) => {
-        eq: (col: string, val: string) => {
-          maybeSingle: () => Promise<{ data: { stage: string; updated_at: string } | null; error: Error | null }>;
-        };
-      };
-    };
-  })
+  const { data, error } = await supabase
     .from("patient_journey")
     .select("stage, updated_at")
     .eq("patient_user_id", patientUserId)
@@ -36,15 +28,17 @@ export async function fetchPatientJourney(patientUserId: string): Promise<Patien
 }
 
 export async function fetchRedeemableCredit(patientUserId: string): Promise<RedeemableCreditRow | null> {
-  const { data, error } = await (supabase as unknown as {
-    rpc: (
-      fn: string,
-      args: Record<string, string>,
-    ) => Promise<{ data: RedeemableCreditRow | RedeemableCreditRow[] | null; error: Error | null }>;
-  }).rpc("get_redeemable_credit", { p_patient: patientUserId });
+  const { data, error } = await supabase.rpc("get_redeemable_credit", { p_patient: patientUserId });
   if (error) throw error;
   const row = Array.isArray(data) ? data[0] : data;
-  return row ?? null;
+  if (!row) return null;
+  return {
+    id: row.id,
+    credit_amount_cents: row.credit_amount_cents,
+    expires_at: row.expires_at,
+    cap_mode: row.cap_mode,
+    status: row.status,
+  };
 }
 
 export function journeyAtLeast(stage: JourneyStage | null | undefined, target: JourneyStage): boolean {
