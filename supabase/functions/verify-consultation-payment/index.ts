@@ -3,8 +3,8 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
-import {
 import { MAIL_FROM } from "../_shared/mail-config.ts";
+import {
   CONSULT_FEE_USD,
   fulfillConsultationPayment,
   recognizeConsultationProduct,
