@@ -34,7 +34,7 @@ import {
   downloadFormularyCheatSheetHtml,
   downloadFormularyCheatSheetMarkdown,
 } from "@/lib/formularyCheatSheetExport";
-import { QUICK_CARD_PDF_PATH } from "@/lib/staffQuickCardExport";
+import { DESK_CARD_PDF_STABLE, QUICK_CARD_PDF_STABLE } from "@/lib/staffQuickCardExport";
 import {
   allEconomicsRows,
   fmtPct,
@@ -219,9 +219,21 @@ const StaffSOPManual = () => {
                 className="font-jost gap-2 bg-primary"
                 asChild
               >
-                <a href={QUICK_CARD_PDF_PATH} target="_blank" rel="noopener noreferrer" download>
+                <a href={DESK_CARD_PDF_STABLE} target="_blank" rel="noopener noreferrer" download>
                   <Download className="h-4 w-4" />
-                  Staff Quick Card (PDF)
+                  Desk Card PDF (1 page)
+                </a>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="font-jost gap-2"
+                asChild
+              >
+                <a href={QUICK_CARD_PDF_STABLE} target="_blank" rel="noopener noreferrer" download>
+                  <Download className="h-4 w-4" />
+                  Full Guide PDF (3 pages)
                 </a>
               </Button>
               <Button
