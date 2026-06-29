@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -44,6 +44,8 @@ import {
 import { formatClinicDate, formatClinicDateTime, formatClinicTime, isConsentActive } from "@/lib/clinicTime";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
+import type { JourneyStage } from "@/config/onboardingCredit";
+import { fetchPatientJourney } from "@/lib/patientJourney";
 import {
   APPOINTMENT_STATUS_LABEL,
   consentTypeTitle,
@@ -136,6 +138,14 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
   const navigate = useNavigate();
   const { data: dash, isLoading } = usePatientDashboard(patient.id, patient.email);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [journeyStage, setJourneyStage] = useState<JourneyStage | null>(null);
+
+  useEffect(() => {
+    if (!patient.user_id) return;
+    void fetchPatientJourney(patient.user_id)
+      .then((row) => setJourneyStage(row?.stage ?? null))
+      .catch(() => setJourneyStage(null));
+  }, [patient.user_id]);
 
   const wellnessPaid = hasWellnessAssessmentPaid({
     onboardingStatus: patient.onboarding_status,
@@ -150,6 +160,7 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
       gfeRows: dash?.gfeRows,
       hasPaidConsultBooking: dash?.hasPaidConsultBooking,
       hasTier1Consents: tier1IntakeComplete === true,
+      journeyStage,
     }),
     [
       patient.onboarding_status,
@@ -157,6 +168,7 @@ export function PatientDashboardHome({ patient, tier1IntakeComplete }: PatientDa
       dash?.gfeRows,
       dash?.hasPaidConsultBooking,
       tier1IntakeComplete,
+      journeyStage,
     ],
   );
 

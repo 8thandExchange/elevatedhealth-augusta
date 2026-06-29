@@ -18,7 +18,21 @@ export type OnetimeCheckoutOpts = {
   success_url?: string;
   cancel_url?: string;
   logConsultationBooking?: boolean;
+  /** Baseline-labs onboarding charge — sets PaymentIntent metadata for credit issuance. */
+  baselineLabsOnboarding?: boolean;
 };
+
+async function resolveAuthUserId(
+  supabaseService: SupabaseClient,
+  authHeader?: string | null,
+): Promise<string | null> {
+  if (!authHeader) return null;
+  const token = authHeader.replace("Bearer ", "").trim();
+  if (!token) return null;
+  const { data: userData, error } = await supabaseService.auth.getUser(token);
+  if (error || !userData?.user) return null;
+  return userData.user.id;
+}
 
 function resolveCheckoutUrls(opts: OnetimeCheckoutOpts): { successUrl: string; cancelUrl: string } {
   const successUrl = opts.successUrl ?? opts.success_url;
@@ -34,7 +48,7 @@ export async function serveOnetimePriceCheckoutFromBody(
   opts: OnetimeCheckoutOpts,
   authHeader?: string | null,
 ): Promise<Response> {
-  const { functionName, stripePriceId, productKey, logConsultationBooking } = opts;
+  const { functionName, stripePriceId, productKey, logConsultationBooking, baselineLabsOnboarding } = opts;
   const { successUrl, cancelUrl } = resolveCheckoutUrls(opts);
 
   try {
@@ -114,6 +128,26 @@ export async function serveOnetimePriceCheckoutFromBody(
 
     if (discount.discounts && discount.discounts.length > 0) {
       sessionParams.discounts = discount.discounts;
+    }
+
+    const isBaselineOnboarding =
+      baselineLabsOnboarding === true || body.baseline_labs_onboarding === true;
+    if (isBaselineOnboarding) {
+      const patientUserId = await resolveAuthUserId(supabaseService, authHeader);
+      if (!patientUserId) {
+        throw new Error("Authentication required for baseline labs onboarding checkout");
+      }
+      sessionParams.payment_intent_data = {
+        metadata: {
+          eha_purpose: "baseline_labs_onboarding",
+          eha_patient_user_id: patientUserId,
+        },
+      };
+      sessionParams.metadata = {
+        ...(sessionParams.metadata ?? {}),
+        eha_purpose: "baseline_labs_onboarding",
+        eha_patient_user_id: patientUserId,
+      };
     }
 
     let session: Stripe.Checkout.Session;

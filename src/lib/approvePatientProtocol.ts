@@ -35,10 +35,26 @@ export async function approvePatientProtocol(
     });
   }
 
+  const { data: patientRow } = await supabase
+    .from("patients")
+    .select("user_id")
+    .eq("id", patientId)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("patients")
     .update({ onboarding_status: "protocol_approved" })
     .eq("id", patientId);
+
+  if (!error && patientRow?.user_id) {
+    await supabase.functions.invoke("advance-patient-journey", {
+      body: {
+        patientId,
+        stage: "protocol_recommended",
+        note: protocolName ? `Protocol recommended: ${protocolName}` : "Protocol recommended",
+      },
+    });
+  }
 
   return { error: error?.message ?? null };
 }

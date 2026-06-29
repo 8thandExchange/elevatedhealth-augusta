@@ -355,3 +355,18 @@ verify_jwt = true
 [functions.qualiphy-webhook]
 verify_jwt = false
 
+[functions.issue-onboarding-credit]
+verify_jwt = false
+
+[functions.redeem-onboarding-credit]
+verify_jwt = false
+
+[functions.expire-onboarding-credits]
+verify_jwt = false
+
+[functions.advance-patient-journey]
+verify_jwt = true
+
+[functions.complete-program-enrollment-consents]
+verify_jwt = true
+

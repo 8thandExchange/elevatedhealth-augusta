@@ -2,6 +2,8 @@ import type { GfeClearanceRow } from "@/lib/gfeClearance";
 import { ELEVATED_PROGRAMS_SUMMARY } from "./membershipCopy";
 import { patientGfeIsComplete } from "@/lib/gfeClearance";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
+import type { JourneyStage } from "@/config/onboardingCredit";
+import { JOURNEY_ORDER } from "@/config/onboardingCredit";
 
 /** Canonical pre-visit funnel stages for Lane B (consult-gated programs). */
 export type ConsultJourneyStageId =
@@ -12,7 +14,10 @@ export type ConsultJourneyStageId =
   | "gfe"
   | "schedule"
   | "visit"
-  | "labs"
+  | "baseline_labs"
+  | "results_review"
+  | "program_consents"
+  | "enroll"
   | "treatment";
 
 export interface ConsultJourneyStage {
@@ -66,10 +71,28 @@ export const CONSULT_JOURNEY_STAGES: ConsultJourneyStage[] = [
     patientDescription: "Meet your care team for history, vitals, and care planning.",
   },
   {
-    id: "labs",
-    label: "Labs & review",
-    shortLabel: "Labs",
-    patientDescription: "LabCorp draw and provider results review.",
+    id: "baseline_labs",
+    label: "Baseline labs (onboarding)",
+    shortLabel: "Labs pay",
+    patientDescription: "Pay the fixed onboarding lab charge — credited toward month one if you enroll in time.",
+  },
+  {
+    id: "results_review",
+    label: "Results review",
+    shortLabel: "Review",
+    patientDescription: "Your provider reviews labs and recommends a protocol.",
+  },
+  {
+    id: "program_consents",
+    label: "Program consents",
+    shortLabel: "Consents",
+    patientDescription: "Sign treatment-specific consents before enrollment.",
+  },
+  {
+    id: "enroll",
+    label: "Membership enrollment",
+    shortLabel: "Enroll",
+    patientDescription: "Activate your ELEVATED program with onboarding credit applied if eligible.",
   },
   {
     id: "treatment",
@@ -86,6 +109,8 @@ export interface ConsultJourneyContext {
   intakeCompleted?: boolean;
   /** Set when consultation_bookings confirms $79 paid (covers stale onboarding_status). */
   hasPaidConsultBooking?: boolean;
+  /** From patient_journey when funnel rebuild migration is applied. */
+  journeyStage?: JourneyStage | null;
 }
 
 export function hasApprovedGfe(
@@ -99,9 +124,31 @@ export function hasPendingGfe(rows: GfeClearanceRow[] | undefined): boolean {
   return (rows ?? []).some((r) => r.status === "pending");
 }
 
-/** Current stage index 0–8 for progress UI. */
+/** Current stage index 0–11 for progress UI. */
 export function getConsultJourneyStageIndex(ctx: ConsultJourneyContext): number {
   const status = ctx.onboardingStatus ?? "new";
+  const js = ctx.journeyStage;
+
+  if (js) {
+    if (js === "not_a_candidate") return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "results_review");
+    if (JOURNEY_ORDER[js] >= JOURNEY_ORDER.active) return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "treatment");
+    if (JOURNEY_ORDER[js] >= JOURNEY_ORDER.membership_enrolled) {
+      return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "enroll");
+    }
+    if (JOURNEY_ORDER[js] >= JOURNEY_ORDER.consent_completed) {
+      return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "enroll");
+    }
+    if (JOURNEY_ORDER[js] >= JOURNEY_ORDER.protocol_recommended) {
+      return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "program_consents");
+    }
+    if (JOURNEY_ORDER[js] >= JOURNEY_ORDER.results_reviewed) {
+      return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "results_review");
+    }
+    if (JOURNEY_ORDER[js] >= JOURNEY_ORDER.baseline_labs_ordered) {
+      return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "baseline_labs");
+    }
+  }
+
   const gfeApproved = hasApprovedGfe(ctx.gfeRows, status);
   const gfePending = hasPendingGfe(ctx.gfeRows);
   const wellnessPaid = hasWellnessAssessmentPaid({
@@ -110,39 +157,42 @@ export function getConsultJourneyStageIndex(ctx: ConsultJourneyContext): number 
   });
 
   if (["treatment_active", "active", "protocol_approved", "pending_pharmacy_order", "rx_sent", "glp1_rx_sent"].includes(status)) {
-    return 8;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "treatment");
   }
-  if (["labs_reviewed", "results_ready", "labs_in_progress", "awaiting_blood_work", "sample_received"].includes(status)) {
-    return 7;
+  if (["labs_reviewed", "results_ready"].includes(status)) {
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "results_review");
+  }
+  if (["labs_in_progress", "awaiting_blood_work", "sample_received", "labs_paid"].includes(status)) {
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "baseline_labs");
   }
   if (["consultation_complete", "intake_complete"].includes(status)) {
-    return 6;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "baseline_labs");
   }
   if (status === "consultation_scheduled") {
-    return 6;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "visit");
   }
   if (gfeApproved || status === "gfe_cleared") {
-    return 5;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "schedule");
   }
   if (gfePending || status === "gfe_pending") {
-    return 4;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "gfe");
   }
   if (wellnessPaid || ["consultation_paid", "consultation_pending"].includes(status)) {
-    return 4;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "gfe");
   }
   if (status === "prequal_consents_complete") {
-    return 3;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "payment");
   }
   if (status === "prequal_screening_passed") {
-    return 2;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "consents");
   }
   if (status === "account_created" && ctx.hasTier1Consents) {
-    return 3;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "payment");
   }
   if (status === "account_created") {
-    return 1;
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "screening");
   }
-  return 0;
+  return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "explore");
 }
 
 export function canBookWellnessVisit(ctx: ConsultJourneyContext): boolean {
@@ -203,10 +253,10 @@ export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
 
   if (["consultation_complete", "intake_complete"].includes(status)) {
     return {
-      title: "Visit complete — labs next",
-      description: "Your care team will coordinate LabCorp labs and follow up when results are ready.",
-      ctaLabel: null,
-      ctaPath: null,
+      title: "Pay for baseline labs",
+      description: "Your visit is complete. Pay the onboarding lab charge next — it can be credited toward your first membership month.",
+      ctaLabel: "Continue enrollment",
+      ctaPath: "/patient/enroll",
     };
   }
 
@@ -230,10 +280,10 @@ export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
 
   if (["protocol_approved", "pending_pharmacy_order"].includes(status)) {
     return {
-      title: "Activate your membership",
-      description: `Your treatment plan is ready. Enroll in your ELEVATED program (${ELEVATED_PROGRAMS_SUMMARY}) — separate from your $79 assessment.`,
-      ctaLabel: "View membership",
-      ctaPath: "/patient/dashboard",
+      title: "Sign consents & enroll",
+      description: `Your treatment plan is ready. Complete program consents, then enroll in your ELEVATED program (${ELEVATED_PROGRAMS_SUMMARY}). Baseline lab credit applies to month one when eligible.`,
+      ctaLabel: "Continue enrollment",
+      ctaPath: "/patient/enroll",
     };
   }
 

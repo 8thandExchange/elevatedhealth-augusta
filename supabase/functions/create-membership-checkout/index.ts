@@ -27,6 +27,39 @@ const ALLOWED_ONBOARDING = [
   "pending_pharmacy_order",
 ];
 
+const JOURNEY_ENROLL_MIN = 80; // consent_completed ordinal
+const JOURNEY_ORDINALS: Record<string, number> = {
+  consult_booked: 10,
+  consult_completed: 20,
+  baseline_labs_ordered: 30,
+  baseline_labs_collected: 40,
+  baseline_labs_resulted: 50,
+  results_reviewed: 60,
+  protocol_recommended: 70,
+  not_a_candidate: 70,
+  consent_completed: 80,
+  membership_enrolled: 90,
+  active: 100,
+};
+
+async function redeemOnboardingCreditForPatient(
+  patientUserId: string,
+  firstMonthPriceCents: number,
+): Promise<{ redeemable: boolean; couponId?: string; creditId?: string; appliedAmountCents?: number }> {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  const res = await fetch(`${supabaseUrl}/functions/v1/redeem-onboarding-credit`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${serviceKey}`,
+      apikey: serviceKey,
+    },
+    body: JSON.stringify({ patientUserId, firstMonthPriceCents }),
+  });
+  return await res.json();
+}
+
 function inferProgramFromPatient(p: {
   treatment_request?: string | null;
   primary_program?: string | null;
@@ -120,7 +153,27 @@ serve(async (req) => {
     if (patientError) throw new Error("Failed to fetch patient record");
     if (!patient) throw new Error("Patient record not found");
 
-    if (!ALLOWED_ONBOARDING.includes(patient.onboarding_status || "")) {
+    const { data: journeyRow } = patient.user_id
+      ? await supabaseService
+        .from("patient_journey")
+        .select("stage")
+        .eq("patient_user_id", patient.user_id)
+        .maybeSingle()
+      : { data: null };
+
+    if (journeyRow?.stage) {
+      if (journeyRow.stage === "not_a_candidate") {
+        throw new Error(
+          "NOT_A_CANDIDATE: Your provider has determined this program is not appropriate at this time. Contact the clinic with questions.",
+        );
+      }
+      const journeyOrdinal = JOURNEY_ORDINALS[journeyRow.stage] ?? 0;
+      if (journeyOrdinal < JOURNEY_ENROLL_MIN && !actingOnBehalf) {
+        throw new Error(
+          "CONSENT_REQUIRED: Sign your program consents after results review before enrolling. Open your dashboard to continue.",
+        );
+      }
+    } else if (!ALLOWED_ONBOARDING.includes(patient.onboarding_status || "")) {
       throw new Error(
         "LAB_REVIEW_REQUIRED: This patient's lab results must be reviewed by a provider before purchasing a membership. Please complete the Lab Review first.",
       );
@@ -133,6 +186,8 @@ serve(async (req) => {
     const priceId = LIVE_ELEVATED_PROGRAMS[program];
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+    const price = await stripe.prices.retrieve(priceId);
+    const firstMonthPriceCents = price.unit_amount ?? 0;
 
     let customerId: string | undefined;
     const customers = await stripe.customers.list({ email: billingEmail, limit: 1 });
@@ -140,23 +195,59 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://elevatedhealthaugusta.com";
 
-    const session = await stripe.checkout.sessions.create({
+    let onboardingCouponId: string | null = null;
+    let redeemedCreditId: string | null = null;
+    let appliedAmountCents = 0;
+
+    if (patient.user_id && firstMonthPriceCents > 0) {
+      const redeem = await redeemOnboardingCreditForPatient(patient.user_id, firstMonthPriceCents);
+      if (redeem.redeemable && redeem.couponId && redeem.creditId) {
+        onboardingCouponId = redeem.couponId;
+        redeemedCreditId = redeem.creditId;
+        appliedAmountCents = redeem.appliedAmountCents ?? 0;
+      }
+    }
+
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : billingEmail,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       success_url: `${origin}/patient/dashboard?subscription=success`,
-      cancel_url: `${origin}/membership`,
+      cancel_url: `${origin}/patient/enroll`,
       metadata: {
         user_id: patient.user_id ?? "",
         patient_id: patient.id,
         product_key: `elevated_${program}`,
         elevated_program: program,
         is_guest_checkout: "false",
-        applied_discount: "none",
+        applied_discount: onboardingCouponId ? "onboarding_credit" : "none",
+        onboarding_credit_id: redeemedCreditId ?? "",
+        onboarding_credit_applied_cents: appliedAmountCents ? String(appliedAmountCents) : "",
         created_on_behalf: actingOnBehalf ? "true" : "false",
       },
-    });
+    };
+
+    if (onboardingCouponId) {
+      sessionParams.discounts = [{ coupon: onboardingCouponId }];
+    }
+
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create(sessionParams);
+    } catch (checkoutErr) {
+      if (redeemedCreditId) {
+        await supabaseService.rpc("void_credit_redemption", { p_credit_id: redeemedCreditId });
+        if (onboardingCouponId) {
+          try {
+            await stripe.coupons.del(onboardingCouponId);
+          } catch {
+            /* coupon cleanup best-effort */
+          }
+        }
+      }
+      throw checkoutErr;
+    }
 
     edgeStructuredLog("create-membership-checkout", {
       event_type: "checkout_created",
@@ -168,7 +259,13 @@ serve(async (req) => {
     });
 
     return new Response(
-      JSON.stringify({ url: session.url, session_id: session.id, sessionId: session.id }),
+      JSON.stringify({
+        url: session.url,
+        session_id: session.id,
+        sessionId: session.id,
+        appliedAmountCents,
+        onboardingCreditApplied: appliedAmountCents > 0,
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (error) {

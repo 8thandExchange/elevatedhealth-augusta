@@ -391,9 +391,9 @@ const HormoneJourneyPage = () => {
                   <p className="text-sm text-muted-foreground mb-4">
                     Your provider has reviewed your labs and designed your personalized treatment plan.
                   </p>
-                  <Button onClick={handlePurchaseMembership} className="bg-green-600 hover:bg-green-700">
+                  <Button onClick={() => navigate("/patient/enroll")} className="bg-green-600 hover:bg-green-700">
                     <CreditCard className="w-4 h-4 mr-2" />
-                    Activate $399/mo Membership
+                    Enroll in membership
                   </Button>
                 </div>
               </div>

@@ -78,6 +78,7 @@ import FAQ from "./pages/FAQ";
 import ConsentPreview from "./pages/_dev/ConsentPreview";
 import PatientIntakeConsents from "./pages/PatientIntakeConsents";
 import PatientTreatmentConsents from "./pages/PatientTreatmentConsents";
+import PatientProgramEnrollment from "./pages/PatientProgramEnrollment";
 import PatientReconsent from "./pages/PatientReconsent";
 import PatientSubstanceAcknowledgment from "./pages/PatientSubstanceAcknowledgment";
 import IntakeKiosk from "./pages/IntakeKiosk";
@@ -365,6 +366,11 @@ const App = () => {
           <Route path="/patient/hormone-journey" element={
             <SecurePatientRoute>
               <HormoneJourneyPage />
+            </SecurePatientRoute>
+          } />
+          <Route path="/patient/enroll" element={
+            <SecurePatientRoute>
+              <PatientProgramEnrollment />
             </SecurePatientRoute>
           } />
           <Route path="/patient/intake" element={

@@ -11,6 +11,22 @@ export async function markLabsReviewedForPatient(patientId: string): Promise<{ e
 
   if (patientError) return { error: patientError.message };
 
+  const { data: patientRow } = await supabase
+    .from("patients")
+    .select("user_id, id")
+    .eq("id", patientId)
+    .maybeSingle();
+
+  if (patientRow?.user_id) {
+    await supabase.functions.invoke("advance-patient-journey", {
+      body: {
+        patientId,
+        stage: "results_reviewed",
+        note: "Provider marked labs reviewed",
+      },
+    });
+  }
+
   const { data: openOrders } = await supabase
     .from("lab_orders")
     .select("id")

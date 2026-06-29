@@ -43,7 +43,7 @@ export function ConsultJourneyProgress({ context, patientId, className, compact 
   };
   const currentIdx = getConsultJourneyStageIndex(mergedContext);
   const visibleStages = CONSULT_JOURNEY_STAGES.filter((s) =>
-    ["screening", "consents", "payment", "gfe", "schedule", "visit", "labs", "treatment"].includes(s.id),
+    ["screening", "consents", "payment", "gfe", "schedule", "visit", "baseline_labs", "results_review", "program_consents", "enroll"].includes(s.id),
   );
 
   return (

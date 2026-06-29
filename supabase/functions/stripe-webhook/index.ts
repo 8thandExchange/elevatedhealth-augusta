@@ -84,6 +84,42 @@ function isUuid(s: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
 }
 
+async function invokeIssueOnboardingCredit(paymentIntentId: string, eventId: string, eventType: string): Promise<void> {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/issue-onboarding-credit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serviceKey}`,
+        apikey: serviceKey,
+      },
+      body: JSON.stringify({ paymentIntentId }),
+    });
+    const payload = await res.json().catch(() => ({}));
+    webhookLog({
+      event_type: eventType,
+      event_id: eventId,
+      product_recognition: "alacarte_fill",
+      action_taken: res.ok
+        ? `onboarding_credit_issue:${payload.issued ? "issued" : payload.reason ?? "noop"}`
+        : `onboarding_credit_issue_failed:${payload.error ?? res.status}`,
+      success: res.ok,
+      error_message: res.ok ? null : String(payload.error ?? res.status),
+    });
+  } catch (err) {
+    webhookLog({
+      event_type: eventType,
+      event_id: eventId,
+      product_recognition: "alacarte_fill",
+      action_taken: "onboarding_credit_issue_exception",
+      success: false,
+      error_message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
 const generateWelcomeEmail = (patientName: string) => `
 <!DOCTYPE html>
 <html>
@@ -397,6 +433,21 @@ serve(async (req) => {
   });
 
   try {
+    if (event.type === "payment_intent.succeeded") {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      if (pi.metadata?.eha_purpose === "baseline_labs_onboarding") {
+        await invokeIssueOnboardingCredit(pi.id, event.id, event.type);
+      } else {
+        webhookLog({
+          event_type: event.type,
+          event_id: event.id,
+          product_recognition: "unknown",
+          action_taken: "payment_intent_succeeded_no_onboarding_action",
+          success: true,
+        });
+      }
+    }
+
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       const customerEmail = session.customer_email || session.customer_details?.email || null;
@@ -586,6 +637,24 @@ serve(async (req) => {
             success: !upErr,
             error_message: upErr?.message ?? null,
           });
+
+          const journeyUserId = typeof metadata.user_id === "string" ? metadata.user_id : "";
+          if (!upErr && journeyUserId) {
+            try {
+              await supabaseClient.rpc("advance_journey", {
+                p_patient: journeyUserId,
+                p_stage: "membership_enrolled",
+                p_note: `Stripe subscription ${subId ?? "unknown"}`,
+              });
+              await supabaseClient.rpc("advance_journey", {
+                p_patient: journeyUserId,
+                p_stage: "active",
+                p_note: "First subscription invoice path",
+              });
+            } catch {
+              /* journey advance is best-effort alongside legacy onboarding_status */
+            }
+          }
         }
 
         if (customerEmail && program && !isGuestMeta) {

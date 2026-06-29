@@ -35,9 +35,10 @@ serve(async (req) => {
       functionName: "create-lab-panel-checkout",
       stripePriceId,
       productKey,
-      success_url: `${origin}/alacarte-success?product=labPanel&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/pricing`,
+      success_url: `${origin}/patient/dashboard?baseline_labs=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/patient/dashboard`,
       logConsultationBooking: true,
+      baselineLabsOnboarding: body.baseline_labs_onboarding === true || body.baseline_labs_onboarding !== false,
     }, req.headers.get("Authorization"));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
