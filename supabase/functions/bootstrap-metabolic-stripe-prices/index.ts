@@ -24,9 +24,9 @@ const CATALOG: CatalogEntry[] = [
   },
   {
     key: "retatrutideFill",
-    name: "Retatrutide Single Fill",
-    description: "Compounded retatrutide fill — à la carte (program members receive via stack bundle)",
-    amountCents: 44900,
+    name: "Retatrutide Monthly (Gated)",
+    description: "Compounded retatrutide — physician-gated GLP-1 lane (monthly fill)",
+    amountCents: 49900,
     mode: "one_time",
   },
   {

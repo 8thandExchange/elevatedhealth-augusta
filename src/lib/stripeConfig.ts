@@ -228,11 +228,11 @@ export const MEDICATION_FILLS = {
     memberAlternative: "glp1" satisfies ElevatedProgramKey,
   },
   retatrutide: {
-    name: "Retatrutide Single Fill",
-    priceId: "price_1TiQlECXbCBPFEeIzhCHuRhj",
+    name: "Retatrutide Monthly (Gated)",
+    priceId: "price_1TnTAnCXbCBPFEeIyA7hRE1V",
     productId: "prod_UhqSeeHiiHdqHr",
-    amount: 44900,
-    displayPrice: "$449",
+    amount: 49900,
+    displayPrice: "$499/mo",
     // Gated, physician-only investigational option within the GLP-1 lane
     // (consent Section 11A, go-live 2026-06-21). Not a routine/advertised SKU.
     memberAlternative: "glp1" satisfies ElevatedProgramKey,

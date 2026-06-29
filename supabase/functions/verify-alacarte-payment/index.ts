@@ -46,7 +46,7 @@ const PRODUCT_LABEL: Record<string, string> = {
   progesterone: "Progesterone",
   semaglutide: "Compounded Semaglutide Fill",
   tirzepatide: "Compounded Tirzepatide Fill",
-  retatrutide: "Compounded Retatrutide Fill",
+  retatrutide: "Retatrutide Monthly (Gated)",
   bpc157: "BPC-157",
   tb500: "TB-500",
   followUp: "Follow-up Consultation",

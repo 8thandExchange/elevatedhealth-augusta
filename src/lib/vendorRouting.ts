@@ -241,7 +241,7 @@ export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
     primaryCostUnit: "fill",
     alternateSupplier: "fcc",
     alternateCostCents: FCC_WHOLESALE_CENTS.retatrutide10mg3ml,
-    clientPriceCents: 44900,
+    clientPriceCents: 49900,
     fulfillmentPharmacySlug: VENDOR_SLUGS.gc,
     gcSku: "RETATRUTIDE-20MG-03ML",
     fccSku: "2484",

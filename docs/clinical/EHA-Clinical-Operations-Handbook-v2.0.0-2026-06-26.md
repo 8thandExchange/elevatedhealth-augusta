@@ -71,7 +71,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 | NAD+ | ONLY as the $50 IV booster add-on | No NAD+ injection, troche, nasal, or standalone infusion |
 | Peptides | À la carte, after a Wellness Assessment | Not a walk-in or online self-serve menu |
 | IV drips | Walk-in at the IV Lounge, no consult | Screening questions still required |
-| Retatrutide | Physician-gated, full consent only ($449) | Not advertised; not casual à la carte |
+| Retatrutide | Physician-gated, full consent only ($499/mo) | Not advertised; not casual à la carte |
 | Ketamine / Spravato | Not offered | Legacy service — we do not provide it |
 | Sexual wellness / hair | Hidden at launch | Exists but not promoted yet |
 
@@ -83,7 +83,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 | ELEVATED HRT (women) | $229 | $58 | $61 | $119 | $110 | 48% |
 | GLP-1 — Semaglutide | $349 | $107 | $63 | $170 | $179 | 51% |
 | GLP-1 — Tirzepatide | $449 | $185–240 | $63 | $248–303 | $146–201 | 33–45% |
-| GLP-1 — Retatrutide (gated) | $449 | $250 | $63 | $313 | $136 | 30% |
+| GLP-1 — Retatrutide (gated) | $499 | $250 | $63 | $313 | $186 | 37% |
 | ELEVATED IV | $199 | $90 | n/a | $90 | $109 | 55% |
 
 ## 4. Weight-loss (GLP-1) — per fill
@@ -92,7 +92,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 | --- | --- | --- | --- | --- |
 | Semaglutide single fill | $75 | $299 | 75% | Headline weight product |
 | Tirzepatide single fill | $185 | $399 | 54% | Headline weight product |
-| Retatrutide (monthly, gated) | $250 | $449 | 44% | Physician-selected within GLP-1 lane |
+| Retatrutide (monthly, gated) | $250 | $499 | 50% | Physician-selected within GLP-1 lane |
 
 ## 5. Peptides à la carte
 
@@ -203,7 +203,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 | ELEVATED Wellness renamed | Now ELEVATED IV — the non-Rx IV membership | Live on site & receipts |
 | Standalone NAD+ retired | NAD+ is only the $50 IV booster add-on | Infusion & peptide NAD+ removed |
 | No separate peptides membership | Peptides stay à la carte with the 20% member discount | Decision recorded |
-| Retatrutide | Offered — physician-gated GLP-1 option ($449) | Full GLP-1 consent required |
+| Retatrutide | Offered — physician-gated GLP-1 option ($499/mo) | Full GLP-1 consent required |
 | Metabolic stack / SLU-PP-332 / AOD-9604 | Discontinued | Off the menu |
 | Injectable TRT discontinued | Men's TRT is testosterone cream only — no cypionate injections | Off the menu |
 | Anastrozole & HCG removed | Neither offered as part of TRT/HRT | Off the menu |
@@ -306,7 +306,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 
 4.4. **IF** Female — BHRT candidacy
    - **THEN** Approve ELEVATED HRT → ALGO-004 protocol.
-   - ↗ **Upsell:** Vitality stack if sleep/recovery goals.
+   - ↗ **Upsell:** Sermorelin à la carte or IV NAD+ booster if sleep/recovery goals.
 
 4.5. **IF** GLP-1 candidacy (semaglutide or tirzepatide)
    - **THEN** Approve ELEVATED GLP-1 → compound via FCC.
@@ -394,9 +394,9 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 | Wellness Assessment | Patient hesitates on labs | Expanded panel if GLP-1 / weight candidacy | $199 Comprehensive vs $299 Expanded | For weight or metabolic goals we recommend the Expanded panel so the physician has the full picture — it saves a redraw later. |
 | Lab draw | Partner or friend waiting | IV Lounge add-on same visit | Myers $185, pushes $25–50 | While labs process, many members grab a hydration drip in our lounge — walk-ins welcome. |
 | Results review | Low T + high body fat | TRT + GLP-1 (advanced recomposition support in-program) | $249/mo TRT or $349–$449/mo GLP-1 | Your labs support hormone optimization; if body composition is also a goal, your physician can layer advanced recomposition support inside the GLP-1 program — reviewed in person. |
-| Results review | Perimenopause symptoms, normal T | ELEVATED HRT + optional Vitality stack | $229/mo HRT; Vitality $299–399/mo | Bi-Est and progesterone are our standard — many women add the Vitality stack for sleep and recovery once stable on hormones. |
+| Results review | Perimenopause symptoms, normal T | ELEVATED HRT + optional sermorelin à la carte | $229/mo HRT; sermorelin $149/mo if added | Bi-Est and progesterone are our standard — sermorelin may be added à la carte for sleep and recovery once stable on hormones. |
 | Enrollment | Patient on single program | Second program only if clinically indicated | Additional subscription SKU | We can layer GLP-1 after TRT stabilizes — physician will confirm timing at your next check-in. |
-| Follow-up (RN) | Recovery, injury, or athletic goal | BPC-157 / TB-500 recovery stack | $249–329/mo | For tissue repair we use a named Healing stack — physician can add it to your plan at the next review. |
+| Follow-up (RN) | Recovery, injury, or athletic goal | BPC-157 and/or TB-500 (individual recovery fills) | $249/fill each | For tissue repair we use BPC-157 and TB-500 as separate prescriptions — your physician selects one or both at your next review. |
 | Follow-up (quarterly) | Labs due, patient active | In-program labs included; IV add-on | $0 panel if in-program; IV member 20% off add-ons | Your quarterly labs are included — while you’re here, members get 20% off IV add-ons. |
 | Renewal / billing | Stripe payment failed | Resolve card + confirm program still fits | Recurring program charge | Your membership renews monthly — let’s update your card and confirm your protocol still matches your goals. |
 
@@ -483,10 +483,10 @@ From first visit to first shipment.
    - **THEN** Enroll ELEVATED HRT ($229/mo) — hormone protocol ALGO-004.
 
 6. **IF** GLP-1 candidacy (semaglutide or tirzepatide)
-   - **THEN** Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo).
+   - **THEN** Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo). Use combo enrollment if hormones also indicated (medication-only add-on on same subscription).
 
-7. **IF** Advanced recomposition / fat-loss candidacy + consents signed
-   - **THEN** Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo); layer advanced recomposition support per ALGO-006.
+7. **IF** Dual lane (weight + hormones) clinically appropriate
+   - **THEN** Anchor program + medication add-on via ElevatedComboSelector — e.g. GLP-1 + TRT add-on $149/mo ($498 total sema) or TRT + GLP-1 sema add-on $249/mo. One RN visit, one quarterly lab draw.
 
 8. Document protocol in chart. Route Rx per ALGO-003. **[STOP]**
 
@@ -569,7 +569,7 @@ GC (peptides/GLP-1) · FCC (IV/core) · Custom Pharmacy Evans (hormones) · Empo
 2. **IF** Metabolic stack OR retatrutide OR SS-31 OR tesamorelin OR CJC/Ipamorelin (stack line)
    - **THEN** Vendor: GC Scientific partner 503A. Channel: GC portal / account manager.
 
-3. **IF** IV premix, glutathione, sermorelin, NAD+, healing stack, AOD, SLU, GLP-1 backup
+3. **IF** IV premix, glutathione, sermorelin, BPC-157/TB-500, AOD, SLU, GLP-1 backup
    - **THEN** Vendor: FCC. Channel: FormuConnect portal.
 
 3b. **IF** Custom Pharmacy or GC backordered on hormone creams/GLP-1, OR patient wants ODT/oral GLP-1 or nasal modality
@@ -667,10 +667,10 @@ Who owns each step.
    - **THEN** Enroll ELEVATED HRT ($229/mo) — hormone protocol ALGO-004.
 
 6. **IF** GLP-1 candidacy (semaglutide or tirzepatide)
-   - **THEN** Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo).
+   - **THEN** Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo). Use combo enrollment if hormones also indicated (medication-only add-on on same subscription).
 
-7. **IF** Advanced recomposition / fat-loss candidacy + consents signed
-   - **THEN** Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo); layer advanced recomposition support per ALGO-006.
+7. **IF** Dual lane (weight + hormones) clinically appropriate
+   - **THEN** Anchor program + medication add-on via ElevatedComboSelector — e.g. GLP-1 + TRT add-on $149/mo ($498 total sema) or TRT + GLP-1 sema add-on $249/mo. One RN visit, one quarterly lab draw.
 
 8. Document protocol in chart. Route Rx per ALGO-003. **[STOP]**
 
@@ -686,7 +686,7 @@ Who owns each step.
 2. **IF** Metabolic stack OR retatrutide OR SS-31 OR tesamorelin OR CJC/Ipamorelin (stack line)
    - **THEN** Vendor: GC Scientific partner 503A. Channel: GC portal / account manager.
 
-3. **IF** IV premix, glutathione, sermorelin, NAD+, healing stack, AOD, SLU, GLP-1 backup
+3. **IF** IV premix, glutathione, sermorelin, BPC-157/TB-500, AOD, SLU, GLP-1 backup
    - **THEN** Vendor: FCC. Channel: FormuConnect portal.
 
 3b. **IF** Custom Pharmacy or GC backordered on hormone creams/GLP-1, OR patient wants ODT/oral GLP-1 or nasal modality
@@ -810,8 +810,9 @@ Who owns each step.
 
 | Item | Primary vendor | COGS | Alternate | Alt COGS | Charge | Margin |
 |------|----------------|------|-----------|----------|--------|--------|
-| BPC-157 / TB-500 recovery stack | gc | $94 | fcc | $180 | $249 | 62% |
-| Retatrutide fill | gc | $220 | fcc | $350 | $449 | 51% |
+| BPC-157 | gc | $66 | fcc | $90 | $249 | 73% |
+| TB-500 (Thymosin Beta-4) | gc | $66 | fcc | $90 | $249 | 73% |
+| Retatrutide fill | gc | $220 | fcc | $350 | $499 | 56% |
 | SS-31 (Elamipretide) | gc | $50 | fcc | $185 | $249 | 80% |
 | Tesamorelin | gc | $72 | fcc | $325 | $399 | 82% |
 | CJC-1295 / Ipamorelin | gc | $79 | fcc | $90 | $179 | 56% |
@@ -923,7 +924,7 @@ Who owns each step.
 | --- | --- | --- |
 | IV Lounge + FCC peptide backup | FCC (Formulation Compounding Center) | Myers premix, NAD+ backup vials |
 | Metabolic / GC peptides + GLP-1 | GC Scientific (503A network) | PATH lyophilized + STLKS injectables |
-| Sermorelin, NAD+, BPC/TB recovery stack | FCC (Formulation Compounding Center) | FCC when not on GC catalog line |
+| Sermorelin, NAD+, BPC-157, TB-500 | FCC (Formulation Compounding Center) | FCC when not on GC catalog line |
 | GLP-1 sema/tirz fills | GC Scientific (503A network) | GC primary; FCC backup |
 | All hormones (TRT/BHRT) | Custom Pharmacy of Evans | Custom Pharmacy of Evans fax default |
 | Lab draws | LabCorp | LabCorp client billing |
@@ -935,7 +936,7 @@ Who owns each step.
 | Hormone Therapy Consent | TRT, BHRT, any hormone protocol |
 | GLP-1 Consent | Semaglutide, tirzepatide, metabolic program GLP class |
 | Off-label / compounded disclosure | 503A compounded therapies |
-| Research Peptide Consent | BPC-157, TB-500, Wolverine stack, and other research peptides (not PT-141) |
+| Research Peptide Consent | BPC-157, TB-500, and other research peptides (not PT-141) |
 | Substance acknowledgment (CDS) | Gray-zone candidates before ePrescribe handoff (RUO is hard-blocked) |
 | Physician CDS review | Prescriber-only final approval in provider chart |
 
@@ -946,7 +947,7 @@ Who owns each step.
 | Lane B intake | Wellness Assessment | $79 | Credited toward program if patient enrolls. |
 | Baseline labs (non-member) | Comprehensive Wellness Panel | $199 | Hormone + foundational paths. |
 | Baseline labs (weight/metabolic) | Expanded Panel | $299 | GLP-1 and metabolic recomposition default. |
-| Membership | Elevated Membership | from $199/mo | Tier = ELEVATED program: ELEVATED IV $199/mo / HRT $229/mo / TRT $249/mo / GLP-1 $349/mo. No legacy concierge/vitality names. |
+| Membership | ELEVATED Programs | from $199/mo | Tier = ELEVATED program: ELEVATED IV $199/mo / HRT $229/mo / TRT $249/mo / GLP-1 $349/mo. No legacy concierge/vitality names. |
 | In-program monitoring | Quarterly labs | $0 | Included while enrolled in active program. |
 | Lane A IV | IV menu (walk-in) | Menu pricing | Charge at booking/checkout — no consult required. |
 

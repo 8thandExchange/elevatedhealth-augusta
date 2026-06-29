@@ -85,7 +85,7 @@
 | ELEVATED GLP-1 · Tirzepatide | $449/mo | All-inclusive program |
 | Semaglutide Single Fill | $299 | $239 · Single fill · non-member / between programs |
 | Tirzepatide Single Fill | $399 | $319 · Single fill |
-| Retatrutide Single Fill | $449 | $359 · Provider-gated · GLP-1 consent · never advertise |
+| Retatrutide Monthly (Gated) | $499/mo | $399 · Provider-gated · GLP-1 consent · never advertise |
 
 ## Peptides — monthly (consult-gated)
 

@@ -52,7 +52,7 @@ export const OFFER_POLICY_ROWS = [
   ["NAD+", "ONLY as the $50 IV booster add-on", "No NAD+ injection, troche, nasal, or standalone infusion"],
   ["Peptides", "À la carte, after a Wellness Assessment", "Not a walk-in or online self-serve menu"],
   ["IV drips", "Walk-in at the IV Lounge, no consult", "Screening questions still required"],
-  ["Retatrutide", "Physician-gated, full consent only ($449)", "Not advertised; not casual à la carte"],
+  ["Retatrutide", "Physician-gated, full consent only ($499/mo)", "Not advertised; not casual à la carte"],
   ["Ketamine / Spravato", "Not offered", "Legacy service — we do not provide it"],
   ["Sexual wellness / hair", "Hidden at launch", "Exists but not promoted yet"],
 ] as const;
@@ -62,14 +62,14 @@ export const PROGRAM_ECONOMICS_ROWS = [
   ["ELEVATED HRT (women)", "$229", "$58", "$61", "$119", "$110", "48%"],
   ["GLP-1 — Semaglutide", "$349", "$107", "$63", "$170", "$179", "51%"],
   ["GLP-1 — Tirzepatide", "$449", "$185–240", "$63", "$248–303", "$146–201", "33–45%"],
-  ["GLP-1 — Retatrutide (gated)", "$449", "$250", "$63", "$313", "$136", "30%"],
+  ["GLP-1 — Retatrutide (gated)", "$499", "$250", "$63", "$313", "$186", "37%"],
   ["ELEVATED IV", "$199", "$90", "n/a", "$90", "$109", "55%"],
 ] as const;
 
 export const GLP1_FILL_ROWS = [
   ["Semaglutide single fill", "$75", "$299", "75%", "Headline weight product"],
   ["Tirzepatide single fill", "$185", "$399", "54%", "Headline weight product"],
-  ["Retatrutide (monthly, gated)", "$250", "$449", "44%", "Physician-selected within GLP-1 lane"],
+  ["Retatrutide (monthly, gated)", "$250", "$499", "50%", "Physician-selected within GLP-1 lane"],
 ] as const;
 
 export const PEPTIDE_ALACARTE_ROWS = [
@@ -166,7 +166,7 @@ export const RECENT_CHANGE_ROWS = [
   ["ELEVATED Wellness renamed", "Now ELEVATED IV — the non-Rx IV membership", "Live on site & receipts"],
   ["Standalone NAD+ retired", "NAD+ is only the $50 IV booster add-on", "Infusion & peptide NAD+ removed"],
   ["No separate peptides membership", "Peptides stay à la carte with the 20% member discount", "Decision recorded"],
-  ["Retatrutide", "Offered — physician-gated GLP-1 option ($449)", "Full GLP-1 consent required"],
+  ["Retatrutide", "Offered — physician-gated GLP-1 option ($499/mo)", "Full GLP-1 consent required"],
   ["Metabolic stack / SLU-PP-332 / AOD-9604", "Discontinued", "Off the menu"],
   ["Injectable TRT discontinued", "Men's TRT is testosterone cream only — no cypionate injections", "Off the menu"],
   ["Anastrozole & HCG removed", "Neither offered as part of TRT/HRT", "Off the menu"],

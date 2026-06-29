@@ -148,7 +148,7 @@ All price IDs below are in LIVE Stripe mode. Test mode price IDs from the legacy
 | Progesterone Fill | $99 | prod_UVe8jVlaypTCLy | price_1TWcq1CXbCBPFEeI35J50U0I |
 | Semaglutide Single Fill | $299 | prod_UVe8LmywoayLOE | price_1TWcqTCXbCBPFEeIP1U1HSld |
 | Tirzepatide Single Fill | $399 | prod_UVeAmnWt8FMQCf | price_1TWcsCCXbCBPFEeI8iA8kbrx |
-| Retatrutide Single Fill | $449 | prod_UhqSeeHiiHdqHr | price_1TiQlECXbCBPFEeIzhCHuRhj |
+| Retatrutide Monthly (Gated) | $499/mo | prod_UhqSeeHiiHdqHr | price_1TnTAnCXbCBPFEeIyA7hRE1V |
 ### À La Carte Peptide Therapy (Recurring Monthly)
 | Product | Price | Stripe Product ID | Stripe Price ID |
 |---|---|---|---|
@@ -231,4 +231,4 @@ The following test-mode price IDs are deprecated. They appear in legacy code tha
 - `price_1SgcM9EOtKRY99puXlVr5s6o` (GLP-1 starter) → DELETE; rolled into ELEVATED GLP-1
 - `price_1Sd8ChEOtKRY99pu7iaAF3Jd` (GLP-1 continuation) → DELETE; rolled into ELEVATED GLP-1
 ---
-End of Pricing Source of Truth. Last updated 2026-06-14.
+End of Pricing Source of Truth. Last updated 2026-06-28 (retatrutide $499/mo).
