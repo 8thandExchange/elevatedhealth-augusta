@@ -28,6 +28,10 @@ import {
   buildDetailedIvDripRows,
   buildDetailedPeptideRows,
   buildHormoneProtocolRows,
+  buildLabCompositionRows,
+  buildLabFrequencyRows,
+  buildLabPricingRows,
+  LAB_PANEL_ORDERING_ROWS,
 } from "./staffMasterGuideContent";
 import {
   MULTI_SERVICE_PLAYBOOK,
@@ -317,6 +321,29 @@ export function buildStaffMasterGuideHtml(): string {
     `,
   );
 
+  const labPanelsPage = page(
+    "Lab panels",
+    "Comprehensive & Expanded lab panels — what to order",
+    `
+    <div class="callout">
+      <strong>Comprehensive Wellness Panel ($199)</strong> = Foundation Wellness · 8 tests.<br/>
+      <strong>Expanded Panel ($299)</strong> = Hormone (TRT/HRT) or Weight/GLP-1 · 16–18 tests (includes all 8 Foundation tests).<br/>
+      Initial labs are paid at onboarding; quarterly panels are included on ELEVATED TRT, HRT, and GLP-1 while active.
+    </div>
+    <h3>Which panel to order (by program)</h3>
+    ${tableHtml(
+      ["Program / pathway", "Panel name", "Non-member", "Member (−20%)", "When"],
+      LAB_PANEL_ORDERING_ROWS.map((r) => [...r]),
+    )}
+    <h3>What each panel includes (tests)</h3>
+    ${tableHtml(["Panel", "Tests included"], buildLabCompositionRows())}
+    <h3>Draw frequency</h3>
+    ${tableHtml(["Panel", "When to draw"], buildLabFrequencyRows())}
+    <h3>Lab pricing reference</h3>
+    ${tableHtml(["Panel", "Walk-in", "Member", "Margin", "LabCorp COGS"], buildLabPricingRows())}
+    `,
+  );
+
   const programsPage = page(
     "Programs",
     "ELEVATED memberships & visits",
@@ -441,6 +468,7 @@ export function buildStaffMasterGuideHtml(): string {
   ${processPage}
   ${multiServicePage}
   ${comboMatrixPage}
+  ${labPanelsPage}
   ${programsPage}
   ${hormonesPage}
   ${glp1Page}
@@ -494,6 +522,19 @@ export function buildStaffMasterGuideMarkdown(): string {
       ["Scenario", "Combo/mo", "Peptides", "Steady state", "Staff script"],
       buildTripleServiceTableRows(),
     ),
+    "",
+    "## Lab panels — Comprehensive & Expanded",
+    "",
+    "### Which panel to order",
+    "",
+    tableMd(
+      ["Program / pathway", "Panel name", "Non-member", "Member", "When"],
+      LAB_PANEL_ORDERING_ROWS.map((r) => [...r]),
+    ),
+    "",
+    "### Panel composition",
+    "",
+    tableMd(["Panel", "Tests included"], buildLabCompositionRows()),
     "",
     "## Peptides (full)",
     "",

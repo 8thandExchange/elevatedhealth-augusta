@@ -1,6 +1,6 @@
 # Pricing Source of Truth — Elevated Health Augusta
 **Effective date:** 2026-05-13
-**Owner:** Troy Akers, DO
+**Owner:** Dr. Troy Akers / Dr. Dennis Williams
 **Status:** Active
 This document is the single canonical reference for all pricing at Elevated Health Augusta. Every price quoted in code, marketing copy, email templates, SMS scripts, AI prompts, database seeds, and staff scripts must match this document. When this document changes, all dependent surfaces must be updated within the same sprint.
 ## Core Services (Non-Member / À La Carte)

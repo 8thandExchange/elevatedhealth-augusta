@@ -25,7 +25,7 @@ import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_PROGRAM_VARIANTS } from "./strip
 export const QUICK_CARD_META = {
   title: "Staff Quick Reference Card",
   subtitle: "Process · Menu · Pricing · Rules",
-  version: "1.0.2",
+  version: "1.0.3",
   effectiveDate: "2026-06-28",
   classification: "Internal — print & laminate at front desk",
   clinic: "Elevated Health Augusta",
@@ -40,7 +40,7 @@ export const QUICK_CARD_FILENAME_BASE = `EHA-Staff-Quick-Card-v${QUICK_CARD_META
 export const TEAM_ROWS = [
   ["Kristen", "Coordinator", "Scheduling · enrollment · billing verify · patient comms"],
   ["Caroline, RN", "Clinical", "IV · phlebotomy · RN check-ins · standing orders"],
-  ["Dr. Dennis Williams", "Physician", "Exams · protocols · Rx sign-off"],
+  ["Dr. Dennis Williams", "Owner / Physician", "Exams · protocols · Rx sign-off"],
   ["Dr. Troy Akers", "Owner / Physician", "Oversight · sign-off · escalations"],
 ] as const;
 

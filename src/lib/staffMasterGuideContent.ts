@@ -24,6 +24,12 @@ import { IV_ADDONS_CATALOG } from "./ivAddonsCatalog";
 import { IV_THERAPIES_CATALOG } from "./ivTherapiesCatalog";
 import { DOSING_PROTOCOLS, type DosingProtocol } from "./dosingProtocols";
 import { PROVIDER_PROTOCOL_ALGORITHMS } from "./providerProtocolAlgorithms";
+import {
+  LAB_COMPOSITION_ROWS,
+  LAB_FREQUENCY_ROWS,
+  LAB_PRICING_ROWS,
+} from "./businessOpsGuideContent";
+import { labPanelDisplayPrice } from "./labPanelCheckout";
 import { MEMBER_DISCOUNT_PERCENT, fmtUsd, labMemberCents } from "./pricing";
 import {
   CHARGE_CHECKPOINTS,
@@ -40,7 +46,7 @@ import { CORE_SERVICES } from "./stripeConfig";
 export const MASTER_GUIDE_META = {
   title: "Staff Complete Reference",
   subtitle: "Process · Multi-Service Add-Ons · Formulary · Dosing · Pricing",
-  version: "2.1.0",
+  version: "2.2.0",
   effectiveDate: "2026-06-28",
   classification: "Internal — master staff formulary & operations reference",
   clinic: "Elevated Health Augusta",
@@ -71,6 +77,70 @@ export const PEPTIDE_LAYER_RULES = {
     "Retatrutide is NOT a casual peptide add-on — GLP-1 lane only, physician-gated.",
   ],
 } as const;
+
+/** Which lab panel to order by program / pathway — staff routing table. */
+export const LAB_PANEL_ORDERING_ROWS = [
+  [
+    "ELEVATED TRT (men)",
+    "Hormone — Male (16 tests)",
+    CORE_SERVICES.expandedPanel.displayPrice,
+    labPanelDisplayPrice("hormone-male", true),
+    "Baseline before TRT · quarterly included while member",
+  ],
+  [
+    "ELEVATED HRT (women)",
+    "Hormone — Female (18 tests)",
+    CORE_SERVICES.expandedPanel.displayPrice,
+    labPanelDisplayPrice("hormone-female", true),
+    "Baseline before HRT · quarterly included while member",
+  ],
+  [
+    "ELEVATED GLP-1 / weight loss",
+    "Weight / Expanded (16 tests)",
+    CORE_SERVICES.expandedPanel.displayPrice,
+    labPanelDisplayPrice("weight-optimization", true),
+    "Baseline before GLP-1 · quarterly included while member",
+  ],
+  [
+    "GLP-1 + hormone combo",
+    "Weight / Expanded (16 tests)",
+    CORE_SERVICES.expandedPanel.displayPrice,
+    labPanelDisplayPrice("weight-optimization", true),
+    "One draw covers both lanes when GLP-1 is in the mix",
+  ],
+  [
+    "General wellness / IV / peptides",
+    "Foundation Wellness (8 tests)",
+    CORE_SERVICES.comprehensivePanel.displayPrice,
+    labPanelDisplayPrice("foundation-wellness", true),
+    "Comprehensive Wellness Panel · annual or as indicated",
+  ],
+  [
+    "Sexual wellness workup",
+    "Sexual Wellness (7 tests)",
+    CORE_SERVICES.comprehensivePanel.displayPrice,
+    labPanelDisplayPrice("sexual-wellness", true),
+    "When clinically indicated for libido/ED workup",
+  ],
+] as const;
+
+export function buildLabCompositionRows(): string[][] {
+  return LAB_COMPOSITION_ROWS.map(([panel, tests]) => [panel, tests]);
+}
+
+export function buildLabFrequencyRows(): string[][] {
+  return LAB_FREQUENCY_ROWS.map(([panel, when]) => [panel, when]);
+}
+
+export function buildLabPricingRows(): string[][] {
+  return LAB_PRICING_ROWS.map(([panel, cogs, walkIn, margin, member, memberMargin]) => [
+    panel,
+    walkIn,
+    member,
+    `${margin} gross margin`,
+    `LabCorp COGS ${cogs}`,
+  ]);
+}
 
 function formatTitration(p: DosingProtocol): string {
   return p.titration.map((t) => `${t.weeks}: ${t.dose}`).join(" → ");

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Elevated Health Augusta — Staff Quick Reference Card</title>
+  <style>
+  @page { size: letter portrait; margin: 0.4in; }
+  :root {
+    --charcoal: #2A2826;
+    --camel: #B8956A;
+    --bone: #F2EBDC;
+    --surface: #faf8f4;
+    --muted: #6b6560;
+    --border: #d4cfc6;
+    --green: #1a5f1a;
+    --red: #8b2e2e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--charcoal);
+    margin: 0;
+    font-size: 8pt;
+    line-height: 1.32;
+  }
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: var(--charcoal);
+    color: var(--bone);
+    padding: 1.5rem;
+    page-break-after: always;
+  }
+  .cover .mark {
+    width: 52px; height: 52px;
+    border: 2px solid var(--camel);
+    border-radius: 3px;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 1.75rem;
+    line-height: 48px;
+    margin-bottom: 0.75rem;
+  }
+  .cover h1 {
+    font-family: Georgia, serif;
+    font-weight: 400;
+    font-size: 1.55rem;
+    margin: 0.2rem 0;
+    max-width: 24rem;
+  }
+  .cover h1 em { color: var(--camel); font-style: italic; }
+  .cover .sub { font-size: 0.9rem; opacity: 0.92; margin-top: 0.35rem; }
+  .cover .meta { margin-top: 1.25rem; font-size: 0.72rem; opacity: 0.78; line-height: 1.55; }
+  .cover .version {
+    margin-top: 1rem;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--camel);
+  }
+  .page { page-break-after: always; padding: 0.05in 0; }
+  .page:last-child { page-break-after: auto; }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid var(--camel);
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .page-header h2 {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    margin: 0;
+  }
+  .page-header .tag {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+  }
+  h3 {
+    font-family: Georgia, serif;
+    font-size: 0.75rem;
+    margin: 0.5rem 0 0.25rem;
+    color: var(--camel);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .script {
+    background: var(--surface);
+    border-left: 3px solid var(--camel);
+    padding: 0.45rem 0.55rem;
+    font-size: 0.72rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+  }
+  .quick-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.35rem;
+    text-align: center;
+  }
+  .quick-card .lbl {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  .quick-card .val { font-size: 0.68rem; font-weight: 600; margin-top: 0.15rem; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .lane {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.4rem 0.5rem;
+    background: var(--surface);
+    page-break-inside: avoid;
+  }
+  .lane-a { border-top: 3px solid #4a7c59; }
+  .lane-b { border-top: 3px solid var(--camel); }
+  .lane h4 {
+    font-size: 0.72rem;
+    margin: 0 0 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .lane ol {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.65rem;
+  }
+  .lane li { margin-bottom: 0.15rem; }
+  .journey {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+  }
+  .journey-item {
+    display: flex;
+    gap: 0.35rem;
+    align-items: flex-start;
+    page-break-inside: avoid;
+  }
+  .journey-num {
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    background: var(--charcoal);
+    color: var(--bone);
+    border-radius: 2px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.1rem;
+  }
+  .journey-title { font-weight: 600; font-size: 0.66rem; }
+  .journey-detail { color: var(--muted); font-size: 0.62rem; }
+  .membership-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    margin-bottom: 0.4rem;
+  }
+  .membership-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--camel);
+    border-radius: 3px;
+    padding: 0.35rem 0.45rem;
+    background: var(--surface);
+    page-break-inside: avoid;
+  }
+  .membership-card .name {
+    font-family: Georgia, serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .membership-card .price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--camel);
+  }
+  .membership-card .detail {
+    font-size: 0.62rem;
+    color: var(--muted);
+    line-height: 1.28;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.64rem;
+    margin: 0.25rem 0 0.4rem;
+    page-break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.22rem 0.35rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--charcoal);
+    color: var(--bone);
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  tr:nth-child(even) td { background: rgba(184, 149, 106, 0.06); }
+  .price { font-weight: 600; white-space: nowrap; }
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--camel);
+    padding: 0.35rem 0.45rem;
+    font-size: 0.64rem;
+    margin: 0.35rem 0;
+  }
+  .say-list, .dont-list {
+    margin: 0;
+    padding-left: 0.9rem;
+    font-size: 0.64rem;
+  }
+  .say-list li { margin-bottom: 0.2rem; color: var(--green); }
+  .say-list li span { color: var(--charcoal); }
+  .dont-list li { margin-bottom: 0.2rem; color: var(--red); }
+  .dont-list li span { color: var(--charcoal); }
+  .team-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem;
+    font-size: 0.64rem;
+  }
+  .team-card {
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.4rem;
+    border-radius: 3px;
+    background: var(--surface);
+  }
+  .team-card strong { display: block; font-size: 0.68rem; }
+  .team-card em { font-size: 0.58rem; color: var(--muted); font-style: normal; }
+  .footer {
+    text-align: center;
+    font-size: 0.58rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 0.3rem;
+    margin-top: 0.4rem;
+  }
+  .footer strong { color: var(--charcoal); font-size: 0.72rem; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+  
+  <section class="cover">
+    <div class="mark">E</div>
+    <h1>Staff <em>Quick Reference</em></h1>
+    <p class="sub">Process · Menu · Pricing · Rules</p>
+    <p class="meta">7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809<br/>(706) 760-3470 · elevatedhealthaugusta.com</p>
+    <p class="version">Internal — print &amp; laminate at front desk · v1.0.3 · 2026-06-28</p>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>How we work</h2>
+      <span class="tag">Page 1 · v1.0.3</span>
+    </div>
+    
+    <div class="script">We start with what you want, but we confirm with labs and a physician review before any prescription. The $79 Wellness Assessment is our front door for hormones, weight loss, and peptides — IV Lounge is walk-in without a consult.</div>
+    <div class="quick-grid">
+      
+        <div class="quick-card">
+          <div class="lbl">Front door</div>
+          <div class="val">$79 Wellness Assessment</div>
+        </div>
+        <div class="quick-card">
+          <div class="lbl">Member discount</div>
+          <div class="val">20% off all à la carte</div>
+        </div>
+        <div class="quick-card">
+          <div class="lbl">Payment</div>
+          <div class="val">Card · Klarna · Affirm · superbills on request</div>
+        </div>
+        <div class="quick-card">
+          <div class="lbl">Lane A</div>
+          <div class="val">IV Lounge — walk-in, no consult</div>
+        </div>
+        <div class="quick-card">
+          <div class="lbl">Lane B</div>
+          <div class="val">Hormones · GLP-1 · peptides — consult-gated</div>
+        </div>
+    </div>
+    <div class="two-col">
+      <div class="lane lane-a">
+        <h4>Lane A — IV Lounge (walk-in)</h4>
+        <ol><li>Patient walks in or books IV Lounge online.</li><li>IV screening edge function runs hard blocks (CHF, pregnancy, G6PD for high-dose vitamin C, etc.).</li><li>Select drip or push; charge at checkout (signature drips $139–$169; NAD+ $50 booster; glutathione and other pushes).</li><li>Members receive 20% off IV add-ons beyond the 2 included drips on ELEVATED IV.</li><li>Soft mention $79 Wellness Assessment only if hormone/weight interest surfaces.</li></ol>
+      </div>
+      <div class="lane lane-b">
+        <h4>Lane B — Consult-gated</h4>
+        <ol><li>Patient pays $79 Wellness Assessment via Stripe before or at booking.</li><li>In-person visit: history, vitals, goal confirmation.</li><li>Order goal-appropriate lab panel; draw same visit when possible.</li><li>Run CDS assessment in provider chart (staff) → physician review (prescriber only).</li><li>Results call: enroll program, collect consents, schedule RN teaching.</li><li>Never promise a specific medication before labs and physician sign-off.</li></ol>
+      </div>
+    </div>
+    <h3>Patient journey (every Lane B patient)</h3>
+    <div class="journey">
+      
+        <div class="journey-item">
+          <div class="journey-num">0</div>
+          <div>
+            <div class="journey-title">Arrival <span style="color:var(--muted);font-weight:400">· Front desk</span></div>
+            <div class="journey-detail">Warm welcome, identify intent</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">1</div>
+          <div>
+            <div class="journey-title">Counsel &amp; discover <span style="color:var(--muted);font-weight:400">· Kristen / Caroline</span></div>
+            <div class="journey-detail">Educate on EHA services; no price guessing</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">2</div>
+          <div>
+            <div class="journey-title">Wellness Assessment <span style="color:var(--muted);font-weight:400">· Kristen + RN</span></div>
+            <div class="journey-detail">Charge $79; intake + lane lock</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">3</div>
+          <div>
+            <div class="journey-title">Labs ordered &amp; drawn <span style="color:var(--muted);font-weight:400">· Caroline</span></div>
+            <div class="journey-detail">Correct panel, correct charge</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">4</div>
+          <div>
+            <div class="journey-title">Provider review <span style="color:var(--muted);font-weight:400">· Provider MD</span></div>
+            <div class="journey-detail">Clinical decision within 5–7 days</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">5</div>
+          <div>
+            <div class="journey-title">Program enrollment <span style="color:var(--muted);font-weight:400">· Kristen</span></div>
+            <div class="journey-detail">Stripe subscription + consents</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">6</div>
+          <div>
+            <div class="journey-title">Prescribe &amp; ship <span style="color:var(--muted);font-weight:400">· Provider + Kristen</span></div>
+            <div class="journey-detail">Vendor routing ALGO-003</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">7</div>
+          <div>
+            <div class="journey-title">Follow-up cadence <span style="color:var(--muted);font-weight:400">· Caroline + Kristen</span></div>
+            <div class="journey-detail">RN check-ins, quarterly labs</div>
+          </div>
+        </div>
+        <div class="journey-item">
+          <div class="journey-num">8</div>
+          <div>
+            <div class="journey-title">Retain &amp; grow <span style="color:var(--muted);font-weight:400">· All staff</span></div>
+            <div class="journey-detail">Verify billing + ethical upsell</div>
+          </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>What we offer &amp; pricing</h2>
+      <span class="tag">Page 2 · v1.0.3</span>
+    </div>
+    
+    <h3>ELEVATED memberships — all-inclusive monthly</h3>
+    <div class="membership-grid">
+      
+        <div class="membership-card">
+          <div class="name">ELEVATED IV</div>
+          <div class="price">$199/mo</div>
+          <div class="detail"><strong>Includes:</strong> None (IV-only) · Not included</div>
+          <div class="detail">2 signature drips/mo · 20% off add-ons · priority booking</div>
+        </div>
+        <div class="membership-card">
+          <div class="name">ELEVATED HRT</div>
+          <div class="price">$229/mo</div>
+          <div class="detail"><strong>Includes:</strong> Bi-Est + progesterone (+ T cream if Rx) · Quarterly Comprehensive ($199 value)</div>
+          <div class="detail">Cream only — no troches</div>
+        </div>
+        <div class="membership-card">
+          <div class="name">ELEVATED TRT</div>
+          <div class="price">$249/mo</div>
+          <div class="detail"><strong>Includes:</strong> Testosterone cream (daily) · Quarterly Comprehensive ($199 value)</div>
+          <div class="detail">No injections · no anastrozole · no HCG</div>
+        </div>
+        <div class="membership-card">
+          <div class="name">ELEVATED GLP-1</div>
+          <div class="price">$349/mo · $449/mo</div>
+          <div class="detail"><strong>Includes:</strong> Compounded semaglutide OR tirzepatide · Quarterly Expanded ($299 value)</div>
+          <div class="detail">Price locked to molecule — titration does not change monthly rate</div>
+        </div>
+    </div>
+    <h3>Combo medication add-ons — second Rx lane (save $100/mo vs two full programs)</h3>
+    <p style="font-size:0.62rem;margin:0 0 0.25rem">Use Elevated Combo Selector in provider portal. Peptides layer on as separate SKUs (−20% member). Full playbook → Staff Complete Reference PDF.</p>
+    <table><thead><tr><th>Combo add-on (med only)</th><th>Price</th><th>Note</th></tr></thead><tbody><tr><td>TRT</td><td>+$149/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>HRT</td><td>+$129/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>GLP-1 Semaglutide</td><td>+$249/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>GLP-1 Tirzepatide</td><td>+$349/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr></tbody></table>
+    <h3>Visits, labs & onboarding</h3>
+    <table><thead><tr><th>Service</th><th>Price</th><th>Notes</th></tr></thead><tbody><tr><td>Wellness Assessment</td><td>$79</td><td>RN intake · universal front door</td></tr><tr><td>Maintenance Visit</td><td>$79</td><td>RN follow-up under standing orders</td></tr><tr><td>Medical Review</td><td>$149</td><td>Physician · complex cases / patient-requested</td></tr><tr><td>Physician Phone Follow-Up</td><td>$99</td><td>Physician phone · non-members</td></tr><tr><td>Rebooking Fee</td><td>$99</td><td>Late cancel / no-show</td></tr><tr><td>Comprehensive Wellness Panel</td><td>$199</td><td>Foundation 8-test panel · general wellness baseline</td></tr><tr><td>Expanded Panel</td><td>$299</td><td>Hormone (TRT/HRT) · GLP-1/weight · member quarterly included on Rx programs</td></tr></tbody></table>
+    <div class="callout">
+      <strong>First month (typical):</strong> $79 assessment + $199–$299 baseline labs + first program month ($199–$449) ≈ <strong>$477–$827</strong> all-in, then predictable monthly thereafter.
+    </div>
+    <div class="callout">
+      <strong>Not included in membership:</strong> Initial $79 Wellness Assessment + baseline labs ($199 or $299) · Patient-requested $149 Medical Review · À la carte beyond plan inclusions (members get 20% off)
+    </div>
+    <h3>Billing checkpoints (verify in Stripe before Rx ships)</h3>
+    <table><thead><tr><th>Step</th><th>Event</th><th>Amount</th></tr></thead><tbody><tr><td>C-01</td><td>Wellness Assessment booked</td><td>$79</td></tr><tr><td>C-02</td><td>Lab panel drawn</td><td>$199 or $299</td></tr><tr><td>C-03</td><td>Program enrollment</td><td>$199–$449/mo</td></tr><tr><td>C-04</td><td>À la carte med fill</td><td>Per SKU — $0 if included in their plan</td></tr><tr><td>C-05</td><td>IV Lounge walk-in</td><td>Drip $139–$169 · boosters $25–$50</td></tr><tr><td>C-08</td><td>Rebooking fee</td><td>$99</td></tr></tbody></table>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+  
+  <section class="page">
+    <div class="page-header">
+      <h2>Menu highlights &amp; staff rules</h2>
+      <span class="tag">Page 3 · v1.0.3</span>
+    </div>
+    
+    <h3>IV Lounge — signature drips</h3>
+    <table><thead><tr><th>Drip</th><th>Walk-in</th><th>Member −20%</th></tr></thead><tbody><tr><td>The Resurrection</td><td>$139</td><td>$111</td></tr><tr><td>The Meyers</td><td>$159</td><td>$127</td></tr><tr><td>Beast Mode</td><td>$169</td><td>$135</td></tr><tr><td>The Shield</td><td>$149</td><td>$119</td></tr><tr><td>The Glow</td><td>$159</td><td>$127</td></tr></tbody></table>
+    <p style="font-size:0.62rem;color:var(--muted);margin:0 0 0.35rem">Boosters: NAD+ $50 · Glutathione $35 · B12 $25 · Toradol $25 · Vit C $25 · Zofran $25 (member −20%)</p>
+    <div class="two-col">
+      <div>
+        <h3>GLP-1 / weight</h3>
+        <table><thead><tr><th>Product</th><th>Price</th><th>Notes</th></tr></thead><tbody><tr><td>ELEVATED GLP-1 · Semaglutide</td><td>$349/mo</td><td>All-inclusive program</td></tr><tr><td>ELEVATED GLP-1 · Tirzepatide</td><td>$449/mo</td><td>All-inclusive program</td></tr><tr><td>Semaglutide Single Fill</td><td>$299</td><td>$239 · Single fill · non-member / between programs</td></tr><tr><td>Tirzepatide Single Fill</td><td>$399</td><td>$319 · Single fill</td></tr><tr><td>Retatrutide Monthly (Gated)</td><td>$499/mo</td><td>$399 · Provider-gated · GLP-1 consent · never advertise</td></tr></tbody></table>
+      </div>
+      <div>
+        <h3>Recovery (consult-gated)</h3>
+        <table><thead><tr><th>Product</th><th>Price</th><th>Notes</th></tr></thead><tbody><tr><td>BPC-157 / TB-500 Recovery Stack</td><td>$349</td><td>$279 member · Consult-gated · Research Peptide Consent · never say “Wolverine” to patients</td></tr></tbody></table>
+        <p style="font-size:0.62rem;color:var(--muted);margin-top:0.35rem">Full formulary, dosing &amp; multi-peptide pricing → Staff Complete Reference PDF.</p>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:0.35rem">
+      <div>
+        <h3>Do say</h3>
+        <ul class="say-list"><li><span>&quot;Our ELEVATED programs bundle your medication, RN check-ins, quarterly labs, and messaging — one price.&quot;</span></li><li><span>&quot;Every new patient starts with a $79 Wellness Assessment unless they're IV walk-in only.&quot;</span></li><li><span>&quot;Active members get 20% off à la carte — IV, peptides, extra labs.&quot;</span></li><li><span>&quot;We are cash-pay; we can provide itemized receipts and superbills on request.&quot;</span></li><li><span>&quot;IV Lounge is walk-in — no consult required for drips and pushes.&quot;</span></li></ul>
+      </div>
+      <div>
+        <h3>Never say / offer</h3>
+        <ul class="dont-list"><li><span>&quot;Plus pharmacy costs&quot; or &quot;medication billed separately&quot; on TRT/HRT/GLP-1.</span></li><li><span>Promise a specific drug or dose before labs + physician review.</span></li><li><span>Offer ketamine, Spravato, injectable TRT, anastrozole, HCG, or pellets.</span></li><li><span>Advertise or lead with retatrutide — physician-gated only.</span></li><li><span>Standalone NAD+ infusion or peptide NAD+ — NAD+ is the $50 IV booster only.</span></li></ul>
+      </div>
+    </div>
+    <h3>Team</h3>
+    <div class="team-grid">
+      
+        <div class="team-card">
+          <strong>Kristen</strong>
+          <em>Coordinator</em>
+          Scheduling · enrollment · billing verify · patient comms
+        </div>
+        <div class="team-card">
+          <strong>Caroline, RN</strong>
+          <em>Clinical</em>
+          IV · phlebotomy · RN check-ins · standing orders
+        </div>
+        <div class="team-card">
+          <strong>Dr. Dennis Williams</strong>
+          <em>Owner / Physician</em>
+          Exams · protocols · Rx sign-off
+        </div>
+        <div class="team-card">
+          <strong>Dr. Troy Akers</strong>
+          <em>Owner / Physician</em>
+          Oversight · sign-off · escalations
+        </div>
+    </div>
+    <div class="callout" style="margin-top:0.4rem">
+      <strong>Deep references:</strong> Staff Complete Reference (formulary + dosing + multi-peptide strategy) · SOP Manual (algorithms) · elevatedhealthaugusta.com/provider
+    </div>
+    
+    <div class="footer">
+      <strong>(706) 760-3470</strong> · 7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809 · elevatedhealthaugusta.com
+    </div>
+  </section>
+</body>
+</html>

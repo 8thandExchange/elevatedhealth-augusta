@@ -103,8 +103,8 @@ export const VISIT_LAB_ROWS = [
   [CORE_SERVICES.medicalReview.name, CORE_SERVICES.medicalReview.displayPrice, "Physician · complex cases / patient-requested"],
   [CORE_SERVICES.phoneFollowUp.name, CORE_SERVICES.phoneFollowUp.displayPrice, "Physician phone · non-members"],
   [CORE_SERVICES.rebookingFee.name, CORE_SERVICES.rebookingFee.displayPrice, "Late cancel / no-show"],
-  [CORE_SERVICES.comprehensivePanel.name, CORE_SERVICES.comprehensivePanel.displayPrice, "Hormone baseline · member quarterly included on Rx programs"],
-  [CORE_SERVICES.expandedPanel.name, CORE_SERVICES.expandedPanel.displayPrice, "GLP-1 / metabolic baseline · member quarterly on GLP-1"],
+  [CORE_SERVICES.comprehensivePanel.name, CORE_SERVICES.comprehensivePanel.displayPrice, "Foundation 8-test panel · general wellness baseline"],
+  [CORE_SERVICES.expandedPanel.name, CORE_SERVICES.expandedPanel.displayPrice, "Hormone (TRT/HRT) · GLP-1/weight · member quarterly included on Rx programs"],
 ] as const;
 
 export const IV_DRIP_ROWS = IV_THERAPIES_CATALOG.map((d) => [
