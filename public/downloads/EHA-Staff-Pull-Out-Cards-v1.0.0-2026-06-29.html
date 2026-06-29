@@ -2,173 +2,273 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>Staff Pull-Out Reference Cards</title>
+  <title>Elevated Health Augusta — Pull-Out Reference Cards</title>
   <style>
-  @page { size: letter portrait; margin: 0.25in; }
-  
   :root {
     --navy: #00477E;
-    --navy-dark: #002D4F;
     --steel: #0B7BB8;
-    --steel-light: #3D9FD1;
-    --paper: #FFFFFF;
-    --ink: #0B3555;
-    --surface: #F4F8FB;
+    --gray: #A7A9AC;
+    --ink: #14202B;
     --muted: #5B6770;
+    --surface: #F4F8FB;
     --border: #C9D4DD;
-    --green: #1a5f1a;
-    --red: #8b2e2e;
   }
-
   * { box-sizing: border-box; }
-  body {
-    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
-    color: var(--ink);
-    margin: 0;
-    font-size: 6.5pt;
-    line-height: 1.25;
-    background: var(--paper);
-  }
-  .sheet-title {
-    text-align: center;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 10pt;
-    color: var(--navy);
-    margin-bottom: 0.12in;
-    border-bottom: 2px solid var(--steel);
-    padding-bottom: 0.06in;
-  }
-  .sheet-title small {
-    display: block;
-    font-family: 'Jost', sans-serif;
-    font-size: 6pt;
-    color: var(--muted);
-    font-weight: 400;
-    margin-top: 0.04in;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.12in;
-  }
+  @page { size: letter portrait; margin: 0.35in; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); margin: 0; }
+
+  .sheet { display: flex; flex-direction: column; gap: 0.18in; }
   .card {
-    border: 2px dashed var(--border);
-    border-radius: 4px;
-    padding: 0.1in;
-    min-height: 3.35in;
+    border: 1.5px solid var(--navy);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 4.95in;
+    display: flex;
+    flex-direction: column;
     page-break-inside: avoid;
-    background: var(--paper);
+    position: relative;
   }
-  .card-head {
-    background: var(--navy);
-    color: var(--paper);
-    margin: -0.1in -0.1in 0.08in;
-    padding: 0.06in 0.1in;
-    border-radius: 2px 2px 0 0;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 8pt;
+  /* hole-punch guide */
+  .punch {
+    height: 0.42in;
+    background: var(--surface);
+    border-bottom: 1px dashed var(--gray);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
   }
-  .card-head span {
-    float: right;
-    font-family: 'Jost', sans-serif;
-    font-size: 5.5pt;
-    opacity: 0.85;
-    font-weight: 400;
+  .punch::before {
+    content: "";
+    width: 0.22in; height: 0.22in;
+    border: 1.5px solid var(--gray);
+    border-radius: 50%;
+    background: #fff;
   }
-  h3 {
-    font-size: 6pt;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--steel);
-    margin: 0.06in 0 0.03in;
+  .punch span {
+    position: absolute; right: 0.18in;
+    font-size: 6pt; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase;
   }
-  table { width: 100%; border-collapse: collapse; font-size: 5.8pt; margin: 0.03in 0; }
-  th, td { border: 1px solid var(--border); padding: 0.03in 0.04in; text-align: left; vertical-align: top; }
-  th { background: var(--surface); color: var(--navy); font-size: 5.5pt; }
-  ul { margin: 0; padding-left: 1em; font-size: 5.8pt; }
-  li { margin-bottom: 0.02in; }
-  .do { border-left: 2px solid var(--green); padding-left: 0.06in; }
-  .dont { border-left: 2px solid var(--red); padding-left: 0.06in; }
+  .head {
+    background: var(--navy); color: #fff;
+    padding: 0.10in 0.18in;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .head h2 { margin: 0; font-size: 13pt; letter-spacing: 0.01em; }
+  .head .tag { font-size: 6.5pt; color: #cfe3f3; text-transform: uppercase; letter-spacing: 0.08em; }
+  .blurb { font-size: 7pt; color: var(--muted); padding: 0.06in 0.18in 0; font-style: italic; }
+
+  table { width: 100%; border-collapse: collapse; margin: 0.05in 0; }
+  th {
+    text-align: left; font-size: 6pt; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--steel); padding: 0.03in 0.06in; border-bottom: 1px solid var(--border);
+  }
+  td { font-size: 7pt; padding: 0.05in 0.06in; vertical-align: top; border-bottom: 1px solid var(--surface); line-height: 1.25; }
+  tr:nth-child(even) td { background: var(--surface); }
+  .c-is { font-weight: 700; color: var(--navy); width: 21%; }
+  .c-does { width: 30%; }
+  .c-rx { width: 27%; color: var(--muted); }
+  .c-cost { width: 22%; font-weight: 600; }
+  td.c-cost { color: var(--navy); }
+
   .foot {
-    font-size: 5pt;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 0.08in;
+    margin-top: auto;
+    background: var(--surface);
     border-top: 1px solid var(--border);
-    padding-top: 0.04in;
+    padding: 0.06in 0.18in;
+    font-size: 6.5pt; color: var(--muted);
   }
-  @media print {
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .foot strong { color: var(--navy); }
+  .brandline {
+    padding: 0.04in 0.18in; font-size: 6pt; color: var(--gray);
+    display: flex; justify-content: space-between;
   }
 </style>
 </head>
 <body>
-  <div class="sheet-title">
-    Staff Pull-Out Reference Cards
-    <small>v1.0.0 · 2026-06-29 · Internal — staff laminate cards (6-up on letter) · Cut along dashed lines · laminate</small>
-  </div>
-  <div class="grid">
-    
-  <div class="card">
-    <div class="card-head">ELEVATED Programs<span>Card 1/6</span></div>
-    
-    <table><thead><tr><th>Program</th><th>Price</th><th>Includes</th></tr></thead><tbody><tr><td>IV</td><td>$199/mo</td><td>None (IV-only)</td></tr><tr><td>HRT</td><td>$229/mo</td><td>Bi-Est + progesterone (+ T cream if Rx)</td></tr><tr><td>TRT</td><td>$249/mo</td><td>Testosterone cream (daily)</td></tr><tr><td>GLP-1</td><td>$349/mo · $449/mo</td><td>Compounded semaglutide OR tirzepatide</td></tr></tbody></table>
-    <h3>Combo add-ons</h3>
-    <table><thead><tr><th>Add-on</th><th>Price</th></tr></thead><tbody><tr><td>TRT</td><td>+$149/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>HRT</td><td>+$129/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>GLP-1 Semaglutide</td><td>+$249/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr><tr><td>GLP-1 Tirzepatide</td><td>+$349/mo</td><td>Medication only — no duplicate RN/labs/messaging</td></tr></tbody></table>
-    
-  </div>
-    
-  <div class="card">
-    <div class="card-head">IV Lounge<span>Card 2/6</span></div>
-    
-    <table><thead><tr><th>Drip</th><th>Walk-in</th><th>Member</th></tr></thead><tbody><tr><td>The Resurrection</td><td>$139</td><td>$111</td></tr><tr><td>The Meyers</td><td>$159</td><td>$127</td></tr><tr><td>Beast Mode</td><td>$169</td><td>$135</td></tr><tr><td>The Shield</td><td>$149</td><td>$119</td></tr><tr><td>The Glow</td><td>$159</td><td>$127</td></tr></tbody></table>
-    <p style="margin:0.04in 0;font-size:5.8pt"><b>Boosters:</b> NAD+ $50 · Glutathione $35 · B12/Toradol/VitC/Zofran $25 · members −20%</p>
-    <p style="margin:0;font-size:5.8pt;color:var(--muted)">Lane A — walk-in, no $79 consult required.</p>
-    
-  </div>
-    
-  <div class="card">
-    <div class="card-head">Lab Panels<span>Card 3/6</span></div>
-    
-    <table><thead><tr><th>Pathway</th><th>Panel</th><th>Price</th></tr></thead><tbody><tr><td>ELEVATED TRT (men)</td><td>Hormone — Male (16 tests)</td><td>$299</td></tr><tr><td>ELEVATED HRT (women)</td><td>Hormone — Female (18 tests)</td><td>$299</td></tr><tr><td>ELEVATED GLP-1 / weight loss</td><td>Weight / Expanded (16 tests)</td><td>$299</td></tr><tr><td>GLP-1 + hormone combo</td><td>Weight / Expanded (16 tests)</td><td>$299</td></tr><tr><td>General wellness / IV / peptides</td><td>Foundation Wellness (8 tests)</td><td>$199</td></tr><tr><td>Sexual wellness workup</td><td>Sexual Wellness (7 tests)</td><td>$199</td></tr></tbody></table>
-    <table><thead><tr><th>Visit / service</th><th>Price</th></tr></thead><tbody><tr><td>Wellness Assessment</td><td>$79</td><td>RN intake · universal front door</td></tr><tr><td>Maintenance Visit</td><td>$79</td><td>RN follow-up under standing orders</td></tr><tr><td>Medical Review</td><td>$149</td><td>Physician · complex cases / patient-requested</td></tr><tr><td>Physician Phone Follow-Up</td><td>$99</td><td>Physician phone · non-members</td></tr><tr><td>Rebooking Fee</td><td>$99</td><td>Late cancel / no-show</td></tr></tbody></table>
-    
-  </div>
-    
-  <div class="card">
-    <div class="card-head">Multi-Service Combos<span>Card 4/6</span></div>
-    
-    <p style="margin:0 0 0.04in;font-size:5.8pt">Anchor + med add-on saves $100/mo vs two full programs.</p>
-    <table><thead><tr><th>Combo</th><th>Total/mo</th><th>Savings</th></tr></thead><tbody><tr><td>ELEVATED GLP-1 · Semaglutide</td><td>$349/mo</td><td>Anchor only</td></tr><tr><td>ELEVATED GLP-1 · Semaglutide + TRT medication add-on</td><td>$498/mo</td><td>Save $100/mo vs two full programs</td></tr><tr><td>ELEVATED GLP-1 · Semaglutide + HRT medication add-on</td><td>$478/mo</td><td>Save $100/mo vs two full programs</td></tr><tr><td>ELEVATED GLP-1 · Tirzepatide</td><td>$449/mo</td><td>Anchor only</td></tr><tr><td>ELEVATED GLP-1 · Tirzepatide + TRT medication add-on</td><td>$598/mo</td><td>Save $100/mo vs two full programs</td></tr></tbody></table>
-    
-  </div>
-    
-  <div class="card">
-    <div class="card-head">Billing Checkpoints<span>Card 5/6</span></div>
-    
-    <table><thead><tr><th>Step</th><th>Event</th><th>Amount</th></tr></thead><tbody><tr><td>C-01</td><td>Wellness Assessment booked</td><td>$79</td></tr><tr><td>C-02</td><td>Lab panel drawn</td><td>$199 or $299</td></tr><tr><td>C-03</td><td>Program enrollment</td><td>$199–$449/mo</td></tr><tr><td>C-04</td><td>À la carte med fill</td><td>Per SKU — $0 if included in their plan</td></tr><tr><td>C-05</td><td>IV Lounge walk-in</td><td>Drip $139–$169 · boosters $25–$50</td></tr><tr><td>C-08</td><td>Rebooking fee</td><td>$99</td></tr></tbody></table>
-    <h3>Quick reference</h3>
-    <ul><li><b>Front door:</b> $79 Wellness Assessment</li><li><b>Member discount:</b> 20% off all à la carte</li><li><b>Payment:</b> Card · Klarna · Affirm · superbills on request</li><li><b>Lane A:</b> IV Lounge — walk-in, no consult</li><li><b>Lane B:</b> Hormones · GLP-1 · peptides — consult-gated</li></ul>
-    
-  </div>
-    
-  <div class="card">
-    <div class="card-head">Scripting &amp; Team<span>Card 6/6</span></div>
-    
-    <div class="do">
-      <h3 style="margin-top:0">Do say</h3>
-      <ul><li>&quot;Our ELEVATED programs bundle your medication, RN check-ins, quarterly labs, and messaging — one price.&quot;</li><li>&quot;Every new patient starts with a $79 Wellness Assessment unless they're IV walk-in only.&quot;</li><li>&quot;Active members get 20% off à la carte — IV, peptides, extra labs.&quot;</li></ul>
-    </div>
-    <div class="dont" style="margin-top:0.06in">
-      <h3 style="margin-top:0">Never</h3>
-      <ul><li>&quot;Plus pharmacy costs&quot; or &quot;medication billed separately&quot; on TRT/HRT/GLP-1.</li><li>Promise a specific drug or dose before labs + physician review.</li><li>Offer ketamine, Spravato, injectable TRT, anastrozole, HCG, or pellets.</li><li>Advertise or lead with retatrutide — physician-gated only.</li></ul>
-    </div>
-    <h3>Team</h3>
-    <ul><li><b>Kristen</b> — Coordinator</li><li><b>Caroline, RN</b> — Clinical</li><li><b>Dr. Dennis Williams</b> — Owner / Physician</li><li><b>Dr. Troy Akers</b> — Owner / Physician</li></ul>
-    <p style="margin:0.04in 0 0;font-size:5.5pt">(706) 760-3470 · elevatedhealthaugusta.com</p>
-    
-  </div>
-  </div>
-  <div class="foot">Elevated Health Augusta · Complete Reference PDF for full formulary · Cost &amp; Margin = staff-only appendix</div>
+  <div class="sheet"><section class="card">
+    <div class="punch"><span>Elevated Health Augusta</span></div>
+    <div class="head"><h2>Memberships</h2><span class="tag">Pull-Out Reference</span></div>
+    <div class="blurb">Monthly all-inclusive programs. One anchor owns RN visits, quarterly labs, messaging.</div>
+    <table>
+      <thead><tr><th>What it is</th><th>What it does</th><th>How it's prescribed</th><th>Patient cost</th></tr></thead>
+      <tbody><tr>
+        <td class="c-is">ELEVATED TRT</td>
+        <td class="c-does">Men's testosterone optimization — energy, libido, body composition.</td>
+        <td class="c-rx">Testosterone cream, daily. Quarterly Comprehensive labs. No injections/anastrozole/HCG.</td>
+        <td class="c-cost">$249/mo — all-inclusive</td>
+      </tr><tr>
+        <td class="c-is">ELEVATED HRT</td>
+        <td class="c-does">Women's hormone balance — mood, sleep, libido, symptom relief.</td>
+        <td class="c-rx">Bi-Est + progesterone cream (T cream if indicated). Quarterly Comprehensive labs. Cream only.</td>
+        <td class="c-cost">$229/mo — all-inclusive</td>
+      </tr><tr>
+        <td class="c-is">ELEVATED GLP-1</td>
+        <td class="c-does">Medical weight management with appetite/metabolic support.</td>
+        <td class="c-rx">Compounded semaglutide OR tirzepatide, weekly SubQ. Quarterly Expanded labs.</td>
+        <td class="c-cost">$349/mo (sema) · $449/mo (tirz)</td>
+      </tr><tr>
+        <td class="c-is">ELEVATED IV</td>
+        <td class="c-does">IV-focused membership — hydration, recovery, energy.</td>
+        <td class="c-rx">2 signature drips/mo + 20% off add-ons + priority booking. No Rx medication.</td>
+        <td class="c-cost">$199/mo — IV only</td>
+      </tr></tbody>
+    </table>
+    <div class="foot"><strong>Remember:</strong> Multiple services? ONE anchor program + medication add-on (saves $100/mo vs two full programs). Never enroll two full programs.</div>
+    <div class="brandline"><span>elevatedhealthaugusta.com</span><span>(706) 760-3470 · v1.0.0</span></div>
+  </section>
+<section class="card">
+    <div class="punch"><span>Elevated Health Augusta</span></div>
+    <div class="head"><h2>Hormones</h2><span class="tag">Pull-Out Reference</span></div>
+    <div class="blurb">Cream-based hormone optimization. Default: men → TRT, women → HRT.</div>
+    <table>
+      <thead><tr><th>What it is</th><th>What it does</th><th>How it's prescribed</th><th>Patient cost</th></tr></thead>
+      <tbody><tr>
+        <td class="c-is">Testosterone Fill</td>
+        <td class="c-does">Daily testosterone for men — energy, libido, lean mass, mood.</td>
+        <td class="c-rx">Compounded cream, applied daily. Baseline + quarterly labs.</td>
+        <td class="c-cost">$179 fill · $143 member · included on ELEVATED TRT</td>
+      </tr><tr>
+        <td class="c-is">Bi-Est Cream Fill</td>
+        <td class="c-does">Estradiol/estriol for women — hot flashes, mood, vaginal/skin health.</td>
+        <td class="c-rx">Compounded cream, daily. Paired with progesterone. Quarterly labs.</td>
+        <td class="c-cost">$109 fill · $87 member · included on ELEVATED HRT</td>
+      </tr><tr>
+        <td class="c-is">Progesterone Fill</td>
+        <td class="c-does">Balances estrogen — sleep, mood, endometrial protection.</td>
+        <td class="c-rx">Compounded, daily or cyclic per protocol. Quarterly labs.</td>
+        <td class="c-cost">$99 fill · $79 member · included on ELEVATED HRT</td>
+      </tr></tbody>
+    </table>
+    <div class="foot"><strong>Remember:</strong> Cream only — no pellets, no injectable TRT, no anastrozole, no HCG in standard programs.</div>
+    <div class="brandline"><span>elevatedhealthaugusta.com</span><span>(706) 760-3470 · v1.0.0</span></div>
+  </section>
+<section class="card">
+    <div class="punch"><span>Elevated Health Augusta</span></div>
+    <div class="head"><h2>Weight Loss (GLP-1)</h2><span class="tag">Pull-Out Reference</span></div>
+    <div class="blurb">Compounded GLP-1 therapy. Program price locked to molecule — titration does not change rate.</div>
+    <table>
+      <thead><tr><th>What it is</th><th>What it does</th><th>How it's prescribed</th><th>Patient cost</th></tr></thead>
+      <tbody><tr>
+        <td class="c-is">ELEVATED GLP-1 · Semaglutide</td>
+        <td class="c-does">Appetite suppression + glucose/metabolic support for weight loss.</td>
+        <td class="c-rx">SubQ Once weekly · maint 1 mg weekly (typical program target)</td>
+        <td class="c-cost">$349/mo program (all-inclusive)</td>
+      </tr><tr>
+        <td class="c-is">ELEVATED GLP-1 · Tirzepatide</td>
+        <td class="c-does">Dual GIP/GLP-1 — stronger appetite + metabolic effect.</td>
+        <td class="c-rx">SubQ Once weekly · maint 7.5 mg weekly (common maintenance)</td>
+        <td class="c-cost">$449/mo program (all-inclusive)</td>
+      </tr><tr>
+        <td class="c-is">Semaglutide Single Fill / Tirzepatide Single Fill (single fill)</td>
+        <td class="c-does">One-off fill between programs / non-member.</td>
+        <td class="c-rx">Weekly SubQ per protocol. Not the all-inclusive program.</td>
+        <td class="c-cost">$299 sema · $399 tirz (member pricing applies)</td>
+      </tr><tr>
+        <td class="c-is">Retatrutide Monthly (Gated)</td>
+        <td class="c-does">Triple-agonist — physician-gated only.</td>
+        <td class="c-rx">SubQ Once weekly · maint 4 mg weekly (lowest effective dose; physician titration only). GLP-1 lane only, provider-gated.</td>
+        <td class="c-cost">$499/mo · NEVER advertise — provider-initiated only</td>
+      </tr></tbody>
+    </table>
+    <div class="foot"><strong>Remember:</strong> One lab draw (Expanded) covers GLP-1 + any hormone lane in a combo. Use additive compound.</div>
+    <div class="brandline"><span>elevatedhealthaugusta.com</span><span>(706) 760-3470 · v1.0.0</span></div>
+  </section>
+<section class="card">
+    <div class="punch"><span>Elevated Health Augusta</span></div>
+    <div class="head"><h2>Peptides</h2><span class="tag">Pull-Out Reference</span></div>
+    <div class="blurb">À la carte, consult-gated. Layer on top of a program. Members save 20% per line.</div>
+    <table>
+      <thead><tr><th>What it is</th><th>What it does</th><th>How it's prescribed</th><th>Patient cost</th></tr></thead>
+      <tbody><tr>
+        <td class="c-is">Sermorelin / CJC-1295 + Ipamorelin</td>
+        <td class="c-does">Growth-hormone support — recovery, sleep, body composition.</td>
+        <td class="c-rx">SubQ, typically nightly. Consult-gated. Monthly.</td>
+        <td class="c-cost">Per catalog · member −20% · billed as separate SKU</td>
+      </tr><tr>
+        <td class="c-is">BPC-157 / TB-500 (Recovery Stack)</td>
+        <td class="c-does">Tissue repair, recovery, inflammation support.</td>
+        <td class="c-rx">SubQ (near injury site if localized) Daily or 5–7 days/week · maint 500 mcg daily. Research Peptide Consent required.</td>
+        <td class="c-cost">$349 stack (vs ~$498 à la carte) · the only published peptide bundle</td>
+      </tr><tr>
+        <td class="c-is">Tesamorelin</td>
+        <td class="c-does">Targeted fat/metabolic support (GHRH analog).</td>
+        <td class="c-rx">SubQ per protocol. Consult-gated. Monthly.</td>
+        <td class="c-cost">Per catalog · member −20% · separate SKU</td>
+      </tr><tr>
+        <td class="c-is">GHK-Cu (topical)</td>
+        <td class="c-does">Skin/collagen support, cosmetic.</td>
+        <td class="c-rx">Topical per label. Consult-gated.</td>
+        <td class="c-cost">Per catalog · member −20% · separate SKU</td>
+      </tr></tbody>
+    </table>
+    <div class="foot"><strong>Remember:</strong> Peptides NEVER fold into a combo subscription. No discount stacking on top of member 20%. Cat-2 compounds need consent + screen.</div>
+    <div class="brandline"><span>elevatedhealthaugusta.com</span><span>(706) 760-3470 · v1.0.0</span></div>
+  </section>
+<section class="card">
+    <div class="punch"><span>Elevated Health Augusta</span></div>
+    <div class="head"><h2>IV Lounge</h2><span class="tag">Pull-Out Reference</span></div>
+    <div class="blurb">Walk-in drips (Lane A). Members get 20% off add-ons + 2 signature drips/mo.</div>
+    <table>
+      <thead><tr><th>What it is</th><th>What it does</th><th>How it's prescribed</th><th>Patient cost</th></tr></thead>
+      <tbody><tr>
+        <td class="c-is">The Resurrection</td>
+        <td class="c-does">Rise again. Rapid rehydration with nausea and headache relief built in.</td>
+        <td class="c-rx">IV infusion in-lounge · Saline, B-Complex, Zofran, Toradol</td>
+        <td class="c-cost">$139 walk-in · $111 member</td>
+      </tr><tr>
+        <td class="c-is">The Meyers</td>
+        <td class="c-does">The OG vitamin IV. Your weekly reset for energy, mood, and metabolic balance.</td>
+        <td class="c-rx">IV infusion in-lounge · Saline, Magnesium, B-Complex, Calcium</td>
+        <td class="c-cost">$159 walk-in · $127 member</td>
+      </tr><tr>
+        <td class="c-is">Beast Mode</td>
+        <td class="c-does">Peak performance recovery. Accelerate muscle repair and crush fatigue post-workout.</td>
+        <td class="c-rx">IV infusion in-lounge · Amino Acids, B12, Magnesium, Taurine</td>
+        <td class="c-cost">$169 walk-in · $135 member</td>
+      </tr><tr>
+        <td class="c-is">The Shield</td>
+        <td class="c-does">Immune support for travel, cold season, and high-exposure weeks.</td>
+        <td class="c-rx">IV infusion in-lounge · Saline, Vitamin C, Zinc, B-Complex</td>
+        <td class="c-cost">$149 walk-in · $119 member</td>
+      </tr><tr>
+        <td class="c-is">The Glow</td>
+        <td class="c-does">Skin, hair, and nail support with brightening antioxidants.</td>
+        <td class="c-rx">IV infusion in-lounge · Saline, Biotin, Vitamin C, Glutathione</td>
+        <td class="c-cost">$159 walk-in · $127 member</td>
+      </tr></tbody>
+    </table>
+    <div class="foot"><strong>Remember:</strong> NAD+ is the $50 booster push only — no peptide NAD+, no standalone NAD+ infusion.</div>
+    <div class="brandline"><span>elevatedhealthaugusta.com</span><span>(706) 760-3470 · v1.0.0</span></div>
+  </section>
+<section class="card">
+    <div class="punch"><span>Elevated Health Augusta</span></div>
+    <div class="head"><h2>Sexual Wellness</h2><span class="tag">Pull-Out Reference</span></div>
+    <div class="blurb">Consult-gated. Available after visit — do not promote on public storefront.</div>
+    <table>
+      <thead><tr><th>What it is</th><th>What it does</th><th>How it's prescribed</th><th>Patient cost</th></tr></thead>
+      <tbody><tr>
+        <td class="c-is">Tadalafil</td>
+        <td class="c-does">Sexual wellness / performance support.</td>
+        <td class="c-rx">Prescribed after consult. Per protocol.</td>
+        <td class="c-cost">$99/mo · $79 member</td>
+      </tr><tr>
+        <td class="c-is">Sildenafil</td>
+        <td class="c-does">Sexual wellness / performance support.</td>
+        <td class="c-rx">Prescribed after consult. Per protocol.</td>
+        <td class="c-cost">$79/mo · $63 member</td>
+      </tr><tr>
+        <td class="c-is">PT-141 (Bremelanotide)</td>
+        <td class="c-does">Sexual wellness / performance support.</td>
+        <td class="c-rx">Prescribed after consult. Per protocol.</td>
+        <td class="c-cost">$225 · $180 member</td>
+      </tr><tr>
+        <td class="c-is">Oxytocin Nasal Spray</td>
+        <td class="c-does">Sexual wellness / performance support.</td>
+        <td class="c-rx">Prescribed after consult. Per protocol.</td>
+        <td class="c-cost">$89/mo · $71 member</td>
+      </tr></tbody>
+    </table>
+    <div class="foot"><strong>Remember:</strong> After consult only. Not advertised on storefront or cold outreach.</div>
+    <div class="brandline"><span>elevatedhealthaugusta.com</span><span>(706) 760-3470 · v1.0.0</span></div>
+  </section></div>
 </body>
 </html>

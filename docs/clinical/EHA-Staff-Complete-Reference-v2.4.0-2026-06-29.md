@@ -136,73 +136,72 @@ Three layers: (1) one anchor program owns the care bundle, (2) optional medicati
 
 ## Cost & Margin — STAFF ONLY (never patient-facing)
 
-> STAFF ONLY — internal cost & margin reference. Never print for patients, never quote COGS at the front desk, never email or text these figures.
+> INTERNAL — STAFF ONLY. Contains wholesale cost. Never shown to patients.
 
 ### Membership gross margin (medication line)
 
 | Program | Revenue/mo | Med cost/mo | Gross on med | Confidence | Note |
 | --- | --- | --- | --- | --- | --- |
-| ELEVATED TRT (men) | $249 | $36 | $156 | Confirmed | Product margin 63% (med + labs COGS $93) — not net after rent/staff/fees |
-| ELEVATED HRT (women) | $229 | $58 | $110 | Confirmed | Product margin 48% (med + labs COGS $119) — not net after rent/staff/fees |
-| GLP-1 — Semaglutide | $349 | $107 | $179 | Confirmed | Product margin 51% (med + labs COGS $170) — not net after rent/staff/fees |
-| GLP-1 — Tirzepatide | $449 | $185–240 | $146–201 | Vendor quote | Product margin 33–45% (med + labs COGS $248–303) — not net after rent/staff/fees |
-| GLP-1 — Retatrutide (gated) | $499 | $250 | $186 | Estimated | Product margin 37% (med + labs COGS $313) — not net after rent/staff/fees |
-| ELEVATED IV | $199 | $90 | $109 | Confirmed | Product margin 55% (med + labs COGS $90) — not net after rent/staff/fees |
+| ELEVATED TRT | $249/mo | ~$50/mo (cream) | ~$199/mo | Verbal — pending formal sheet | Cream-only. Strongest med-line margin of the hormone programs. |
+| ELEVATED HRT | $229/mo | ~$100/mo (Bi-Est $50 + Prog $50) | ~$129/mo | Verbal — pending formal sheet | Two creams at $50 each — confirm against formal sheet. Lower than TRT because two compounds. |
+| ELEVATED GLP-1 · Semaglutide | $349/mo | vial ÷ months (physician divisor) | Pending dose/supply | Estimate — see note | Cannot finalize without months-of-supply-at-dose. Vial $110–$180. Additive version only. |
+| ELEVATED GLP-1 · Tirzepatide | $449/mo | vial ÷ months (physician divisor) | Pending dose/supply | Estimate — see note | Vial $200–$230 (503B). Additive version only. |
 
 ### Medication cost detail (by supplier)
 
 | Item | Supplier | Unit cost | Basis | Monthly | Confidence |
 | --- | --- | --- | --- | --- | --- |
-| Testosterone cream (men) | Custom Pharmacy of Evans | $30 / mo | 30-day fill | $30 / mo | Vendor quote |
-| Bi-Est cream (women) | Custom Pharmacy of Evans | $27 / mo | 30-day fill | $27 / mo | Vendor quote |
-| Progesterone caps (women) | Custom Pharmacy of Evans | $35 / mo | 30-day fill | $35 / mo | Vendor quote |
-| Semaglutide (program vial) | GC STLKS | $107 | 10mg injectable vial / mo | $107 | HYBRID / STLKS |
-| Tirzepatide (program vial) | GC STLKS | $185–240 | 10mg injectable vial / mo | $185–240 | HYBRID / STLKS |
-| Retatrutide (gated fill) | GC PATH | $250 | 20mg fill | $250 | Estimated |
-| ELEVATED IV — 2 drips/mo | FCC + supplies | ~$45/bag | 2 signature drips | ~$90 | Estimated |
+| TRT — Testosterone cream (daily) | Custom Pharmacy of Evans | ~$50 | Testosterone 5mg/0.2 — monthly script | ~$50/mo | Verbal — pending formal sheet |
+| HRT — Bi-Est cream | Custom Pharmacy of Evans | ~$50 | Bi-est 2mg — monthly script | ~$50/mo | Verbal — pending formal sheet |
+| HRT — Progesterone | Custom Pharmacy of Evans | ~$50 | Progesterone 40mg/ml — monthly script | ~$50/mo | Verbal — pending formal sheet |
+| GLP-1 — Compounded semaglutide | GC network (STLKS / KDX, 503A) | ~$110 (10mg vial) – $180 (20mg vial) | Multi-month vial — NOT a monthly cost | = vial ÷ months-at-dose | Estimate — see note |
+| GLP-1 — Compounded tirzepatide | GC network (HYBRID 503B / APRX 503B / STLKS) | ~$200–$230 (50mg vial) | Multi-month vial — NOT a monthly cost | = vial ÷ months-at-dose | Estimate — see note |
+| IV membership — 2 signature drips/mo | GC network (STLKS / HYBRID) | Nutrient cost only (see IV table) | Base hydration + 2 drips/mo | Low — nutrients $10–$65/component | Contract / catalog |
 
 ### IV / injectable nutrient cost — GC network (HYBRID / STLKS)
 
 | Nutrient | Supplier | Wholesale | Basis | Confidence |
 | --- | --- | --- | --- | --- |
-| NAD+ Booster | GC STLKS | $7.00 | Per push / dose | HYBRID / STLKS |
-| Glutathione Push | HYBRID premix / McKesson | $9.90 | Per push / dose | Estimated |
-| B12 Shot | HYBRID premix / McKesson | $2.80 | Per push / dose | Estimated |
-| Toradol Push | HYBRID premix / McKesson | $2.50 | Per push / dose | Estimated |
-| Vitamin C Push | HYBRID premix / McKesson | $1.40 | Per push / dose | Estimated |
-| Zofran Push | HYBRID premix / McKesson | $1.50 | Per push / dose | Estimated |
-| Myers premix bag | FCC | $45 | 503A premix bag | Vendor quote |
-| Saline + B-complex base | McKesson / Henry Schein | varies | Per drip build | Estimated |
+| NAD+ 1000mg | STLKS / KDX | ~$65 | 1000mg vial | Contract / catalog |
+| Glutathione 2000mg | STLKS | ~$10 | 2000mg / 10mL vial | Contract / catalog |
+| Ascorbic acid 5500mg | STLKS | ~$10 | 10mL vial | Contract / catalog |
+| L-Carnitine 5000mg | STLKS | ~$10 | 10mL vial | Contract / catalog |
+| Amino complex (BCAAs) | STLKS | ~$10 | 10mL vial | Contract / catalog |
+| Lipo-C / MIC | STLKS | ~$25 | 10mL vial | Contract / catalog |
+| MIC + B12 | STLKS | ~$25 | 10mL vial | Contract / catalog |
+| B-Complex injection | STLKS | ~$25 | 10mL vial | Contract / catalog |
+| B12 Methylcobalamin | STLKS | ~$25 | 50,000mcg / 10mL | Contract / catalog |
 
 ### Sexual wellness cost — GC network (503A)
 
 | Product | Supplier | Wholesale | Basis | Confidence |
 | --- | --- | --- | --- | --- |
-| PT-141 (Bremelanotide) | GC PATH | $49 | 10mg vial | HYBRID / STLKS |
-| Oxytocin nasal | Empower 503A | $77 | 10mL spray | Vendor quote |
-| Tadalafil (monthly) | Empower 503A | catalog | 30-day supply | Vendor quote |
-| Sildenafil (monthly) | Empower 503A | catalog | 30-day supply | Vendor quote |
+| PT-141 (Bremelanotide) | KDX / STLKS | ~$65 (10mg vial) – $80 (nasal) | per vial / spray | Contract / catalog |
+| Sildenafil | STLKS | ~$1.00/cap | 50–100mg cap | Contract / catalog |
+| Tadalafil | STLKS | ~$2.00–$3.00/cap | 5–25mg cap | Contract / catalog |
+| Sildenafil/Tadalafil troche | STLKS | ~$3.00–$4.00/unit | combo troche | Contract / catalog |
+| Scream cream | STLKS | ~$35 | 30gm | Contract / catalog |
 
 ### Supplier directory — who fills what
 
 | Supplier | Type | Fills | Status |
 | --- | --- | --- | --- |
-| GC Scientific (503A network) | 503A network (PATH + STLKS) | GLP-1 injectable · recovery/metabolic peptides · PT-141 · IV STLKS vials | Primary peptides + GLP-1 |
-| FCC (Formulation Compounding Center) | 503A | IV Myers premix · legacy peptide backup | Backup / IV premix |
-| Custom Pharmacy of Evans | 503A local | BHRT/TRT creams · progesterone caps | Primary hormones |
-| Empower Pharmacy (503A backup) | 503A PCAB backup | Hormone creams · GLP-1 ODT · sexual wellness · NAD+ (not recovery peptides) | Backup — no BPC/TB/SS-31 |
-| DrFirst Rcopia (retail) | Retail eRx | FDA-approved patches/gels when patient prefers retail | Patient preference path |
-| LabCorp | Lab billing | All in-office draws — client billing account | Pending full activation |
-| McKesson / Henry Schein | Wholesale supplies | IV supplies · syringes · clinic consumables | Active |
+| Custom Pharmacy of Evans | 503A compounding (in-state) | All creams: T cream, Bi-Est, progesterone | Active — verbal pricing, formal sheet pending |
+| GC network — STLKS | 503A pharmacy | IV nutrients, sexual wellness, sermorelin | 49 states — confirm GA |
+| GC network — HYBRID | 503B outsourcing | Injectable nutrients, GLP-1 (tirz) | Licensed states — confirm GA |
+| GC network — APRX | 503B outsourcing | GLP-1 tirzepatide (bulk) | Licensed states — confirm GA |
+| GC network — KDX | 503A pharmacy | GLP-1, single peptides, blends | 49 states — confirm GA |
+| Empower | 503B outsourcing | Reference-only (not selected for IV cost basis) | Verified sane vs GC; GC chosen as basis |
+| PATH | Physician-use research lab | EXCLUDED — research use only, never patient cost basis | Do not use for pricing |
 
 ### Cost & sourcing compliance flags
 
-- Never quote wholesale COGS, margin %, or supplier names to patients.
-- Retatrutide: physician-gated only — full GLP-1 investigational consent; do not advertise.
-- Cat 2 research peptides (BPC-157, TB-500, CJC/Ipamorelin, etc.): Research Peptide Consent required.
-- Empower does NOT carry recovery/metabolic peptides — route BPC/TB/SS-31 through GC/PATH only.
-- Do not discount any SKU below 15% gross margin without Dennis + physician approval.
-- Margins shown are product margins — not take-home profit after staff time, rent, and payment fees.
-- If GC or FCC discontinues a compound, notify affected patients and update this sheet.
+- PATH pricing is NEVER a patient-care cost basis — research-use-only lab, not 503A/503B. Cheapest numbers in the catalog, unusable.
+- VTLGENICS (stem cells / exosomes / Wharton's Jelly) — unapproved biologics, out of EHA scope. Not in formulary, not in this guide.
+- GLP-1: dispense ADDITIVE compound (glycine/niacinamide/pyridoxine/B12) — plain copy-compounding of semaglutide/tirzepatide is the FDA exposure.
+- Gray-zone peptides (BPC-157, TB-500, MOTS-C, CJC-1295, Ipamorelin) — post-Apr-2026 503A status under review. Physician-gated; not a casual add-on.
+- Retatrutide remains physician-gated, GLP-1 lane only. A 503A partner listing it does not change the compounding analysis.
+- Verify GA shipping before banking any GC partner price. ALMD = 28 states (verify). SPRX / HYBRID / APRX = 'licensed states' (confirm GA).
+- All creams source from Custom Pharmacy of Evans (in-state, existing relationship). Costs are VERBAL until the formal sheet lands.
 
-> **Review trigger:** Review monthly or when GC/FCC/Empower catalog updates, LabCorp fee schedule changes, or Stripe program prices change. Flag any SKU below 15% gross margin to Dennis before discounting.
+> **Review trigger:** Re-cost when Custom Pharmacy formal sheet lands (Heather Taylor, PharmD — expected new year) and when LabCorp client-bill costs return from Kristen.

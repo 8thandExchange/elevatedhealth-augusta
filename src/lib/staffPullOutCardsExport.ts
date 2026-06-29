@@ -1,246 +1,356 @@
 /**
- * Pull-out reference cards — perforated-style laminate cards for front desk.
- * Print on letter stock; cut along dashed guides.
+ * Staff Pull-Out Reference Cards — laminated, hole-punched quick cards.
+ *
+ * One card per section (Memberships, Hormones, GLP-1, Peptides, IV, Sexual Wellness).
+ * Each item shows four PATIENT-FACING fields:
+ *   - What it is
+ *   - What it does
+ *   - How it's prescribed
+ *   - Cost to the patient (non-member + member)
+ *
+ * PATIENT-SAFE: shows patient price only — NO wholesale cost, NO margin.
+ * These cards are meant to be held in front of a patient. The Cost & Margin
+ * data lives only in the Staff Complete Reference (internal).
+ *
+ * Print: Letter portrait, 2 cards/page (~4.25in x 5.5in each), hole-punch zone
+ * at the top of every card. Laminate, punch, ring together.
+ *
+ * Data pulled live from stripeConfig / catalogs / dosingProtocols — never hardcoded prices.
  */
-import {
-  CHARGE_CHECKPOINTS,
-  COMBO_ADDON_ROWS,
-  DO_SAY,
-  DONT_SAY,
-  GLP1_ROWS,
-  IV_DRIP_ROWS,
-  MEMBERSHIP_ROWS,
-  QUICK_CARD_META,
-  QUICK_REFERENCE,
-  TEAM_ROWS,
-  VISIT_LAB_ROWS,
-} from "./staffQuickCardContent";
-import { buildComboMatrixRows } from "./multiServiceAddonPlaybook";
-import { LAB_PANEL_ORDERING_ROWS } from "./staffMasterGuideContent";
-import { STAFF_PRINT_CSS_ROOT } from "./staffPrintBrand";
 
-export const PULL_OUT_CARDS_META = {
-  title: "Staff Pull-Out Reference Cards",
-  subtitle: "Cut · laminate · keep at front desk",
+import {
+  ELEVATED_PROGRAMS,
+  GLP1_PROGRAM_VARIANTS,
+  MEDICATION_FILLS,
+  SEXUAL_WELLNESS_PRODUCTS,
+} from "./stripeConfig";
+import { IV_THERAPIES_CATALOG } from "./ivTherapiesCatalog";
+import { DOSING_PROTOCOLS } from "./dosingProtocols";
+import { fmtUsd, labMemberCents } from "./pricing";
+
+export const CARDS_META = {
+  title: "Pull-Out Reference Cards",
+  subtitle: "Laminate · hole-punch · pull one to help a patient fast",
   version: "1.0.0",
   effectiveDate: "2026-06-29",
-  classification: "Internal — staff laminate cards (6-up on letter)",
+  classification: "Patient-safe — shows patient price only (no cost/margin)",
+  clinic: "Elevated Health Augusta",
+  phone: "(706) 760-3470",
+  domain: "elevatedhealthaugusta.com",
 } as const;
 
-export const CARDS_FILENAME_BASE = `EHA-Staff-Pull-Out-Cards-v${PULL_OUT_CARDS_META.version}-${PULL_OUT_CARDS_META.effectiveDate}`;
+export const CARDS_FILENAME_BASE = `EHA-Staff-Pull-Out-Cards-v${CARDS_META.version}-${CARDS_META.effectiveDate}`;
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+const member = (cents: number) => fmtUsd(labMemberCents(cents));
+
+/** One item line on a card. */
+interface CardItem {
+  is: string;        // what it is
+  does: string;      // what it does
+  rx: string;        // how it's prescribed
+  cost: string;      // patient cost
 }
 
-function tableHtml(headers: readonly string[], rows: readonly (readonly string[])[]): string {
-  const th = headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("");
-  const trs = rows
-    .map((r) => `<tr>${r.map((c) => `<td>${escapeHtml(c)}</td>`).join("")}</tr>`)
-    .join("");
-  return `<table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>`;
+interface SectionCard {
+  section: string;
+  blurb: string;     // one-line "what this section is"
+  items: CardItem[];
+  footnote?: string;
+}
+
+function dose(key: string): string {
+  const p = DOSING_PROTOCOLS[key];
+  if (!p) return "Physician-directed";
+  return [p.route, p.frequency, p.maintenanceDose ? `· maint ${p.maintenanceDose}` : ""]
+    .filter(Boolean)
+    .join(" ");
+}
+
+/* ----------------------------- CARD 1: MEMBERSHIPS ----------------------------- */
+const membershipsCard: SectionCard = {
+  section: "Memberships",
+  blurb: "Monthly all-inclusive programs. One anchor owns RN visits, quarterly labs, messaging.",
+  items: [
+    {
+      is: ELEVATED_PROGRAMS.trt.name,
+      does: "Men's testosterone optimization — energy, libido, body composition.",
+      rx: "Testosterone cream, daily. Quarterly Comprehensive labs. No injections/anastrozole/HCG.",
+      cost: `${ELEVATED_PROGRAMS.trt.displayPrice} — all-inclusive`,
+    },
+    {
+      is: ELEVATED_PROGRAMS.hrt.name,
+      does: "Women's hormone balance — mood, sleep, libido, symptom relief.",
+      rx: "Bi-Est + progesterone cream (T cream if indicated). Quarterly Comprehensive labs. Cream only.",
+      cost: `${ELEVATED_PROGRAMS.hrt.displayPrice} — all-inclusive`,
+    },
+    {
+      is: "ELEVATED GLP-1",
+      does: "Medical weight management with appetite/metabolic support.",
+      rx: "Compounded semaglutide OR tirzepatide, weekly SubQ. Quarterly Expanded labs.",
+      cost: `${GLP1_PROGRAM_VARIANTS.semaglutide.displayPrice} (sema) · ${GLP1_PROGRAM_VARIANTS.tirzepatide.displayPrice} (tirz)`,
+    },
+    {
+      is: ELEVATED_PROGRAMS.wellness.name,
+      does: "IV-focused membership — hydration, recovery, energy.",
+      rx: "2 signature drips/mo + 20% off add-ons + priority booking. No Rx medication.",
+      cost: `${ELEVATED_PROGRAMS.wellness.displayPrice} — IV only`,
+    },
+  ],
+  footnote:
+    "Multiple services? ONE anchor program + medication add-on (saves $100/mo vs two full programs). Never enroll two full programs.",
+};
+
+/* ----------------------------- CARD 2: HORMONES ----------------------------- */
+const hormonesCard: SectionCard = {
+  section: "Hormones",
+  blurb: "Cream-based hormone optimization. Default: men → TRT, women → HRT.",
+  items: [
+    {
+      is: MEDICATION_FILLS.testosterone.name,
+      does: "Daily testosterone for men — energy, libido, lean mass, mood.",
+      rx: "Compounded cream, applied daily. Baseline + quarterly labs.",
+      cost: `${MEDICATION_FILLS.testosterone.displayPrice} fill · ${member(MEDICATION_FILLS.testosterone.amount)} member · included on ELEVATED TRT`,
+    },
+    {
+      is: MEDICATION_FILLS.biEst.name,
+      does: "Estradiol/estriol for women — hot flashes, mood, vaginal/skin health.",
+      rx: "Compounded cream, daily. Paired with progesterone. Quarterly labs.",
+      cost: `${MEDICATION_FILLS.biEst.displayPrice} fill · ${member(MEDICATION_FILLS.biEst.amount)} member · included on ELEVATED HRT`,
+    },
+    {
+      is: MEDICATION_FILLS.progesterone.name,
+      does: "Balances estrogen — sleep, mood, endometrial protection.",
+      rx: "Compounded, daily or cyclic per protocol. Quarterly labs.",
+      cost: `${MEDICATION_FILLS.progesterone.displayPrice} fill · ${member(MEDICATION_FILLS.progesterone.amount)} member · included on ELEVATED HRT`,
+    },
+  ],
+  footnote: "Cream only — no pellets, no injectable TRT, no anastrozole, no HCG in standard programs.",
+};
+
+/* ----------------------------- CARD 3: GLP-1 ----------------------------- */
+const glp1Card: SectionCard = {
+  section: "Weight Loss (GLP-1)",
+  blurb: "Compounded GLP-1 therapy. Program price locked to molecule — titration does not change rate.",
+  items: [
+    {
+      is: GLP1_PROGRAM_VARIANTS.semaglutide.name,
+      does: "Appetite suppression + glucose/metabolic support for weight loss.",
+      rx: dose("semaglutide"),
+      cost: `${GLP1_PROGRAM_VARIANTS.semaglutide.displayPrice} program (all-inclusive)`,
+    },
+    {
+      is: GLP1_PROGRAM_VARIANTS.tirzepatide.name,
+      does: "Dual GIP/GLP-1 — stronger appetite + metabolic effect.",
+      rx: dose("tirzepatide"),
+      cost: `${GLP1_PROGRAM_VARIANTS.tirzepatide.displayPrice} program (all-inclusive)`,
+    },
+    {
+      is: `${MEDICATION_FILLS.semaglutide.name} / ${MEDICATION_FILLS.tirzepatide.name} (single fill)`,
+      does: "One-off fill between programs / non-member.",
+      rx: "Weekly SubQ per protocol. Not the all-inclusive program.",
+      cost: `${MEDICATION_FILLS.semaglutide.displayPrice} sema · ${MEDICATION_FILLS.tirzepatide.displayPrice} tirz (member pricing applies)`,
+    },
+    {
+      is: MEDICATION_FILLS.retatrutide.name,
+      does: "Triple-agonist — physician-gated only.",
+      rx: dose("retatrutide") + ". GLP-1 lane only, provider-gated.",
+      cost: `${MEDICATION_FILLS.retatrutide.displayPrice} · NEVER advertise — provider-initiated only`,
+    },
+  ],
+  footnote: "One lab draw (Expanded) covers GLP-1 + any hormone lane in a combo. Use additive compound.",
+};
+
+/* ----------------------------- CARD 4: PEPTIDES ----------------------------- */
+const peptidesCard: SectionCard = {
+  section: "Peptides",
+  blurb: "À la carte, consult-gated. Layer on top of a program. Members save 20% per line.",
+  items: [
+    {
+      is: "Sermorelin / CJC-1295 + Ipamorelin",
+      does: "Growth-hormone support — recovery, sleep, body composition.",
+      rx: "SubQ, typically nightly. Consult-gated. Monthly.",
+      cost: "Per catalog · member −20% · billed as separate SKU",
+    },
+    {
+      is: "BPC-157 / TB-500 (Recovery Stack)",
+      does: "Tissue repair, recovery, inflammation support.",
+      rx: dose("bpc157") + ". Research Peptide Consent required.",
+      cost: "$349 stack (vs ~$498 à la carte) · the only published peptide bundle",
+    },
+    {
+      is: "Tesamorelin",
+      does: "Targeted fat/metabolic support (GHRH analog).",
+      rx: "SubQ per protocol. Consult-gated. Monthly.",
+      cost: "Per catalog · member −20% · separate SKU",
+    },
+    {
+      is: "GHK-Cu (topical)",
+      does: "Skin/collagen support, cosmetic.",
+      rx: "Topical per label. Consult-gated.",
+      cost: "Per catalog · member −20% · separate SKU",
+    },
+  ],
+  footnote:
+    "Peptides NEVER fold into a combo subscription. No discount stacking on top of member 20%. Cat-2 compounds need consent + screen.",
+};
+
+/* ----------------------------- CARD 5: IV LOUNGE ----------------------------- */
+const ivCard: SectionCard = {
+  section: "IV Lounge",
+  blurb: "Walk-in drips (Lane A). Members get 20% off add-ons + 2 signature drips/mo.",
+  items: IV_THERAPIES_CATALOG.map((d) => ({
+    is: d.name,
+    does: (d.description ?? "").replace(/\s+/g, " ").trim() || d.category,
+    rx: `IV infusion in-lounge${(d.ingredients ?? []).length ? " · " + (d.ingredients ?? []).join(", ") : ""}`,
+    cost: `$${d.price} walk-in · ${member(d.price * 100)} member`,
+  })),
+  footnote: "NAD+ is the $50 booster push only — no peptide NAD+, no standalone NAD+ infusion.",
+};
+
+/* ----------------------------- CARD 6: SEXUAL WELLNESS ----------------------------- */
+const sexualWellnessCard: SectionCard = {
+  section: "Sexual Wellness",
+  blurb: "Consult-gated. Available after visit — do not promote on public storefront.",
+  items: Object.values(SEXUAL_WELLNESS_PRODUCTS).map((p) => ({
+    is: p.name,
+    does: "Sexual wellness / performance support.",
+    rx: "Prescribed after consult. Per protocol.",
+    cost: `${p.displayPrice} · ${member(p.amount)} member`,
+  })),
+  footnote: "After consult only. Not advertised on storefront or cold outreach.",
+};
+
+export const ALL_CARDS: SectionCard[] = [
+  membershipsCard,
+  hormonesCard,
+  glp1Card,
+  peptidesCard,
+  ivCard,
+  sexualWellnessCard,
+];
+
+/* ----------------------------- HTML / PRINT ----------------------------- */
+
+function esc(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 const CSS = `
-  @page { size: letter portrait; margin: 0.25in; }
-  ${STAFF_PRINT_CSS_ROOT}
+  :root {
+    --navy: #00477E;
+    --steel: #0B7BB8;
+    --gray: #A7A9AC;
+    --ink: #14202B;
+    --muted: #5B6770;
+    --surface: #F4F8FB;
+    --border: #C9D4DD;
+  }
   * { box-sizing: border-box; }
-  body {
-    font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
-    color: var(--ink);
-    margin: 0;
-    font-size: 6.5pt;
-    line-height: 1.25;
-    background: var(--paper);
-  }
-  .sheet-title {
-    text-align: center;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 10pt;
-    color: var(--navy);
-    margin-bottom: 0.12in;
-    border-bottom: 2px solid var(--steel);
-    padding-bottom: 0.06in;
-  }
-  .sheet-title small {
-    display: block;
-    font-family: 'Jost', sans-serif;
-    font-size: 6pt;
-    color: var(--muted);
-    font-weight: 400;
-    margin-top: 0.04in;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.12in;
-  }
+  @page { size: letter portrait; margin: 0.35in; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); margin: 0; }
+
+  .sheet { display: flex; flex-direction: column; gap: 0.18in; }
   .card {
-    border: 2px dashed var(--border);
-    border-radius: 4px;
-    padding: 0.1in;
-    min-height: 3.35in;
+    border: 1.5px solid var(--navy);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 4.95in;
+    display: flex;
+    flex-direction: column;
     page-break-inside: avoid;
-    background: var(--paper);
+    position: relative;
   }
-  .card-head {
-    background: var(--navy);
-    color: var(--paper);
-    margin: -0.1in -0.1in 0.08in;
-    padding: 0.06in 0.1in;
-    border-radius: 2px 2px 0 0;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 8pt;
+  /* hole-punch guide */
+  .punch {
+    height: 0.42in;
+    background: var(--surface);
+    border-bottom: 1px dashed var(--gray);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
   }
-  .card-head span {
-    float: right;
-    font-family: 'Jost', sans-serif;
-    font-size: 5.5pt;
-    opacity: 0.85;
-    font-weight: 400;
+  .punch::before {
+    content: "";
+    width: 0.22in; height: 0.22in;
+    border: 1.5px solid var(--gray);
+    border-radius: 50%;
+    background: #fff;
   }
-  h3 {
-    font-size: 6pt;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--steel);
-    margin: 0.06in 0 0.03in;
+  .punch span {
+    position: absolute; right: 0.18in;
+    font-size: 6pt; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase;
   }
-  table { width: 100%; border-collapse: collapse; font-size: 5.8pt; margin: 0.03in 0; }
-  th, td { border: 1px solid var(--border); padding: 0.03in 0.04in; text-align: left; vertical-align: top; }
-  th { background: var(--surface); color: var(--navy); font-size: 5.5pt; }
-  ul { margin: 0; padding-left: 1em; font-size: 5.8pt; }
-  li { margin-bottom: 0.02in; }
-  .do { border-left: 2px solid var(--green); padding-left: 0.06in; }
-  .dont { border-left: 2px solid var(--red); padding-left: 0.06in; }
+  .head {
+    background: var(--navy); color: #fff;
+    padding: 0.10in 0.18in;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .head h2 { margin: 0; font-size: 13pt; letter-spacing: 0.01em; }
+  .head .tag { font-size: 6.5pt; color: #cfe3f3; text-transform: uppercase; letter-spacing: 0.08em; }
+  .blurb { font-size: 7pt; color: var(--muted); padding: 0.06in 0.18in 0; font-style: italic; }
+
+  table { width: 100%; border-collapse: collapse; margin: 0.05in 0; }
+  th {
+    text-align: left; font-size: 6pt; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--steel); padding: 0.03in 0.06in; border-bottom: 1px solid var(--border);
+  }
+  td { font-size: 7pt; padding: 0.05in 0.06in; vertical-align: top; border-bottom: 1px solid var(--surface); line-height: 1.25; }
+  tr:nth-child(even) td { background: var(--surface); }
+  .c-is { font-weight: 700; color: var(--navy); width: 21%; }
+  .c-does { width: 30%; }
+  .c-rx { width: 27%; color: var(--muted); }
+  .c-cost { width: 22%; font-weight: 600; }
+  td.c-cost { color: var(--navy); }
+
   .foot {
-    font-size: 5pt;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 0.08in;
+    margin-top: auto;
+    background: var(--surface);
     border-top: 1px solid var(--border);
-    padding-top: 0.04in;
+    padding: 0.06in 0.18in;
+    font-size: 6.5pt; color: var(--muted);
   }
-  @media print {
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .foot strong { color: var(--navy); }
+  .brandline {
+    padding: 0.04in 0.18in; font-size: 6pt; color: var(--gray);
+    display: flex; justify-content: space-between;
   }
 `;
 
-function card(title: string, num: string, body: string): string {
-  return `
-  <div class="card">
-    <div class="card-head">${escapeHtml(title)}<span>Card ${num}</span></div>
-    ${body}
-  </div>`;
+function cardHtml(c: SectionCard): string {
+  const rows = c.items
+    .map(
+      (it) => `<tr>
+        <td class="c-is">${esc(it.is)}</td>
+        <td class="c-does">${esc(it.does)}</td>
+        <td class="c-rx">${esc(it.rx)}</td>
+        <td class="c-cost">${esc(it.cost)}</td>
+      </tr>`,
+    )
+    .join("");
+  return `<section class="card">
+    <div class="punch"><span>${esc(CARDS_META.clinic)}</span></div>
+    <div class="head"><h2>${esc(c.section)}</h2><span class="tag">Pull-Out Reference</span></div>
+    <div class="blurb">${esc(c.blurb)}</div>
+    <table>
+      <thead><tr><th>What it is</th><th>What it does</th><th>How it's prescribed</th><th>Patient cost</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    ${c.footnote ? `<div class="foot"><strong>Remember:</strong> ${esc(c.footnote)}</div>` : ""}
+    <div class="brandline"><span>${esc(CARDS_META.domain)}</span><span>${esc(CARDS_META.phone)} · v${CARDS_META.version}</span></div>
+  </section>`;
 }
 
 export function buildPullOutCardsHtml(): string {
-  const m = PULL_OUT_CARDS_META;
-  const qr = QUICK_CARD_META;
-
-  const card1 = card(
-    "ELEVATED Programs",
-    "1/6",
-    `
-    ${tableHtml(
-      ["Program", "Price", "Includes"],
-      MEMBERSHIP_ROWS.map((r) => [r.name.replace("ELEVATED ", ""), r.price, r.medication]),
-    )}
-    <h3>Combo add-ons</h3>
-    ${tableHtml(["Add-on", "Price"], COMBO_ADDON_ROWS.slice(0, 4))}
-    `,
-  );
-
-  const card2 = card(
-    "IV Lounge",
-    "2/6",
-    `
-    ${tableHtml(["Drip", "Walk-in", "Member"], IV_DRIP_ROWS.map((r) => [r[0], r[1], r[2]]))}
-    <p style="margin:0.04in 0;font-size:5.8pt"><b>Boosters:</b> NAD+ $50 · Glutathione $35 · B12/Toradol/VitC/Zofran $25 · members −20%</p>
-    <p style="margin:0;font-size:5.8pt;color:var(--muted)">Lane A — walk-in, no $79 consult required.</p>
-    `,
-  );
-
-  const card3 = card(
-    "Lab Panels",
-    "3/6",
-    `
-    ${tableHtml(
-      ["Pathway", "Panel", "Price"],
-      LAB_PANEL_ORDERING_ROWS.slice(0, 6).map((r) => [r[0], r[1], r[2]]),
-    )}
-    ${tableHtml(["Visit / service", "Price"], VISIT_LAB_ROWS.slice(0, 5))}
-    `,
-  );
-
-  const card4 = card(
-    "Multi-Service Combos",
-    "4/6",
-    `
-    <p style="margin:0 0 0.04in;font-size:5.8pt">Anchor + med add-on saves $100/mo vs two full programs.</p>
-    ${tableHtml(
-      ["Combo", "Total/mo", "Savings"],
-      buildComboMatrixRows()
-        .filter((r) => r[1] !== "—")
-        .slice(0, 5)
-        .map((r) => [r[0], r[1], r[3]]),
-    )}
-    `,
-  );
-
-  const card5 = card(
-    "Billing Checkpoints",
-    "5/6",
-    `
-    ${tableHtml(["Step", "Event", "Amount"], CHARGE_CHECKPOINTS.map((r) => [...r]))}
-    <h3>Quick reference</h3>
-    <ul>${QUICK_REFERENCE.slice(0, 5).map((q) => `<li><b>${escapeHtml(q.label)}:</b> ${escapeHtml(q.value)}</li>`).join("")}</ul>
-    `,
-  );
-
-  const card6 = card(
-    "Scripting & Team",
-    "6/6",
-    `
-    <div class="do">
-      <h3 style="margin-top:0">Do say</h3>
-      <ul>${DO_SAY.slice(0, 3).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
-    </div>
-    <div class="dont" style="margin-top:0.06in">
-      <h3 style="margin-top:0">Never</h3>
-      <ul>${DONT_SAY.slice(0, 4).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ul>
-    </div>
-    <h3>Team</h3>
-    <ul>${TEAM_ROWS.map(([name, role]) => `<li><b>${escapeHtml(name)}</b> — ${escapeHtml(role)}</li>`).join("")}</ul>
-    <p style="margin:0.04in 0 0;font-size:5.5pt">${escapeHtml(qr.phone)} · ${escapeHtml(qr.domain)}</p>
-    `,
-  );
-
+  // 2 cards per page; CSS height keeps them paired and laminate-friendly.
+  const cards = ALL_CARDS.map(cardHtml).join("\n");
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>${escapeHtml(m.title)}</title>
+  <title>${esc(CARDS_META.clinic)} — ${esc(CARDS_META.title)}</title>
   <style>${CSS}</style>
 </head>
 <body>
-  <div class="sheet-title">
-    ${escapeHtml(m.title)}
-    <small>v${m.version} · ${m.effectiveDate} · ${escapeHtml(m.classification)} · Cut along dashed lines · laminate</small>
-  </div>
-  <div class="grid">
-    ${card1}
-    ${card2}
-    ${card3}
-    ${card4}
-    ${card5}
-    ${card6}
-  </div>
-  <div class="foot">Elevated Health Augusta · Complete Reference PDF for full formulary · Cost &amp; Margin = staff-only appendix</div>
+  <div class="sheet">${cards}</div>
 </body>
 </html>`;
 }

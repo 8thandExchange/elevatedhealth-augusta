@@ -470,11 +470,11 @@ export function buildStaffMasterGuideHtml(): string {
       ["Program", "Revenue/mo", "Med cost/mo", "Gross on med", "Confidence", "Note"],
       MEMBERSHIP_MARGIN_ROWS.map((r) => [
         r.program,
-        r.revenueMo,
-        r.medCostMo,
+        r.revenue,
+        r.medCost,
         r.grossOnMed,
         confidenceLabel(r.confidence),
-        r.note,
+        r.note ?? "",
       ]),
     )}
     <h3>Medication cost detail (by supplier)</h3>
@@ -485,7 +485,7 @@ export function buildStaffMasterGuideHtml(): string {
         r.supplier,
         r.unitCost,
         r.basis,
-        r.monthly,
+        r.monthlyCost,
         confidenceLabel(r.confidence),
       ]),
     )}
@@ -493,9 +493,9 @@ export function buildStaffMasterGuideHtml(): string {
     ${tableHtml(
       ["Nutrient", "Supplier", "Wholesale", "Basis", "Confidence"],
       IV_NUTRIENT_COST_ROWS.map((r) => [
-        r.nutrient,
+        r.item,
         r.supplier,
-        r.wholesale,
+        r.unitCost,
         r.basis,
         confidenceLabel(r.confidence),
       ]),
@@ -504,9 +504,9 @@ export function buildStaffMasterGuideHtml(): string {
     ${tableHtml(
       ["Product", "Supplier", "Wholesale", "Basis", "Confidence"],
       SEXUAL_WELLNESS_COST_ROWS.map((r) => [
-        r.product,
+        r.item,
         r.supplier,
-        r.wholesale,
+        r.unitCost,
         r.basis,
         confidenceLabel(r.confidence),
       ]),
@@ -514,7 +514,7 @@ export function buildStaffMasterGuideHtml(): string {
     <h3>Supplier directory — who fills what</h3>
     ${tableHtml(
       ["Supplier", "Type", "Fills", "Status"],
-      SUPPLIER_DIRECTORY.map((r) => [r.supplier, r.type, r.fills, r.status]),
+      SUPPLIER_DIRECTORY.map((r) => [r.name, r.type, r.fills, r.status]),
     )}
     <h3>Cost & sourcing compliance flags</h3>
     <ul>${COST_COMPLIANCE_FLAGS.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>
@@ -639,11 +639,11 @@ export function buildStaffMasterGuideMarkdown(): string {
       ["Program", "Revenue/mo", "Med cost/mo", "Gross on med", "Confidence", "Note"],
       MEMBERSHIP_MARGIN_ROWS.map((r) => [
         r.program,
-        r.revenueMo,
-        r.medCostMo,
+        r.revenue,
+        r.medCost,
         r.grossOnMed,
         confidenceLabel(r.confidence),
-        r.note,
+        r.note ?? "",
       ]),
     ),
     "",
@@ -656,7 +656,7 @@ export function buildStaffMasterGuideMarkdown(): string {
         r.supplier,
         r.unitCost,
         r.basis,
-        r.monthly,
+        r.monthlyCost,
         confidenceLabel(r.confidence),
       ]),
     ),
@@ -666,9 +666,9 @@ export function buildStaffMasterGuideMarkdown(): string {
     tableMd(
       ["Nutrient", "Supplier", "Wholesale", "Basis", "Confidence"],
       IV_NUTRIENT_COST_ROWS.map((r) => [
-        r.nutrient,
+        r.item,
         r.supplier,
-        r.wholesale,
+        r.unitCost,
         r.basis,
         confidenceLabel(r.confidence),
       ]),
@@ -679,9 +679,9 @@ export function buildStaffMasterGuideMarkdown(): string {
     tableMd(
       ["Product", "Supplier", "Wholesale", "Basis", "Confidence"],
       SEXUAL_WELLNESS_COST_ROWS.map((r) => [
-        r.product,
+        r.item,
         r.supplier,
-        r.wholesale,
+        r.unitCost,
         r.basis,
         confidenceLabel(r.confidence),
       ]),
@@ -691,7 +691,7 @@ export function buildStaffMasterGuideMarkdown(): string {
     "",
     tableMd(
       ["Supplier", "Type", "Fills", "Status"],
-      SUPPLIER_DIRECTORY.map((r) => [r.supplier, r.type, r.fills, r.status]),
+      SUPPLIER_DIRECTORY.map((r) => [r.name, r.type, r.fills, r.status]),
     ),
     "",
     "### Cost & sourcing compliance flags",
