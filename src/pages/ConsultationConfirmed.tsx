@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { CheckCircle2, Loader2, Mail, ClipboardCheck, Calendar } from "lucide-react";
+import { CheckCircle2, Loader2, Mail, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -88,8 +88,7 @@ const ConsultationConfirmed = () => {
                 </div>
                 <h1 className="text-3xl md:text-4xl font-playfair text-foreground mb-3">Payment confirmed</h1>
                 <p className="font-jost text-lg text-muted-foreground max-w-xl mx-auto">
-                  Next up: complete your Good Faith Exam (remote medical clearance). After that, you&apos;ll schedule
-                  your in-person wellness assessment.
+                  Next up: book your in-person wellness assessment with our care team in Evans.
                 </p>
               </div>
 
@@ -97,25 +96,13 @@ const ConsultationConfirmed = () => {
                 <CardContent className="p-6 md:p-8 space-y-6">
                   <div className="flex gap-4">
                     <div className="p-2 rounded-full bg-accent/15 h-fit">
-                      <ClipboardCheck className="h-6 w-6 text-accent" />
+                      <Calendar className="h-6 w-6 text-accent" />
                     </div>
                     <div>
-                      <h2 className="font-playfair text-xl mb-2">Step 1 — Good Faith Exam</h2>
+                      <h2 className="font-playfair text-xl mb-2">Book your visit</h2>
                       <p className="text-sm text-muted-foreground font-jost">
-                        We&apos;re sending a Qualiphy link to your email and phone. Complete the remote exam (about
-                        10–15 minutes). You must finish this before booking your clinic visit.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="p-2 rounded-full bg-muted h-fit">
-                      <Calendar className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <h2 className="font-playfair text-xl mb-2">Step 2 — Book your visit</h2>
-                      <p className="text-sm text-muted-foreground font-jost">
-                        Once cleared, sign in to your patient portal or use the scheduling link in your confirmation
-                        email to pick an in-person time in Evans.
+                        Create your patient portal account (or sign in), then choose an open appointment time. Our team
+                        may send a remote medical clearance link separately if your care plan requires it.
                       </p>
                     </div>
                   </div>
@@ -135,7 +122,7 @@ const ConsultationConfirmed = () => {
                 <CardContent className="p-6 flex gap-4">
                   <Mail className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                   <p className="text-sm text-muted-foreground font-jost">
-                    Receipt and GFE instructions are on the way to{" "}
+                    Receipt and next steps are on the way to{" "}
                     {customerEmail ? <strong>{customerEmail}</strong> : "your email"}. Program interest: {serviceType.replace(/_/g, " ")}.
                   </p>
                 </CardContent>

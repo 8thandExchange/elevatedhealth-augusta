@@ -2,7 +2,6 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { triggerIntakeMagicLinkDelivery } from "../_shared/trigger-intake-magic-link.ts";
-import { hasValidGfeClearance } from "../_shared/gfe-clearance.ts";
 import { resolveReferralAttribution } from "../_shared/referral-attribution.ts";
 import { notifyStaffNewAppointment } from "../_shared/notify-staff-booking.ts";
 import {
@@ -525,18 +524,6 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Could not resolve patient" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
-    }
-
-    const gfeOk = await hasValidGfeClearance(supabase, patientId);
-    if (!gfeOk) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Complete your Good Faith Exam (remote medical clearance) before scheduling your in-person visit. Check your email or patient portal for the Qualiphy link.",
-          error_code: "gfe_required",
-        }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
     }
 
     const serviceLabel =

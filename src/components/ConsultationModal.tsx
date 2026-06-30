@@ -61,7 +61,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
             Start your $79 Wellness Assessment
           </DialogTitle>
           <DialogDescription className="text-left sm:text-center text-muted-foreground font-jost text-sm sm:text-base mt-2 leading-relaxed">
-            Screening and consents first — then payment, your Good Faith Exam, and scheduling your in-person visit.
+            Screening and consents first — then payment and scheduling your in-person visit.
           </DialogDescription>
         </DialogHeader>
 

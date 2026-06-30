@@ -398,7 +398,7 @@ export default function ConsultPrequal() {
           <p className="section-label mb-2">Consult-gated programs</p>
           <h1 className="font-playfair text-3xl md:text-4xl text-foreground">Start your enrollment</h1>
           <p className="mt-3 font-jost text-muted-foreground text-sm max-w-lg mx-auto">
-            Screening → consents → $79 wellness assessment → Good Faith Exam → schedule your visit.
+            Screening → consents → $79 wellness assessment → schedule your visit.
           </p>
         </div>
 
@@ -687,7 +687,7 @@ export default function ConsultPrequal() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                After payment, we&apos;ll email your Good Faith Exam link. Once cleared, you&apos;ll book your in-person visit.
+                After payment, create your portal account and book your in-person visit. Our team will send a remote medical clearance link when clinically appropriate.
               </p>
               <Button className="w-full" size="lg" onClick={startCheckout} disabled={loading}>
                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Pay $79 securely with Stripe"}

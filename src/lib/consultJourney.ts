@@ -53,16 +53,16 @@ export const CONSULT_JOURNEY_STAGES: ConsultJourneyStage[] = [
     patientDescription: "One-time wellness assessment fee — credited toward your program if you enroll.",
   },
   {
-    id: "gfe",
-    label: "Good Faith Exam",
-    shortLabel: "GFE",
-    patientDescription: "Complete your remote medical clearance exam (Qualiphy).",
-  },
-  {
     id: "schedule",
     label: "Book your visit",
     shortLabel: "Schedule",
     patientDescription: "Pick an in-person appointment at our Evans clinic.",
+  },
+  {
+    id: "gfe",
+    label: "Good Faith Exam",
+    shortLabel: "GFE",
+    patientDescription: "Remote medical clearance when your care team requests it (Qualiphy).",
   },
   {
     id: "visit",
@@ -171,14 +171,15 @@ export function getConsultJourneyStageIndex(ctx: ConsultJourneyContext): number 
   if (status === "consultation_scheduled") {
     return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "visit");
   }
-  if (gfeApproved || status === "gfe_cleared") {
-    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "schedule");
-  }
   if (gfePending || status === "gfe_pending") {
+    // GFE in progress does not block scheduling — show visit step once booked, else schedule.
+    if (wellnessPaid) {
+      return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "schedule");
+    }
     return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "gfe");
   }
-  if (wellnessPaid || ["consultation_paid", "consultation_pending"].includes(status)) {
-    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "gfe");
+  if (wellnessPaid || gfeApproved || status === "gfe_cleared" || ["consultation_paid", "consultation_pending"].includes(status)) {
+    return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "schedule");
   }
   if (status === "prequal_consents_complete") {
     return CONSULT_JOURNEY_STAGES.findIndex((s) => s.id === "payment");
@@ -197,7 +198,10 @@ export function getConsultJourneyStageIndex(ctx: ConsultJourneyContext): number 
 
 export function canBookWellnessVisit(ctx: ConsultJourneyContext): boolean {
   if (ctx.onboardingStatus === "consultation_scheduled") return false;
-  return hasApprovedGfe(ctx.gfeRows, ctx.onboardingStatus);
+  return hasWellnessAssessmentPaid({
+    onboardingStatus: ctx.onboardingStatus,
+    hasPaidConsultBooking: ctx.hasPaidConsultBooking,
+  });
 }
 
 export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
@@ -215,21 +219,22 @@ export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
   if (canBookWellnessVisit(ctx) && !["consultation_scheduled", "consultation_complete", "intake_complete"].includes(status)) {
     return {
       title: "Book your in-person visit",
-      description: "Your Good Faith Exam is complete. Choose a time for your wellness assessment in Evans.",
+      description: "Your wellness assessment is paid. Choose a time for your visit with our care team in Evans.",
       ctaLabel: "Choose appointment time",
       ctaPath: "/schedule-consult",
     };
   }
 
   if (
-    !hasApprovedGfe(ctx.gfeRows, status) &&
-    (hasPendingGfe(ctx.gfeRows) || status === "gfe_pending" || wellnessPaid)
+    status === "consultation_scheduled" &&
+    (hasPendingGfe(ctx.gfeRows) || status === "gfe_pending")
   ) {
     return {
-      title: "Complete your Good Faith Exam",
-      description: "Check your email or SMS for the Qualiphy link. Finish the remote exam before scheduling your visit.",
-      ctaLabel: null,
-      ctaPath: null,
+      title: "Complete medical clearance before your visit",
+      description:
+        "Your care team sent a Qualiphy link to your email and phone. Finish the remote exam before your appointment if you haven't already.",
+      ctaLabel: "View dashboard",
+      ctaPath: "/patient/dashboard",
     };
   }
 
@@ -308,18 +313,16 @@ export function getConsultJourneyPatientAction(ctx: ConsultJourneyContext): {
 /** Staff pipeline bucket for pre-visit funnel. */
 export type StaffPrevisitBucket =
   | "prequal_in_progress"
-  | "paid_awaiting_gfe"
+  | "paid_unscheduled"
   | "gfe_pending"
-  | "gfe_cleared_unscheduled"
   | "visit_scheduled"
   | "in_clinic_care";
 
 export function staffPrevisitBucket(ctx: ConsultJourneyContext & { email?: string }): StaffPrevisitBucket {
   const status = ctx.onboardingStatus ?? "";
   if (["consultation_scheduled"].includes(status)) return "visit_scheduled";
-  if (canBookWellnessVisit(ctx)) return "gfe_cleared_unscheduled";
   if (hasPendingGfe(ctx.gfeRows) || status === "gfe_pending") return "gfe_pending";
-  if (["consultation_paid", "consultation_pending"].includes(status)) return "paid_awaiting_gfe";
+  if (["consultation_paid", "consultation_pending", "gfe_cleared"].includes(status)) return "paid_unscheduled";
   if (["prequal_screening_passed", "prequal_consents_complete"].includes(status)) return "prequal_in_progress";
   if (["consultation_complete", "intake_complete", "awaiting_blood_work", "labs_in_progress", "results_ready", "labs_reviewed", "treatment_active"].includes(status)) {
     return "in_clinic_care";
@@ -329,9 +332,8 @@ export function staffPrevisitBucket(ctx: ConsultJourneyContext & { email?: strin
 
 export const STAFF_PREVISIT_BUCKET_LABELS: Record<StaffPrevisitBucket, string> = {
   prequal_in_progress: "Pre-enrollment (screening/consents)",
-  paid_awaiting_gfe: "Paid — send GFE",
+  paid_unscheduled: "Paid — schedule visit",
   gfe_pending: "GFE sent — awaiting patient",
-  gfe_cleared_unscheduled: "GFE cleared — book visit",
   visit_scheduled: "Visit scheduled",
   in_clinic_care: "In-clinic / active care",
 };
@@ -341,9 +343,9 @@ export function onboardingStatusDisplayLabel(status: string | null | undefined):
   const map: Record<string, string> = {
     prequal_screening_passed: "Screening passed",
     prequal_consents_complete: "Consents signed (pre-pay)",
-    consultation_paid: "Paid $79 — GFE next",
+    consultation_paid: "Paid $79 — schedule visit",
     gfe_pending: "GFE invite sent",
-    gfe_cleared: "GFE cleared — schedule visit",
+    gfe_cleared: "GFE cleared",
     consultation_scheduled: "Visit scheduled",
     consultation_complete: "Visit complete",
     intake_complete: "Intake complete",

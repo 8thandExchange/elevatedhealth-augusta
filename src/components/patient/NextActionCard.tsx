@@ -104,23 +104,11 @@ export const NextActionCard = ({
       };
     }
 
-    if (status === "consultation_paid" || status === "gfe_pending") {
-      return {
-        icon: <Calendar className="w-6 h-6" />,
-        title: "Complete your Good Faith Exam",
-        description: "Finish the remote Qualiphy exam we sent to your email and phone. Scheduling opens after clearance.",
-        buttonText: null,
-        buttonAction: null,
-        timeEstimate: "Usually 10–15 minutes",
-        accentColor: "amber",
-      };
-    }
-
-    if (status === "gfe_cleared") {
+    if (status === "consultation_paid" || status === "gfe_pending" || status === "gfe_cleared") {
       return {
         icon: <Calendar className="w-6 h-6" />,
         title: "Schedule Your Session",
-        description: "Your medical clearance is complete. Pick a time for your in-person wellness assessment.",
+        description: "Your wellness assessment is paid. Pick a time for your in-person visit with our care team.",
         buttonText: "Choose Time",
         buttonAction: onBookConsultation,
         timeEstimate: "Book within 48 hours",

@@ -237,9 +237,8 @@ export function GfeClearanceCard({
             {statusBadge()}
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            Remote Qualiphy clearance is included with the $79 wellness assessment. Send manually when
-            Dennis or Troy are unavailable — or record an in-clinic exam. Valid clearance suppresses
-            prompts for 12 months.
+            Staff-initiated Qualiphy remote clearance or in-clinic Good Faith Exam. Send when clinically
+            appropriate — typically after the patient schedules. Valid clearance suppresses prompts for 12 months.
           </p>
         </CardHeader>
         <CardContent className="space-y-3">

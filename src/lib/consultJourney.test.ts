@@ -6,21 +6,27 @@ import {
 } from "./consultJourney";
 
 describe("consultJourney", () => {
-  it("blocks booking until GFE cleared", () => {
+  it("allows booking as soon as wellness assessment is paid", () => {
     expect(
       canBookWellnessVisit({ onboardingStatus: "consultation_paid", gfeRows: [] }),
-    ).toBe(false);
+    ).toBe(true);
     expect(
       canBookWellnessVisit({
-        onboardingStatus: "gfe_cleared",
+        onboardingStatus: "gfe_pending",
         gfeRows: [],
       }),
     ).toBe(true);
+    expect(
+      canBookWellnessVisit({
+        onboardingStatus: "consultation_scheduled",
+        gfeRows: [],
+      }),
+    ).toBe(false);
   });
 
-  it("places paid patient on GFE step", () => {
+  it("places paid patient on schedule step", () => {
     const idx = getConsultJourneyStageIndex({ onboardingStatus: "consultation_paid" });
-    expect(idx).toBeGreaterThanOrEqual(4);
+    expect(idx).toBe(CONSULT_JOURNEY_SCHEDULE_INDEX);
   });
 
   it("advances account_created when paid booking exists", () => {
@@ -28,18 +34,18 @@ describe("consultJourney", () => {
       onboardingStatus: "account_created",
       hasPaidConsultBooking: true,
     });
-    expect(idx).toBe(4);
+    expect(idx).toBe(CONSULT_JOURNEY_SCHEDULE_INDEX);
     const action = getConsultJourneyPatientAction({
       onboardingStatus: "account_created",
       hasPaidConsultBooking: true,
     });
-    expect(action.ctaPath).not.toBe("/consult/start");
-    expect(action.title).toMatch(/Good Faith Exam/i);
+    expect(action.ctaPath).toBe("/schedule-consult");
+    expect(action.title).toMatch(/Book your in-person visit/i);
   });
 
-  it("offers booking when gfe_cleared even with stale pending invite row", () => {
+  it("reminds scheduled patients with pending GFE to complete clearance", () => {
     const action = getConsultJourneyPatientAction({
-      onboardingStatus: "gfe_cleared",
+      onboardingStatus: "consultation_scheduled",
       gfeRows: [
         {
           id: "pending",
@@ -59,7 +65,8 @@ describe("consultJourney", () => {
         },
       ],
     });
-    expect(action.ctaPath).toBe("/schedule-consult");
-    expect(action.title).toMatch(/Book your in-person visit/i);
+    expect(action.title).toMatch(/medical clearance/i);
   });
 });
+
+const CONSULT_JOURNEY_SCHEDULE_INDEX = 4;

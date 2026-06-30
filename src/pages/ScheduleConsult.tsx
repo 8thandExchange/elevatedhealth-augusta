@@ -22,7 +22,6 @@ import ProviderChooser from "@/components/booking/ProviderChooser";
 import BookingConfirmedCard from "@/components/booking/BookingConfirmedCard";
 import { PATIENT_SELF_SERVICE_PROVIDER_ID } from "@/lib/patientBookingConfig";
 import { REBOOKING_FEE_DISPLAY } from "@/lib/cancellationPolicy";
-import { patientGfeIsComplete } from "@/lib/gfeClearance";
 import { resolveSchedulableConsultBooking } from "@/lib/paidConsultBooking";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
@@ -71,7 +70,6 @@ const ScheduleConsult = () => {
   const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
   const [providerId, setProviderId] = useState<string | null>(PATIENT_SELF_SERVICE_PROVIDER_ID);
   const [processingRebooking, setProcessingRebooking] = useState(false);
-  const [gfeGate, setGfeGate] = useState<"unknown" | "cleared" | "pending">("unknown");
   const [wellnessPaidNoBooking, setWellnessPaidNoBooking] = useState(false);
   const [needsReferralCapture, setNeedsReferralCapture] = useState(false);
   const slotPickerRef = useRef<SlotPickerHandle>(null);
@@ -113,17 +111,6 @@ const ScheduleConsult = () => {
 
         if (patient?.id) {
           setNeedsReferralCapture(!patient.referral_source);
-          const { data: gfeRows } = await supabase
-            .from("gfe_clearances")
-            .select("status, expires_at, approved_at, created_at")
-            .eq("patient_id", patient.id)
-            .order("created_at", { ascending: false })
-            .limit(5);
-          if (patientGfeIsComplete(gfeRows ?? [], patient.onboarding_status)) {
-            setGfeGate("cleared");
-          } else {
-            setGfeGate("pending");
-          }
         }
 
         if (patient?.onboarding_status === "rebooking_fee_required") {
@@ -212,17 +199,8 @@ const ScheduleConsult = () => {
       code === "room_unavailable" ||
       code === "limit_exceeded" ||
       code === "room_blackout" ||
-      code === "slot_taken" ||
-      code === "gfe_required"
+      code === "slot_taken"
     ) {
-      if (code === "gfe_required") {
-        toast.error(
-          (data as { error?: string })?.error ||
-            "Complete your Good Faith Exam before scheduling.",
-        );
-        setGfeGate("pending");
-        return;
-      }
       toast.error(
         (data as { error?: string })?.error ||
           "That slot is no longer available. Please pick another.",
@@ -409,26 +387,6 @@ const ScheduleConsult = () => {
                 </a>
               </p>
             </div>
-          ) : gfeGate !== "cleared" ? (
-            <div className="space-y-6 py-12">
-              <div className="text-center space-y-6">
-                <div className="w-20 h-20 rounded-full bg-accent/15 flex items-center justify-center mx-auto">
-                  <Lock className="w-10 h-10 text-accent" />
-                </div>
-                <h1 className="text-3xl font-playfair text-foreground">Complete your Good Faith Exam first</h1>
-                <p className="font-jost text-muted-foreground max-w-lg mx-auto">
-                  Your $79 wellness assessment is paid. Finish the remote Qualiphy medical clearance sent to your email
-                  and phone — then return here to book your in-person visit.
-                </p>
-                <Button onClick={() => navigate("/patient/dashboard")}>Go to patient portal</Button>
-              </div>
-              {needsReferralCapture && (
-                <ReferralSourceCapture
-                  compact
-                  onRecorded={() => setNeedsReferralCapture(false)}
-                />
-              )}
-            </div>
           ) : (
             <div className="space-y-8">
               {needsReferralCapture && (
@@ -442,7 +400,7 @@ const ScheduleConsult = () => {
                   Pick a time for your visit
                 </h1>
                 <p className="font-jost text-lg text-muted-foreground max-w-xl mx-auto">
-                  Your Good Faith Exam is complete. Choose an open slot for your {serviceLabel}.
+                  Your wellness assessment is paid. Choose an open slot for your {serviceLabel}.
                 </p>
               </div>
 

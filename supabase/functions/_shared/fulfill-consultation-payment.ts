@@ -2,7 +2,6 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_CORE_SERVICES } from "./live-prices.ts";
 import { applyPrequalSessionToPatient } from "./apply-prequal-session.ts";
-import { sendQualiphyGfeInvite } from "./send-qualiphy-gfe-invite-core.ts";
 
 export const CONSULT_FEE_USD = 79;
 const LEGACY_DISCOVERY_AMOUNT_CENTS = 9900;
@@ -140,13 +139,6 @@ async function finalizeConsultPatient(
       bookingId,
     );
     if (fromPrequal) {
-      const gfe = await sendQualiphyGfeInvite(supabase, {
-        patientId: fromPrequal,
-        channels: ["email", "sms"],
-      });
-      if (!gfe.ok && !gfe.skipped) {
-        console.warn("[fulfillConsultationPayment] auto GFE failed:", gfe.error);
-      }
       return fromPrequal;
     }
   }
