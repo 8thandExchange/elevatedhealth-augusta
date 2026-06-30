@@ -12,6 +12,7 @@ import {
   fulfillConsultationPayment,
   isConsultationCheckoutSession,
 } from "../_shared/fulfill-consultation-payment.ts";
+import { resolveReferralAttribution } from "../_shared/referral-attribution.ts";
 import { resolveSubscriptionElevatedState } from "../_shared/elevated-combo-prices.ts";
 import { MAIL_FROM } from "../_shared/mail-config.ts";
 
@@ -215,8 +216,9 @@ function generateStaffPaymentEmail(opts: {
   amountLabel: string;
   description: string;
   isGuest: boolean;
+  heardAboutUs: string;
 }): string {
-  const { patientName, patientEmail, amountLabel, description, isGuest } = opts;
+  const { patientName, patientEmail, amountLabel, description, isGuest, heardAboutUs } = opts;
   return `
 <!DOCTYPE html>
 <html>
@@ -235,6 +237,7 @@ function generateStaffPaymentEmail(opts: {
             <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;">Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;">${patientEmail ?? "&mdash;"}</td></tr>
             <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;">Amount</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;font-weight:600;">${amountLabel}</td></tr>
             <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;">Purchased</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;">${description}</td></tr>
+            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#6b7280;">Heard about us</td><td style="padding:10px 0;border-bottom:1px solid #eee;color:#111;">${heardAboutUs}</td></tr>
             <tr><td style="padding:10px 0;color:#6b7280;">Type</td><td style="padding:10px 0;color:#111;">${isGuest ? "Guest checkout (new lead)" : "Existing patient"}</td></tr>
           </table>
           <div style="margin-top:24px;">
@@ -257,6 +260,7 @@ function generateStaffPaymentEmail(opts: {
  */
 async function notifyStaffOfPayment(
   resend: Resend,
+  supabase: ReturnType<typeof createClient>,
   opts: {
     patientName: string;
     patientEmail: string | null;
@@ -267,9 +271,17 @@ async function notifyStaffOfPayment(
     isGuest: boolean;
     eventId: string;
     eventType: string;
+    prequalSessionId?: string | null;
+    patientId?: string | null;
   },
 ): Promise<void> {
   const amountLabel = opts.amount != null ? `$${opts.amount.toFixed(2)}` : "—";
+
+  const referral = await resolveReferralAttribution(supabase, {
+    patientEmail: opts.patientEmail,
+    patientId: opts.patientId ?? null,
+    prequalSessionId: opts.prequalSessionId ?? null,
+  });
 
   // 1) Email — reliable channel.
   try {
@@ -283,6 +295,7 @@ async function notifyStaffOfPayment(
         amountLabel,
         description: opts.description,
         isGuest: opts.isGuest,
+        heardAboutUs: referral.display,
       }),
     });
     webhookLog({
@@ -473,7 +486,7 @@ serve(async (req) => {
         const staffDescription = session.mode === "subscription"
           ? `${staffProductKey || "Membership"} subscription`
           : (staffPaymentType || staffProductKey || "Service payment");
-        await notifyStaffOfPayment(resend, {
+        await notifyStaffOfPayment(resend, supabaseClient, {
           patientName: staffPatientName,
           patientEmail: customerEmail,
           amount: staffAmount,
@@ -482,6 +495,10 @@ serve(async (req) => {
           isGuest: isGuestMeta,
           eventId: event.id,
           eventType: event.type,
+          prequalSessionId: typeof metadata.prequal_session_id === "string"
+            ? metadata.prequal_session_id
+            : null,
+          patientId: isUuid(patientIdMeta) ? patientIdMeta : null,
         });
       } catch (notifyErr) {
         webhookLog({

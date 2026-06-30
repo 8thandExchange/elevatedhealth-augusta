@@ -27,6 +27,7 @@ import { resolveSchedulableConsultBooking } from "@/lib/paidConsultBooking";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 import { CancellationPolicySummary } from "@/components/marketing/CancellationPolicySummary";
 import { wellnessPreVisitForServiceType } from "@/lib/wellnessVisitInstructions";
+import ReferralSourceCapture from "@/components/patient/ReferralSourceCapture";
 
 interface PaidBooking {
   id: string;
@@ -72,6 +73,7 @@ const ScheduleConsult = () => {
   const [processingRebooking, setProcessingRebooking] = useState(false);
   const [gfeGate, setGfeGate] = useState<"unknown" | "cleared" | "pending">("unknown");
   const [wellnessPaidNoBooking, setWellnessPaidNoBooking] = useState(false);
+  const [needsReferralCapture, setNeedsReferralCapture] = useState(false);
   const slotPickerRef = useRef<SlotPickerHandle>(null);
 
   useEffect(() => {
@@ -93,13 +95,24 @@ const ScheduleConsult = () => {
         }
 
         // Find the patient row + onboarding state.
-        const { data: patient } = await supabase
+        const email = (user.email || "").toLowerCase().trim();
+        let { data: patient } = await supabase
           .from("patients")
-          .select("id, email, onboarding_status")
+          .select("id, email, onboarding_status, referral_source, user_id")
           .eq("user_id", user.id)
           .maybeSingle();
 
+        if (!patient && email) {
+          const { data: byEmail } = await supabase
+            .from("patients")
+            .select("id, email, onboarding_status, referral_source, user_id")
+            .eq("email", email)
+            .maybeSingle();
+          patient = byEmail;
+        }
+
         if (patient?.id) {
+          setNeedsReferralCapture(!patient.referral_source);
           const { data: gfeRows } = await supabase
             .from("gfe_clearances")
             .select("status, expires_at, approved_at, created_at")
@@ -119,8 +132,8 @@ const ScheduleConsult = () => {
           return;
         }
 
-        const email = (patient?.email || user.email || "").toLowerCase().trim();
-        if (!email) {
+        const accountEmail = (patient?.email || user.email || "").toLowerCase().trim();
+        if (!accountEmail) {
           toast.error("We couldn't find your account email.");
           navigate("/patient/dashboard");
           return;
@@ -136,7 +149,7 @@ const ScheduleConsult = () => {
         );
 
         const booking = await resolveSchedulableConsultBooking({
-          email,
+          email: accountEmail,
           onboardingStatus: patient?.onboarding_status,
         });
 
@@ -397,19 +410,30 @@ const ScheduleConsult = () => {
               </p>
             </div>
           ) : gfeGate !== "cleared" ? (
-            <div className="text-center py-12 space-y-6">
-              <div className="w-20 h-20 rounded-full bg-accent/15 flex items-center justify-center mx-auto">
-                <Lock className="w-10 h-10 text-accent" />
+            <div className="space-y-6 py-12">
+              <div className="text-center space-y-6">
+                <div className="w-20 h-20 rounded-full bg-accent/15 flex items-center justify-center mx-auto">
+                  <Lock className="w-10 h-10 text-accent" />
+                </div>
+                <h1 className="text-3xl font-playfair text-foreground">Complete your Good Faith Exam first</h1>
+                <p className="font-jost text-muted-foreground max-w-lg mx-auto">
+                  Your $79 wellness assessment is paid. Finish the remote Qualiphy medical clearance sent to your email
+                  and phone — then return here to book your in-person visit.
+                </p>
+                <Button onClick={() => navigate("/patient/dashboard")}>Go to patient portal</Button>
               </div>
-              <h1 className="text-3xl font-playfair text-foreground">Complete your Good Faith Exam first</h1>
-              <p className="font-jost text-muted-foreground max-w-lg mx-auto">
-                Your $79 wellness assessment is paid. Finish the remote Qualiphy medical clearance sent to your email
-                and phone — then return here to book your in-person visit.
-              </p>
-              <Button onClick={() => navigate("/patient/dashboard")}>Go to patient portal</Button>
+              {needsReferralCapture && (
+                <ReferralSourceCapture
+                  compact
+                  onRecorded={() => setNeedsReferralCapture(false)}
+                />
+              )}
             </div>
           ) : (
             <div className="space-y-8">
+              {needsReferralCapture && (
+                <ReferralSourceCapture onRecorded={() => setNeedsReferralCapture(false)} />
+              )}
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/15 mb-6">
                   <CheckCircle2 className="h-10 w-10 text-accent" />

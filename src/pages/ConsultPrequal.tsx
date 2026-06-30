@@ -9,6 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, ArrowRight, ArrowLeft, Shield, FileText, CreditCard, Phone, CheckCircle2 } from "lucide-react";
@@ -21,6 +28,7 @@ import { getActiveConsentVersion } from "@/lib/consents/consent-helpers";
 import { ConsentDocumentDisplay } from "@/components/consents/ConsentDocumentDisplay";
 import { hasWellnessAssessmentPaid } from "@/lib/wellnessAssessmentPayment";
 import { readEdgeFunctionError } from "@/lib/edgeFunctionError";
+import { REFERRAL_SOURCE_OPTIONS } from "@/lib/referralSources";
 
 const VISIT_REASONS = filterVisibleVisitReasons([
   { id: "hormone", label: "Hormone optimization (HRT/TRT)" },
@@ -48,7 +56,7 @@ export default function ConsultPrequal() {
   const draft = (() => {
     try {
       return JSON.parse(sessionStorage.getItem("consult_profile_draft") || "null") as
-        | { email?: string; fullName?: string; phone?: string; dob?: string; gender?: "female" | "male" | "other"; reasons?: string[] }
+        | { email?: string; fullName?: string; phone?: string; dob?: string; gender?: "female" | "male" | "other"; reasons?: string[]; referral_source?: string; referral_source_detail?: string }
         | null;
     } catch {
       return null;
@@ -74,6 +82,8 @@ export default function ConsultPrequal() {
   const [dob, setDob] = useState(draft?.dob ?? "");
   const [gender, setGender] = useState<"female" | "male" | "other">(draft?.gender ?? "female");
   const [reasons, setReasons] = useState<Set<string>>(new Set(draft?.reasons ?? []));
+  const [referralSource, setReferralSource] = useState(draft?.referral_source ?? "");
+  const [referralSourceDetail, setReferralSourceDetail] = useState(draft?.referral_source_detail ?? "");
 
   const [screening, setScreening] = useState({
     pregnant_or_breastfeeding: false,
@@ -102,9 +112,9 @@ export default function ConsultPrequal() {
     if (sessionId) sessionStorage.setItem("consult_session_id", sessionId);
     sessionStorage.setItem(
       "consult_profile_draft",
-      JSON.stringify({ email, fullName, phone, dob, gender, reasons: [...reasons] }),
+      JSON.stringify({ email, fullName, phone, dob, gender, reasons: [...reasons], referral_source: referralSource, referral_source_detail: referralSourceDetail }),
     );
-  }, [step, sessionId, email, fullName, phone, dob, gender, reasons]);
+  }, [step, sessionId, email, fullName, phone, dob, gender, reasons, referralSource, referralSourceDetail]);
   const [checkingPaid, setCheckingPaid] = useState(false);
 
   const emailFromUrl = searchParams.get("email") ?? "";
@@ -201,6 +211,10 @@ export default function ConsultPrequal() {
       toast.error("Please complete contact info including phone and date of birth.");
       return;
     }
+    if (!referralSource) {
+      toast.error("Please tell us how you heard about us.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -234,6 +248,8 @@ export default function ConsultPrequal() {
           dob,
           gender,
           visit_reasons: [...reasons],
+          referral_source: referralSource,
+          referral_source_detail: referralSourceDetail,
           ...screening,
         },
       });
@@ -451,6 +467,43 @@ export default function ConsultPrequal() {
                       </label>
                     ))}
                   </div>
+                </div>
+                <div className="space-y-2 pt-2 border-t">
+                  <Label htmlFor="pq-referral">How did you hear about us?</Label>
+                  <Select
+                    value={referralSource}
+                    onValueChange={(v) => {
+                      const opt = REFERRAL_SOURCE_OPTIONS.find((o) => o.value === v);
+                      setReferralSource(v);
+                      setReferralSourceDetail(opt?.promptForDetail ? referralSourceDetail : "");
+                    }}
+                  >
+                    <SelectTrigger id="pq-referral">
+                      <SelectValue placeholder="Select an option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {REFERRAL_SOURCE_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {REFERRAL_SOURCE_OPTIONS.find((o) => o.value === referralSource)?.promptForDetail && (
+                    <Input
+                      value={referralSourceDetail}
+                      onChange={(e) => setReferralSourceDetail(e.target.value)}
+                      placeholder={
+                        referralSource === "friend_family"
+                          ? "Who referred you? (optional)"
+                          : referralSource === "provider_referral"
+                            ? "Provider or practice name (optional)"
+                            : referralSource === "social_media"
+                              ? "Which platform? (optional)"
+                              : "Please specify (optional)"
+                      }
+                    />
+                  )}
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? (

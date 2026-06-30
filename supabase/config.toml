@@ -370,3 +370,6 @@ verify_jwt = true
 [functions.complete-program-enrollment-consents]
 verify_jwt = true
 
+[functions.record-patient-referral]
+verify_jwt = true
+

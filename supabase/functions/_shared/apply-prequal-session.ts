@@ -79,7 +79,7 @@ export async function applyPrequalSessionToPatient(
 
   const { data: existing } = await supabase
     .from("patients")
-    .select("id, onboarding_status, full_name")
+    .select("id, onboarding_status, full_name, medical_history")
     .eq("email", email)
     .maybeSingle();
 
@@ -95,6 +95,26 @@ export async function applyPrequalSessionToPatient(
 
   if (prequal.visit_reasons?.length) {
     patientPatch.treatment_request = prequal.visit_reasons.join(",");
+  }
+
+  const referralSource =
+    typeof prequal.referral_source === "string" ? prequal.referral_source.trim() : "";
+  const referralSourceDetail =
+    typeof prequal.referral_source_detail === "string" ? prequal.referral_source_detail.trim() : "";
+  if (referralSource) {
+    patientPatch.referral_source = referralSource;
+    patientPatch.referral_source_detail = referralSourceDetail || null;
+    const priorHistory =
+      existing?.medical_history && typeof existing.medical_history === "object"
+        ? (existing.medical_history as Record<string, unknown>)
+        : {};
+    patientPatch.medical_history = {
+      ...priorHistory,
+      marketing: {
+        referral_source: referralSource,
+        referral_source_detail: referralSourceDetail || null,
+      },
+    };
   }
 
   let patientId: string;
@@ -124,6 +144,21 @@ export async function applyPrequalSessionToPatient(
   }
 
   await copyPrequalConsentsToPatient(supabase, patientId, payload);
+
+  if (referralSource) {
+    try {
+      await supabase.from("marketing_referrals").insert({
+        channel: "consult_prequal",
+        referral_source: referralSource,
+        referral_source_detail: referralSourceDetail || null,
+        contact_name: prequal.full_name ?? customerName ?? null,
+        contact_email: email,
+        patient_id: patientId,
+      });
+    } catch (e) {
+      console.warn("marketing_referrals insert skipped (non-fatal):", e);
+    }
+  }
 
   await supabase
     .from("consult_prequal_sessions")

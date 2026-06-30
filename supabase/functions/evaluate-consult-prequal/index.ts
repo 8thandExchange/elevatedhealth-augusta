@@ -34,6 +34,8 @@ serve(async (req) => {
     const visitReasons = Array.isArray(body.visit_reasons)
       ? body.visit_reasons.filter((r: unknown) => typeof r === "string")
       : [];
+    const referralSource = String(body.referral_source ?? "").trim() || null;
+    const referralSourceDetail = String(body.referral_source_detail ?? "").trim() || null;
 
     if (!email || !fullName || !dob) {
       return new Response(JSON.stringify({ error: "email, full_name, and dob are required" }), {
@@ -66,6 +68,8 @@ serve(async (req) => {
         dob,
         gender: screeningInput.gender,
         visit_reasons: visitReasons,
+        referral_source: referralSource,
+        referral_source_detail: referralSourceDetail,
         screening_answers: screeningInput,
         screening_result: outcome.result,
         block_reasons: outcome.blockReasons,

@@ -1,7 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 import { triggerIntakeMagicLinkDelivery } from "../_shared/trigger-intake-magic-link.ts";
 import { hasValidGfeClearance } from "../_shared/gfe-clearance.ts";
+import { resolveReferralAttribution } from "../_shared/referral-attribution.ts";
+import { notifyStaffNewAppointment } from "../_shared/notify-staff-booking.ts";
 import {
   getSlotSigningKey,
   redeemSlotTokenJtiOnce,
@@ -12,6 +15,40 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+
+async function alertStaffAppointmentBooked(
+  supabase: ReturnType<typeof createClient>,
+  opts: {
+    patientId: string;
+    patientName: string;
+    patientEmail: string | null;
+    patientPhone?: string | null;
+    serviceLabel: string;
+    scheduledAt: string;
+    confirmationNumber?: string | null;
+  },
+): Promise<void> {
+  if (!Deno.env.get("RESEND_API_KEY")) return;
+  try {
+    const referral = await resolveReferralAttribution(supabase, {
+      patientId: opts.patientId,
+      patientEmail: opts.patientEmail,
+    });
+    await notifyStaffNewAppointment(resend, {
+      patientName: opts.patientName,
+      patientEmail: opts.patientEmail,
+      patientPhone: opts.patientPhone,
+      serviceLabel: opts.serviceLabel,
+      scheduledAt: opts.scheduledAt,
+      heardAboutUs: referral.display,
+      confirmationNumber: opts.confirmationNumber,
+    });
+  } catch (e) {
+    console.warn("staff appointment alert failed", e);
+  }
+}
 
 function responseForAppointmentInsertError(err: { message?: string } | null): Response | null {
   const msg = err?.message || "";
@@ -391,6 +428,16 @@ serve(async (req) => {
         console.warn("send-booking-confirmation failed", e);
       }
 
+      await alertStaffAppointmentBooked(supabase, {
+        patientId: patient.id,
+        patientName: staff_booking.customer_name || patient.full_name || "Patient",
+        patientEmail: staff_booking.customer_email || patient.email,
+        patientPhone: staff_booking.customer_phone || patient.phone,
+        serviceLabel,
+        scheduledAt: slotStart.toISOString(),
+        confirmationNumber: appt.id.slice(0, 8).toUpperCase(),
+      });
+
       triggerIntakeMagicLinkDelivery(supabase, {
         patientId: patient.id,
         bookingId: created.id,
@@ -548,6 +595,18 @@ serve(async (req) => {
         },
       });
     } catch (e) { console.warn("send-booking-confirmation failed", e); }
+
+    if (patientId) {
+      await alertStaffAppointmentBooked(supabase, {
+        patientId,
+        patientName: booking.customer_name || "Patient",
+        patientEmail: email,
+        patientPhone: booking.customer_phone,
+        serviceLabel,
+        scheduledAt: slotStart.toISOString(),
+        confirmationNumber: appt.id.slice(0, 8).toUpperCase(),
+      });
+    }
 
     triggerIntakeMagicLinkDelivery(supabase, {
       patientId,
