@@ -6,8 +6,8 @@
 export const OPS_GUIDE_META = {
   title: "Elevated Health Augusta — Clinical Operations Handbook",
   subtitle: "Business operations + clinical SOPs + staff quick reference",
-  version: "2.0.0",
-  effectiveDate: "2026-06-26",
+  version: "2.1.0",
+  effectiveDate: "2026-07-01",
   owner: "Dr. Troy Akers / Dr. Dennis Williams",
   classification: "Internal — staff & clinical team only",
   address: "7013 Evans Town Center Blvd, Suite 203, Evans, GA 30809",

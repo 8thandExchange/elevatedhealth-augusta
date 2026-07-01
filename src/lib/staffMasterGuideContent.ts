@@ -41,7 +41,7 @@ import {
   STAFF_OPENING_SCRIPT,
   TEAM_ROWS,
 } from "./staffQuickCardContent";
-import { CORE_SERVICES } from "./stripeConfig";
+import { CORE_SERVICES, ELEVATED_PROGRAMS } from "./stripeConfig";
 import {
   NAD_IV_BOOSTER_ONLY_RULE,
   RETATRUTIDE_PEPTIDE_LAYER_RULE,
@@ -270,7 +270,7 @@ export function buildHormoneProtocolRows(): string[][] {
       "Men — ELEVATED TRT (testosterone cream)",
       "Lab-guided testosterone optimization; daily transdermal cream titrated to labs",
       `${trt.startDose} · ${trt.escalationSchedule} · ${trt.frequency}`,
-      "$249/mo all-inclusive",
+      `${ELEVATED_PROGRAMS.trt.displayPrice} all-inclusive`,
       "Medication included — never say plus pharmacy",
       "Quarterly Comprehensive labs included",
     ]);
@@ -281,7 +281,7 @@ export function buildHormoneProtocolRows(): string[][] {
       "Women — ELEVATED HRT (Bi-Est + progesterone)",
       "Lab-guided bioidentical hormone balance; cream + oral progesterone",
       `${bhrt.startDose} · ${bhrt.escalationSchedule}`,
-      "$229/mo all-inclusive",
+      `${ELEVATED_PROGRAMS.hrt.displayPrice} all-inclusive`,
       "Medication included · cream only — no troches",
       "Quarterly Comprehensive labs included",
     ]);

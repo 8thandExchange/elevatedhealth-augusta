@@ -6,7 +6,13 @@ import {
   retatrutideMonthlyDisplayPrice,
   REVENUE_LANE_BULLETS,
 } from "./staffTherapyCounseling";
+import { ACTIVE_SERVICES } from "./serviceConfig";
 import { MEDICATION_FILLS } from "./stripeConfig";
+import {
+  HORMONE_PROGRAM_COUNSELING,
+  IV_LOUNGE_ADDON_CHARGE,
+  WELLNESS_ASSESSMENT_PRICE,
+} from "./staffTherapyCounseling";
 
 describe("staffTherapyCounseling", () => {
   it("derives GLP program counseling from Stripe variants", () => {
@@ -30,5 +36,21 @@ describe("staffTherapyCounseling", () => {
     expect(joined.toLowerCase()).toContain("ketamine");
     expect(joined).toContain("$499/mo");
     expect(joined).toContain("Stripe prepay");
+  });
+
+  it("derives hormone counseling from ELEVATED program Stripe prices", () => {
+    expect(HORMONE_PROGRAM_COUNSELING).toContain("$249/mo");
+    expect(HORMONE_PROGRAM_COUNSELING).toContain("$229/mo");
+  });
+
+  it("derives IV lounge upsell charge from Stripe + addon catalog", () => {
+    expect(IV_LOUNGE_ADDON_CHARGE).toContain("$185");
+    expect(IV_LOUNGE_ADDON_CHARGE).toMatch(/pushes \$25–\$50/);
+  });
+
+  it("confirms sexual wellness and hair restoration remain launch-hidden", () => {
+    expect(ACTIVE_SERVICES.sexualWellness).toBe(false);
+    expect(ACTIVE_SERVICES.hairRestoration).toBe(false);
+    expect(WELLNESS_ASSESSMENT_PRICE).toBe("$79");
   });
 });
