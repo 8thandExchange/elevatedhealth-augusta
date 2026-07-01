@@ -23,7 +23,7 @@ A prospect lands on a beautiful storefront, books (IV immediately or $79 consult
 **Hidden until launch:** hair restoration, sexual wellness (`ACTIVE_SERVICES` off).  
 **Not offered:** ketamine/Spravato.
 
-**Retatrutide:** Offered as anchor of ELEVATED METABOLIC RECOMPOSITION (policy override 2026-06-14, Dr. Akers).
+**Retatrutide:** Offered within the ELEVATED GLP-1 lane — physician-selected, full GLP-1 consent (Section 11A). Never advertised or the lead offer. Not casual à la carte self-serve.
 
 ---
 

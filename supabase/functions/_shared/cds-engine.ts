@@ -3,11 +3,14 @@
  * Shared by run-cds-assessment edge function and frontend/tests via src/lib/cdsEngine.ts.
  *
  * Hard clinic exclusions (ketamine only) are enforced here regardless of DB config.
+ *
+ * Keep in sync with `THERAPY_ENGINE_EXCLUSIONS` in src/lib/therapyCatalog.ts.
+ * Retatrutide is intentionally NOT engine-excluded — provider-gated via GLP-1 policy + consent.
  */
 
 export const CDS_ENGINE_VERSION = "cds-engine/1.0.0";
 
-/** Engine-level hard blocks — not overridable by cds_candidates seed rows. */
+/** Engine-level hard blocks — not overridable by cds_candidates seed rows. Ketamine only; see therapyCatalog.ts. */
 export const ENGINE_EXCLUDED_CANDIDATE_KEYS = ["ketamine"] as const;
 
 export type RegulatoryStatus =

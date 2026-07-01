@@ -1,5 +1,5 @@
 -- CDS Task 6: production therapy candidate seed (inactive until prescriber sign-off)
--- Pairs with Task 4 pathways. Engine hard-blocks ketamine/retatrutide keys regardless of rows here.
+-- Pairs with Task 4 pathways. Engine hard-blocks ketamine only (see src/lib/therapyCatalog.ts).
 
 ALTER TABLE public.cds_candidates
   ADD COLUMN IF NOT EXISTS contraindication_tags text[] NOT NULL DEFAULT ARRAY[]::text[];

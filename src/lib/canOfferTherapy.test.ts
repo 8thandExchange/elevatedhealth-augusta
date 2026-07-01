@@ -27,6 +27,18 @@ describe("canOfferTherapy", () => {
     expect(result.protocol.status).toBe("pass");
   });
 
+  it("does not engine-block retatrutide when regulatory status is compoundable", () => {
+    const result = canOfferTherapy({
+      ...base,
+      therapyKey: "retatrutide",
+      displayName: "Retatrutide",
+      regulatoryStatus: "COMPOUNDABLE_503A",
+      policyEhaStatus: undefined,
+    });
+    expect(result.regulatory.status).not.toBe("block");
+    expect(result.engineGateState).not.toBe("blocked_excluded");
+  });
+
   it("blocks ketamine via regulatory engine exclusion", () => {
     const result = canOfferTherapy({
       ...base,

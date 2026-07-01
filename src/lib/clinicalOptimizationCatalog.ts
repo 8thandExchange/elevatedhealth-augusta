@@ -2,6 +2,7 @@
  * Clinical Optimization Framework — unified program/formulary catalog.
  * Single source for public visibility, staff quoting gates, lab routing, and supply checks.
  * Public surfaces import only `public_status === "public"` fields via helpers below.
+ * Therapy availability guardrails: see `therapyCatalog.ts` (Phase 2 canonical truth source).
  */
 import { CATALOG, memberPriceCents, nonMemberPriceCents } from "./pricing";
 import { LAB_PANEL_DISPLAY_NAMES, LAB_PANEL_SLUGS } from "./labPanelRecommendations";
@@ -334,7 +335,7 @@ export const CLINICAL_OPTIMIZATION_CATALOG: ClinicalOptimizationItem[] = [
   }),
   fromCatalogKey("retatrutide-provider-directed", MEDICATION_FILLS.retatrutide.name, "glp1_weight_loss", "retatrutide", {
     public_status: "provider_only",
-    clinical_status: "policy_review",
+    clinical_status: "active",
     lab_panel_slug: LAB_PANEL_SLUGS.expandedWeight,
     consent_type: "glp1",
     elevated_program_key: "glp1",
