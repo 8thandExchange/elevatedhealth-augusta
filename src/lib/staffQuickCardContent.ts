@@ -14,6 +14,7 @@ import {
   VISIT_LAB_ROWS,
 } from "./formularyCheatSheetContent";
 import { MEMBER_DISCOUNT_PERCENT } from "./pricing";
+import { C03_PROGRAM_AMOUNT } from "./staffTherapyCounseling";
 import { PATIENT_JOURNEY_PHASES } from "./sopManualContent";
 import {
   LANE_A_IV_STEPS,
@@ -63,7 +64,7 @@ export const DONT_SAY = [
 export const CHARGE_CHECKPOINTS = [
   ["C-01", "Wellness Assessment booked", CORE_SERVICES.wellnessAssessment.displayPrice],
   ["C-02", "Lab panel drawn", `${CORE_SERVICES.comprehensivePanel.displayPrice} or ${CORE_SERVICES.expandedPanel.displayPrice}`],
-  ["C-03", "Program enrollment", "$199–$449/mo"],
+  ["C-03", "Program enrollment", C03_PROGRAM_AMOUNT],
   ["C-04", "À la carte med fill", "Per SKU — $0 if included in their plan"],
   ["C-05", "IV Lounge walk-in", "Drip $139–$169 · boosters $25–$50"],
   ["C-08", "Rebooking fee", CORE_SERVICES.rebookingFee.displayPrice],

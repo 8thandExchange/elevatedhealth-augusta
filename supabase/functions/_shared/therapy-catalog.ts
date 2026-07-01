@@ -766,8 +766,8 @@ export const PEPTIDE_OUTCOME_GROUPS: PeptideOutcomeGroup[] = [
     id: "longevity",
     title: "Longevity & performance",
     summary:
-      "Vitality and GH-axis support under individualized plans — never self-selected online.",
-    therapyKeys: ["sermorelin", "cjc-ipamorelin", "tesamorelin"],
+      "Vitality and GH-axis support under individualized plans — never self-selected online. NAD+ is available as a $50 IV booster add-on (Lane A), not a peptide SKU.",
+    therapyKeys: ["sermorelin", "cjc-ipamorelin", "tesamorelin", "iv-nad-booster"],
   },
   {
     id: "hair_skin",

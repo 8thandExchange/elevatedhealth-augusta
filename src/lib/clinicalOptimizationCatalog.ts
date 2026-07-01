@@ -4,18 +4,21 @@
  * Public surfaces import only `public_status === "public"` fields via helpers below.
  * Therapy availability guardrails: see `therapyCatalog.ts` (Phase 2 canonical truth source).
  */
-import { CATALOG, memberPriceCents, nonMemberPriceCents } from "./pricing";
+import { CATALOG, memberPriceCents, nonMemberPriceCents, labMemberCents } from "./pricing";
 import { LAB_PANEL_DISPLAY_NAMES, LAB_PANEL_SLUGS } from "./labPanelRecommendations";
 import { isServiceActive } from "./serviceConfig";
 import {
   CORE_SERVICES,
   ELEVATED_PROGRAMS,
+  HAIR_RESTORATION_PRODUCTS,
   MEDICATION_FILLS,
   METABOLIC_STACK_ALACARTE,
   PEPTIDE_PRODUCTS,
+  RECOVERY_PEPTIDE_PRODUCTS,
   SEXUAL_WELLNESS_PRODUCTS,
   type ElevatedProgramKey,
 } from "./stripeConfig";
+import { IV_ADDONS_CATALOG } from "./ivAddonsCatalog";
 import { FORMULARY_ECONOMICS_CATALOG } from "./vendorRouting";
 import { marginPct } from "./formularyEconomics";
 import { isTherapyStaffQuotable, therapyByCatalogSlug } from "./therapyCatalog";
@@ -104,6 +107,8 @@ export const CATALOG_SLUG_ALIASES: Record<string, string> = {
   aod9604: "aod-9604",
   slu_pp332: "slu-pp-332-provider-only",
   five_amino_1mq: "5-amino-1mq-provider-only",
+  minoxidil_finasteride: "minoxidil_finasteride",
+  ghk_cu_scalp: "ghk_cu_scalp",
 };
 
 export const PUBLIC_AVAILABILITY_DISCLAIMER =
@@ -645,6 +650,131 @@ export const CLINICAL_OPTIMIZATION_CATALOG: ClinicalOptimizationItem[] = [
     elevated_program_key: null,
     policy_key: null,
     margin_threshold_pct: 20,
+  },
+  fromCatalogKey("testosterone", MEDICATION_FILLS.testosterone.name, "hormone_male", "testosterone", {
+    public_status: "provider_only",
+    elevated_program_key: "trt",
+    public_description: "Single testosterone cream fill when not on ELEVATED TRT — provider-directed.",
+  }),
+  fromCatalogKey("tadalafil", SEXUAL_WELLNESS_PRODUCTS.tadalafil.name, "peptide_sexual", "tadalafil", {
+    public_status: "provider_only",
+    lab_panel_slug: LAB_PANEL_SLUGS.sexualWellness,
+    public_description: "ED support when clinically appropriate — launch-hidden storefront.",
+  }),
+  fromCatalogKey("sildenafil", SEXUAL_WELLNESS_PRODUCTS.sildenafil.name, "peptide_sexual", "sildenafil", {
+    public_status: "provider_only",
+    lab_panel_slug: LAB_PANEL_SLUGS.sexualWellness,
+    public_description: "ED support when clinically appropriate — launch-hidden storefront.",
+  }),
+  fromCatalogKey("oxytocin", SEXUAL_WELLNESS_PRODUCTS.oxytocin.name, "peptide_sexual", "oxytocin", {
+    public_status: "provider_only",
+    public_description: "Intimacy support when clinically appropriate — launch-hidden storefront.",
+  }),
+  fromCatalogKey(
+    "minoxidil_finasteride",
+    HAIR_RESTORATION_PRODUCTS.minoxidilFinasteride.name,
+    "peptide_aesthetic",
+    "minoxidilFinasteride",
+    {
+      public_status: "provider_only",
+      public_description: "Scalp protocol when clinically appropriate — launch-hidden storefront.",
+    },
+  ),
+  fromCatalogKey("dutasteride", HAIR_RESTORATION_PRODUCTS.dutasteride.name, "peptide_aesthetic", "dutasteride", {
+    public_status: "provider_only",
+    public_description: "Hair restoration protocol — launch-hidden storefront.",
+  }),
+  fromCatalogKey("ghk_cu_scalp", HAIR_RESTORATION_PRODUCTS.ghkCuScalp.name, "peptide_aesthetic", "ghkCuScalp", {
+    public_status: "provider_only",
+    public_description: "Topical scalp peptide — launch-hidden storefront.",
+  }),
+  {
+    slug: "elevated_iv",
+    display_name: ELEVATED_PROGRAMS.wellness.name,
+    category: "program_membership",
+    public_status: "public",
+    clinical_status: "active",
+    supplier: null,
+    supplier_sku: null,
+    route: null,
+    dosage_form: "membership",
+    patient_price_cents: ELEVATED_PROGRAMS.wellness.amount,
+    member_price_cents: ELEVATED_PROGRAMS.wellness.amount,
+    clinic_cost_cents: null,
+    requires_labs: false,
+    lab_panel_slug: null,
+    requires_consent: false,
+    consent_type: null,
+    requires_provider_signoff: false,
+    ordering_supplies_required: false,
+    inventory_tracking_required: false,
+    internal_notes: "Non-Rx IV membership — 20% off add-ons.",
+    public_description: "Monthly IV membership with signature drips and member pricing on add-ons.",
+    staff_description: "Lane A membership path — separate from consult-gated peptides.",
+    provider_algorithm: null,
+    catalog_key: null,
+    elevated_program_key: "wellness",
+    policy_key: "elevated_iv",
+    margin_threshold_pct: 30,
+  },
+  // Lane A + program slugs (therapy catalog alignment)
+  {
+    slug: "iv_lounge",
+    display_name: "IV Lounge (Lane A)",
+    category: "iv_hydration",
+    public_status: "public",
+    clinical_status: "active",
+    supplier: "FCC / Henry Schein",
+    supplier_sku: null,
+    route: "IV",
+    dosage_form: "infusion",
+    patient_price_cents: null,
+    member_price_cents: null,
+    clinic_cost_cents: null,
+    requires_labs: false,
+    lab_panel_slug: null,
+    requires_consent: false,
+    consent_type: null,
+    requires_provider_signoff: false,
+    ordering_supplies_required: true,
+    inventory_tracking_required: false,
+    internal_notes: "Walk-in Lane A — public Stripe prepay; staff pay-at-visit allowed.",
+    public_description: "Direct IV booking — no $79 consult required.",
+    staff_description: "Route IV-only interest to /iv-lounge.",
+    provider_algorithm: null,
+    catalog_key: null,
+    elevated_program_key: null,
+    policy_key: "iv_lounge",
+    margin_threshold_pct: 25,
+  },
+  {
+    slug: "nad_booster",
+    display_name: IV_ADDONS_CATALOG.find((a) => a.name === "NAD+ Booster")!.name,
+    category: "iv_hydration",
+    public_status: "public",
+    clinical_status: "active",
+    supplier: "FCC",
+    supplier_sku: null,
+    route: "IV push",
+    dosage_form: "add-on",
+    patient_price_cents: 5000,
+    member_price_cents: labMemberCents(5000),
+    clinic_cost_cents: null,
+    requires_labs: false,
+    lab_panel_slug: null,
+    requires_consent: false,
+    consent_type: null,
+    requires_provider_signoff: false,
+    ordering_supplies_required: true,
+    inventory_tracking_required: false,
+    internal_notes: "Only patient-facing NAD+ SKU — peptide NAD discontinued 2026-06-25.",
+    public_description: IV_ADDONS_CATALOG.find((a) => a.name === "NAD+ Booster")!.description ?? "NAD+ IV booster add-on",
+    staff_description: "Add to any IV drip — not a standalone peptide product.",
+    provider_algorithm: null,
+    catalog_key: null,
+    elevated_program_key: null,
+    policy_key: "nad_booster",
+    margin_threshold_pct: 25,
   },
   // Blocked legacy — mirrored from therapy catalog (ketamine)
   ...((): ClinicalOptimizationItem[] => {

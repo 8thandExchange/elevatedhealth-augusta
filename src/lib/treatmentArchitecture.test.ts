@@ -43,4 +43,10 @@ describe("therapy catalog ↔ formulary alignment", () => {
     const recovery = peptideOutcomeGroups().find((g) => g.id === "recovery");
     expect(recovery?.therapyKeys).toEqual(expect.arrayContaining(["bpc-157", "tb-500"]));
   });
+
+  it("includes NAD+ IV booster in longevity outcome group", () => {
+    const longevity = peptideOutcomeGroups().find((g) => g.id === "longevity");
+    expect(longevity?.therapyKeys).toContain("iv-nad-booster");
+    expect(longevity?.summary).toMatch(/IV booster/i);
+  });
 });

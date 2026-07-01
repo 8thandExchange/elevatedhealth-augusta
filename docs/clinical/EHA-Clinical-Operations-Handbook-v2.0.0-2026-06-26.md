@@ -250,7 +250,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 
 1.4. **IF** Symptoms suggest weight / metabolic (BMI concern, insulin resistance, prior GLP-1)
    - **THEN** Counsel: ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo). $79 consult first.
-   - ↗ **Upsell:** Advanced recomposition support (lean-mass/metabolic peptides; gated retatrutide) is layered inside the GLP-1 program at the physician's discretion — reviewed in person.
+   - ↗ **Upsell:** Advanced recomposition support (lean-mass/metabolic peptides; gated retatrutide at $499/mo when physician-selected) is layered inside the GLP-1 program at the physician's discretion — reviewed in person.
 
 1.5. **IF** Recovery, longevity, cognitive, or athletic performance
    - **THEN** Counsel: peptide options or ELEVATED IV ($199/mo). Requires consult-gated path.
@@ -312,7 +312,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
    - **THEN** Approve ELEVATED GLP-1 → compound via FCC.
 
 4.6. **IF** Advanced recomposition candidacy + consents on file
-   - **THEN** Approve advanced recomposition support within ELEVATED GLP-1 (gated retatrutide per GLP-1 consent Section 11A) → ALGO-006.
+   - **THEN** Approve advanced recomposition support within ELEVATED GLP-1 (gated retatrutide at $499/mo per GLP-1 consent Section 11A) → ALGO-006.
 
 4.7. **IF** Labs optimal, patient not ready for program
    - **THEN** Offer ELEVATED IV ($199/mo) or retest in 3–6 months. Schedule follow-up.
@@ -393,7 +393,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 | Counseling | Fatigue, weight, libido, or brain fog | ELEVATED program path vs à la carte | $79 consult → program $199–$449/mo | Our programs bundle medication, RN check-ins, quarterly labs, and messaging — usually less than piecing fills together à la carte. |
 | Wellness Assessment | Patient hesitates on labs | Expanded panel if GLP-1 / weight candidacy | $199 Comprehensive vs $299 Expanded | For weight or metabolic goals we recommend the Expanded panel so the physician has the full picture — it saves a redraw later. |
 | Lab draw | Partner or friend waiting | IV Lounge add-on same visit | Myers $185, pushes $25–50 | While labs process, many members grab a hydration drip in our lounge — walk-ins welcome. |
-| Results review | Low T + high body fat | TRT + GLP-1 (advanced recomposition support in-program) | $249/mo TRT or $349–$449/mo GLP-1 | Your labs support hormone optimization; if body composition is also a goal, your physician can layer advanced recomposition support inside the GLP-1 program — reviewed in person. |
+| Results review | Low T + high body fat | TRT + GLP-1 (advanced recomposition support in-program) | $249/mo TRT or $349/mo–$449/mo GLP-1 | Your labs support hormone optimization; if body composition is also a goal, your physician can layer advanced recomposition support inside the GLP-1 program — reviewed in person. |
 | Results review | Perimenopause symptoms, normal T | ELEVATED HRT + optional sermorelin à la carte | $229/mo HRT; sermorelin $149/mo if added | Bi-Est and progesterone are our standard — sermorelin may be added à la carte for sleep and recovery once stable on hormones. |
 | Enrollment | Patient on single program | Second program only if clinically indicated | Additional subscription SKU | We can layer GLP-1 after TRT stabilizes — physician will confirm timing at your next check-in. |
 | Follow-up (RN) | Recovery, injury, or athletic goal | BPC-157 and/or TB-500 (individual recovery fills) | $249/fill each | For tissue repair we use BPC-157 and TB-500 as separate prescriptions — your physician selects one or both at your next review. |
@@ -411,7 +411,7 @@ Getting started: $79 Wellness Assessment + baseline panel ($199 Foundation or $2
 | C-03 | Program enrollment | ELEVATED_PROGRAMS.* | $199–$449/mo | Correct program SKU; subscription active in Stripe; webhook updated patient record |
 | C-04 | À la carte medication fill | MEDICATION_FILLS.* | Per fill price | If patient has matching program, fill should be $0 incremental — do not double-charge |
 | C-05 | IV Lounge walk-in | IV drip / push checkout | Menu price; member −20% on add-ons | Member discount applied once; receipt matches IV menu |
-| C-06 | Metabolic peptide / gated retatrutide fill | Metabolic à la carte (SS-31, AOD-9604, etc.); retatrutide gated | Per fill price | Provider-directed à la carte; retatrutide gated/physician-selected under GLP-1 consent |
+| C-06 | Metabolic peptide / gated retatrutide fill | Metabolic à la carte (SS-31, AOD-9604, etc.); retatrutide gated | Per fill price | Provider-directed à la carte; retatrutide $499/mo gated/physician-selected under GLP-1 consent |
 | C-07 | Quarterly labs (in-program) | Included in program | $0 to patient | Do not run panel checkout if active ELEVATED program covers labs |
 | C-08 | Late cancel / no-show rebooking fee | CORE_SERVICES.rebookingFee | $99 | Confirm 24-hour rule vs scheduled time. Late cancel or no-show: set rebooking_fee_required, patient pays via create-rebooking-checkout before schedule unlocks. IV refund eligible only if 24+ hr notice and service not rendered — process Stripe refund from original session; note refund ID in chart. Notify patient by email/SMS. |
 
@@ -439,10 +439,10 @@ Eight charge events (C-01 through C-08). Kristen verifies Stripe receipt matches
 
 Two booking lanes — never mix the workflow.
 
-- Lane A — IV Lounge: open booking, cash at checkout, FCC compounds + Henry Schein supplies.
+- Lane A — IV Lounge: open booking, Stripe prepay at checkout; staff may use pay-at-visit for walk-ins.
 - Lane B — Consult-gated: $79 consult → labs → ELEVATED program ($199–$449/mo).
 - Hidden at launch: sexual wellness, hair restoration.
-- Not offered: ketamine, Spravato. Retatrutide is gated/physician-only within the GLP-1 consent — never advertised, never the lead.
+- IV ketamine and SPRAVATO? (esketamine) are not offered at Elevated Health Augusta. Retatrutide is gated/physician-only within the GLP-1 consent ($499/mo when selected) — never advertised, never the lead.
 
 ### ALGO-001: New patient — lane assignment
 **Purpose:** Route walk-in vs consult-gated paths within 60 seconds of inquiry.  
@@ -500,7 +500,7 @@ From first visit to first shipment.
 
 3. Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo) via Stripe. Advanced support is à la carte / gated, not a separate program SKU.
 
-4. Anchor: semaglutide or tirzepatide per GLP-1 protocol. Retatrutide ONLY if gated/physician-selected — titrate from 0.5 mg/wk.
+4. Anchor: semaglutide or tirzepatide per GLP-1 protocol. Retatrutide ONLY if gated/physician-selected ($499/mo) — titrate from 0.5 mg/wk.
 
 5. Add SS-31 + NAD+ when anchor tolerated (à la carte, provider-directed).
 
@@ -750,7 +750,7 @@ Who owns each step.
 
 3. Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo) via Stripe. Advanced support is à la carte / gated, not a separate program SKU.
 
-4. Anchor: semaglutide or tirzepatide per GLP-1 protocol. Retatrutide ONLY if gated/physician-selected — titrate from 0.5 mg/wk.
+4. Anchor: semaglutide or tirzepatide per GLP-1 protocol. Retatrutide ONLY if gated/physician-selected ($499/mo) — titrate from 0.5 mg/wk.
 
 5. Add SS-31 + NAD+ when anchor tolerated (à la carte, provider-directed).
 

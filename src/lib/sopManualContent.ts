@@ -1,7 +1,21 @@
 /**
  * EHA Standard Operating Procedures — structured content.
  * Financial figures are resolved at render time via formularyEconomics + stripeConfig.
+ * GLP / retatrutide counseling: staffTherapyCounseling.ts (catalog + Stripe).
  */
+import {
+  C03_PROGRAM_AMOUNT,
+  C06_RETATRUTIDE_VERIFY,
+  GLP1_ALGO006_ENROLL,
+  GLP1_COUNSEL_THEN,
+  GLP1_ENROLL_THEN,
+  GLP1_RECOMPOSITION_ANCHOR_STEP,
+  GLP1_RECOMPOSITION_REVIEW_THEN,
+  GLP1_RECOMPOSITION_UPSELL,
+  LANE_B_CONSULT_CHARGE,
+  RESULTS_REVIEW_HORMONE_GLP_CHARGE,
+  REVENUE_LANE_BULLETS,
+} from "./staffTherapyCounseling";
 
 export const SOP_MANUAL_META = {
   title: "Elevated Health Augusta — Standard Operating Procedures",
@@ -89,7 +103,7 @@ export const UPSELL_MATRIX: UpsellRow[] = [
     phase: "Counseling",
     trigger: "Fatigue, weight, libido, or brain fog",
     offer: "ELEVATED program path vs à la carte",
-    charge: "$79 consult → program $199–$449/mo",
+    charge: LANE_B_CONSULT_CHARGE,
     script: "Our programs bundle medication, RN check-ins, quarterly labs, and messaging — usually less than piecing fills together à la carte.",
   },
   {
@@ -110,7 +124,7 @@ export const UPSELL_MATRIX: UpsellRow[] = [
     phase: "Results review",
     trigger: "Low T + high body fat",
     offer: "TRT + GLP-1 (advanced recomposition support in-program)",
-    charge: "$249/mo TRT or $349–$449/mo GLP-1",
+    charge: RESULTS_REVIEW_HORMONE_GLP_CHARGE,
     script: "Your labs support hormone optimization; if body composition is also a goal, your physician can layer advanced recomposition support inside the GLP-1 program — reviewed in person.",
   },
   {
@@ -177,7 +191,7 @@ export const CHARGE_CHECKPOINTS: ChargeCheckpoint[] = [
     step: "C-03",
     event: "Program enrollment",
     stripeSku: "ELEVATED_PROGRAMS.*",
-    amount: "$199–$449/mo",
+    amount: C03_PROGRAM_AMOUNT,
     verify: "Correct program SKU; subscription active in Stripe; webhook updated patient record",
   },
   {
@@ -199,7 +213,7 @@ export const CHARGE_CHECKPOINTS: ChargeCheckpoint[] = [
     event: "Metabolic peptide / gated retatrutide fill",
     stripeSku: "Metabolic à la carte (SS-31, AOD-9604, etc.); retatrutide gated",
     amount: "Per fill price",
-    verify: "Provider-directed à la carte; retatrutide gated/physician-selected under GLP-1 consent",
+    verify: C06_RETATRUTIDE_VERIFY,
   },
   {
     step: "C-07",
@@ -264,8 +278,8 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         step: "1.4",
         phase: "Counsel & discover",
         if: "Symptoms suggest weight / metabolic (BMI concern, insulin resistance, prior GLP-1)",
-        then: "Counsel: ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo). $79 consult first.",
-        upsell: "Advanced recomposition support (lean-mass/metabolic peptides; gated retatrutide) is layered inside the GLP-1 program at the physician's discretion — reviewed in person.",
+        then: GLP1_COUNSEL_THEN,
+        upsell: GLP1_RECOMPOSITION_UPSELL,
       },
       {
         step: "1.5",
@@ -380,7 +394,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
         step: "4.6",
         phase: "Provider review",
         if: "Advanced recomposition candidacy + consents on file",
-        then: "Approve advanced recomposition support within ELEVATED GLP-1 (gated retatrutide per GLP-1 consent Section 11A) → ALGO-006.",
+        then: GLP1_RECOMPOSITION_REVIEW_THEN,
       },
       {
         step: "4.7",
@@ -560,7 +574,7 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
       {
         step: "6",
         if: "GLP-1 candidacy (semaglutide or tirzepatide)",
-        then: "Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo). Use combo enrollment if hormones also indicated (medication-only add-on on same subscription).",
+        then: GLP1_ENROLL_THEN,
       },
       {
         step: "7",
@@ -664,8 +678,8 @@ export const SOP_ALGORITHMS: SOPAlgorithm[] = [
     steps: [
       { step: "1", action: "Confirm GLP-1 consent (incl. Section 11A retatrutide disclosure) signed in portal." },
       { step: "2", action: "Baseline Expanded Panel ($299) drawn in-office — weight-optimization slug." },
-      { step: "3", action: "Enroll ELEVATED GLP-1 (semaglutide $349/mo · tirzepatide $449/mo) via Stripe. Advanced support is à la carte / gated, not a separate program SKU." },
-      { step: "4", action: "Anchor: semaglutide or tirzepatide per GLP-1 protocol. Retatrutide ONLY if gated/physician-selected — titrate from 0.5 mg/wk." },
+      { step: "3", action: GLP1_ALGO006_ENROLL },
+      { step: "4", action: GLP1_RECOMPOSITION_ANCHOR_STEP },
       { step: "5", action: "Add SS-31 + NAD+ when anchor tolerated (à la carte, provider-directed)." },
       { step: "6", action: "Add CJC/Ipamorelin + tesamorelin for lean mass when indicated." },
       { step: "7", action: "Optional: AOD / SLU / 5-amino per physician — mostly FCC lines." },
@@ -748,12 +762,7 @@ export const SOP_SECTIONS: SOPSection[] = [
     number: "4",
     title: "Revenue lanes",
     summary: "Two booking lanes — never mix the workflow.",
-    bullets: [
-      "Lane A — IV Lounge: open booking, cash at checkout, FCC compounds + Henry Schein supplies.",
-      "Lane B — Consult-gated: $79 consult → labs → ELEVATED program ($199–$449/mo).",
-      "Hidden at launch: sexual wellness, hair restoration.",
-      "Not offered: ketamine, Spravato. Retatrutide is gated/physician-only within the GLP-1 consent — never advertised, never the lead.",
-    ],
+    bullets: [...REVENUE_LANE_BULLETS],
     algorithmIds: ["ALGO-001"],
   },
   {

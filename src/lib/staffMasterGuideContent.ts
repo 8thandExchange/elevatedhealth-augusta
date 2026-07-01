@@ -42,6 +42,10 @@ import {
   TEAM_ROWS,
 } from "./staffQuickCardContent";
 import { CORE_SERVICES } from "./stripeConfig";
+import {
+  NAD_IV_BOOSTER_ONLY_RULE,
+  RETATRUTIDE_PEPTIDE_LAYER_RULE,
+} from "./staffTherapyCounseling";
 
 export const MASTER_GUIDE_META = {
   title: "Staff Complete Reference",
@@ -68,13 +72,13 @@ export const PEPTIDE_LAYER_RULES = {
   declinedPrograms: [
     "ELEVATED Peptides membership (~$349/mo bundle) — declined 2026-06-25.",
     "ELEVATED Metabolic Recomposition ($599/mo) — retired 2026-06-24; peptides remain à la carte.",
-    "Standalone NAD+ peptide — discontinued; NAD+ is the $50 IV booster only.",
+    NAD_IV_BOOSTER_ONLY_RULE,
   ],
   rules: [
     "Physician layers 1–2 peptides at a time after anchor ± add-on is stable.",
     "Recovery stack (BPC + TB) = $349 / " + member(RECOVERY_STACK.nonMemberCents) + " member — only published peptide bundle.",
     "Research Peptide Consent + malignancy screen for Cat 2 compounds.",
-    "Retatrutide is NOT a casual peptide add-on — GLP-1 lane only, physician-gated.",
+    RETATRUTIDE_PEPTIDE_LAYER_RULE,
   ],
 } as const;
 
