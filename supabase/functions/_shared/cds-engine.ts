@@ -2,13 +2,13 @@
  * Clinical Decision Support — deterministic evaluation engine.
  * Shared by run-cds-assessment edge function and frontend/tests via src/lib/cdsEngine.ts.
  *
- * Hard clinic exclusions (ketamine, retatrutide) are enforced here regardless of DB config.
+ * Hard clinic exclusions (ketamine only) are enforced here regardless of DB config.
  */
 
 export const CDS_ENGINE_VERSION = "cds-engine/1.0.0";
 
 /** Engine-level hard blocks — not overridable by cds_candidates seed rows. */
-export const ENGINE_EXCLUDED_CANDIDATE_KEYS = ["ketamine", "retatrutide"] as const;
+export const ENGINE_EXCLUDED_CANDIDATE_KEYS = ["ketamine"] as const;
 
 export type RegulatoryStatus =
   | "FDA_APPROVED"

@@ -257,13 +257,13 @@ INSERT INTO public.cds_candidates (
 SELECT
   p.id,
   'policy_retatrutide_ala_carte',
-  'Retatrutide à la carte (blocked)',
+  'Retatrutide à la carte (not offered)',
   'EXCLUDED',
   false,
   ARRAY[]::text[],
   ARRAY[]::text[],
   0.000,
-  'Engine hard-blocks retatrutide candidate key. Program-only via elevated_metabolic_program + signed protocol.',
+  'Retatrutide is not offered à la carte. It is physician-selected only within the supervised metabolic program with signed protocol and consent.',
   false, false
 FROM public.cds_pathways p WHERE p.slug = 'metabolic-recomposition'
 ON CONFLICT (candidate_key) DO NOTHING;

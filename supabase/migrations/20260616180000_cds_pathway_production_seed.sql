@@ -36,7 +36,7 @@ INSERT INTO public.cds_pathways (
 (
   'metabolic-recomposition',
   'Advanced metabolic recomposition',
-  'ELEVATED METABOLIC RECOMPOSITION — program-only; requires signed metabolic protocol. CDS engine hard-blocks retatrutide at candidate level; enrollment is protocol-gated.',
+  'ELEVATED METABOLIC RECOMPOSITION — program-only; requires signed metabolic protocol. Retatrutide is physician-selected and protocol-gated, not à la carte.',
   'metabolic_recomposition',
   'weight-optimization',
   'metabolicRecomposition',

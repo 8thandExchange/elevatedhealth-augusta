@@ -47,7 +47,7 @@ describe("cdsEngine exclusions", () => {
     expect(isEngineExcludedKey("Ketamine")).toBe(true);
   });
 
-  it("hard-blocks retatrutide at engine level", () => {
+  it("does not hard-block retatrutide at engine level", () => {
     const result = evaluateCandidate(
       candidate({
         candidate_key: "retatrutide",
@@ -55,8 +55,8 @@ describe("cdsEngine exclusions", () => {
       }),
       baseCtx,
     );
-    expect(result.gate_state).toBe("blocked_excluded");
-    expect(isEngineExcludedKey("retatrutide")).toBe(true);
+    expect(result.gate_state).toBe("ready");
+    expect(isEngineExcludedKey("retatrutide")).toBe(false);
   });
 });
 
