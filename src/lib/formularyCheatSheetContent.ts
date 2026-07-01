@@ -5,6 +5,7 @@
 import { IV_ADDONS_CATALOG } from "./ivAddonsCatalog";
 import { IV_THERAPIES_CATALOG } from "./ivTherapiesCatalog";
 import { MEMBER_DISCOUNT_PERCENT, fmtUsd, labMemberCents } from "./pricing";
+import { therapyStaffPolicyBullets } from "./therapyCatalog";
 import {
   CORE_SERVICES,
   ELEVATED_COMBO_ADDONS,
@@ -182,8 +183,7 @@ export const HAIR_ROWS = Object.values(HAIR_RESTORATION_PRODUCTS).map((p) => [
 export const POLICY_BULLETS = [
   "Medication is INCLUDED in ELEVATED TRT / HRT / GLP-1 — never say “plus pharmacy costs.”",
   "NAD+ is ONLY the $50 IV booster push — no peptide NAD+, no standalone NAD+ infusion.",
-  "Ketamine / Spravato — not offered.",
-  "Retatrutide — physician-selected within GLP-1 lane only; full consent; never headline or advertise.",
+  ...therapyStaffPolicyBullets(),
   "Injectable TRT (cypionate) — not offered. Anastrozole and HCG — not offered.",
   "Cash pay · no insurance billing · itemized receipts & superbills on request.",
   "Benefits end on membership cancel: quarterly labs revert to full price; 20% discount ends.",

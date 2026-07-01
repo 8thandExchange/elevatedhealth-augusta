@@ -19,18 +19,10 @@ import {
   type GateState,
   type RegulatoryStatus,
 } from "@/lib/cdsEngine";
-import {
-  GATE_STATE_LABELS,
-  REGULATORY_STATUS_LABELS,
-  gateBadgeClassName,
-  regulatoryBadgeClassName,
-} from "@/lib/cdsUiHelpers";
+import { cdsCandidateActivationBlocklist } from "@/lib/therapyCatalog";
 
-/** Policy / audit rows that must not be prescriber-activated. */
-export const CDS_CANDIDATE_ACTIVATION_BLOCKLIST = new Set([
-  "policy_ketamine",
-  "policy_retatrutide_ala_carte",
-]);
+/** Policy / audit rows that must not be prescriber-activated — from therapy catalog. */
+export const CDS_CANDIDATE_ACTIVATION_BLOCKLIST = cdsCandidateActivationBlocklist();
 
 interface PathwayRow {
   id: string;

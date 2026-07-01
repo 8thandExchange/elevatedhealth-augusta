@@ -5,7 +5,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { LIVE_CORE_SERVICES } from "../_shared/live-prices.ts";
 import { edgeStructuredLog } from "../_shared/edge-structured-log.ts";
 import { hasClinicStaffRole } from "../_shared/staff-auth.ts";
-import { MAIL_FROM } from "../_shared/mail-config.ts";
+import { legacyProgramDisplayLabels } from "../_shared/therapy-catalog.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -77,8 +77,8 @@ serve(async (req) => {
     const serviceLabels: Record<string, string> = {
       hormone: "Hormone Therapy",
       weight_loss: "Weight Loss",
-      ketamine: "General Wellness",
       general: "General Consultation",
+      ...legacyProgramDisplayLabels(),
     };
     const serviceLabel = serviceLabels[service_type] || "Wellness Assessment";
 

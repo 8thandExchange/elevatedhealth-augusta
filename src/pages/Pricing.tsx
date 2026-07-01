@@ -17,7 +17,7 @@ import { useBooking } from "@/contexts/BookingContext";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
 import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
-import { openAssistantChat } from "@/lib/openAssistantChat";
+import { ketamineNotOfferedPatientCopy } from "@/lib/therapyCatalog";
 import {
   Check,
   Star,
@@ -358,7 +358,7 @@ const Pricing = () => {
                 Mental wellness
               </h2>
               <p className="text-muted-foreground font-jost text-sm leading-relaxed">
-                IV ketamine and SPRAVATO? (esketamine) are not offered at Elevated Health Augusta. If
+                {ketamineNotOfferedPatientCopy()} If
                 you are working with depression or anxiety, our clinicians can discuss evidence-based
                 options within our active service lines?such as medical weight loss, hormone
                 optimization, IV hydration, and primary care coordination. Call{" "}

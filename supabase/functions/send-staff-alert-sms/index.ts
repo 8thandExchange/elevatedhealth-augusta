@@ -96,10 +96,15 @@ const handler = async (req: Request): Promise<Response> => {
         message = `⚠️ HIGH RISK ALERT: ${patient_name} flagged as high risk during intake. Requires immediate provider review.`;
         break;
       
-      case "new_signup":
-        const programStr = program === "ketamine" ? "Ketamine" : "Hormone/Weight";
+      case "new_signup": {
+        const { resolveLegacyProgramDisplayLabel } = await import("../_shared/therapy-catalog.ts");
+        const programStr =
+          program === "ketamine"
+            ? resolveLegacyProgramDisplayLabel("ketamine")
+            : "Hormone/Weight";
         message = `🆕 NEW PATIENT: ${patient_name} registered for ${programStr} program. Awaiting intake completion.`;
         break;
+      }
       
       case "consultation_booked":
         message = `📅 CONSULT BOOKED: ${patient_name} has scheduled their consultation. Check calendar for details.`;

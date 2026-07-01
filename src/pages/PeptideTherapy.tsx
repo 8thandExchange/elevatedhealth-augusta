@@ -19,6 +19,7 @@ import {
 } from "@/lib/clinicalOptimizationCatalog";
 import { RECOVERY_PEPTIDE_PUBLIC_LANGUAGE } from "@/lib/recoveryPeptideCareLane";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
+import { recoveryPeptideShortNames, therapyByKey } from "@/lib/therapyCatalog";
 import {
   storefrontHeroInner,
   storefrontHeroLabel,
@@ -45,7 +46,7 @@ const steps = [
   {
     n: "03",
     title: "Provider review",
-    body: "Recovery peptides (BPC-157, TB-500) require a dedicated clinical review before any plan is discussed.",
+    body: `Recovery peptides (${recoveryPeptideShortNames()}) require a dedicated clinical review before any plan is discussed.`,
   },
   {
     n: "04",
@@ -63,10 +64,14 @@ const symptoms = [
   "Skin, hair, or post–weight-loss transformation support",
 ];
 
+const bpcTherapy = therapyByKey("bpc-157");
+
 const faqs = [
   {
     q: "Are BPC-157 and TB-500 available?",
-    a: "Yes — when clinically appropriate and after provider review, safety screening, consent, and pharmacy availability. They are not walk-in or self-selected products. Pentadeca Arginate (PDA) is an optional oral alternate your physician may discuss.",
+    a: bpcTherapy
+      ? `${bpcTherapy.description} Pentadeca Arginate (PDA) is an optional oral alternate your physician may discuss.`
+      : "Yes — when clinically appropriate and after provider review, safety screening, consent, and pharmacy availability.",
   },
   {
     q: "Are peptides FDA-approved?",

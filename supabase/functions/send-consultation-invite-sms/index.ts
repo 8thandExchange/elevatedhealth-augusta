@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { legacyProgramDisplayLabels } from "../_shared/therapy-catalog.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,8 +23,8 @@ interface ConsultationInviteSMSRequest {
 const SERVICE_LABELS: Record<string, string> = {
   hormone: "Hormone Therapy",
   weight_loss: "Weight Loss",
-  ketamine: "Ketamine Therapy",
   general: "your consultation",
+  ...legacyProgramDisplayLabels(),
 };
 
 async function sendSMS(to: string, message: string): Promise<{ success: boolean; messageId?: string; error?: string }> {

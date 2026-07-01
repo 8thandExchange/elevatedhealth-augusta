@@ -18,6 +18,7 @@ import {
 } from "./stripeConfig";
 import { FORMULARY_ECONOMICS_CATALOG } from "./vendorRouting";
 import { marginPct } from "./formularyEconomics";
+import { isTherapyStaffQuotable, therapyByCatalogSlug } from "./therapyCatalog";
 
 export type PublicCatalogStatus = "public" | "hidden" | "provider_only" | "inactive";
 export type ClinicalCatalogStatus = "active" | "draft" | "policy_review" | "inactive";
@@ -645,36 +646,42 @@ export const CLINICAL_OPTIMIZATION_CATALOG: ClinicalOptimizationItem[] = [
     policy_key: null,
     margin_threshold_pct: 20,
   },
-  // Blocked legacy
-  {
-    slug: "ketamine",
-    display_name: "Ketamine / Spravato",
-    category: "program_membership",
-    public_status: "inactive",
-    clinical_status: "inactive",
-    supplier: null,
-    supplier_sku: null,
-    route: null,
-    dosage_form: null,
-    patient_price_cents: null,
-    member_price_cents: null,
-    clinic_cost_cents: null,
-    requires_labs: false,
-    lab_panel_slug: null,
-    requires_consent: false,
-    consent_type: null,
-    requires_provider_signoff: true,
-    ordering_supplies_required: false,
-    inventory_tracking_required: false,
-    internal_notes: "Legacy Réveil — not offered.",
-    public_description: "Not offered at Elevated Health Augusta.",
-    staff_description: "Redirect to appropriate wellness services.",
-    provider_algorithm: null,
-    catalog_key: null,
-    elevated_program_key: null,
-    policy_key: "ketamine",
-    margin_threshold_pct: 0,
-  },
+  // Blocked legacy — mirrored from therapy catalog (ketamine)
+  ...((): ClinicalOptimizationItem[] => {
+    const k = therapyByCatalogSlug("ketamine");
+    if (!k) return [];
+    return [
+      {
+        slug: "ketamine",
+        display_name: k.name,
+        category: "program_membership",
+        public_status: "inactive",
+        clinical_status: "inactive",
+        supplier: null,
+        supplier_sku: null,
+        route: null,
+        dosage_form: null,
+        patient_price_cents: null,
+        member_price_cents: null,
+        clinic_cost_cents: null,
+        requires_labs: false,
+        lab_panel_slug: null,
+        requires_consent: false,
+        consent_type: null,
+        requires_provider_signoff: true,
+        ordering_supplies_required: false,
+        inventory_tracking_required: false,
+        internal_notes: k.clinicalNotes,
+        public_description: k.description,
+        staff_description: "Redirect to appropriate wellness services.",
+        provider_algorithm: null,
+        catalog_key: null,
+        elevated_program_key: null,
+        policy_key: "ketamine",
+        margin_threshold_pct: 0,
+      },
+    ];
+  })(),
 ];
 
 export function catalogBySlug(slug: string): ClinicalOptimizationItem | undefined {
@@ -700,7 +707,7 @@ export function staffQuotableItems(): ClinicalOptimizationItem[] {
     (i) =>
       i.clinical_status === "active" &&
       i.public_status !== "inactive" &&
-      i.slug !== "ketamine",
+      isTherapyStaffQuotable(i.slug),
   );
 }
 

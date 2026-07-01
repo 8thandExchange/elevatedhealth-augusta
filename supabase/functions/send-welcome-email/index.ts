@@ -210,7 +210,8 @@ serve(async (req) => {
 
     const firstName = first_name || "there";
     const rawProgram = primary_program || "general";
-    const programKey = rawProgram === "ketamine" ? "general" : rawProgram;
+    const { resolveLegacyProgramKey } = await import("../_shared/therapy-catalog.ts");
+    const programKey = resolveLegacyProgramKey(rawProgram);
 
     const serviceDescriptions: Record<
       string,

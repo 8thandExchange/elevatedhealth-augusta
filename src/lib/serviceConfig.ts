@@ -9,6 +9,8 @@
  * chat functions, provider dashboard, and patient portal.
  */
 
+import { isLegacySunsettedService } from "./therapyCatalog";
+
 export const ACTIVE_SERVICES = {
   // ACTIVE SERVICES - 4 core pillars
   hormones: true,      // Hormone Optimization
@@ -16,8 +18,8 @@ export const ACTIVE_SERVICES = {
   ivLounge: true,      // IV Therapy
   peptides: true,      // Peptide Therapy
 
-  // SUNSETTED / NOT-YET-LAUNCHED SERVICES - hidden across app
-  ketamine: false,        // Ketamine / Spravato — not offered
+  // SUNSETTED / NOT-YET-LAUNCHED SERVICES — visibility from therapy catalog where mapped
+  ketamine: !isLegacySunsettedService("ketamine"),
   hairRestoration: false, // Hair Restoration — post-launch
   sexualWellness: false,  // Sexual Wellness — post-launch
 

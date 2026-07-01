@@ -9,14 +9,14 @@ import {
   itemMarginPercent,
   type ClinicalOptimizationItem,
 } from "./clinicalOptimizationCatalog";
+import { recoveryPeptidePublicLanguage as RECOVERY_PEPTIDE_PUBLIC_LANGUAGE } from "./therapyCatalog";
 import { recoveryPeptideSupplyProfile, supplyProfileForItem } from "./supplyReadiness";
 import { LAB_PANEL_SLUGS } from "./labPanelRecommendations";
 
 export const RECOVERY_PEPTIDE_CARE_LANE_ID = "recovery_peptide_review" as const;
 export const RECOVERY_PEPTIDE_CARE_LANE_LABEL = "Recovery Peptide Review";
 
-export const RECOVERY_PEPTIDE_PUBLIC_LANGUAGE =
-  "Recovery peptide protocols for active adults, training recovery, tendon and ligament concerns, soft-tissue recovery, joint support, and inflammation-related recovery goals. Options may include BPC-157, TB-500, or related recovery peptides when clinically appropriate and prescribed by a provider.";
+export { RECOVERY_PEPTIDE_PUBLIC_LANGUAGE };
 
 export const RECOVERY_PEPTIDE_PATIENT_PORTAL_MESSAGE =
   "Your provider is reviewing whether a recovery peptide protocol is appropriate based on your history, symptoms, goals, labs, and safety screen.";

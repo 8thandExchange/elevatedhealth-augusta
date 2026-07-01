@@ -21,6 +21,7 @@ import {
 } from "./labPanelRecommendations";
 import { DOSING_PROTOCOLS, type DosingProtocol } from "./dosingProtocols";
 import { fmtUsd, labMemberCents } from "./pricing";
+import { pathwayExcludedCompounds } from "./therapyCatalog";
 
 export type PatientGoal =
   | "weight_loss"
@@ -92,16 +93,8 @@ export const GOAL_LABELS: Record<PatientGoal, string> = {
   aesthetics: "Aesthetics",
 };
 
-/** Compounds we do NOT offer despite GC catalog availability. */
-export const EXCLUDED_COMPOUNDS = [
-  { key: "mazdutide", reason: "Not in formulary — insufficient clinical governance vs sema/tirz/reta" },
-  { key: "melanotan2", reason: "Cosmetic tanning — reputational/regulatory risk" },
-  { key: "cagrilintide", reason: "Not on EHA formulary — use GLP-1 program paths instead" },
-  { key: "cagrilintide_retatrutide_blend", reason: "Pre-blended — use supervised metabolic protocol only" },
-  { key: "igf1_lr3", reason: "High-risk growth factor — physician exclusion default" },
-  { key: "ghk_cu_injectable", reason: "Prefer topical/sublingual per formulary policy" },
-  { key: "ketamine", reason: "Legacy — not offered" },
-] as const;
+/** Compounds we do NOT offer despite GC catalog availability — from therapy catalog. */
+export const EXCLUDED_COMPOUNDS = pathwayExcludedCompounds();
 
 function labMeta(slug: string) {
   const tier = labCheckoutTierForSlug(slug);

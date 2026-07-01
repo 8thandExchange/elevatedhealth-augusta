@@ -47,14 +47,15 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     // Build treatment interests list
+    const { legacyProgramDisplayLabels } = await import("../_shared/therapy-catalog.ts");
     const interestLabels: Record<string, string> = {
       hormone: "Hormone Optimization",
       hormone_female: "Hormone Optimization (Women)",
       testosterone: "Testosterone Therapy (TRT)",
       hormone_male: "Hormone Optimization (Men)",
       weight_loss: "Medical Weight Loss",
-      ketamine: "General Wellness",
       peptides: "Peptide Therapy",
+      ...legacyProgramDisplayLabels(),
     };
 
     const treatmentListHtml = data.treatmentInterests

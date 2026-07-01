@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  cdsCandidateActivationBlocklist,
   isTherapyEngineExcluded,
   offeredPeptideKeys,
+  pathwayExcludedCompounds,
   THERAPY_CATALOG,
   THERAPY_ENGINE_EXCLUSIONS,
   therapyByKey,
+  therapyStaffPolicyBullets,
   websiteTherapies,
 } from "./therapyCatalog";
 
@@ -48,5 +51,25 @@ describe("therapyCatalog", () => {
   it("has unique therapy keys", () => {
     const keys = THERAPY_CATALOG.map((t) => t.key);
     expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("derives pathway exclusions from catalog not_offered entries", () => {
+    const keys = pathwayExcludedCompounds().map((e) => e.key);
+    expect(keys).toContain("ketamine");
+    expect(keys).toContain("mazdutide");
+    expect(keys).not.toContain("retatrutide");
+    expect(keys).not.toContain("bpc-157");
+  });
+
+  it("derives CDS activation blocklist from catalog", () => {
+    const blocklist = cdsCandidateActivationBlocklist();
+    expect(blocklist.has("policy_ketamine")).toBe(true);
+    expect(blocklist.has("policy_retatrutide_ala_carte")).toBe(true);
+  });
+
+  it("exports staff policy bullets for ketamine and retatrutide", () => {
+    const bullets = therapyStaffPolicyBullets();
+    expect(bullets.some((b) => b.includes("Ketamine"))).toBe(true);
+    expect(bullets.some((b) => b.includes("Retatrutide"))).toBe(true);
   });
 });

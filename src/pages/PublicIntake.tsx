@@ -16,7 +16,7 @@ import {
   routeIntakeCare,
   type IntakeInterest,
 } from "@/lib/intakeCareRouting";
-import { REFERRAL_SOURCE_OPTIONS } from "@/lib/referralSources";
+import { resolveLegacyProgramDisplayLabel } from "@/lib/therapyCatalog";
 
 interface PatientInfo {
   id: string;
@@ -709,7 +709,7 @@ export default function PublicIntake() {
                     <strong>Booking interests on file:</strong>{" "}
                     {Array.isArray(patient?.service_interests)
                       ? (patient.service_interests as string[]).map(s =>
-                          s === "ketamine" ? "General Wellness" :
+                          s === "ketamine" ? resolveLegacyProgramDisplayLabel("ketamine") :
                           s === "hormone" ? "Hormone Optimization" :
                           s === "weight_loss" ? "Weight Loss" : s
                         ).join(", ")

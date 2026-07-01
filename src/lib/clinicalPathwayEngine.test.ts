@@ -43,5 +43,7 @@ describe("clinicalPathwayEngine", () => {
     const keys = EXCLUDED_COMPOUNDS.map((e) => e.key);
     expect(keys).toContain("mazdutide");
     expect(keys).toContain("melanotan2");
+    expect(keys).toContain("ketamine");
+    expect(keys).not.toContain("retatrutide");
   });
 });
