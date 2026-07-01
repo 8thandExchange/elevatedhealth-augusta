@@ -70,6 +70,18 @@ export default {
           DEFAULT: "hsl(var(--surface))",
           foreground: "hsl(var(--surface-foreground))",
         },
+        /* Phase 3 Figma-aligned marketing palette */
+        eha: {
+          navy: "#123B52",
+          clinical: "#2B6C94",
+          sky: "#DDECF4",
+          ice: "#F5FAFC",
+          ink: "#10202B",
+          slate: "#667A86",
+          line: "#D8E3E8",
+          success: "#2F7665",
+          warning: "#B7791F",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -63,6 +63,16 @@
     --shadow-glow: 0 10px 40px hsl(199 89% 39% / 0.22);
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* Phase 3 Figma marketing palette */
+    --eha-navy: #123B52;
+    --eha-clinical: #2B6C94;
+    --eha-sky: #DDECF4;
+    --eha-ice: #F5FAFC;
+    --eha-ink: #10202B;
+    --eha-slate: #667A86;
+    --eha-line: #D8E3E8;
+    --eha-success: #2F7665;
+    --eha-warning: #B7791F;
   }
 
   .dark {
@@ -265,6 +275,39 @@
 
 .section-band-navy {
   @apply section-band bg-primary text-primary-foreground;
+}
+
+/* Phase 3 — Elevated Health marketing design system (Figma palette) */
+
+.eha-section-label {
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.75rem;
+  color: var(--eha-clinical);
+}
+
+.eha-card {
+  @apply rounded-xl border bg-white shadow-sm transition-shadow duration-300;
+  border-color: var(--eha-line);
+}
+
+.eha-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.eha-section-ice {
+  background-color: var(--eha-ice);
+}
+
+.eha-section-sky {
+  background-color: var(--eha-sky);
+}
+
+.eha-section-navy {
+  background-color: var(--eha-navy);
+  color: #fff;
 }
 
 /* Site-wide public marketing shell — Navbar + flex main + Footer */

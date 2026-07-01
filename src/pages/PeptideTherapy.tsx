@@ -11,9 +11,8 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, PEPTIDE_PRODUCTS } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { PeptideOutcomeCards } from "@/components/marketing/PeptideOutcomeCards";
+import { ClinicalNoteCard, ProcessTimeline } from "@/components/marketing/design-system";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
-import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
-import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
 import {
   PUBLIC_AVAILABILITY_DISCLAIMER,
 } from "@/lib/clinicalOptimizationCatalog";
@@ -166,31 +165,28 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section id="peptide-categories" className="py-16 md:py-20 bg-background">
+          <section id="peptide-categories" className="py-16 md:py-20 eha-section-ice">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-8">
               <div className="text-center max-w-2xl mx-auto">
-                <p className="section-label mb-3">Care areas</p>
-                <h2 className="font-playfair text-3xl text-foreground">
+                <p className="eha-section-label mb-3">Organized by outcome</p>
+                <h2 className="font-playfair text-3xl text-eha-ink">
                   What we <span className="italic">focus on</span>
                 </h2>
-                <p className="font-jost text-sm text-muted-foreground mt-4">
+                <p className="font-jost text-sm text-eha-slate mt-4">
                   Education only — not a self-serve menu. {PUBLIC_AVAILABILITY_DISCLAIMER}
                 </p>
               </div>
 
-              <div className="rounded-sm border border-accent/30 bg-muted/20 p-6 md:p-8">
-                <h3 className="font-playfair text-xl mb-3">Recovery Peptide Review</h3>
-                <p className="font-jost text-xs text-accent mb-3">
+              <ClinicalNoteCard title="Recovery Peptide Review" variant="warning">
+                <p className="font-jost text-xs text-eha-clinical mb-2">
                   BPC-157 · TB-500 · PDA (provider-selected alternate)
                 </p>
-                <p className="font-jost text-sm text-muted-foreground leading-relaxed mb-4">
-                  {RECOVERY_PEPTIDE_PUBLIC_LANGUAGE}
+                <p>{RECOVERY_PEPTIDE_PUBLIC_LANGUAGE}</p>
+                <p className="mt-2 text-xs">
+                  Requires assessment, provider review, informed consent, and current pharmacy availability. We do not
+                  publish dosing or guarantee healing outcomes.
                 </p>
-                <p className="font-jost text-xs text-muted-foreground">
-                  Requires assessment, provider review, informed consent, and current pharmacy
-                  availability. We do not publish dosing or guarantee healing outcomes.
-                </p>
-              </div>
+              </ClinicalNoteCard>
 
               <PeptideOutcomeCards />
 
@@ -314,17 +310,21 @@ const PeptideTherapy = () => {
             </div>
           </section>
 
-          <section id="how-it-works" className="section-band-surface">
-            <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
-              <StorefrontSectionHeader
-                label="How it works"
-                title={
-                  <>
-                    Four steps. <span className="italic">No surprises.</span>
-                  </>
-                }
+          <section id="how-it-works" className="py-16 md:py-20 bg-white border-y border-eha-line">
+            <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+              <div className="text-center mb-12">
+                <p className="eha-section-label mb-3">How it works</p>
+                <h2 className="font-playfair text-3xl md:text-4xl text-eha-ink">
+                  Four steps. <span className="italic">No surprises.</span>
+                </h2>
+              </div>
+              <ProcessTimeline
+                steps={steps.map((s) => ({
+                  step: s.n,
+                  title: s.title,
+                  description: s.body,
+                }))}
               />
-              <StorefrontStepCards steps={steps} />
             </div>
           </section>
 

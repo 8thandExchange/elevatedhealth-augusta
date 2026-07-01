@@ -1,9 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card";
 import {
   peptideOutcomeGroups,
   therapyByKey,
   type PeptideOutcomeGroup,
 } from "@/lib/therapyCatalog";
+import { OutcomeGroupCard } from "./design-system";
 
 function therapyLabel(key: string): string | null {
   const t = therapyByKey(key);
@@ -23,21 +23,14 @@ export function PeptideOutcomeCards() {
 
   return (
     <div className="grid sm:grid-cols-2 gap-6">
-      {groups.map((group) => {
-        const labels = visibleTherapyLabels(group);
-        return (
-          <Card key={group.id} className="border-border/60">
-            <CardContent className="p-6 space-y-3">
-              <h3 className="font-playfair text-lg text-foreground">{group.title}</h3>
-              <p className="font-jost text-xs text-accent">{labels.join(" · ")}</p>
-              <p className="font-jost text-sm text-muted-foreground leading-relaxed">{group.summary}</p>
-              <p className="font-jost text-xs text-muted-foreground italic">
-                Provider-reviewed · physician-guided · your provider determines fit
-              </p>
-            </CardContent>
-          </Card>
-        );
-      })}
+      {groups.map((group) => (
+        <OutcomeGroupCard
+          key={group.id}
+          title={group.title}
+          therapyLabels={visibleTherapyLabels(group)}
+          summary={group.summary}
+        />
+      ))}
     </div>
   );
 }

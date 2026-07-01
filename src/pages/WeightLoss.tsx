@@ -28,6 +28,7 @@ import ElevatedComboUpsell from "@/components/marketing/ElevatedComboUpsell";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { BodyRecompositionTeaser } from "@/components/marketing/BodyRecompositionTeaser";
 import { GlpTherapyOverviewCards } from "@/components/marketing/GlpTherapyOverviewCards";
+import { ClinicalNoteCard } from "@/components/marketing/design-system";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ArrowRight } from "lucide-react";
 import {
@@ -235,19 +236,23 @@ const WeightLoss = () => {
             </div>
           </section>
 
-          <section className="py-16 md:py-20 bg-background border-y border-border">
+          <section className="py-16 md:py-20 eha-section-ice border-y border-eha-line">
             <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-8">
               <div className="text-center max-w-2xl mx-auto">
-                <p className="section-label mb-3">GLP-1 options</p>
-                <h2 className="font-playfair text-2xl md:text-3xl text-foreground mb-3">
-                  Physician-guided weight-loss therapies
+                <p className="eha-section-label mb-3">Compare GLP-1 options</p>
+                <h2 className="font-playfair text-2xl md:text-3xl text-eha-ink mb-3">
+                  Semaglutide · Tirzepatide · Retatrutide
                 </h2>
-                <p className="font-jost text-sm text-muted-foreground">
-                  Semaglutide and tirzepatide are our headline programs. Retatrutide may be considered only when
-                  your physician selects it within the GLP-1 lane after assessment — never self-selected online.
+                <p className="font-jost text-sm text-eha-slate">
+                  Semaglutide and tirzepatide are our headline ELEVATED GLP-1 programs. Retatrutide (
+                  {MEDICATION_FILLS.retatrutide.displayPrice}) may be considered only when your physician selects
+                  it after assessment — never self-selected online.
                 </p>
               </div>
               <GlpTherapyOverviewCards />
+              <ClinicalNoteCard variant="default">
+                Program pricing includes medication when prescribed, monthly clinical check-ins, quarterly labs, and unlimited messaging. Individual results vary — we do not promise specific weight-loss amounts.
+              </ClinicalNoteCard>
             </div>
           </section>
 

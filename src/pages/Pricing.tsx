@@ -15,7 +15,12 @@ import {
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { useBooking } from "@/contexts/BookingContext";
 import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncludedPillars";
-import { CORE_SERVICES, ELEVATED_PROGRAMS, MEDICATION_FILLS } from "@/lib/stripeConfig";
+import {
+  ClinicalNoteCard,
+  SectionHero,
+  TreatmentCard,
+} from "@/components/marketing/design-system";
+import { CORE_SERVICES, ELEVATED_PROGRAMS, GLP1_PROGRAM_VARIANTS, MEDICATION_FILLS } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { ketamineNotOfferedPatientCopy } from "@/lib/therapyCatalog";
 import {
@@ -236,77 +241,72 @@ const Pricing = () => {
 
       <main id="main-content" className="flex-1 public-page-shell">
 
-        {/* Hero Section - Reduced padding */}
-        <section className="relative py-16 lg:py-20 bg-gradient-to-b from-secondary to-background">
-          <div className="container mx-auto px-4 text-center">
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 border-accent/30 text-accent font-jost">
-              Transparent Pricing
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair text-foreground mb-6">
-              Investment in Your <span className="text-accent">Wellness</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 font-jost">
-              No hidden fees. No surprise bills. Just honest pricing for 
-              transformative healthcare that fits your life and budget.
-            </p>
-
-            {/* Trust Badges */}
-            <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-10">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Shield className="w-5 h-5 text-accent" />
-                <span>Insurance Options</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="w-5 h-5 text-accent" />
-                <span>Cancel Anytime</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <BadgeCheck className="w-5 h-5 text-accent" />
-                <span>Board-Certified Providers</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Sparkles className="w-5 h-5 text-accent" />
-                <span>Pay in 4 with Klarna/Affirm</span>
-              </div>
+        {/* Hero Section */}
+        <SectionHero
+          eyebrow="Transparent pricing"
+          title={
+            <>
+              Investment in your <span className="italic">wellness</span>
+            </>
+          }
+          lead="No hidden fees. No surprise bills. Honest pricing for physician-led care that fits your life and budget."
+          variant="gradient"
+          compact
+          className="border-b-0"
+        >
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-10 text-sm text-eha-slate">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-eha-clinical" />
+              <span>Insurance documentation available</span>
             </div>
-
-            {/* Category Pills */}
-            <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-6">
-              {serviceCategories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-jost transition-all duration-300 ${
-                    activeCategory === cat.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-card border border-border hover:border-accent/50 text-foreground"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
+            <div className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-eha-clinical" />
+              <span>Cancel anytime</span>
             </div>
-
-            {/* Pricing Comparison CTA */}
-            <Link 
-              to="/pricing-comparison" 
-              className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent/80 transition-colors"
-            >
-              <span>Compare Membership vs. ? La Carte Pricing</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <BadgeCheck className="w-5 h-5 text-eha-clinical" />
+              <span>Board-certified providers</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-eha-clinical" />
+              <span>Pay in 4 with Klarna/Affirm</span>
+            </div>
           </div>
-        </section>
 
-        <section className="py-14 bg-muted/10 border-y border-border">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-6">
+            {serviceCategories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-sm font-jost transition-all duration-300 ${
+                  activeCategory === cat.id
+                    ? "bg-eha-navy text-white"
+                    : "bg-white border border-eha-line hover:border-eha-clinical/50 text-eha-ink"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          <Link
+            to="/pricing-comparison"
+            className="inline-flex items-center gap-2 text-sm text-eha-clinical hover:text-eha-clinical/80 transition-colors"
+          >
+            <span>Compare membership vs. à la carte pricing</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </SectionHero>
+
+        <section className="py-14 eha-section-ice border-y border-eha-line">
           <div className="container mx-auto px-4 max-w-6xl">
             <EverythingIncludedPillars className="border-0 bg-transparent shadow-none mb-12" />
             <div className="text-center mb-10">
-              <p className="section-label mb-2">ELEVATED Programs</p>
-              <h2 className="font-playfair text-3xl md:text-4xl text-foreground mb-3">
+              <p className="eha-section-label mb-2">ELEVATED Programs</p>
+              <h2 className="font-playfair text-3xl md:text-4xl text-eha-ink mb-3">
                 One monthly price. Everything that matters.
               </h2>
-              <p className="text-muted-foreground font-jost text-sm max-w-2xl mx-auto leading-relaxed">
+              <p className="text-eha-slate font-jost text-sm max-w-2xl mx-auto leading-relaxed">
                 Every new patient starts with a {CORE_SERVICES.wellnessAssessment.displayPrice}{" "}
                 {CORE_SERVICES.wellnessAssessment.name.toLowerCase()} and baseline labs (
                 {CORE_SERVICES.comprehensivePanel.displayPrice} comprehensive panel, or{" "}
@@ -324,26 +324,30 @@ const Pricing = () => {
                 ] as const
               ).map(([key, href]) => {
                 const p = ELEVATED_PROGRAMS[key];
+                const description =
+                  key === "wellness"
+                    ? "Two signature IV drips every month, monthly check-in, unlimited messaging, priority booking, and 20% off boosters & à la carte. No medication or labs bundled — this is the IV membership."
+                    : key === "glp1"
+                      ? `Semaglutide ${GLP1_PROGRAM_VARIANTS.semaglutide.displayPrice} · Tirzepatide ${GLP1_PROGRAM_VARIANTS.tirzepatide.displayPrice}. Medication when prescribed, monthly check-ins, quarterly labs, unlimited messaging. Retatrutide (${MEDICATION_FILLS.retatrutide.displayPrice}) physician-selected only.`
+                      : "Medication included where prescribed, monthly check-in with our clinical team, quarterly labs, lab review when needed, unlimited messaging.";
                 return (
-                  <Card key={key} className="border-border flex flex-col">
-                    <CardHeader className="pb-2">
-                      <h3 className="font-playfair text-xl text-foreground">{p.name}</h3>
-                    </CardHeader>
-                    <CardContent className="flex flex-col flex-grow pt-0">
-                      <p className="text-3xl font-playfair text-foreground mb-4">{p.displayPrice}</p>
-                      <p className="text-xs text-muted-foreground font-jost flex-grow mb-4 leading-relaxed">
-                        {key === "wellness"
-                          ? "Two signature IV drips every month, monthly check-in with our clinical team, unlimited messaging, priority booking, and 20% off boosters & ? la carte. No medication or labs bundled ? this is the IV membership."
-                          : "Medication included where prescribed, monthly check-in with our clinical team, quarterly labs, lab review when needed, unlimited messaging."}
-                      </p>
-                      <Button variant="outline" asChild className="mt-auto rounded-full">
-                        <Link to={href}>View program</Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  <TreatmentCard
+                    key={key}
+                    title={p.name}
+                    description={description}
+                    href={href}
+                    cta="View program"
+                    price={p.displayPrice}
+                    priceLabel="From"
+                  />
                 );
               })}
             </div>
+            <ClinicalNoteCard className="mt-10" title="GLP-1 program pricing">
+              Semaglutide and tirzepatide are molecule-priced within ELEVATED GLP-1 — your monthly rate stays
+              consistent as you titrate within your molecule. Retatrutide is provider-gated at{" "}
+              {MEDICATION_FILLS.retatrutide.displayPrice} when your physician selects it — not self-serve online.
+            </ClinicalNoteCard>
           </div>
         </section>
 
