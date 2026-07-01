@@ -91,7 +91,7 @@ const faqs = [
   },
   {
     q: "What if standard weight loss isn't enough?",
-    a: "Some patients plateau or need fat loss without losing lean tissue. Advanced body recomposition protocols are physician-directed, phased, and discussed in person after your Wellness Assessment and labs — not offered as a walk-in or online catalog item.",
+    a: "Advanced body recomposition support is physician-directed, phased, and reviewed in person after your Wellness Assessment and labs — available only when your provider determines it is appropriate, not as a walk-in or online catalog item.",
   },
 ];
 

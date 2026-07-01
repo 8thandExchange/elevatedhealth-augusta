@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useBooking } from "@/contexts/BookingContext";
+import { TREATMENT_GOAL_PATHS, therapyLabelsForGoal } from "@/lib/treatmentArchitecture";
 import { SERVICE_PILLARS } from "@/lib/marketingPillars";
 import { CORE_SERVICES } from "@/lib/stripeConfig";
 import { ArrowRight } from "lucide-react";
@@ -84,6 +85,48 @@ const Services = () => {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+
+              <div className="mt-16 space-y-6">
+                <div className="text-center max-w-2xl mx-auto">
+                  <p className="section-label mb-3">Start with your goal</p>
+                  <h2 className="font-playfair text-2xl md:text-3xl text-foreground mb-3">
+                    Which path fits you?
+                  </h2>
+                  <p className="font-jost text-sm text-muted-foreground">
+                    We organize care by what you want to improve — your physician builds an individualized plan
+                    after assessment and labs when indicated.
+                  </p>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {TREATMENT_GOAL_PATHS.map((path) => {
+                    const labels = therapyLabelsForGoal(path);
+                    return (
+                      <Card key={path.id} className="border-border/50">
+                        <CardContent className="p-6 flex flex-col h-full">
+                          <h3 className="font-playfair text-xl text-foreground mb-2">{path.goal}</h3>
+                          <p className="font-jost text-sm text-muted-foreground leading-relaxed flex-1 mb-4">
+                            {path.summary}
+                          </p>
+                          {labels.length > 0 && (
+                            <p className="font-jost text-xs text-muted-foreground mb-3">
+                              <span className="font-medium text-foreground">May include: </span>
+                              {labels.join(" · ")}
+                            </p>
+                          )}
+                          <p className="font-jost text-xs text-muted-foreground/90 mb-4 italic">
+                            {path.providerNote}
+                          </p>
+                          <Button asChild variant="outline" className="font-jost w-fit">
+                            <Link to={path.href}>
+                              {path.cta} <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                            </Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="mt-16 text-center rounded-2xl border border-border/50 bg-muted/20 p-10">

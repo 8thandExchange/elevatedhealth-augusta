@@ -4,6 +4,7 @@
  */
 export {
   cdsCandidateActivationBlocklist,
+  glpTherapyKeys,
   isLegacySunsettedService,
   isTherapyEngineExcluded,
   isTherapyNotOffered,
@@ -13,6 +14,7 @@ export {
   legacyProgramDisplayLabels,
   offeredPeptideKeys,
   pathwayExcludedCompounds,
+  providerGatedTherapies,
   recoveryPeptidePublicLanguage,
   recoveryPeptideShortNames,
   recoveryPeptideTherapies,
@@ -23,6 +25,7 @@ export {
   therapyEngineExcludedKeys,
   therapyStaffPolicyBullets,
   THERAPY_CATALOG,
+  therapiesByCategory,
   websiteTherapies,
 } from "../../supabase/functions/_shared/therapy-catalog.ts";
 

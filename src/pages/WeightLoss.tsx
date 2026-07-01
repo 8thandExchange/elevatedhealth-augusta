@@ -27,6 +27,7 @@ import { EverythingIncludedPillars } from "@/components/marketing/EverythingIncl
 import ElevatedComboUpsell from "@/components/marketing/ElevatedComboUpsell";
 import { MembershipComparison } from "@/components/marketing/MembershipComparison";
 import { BodyRecompositionTeaser } from "@/components/marketing/BodyRecompositionTeaser";
+import { GlpTherapyOverviewCards } from "@/components/marketing/GlpTherapyOverviewCards";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ArrowRight } from "lucide-react";
 import {
@@ -231,6 +232,22 @@ const WeightLoss = () => {
                   <span>Transparent program pricing</span>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section className="py-16 md:py-20 bg-background border-y border-border">
+            <div className="container mx-auto px-6 lg:px-8 max-w-5xl space-y-8">
+              <div className="text-center max-w-2xl mx-auto">
+                <p className="section-label mb-3">GLP-1 options</p>
+                <h2 className="font-playfair text-2xl md:text-3xl text-foreground mb-3">
+                  Physician-guided weight-loss therapies
+                </h2>
+                <p className="font-jost text-sm text-muted-foreground">
+                  Semaglutide and tirzepatide are our headline programs. Retatrutide may be considered only when
+                  your physician selects it within the GLP-1 lane after assessment — never self-selected online.
+                </p>
+              </div>
+              <GlpTherapyOverviewCards />
             </div>
           </section>
 

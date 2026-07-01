@@ -196,6 +196,48 @@ export const THERAPY_CATALOG: TherapyCatalogEntry[] = [
     catalogSlug: "cjc-ipamorelin",
   },
   {
+    key: "tesamorelin",
+    name: "Tesamorelin",
+    category: "peptide_vitality",
+    patientFacingAvailability: "website_consult_gated",
+    providerGated: true,
+    description:
+      "Physician-guided growth-hormone axis support for body composition and metabolic health after assessment.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Monthly peptide program. Research Peptide Consent when clinically indicated.",
+    catalogSlug: "tesamorelin",
+  },
+  {
+    key: "ghk-cu",
+    name: "GHK-Cu Topical",
+    category: "peptide_aesthetic",
+    patientFacingAvailability: "website_consult_gated",
+    providerGated: true,
+    description:
+      "Topical peptide support for skin, collagen, and transformation goals — selected by your provider after review.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Topical preferred over injectable GHK-Cu per formulary policy.",
+    catalogSlug: "ghk_cu_topical",
+  },
+  {
+    key: "pt-141",
+    name: "PT-141 (Bremelanotide)",
+    category: "sexual_wellness",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description:
+      "FDA-approved libido support (Vyleesi class) when clinically appropriate — physician-guided after assessment.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Sexual wellness lane hidden at launch; offered when clinically appropriate.",
+    catalogSlug: "pt_141",
+  },
+  {
     key: "mazdutide",
     name: "Mazdutide",
     category: "formulary_excluded",
@@ -388,6 +430,22 @@ export function legacyProgramDisplayLabels(): Record<string, string> {
     if (t.legacyProgramAlias) out[t.key] = t.legacyProgramAlias;
   }
   return out;
+}
+
+export function therapiesByCategory(category: TherapyCategory): TherapyCatalogEntry[] {
+  return THERAPY_CATALOG.filter((t) => t.category === category);
+}
+
+export function providerGatedTherapies(): TherapyCatalogEntry[] {
+  return THERAPY_CATALOG.filter(
+    (t) => t.providerGated && t.patientFacingAvailability !== "not_offered",
+  );
+}
+
+export function glpTherapyKeys(): string[] {
+  return THERAPY_CATALOG.filter(
+    (t) => t.category === "glp1_weight_loss" && t.patientFacingAvailability !== "not_offered" && t.key !== "policy_retatrutide_ala_carte",
+  ).map((t) => t.key);
 }
 
 export function isLegacySunsettedService(serviceKey: string): boolean {
