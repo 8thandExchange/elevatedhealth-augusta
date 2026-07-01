@@ -197,7 +197,7 @@ function recommendWeightLoss(advanced: boolean): PathwayRecommendation {
       ? "Your labs support advanced, physician-directed weight management within our GLP-1 program — your physician may layer lean-mass and metabolic support, and in select cases an investigational option, only as your labs and tolerance support each step, under close oversight."
       : "We'll start with a GLP-1 program: one weekly injection, RN check-ins, and labs included while you're enrolled. Semaglutide is our default; tirzepatide if clinically appropriate.",
     staffScript: advanced
-      ? "Lead with the GLP-1 program (semaglutide $349/mo, tirzepatide $449/mo). Advanced recomposition support — including gated, physician-selected retatrutide — is reviewed in person under the GLP-1 consent. Never the lead, never advertised."
+      ? "Lead with the GLP-1 program (semaglutide $349/mo, tirzepatide $449/mo). Advanced recomposition support — including gated, physician-selected retatrutide ($499/mo when selected) — is reviewed in person under the GLP-1 consent. Never the lead, never advertised."
       : "Lead with the GLP-1 program (semaglutide $349/mo, tirzepatide $449/mo). Quote $79 consult + $299 Expanded labs for month one.",
     upsell: advanced ? undefined : "If BMI >30 or prior GLP failure, flag advanced recomposition support at results review.",
     excludedAlternatives: ["mazdutide", "cagrilintide blends"],

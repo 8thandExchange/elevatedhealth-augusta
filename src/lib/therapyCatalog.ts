@@ -3,6 +3,7 @@
  * @see supabase/functions/_shared/therapy-catalog.ts
  */
 export {
+  activeTherapyCatalogEntries,
   cdsCandidateActivationBlocklist,
   glpTherapyKeys,
   isLegacySunsettedService,
@@ -14,23 +15,28 @@ export {
   legacyProgramDisplayLabels,
   offeredPeptideKeys,
   pathwayExcludedCompounds,
+  peptideOutcomeGroups,
+  PEPTIDE_OUTCOME_GROUPS,
   providerGatedTherapies,
   recoveryPeptidePublicLanguage,
   recoveryPeptideShortNames,
   recoveryPeptideTherapies,
   resolveLegacyProgramDisplayLabel,
   resolveLegacyProgramKey,
+  therapiesByCatalogKey,
+  therapiesByCategory,
+  therapiesForPageRoute,
   therapyByCatalogSlug,
   therapyByKey,
   therapyEngineExcludedKeys,
   therapyStaffPolicyBullets,
   THERAPY_CATALOG,
-  therapiesByCategory,
   websiteTherapies,
 } from "../../supabase/functions/_shared/therapy-catalog.ts";
 
 export type {
   PatientFacingAvailability,
+  PeptideOutcomeGroup,
   TherapyCatalogEntry,
   TherapyCategory,
 } from "../../supabase/functions/_shared/therapy-catalog.ts";

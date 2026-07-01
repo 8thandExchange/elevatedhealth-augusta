@@ -10,12 +10,12 @@ import { useBooking } from "@/contexts/BookingContext";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { CORE_SERVICES, PEPTIDE_PRODUCTS } from "@/lib/stripeConfig";
 import { MEMBER_DISCOUNT_PERCENT } from "@/lib/pricing";
+import { PeptideOutcomeCards } from "@/components/marketing/PeptideOutcomeCards";
 import { PatternCSplit } from "@/components/marketing/PatternCSplit";
 import { StorefrontStepCards } from "@/components/marketing/StorefrontStepCards";
 import { StorefrontSectionHeader } from "@/components/marketing/StorefrontSectionHeader";
 import {
   PUBLIC_AVAILABILITY_DISCLAIMER,
-  PUBLIC_PEPTIDE_CATEGORIES,
 } from "@/lib/clinicalOptimizationCatalog";
 import { RECOVERY_PEPTIDE_PUBLIC_LANGUAGE } from "@/lib/recoveryPeptideCareLane";
 import { MARKETING_IMAGES } from "@/lib/marketingImages";
@@ -192,23 +192,12 @@ const PeptideTherapy = () => {
                 </p>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-6">
-                {PUBLIC_PEPTIDE_CATEGORIES.filter((c) => c.id !== "recovery").map((cat) => (
-                  <div
-                    key={cat.id}
-                    id={cat.id === "sexual" ? "sexual-wellness" : undefined}
-                    className="border border-border rounded-sm p-6 bg-card/40"
-                  >
-                    <h3 className="font-playfair text-lg mb-2">{cat.title}</h3>
-                    <p className="font-jost text-xs text-accent mb-2">{cat.examples.join(" · ")}</p>
-                    <p className="font-jost text-sm text-muted-foreground">{cat.note}</p>
-                    {cat.id === "glp1_metabolic" && (
-                      <Button asChild variant="link" className="font-jost text-accent px-0 mt-2 h-auto">
-                        <Link to="/weight-loss">GLP-1 program detail →</Link>
-                      </Button>
-                    )}
-                  </div>
-                ))}
+              <PeptideOutcomeCards />
+
+              <div className="text-center pt-4">
+                <Button asChild variant="link" className="font-jost text-accent">
+                  <Link to="/weight-loss">GLP-1 medical weight loss →</Link>
+                </Button>
               </div>
             </div>
           </section>

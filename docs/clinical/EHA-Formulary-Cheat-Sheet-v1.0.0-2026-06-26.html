@@ -6,19 +6,26 @@
   <title>Elevated Health Augusta — Formulary &amp; Pricing Cheat Sheet</title>
   <style>
   @page { size: letter portrait; margin: 0.45in; }
+  
   :root {
-    --charcoal: #2A2826;
-    --camel: #B8956A;
-    --bone: #F2EBDC;
-    --surface: #faf8f4;
-    --muted: #6b6560;
-    --border: #d4cfc6;
+    --navy: #00477E;
+    --navy-dark: #002D4F;
+    --steel: #0B7BB8;
+    --steel-light: #3D9FD1;
+    --paper: #FFFFFF;
+    --ink: #0B3555;
+    --surface: #F4F8FB;
+    --muted: #5B6770;
+    --border: #C9D4DD;
+    --green: #1a5f1a;
+    --red: #8b2e2e;
   }
+
   * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color: var(--charcoal);
-    background: white;
+    font-family: 'Jost', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
     margin: 0;
     padding: 0;
     font-size: 8.5pt;
@@ -31,14 +38,14 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     padding: 2rem;
     page-break-after: always;
   }
   .cover .mark {
     width: 56px; height: 56px;
-    border: 2px solid var(--camel);
+    border: 2px solid var(--steel);
     border-radius: 3px;
     font-family: Georgia, 'Times New Roman', serif;
     font-style: italic;
@@ -53,7 +60,7 @@
     margin: 0.25rem 0;
     max-width: 28rem;
   }
-  .cover h1 em { font-style: italic; color: var(--camel); }
+  .cover h1 em { font-style: italic; color: var(--steel); }
   .cover .sub {
     font-size: 0.95rem;
     opacity: 0.9;
@@ -70,7 +77,7 @@
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--camel);
+    color: var(--steel);
   }
   .page {
     padding: 0.1in 0;
@@ -81,7 +88,7 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    border-bottom: 2px solid var(--camel);
+    border-bottom: 2px solid var(--steel);
     padding-bottom: 0.35rem;
     margin-bottom: 0.65rem;
     page-break-after: avoid;
@@ -104,7 +111,7 @@
     font-family: Georgia, serif;
     font-size: 0.82rem;
     margin: 0.65rem 0 0.35rem;
-    color: var(--camel);
+    color: var(--steel);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     page-break-after: avoid;
@@ -142,7 +149,7 @@
   }
   .membership-card {
     border: 1px solid var(--border);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     border-radius: 3px;
     padding: 0.45rem 0.55rem;
     background: var(--surface);
@@ -156,7 +163,7 @@
   .membership-card .price {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--camel);
+    color: var(--steel);
     margin: 0.15rem 0;
   }
   .membership-card .detail {
@@ -164,7 +171,7 @@
     color: var(--muted);
     line-height: 1.3;
   }
-  .membership-card .detail strong { color: var(--charcoal); font-weight: 600; }
+  .membership-card .detail strong { color: var(--navy); font-weight: 600; }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -179,20 +186,20 @@
     vertical-align: top;
   }
   th {
-    background: var(--charcoal);
-    color: var(--bone);
+    background: var(--navy);
+    color: var(--paper);
     font-weight: 600;
     font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  tr:nth-child(even) td { background: rgba(184, 149, 106, 0.06); }
+  tr:nth-child(even) td { background: rgba(10, 106, 161, 0.04); }
   .price-col { font-weight: 600; white-space: nowrap; }
   .member-col { color: #1a5f1a; font-weight: 600; white-space: nowrap; }
   .callout {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--camel);
+    border-left: 3px solid var(--steel);
     padding: 0.4rem 0.55rem;
     font-size: 0.68rem;
     margin: 0.4rem 0;
@@ -311,7 +318,7 @@
     <div class="two-col">
       <div>
         <h3>Visits &amp; labs</h3>
-        <table><thead><tr><th>Service</th><th>Price</th><th>Notes</th></tr></thead><tbody><tr><td>Wellness Assessment</td><td>$79</td><td>RN intake · universal front door</td></tr><tr><td>Maintenance Visit</td><td>$79</td><td>RN follow-up under standing orders</td></tr><tr><td>Medical Review</td><td>$149</td><td>Physician · complex cases / patient-requested</td></tr><tr><td>Physician Phone Follow-Up</td><td>$99</td><td>Physician phone · non-members</td></tr><tr><td>Rebooking Fee</td><td>$99</td><td>Late cancel / no-show</td></tr><tr><td>Comprehensive Wellness Panel</td><td>$199</td><td>Hormone baseline · member quarterly included on Rx programs</td></tr><tr><td>Expanded Panel</td><td>$299</td><td>GLP-1 / metabolic baseline · member quarterly on GLP-1</td></tr></tbody></table>
+        <table><thead><tr><th>Service</th><th>Price</th><th>Notes</th></tr></thead><tbody><tr><td>Wellness Assessment</td><td>$79</td><td>RN intake · universal front door</td></tr><tr><td>Maintenance Visit</td><td>$79</td><td>RN follow-up under standing orders</td></tr><tr><td>Medical Review</td><td>$149</td><td>Physician · complex cases / patient-requested</td></tr><tr><td>Physician Phone Follow-Up</td><td>$99</td><td>Physician phone · non-members</td></tr><tr><td>Rebooking Fee</td><td>$99</td><td>Late cancel / no-show</td></tr><tr><td>Comprehensive Wellness Panel</td><td>$199</td><td>Foundation 8-test panel · general wellness baseline</td></tr><tr><td>Expanded Panel</td><td>$299</td><td>Hormone (TRT/HRT) · GLP-1/weight · member quarterly included on Rx programs</td></tr></tbody></table>
       </div>
       <div>
         <h3>IV boosters (add-ons)</h3>
@@ -321,6 +328,15 @@
     </div>
     <h3>IV signature drips (walk-in · RN-administered)</h3>
     <table><thead><tr><th>Drip</th><th>Walk-in</th><th>Member</th><th>Category</th><th>Ingredients</th></tr></thead><tbody><tr><td>The Resurrection</td><td>$139</td><td>$111</td><td>Recovery</td><td>Saline · B-Complex · Zofran · Toradol</td></tr><tr><td>The Meyers</td><td>$159</td><td>$127</td><td>Wellness</td><td>Saline · Magnesium · B-Complex · Calcium</td></tr><tr><td>Beast Mode</td><td>$169</td><td>$135</td><td>Performance</td><td>Amino Acids · B12 · Magnesium · Taurine</td></tr><tr><td>The Shield</td><td>$149</td><td>$119</td><td>Immunity</td><td>Saline · Vitamin C · Zinc · B-Complex</td></tr><tr><td>The Glow</td><td>$159</td><td>$127</td><td>Glow</td><td>Saline · Biotin · Vitamin C · Glutathione</td></tr></tbody></table>
+    
+    <h3 style="margin-top:0">IV medication protocols (clinical seed)</h3>
+    <table>
+      <thead><tr><th>Protocol</th><th>Dose · base</th><th>Route · duration</th><th>Checks / monitoring</th></tr></thead>
+      <tbody><tr><td>Myers Cocktail Administration</td><td>Per formulation above · Magnesium chloride 1g, calcium gluconate 100mg, B-complex 1mL, B12 1mg, B5 250mg, B6 100mg, vitamin C 5g, in 250mL normal saline.</td><td>IV infusion · 30–45 minutes</td><td>Verify identity · Two RN checks on bag labeling · Monitor: VS q15min first 30min · ⚠ 3 open reviewer note(s)</td></tr><tr><td>NAD+ 250mg Infusion</td><td>250mg · NAD+ 250mg in 500mL normal saline.</td><td>IV infusion · 60–90 min</td><td>Baseline VS · Pregnancy status if applicable · Monitor: VS per IV lounge policy · ⚠ 3 open reviewer note(s)</td></tr><tr><td>NAD+ 500mg Infusion</td><td>500mg · NAD+ 500mg in 500mL normal saline.</td><td>IV infusion · 90–120 min</td><td>Review prior NAD+ sessions · VS baseline · Monitor: VS q15min early · ⚠ 2 open reviewer note(s)</td></tr><tr><td>Glutathione Push</td><td>1–2g per order · Glutathione 1–2g IV push.</td><td>IV push · 5–10 min</td><td>Verify dose on order · Patent IV · Monitor: Continuous observation · ⚠ 2 open reviewer note(s)</td></tr></tbody>
+    </table>
+    <div class="callout callout-warn" style="margin-top:0.4rem">
+      <strong>Rx add-ons (Toradol · Zofran · Benadryl · Pepcid):</strong> protocol drafts pending Dr. Akers signature — do not administer until signed.
+    </div>
     
     <div class="footer-note">Elevated Health Augusta · (706) 760-3470 · Internal use only</div>
   </section>
@@ -375,7 +391,7 @@
     </div>
     
     <ul class="policy-list">
-      <li>Medication is INCLUDED in ELEVATED TRT / HRT / GLP-1 — never say “plus pharmacy costs.”</li><li>NAD+ is ONLY the $50 IV booster push — no peptide NAD+, no standalone NAD+ infusion.</li><li>Ketamine / Spravato — not offered (legacy).</li><li>Retatrutide — physician-selected within GLP-1 lane only; full consent; never headline or advertise.</li><li>Injectable TRT (cypionate) — not offered. Anastrozole and HCG — not offered.</li><li>Cash pay · no insurance billing · itemized receipts &amp; superbills on request.</li><li>Benefits end on membership cancel: quarterly labs revert to full price; 20% discount ends.</li>
+      <li>Medication is INCLUDED in ELEVATED TRT / HRT / GLP-1 — never say “plus pharmacy costs.”</li><li>NAD+ is ONLY the $50 IV booster push — no peptide NAD+, no standalone NAD+ infusion.</li><li>Ketamine / Spravato — not offered.</li><li>Retatrutide — $499/mo · physician-selected within GLP-1 lane only; full consent; never headline or advertise.</li><li>Injectable TRT (cypionate) — not offered. Anastrozole and HCG — not offered.</li><li>Cash pay · no insurance billing · itemized receipts &amp; superbills on request.</li><li>Benefits end on membership cancel: quarterly labs revert to full price; 20% discount ends.</li>
     </ul>
     <div class="callout" style="margin-top: 0.75rem;">
       <strong>Member discount math:</strong> non-member price × 0.80 on all eligible à la carte.

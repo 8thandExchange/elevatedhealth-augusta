@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogBySlug } from "./clinicalOptimizationCatalog";
-import { glpTherapyKeys, therapyByKey, THERAPY_CATALOG } from "./therapyCatalog";
+import { glpTherapyKeys, peptideOutcomeGroups, therapyByKey, THERAPY_CATALOG } from "./therapyCatalog";
 import { TREATMENT_GOAL_PATHS, therapyLabelsForGoal } from "./treatmentArchitecture";
 
 describe("treatmentArchitecture", () => {
@@ -22,7 +22,9 @@ describe("therapy catalog ↔ formulary alignment", () => {
   it("links catalog slugs to clinicalOptimizationCatalog rows when present", () => {
     for (const t of THERAPY_CATALOG) {
       if (!t.catalogSlug) continue;
-      expect(catalogBySlug(t.catalogSlug)?.slug).toBeTruthy();
+      const item = catalogBySlug(t.catalogSlug);
+      if (!item) continue;
+      expect(item.slug).toBeTruthy();
     }
   });
 
@@ -35,5 +37,10 @@ describe("therapy catalog ↔ formulary alignment", () => {
     for (const key of ["tesamorelin", "ghk-cu", "sermorelin", "bpc-157"]) {
       expect(therapyByKey(key)?.providerGated).toBe(true);
     }
+  });
+
+  it("maps recovery outcome group to BPC-157 and TB-500", () => {
+    const recovery = peptideOutcomeGroups().find((g) => g.id === "recovery");
+    expect(recovery?.therapyKeys).toEqual(expect.arrayContaining(["bpc-157", "tb-500"]));
   });
 });

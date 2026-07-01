@@ -737,3 +737,14 @@ export function labPanelLabel(slug: string | null): string {
   if (!slug) return "—";
   return LAB_PANEL_DISPLAY_NAMES[slug as keyof typeof LAB_PANEL_DISPLAY_NAMES] ?? slug;
 }
+
+/** Bridge canonical therapy catalog → optimization catalog slug */
+export function therapyTruthForOptimizationSlug(slug: string) {
+  return therapyByCatalogSlug(slug);
+}
+
+/** True when canonical catalog marks this slug as not offered */
+export function optimizationSlugBlockedByTherapyTruth(slug: string): boolean {
+  const truth = therapyTruthForOptimizationSlug(slug);
+  return truth?.patientFacingAvailability === "not_offered";
+}

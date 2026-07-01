@@ -32,6 +32,14 @@ describe("therapyCatalog", () => {
     expect(r?.engineHardExcluded).toBe(false);
     expect(r?.onWebsite).toBe(false);
     expect(r?.inStripePricing).toBe(true);
+    expect(r?.displayPrice).toBe("$499/mo");
+  });
+
+  it("includes expanded catalog categories from Phase 2B", () => {
+    expect(therapyByKey("elevated-trt")?.displayPrice).toBe("$249/mo");
+    expect(therapyByKey("iv-nad-booster")?.pageRoute).toBe("/iv-lounge");
+    expect(therapyByKey("ss-31")?.providerGated).toBe(true);
+    expect(THERAPY_CATALOG.length).toBeGreaterThanOrEqual(35);
   });
 
   it("lists active recovery peptides as offered and provider-gated", () => {

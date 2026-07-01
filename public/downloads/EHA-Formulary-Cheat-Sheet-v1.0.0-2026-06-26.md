@@ -45,8 +45,8 @@
 | Medical Review | $149 | Physician · complex cases / patient-requested |
 | Physician Phone Follow-Up | $99 | Physician phone · non-members |
 | Rebooking Fee | $99 | Late cancel / no-show |
-| Comprehensive Wellness Panel | $199 | Hormone baseline · member quarterly included on Rx programs |
-| Expanded Panel | $299 | GLP-1 / metabolic baseline · member quarterly on GLP-1 |
+| Comprehensive Wellness Panel | $199 | Foundation 8-test panel · general wellness baseline |
+| Expanded Panel | $299 | Hormone (TRT/HRT) · GLP-1/weight · member quarterly included on Rx programs |
 
 ## IV Lounge (Lane A — walk-in)
 
@@ -134,8 +134,8 @@
 
 - Medication is INCLUDED in ELEVATED TRT / HRT / GLP-1 — never say “plus pharmacy costs.”
 - NAD+ is ONLY the $50 IV booster push — no peptide NAD+, no standalone NAD+ infusion.
-- Ketamine / Spravato — not offered (legacy).
-- Retatrutide — physician-selected within GLP-1 lane only; full consent; never headline or advertise.
+- Ketamine / Spravato — not offered.
+- Retatrutide — $499/mo · physician-selected within GLP-1 lane only; full consent; never headline or advertise.
 - Injectable TRT (cypionate) — not offered. Anastrozole and HCG — not offered.
 - Cash pay · no insurance billing · itemized receipts & superbills on request.
 - Benefits end on membership cancel: quarterly labs revert to full price; 20% discount ends.

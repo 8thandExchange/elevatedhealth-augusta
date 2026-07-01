@@ -14,10 +14,12 @@ export type TherapyCategory =
   | "peptide_recovery"
   | "peptide_vitality"
   | "peptide_metabolic"
+  | "peptide_aesthetic"
   | "hormone"
   | "iv"
   | "sexual_wellness"
-  | "hair_restoration";
+  | "hair_restoration"
+  | "program_membership";
 
 export type PatientFacingAvailability =
   | "not_offered"
@@ -48,6 +50,16 @@ export interface TherapyCatalogEntry {
   legacyProgramAlias?: string;
   /** Short staff-facing policy bullet for cheatsheets */
   staffPolicyBullet?: string;
+  /** pricing.ts / stripeConfig catalog key when applicable */
+  catalogKey?: string;
+  /** Patient-facing storefront route */
+  pageRoute?: string;
+  /** Display price string — Stripe is source of truth for charges */
+  displayPrice?: string;
+  /** Hidden from public nav at launch (sexual wellness, hair, etc.) */
+  hiddenAtLaunch?: boolean;
+  /** Staff/internal only — never patient storefront */
+  internalOnly?: boolean;
 }
 
 export const THERAPY_CATALOG: TherapyCatalogEntry[] = [
@@ -108,11 +120,14 @@ export const THERAPY_CATALOG: TherapyCatalogEntry[] = [
     inPatientGuide: true,
     inStripePricing: true,
     clinicalNotes:
-      "NOT engine-excluded. Physician-selected within GLP-1 lane; GLP-1 consent Section 11A. Never advertise or lead with retatrutide.",
+      "$499/mo gated fill. NOT engine-excluded. Physician-selected within GLP-1 lane; GLP-1 consent Section 11A. Never advertise or lead with retatrutide.",
     catalogSlug: "retatrutide-provider-directed",
+    catalogKey: "retatrutide",
+    pageRoute: "/weight-loss",
+    displayPrice: "$499/mo",
     engineHardExcluded: false,
     staffPolicyBullet:
-      "Retatrutide — physician-selected within GLP-1 lane only; full consent; never headline or advertise.",
+      "Retatrutide — $499/mo · physician-selected within GLP-1 lane only; full consent; never headline or advertise.",
   },
   {
     key: "policy_retatrutide_ala_carte",
@@ -236,6 +251,277 @@ export const THERAPY_CATALOG: TherapyCatalogEntry[] = [
     inStripePricing: true,
     clinicalNotes: "Sexual wellness lane hidden at launch; offered when clinically appropriate.",
     catalogSlug: "pt_141",
+  },
+  // Hormone optimization programs
+  {
+    key: "elevated-trt",
+    name: "ELEVATED TRT",
+    category: "hormone",
+    patientFacingAvailability: "website_program",
+    providerGated: true,
+    description:
+      "Lab-guided testosterone optimization for men — compounded transdermal protocols when prescribed after assessment.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Cream-based TRT lead product. Quarterly Comprehensive panel included.",
+    catalogKey: "trt",
+    pageRoute: "/hormones/men",
+    displayPrice: "$249/mo",
+    catalogSlug: "elevated_trt",
+  },
+  {
+    key: "elevated-hrt",
+    name: "ELEVATED HRT",
+    category: "hormone",
+    patientFacingAvailability: "website_program",
+    providerGated: true,
+    description:
+      "Bioidentical hormone replacement for women — physician-guided after labs and provider review.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Bi-Est cream lead product. Quarterly Comprehensive panel included.",
+    catalogKey: "hrt",
+    pageRoute: "/hormones/women",
+    displayPrice: "$229/mo",
+    catalogSlug: "elevated_hrt",
+  },
+  {
+    key: "testosterone-fill",
+    name: "Testosterone Cream Fill",
+    category: "hormone",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Single testosterone cream fill when not on ELEVATED TRT — provider-directed.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Included in ELEVATED TRT program when enrolled.",
+    catalogKey: "testosterone",
+    displayPrice: "$179",
+    catalogSlug: "testosterone",
+  },
+  // IV / NAD (Lane A)
+  {
+    key: "iv-lounge",
+    name: "IV Lounge",
+    category: "iv",
+    patientFacingAvailability: "website_program",
+    providerGated: false,
+    description:
+      "Walk-in IV hydration and wellness drips — book online, complete screening, pay at checkout. No $79 consult required.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Lane A direct booking. Public prepay required; staff may use pay_at_visit for walk-ins.",
+    pageRoute: "/iv-lounge",
+    catalogSlug: "iv_lounge",
+  },
+  {
+    key: "iv-nad-booster",
+    name: "NAD+ IV Booster",
+    category: "iv",
+    patientFacingAvailability: "website_program",
+    providerGated: false,
+    description: "NAD+ push add-on to any IV drip — the only patient-facing NAD+ SKU after peptide NAD discontinuation.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Standalone NAD+ infusions and peptide NAD SKUs discontinued 2026-06-25.",
+    pageRoute: "/iv-lounge",
+    displayPrice: "$50",
+    catalogSlug: "nad_booster",
+  },
+  {
+    key: "elevated-iv",
+    name: "ELEVATED IV",
+    category: "program_membership",
+    patientFacingAvailability: "website_program",
+    providerGated: false,
+    description: "Monthly IV membership — signature drips, member pricing on add-ons, priority booking.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Non-Rx IV membership. 20% off add-ons.",
+    catalogKey: "wellness",
+    pageRoute: "/membership",
+    displayPrice: "$199/mo",
+    catalogSlug: "elevated_iv",
+  },
+  // Metabolic peptides (provider-only à la carte)
+  {
+    key: "ss-31",
+    name: "SS-31 (Elamipretide)",
+    category: "peptide_metabolic",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description:
+      "Metabolic and mitochondrial support peptide — physician-directed after assessment when appropriate for your plan.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Provider-only metabolic à la carte. Research Peptide Consent when indicated.",
+    catalogKey: "ss31",
+    displayPrice: "$249/mo",
+    catalogSlug: "ss-31-provider-only",
+  },
+  {
+    key: "aod-9604",
+    name: "AOD-9604",
+    category: "peptide_metabolic",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Body composition support peptide — layered by your physician when clinically appropriate.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Provider-only metabolic à la carte.",
+    catalogKey: "aod9604",
+    displayPrice: "$129/mo",
+    catalogSlug: "aod-9604",
+  },
+  {
+    key: "slu-pp-332",
+    name: "SLU-PP-332",
+    category: "peptide_metabolic",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Metabolic pathway support — selected by your provider for appropriate patients after review.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Provider-only metabolic à la carte.",
+    catalogKey: "sluPp332",
+    displayPrice: "$99/mo",
+    catalogSlug: "slu-pp-332-provider-only",
+  },
+  {
+    key: "five-amino-1mq",
+    name: "5-Amino-1MQ",
+    category: "peptide_metabolic",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Metabolic support peptide — physician-guided when your provider determines fit.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Provider-only metabolic à la carte.",
+    catalogKey: "fiveAmino1mq",
+    displayPrice: "$119/mo",
+    catalogSlug: "5-amino-1mq-provider-only",
+  },
+  {
+    key: "pda-recovery",
+    name: "Pentadeca Arginate (PDA)",
+    category: "peptide_recovery",
+    patientFacingAvailability: "website_consult_gated",
+    providerGated: true,
+    description: "Oral recovery support — optional alternate your physician may select after Recovery Peptide Review.",
+    onWebsite: true,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Optional oral alternate to injectable recovery peptides when physician selects.",
+    catalogSlug: "pda-pentadeca-arginate",
+    displayPrice: "$249",
+  },
+  // Sexual wellness (hidden at launch)
+  {
+    key: "tadalafil",
+    name: "Tadalafil",
+    category: "sexual_wellness",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Physician-guided ED support when clinically appropriate after assessment.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Sexual wellness lane hidden at launch.",
+    catalogKey: "tadalafil",
+    displayPrice: "$99/mo",
+    hiddenAtLaunch: true,
+    catalogSlug: "tadalafil",
+  },
+  {
+    key: "sildenafil",
+    name: "Sildenafil",
+    category: "sexual_wellness",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Physician-guided ED support when clinically appropriate after assessment.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Sexual wellness lane hidden at launch.",
+    catalogKey: "sildenafil",
+    displayPrice: "$79/mo",
+    hiddenAtLaunch: true,
+    catalogSlug: "sildenafil",
+  },
+  {
+    key: "oxytocin",
+    name: "Oxytocin Nasal Spray",
+    category: "sexual_wellness",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Intimacy and connection support — physician-guided when appropriate for your plan.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Sexual wellness lane hidden at launch.",
+    catalogKey: "oxytocin",
+    displayPrice: "$89/mo",
+    hiddenAtLaunch: true,
+    catalogSlug: "oxytocin",
+  },
+  // Hair restoration (hidden at launch)
+  {
+    key: "minoxidil-finasteride",
+    name: "Minoxidil + Finasteride",
+    category: "hair_restoration",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Physician-guided scalp protocol for hair density — individualized plan after review.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Hair restoration hidden at launch.",
+    catalogKey: "minoxidilFinasteride",
+    displayPrice: "$129/mo",
+    hiddenAtLaunch: true,
+    catalogSlug: "minoxidil_finasteride",
+  },
+  {
+    key: "dutasteride",
+    name: "Dutasteride Protocol",
+    category: "hair_restoration",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Physician-guided hair restoration protocol when your provider determines fit.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Hair restoration hidden at launch.",
+    catalogKey: "dutasteride",
+    displayPrice: "$149/mo",
+    hiddenAtLaunch: true,
+    catalogSlug: "dutasteride",
+  },
+  {
+    key: "ghk-cu-scalp",
+    name: "GHK-Cu Scalp Therapy",
+    category: "hair_restoration",
+    patientFacingAvailability: "provider_only",
+    providerGated: true,
+    description: "Topical scalp peptide support for hair and skin goals — provider-reviewed after assessment.",
+    onWebsite: false,
+    inPatientGuide: true,
+    inStripePricing: true,
+    clinicalNotes: "Hair restoration hidden at launch.",
+    catalogKey: "ghkCuScalp",
+    displayPrice: "$149/mo",
+    hiddenAtLaunch: true,
+    catalogSlug: "ghk_cu_scalp",
   },
   {
     key: "mazdutide",
@@ -451,4 +737,69 @@ export function glpTherapyKeys(): string[] {
 export function isLegacySunsettedService(serviceKey: string): boolean {
   const entry = therapyByKey(serviceKey);
   return entry?.patientFacingAvailability === "not_offered" && entry.category === "legacy_excluded";
+}
+
+/** Outcome-based peptide groupings for patient storefront UX */
+export interface PeptideOutcomeGroup {
+  id: string;
+  title: string;
+  summary: string;
+  therapyKeys: string[];
+}
+
+export const PEPTIDE_OUTCOME_GROUPS: PeptideOutcomeGroup[] = [
+  {
+    id: "recovery",
+    title: "Recovery",
+    summary:
+      "May support tissue recovery, training bounce-back, and joint comfort in appropriate patients — provider-reviewed after Wellness Assessment.",
+    therapyKeys: ["bpc-157", "tb-500", "pda-recovery"],
+  },
+  {
+    id: "body_composition",
+    title: "Body composition",
+    summary:
+      "Physician-guided support for lean mass and metabolic goals — your provider determines fit after labs and assessment.",
+    therapyKeys: ["tesamorelin", "cjc-ipamorelin"],
+  },
+  {
+    id: "longevity",
+    title: "Longevity & performance",
+    summary:
+      "Vitality and GH-axis support under individualized plans — never self-selected online.",
+    therapyKeys: ["sermorelin", "cjc-ipamorelin", "tesamorelin"],
+  },
+  {
+    id: "hair_skin",
+    title: "Hair & skin",
+    summary:
+      "Topical transformation support when clinically appropriate — provider-reviewed, not a walk-in catalog.",
+    therapyKeys: ["ghk-cu", "ghk-cu-scalp"],
+  },
+  {
+    id: "sexual_wellness",
+    title: "Sexual wellness",
+    summary:
+      "Discreet, physician-guided care for libido and intimacy goals — offered when your provider determines fit.",
+    therapyKeys: ["pt-141", "tadalafil", "sildenafil", "oxytocin"],
+  },
+];
+
+export function peptideOutcomeGroups(): PeptideOutcomeGroup[] {
+  return PEPTIDE_OUTCOME_GROUPS;
+}
+
+export function therapiesForPageRoute(route: string): TherapyCatalogEntry[] {
+  const normalized = route.replace(/\/$/, "");
+  return THERAPY_CATALOG.filter(
+    (t) => t.pageRoute?.replace(/\/$/, "") === normalized && t.patientFacingAvailability !== "not_offered",
+  );
+}
+
+export function therapiesByCatalogKey(catalogKey: string): TherapyCatalogEntry | undefined {
+  return THERAPY_CATALOG.find((t) => t.catalogKey === catalogKey);
+}
+
+export function activeTherapyCatalogEntries(): TherapyCatalogEntry[] {
+  return THERAPY_CATALOG.filter((t) => t.patientFacingAvailability !== "not_offered");
 }
