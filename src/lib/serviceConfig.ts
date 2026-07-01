@@ -48,6 +48,9 @@ const VISIT_REASON_SERVICE: Partial<Record<string, ServiceKey>> = {
   hair_restoration: "hairRestoration",
 };
 
+/** Lane B ($79 Wellness Assessment) — never offer IV; IV is Lane A direct book only. */
+const CONSULT_MODAL_EXCLUDED_REASONS = new Set(["iv"]);
+
 export function isVisitReasonVisible(reasonId: string): boolean {
   const service = VISIT_REASON_SERVICE[reasonId];
   return service ? isServiceActive(service) : true;
@@ -55,6 +58,11 @@ export function isVisitReasonVisible(reasonId: string): boolean {
 
 export function filterVisibleVisitReasons<T extends { id: string }>(reasons: T[]): T[] {
   return reasons.filter((r) => isVisitReasonVisible(r.id));
+}
+
+/** Visit reasons for the $79 Wellness Assessment modal (excludes IV and hidden services). */
+export function filterConsultVisitReasons<T extends { id: string }>(reasons: T[]): T[] {
+  return filterVisibleVisitReasons(reasons).filter((r) => !CONSULT_MODAL_EXCLUDED_REASONS.has(r.id));
 }
 
 /** Public marketing copy for consult-gated services (respects launch flags). */

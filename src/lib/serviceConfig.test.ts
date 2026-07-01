@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   consultGatedServicesCopy,
+  filterConsultVisitReasons,
   filterVisibleVisitReasons,
   isVisitReasonVisible,
 } from "./serviceConfig";
@@ -21,6 +22,15 @@ describe("serviceConfig visit reason visibility", () => {
   it("filters booking reason lists", () => {
     const visible = filterVisibleVisitReasons(reasons);
     expect(visible.map((r) => r.id)).toEqual(["peptide"]);
+  });
+
+  it("excludes IV from Wellness Assessment modal reasons", () => {
+    const consultReasons = filterConsultVisitReasons([
+      { id: "peptide", label: "Peptide therapy" },
+      { id: "iv", label: "IV therapy / wellness drips" },
+      { id: "weight_loss", label: "Weight loss" },
+    ]);
+    expect(consultReasons.map((r) => r.id)).toEqual(["peptide", "weight_loss"]);
   });
 
   it("builds consult marketing copy without hidden services", () => {

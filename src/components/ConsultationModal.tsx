@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { Phone, MessageCircle, CreditCard } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import { cn } from "@/lib/utils";
-import { filterVisibleVisitReasons } from "@/lib/serviceConfig";
+import { filterConsultVisitReasons } from "@/lib/serviceConfig";
 import { openAssistantChat } from "@/lib/openAssistantChat";
 
 interface ConsultationModalProps {
@@ -25,7 +25,6 @@ const ALL_VISIT_REASONS: { id: string; label: string }[] = [
   { id: "hormone", label: "Hormone optimization (HRT/TRT)" },
   { id: "weight_loss", label: "Weight loss (GLP-1 therapy)" },
   { id: "peptide", label: "Peptide therapy" },
-  { id: "iv", label: "IV therapy / wellness drips" },
   { id: "sexual_wellness", label: "Sexual wellness" },
   { id: "hair_restoration", label: "Hair restoration" },
   { id: "general_wellness", label: "General wellness / longevity" },
@@ -34,7 +33,7 @@ const ALL_VISIT_REASONS: { id: string; label: string }[] = [
 
 const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
   const navigate = useNavigate();
-  const visitReasons = filterVisibleVisitReasons(ALL_VISIT_REASONS);
+  const visitReasons = filterConsultVisitReasons(ALL_VISIT_REASONS);
   const [selectedReasons, setSelectedReasons] = useState<Set<string>>(new Set());
 
   const toggleReason = (id: string, checked: boolean) => {
