@@ -17,6 +17,9 @@ export default defineConfig(() => ({
   },
     test: {
     environment: "node",
-    include: ["src/**/*.test.ts", "scripts/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx", "scripts/**/*.test.ts"],
+    // Inline framer-motion so vi.resetModules() re-initializes its module-level
+    // reduced-motion singleton (needed to test the prefers-reduced-motion path).
+    server: { deps: { inline: ["framer-motion"] } },
   },
 }));
