@@ -14,12 +14,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        'playfair': ['Playfair Display', 'serif'],
-        'jost': ['Jost', 'sans-serif'],
-        // Legacy aliases for components that still reference these
-        'inter': ['Jost', 'sans-serif'],
-        'lato': ['Jost', 'sans-serif'],
-        'cormorant': ['Playfair Display', 'serif'],
+        'playfair': ['General Sans', 'system-ui', 'sans-serif'],   // display alias, now geometric sans
+        'jost': ['Inter', 'system-ui', 'sans-serif'],              // body alias, now Inter
+        'display': ['General Sans', 'system-ui', 'sans-serif'],    // new semantic alias
+        'sans': ['Inter', 'system-ui', 'sans-serif'],              // new semantic body alias
+        'inter': ['Inter', 'system-ui', 'sans-serif'],
+        'lato': ['Inter', 'system-ui', 'sans-serif'],
+        'cormorant': ['General Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
