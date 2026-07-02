@@ -126,6 +126,31 @@ describe("cdsEngine consent gates", () => {
     );
     expect(result.gate_state).toBe("ready");
   });
+
+  it("surfaces needs_ack for COMPOUNDABLE_503A when required consent types are missing", () => {
+    const result = evaluateCandidate(
+      candidate({
+        candidate_key: "bpc_157",
+        regulatory_status: "COMPOUNDABLE_503A",
+        required_consent_types: ["research_peptide"],
+      }),
+      { ...baseCtx, validConsentTypes: [], substanceAcknowledgmentIds: [] },
+    );
+    expect(result.gate_state).toBe("needs_ack");
+    expect(result.gate_state).not.toBe("ready");
+    expect(result.blocked_reason).toMatch(/consent/i);
+  });
+
+  it("returns ready for FDA_APPROVED when required_consent_types is empty", () => {
+    const result = evaluateCandidate(
+      candidate({
+        regulatory_status: "FDA_APPROVED",
+        required_consent_types: [],
+      }),
+      { ...baseCtx, validConsentTypes: [], substanceAcknowledgmentIds: [] },
+    );
+    expect(result.gate_state).toBe("ready");
+  });
 });
 
 describe("cdsEngine pathway selection", () => {

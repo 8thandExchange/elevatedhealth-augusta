@@ -205,17 +205,17 @@ export function evaluateCandidate(
     };
   }
 
-  if (regulatoryStatus === "GRAY_ZONE") {
-    if (!hasRequiredConsents(candidate, ctx)) {
-      return {
-        ...base,
-        regulatory_status: regulatoryStatus,
-        gate_state: "needs_ack",
-        blocked_reason: "Required parent consent(s) not on file.",
-        rank_score: 0,
-      };
-    }
+  if (candidate.required_consent_types.length > 0 && !hasRequiredConsents(candidate, ctx)) {
+    return {
+      ...base,
+      regulatory_status: regulatoryStatus,
+      gate_state: "needs_ack",
+      blocked_reason: "Required parent consent(s) not on file.",
+      rank_score: 0,
+    };
+  }
 
+  if (regulatoryStatus === "GRAY_ZONE") {
     if (!hasSubstanceAcknowledgment(candidate, ctx)) {
       return {
         ...base,

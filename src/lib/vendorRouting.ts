@@ -1,6 +1,6 @@
 /**
  * Vendor routing — single source of truth for who fulfills what.
- * GC Scientific = peptide + GLP-1 sourcing partner (PATH lyophilized + STLKS 503A injectables).
+ * GC Scientific = peptide + GLP-1 sourcing partner. Patient fills route through the STLKS 503A injectable line. PATH lyophilized material is research-use-only and is not dispensed to patients.
  * FCC = IV premix backup, legacy peptide backup.
  * Custom Pharmacy of Evans = all hormone compounds (local fax; GC STLKS available as backup).
  * DrFirst Rcopia = FDA-approved retail patches/gels when patient prefers.
@@ -44,10 +44,10 @@ export const VENDORS: Record<string, VendorProfile> = {
     slug: VENDOR_SLUGS.gc,
     displayName: "GC Scientific (503A network)",
     supplierKey: "gc",
-    role: "Primary — metabolic stack, GLP-1, named peptide stacks (PATH + STLKS network)",
+    role: "Primary — metabolic stack, GLP-1, named peptide stacks (STLKS 503A injectable line)",
     fulfillment: "portal",
     routingNote:
-      "Route via GC account (contact@gccompounds.com). PATH for lyophilized peptides; STLKS for injectable GLP-1/hormones/IV vials. Confirm fulfilling 503A + COA per batch.",
+      "Route via GC account (contact@gccompounds.com). Patient-administered peptides and GLP-1 fill through the STLKS 503A injectable line. Confirm the fulfilling 503A license and a COA per batch before first fill. PATH lyophilized material is not dispensed to patients.",
   },
   fcc: {
     slug: VENDOR_SLUGS.fcc,
@@ -72,7 +72,7 @@ export const VENDORS: Record<string, VendorProfile> = {
     role: "Backup 503A — hormones/creams, GLP-1 (injectable + ODT), NAD+, sexual health, ancillaries. Does NOT carry research/recovery/metabolic peptides.",
     fulfillment: "portal",
     routingNote:
-      "Patient-Specific Bill-Clinic catalog (PCAB-accredited, Houston TX). Use as backup for hormone creams and GLP-1 if Custom Pharmacy/GC is backordered, and for unique modalities (ODT/oral GLP-1, nasal, troches, dermatology). NOT a peptide source — GC/PATH remains primary for BPC-157/TB-500/SS-31/CJC/etc.",
+      "Patient-Specific Bill-Clinic catalog (PCAB-accredited, Houston TX). Use as backup for hormone creams and GLP-1 if Custom Pharmacy/GC is backordered, and for unique modalities (ODT/oral GLP-1, nasal, troches, dermatology). NOT a peptide source — GC STLKS 503A line remains primary for BPC-157/TB-500/CJC/etc.",
   },
   drfirst: {
     slug: VENDOR_SLUGS.drfirst,
@@ -108,7 +108,7 @@ export const EMPOWER_WHOLESALE_CENTS = {
   oxytocinNasal10ml: 7722, // Oxytocin Nasal Spray 100 IU/mL 10mL
 } as const;
 
-/** GC wholesale — cents. Source: GC Compound Consulting Partner Catalog 2026-05-23 (PATH + STLKS). */
+/** GC wholesale — cents. Source: GC Compound Consulting Partner Catalog 2026-05-23 (STLKS 503A line). PATH lyophilized costs are research-use reference only, not a patient fill basis. */
 export const GC_WHOLESALE_CENTS = {
   retatrutide10mg: 13000,
   retatrutide20mg: 22000,
@@ -205,7 +205,7 @@ export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
   {
     itemCode: "PEPTIDE-BPC157",
     label: "BPC-157",
-    category: "peptide_recovery",
+    category: "peptide",
     primarySupplier: "gc",
     primaryCostCents: GC_WHOLESALE_CENTS.bpc15710mg,
     primaryCostUnit: "vial",
@@ -213,14 +213,14 @@ export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
     alternateCostCents: 9000,
     clientPriceCents: 24900,
     fulfillmentPharmacySlug: VENDOR_SLUGS.gc,
-    gcSku: "PATH-BPC157-10",
+    gcSku: "BPC-157-10MG-03ML",
     publicMenu: true,
     notes: "Recovery peptide — individual vial. Member 20% off via checkout coupon.",
   },
   {
     itemCode: "PEPTIDE-TB500",
     label: "TB-500 (Thymosin Beta-4)",
-    category: "peptide_recovery",
+    category: "peptide",
     primarySupplier: "gc",
     primaryCostCents: GC_WHOLESALE_CENTS.tb50010mg,
     primaryCostUnit: "vial",
@@ -228,7 +228,7 @@ export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
     alternateCostCents: 9000,
     clientPriceCents: 24900,
     fulfillmentPharmacySlug: VENDOR_SLUGS.gc,
-    gcSku: "PATH-TB500-10",
+    gcSku: "TB-500-10MG-03ML",
     publicMenu: true,
     notes: "Recovery peptide — individual vial. WADA prohibited — disclose to athletes.",
   },
@@ -335,7 +335,7 @@ export const FORMULARY_ECONOMICS_CATALOG: FormularyEconomicsLine[] = [
     gcSku: "AOD9604-05MG-03ML",
     fccSku: "3557",
     publicMenu: false,
-    notes: "Metabolic stack adjunct — PATH primary.",
+    notes: "Metabolic stack adjunct. Staff escalation only, publicMenu false. Fills through STLKS 503A line if prescribed.",
   },
   {
     itemCode: "PEPTIDE-SLU-PP332",
